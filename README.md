@@ -42,38 +42,35 @@ PandaWiki 是一个现代化的知识管理系统，采用前后端分离架构�
 - 📋 表格支持
 - 🎯 任务列表功能
 
-## 安装
+## 上手指南
 
-### 前端开发环境设置
+### 环境需求
+
+安装 `PandaWiki` 前请确保你的系统环境符合以下要求
+
+- 操作系统：Linux
+- CPU 指令架构：x86_64
+- 软件依赖：Docker 20.10.14 版本以上
+- 软件依赖：Docker Compose 2.0.0 版本以上
+- 推荐资源：1 核 CPU / 2 GB 内存 / 10 GB 磁盘
+- 最低资源：1 核 CPU / 1 GB 内存 / 5 GB 磁盘
+
+### 一键安装
+
+使用 root 权限执行以下命令进行安装
 
 ```bash
-# 进入前端目录
-cd web
-
-# 安装依赖
-pnpm install
-
-# 启动开发服务器
-pnpm dev
+bash -c "$(curl -fsSLk https://baizhi.cloud/release/pandawiki/manager.sh)"
 ```
 
-### 后端开发环境设置
+### 源码编译安装
 
-```bash
-# 进入后端目录
-cd backend
+> TODO
 
-# 安装依赖
-go mod download
+### 开始使用
 
-# 运行服务
-go run cmd/main.go
-```
-
-## 开发
-
-- 前端开发服务器运行在 `http://localhost:5173`
-- 后端 API 服务运行在 `http://localhost:8080`
+1. 访问 PandaWiki 控制台
+2. 配置大模型
 
 ## 贡献
 
