@@ -7,42 +7,29 @@
   <a target="_blank" href="https://ly.safepoint.cloud/laA8asp">🏠 官网</a> &nbsp; | &nbsp;
   <a target="_blank" href="https://ly.safepoint.cloud/w2AeHhb">📖 帮助文档</a> &nbsp; | &nbsp;
   <a target="_blank" href="https://ly.safepoint.cloud/hSMd4SH">🔍 演示 Demo</a> &nbsp; | &nbsp;
-  <a target="_blank" href="https://discord.gg/SVnZGzHFvn">🙋‍♂️ 微信交流群</a>
+  <a target="_blank" href="/images/banner.png">🙋‍♂️ 微信交流群</a>
 </p>
 
-## 介绍
+## 👋 项目介绍
 
-PandaWiki 是一个现代化的知识管理系统，采用前后端分离架构，提供强大的文档编辑、管理和协作功能。本项目使用最新的技术栈，为用户提供流畅的写作和阅读体验。
+PandaWiki 是一个 AI 驱动的开源 Wiki 搭建系统，提供强大的文档编辑、管理和协作功能。
 
-## 技术栈
+## 🔥 功能与特色
 
-### 前端
-- React 19
-- TypeScript
-- Material-UI (MUI) v6
-- TipTap 富文本编辑器
-- Redux Toolkit 状态管理
-- Vite 构建工具
+- 支持使用 AI 大模型对 Wiki 内容进行检索和总结。
+- 富文本编辑能力简洁又强大，支持导出为 word、pdf、markdown 等多种格式。
+- 支持多用户协作管理。
+- 支持快速与钉钉、飞书、企业微信等 IM 工具对接 Wiki。
 
-### 后端
-- Go 语言
-- 领域驱动设计 (DDD) 架构
-- 模块化设计
+## ⚡️ 截图
 
-## 特性
+| <img src="/images/screenshot-1.png" width=370 /> | <img src="/images/screenshot-2.png" width=370 /> |
+| ------------------------------------------------- | ------------------------------------------------- | 
+| <img src="/images/screenshot-3.png" width=370 /> | <img src="/images/screenshot-4.png" width=370 /> | 
 
-- 📝 强大的富文本编辑器，支持 Markdown
-- 🎨 现代化的用户界面
-- 📊 实时协作功能
-- 🔍 全文搜索
-- 📱 响应式设计
-- 🔒 权限管理
-- 📈 版本控制
-- 🖼️ 图片上传和管理
-- 📋 表格支持
-- 🎯 任务列表功能
+查看 [演示 Demo](https://baizhi.cloud/)
 
-## 上手指南
+## 🚀 上手指南
 
 ### 环境需求
 
@@ -55,7 +42,7 @@ PandaWiki 是一个现代化的知识管理系统，采用前后端分离架构�
 - 推荐资源：1 核 CPU / 2 GB 内存 / 10 GB 磁盘
 - 最低资源：1 核 CPU / 1 GB 内存 / 5 GB 磁盘
 
-### 一键安装
+### 📦 一键安装
 
 使用 root 权限执行以下命令进行安装
 
@@ -63,20 +50,42 @@ PandaWiki 是一个现代化的知识管理系统，采用前后端分离架构�
 bash -c "$(curl -fsSLk https://baizhi.cloud/release/pandawiki/manager.sh)"
 ```
 
-### 源码编译安装
+### ⚙️ 初始化
 
-> TODO
+#### 访问 PandaWiki 控制台
 
-### 开始使用
+安装完成后，控制台默认监听在 9998 端口，使用浏览器访问 http://127.0.0.1:9998 就能看到登录页面。
 
-1. 访问 PandaWiki 控制台
-2. 配置大模型
+默认账号密码会在安装时随机生成，请查看安装命令的输出内容。
 
-## 贡献
+#### ⚙️ 配置 AI 大模型
 
-欢迎提交 Pull Request 或创建 Issue 来帮助改进项目。
+在  PandaWiki 控制台的右上角点击 **系统配置** 按钮，在弹出窗口中配置供 PandaWiki 使用的大模型。
 
-## 许可证
+> PandaWiki 目前支持接入以下大模型
+> 
+> - **DeepSeek**：参考文档 [DeepSeek](https://platform.deepseek.com/)
+> - **OpenAI**：ChatGPT 所使用的大模型，参考文档 [OpenAI](https://platform.openai.com/)
+>- **Ollama**：Ollama 通常是本地部署的大模型，参考文档 [Ollama](https://github.com/ollama/ollama/tree/main/docs)
+>- **硅基流动**：参考文档 [SiliconFlow](https://docs.siliconflow.cn/)
+>- **月之暗面**：Kimi 所使用的模型，参考文档 [Moonshot](https://platform.moonshot.cn/)
+> - **其他**：其他兼容 OpenAI 模型接口的 API
+
+#### 💪 开始使用
+
+完成以上配置后你就可以开始 PandaWiki 了，开始创建文档，并使用 AI 问答功能吧。
+
+## 社区交流
+
+欢迎加入我们的微信群进行交流。
+
+<img src="/images/wechat.png" width="300" />
+
+## 🙋‍♂️ 贡献
+
+欢迎提交 [Pull Request](https://github.com/chaitin/PandaWiki/pulls) 或创建 [Issue](https://github.com/chaitin/PandaWiki/issues) 来帮助改进项目。
+
+## 📝 许可证
 
 本项目采用 GNU Affero General Public License v3.0 (AGPL-3.0) 许可证。这意味着：
 
@@ -84,6 +93,3 @@ bash -c "$(curl -fsSLk https://baizhi.cloud/release/pandawiki/manager.sh)"
 - 你必须以相同的许可证开源你的修改
 - 如果你通过网络提供服务，也必须开源你的代码
 - 商业使用需要遵守相同的开源要求
-
-查看完整的 [LICENSE](/LICENSE) 文件了解更多详情。
-
