@@ -1,0 +1,143 @@
+package pg
+
+import (
+	"context"
+
+	"gorm.io/gorm"
+
+	"github.com/chaitin/panda-wiki/domain"
+	"github.com/chaitin/panda-wiki/store/pg"
+)
+
+type ConversationRepository struct {
+	db *pg.DB
+}
+
+func NewConversationRepository(db *pg.DB) *ConversationRepository {
+	return &ConversationRepository{db: db}
+}
+
+func (r *ConversationRepository) CreateConversationMessage(ctx context.Context, conversationMessage *domain.ConversationMessage, references []*domain.ConversationReference) error {
+	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(conversationMessage).Error; err != nil {
+			return err
+		}
+		if len(references) > 0 {
+			return tx.Create(references).Error
+		}
+		return nil
+	})
+}
+
+func (r *ConversationRepository) CreateConversation(ctx context.Context, conversation *domain.Conversation) error {
+	return r.db.WithContext(ctx).Create(conversation).Error
+}
+
+func (r *ConversationRepository) GetConversationList(ctx context.Context, request *domain.ConversationListReq) ([]*domain.ConversationListItem, uint64, error) {
+	conversations := []*domain.ConversationListItem{}
+	query := r.db.WithContext(ctx).
+		Model(&domain.Conversation{}).
+		Where("conversations.kb_id = ?", request.KBID)
+
+	if request.AppID != nil && *request.AppID != "" {
+		query = query.Where("conversations.app_id = ?", *request.AppID)
+	}
+	if request.Subject != nil && *request.Subject != "" {
+		query = query.Where("conversations.subject like ?", "%"+*request.Subject+"%")
+	}
+	if request.RemoteIP != nil && *request.RemoteIP != "" {
+		query = query.Where("conversations.remote_ip like ?", "%"+*request.RemoteIP+"%")
+	}
+	var count int64
+	if err := query.Count(&count).Error; err != nil {
+		return nil, 0, err
+	}
+	if err := query.
+		Joins("left join apps on conversations.app_id = apps.id").
+		Select("conversations.*, apps.name as app_name").
+		Offset(request.Offset()).
+		Limit(request.Limit()).
+		Order("conversations.created_at DESC").
+		Find(&conversations).Error; err != nil {
+		return nil, 0, err
+	}
+	return conversations, uint64(count), nil
+}
+
+func (r *ConversationRepository) GetConversationDetail(ctx context.Context, conversationID string) (*domain.ConversationDetailResp, error) {
+	conversation := &domain.ConversationDetailResp{}
+	if err := r.db.WithContext(ctx).
+		Model(&domain.Conversation{}).
+		Where("id = ?", conversationID).
+		First(conversation).Error; err != nil {
+		return nil, err
+	}
+	return conversation, nil
+}
+
+func (r *ConversationRepository) GetConversationReferences(ctx context.Context, conversationID string) ([]*domain.ConversationReference, error) {
+	references := []*domain.ConversationReference{}
+	if err := r.db.WithContext(ctx).
+		Model(&domain.ConversationReference{}).
+		Where("conversation_id = ?", conversationID).
+		Find(&references).Error; err != nil {
+		return nil, err
+	}
+	return references, nil
+}
+
+func (r *ConversationRepository) GetConversationStatForApp(ctx context.Context) (map[string]*domain.ConversationStatForApp, error) {
+	stats := []*domain.ConversationStatForApp{}
+	if err := r.db.WithContext(ctx).
+		Model(&domain.Conversation{}).
+		Where("created_at > NOW() - INTERVAL '24 hours'").
+		Select("app_id, COUNT(distinct(remote_ip)) as last_24h_ip_count, COUNT(*) as last_24h_count").
+		Group("app_id").
+		Find(&stats).Error; err != nil {
+		return nil, err
+	}
+
+	dayCounts := []*domain.ConversationCount{}
+	if err := r.db.WithContext(ctx).
+		Model(&domain.Conversation{}).
+		Select("app_id, DATE(created_at) as date, COUNT(*) as count").
+		Group("app_id, DATE(created_at)").
+		Find(&dayCounts).Error; err != nil {
+		return nil, err
+	}
+
+	statMap := make(map[string]*domain.ConversationStatForApp)
+	for _, stat := range stats {
+		statMap[stat.AppID] = stat
+	}
+	for _, dayCount := range dayCounts {
+		if stat, ok := statMap[dayCount.AppID]; ok {
+			stat.DayCounts = append(stat.DayCounts, dayCount)
+		}
+	}
+	return statMap, nil
+}
+
+func (r *ConversationRepository) GetConversationMessagesByID(ctx context.Context, conversationID string) ([]*domain.ConversationMessage, error) {
+	messages := []*domain.ConversationMessage{}
+	if err := r.db.WithContext(ctx).
+		Model(&domain.ConversationMessage{}).
+		Where("conversation_id = ?", conversationID).
+		Order("created_at asc").
+		Find(&messages).Error; err != nil {
+		return nil, err
+	}
+	return messages, nil
+}
+
+func (r *ConversationRepository) ValidateConversationNonce(ctx context.Context, conversationID, nonce string) error {
+	conversation := &domain.Conversation{}
+	if err := r.db.WithContext(ctx).
+		Model(&domain.Conversation{}).
+		Where("id = ?", conversationID).
+		Where("nonce = ?", nonce).
+		First(&conversation).Error; err != nil {
+		return err
+	}
+	return nil
+}
