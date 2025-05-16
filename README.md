@@ -7,7 +7,7 @@
   <a target="_blank" href="https://ly.safepoint.cloud/laA8asp">🏠 官网</a> &nbsp; | &nbsp;
   <a target="_blank" href="https://ly.safepoint.cloud/w2AeHhb">📖 帮助文档</a> &nbsp; | &nbsp;
   <a target="_blank" href="https://ly.safepoint.cloud/hSMd4SH">🔍 演示 Demo</a> &nbsp; | &nbsp;
-  <a target="_blank" href="https://discord.gg/SVnZGzHFvn">🙋‍♂️ 微信交流群</a>
+  <a target="_blank" href="/images/banner.png">🙋‍♂️ 微信交流群</a>
 </p>
 
 ## 👋 项目介绍
@@ -79,7 +79,7 @@ bash -c "$(curl -fsSLk https://baizhi.cloud/release/pandawiki/manager.sh)"
 
 欢迎加入我们的微信群进行交流。
 
-<img src="/images/wechat.png" width="400" />
+<img src="/images/wechat.png" width="300" />
 
 ## 🙋‍♂️ 贡献
 
