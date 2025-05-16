@@ -23,9 +23,9 @@ PandaWiki 是一个 AI 驱动的开源 Wiki 搭建系统，提供强大的文档
 
 ## ⚡️ 截图
 
-| <img src="./images/screenshot-1.png" width=370 /> | <img src="./images/screenshot-2.png" width=370 /> |
+| <img src="/images/screenshot-1.png" width=370 /> | <img src="/images/screenshot-2.png" width=370 /> |
 | ------------------------------------------------- | ------------------------------------------------- | 
-| <img src="./images/screenshot-3.png" width=370 /> | <img src="./images/screenshot-4.png" width=370 /> | 
+| <img src="/images/screenshot-3.png" width=370 /> | <img src="/images/screenshot-4.png" width=370 /> | 
 
 查看 [演示 Demo](https://baizhi.cloud/)
 
@@ -74,6 +74,12 @@ bash -c "$(curl -fsSLk https://baizhi.cloud/release/pandawiki/manager.sh)"
 #### 💪 开始使用
 
 完成以上配置后你就可以开始 PandaWiki 了，开始创建文档，并使用 AI 问答功能吧。
+
+## 社区交流
+
+欢迎加入我们的微信群进行交流。
+
+<img src="/images/wechat.png" width="400" />
 
 ## 🙋‍♂️ 贡献
 
