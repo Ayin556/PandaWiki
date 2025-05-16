@@ -1,5 +1,5 @@
-import { Icon, Message } from '@cx/ui';
 import { IconButton, Stack } from '@mui/material';
+import { Icon, Message } from 'ct-mui';
 import { useNavigate } from 'react-router-dom';
 import System from '../System';
 import Bread from './Bread';

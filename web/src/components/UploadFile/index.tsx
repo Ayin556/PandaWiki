@@ -1,6 +1,6 @@
 import { uploadFile } from '@/api';
-import { Icon, Message } from '@cx/ui';
 import { Box, IconButton, Stack } from '@mui/material';
+import { Icon, Message } from 'ct-mui';
 import { useEffect, useRef, useState } from 'react';
 import CustomImage from '../CustomImage';
 

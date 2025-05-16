@@ -1,7 +1,7 @@
-import { Icon } from '@cx/ui';
 import MenuItem from '@mui/material/MenuItem';
 import Popover from '@mui/material/Popover';
 import { type Editor } from '@tiptap/core';
+import { Icon } from 'ct-mui';
 import { TextSelection } from 'prosemirror-state';
 import { useEffect, useState } from 'react';
 import EditorToolbarButton from './EditorToolbarButton';
@@ -15,7 +15,7 @@ const EditorTable = ({ editor }: { editor: Editor }) => {
     editor
       .chain()
       .focus()
-      .insertTable({ rows: 3, cols: 3, withHeaderRow: false })
+      .insertTable({ rows: 3, cols: 6, withHeaderRow: false })
       .run();
   };
 

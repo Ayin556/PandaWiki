@@ -1,7 +1,7 @@
 import { RecommendDoc } from "@/api"
 import { addOpacityToColor } from "@/utils"
-import { Ellipsis, Icon } from "@cx/ui"
 import { Box, Stack, useTheme } from "@mui/material"
+import { Ellipsis, Icon } from "ct-mui"
 
 interface ChatRecommendsProps {
   docs: RecommendDoc[]

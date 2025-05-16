@@ -1,6 +1,6 @@
 import { useAppSelector } from "@/store"
-import { Icon } from "@cx/ui"
 import { Box, Stack, useTheme } from "@mui/material"
+import { Icon } from "ct-mui"
 import { useEffect, useState } from "react"
 import { NavLink, useLocation } from "react-router-dom"
 import KBSelect from "../KB/KBSelect"

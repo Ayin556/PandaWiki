@@ -3,8 +3,8 @@ import ChatLogo from '@/assets/images/chat-logo.png';
 import Avatar from "@/components/Avatar";
 import Card from "@/components/Card";
 import { addOpacityToColor } from "@/utils";
-import { Icon } from "@cx/ui";
 import { Box, Stack, TextField, useTheme } from "@mui/material";
+import { Icon } from "ct-mui";
 
 const DemoApp = ({ detail }: { detail: AppConfigEditData | null }) => {
   const theme = useTheme()

@@ -3,8 +3,8 @@ import NoData from '@/assets/images/nodata.png'
 import Card from "@/components/Card"
 import { tableSx } from "@/constant/styles"
 import { useAppSelector } from '@/store'
-import { Table } from "@cx/ui"
 import { Box, Button, Stack } from "@mui/material"
+import { Table } from "ct-mui"
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 import MemberAdd from './MemberAdd'

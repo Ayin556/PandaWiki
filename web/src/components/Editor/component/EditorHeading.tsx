@@ -1,6 +1,6 @@
-import { Icon } from "@cx/ui";
 import { Box, MenuItem, Select } from "@mui/material";
 import { type Editor } from "@tiptap/react";
+import { Icon } from "ct-mui";
 import { HeadingFiveIcon } from "../icons/heading-five-icon";
 import { HeadingFourIcon } from "../icons/heading-four-icon";
 import { HeadingIcon } from "../icons/heading-icon";

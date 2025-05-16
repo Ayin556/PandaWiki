@@ -1,6 +1,6 @@
 import { addOpacityToColor } from '@/utils';
-import { Icon, Message } from '@cx/ui';
 import { Box, IconButton, useTheme } from '@mui/material';
+import { Icon, Message } from 'ct-mui';
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import SyntaxHighlighter from 'react-syntax-highlighter';

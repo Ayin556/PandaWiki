@@ -1,8 +1,8 @@
 import { AppDetail, FeishuBotSetting, getAppDetail, updateAppDetail } from "@/api"
 import Card from "@/components/Card"
 import { addOpacityToColor } from "@/utils"
-import { Ellipsis, Icon, Message, Modal } from "@cx/ui"
 import { Box, Stack, TextField, useTheme } from "@mui/material"
+import { Ellipsis, Icon, Message, Modal } from "ct-mui"
 import { useEffect, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 interface ConfigFeishuProps {

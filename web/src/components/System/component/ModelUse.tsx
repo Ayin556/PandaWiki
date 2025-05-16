@@ -1,9 +1,9 @@
 import { ModelListItem, updateModelActivate } from "@/api";
 import Card from "@/components/Card";
-import { Ellipsis, Message, Modal } from "@cx/ui";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ErrorIcon from '@mui/icons-material/Error';
 import { Box, Stack, useTheme } from "@mui/material";
+import { Ellipsis, Message, Modal } from "ct-mui";
 
 interface AddModelProps {
   open: boolean

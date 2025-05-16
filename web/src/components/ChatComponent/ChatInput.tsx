@@ -1,8 +1,8 @@
 import { AppDetail } from "@/api";
 import { AnswerStatus } from "@/constant/enums";
 import { addOpacityToColor } from "@/utils";
-import { Icon } from "@cx/ui";
 import { Box, TextField, useTheme } from "@mui/material";
+import { Icon } from "ct-mui";
 import { useEffect, useState } from "react";
 import ChatLoading from "./ChatLoading";
 

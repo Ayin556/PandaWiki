@@ -1,6 +1,6 @@
 import { useURLSearchParams } from "@/hooks";
-import { Icon } from "@cx/ui";
 import { IconButton, InputAdornment, Stack, TextField } from "@mui/material";
+import { Icon } from "ct-mui";
 import { useState } from "react";
 
 const Search = () => {

@@ -1,8 +1,8 @@
 import { createKnowledgeBase, KnowledgeBaseListItem, updateKnowledgeBase } from "@/api"
 import { useAppDispatch, useAppSelector } from "@/store"
 import { setKbList } from "@/store/slices/config"
-import { Message, Modal } from "@cx/ui"
 import { Box, TextField } from "@mui/material"
+import { Message, Modal } from "ct-mui"
 import { useEffect, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 

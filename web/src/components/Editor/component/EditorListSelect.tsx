@@ -1,6 +1,6 @@
-import { Icon } from "@cx/ui";
 import { Box, MenuItem, Select } from "@mui/material";
 import { type Editor } from "@tiptap/react";
+import { Icon } from "ct-mui";
 import { useEffect, useState } from "react";
 import { ListIcon } from "../icons/list-icon";
 import { ListOrderedIcon } from "../icons/list-ordered-icon";
@@ -72,7 +72,6 @@ const EditorListSelect = ({ editor }: { editor: Editor }) => {
       className={['orderedList', 'taskList', 'bulletList'].includes(selectedValue) ? "active" : ""}
       onChange={handleChange}
       renderValue={(value) => {
-        console.log(value);
         return <EditorToolbarButton
           tip={'列表'}
           icon={<Box sx={{ mr: 0.5 }}>

@@ -1,6 +1,6 @@
-import { Icon } from '@cx/ui';
 import { Box, MenuItem, Select } from '@mui/material';
 import { Editor } from '@tiptap/core';
+import { Icon } from 'ct-mui';
 import { useEffect, useState } from 'react';
 import EditorToolbarButton from './EditorToolbarButton';
 

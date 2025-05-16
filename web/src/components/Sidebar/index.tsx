@@ -1,7 +1,7 @@
 import Logo from '@/assets/images/logo.png';
 import Qrcode from '@/assets/images/qrcode.png';
-import { Icon } from '@cx/ui';
 import { Box, Button, Stack, Tooltip, useTheme } from "@mui/material";
+import { Icon } from 'ct-mui';
 import { NavLink, useLocation } from "react-router-dom";
 import Avatar from '../Avatar';
 import Version from './Version';
