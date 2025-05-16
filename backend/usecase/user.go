@@ -24,7 +24,7 @@ func NewUserUsecase(repo *pg.UserRepository, logger *log.Logger, config *config.
 	if config.AdminPassword != "" {
 		if err := repo.UpsertDefaultUser(context.Background(), &domain.User{
 			ID:       uuid.New().String(),
-			Account:  "admin@panda.wiki",
+			Account:  "admin",
 			Password: config.AdminPassword,
 		}); err != nil {
 			return nil, fmt.Errorf("failed to create default user: %w", err)
