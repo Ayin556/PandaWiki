@@ -1,4 +1,4 @@
-import { MAC_SYMBOLS } from "@/constant/enums";
+import { getShortcutKeyText } from "@/utils";
 import { Theme } from "@emotion/react";
 import { Box, Button, Stack, SxProps, Tooltip } from "@mui/material";
 
@@ -13,18 +13,19 @@ interface EditorToolbarButtonProps {
 }
 
 const EditorToolbarButton = ({ tip, shortcutKey, icon, sx, onClick, ...rest }: EditorToolbarButtonProps) => {
-  const isMac = navigator.userAgent.includes('Mac');
-  const shortcutKeyText = shortcutKey?.map(it => (isMac ? (MAC_SYMBOLS[it as keyof typeof MAC_SYMBOLS] || it) : it)).join('+');
+  const shortcutKeyText = getShortcutKeyText(shortcutKey || []);
   return (
     <Tooltip title={
       <Stack alignItems="center">
         <Box>{tip}</Box>
-        {shortcutKey && <Box sx={{ fontSize: 12 }}>{shortcutKeyText}</Box>}
+        {shortcutKeyText && <Box sx={{ fontSize: 12 }}>{shortcutKeyText}</Box>}
       </Stack>
     } arrow>
-      <Button onClick={onClick} sx={{ ...sx, textTransform: 'none' }} {...rest} >
-        {icon}
-      </Button>
+      <Box>
+        <Button onClick={onClick} sx={{ ...sx, textTransform: 'none' }} {...rest} >
+          {icon}
+        </Button>
+      </Box>
     </Tooltip>
   )
 }

@@ -1,10 +1,10 @@
-import { Message } from "@cx/ui";
 import axios, {
   AxiosError,
   AxiosInstance,
   AxiosRequestConfig,
   AxiosResponse,
 } from "axios";
+import { Message } from "ct-mui";
 
 type BasicResponse<T> = {
   data: T;

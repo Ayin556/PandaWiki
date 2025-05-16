@@ -1,5 +1,4 @@
 import { formatByte } from '@/utils'
-import { Icon, Message } from '@cx/ui'
 import { Upload as UploadIcon } from '@mui/icons-material'
 import {
   Box,
@@ -8,6 +7,7 @@ import {
   Typography,
   useTheme
 } from '@mui/material'
+import { Icon, Message } from 'ct-mui'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { FileRejection, useDropzone } from 'react-dropzone'
 

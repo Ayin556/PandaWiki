@@ -2,8 +2,8 @@ import { deleteKnowledgeBase, getKnowledgeBaseList, KnowledgeBaseListItem } from
 import { useAppDispatch, useAppSelector } from "@/store"
 import { setKbId, setKbList } from "@/store/slices/config"
 import custom from '@/themes/custom'
-import { Ellipsis, Icon, Message } from "@cx/ui"
 import { Box, Button, IconButton, MenuItem, Select, Stack } from "@mui/material"
+import { Ellipsis, Icon, Message } from "ct-mui"
 import { useEffect, useState } from "react"
 import KBEdit from "../KB/KBEdit"
 import KBDelete from "./KBDelete"
@@ -102,7 +102,7 @@ const KBSelect = () => {
         }
       }}
     >
-      <Button size='small' sx={{
+      <Button size='small' disabled sx={{
         height: 40,
         mb: 0.5,
         borderRadius: '5px',
@@ -122,7 +122,7 @@ const KBSelect = () => {
           <Icon type='icon-zuzhi' sx={{ fontSize: 14, color: 'text.secondary', flexShrink: 0 }} />
           <Ellipsis>{item.name}</Ellipsis>
           <Box sx={{ width: 10 }}></Box>
-          <IconButton size='small' className='hover-del-space-icon' sx={{ display: 'none' }}>
+          {kbList.length > 1 && <IconButton size='small' className='hover-del-space-icon' sx={{ display: 'none' }}>
             <Icon
               type='icon-shanchu'
               sx={{ fontSize: 14, color: 'text.auxiliary', flexShrink: 0 }}
@@ -132,7 +132,7 @@ const KBSelect = () => {
                 setDeleteOpen(true)
               }}
             />
-          </IconButton>
+          </IconButton>}
         </Stack>
       </MenuItem>)}
     </Select>}

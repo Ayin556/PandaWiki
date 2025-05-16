@@ -2,8 +2,8 @@ import { createModel, getModelNameList, ModelListItem, testModel, updateModel } 
 import Card from "@/components/Card"
 import { ModelProvider } from "@/constant/enums"
 import { addOpacityToColor } from "@/utils"
-import { Icon, Message, Modal } from "@cx/ui"
 import { Box, Button, MenuItem, Stack, TextField, useTheme } from "@mui/material"
+import { Icon, Message, Modal } from "ct-mui"
 import { useEffect, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 interface AddModelProps {

@@ -1,8 +1,8 @@
 import { getModelList, ModelListItem } from "@/api"
 import NoData from '@/assets/images/nodata.png'
 import Card from "@/components/Card"
-import { Icon, Modal } from "@cx/ui"
 import { Box, Button, Stack } from "@mui/material"
+import { Icon, Modal } from "ct-mui"
 import { useEffect, useState } from "react"
 import Member from "./component/Member"
 import ModelAdd from "./component/ModelAdd"

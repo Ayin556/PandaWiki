@@ -1,3 +1,4 @@
+import { MAC_SYMBOLS } from "@/constant/enums";
 import { isArray, isEmpty, isNil, isObject, pickBy } from "lodash";
 
 export * from "./render";
@@ -78,3 +79,7 @@ export function generatePassword(length = 8) {
 
 export const isMac = () => typeof navigator !== "undefined" &&
   navigator.platform.toLowerCase().includes("mac")
+
+export const getShortcutKeyText = (shortcutKey: string[]) => {
+  return shortcutKey?.map(it => (isMac() ? (MAC_SYMBOLS[it as keyof typeof MAC_SYMBOLS] || it) : it)).join('+');
+}

@@ -1,7 +1,7 @@
 import { createDoc, DocDetail, DocListItem, updateDoc } from "@/api"
 import { useAppSelector } from "@/store"
-import { Message, Modal } from "@cx/ui"
 import { Box, TextField } from "@mui/material"
+import { Message, Modal } from "ct-mui"
 import { useEffect } from "react"
 import { Controller, useForm } from "react-hook-form"
 

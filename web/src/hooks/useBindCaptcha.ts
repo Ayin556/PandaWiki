@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Message } from '@cx/ui';
+import { Message } from 'ct-mui';
 import { useEffect, useRef, useState } from 'react';
 
 export function useBindCaptcha(id: string, { init = false, businessId = '0195ea3c-ab47-73f3-9f8e-e72b8fd7f089' }: { init: boolean, businessId?: string }) {

@@ -5,8 +5,8 @@ import ChatLoading from "@/components/ChatComponent/ChatLoading"
 import MarkDown from "@/components/MarkDown"
 import { AnswerStatus } from "@/constant/enums"
 import SSEClient from "@/utils/fetch"
-import { Message, Modal } from "@cx/ui"
 import { Box, Stack } from "@mui/material"
+import { Message, Modal } from "ct-mui"
 import { useCallback, useEffect, useRef, useState } from "react"
 
 interface TestKBProps {

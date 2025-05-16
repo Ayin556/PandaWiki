@@ -2,8 +2,8 @@ import { updateKnowledgeBase } from "@/api"
 import Card from "@/components/Card"
 import { useAppDispatch, useAppSelector } from "@/store"
 import { setKbList } from "@/store/slices/config"
-import { Ellipsis, Message } from "@cx/ui"
 import { Box, Button, Stack, TextField } from "@mui/material"
+import { Ellipsis, Message } from "ct-mui"
 import { useEffect, useState } from "react"
 
 const ConfigKB = () => {

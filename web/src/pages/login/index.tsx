@@ -4,8 +4,8 @@ import Logo from '@/assets/images/logo.png'
 import Avatar from '@/components/Avatar'
 import Card from '@/components/Card'
 import { useURLSearchParams } from '@/hooks'
-import { Icon, Message } from '@cx/ui'
 import { Box, Button, IconButton, Stack, TextField } from "@mui/material"
+import { Icon, Message } from 'ct-mui'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 

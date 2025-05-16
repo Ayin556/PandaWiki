@@ -1,8 +1,8 @@
 import HelpCenter from '@/assets/json/help-center.json';
 import IconUpgrade from '@/assets/json/upgrade.json';
 import LottieIcon from "@/components/LottieIcon";
-import { Icon } from '@cx/ui';
 import { Box, Stack, Tooltip } from "@mui/material";
+import { Icon } from 'ct-mui';
 import { useEffect, useState } from 'react';
 import packageJson from '../../../package.json';
 

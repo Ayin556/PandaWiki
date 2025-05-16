@@ -1,5 +1,4 @@
-import { DocDetail, updateDoc, uploadFile } from "@/api";
-import { Message } from "@cx/ui";
+import { DocDetail, updateDoc } from "@/api";
 import { Box } from "@mui/material";
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import { Color } from '@tiptap/extension-color';
@@ -19,12 +18,14 @@ import { Typography } from "@tiptap/extension-typography";
 import { Underline } from "@tiptap/extension-underline";
 import { EditorContent, useEditor } from "@tiptap/react";
 import { StarterKit } from "@tiptap/starter-kit";
+import { Message } from "ct-mui";
 import { all, createLowlight } from 'lowlight';
 import { TextSelection } from "prosemirror-state";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Markdown } from 'tiptap-markdown';
 import EditorHeader from "./component/EditorHeader";
 import EditorToolbar from "./component/EditorToolbar";
+import ImageEditDialog from "./component/ImageEditDialog";
 import FontSize from "./extension/FontSize";
 import Link from "./extension/Link";
 import Selection from "./extension/Selection";
@@ -41,6 +42,10 @@ interface SimpleEditorProps {
 }
 
 const SimpleEditor = ({ content, detail, refresh }: SimpleEditorProps) => {
+  const [imageEditOpen, setImageEditOpen] = useState(false)
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [dropPosition, setDropPosition] = useState(-1)
+
   const editor = useEditor({
     immediatelyRender: false,
     editorProps: {
@@ -63,77 +68,37 @@ const SimpleEditor = ({ content, detail, refresh }: SimpleEditorProps) => {
       handlePaste: (_, event) => {
         const items = event.clipboardData?.items;
         if (!items || !items.length) return false;
-
         for (let i = 0; i < items.length; i++) {
           const item = items[i];
-
           if (item.type.indexOf('image') !== -1) {
             event.preventDefault();
-
             const file = item.getAsFile();
             if (!file) continue;
-            const formData = new FormData();
-            formData.append("file", file);
-
-            uploadFile(formData)
-              .then(res => {
-                const imageUrl = location.origin + '/static-file/' + res.key;
-                editor?.chain().focus().setImage({ src: imageUrl }).run();
-                Message.success('图片上传成功');
-              })
-              .catch(error => {
-                console.error('图片上传失败:', error);
-                Message.error('图片上传失败');
-              });
-
+            setDropPosition(-1)
+            setImageFile(file)
+            setImageEditOpen(true)
             return true;
           }
         }
-
         return false;
       },
       handleDrop: (view, event) => {
         if (event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files.length > 0) {
           const files = event.dataTransfer.files;
-
           for (let i = 0; i < files.length; i++) {
             const file = files[i];
-
             if (file.type.startsWith('image/')) {
               event.preventDefault();
-
               const coordinates = view.posAtCoords({ left: event.clientX, top: event.clientY });
-
               if (!coordinates) return false;
-
               const dropPosition = coordinates.pos;
-
-              const formData = new FormData();
-              formData.append("file", file);
-
-              uploadFile(formData)
-                .then(res => {
-                  const imageUrl = location.origin + '/static-file/' + res.key;
-
-                  if (editor) {
-                    const { state } = editor.view;
-                    const tr = state.tr.setSelection(TextSelection.near(state.doc.resolve(dropPosition)));
-                    editor.view.dispatch(tr);
-
-                    editor.chain().focus().setImage({ src: imageUrl }).run();
-                    Message.success('图片上传成功');
-                  }
-                })
-                .catch(error => {
-                  console.error('图片上传失败:', error);
-                  Message.error('图片上传失败');
-                });
-
+              setDropPosition(dropPosition)
+              setImageFile(file)
+              setImageEditOpen(true)
               return true;
             }
           }
         }
-
         return false;
       }
     },
@@ -190,6 +155,20 @@ const SimpleEditor = ({ content, detail, refresh }: SimpleEditorProps) => {
     content: content,
   });
 
+  const handleImageEdit = (imageUrl: string) => {
+    setImageEditOpen(false)
+    if (editor) {
+      if (dropPosition === -1) {
+        editor.chain().focus().setImage({ src: imageUrl }).run();
+      } else {
+        const { state } = editor.view;
+        const tr = state.tr.setSelection(TextSelection.near(state.doc.resolve(dropPosition)));
+        editor.view.dispatch(tr);
+        editor.chain().focus().setImage({ src: imageUrl }).run();
+      }
+    }
+  }
+
   const handleSave = () => {
     if (!detail || !editor) return
     updateDoc({ doc_id: detail.id, content: editor.getHTML() }).then(() => {
@@ -225,7 +204,7 @@ const SimpleEditor = ({ content, detail, refresh }: SimpleEditorProps) => {
           borderColor: 'divider',
           py: 1,
         }}>
-          <EditorHeader detail={detail} onSave={handleSave} refresh={refresh} />
+          <EditorHeader editor={editor} detail={detail} onSave={handleSave} refresh={refresh} />
         </Box>
         <EditorToolbar editor={editor} />
       </Box>
@@ -238,6 +217,12 @@ const SimpleEditor = ({ content, detail, refresh }: SimpleEditorProps) => {
       }}>
         <EditorContent editor={editor} className="simple-editor-content" />
       </Box>
+      <ImageEditDialog
+        open={imageEditOpen}
+        onClose={() => setImageEditOpen(false)}
+        imageFile={imageFile}
+        onConfirm={handleImageEdit}
+      />
     </Box>
   );
 };

@@ -1,6 +1,6 @@
-import { Icon } from '@cx/ui';
 import { Box, Button, Grid, Popover, Stack } from '@mui/material';
 import { type Editor } from '@tiptap/react';
+import { Icon } from 'ct-mui';
 import { useRef, useState } from 'react';
 import { HexAlphaColorPicker } from 'react-colorful';
 import EditorToolbarButton from './EditorToolbarButton';

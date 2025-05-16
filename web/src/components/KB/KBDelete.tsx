@@ -1,7 +1,7 @@
-import { Modal } from "@cx/ui"
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import ErrorIcon from '@mui/icons-material/Error'
 import { Box, Stack, useTheme } from "@mui/material"
+import { Modal } from "ct-mui"
 
 interface KBDeleteProps {
   open: boolean

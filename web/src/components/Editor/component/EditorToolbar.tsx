@@ -1,9 +1,5 @@
 import { Divider, Stack } from "@mui/material";
 import { type Editor } from "@tiptap/react";
-import { AlignCenterIcon } from "../icons/align-center-icon";
-import { AlignJustifyIcon } from "../icons/align-justify-icon";
-import { AlignLeftIcon } from "../icons/align-left-icon";
-import { AlignRightIcon } from "../icons/align-right-icon";
 import { BlockQuoteIcon } from "../icons/block-quote-icon";
 import { BoldIcon } from "../icons/bold-icon";
 import { CodeBlockIcon } from "../icons/code-block-icon";
@@ -15,6 +11,7 @@ import { SubscriptIcon } from "../icons/subscript-icon";
 import { SuperscriptIcon } from "../icons/superscript-icon";
 import { UnderlineIcon } from "../icons/underline-icon";
 import { Undo2Icon } from "../icons/undo2-icon";
+import EditorAlign from "./EditorAlign";
 import EditorFontSize from "./EditorFontSize";
 import EditorHeading from "./EditorHeading";
 import HighlightButton from "./EditorHighlight";
@@ -86,6 +83,7 @@ const EditorToolbar = ({ editor }: { editor: Editor }) => {
     <EditorHeading editor={editor} />
     <EditorFontSize editor={editor} />
     <EditorListSelect editor={editor} />
+    <EditorAlign editor={editor} />
     <EditorToolbarButton
       tip={'引用'}
       shortcutKey={['ctrl', 'shift', 'B']}
@@ -156,35 +154,6 @@ const EditorToolbar = ({ editor }: { editor: Editor }) => {
       icon={<SubscriptIcon />}
       onClick={() => editor.chain().focus().toggleSubscript().run()}
       className={editor.isActive("subscript") ? "active" : ""}
-    />
-    <Divider orientation="vertical" flexItem sx={{ height: 20, alignSelf: 'center' }} />
-    <EditorToolbarButton
-      tip={'左对齐'}
-      shortcutKey={['ctrl', 'L']}
-      icon={<AlignLeftIcon />}
-      onClick={() => editor.chain().focus().setTextAlign("left").run()}
-      className={editor.isActive({ textAlign: "left" }) ? "active" : ""}
-    />
-    <EditorToolbarButton
-      tip={'居中对齐'}
-      shortcutKey={['ctrl', 'E']}
-      icon={<AlignCenterIcon />}
-      onClick={() => editor.chain().focus().setTextAlign("center").run()}
-      className={editor.isActive({ textAlign: "center" }) ? "active" : ""}
-    />
-    <EditorToolbarButton
-      tip={'右对齐'}
-      icon={<AlignRightIcon />}
-      shortcutKey={['ctrl', 'R']}
-      onClick={() => editor.chain().focus().setTextAlign("right").run()}
-      className={editor.isActive({ textAlign: "right" }) ? "active" : ""}
-    />
-    <EditorToolbarButton
-      tip={'两端对齐'}
-      icon={<AlignJustifyIcon />}
-      shortcutKey={['ctrl', 'J']}
-      onClick={() => editor.chain().focus().setTextAlign("justify").run()}
-      className={editor.isActive({ textAlign: "justify" }) ? "active" : ""}
     />
     <Divider orientation="vertical" flexItem sx={{ height: 20, alignSelf: 'center' }} />
     <EditorImage editor={editor} />

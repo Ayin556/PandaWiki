@@ -1,9 +1,9 @@
 import { createUser } from "@/api"
 import Card from "@/components/Card"
 import { generatePassword } from "@/utils"
-import { Message, Modal } from "@cx/ui"
 import { CheckCircle } from "@mui/icons-material"
 import { Box, Button, Stack, TextField } from "@mui/material"
+import { Message, Modal } from "ct-mui"
 import { useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 

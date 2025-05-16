@@ -1,6 +1,6 @@
 import { AppDetail } from "@/api";
-import { Ellipsis } from "@cx/ui";
 import { Box, Stack } from "@mui/material";
+import { Ellipsis } from "ct-mui";
 
 const ChatHeader = ({ first, detail, pc = false }: { first: boolean, detail: AppDetail, pc?: boolean }) => {
   if (!first || !detail) return null
