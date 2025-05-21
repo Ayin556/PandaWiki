@@ -12,14 +12,14 @@
 
 ## 👋 项目介绍
 
-PandaWiki 是一个 AI 驱动的开源 Wiki 搭建系统，提供强大的文档编辑、管理和协作功能。
+PandaWiki 是一款 AI 驱动的开源知识库搭建系统，借助大模型的力量为你提供 AI 创作、AI 问答、AI 搜索等能力，让你快速拥有智能化的 产品文档、FAQ、博客系统。
 
 ## 🔥 功能与特色
 
-- 支持使用 AI 大模型对 Wiki 内容进行检索和总结。
-- 富文本编辑能力简洁又强大，支持导出为 word、pdf、markdown 等多种格式。
-- 支持多用户协作管理。
-- 支持快速与钉钉、飞书、企业微信等 IM 工具对接 Wiki。
+- AI 驱动智能化：AI 辅助创作、AI 辅助问答、AI 辅助搜索。
+- 强大的富文本编辑能力：兼容 Markdown 和 HTML，支持导出为 word、pdf、markdown 等多种格式。
+- 轻松与第三方应用进行集成：支持做成网页挂件挂在其他网站上，支持做成钉钉、飞书、企业微信等聊天机器人。
+- 通过第三方来源导入内容：根据网页 URL 导入、通过网站 Sitemap 导入、通过 RSS 订阅、通过离线文件导入等。
 
 ## ⚡️ 截图
 
@@ -47,7 +47,7 @@ PandaWiki 是一个 AI 驱动的开源 Wiki 搭建系统，提供强大的文档
 使用 root 权限执行以下命令进行安装
 
 ```bash
-bash -c "$(curl -fsSLk https://baizhi.cloud/release/pandawiki/manager.sh)"
+bash -c "$(curl -fsSLk https://release.baizhi.cloud/pandawiki/manager.sh)"
 ```
 
 ### ⚙️ 初始化
