@@ -20,11 +20,16 @@ const MemberAdd = ({ refresh }: { refresh: () => void }) => {
 
   const account = watch('account')
 
-  const copyUserInfo = ({ account, password }: { account: string, password: string }) => {
-    navigator.clipboard.writeText(`用户名: ${account}\n密码: ${password}`)
-    Message.success('复制成功')
-    setPassword('')
-    reset()
+  const copyUserInfo = async ({ account, password }: { account: string, password: string }) => {
+    try {
+      await navigator.clipboard.writeText(`用户名: ${account}\n密码: ${password}`)
+      Message.success('复制成功')
+    } catch (error) {
+      Message.error('复制失败，请手动复制')
+    } finally {
+      setPassword('')
+      reset()
+    }
   }
 
   const onSumbit = ({ account }: { account: string }) => {
