@@ -9,20 +9,20 @@ import {
   CreateAppFormData,
   CreateModelData,
   CreateNodeData,
-  DocListFilterData,
   GetConversationListData,
   GetModelNameData,
   KnowledgeBaseListItem,
   ModelListItem,
   NodeDetail,
+  NodeListFilterData,
   NodeListItem,
-  ParseDocData,
+  ParseNodeData,
   ResposeList,
   UpdateAppDetailData,
-  UpdateDocActionData,
-  UpdateDocData,
   UpdateKnowledgeBaseData,
   UpdateModelData,
+  UpdateNodeActionData,
+  UpdateNodeData,
   UpdateUserInfo,
   UserForm,
   UserInfo
@@ -64,27 +64,27 @@ export const createKnowledgeBase = (data: Partial<UpdateKnowledgeBaseData>): Pro
 export const deleteKnowledgeBase = (params: { id: string }): Promise<void> =>
   request({ url: 'api/v1/knowledge_base/detail', method: 'delete', params })
 
-// =============================================》doc
+// =============================================》node
 
-export const getDocList = (params: DocListFilterData): Promise<NodeListItem[]> =>
+export const getNodeList = (params: NodeListFilterData): Promise<NodeListItem[]> =>
   request({ url: 'api/v1/node/list', method: 'get', params })
 
-export const moveDoc = (data: { id: string, parent_id: string | null, next_id: string | null, prev_id: string | null }): Promise<void> =>
+export const moveNode = (data: { id: string, parent_id: string | null, next_id: string | null, prev_id: string | null }): Promise<void> =>
   request({ url: 'api/v1/node/move', method: 'post', data })
 
-export const getDocDetail = (params: { id: string }): Promise<NodeDetail> =>
+export const getNodeDetail = (params: { id: string }): Promise<NodeDetail> =>
   request({ url: 'api/v1/node/detail', method: 'get', params })
 
-export const updateDocAction = (data: UpdateDocActionData): Promise<void> =>
+export const updateNodeAction = (data: UpdateNodeActionData): Promise<void> =>
   request({ url: 'api/v1/node/action', method: 'post', data })
 
-export const updateDoc = (data: UpdateDocData): Promise<void> =>
+export const updateNode = (data: UpdateNodeData): Promise<void> =>
   request({ url: 'api/v1/node/detail', method: 'put', data })
 
-export const createDoc = (data: CreateNodeData): Promise<{ ids: string[] }> =>
+export const createNode = (data: CreateNodeData): Promise<{ ids: string[] }> =>
   request({ url: 'api/v1/node', method: 'post', data })
 
-export const parseDocUrl = (data: ParseDocData): Promise<{
+export const parseNodeUrl = (data: ParseNodeData): Promise<{
   items?: { title: string, url: string, published: string, desc: string }[]
 }> =>
   request({ url: 'api/v1/node/parse_url', method: 'post', data })

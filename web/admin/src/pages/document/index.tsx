@@ -1,6 +1,6 @@
-import { DocListFilterData, getDocList, ITreeItem, NodeDetail } from "@/api"
+import { getNodeList, ITreeItem, NodeDetail, NodeListFilterData } from "@/api"
 import Card from "@/components/Card"
-import DragTree from "@/components/DragTree"
+import DragTree from "@/components/Drag/DragTree"
 import { convertToTree } from "@/constant/drag"
 import { useURLSearchParams } from "@/hooks"
 import { useAppSelector } from "@/store"
@@ -22,11 +22,10 @@ const Content = () => {
   const [renameOpen, setRenameOpen] = useState(false)
 
   const getData = useCallback(() => {
-    const params: DocListFilterData = { kb_id }
+    const params: NodeListFilterData = { kb_id }
     if (search) params.search = search
-    getDocList(params).then(res => {
+    getNodeList(params).then(res => {
       const v = convertToTree(res || [])
-      console.log(v)
       setData(v)
     })
   }, [search, kb_id])

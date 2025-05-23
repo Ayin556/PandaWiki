@@ -1,4 +1,4 @@
-import { createDoc, parseDocUrl } from "@/api"
+import { createNode, parseNodeUrl } from "@/api"
 import Card from "@/components/Card"
 import { useAppSelector } from "@/store"
 import { addOpacityToColor } from "@/utils"
@@ -75,7 +75,7 @@ const DocAdd = ({ refresh }: InputContentProps) => {
     if (!id) return
     if (['Sitemap', 'RSS'].includes(key)) {
       setLoading(true)
-      parseDocUrl({ type: key, url, kb_id: id }).then((res) => {
+      parseNodeUrl({ type: key, url, kb_id: id }).then((res) => {
         setItems(res.items || [])
         setAddressOpen(false)
         setKey('URL')
@@ -88,7 +88,7 @@ const DocAdd = ({ refresh }: InputContentProps) => {
     const urlArray = (selectUrls.length > 0 ? selectUrls : urls).filter(it => it.startsWith('http'))
     if (urlArray.length === 0) return
     setLoading(true)
-    createDoc({ url: urlArray, source: 1, kb_id: id }).then(() => {
+    createNode({ url: urlArray, source: 1, kb_id: id }).then(() => {
       close()
       if (refresh) refresh()
     }).finally(() => {

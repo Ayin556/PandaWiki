@@ -1,4 +1,4 @@
-import { ITreeItem, moveDoc } from "@/api";
+import { ITreeItem, moveNode } from "@/api";
 import { AppContext, getSiblingItemIds } from "@/constant/drag";
 import { DndContext } from "@dnd-kit/core";
 import {
@@ -33,7 +33,7 @@ const DragTree = ({ data, refresh }: DragTreeProps) => {
             const { draggedItem } = reason;
             const { parentId = null, id } = draggedItem
             const { prevItemId, nextItemId } = getSiblingItemIds(items, id)
-            moveDoc({ id, parent_id: parentId, next_id: nextItemId, prev_id: prevItemId }).then(() => {
+            moveNode({ id, parent_id: parentId, next_id: nextItemId, prev_id: prevItemId }).then(() => {
               refresh?.()
             })
           }

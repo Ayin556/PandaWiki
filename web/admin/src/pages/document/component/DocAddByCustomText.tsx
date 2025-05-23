@@ -1,4 +1,4 @@
-import { createDoc, NodeDetail, updateDoc } from "@/api"
+import { createNode, NodeDetail, updateNode } from "@/api"
 import { useAppSelector } from "@/store"
 import { Box, TextField } from "@mui/material"
 import { Message, Modal } from "ct-mui"
@@ -29,7 +29,7 @@ const DocAddByCustomText = ({ open, data, onClose, refresh, type = 'customDoc' }
 
   const submit = (value: { name: string }) => {
     if (data) {
-      updateDoc({ id: data.id, name: value.name }).then(() => {
+      updateNode({ id: data.id, name: value.name }).then(() => {
         Message.success('修改成功')
         reset()
         handleClose()
@@ -37,7 +37,7 @@ const DocAddByCustomText = ({ open, data, onClose, refresh, type = 'customDoc' }
       })
     } else {
       if (!id) return
-      createDoc({ name: value.name, content: '', kb_id: id, parent_id: null, type: type === 'docFile' ? 1 : 2 }).then(() => {
+      createNode({ name: value.name, content: '', kb_id: id, parent_id: null, type: type === 'docFile' ? 1 : 2 }).then(() => {
         Message.success('创建成功')
         reset()
         handleClose()

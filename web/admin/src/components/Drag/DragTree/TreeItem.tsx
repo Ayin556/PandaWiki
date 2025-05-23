@@ -1,4 +1,4 @@
-import { createDoc, ITreeItem, NodeDetail, updateDoc } from "@/api";
+import { createNode, ITreeItem, NodeDetail, updateNode } from "@/api";
 import { AppContext, updateTree } from "@/constant/drag";
 import DocDelete from "@/pages/document/component/DocDelete";
 import { useAppSelector } from "@/store";
@@ -91,8 +91,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
           alignItems={'center'}
           justifyContent="space-between"
           gap={2}
-          flex={1}
-          onClick={() => {
+          flex={1} onClick={() => {
             if (item.type === 2) window.open(`/doc/editor/${item.id}`, '_blank')
           }}
         >
@@ -115,7 +114,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
             <Button variant="contained" size="small" onClick={(e) => {
               e.stopPropagation()
               if (item.name) {
-                updateDoc({ id: item.id, name: value }).then(() => {
+                updateNode({ id: item.id, name: value }).then(() => {
                   Message.success('更新成功')
                   refresh?.()
                 })
@@ -124,7 +123,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
                   Message.error('文档名称不能为空')
                   return
                 }
-                createDoc({ name: value, content: '', kb_id: id, parent_id: item.parentId, type: item.type }).then(() => {
+                createNode({ name: value, content: '', kb_id: id, parent_id: item.parentId, type: item.type }).then(() => {
                   Message.success('创建成功')
                   refresh?.()
                 })
@@ -132,92 +131,109 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
             }}>保存</Button>
             <Button variant="outlined" size="small" onClick={(e) => {
               e.stopPropagation()
-              const temp = [...items];
-              updateTree(temp, item.id, {
-                ...item,
-                isEditting: false,
-              });
-              setItems(temp);
+              if (!item.name) {
+                const temp = [...items];
+                const removeItem = (items: ITreeItem[], id: string) => {
+                  return items.filter(item => {
+                    if (item.id === id) return false;
+                    if (item.children) {
+                      item.children = removeItem(item.children, id);
+                    }
+                    return true;
+                  });
+                };
+                const newItems = removeItem(temp, item.id);
+                setItems(newItems);
+              } else {
+                const temp = [...items];
+                updateTree(temp, item.id, {
+                  ...item,
+                  isEditting: false,
+                });
+                setItems(temp);
+              }
             }}>取消</Button>
-          </Stack> : <Stack direction="row" alignItems={'center'} gap={2} sx={{ cursor: 'pointer' }}>
-            {item.type === 1 ? <Icon sx={{ fontSize: 14 }} type={collapsed ? 'icon-wenjianjia1' : 'icon-wenjianjiadakai'} />
-              : <Icon sx={{ fontSize: 14 }} type='icon-wenjian' />}
+          </Stack> : <Stack direction="row" alignItems={'center'} gap={2} sx={{ fontSize: 14, cursor: 'pointer' }}>
+            {item.type === 1 ? <Icon type={collapsed ? 'icon-wenjianjia1' : 'icon-wenjianjiadakai'} />
+              : <Icon type='icon-wenjian' />}
             <Box>{item.name}</Box>
           </Stack>}
           <Box sx={{ flex: 1, alignSelf: 'center', borderBottom: '1px dashed', borderColor: 'divider' }} />
           <Stack direction="row" alignItems={'center'} gap={2}>
-            <Box sx={{ fontSize: 14 }}>{dayjs().format('DD/MM/YYYY')}</Box>
-            <MenuSelect
-              list={[
-                ...(item.type === 1 ? [
-                  {
-                    label: '创建文件夹',
-                    key: 'add-child',
-                    onClick: () => {
-                      setItems(items.map(i => (i.id === item.id) ? ({
-                        ...item,
-                        children: [
-                          ...(item.children ?? []),
-                          {
-                            id: `${items.length + 10}`,
-                            name: "",
-                            level: 2,
-                            type: 1,
-                            isEditting: true,
-                            parentId: item.id,
-                          }
-                        ]
-                      }) : i))
-                    }
-                  },
-                  {
-                    label: '创建文档',
-                    key: 'add-child',
-                    onClick: () => {
-                      setItems(items.map(i => (i.id === item.id) ? ({
-                        ...item,
-                        children: [
-                          ...(item.children ?? []),
-                          {
-                            id: `${items.length + 10}`,
-                            name: "",
-                            level: 2,
-                            type: 2,
-                            isEditting: true,
-                            parentId: item.id,
-                          }
-                        ]
-                      }) : i))
-                    }
-                  }
-                ] : []),
-                ...(!isEditting ? [
-                  {
-                    label: '重命名',
-                    key: 'rename',
-                    onClick: () => {
-                      if (!isEditting) {
-                        const temp = [...items];
-                        updateTree(temp, item.id, {
+            <Box sx={{ fontSize: 12, fontFamily: 'monospace', color: 'text.auxiliary' }}>{dayjs(item.updated_at).fromNow()}</Box>
+            <Box onClick={(e) => e.stopPropagation()}>
+              <MenuSelect
+                list={[
+                  ...(item.type === 1 ? [
+                    {
+                      label: '创建文件夹',
+                      key: 'add-child',
+                      onClick: () => {
+                        setItems(items.map(i => (i.id === item.id) ? ({
                           ...item,
-                          isEditting: true,
-                        });
-                        setItems(temp);
+                          children: [
+                            ...(item.children ?? []),
+                            {
+                              id: `${items.length + 10}`,
+                              name: "",
+                              level: 2,
+                              type: 1,
+                              isEditting: true,
+                              parentId: item.id,
+                            }
+                          ]
+                        }) : i))
+                      }
+                    },
+                    {
+                      label: '创建文档',
+                      key: 'add-child',
+                      onClick: () => {
+                        setItems(items.map(i => (i.id === item.id) ? ({
+                          ...item,
+                          children: [
+                            ...(item.children ?? []),
+                            {
+                              id: `${items.length + 10}`,
+                              name: "",
+                              level: 2,
+                              type: 2,
+                              isEditting: true,
+                              parentId: item.id,
+                            }
+                          ]
+                        }) : i))
                       }
                     }
-                  }] : []),
-                {
-                  label: '删除',
-                  key: 'delete',
-                  onClick: () => {
-                    setDeleteOpen(true)
+                  ] : []),
+                  ...(!isEditting ? [
+                    {
+                      label: '重命名',
+                      key: 'rename',
+                      onClick: () => {
+                        if (!isEditting) {
+                          const temp = [...items];
+                          updateTree(temp, item.id, {
+                            ...item,
+                            isEditting: true,
+                          });
+                          setItems(temp);
+                        }
+                      }
+                    }] : []),
+                  {
+                    label: '删除',
+                    key: 'delete',
+                    onClick: () => {
+                      setDeleteOpen(true)
+                    }
                   }
-                }
-              ]}
-              context={<IconButton size="small">
-                <Icon type='icon-gengduo' />
-              </IconButton>}
-            />
+                ]}
+                context={<IconButton size="small">
+                  <Icon type='icon-gengduo' />
+                </IconButton>}
+              />
+            </Box>
           </Stack>
         </Stack>
       </SimpleTreeItemWrapper>

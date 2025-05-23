@@ -1,22 +1,22 @@
-import { createDoc, NodeDetail } from "@/api"
+import { createNode, NodeDetail } from "@/api"
 import DocAddByCustomText from "@/pages/document/component/DocAddByCustomText"
 import DocDelete from "@/pages/document/component/DocDelete"
 import { useAppSelector } from "@/store"
 import { getShortcutKeyText } from "@/utils"
 import { Box, Button, IconButton, Stack, Tooltip } from "@mui/material"
-import { Editor } from "@tiptap/core"
 import { Icon, MenuSelect, Message } from "ct-mui"
 import dayjs from "dayjs"
 import { useState } from "react"
 
 interface EditorHeaderProps {
-  editor: Editor | null
+  editorRef: any
   detail: NodeDetail | null
   onSave?: () => void
   refresh?: () => void
 }
 
-const EditorHeader = ({ editor, detail, onSave, refresh }: EditorHeaderProps) => {
+const EditorHeader = ({ editorRef, detail, onSave, refresh }: EditorHeaderProps) => {
+  const { editor } = editorRef
   const { kb_id } = useAppSelector(state => state.config)
 
   const [renameOpen, setRenameOpen] = useState(false)
@@ -48,9 +48,6 @@ const EditorHeader = ({ editor, detail, onSave, refresh }: EditorHeaderProps) =>
       URL.revokeObjectURL(url)
       Message.success('导出成功')
     }
-    // if (type === 'docx') {
-    //   editor.chain().focus().export({ format: 'docx' }).run()
-    // }
   }
 
   if (!detail) return null
@@ -72,7 +69,7 @@ const EditorHeader = ({ editor, detail, onSave, refresh }: EditorHeaderProps) =>
             label: '复制',
             onClick: () => {
               if (kb_id) {
-                createDoc({ name: detail.name + ' [副本]', content: detail.content, kb_id: kb_id, type: 2 }).then((res) => {
+                createNode({ name: detail.name + ' [副本]', content: detail.content, kb_id: kb_id, type: 2 }).then((res) => {
                   Message.success('复制成功')
                   window.open(`/doc/editor/${res.ids[0]}`, '_blank')
                 })

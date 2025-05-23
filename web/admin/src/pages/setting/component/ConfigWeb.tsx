@@ -1,4 +1,4 @@
-import { DocListItem, getAppDetail, getDocList, updateAppDetail } from "@/api"
+import { getAppDetail, getNodeList, NodeListItem, updateAppDetail } from "@/api"
 import { FreeSoloAutocomplete } from "@/components/FreeSoloAutocomplete"
 import UploadFile from "@/components/UploadFile"
 import { useCommitPendingInput } from "@/hooks"
@@ -28,7 +28,7 @@ type FormData = {
 const ConfigWeb = ({ id, open, onClose, refresh }: ConfigWebProps) => {
   const theme = useTheme()
   const { kb_id } = useAppSelector(state => state.config)
-  const [docList, setDocList] = useState<DocListItem[]>([])
+  const [docList, setDocList] = useState<NodeListItem[]>([])
   const { control, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm<FormData>({
     defaultValues: {
       icon: '',
@@ -69,8 +69,8 @@ const ConfigWeb = ({ id, open, onClose, refresh }: ConfigWebProps) => {
   }
 
   const getDocOptions = useCallback(() => {
-    getDocList({ kb_id }).then(res => {
-      setDocList(res.filter(item => item.status === 2))
+    getNodeList({ kb_id }).then(res => {
+      setDocList(res)
     })
   }, [kb_id])
 
@@ -181,7 +181,7 @@ const ConfigWeb = ({ id, open, onClose, refresh }: ConfigWebProps) => {
         {...field}
         multiple
         options={docList}
-        getOptionLabel={(option) => (option.title || option.url)}
+        getOptionLabel={(option) => option.name}
         disableCloseOnSelect
         slotProps={{
           paper: {
@@ -207,7 +207,7 @@ const ConfigWeb = ({ id, open, onClose, refresh }: ConfigWebProps) => {
           <Box component="li" {...props} sx={{ fontSize: 12 }}>
             <Stack direction={'row'} alignItems={'center'} gap={1}>
               <Icon type='icon-bangzhuwendang1' sx={{ fontSize: 14, color: '#2f80f7' }} />
-              <Ellipsis sx={{ width: '400px' }}>{option.title || option.url}</Ellipsis>
+              <Ellipsis sx={{ width: '400px' }}>{option.name}</Ellipsis>
             </Stack>
           </Box>
         )}
@@ -223,7 +223,7 @@ const ConfigWeb = ({ id, open, onClose, refresh }: ConfigWebProps) => {
               <Chip
                 variant='outlined'
                 size='small'
-                label={<Ellipsis sx={{ fontSize: 12, maxWidth: 140 }}>{option.title || option.url}</Ellipsis>}
+                label={<Ellipsis sx={{ fontSize: 12, maxWidth: 140 }}>{option.name}</Ellipsis>}
                 {...getTagProps({ index })}
                 key={index}
                 icon={<Icon type='icon-bangzhuwendang1' sx={{
@@ -239,8 +239,7 @@ const ConfigWeb = ({ id, open, onClose, refresh }: ConfigWebProps) => {
         filterOptions={(options, { inputValue }) => {
           const filterValue = inputValue.toLowerCase();
           return options.filter(option =>
-            option.title.toLowerCase().includes(filterValue) ||
-            (option.url && option.url.toLowerCase().includes(filterValue))
+            option.name.toLowerCase().includes(filterValue)
           );
         }}
         popupIcon={<Icon type='icon-xiala' sx={{ fontSize: 24, color: 'text.primary' }} />}

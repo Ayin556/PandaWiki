@@ -14,7 +14,7 @@ const Header = () => {
     sx={{
       position: 'fixed',
       pl: '170px',
-      mt: 2,
+      py: 2,
       pr: 2,
       zIndex: 998,
       width: '100%',
