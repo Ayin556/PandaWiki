@@ -25,7 +25,6 @@ export function FreeSoloAutocomplete<T>({
 }: FreeSoloAutocompleteProps<T>) {
   return (
     <Autocomplete<T, true, false, true>
-      size='small'
       multiple
       fullWidth
       freeSolo
@@ -47,7 +46,6 @@ export function FreeSoloAutocomplete<T>({
         {...params}
         {...inputProps}
         variant='outlined'
-        size='small'
         placeholder={placeholder}
       />}
       renderTags={(value, getTagProps) => {

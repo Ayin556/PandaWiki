@@ -6,13 +6,14 @@ import CustomImage from '../CustomImage';
 
 interface UploadFileProps {
   type: 'url' | 'base64'
+  name: string
   value: string;
   accept: string;
   onChange: (url: string) => void;
   width?: number;
 }
 
-const UploadFile = ({ value, onChange, accept, type, width }: UploadFileProps) => {
+const UploadFile = ({ name, value, onChange, accept, type, width }: UploadFileProps) => {
   const [preview, setPreview] = useState<string>(value);
   const currentPreviewUrl = useRef<string | null>(null);
 
@@ -76,7 +77,7 @@ const UploadFile = ({ value, onChange, accept, type, width }: UploadFileProps) =
   return (
     <Box>
       <input
-        id="file-upload"
+        id={name}
         type="file"
         accept={accept}
         style={{ display: 'none' }}
@@ -84,7 +85,7 @@ const UploadFile = ({ value, onChange, accept, type, width }: UploadFileProps) =
       />
       <Box
         component="label"
-        htmlFor="file-upload"
+        htmlFor={name}
         sx={{
           width: width || 190,
           height: width || 173.26,

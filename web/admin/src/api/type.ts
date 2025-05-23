@@ -1,4 +1,4 @@
-import { AppType, IconMap, ModelProvider, PageStatus } from "@/constant/enums"
+import { AppType, IconMap, ModelProvider } from "@/constant/enums"
 
 export type Paging = {
   page?: number
@@ -92,74 +92,28 @@ export type CreateNodeData = {
   type: 1 | 2
 }
 
-// =============================================》doc
-export type DocCommon = {
-  id: string,
-  url: string,
-  error: string,
-  created_at: string,
-  updated_at: string,
-  source: 1 | 2 | 3,
-  status: keyof typeof PageStatus,
+export type NodeListFilterData = {
+  kb_id: string
+  search?: string
 }
 
-export type DocListItem = DocCommon & {
-  title: string,
-  chunk_count: number,
-  favicon: string,
-  word_count: number
-}
+export type NodeAction = 'delete'
 
-export type DocChunkListItem = {
-  content: string,
-  id: string,
-  seq: number,
-  title: string
-}
-
-export type DocDetail = DocCommon & {
-  content: string,
-  meta: {
-    charset: string,
-    description: string,
-    favicon: string,
-    keywords: string,
-    screenshot: string,
-    title: string
-  },
-}
-
-export type DocAction = 'scrape' | 'publish' | 'delete'
-
-export type UpdateDocActionData = {
+export type UpdateNodeActionData = {
   ids: string[],
-  action: DocAction
+  action: NodeAction
 }
 
-export type UpdateDocData = {
+export type UpdateNodeData = {
   id: string,
   name?: string,
   content?: string
 }
 
-export type CreateDocData = {
-  kb_id: string
-  content?: string
-  file_key?: string[]
-  source: 1 | 2 | 3
-  title?: string
-  url?: string[]
-}
-
-export type ParseDocData = {
+export type ParseNodeData = {
   kb_id: string
   type: 'RSS' | 'Sitemap' | 'URL'
   url: string
-}
-
-export type DocListFilterData = {
-  kb_id: string
-  search?: string
 }
 
 // =============================================》app

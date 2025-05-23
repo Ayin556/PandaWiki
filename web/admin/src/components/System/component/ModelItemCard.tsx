@@ -24,8 +24,9 @@ const ModelItemCard = ({ it, refresh }: ModelItemCardProps) => {
 
   return <Card sx={{
     p: 2,
-    width: 'calc((100% - 32px) / 3)',
+    width: 'calc((100% - 24px) / 2)',
     overflow: 'hidden',
+    flexShrink: 0,
     border: '1px solid',
     borderColor: it.is_active ? 'primary.main' : 'common.white',
     boxShadow: '0px 0px 10px 0px rgba(54,59,76,0.1), 0px 0px 1px 1px rgba(54,59,76,0.03)',
@@ -38,13 +39,13 @@ const ModelItemCard = ({ it, refresh }: ModelItemCardProps) => {
     }
   }}>
     <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'} gap={2}>
-      <Stack direction={'row'} alignItems={'center'} gap={1}>
+      <Stack direction={'row'} alignItems={'center'} gap={1} >
         {IconMap[it.model] ?
           <Icon type={IconMap[it.model]} sx={{ fontSize: 40 }} />
           : ModelProvider[it.provider as keyof typeof ModelProvider] ?
             <Icon type={ModelProvider[it.provider as keyof typeof ModelProvider].icon} sx={{ fontSize: 40 }} />
             : <Avatar src={Logo} />}
-        <Ellipsis sx={{ fontWeight: 'bold', lineHeight: '24px', fontSize: 16 }}>{it.model}</Ellipsis>
+        <Ellipsis sx={{ width: '100%', fontWeight: 'bold', lineHeight: '24px', fontSize: 16 }}>{it.model}</Ellipsis>
       </Stack>
       {it.is_active && <Box sx={{
         flexShrink: 0,

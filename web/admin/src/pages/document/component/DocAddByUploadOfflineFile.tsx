@@ -1,4 +1,4 @@
-import { createDoc, uploadFile } from "@/api"
+import { createNode, uploadFile } from "@/api"
 import Upload from "@/components/UploadFile/Drag"
 import { useAppSelector } from "@/store"
 import { formatByte } from "@/utils"
@@ -81,7 +81,7 @@ const DocAddByUploadOfflineFile = ({ open, onClose, refresh }: DocAddByUploadOff
         }
       }
       if (urls.length > 0 && id) {
-        createDoc({ kb_id: id, file_key: urls, source: 2 }).then(() => {
+        createNode({ kb_id: id, file_key: urls, source: 2 }).then(() => {
           const text = errorIdx.length === 0 ? '上传成功' : `已上传 ${urls.length} 个文件，${errorIdx.length} 个文件上传失败`
           Message.success(text)
           if (errorIdx.length === 0) handleClose()

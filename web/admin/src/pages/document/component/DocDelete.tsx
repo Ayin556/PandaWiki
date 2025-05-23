@@ -1,4 +1,4 @@
-import { NodeDetail, updateDocAction } from "@/api";
+import { NodeDetail, updateNodeAction } from "@/api";
 import Card from "@/components/Card";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ErrorIcon from '@mui/icons-material/Error';
@@ -18,7 +18,7 @@ const DocDelete = ({ open, onClose, data, refresh }: DocDeleteProps) => {
   if (!data) return null
 
   const submit = () => {
-    updateDocAction({ ids: [data.id], action: 'delete' }).then(() => {
+    updateNodeAction({ ids: [data.id], action: 'delete' }).then(() => {
       Message.success('删除成功')
       onClose()
       refresh?.();
