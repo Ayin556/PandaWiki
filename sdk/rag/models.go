@@ -110,20 +110,44 @@ type Dataset struct {
 	VectorSimilarityWeight float64      `json:"vector_similarity_weight"`
 }
 
+// RaptorConfig 配置
+// 完全适配 Python 版本
+// use_raptor, prompt, max_token, threshold, max_cluster, random_seed
+type RaptorConfig struct {
+	UseRaptor  bool    `json:"use_raptor"`
+	Prompt     string  `json:"prompt,omitempty"`
+	MaxToken   int     `json:"max_token,omitempty"`
+	Threshold  float64 `json:"threshold,omitempty"`
+	MaxCluster int     `json:"max_cluster,omitempty"`
+	RandomSeed int     `json:"random_seed,omitempty"`
+}
+
+// GraphragConfig 配置
+// 完全适配 Python 版本
+// use_graphrag, entity_types, method, community, resolution
+type GraphragConfig struct {
+	UseGraphRAG bool     `json:"use_graphrag"`
+	EntityTypes []string `json:"entity_types,omitempty"`
+	Method      string   `json:"method,omitempty"`
+	Community   bool     `json:"community,omitempty"`
+	Resolution  bool     `json:"resolution,omitempty"`
+}
+
 // ParserConfig 解析配置，随 chunk_method 变化
 type ParserConfig struct {
-	ChunkTokenNum   int      `json:"chunk_token_num,omitempty"`  // 分块token数
-	Delimiter       string   `json:"delimiter,omitempty"`        // 分隔符
-	HTML4Excel      bool     `json:"html4excel,omitempty"`       // Excel转HTML
-	LayoutRecognize string   `json:"layout_recognize,omitempty"` // 布局识别
-	TagKBIDs        []string `json:"tag_kb_ids,omitempty"`       // 标签知识库ID
-	TaskPageSize    int      `json:"task_page_size,omitempty"`   // PDF分页
-	Raptor          struct {
-		UseRaptor bool `json:"use_raptor"`
-	} `json:"raptor,omitempty"`
-	GraphRAG struct {
-		UseGraphRAG bool `json:"use_graphrag"`
-	} `json:"graphrag,omitempty"`
+	AutoKeywords       int             `json:"auto_keywords,omitempty"`        // 自动关键词数
+	AutoQuestions      int             `json:"auto_questions,omitempty"`       // 自动问题数
+	ChunkTokenNum      int             `json:"chunk_token_num,omitempty"`      // 分块token数
+	Delimiter          string          `json:"delimiter,omitempty"`            // 分隔符
+	Graphrag           *GraphragConfig `json:"graphrag,omitempty"`             // GraphRAG配置
+	HTML4Excel         bool            `json:"html4excel,omitempty"`           // Excel转HTML
+	LayoutRecognize    string          `json:"layout_recognize,omitempty"`     // 布局识别
+	Raptor             *RaptorConfig   `json:"raptor,omitempty"`               // Raptor配置
+	TagKBIDs           []string        `json:"tag_kb_ids,omitempty"`           // 标签知识库ID
+	TopnTags           int             `json:"topn_tags,omitempty"`            // TopN标签
+	FilenameEmbdWeight *float64        `json:"filename_embd_weight,omitempty"` // 文件名嵌入权重
+	TaskPageSize       *int            `json:"task_page_size,omitempty"`       // PDF分页
+	Pages              *[][]int        `json:"pages,omitempty"`                // 页码范围
 }
 
 // CreateDatasetRequest 创建数据集请求
