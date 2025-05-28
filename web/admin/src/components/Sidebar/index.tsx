@@ -1,7 +1,8 @@
 import Logo from '@/assets/images/logo.png';
 import Qrcode from '@/assets/images/qrcode.png';
-import { Box, Button, Stack, Tooltip, useTheme } from "@mui/material";
-import { Icon } from 'ct-mui';
+import { Box, Button, Stack, useTheme } from "@mui/material";
+import { Icon, Modal } from 'ct-mui';
+import { useState } from 'react';
 import { NavLink, useLocation } from "react-router-dom";
 import Avatar from '../Avatar';
 import Version from './Version';
@@ -33,6 +34,7 @@ const menus = [
 const Sidebar = () => {
   const { pathname } = useLocation()
   const theme = useTheme()
+  const [showQrcode, setShowQrcode] = useState(false)
   return <Stack sx={{
     width: 138,
     m: 2,
@@ -121,48 +123,37 @@ const Sidebar = () => {
       }} startIcon={<Icon type='icon-bangzhuwendang1' />}
         onClick={() => window.open('https://docs.web2gpt.ai/', '_blank')}
       >帮助文档</Button>
-      <Tooltip
-        placement='bottom-start'
-        slotProps={{
-          tooltip: {
-            sx: {
-              backgroundColor: 'background.paper',
-              boxShadow: '0px 4px 8px 4px rgba(54,59,76,0.06)',
-              maxWidth: 400,
-              borderRadius: '10px',
-            },
-          },
-          arrow: { sx: { color: 'background.paper' } },
-        }}
-        title={
-          <Box sx={{ p: '16px 8px', width: 192 }}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <Box component='img' src={Qrcode} sx={{ width: '100%' }} />
-              <Box sx={{ fontSize: '14px', mt: '8px', color: 'text.primary' }}>交流群</Box>
-            </Box>
-          </Box>
+      <Button variant='outlined' sx={{
+        fontSize: 14,
+        flexShrink: 0,
+        bgcolor: 'background.paper',
+        pr: 1.5,
+        pl: 1.5,
+        gap: 0.5,
+        justifyContent: 'flex-start',
+        border: `1px solid ${theme.palette.divider}`,
+        '.MuiButton-startIcon': {
+          mr: '3px',
+        },
+        '&:hover': {
+          color: 'primary.main',
         }
-        arrow
-      >
-        <Button variant='outlined' sx={{
-          fontSize: 14,
-          flexShrink: 0,
-          bgcolor: 'background.paper',
-          pr: 1.5,
-          pl: 1.5,
-          gap: 0.5,
-          justifyContent: 'flex-start',
-          border: `1px solid ${theme.palette.divider}`,
-          '.MuiButton-startIcon': {
-            mr: '3px',
-          },
-          '&:hover': {
-            color: 'primary.main',
-          }
-        }} startIcon={<Icon type='icon-group' />}>交流群</Button>
-      </Tooltip>
+      }}
+        onClick={() => setShowQrcode(true)}
+        startIcon={<Icon type='icon-group' />}
+      >交流群</Button>
       <Version />
     </Stack>
+    <Modal
+      open={showQrcode}
+      onCancel={() => setShowQrcode(false)}
+      title='欢迎加入 PandaWiki 交流群'
+      footer={null}
+    >
+      <Stack alignItems={'center'} justifyContent={'center'} sx={{ my: 2 }}>
+        <Box component='img' src={Qrcode} sx={{ width: 300 }} />
+      </Stack>
+    </Modal>
   </Stack>
 }
 

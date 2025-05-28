@@ -12,8 +12,11 @@ import TreeItem from "./TreeItem";
 interface DragTreeProps {
   data: ITreeItem[]
   refresh: () => void
+  type?: 'select' | 'move'
+  selected?: string[]
+  onSelectChange?: (value: string[]) => void
 }
-const DragTree = ({ data, refresh }: DragTreeProps) => {
+const DragTree = ({ data, refresh, type = 'move', selected, onSelectChange }: DragTreeProps) => {
   const [items, setItems] = useState<TreeItems<ITreeItem>>(data);
 
   useEffect(() => {
@@ -23,7 +26,10 @@ const DragTree = ({ data, refresh }: DragTreeProps) => {
   return <AppContext.Provider value={{
     items,
     setItems,
-    refresh
+    refresh,
+    type,
+    selected,
+    onSelectChange
   }}>
     <DndContext>
       <SortableTree

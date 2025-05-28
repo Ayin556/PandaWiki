@@ -4,7 +4,7 @@ import DragTree from "@/components/Drag/DragTree"
 import { convertToTree } from "@/constant/drag"
 import { useURLSearchParams } from "@/hooks"
 import { useAppSelector } from "@/store"
-import { Stack } from "@mui/material"
+import { Box, Stack } from "@mui/material"
 import { useCallback, useEffect, useState } from "react"
 import DocAdd from "./component/DocAdd"
 import DocAddByCustomText from "./component/DocAddByCustomText"
@@ -50,8 +50,11 @@ const Content = () => {
   return <>
     <Card>
       <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'} sx={{ p: 2 }}  >
-        <DocSearch />
-        <DocAdd refresh={getData} />
+        <Box sx={{ fontSize: 16, fontWeight: 700 }}>目录</Box>
+        <Stack direction={'row'} alignItems={'center'} gap={2}>
+          <DocSearch />
+          <DocAdd refresh={getData} />
+        </Stack>
       </Stack>
       <Stack sx={{
         height: 'calc(100vh - 148px)',

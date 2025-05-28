@@ -1,12 +1,16 @@
 "use client";
-import { DocItem } from "@/assets/type";
+
 import { IconSearch } from "@/components/icons";
+import { useKBDetail } from "@/provider/kb-provider";
 import { Box, TextField } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import DocList from "./DocList";
+import NodeList from "./NodeList";
+import QuestionList from "./QuestionList";
 
-const Home = ({ documents }: { documents: DocItem[] }) => {
+const Home = () => {
+  const { kbDetail } = useKBDetail()
+
   const [searchText, setSearchText] = useState("");
   const router = useRouter();
 
@@ -24,9 +28,9 @@ const Home = ({ documents }: { documents: DocItem[] }) => {
 
   return <Box sx={{ pt: 10 }}>
     <Box sx={{ fontSize: '40px', textAlign: 'center', fontWeight: '700', lineHeight: '44px' }}>
-      PandaWiki 知识库
+      {kbDetail?.settings?.welcome_str}
     </Box>
-    <Box sx={{ width: '760px', mx: 'auto', mt: 5 }}>
+    <Box sx={{ width: '656px', mx: 'auto', mt: 5 }}>
       <TextField
         fullWidth
         sx={{
@@ -49,20 +53,21 @@ const Home = ({ documents }: { documents: DocItem[] }) => {
             },
           }
         }}
-        placeholder="开始搜索"
+        placeholder={kbDetail?.settings?.search_placeholder || "开始搜索"}
         autoComplete="off"
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
         onKeyDown={handleKeyDown}
         InputProps={{
           endAdornment: <IconSearch
-            sx={{ cursor: 'pointer', color: 'text.auxiliary' }}
+            sx={{ cursor: 'pointer', color: 'text.tertiary' }}
             onClick={handleSearch}
           />
         }}
       />
     </Box>
-    <DocList documents={documents} />
+    <QuestionList />
+    <NodeList />
   </Box>;
 };
 

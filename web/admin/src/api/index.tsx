@@ -2,22 +2,23 @@ import { AxiosProgressEvent } from "axios"
 import request from "./request"
 import {
   AppDetail,
-  AppListItem,
   CheckModelData,
   ConversationDetail,
   ConversationListItem,
-  CreateAppFormData,
   CreateModelData,
   CreateNodeData,
+  CreateNodeSummaryData,
   GetConversationListData,
   GetModelNameData,
+  GetNodeRecommendData,
   KnowledgeBaseListItem,
   ModelListItem,
   NodeDetail,
   NodeListFilterData,
   NodeListItem,
-  ParseNodeData,
+  RecommendNode,
   ResposeList,
+  ScrapeRSSItem,
   UpdateAppDetailData,
   UpdateKnowledgeBaseData,
   UpdateModelData,
@@ -81,13 +82,25 @@ export const updateNodeAction = (data: UpdateNodeActionData): Promise<void> =>
 export const updateNode = (data: UpdateNodeData): Promise<void> =>
   request({ url: 'api/v1/node/detail', method: 'put', data })
 
-export const createNode = (data: CreateNodeData): Promise<{ ids: string[] }> =>
+export const createNode = (data: CreateNodeData): Promise<{ id: string }> =>
   request({ url: 'api/v1/node', method: 'post', data })
 
-export const parseNodeUrl = (data: ParseNodeData): Promise<{
-  items?: { title: string, url: string, published: string, desc: string }[]
-}> =>
-  request({ url: 'api/v1/node/parse_url', method: 'post', data })
+export const createNodeSummary = (data: CreateNodeSummaryData): Promise<{ summary: string }> =>
+  request({ url: 'api/v1/node/summary', method: 'post', data })
+
+export const getNodeRecommend = (params: GetNodeRecommendData): Promise<RecommendNode[]> =>
+  request({ url: 'api/v1/node/recommend_nodes', method: 'get', params })
+
+// =============================================》crawler
+
+export const scrapeCrawler = (data: { url: string }): Promise<{ content: string, title: string }> =>
+  request({ url: 'api/v1/crawler/scrape', method: 'post', data })
+
+export const scrapeRSS = (data: { url: string }): Promise<{ items: ScrapeRSSItem[] }> =>
+  request({ url: 'api/v1/crawler/parse_rss', method: 'post', data })
+
+export const scrapeSitemap = (data: { url: string }): Promise<{ items: ScrapeRSSItem[] }> =>
+  request({ url: 'api/v1/crawler/parse_sitemap', method: 'post', data })
 
 // =============================================》file
 
@@ -99,18 +112,8 @@ export const uploadFile = (
   request({ url: 'api/v1/file/upload', method: 'post', data, ...config, headers: { 'Content-Type': 'multipart/form-data' } })
 
 // =============================================》app
-
-export const getAppList = (params: { kb_id: string }): Promise<AppListItem[]> =>
-  request({ url: 'api/v1/app/list', method: 'get', params })
-
-export const getAppDetail = (params: { id: string, }): Promise<AppDetail> =>
+export const getAppDetail = (params: { kb_id: string, type: 1 }): Promise<AppDetail> =>
   request({ url: 'api/v1/app/detail', method: 'get', params })
-
-export const createApp = (data: CreateAppFormData): Promise<{ id: string }> =>
-  request({ url: 'api/v1/app', method: 'post', data })
-
-export const deleteApp = (params: { id: string }): Promise<void> =>
-  request({ url: 'api/v1/app', method: 'delete', params })
 
 export const updateAppDetail = (params: { id: string, }, app: UpdateAppDetailData): Promise<void> =>
   request({ url: 'api/v1/app', method: 'put', params, data: app })

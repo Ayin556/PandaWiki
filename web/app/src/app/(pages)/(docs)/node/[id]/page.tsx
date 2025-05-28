@@ -1,0 +1,55 @@
+import { NodeDetail, NodeListItem } from "@/assets/type";
+import Doc from "@/views/node";
+import { headers } from "next/headers";
+
+export interface PageProps {
+  params: Promise<{ id: string }>
+}
+
+async function getNodeList(kb_id: string) {
+  try {
+    const res = await fetch(`${process.env.API_URL}/share/v1/node/list`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-kb-id': kb_id,
+      }
+    });
+    const result = await res.json()
+    return result.data as NodeListItem[]
+  } catch (error) {
+    console.error('Error fetching document content:', error);
+    return undefined
+  }
+}
+
+async function getNodeDetail(id: string, kb_id: string) {
+  try {
+    const res = await fetch(`${process.env.API_URL}/share/v1/node/detail?id=${id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-kb-id': kb_id,
+      }
+    });
+    const result = await res.json()
+    return result.data as NodeDetail
+  } catch (error) {
+    console.error('Error fetching document content:', error);
+    return undefined
+  }
+}
+
+const DocPage = async ({ params }: PageProps) => {
+  const { id = '' } = await params
+
+  const headersList = await headers()
+  const kb_id = headersList.get('x-kb-id') || ''
+
+  const node = await getNodeDetail(id, kb_id)
+  const nodeList = await getNodeList(kb_id)
+
+  return <Doc node={node} nodeList={nodeList || []} />
+};
+
+export default DocPage;

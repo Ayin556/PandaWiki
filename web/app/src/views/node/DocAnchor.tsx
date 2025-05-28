@@ -1,7 +1,6 @@
-import { DocInfo } from "@/assets/type";
 import { StyledAnchor } from "@/components/StyledHTML";
 
-const DocAnchor = ({ info }: { info: DocInfo | null }) => {
+const DocAnchor = () => {
   return <StyledAnchor>
     {/* <Ellipsis>aaa</Ellipsis> */}
   </StyledAnchor>

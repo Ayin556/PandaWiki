@@ -12,9 +12,10 @@ import ChatResult from "./ChatResult";
 import SearchResult from "./SearchResult";
 import { AnswerStatus } from "./constant";
 
-const Chat = ({ id }: { id: string }) => {
+const Chat = () => {
   const inIframe = isInIframe()
   const searchParams = useSearchParams();
+  const search = searchParams.get('search')
 
   const chatContainerRef = useRef<HTMLDivElement | null>(null)
   const sseClientRef = useRef<SSEClient<{ type: string, content: string, chunk_result: ChunkResultItem[] }> | null>(null)
@@ -28,7 +29,7 @@ const Chat = ({ id }: { id: string }) => {
   const [answer, setAnswer] = useState('');
   const [isUserScrolling, setIsUserScrolling] = useState(false);
 
-  const chatAnswer = useCallback(async (q: string) => {
+  const chatAnswer = async (q: string) => {
     setLoading(true);
     setThinking(1);
     setIsUserScrolling(false)
@@ -82,9 +83,9 @@ const Chat = ({ id }: { id: string }) => {
         }
       })
     }
-  }, [conversationId, nonce, inIframe])
+  }
 
-  const onSearch = useCallback((q: string, reset: boolean = false) => {
+  const onSearch = (q: string, reset: boolean = false) => {
     if (loading || !q.trim()) return;
     const newConversation = reset ? [] : [...conversation];
     if (answer) {
@@ -96,7 +97,7 @@ const Chat = ({ id }: { id: string }) => {
     setTimeout(() => {
       chatAnswer(q);
     }, 0);
-  }, [loading, answer, conversation, setConversation, setAnswer, chatAnswer])
+  }
 
   const handleSearchAbort = () => {
     sseClientRef.current?.unsubscribe()
@@ -126,22 +127,19 @@ const Chat = ({ id }: { id: string }) => {
   }, [answer, isUserScrolling])
 
   useEffect(() => {
-    const search = searchParams.get('search');
     if (search) {
       onSearch(search, true);
     }
-  }, [searchParams, onSearch]);
+  }, [search]);
 
   useEffect(() => {
-    const origin = location.origin
     sseClientRef.current = new SSEClient({
-      url: `${origin}/share/v1/chat/message`,
+      url: '/share/v1/chat/message',
       headers: {
         'Content-Type': 'application/json',
-        'x-kb-id': id || '',
       },
     })
-  }, [id])
+  }, [])
 
   return <Box sx={{ pt: 4 }}>
     <Stack alignItems='stretch' direction='row' gap={3}>
@@ -156,6 +154,7 @@ const Chat = ({ id }: { id: string }) => {
       />
       <SearchResult
         list={chunkResult}
+        loading={loading}
       />
     </Stack>
   </Box>

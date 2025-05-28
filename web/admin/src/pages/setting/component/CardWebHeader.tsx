@@ -1,54 +1,35 @@
-import Avatar from "@/components/Avatar"
+import { AppDetail, CardWebHeaderBtn, HeaderSetting, updateAppDetail } from "@/api"
+import DragBtn from "@/components/Drag/DragBtn"
 import UploadFile from "@/components/UploadFile"
-import { Box, Button, Checkbox, FormControl, FormControlLabel, IconButton, Radio, RadioGroup, Stack, TextField } from "@mui/material"
-import { Icon } from "ct-mui"
-import { useState } from "react"
+import { Box, Button, Checkbox, FormControl, FormControlLabel, Radio, RadioGroup, Stack, TextField } from "@mui/material"
+import { Icon, Message } from "ct-mui"
+import { useEffect, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 
-interface CardWebHeaderBtn {
-  url: string
-  variant: 'contained' | 'outlined',
-  showIcon: boolean
-  icon: string
-  text: string
-  target: '_blank' | '_self'
-}
-
 interface CardWebHeaderProps {
-  title: string
-  logo: string
-  btns: CardWebHeaderBtn[]
+  id: string
+  data: AppDetail
+  refresh: (value: HeaderSetting) => void
 }
 
-const CardWebHeader = () => {
-  const { control, handleSubmit, formState: { errors }, watch, setValue } = useForm<CardWebHeaderProps>({
+const CardWebHeader = ({ id, data, refresh }: CardWebHeaderProps) => {
+  const [isEdit, setIsEdit] = useState(false)
+  const { control, handleSubmit, formState: { errors }, watch, setValue } = useForm<HeaderSetting>({
     defaultValues: {
       title: '',
-      logo: '',
-      btns: [{
-        url: 'https://www.baidu.com',
-        showIcon: false,
-        icon: '',
-        variant: 'contained',
-        text: '首页',
-        target: '_self'
-      }, {
-        url: 'https://www.baidu.com',
-        variant: 'outlined',
-        showIcon: true,
-        icon: 'https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png',
-        text: '关于',
-        target: '_self'
-      }]
+      icon: '',
+      btns: []
     }
   })
 
   const btns = watch('btns')
 
-  const [selectedBtnIndex, setSelectedBtnIndex] = useState<number | null>(null)
+  const [selectedBtnId, setSelectedBtnId] = useState<string | null>(null)
 
   const handleAddButton = () => {
+    const id = Date.now().toString()
     const newBtn = {
+      id,
       url: '',
       variant: 'outlined' as const,
       showIcon: false,
@@ -57,22 +38,45 @@ const CardWebHeader = () => {
       target: '_self' as const
     }
 
-    const currentBtns = control._formValues.btns || []
-    control._formValues.btns = [...currentBtns, newBtn]
-    setSelectedBtnIndex(currentBtns.length)
+    const currentBtns = btns || []
+    const newBtns = [...currentBtns, newBtn]
+    setValue('btns', newBtns)
+    setSelectedBtnId(id)
+    setIsEdit(true)
   }
 
-  const onSubmit = (data: CardWebHeaderProps) => {
-    console.log(data)
+  const onSubmit = (value: HeaderSetting) => {
+    updateAppDetail({ id }, { settings: { ...data.settings, ...value } }).then(() => {
+      refresh(value)
+      Message.success('保存成功')
+      setIsEdit(false)
+    })
   }
+
+  useEffect(() => {
+    setValue('title', data.settings?.title || '')
+    setValue('icon', data.settings?.icon || '')
+    setValue('btns', data.settings?.btns || [])
+  }, [data])
 
   return <>
     <Stack direction='row' alignItems={'center'} justifyContent={'space-between'} sx={{
       m: 2,
       height: 32,
+      fontWeight: 'bold',
     }}>
-      <Box sx={{ fontWeight: 'bold' }}>顶部导航</Box>
-      <Button variant="contained" size="small" onClick={handleSubmit(onSubmit)}>保存</Button>
+      <Box sx={{
+        '&::before': {
+          content: '""',
+          display: 'inline-block',
+          width: 4,
+          height: 12,
+          bgcolor: 'common.black',
+          borderRadius: '2px',
+          mr: 1,
+        },
+      }}>顶部导航</Box>
+      {isEdit && <Button variant="contained" size="small" onClick={handleSubmit(onSubmit)}>保存</Button>}
     </Stack>
     <Box sx={{ m: 2 }}>
       <Box sx={{ fontSize: 14, lineHeight: '32px', mb: 1 }}>网站标题</Box>
@@ -85,6 +89,10 @@ const CardWebHeader = () => {
           placeholder="输入网站标题"
           error={!!errors.title}
           helperText={errors.title?.message}
+          onChange={(e) => {
+            field.onChange(e.target.value)
+            setIsEdit(true)
+          }}
         />}
       />
       <Box sx={{ my: 1, fontSize: 14, lineHeight: '32px' }}>
@@ -92,51 +100,40 @@ const CardWebHeader = () => {
       </Box>
       <Controller
         control={control}
-        name="logo"
+        name="icon"
         render={({ field }) => <UploadFile
           {...field}
+          id="website_logo"
           type="url"
           accept="image/*"
           width={80}
           onChange={(url) => {
             field.onChange(url)
+            setIsEdit(true)
           }}
         />}
       />
       <Box sx={{ mb: '6px', my: 1, fontSize: 14, lineHeight: '32px' }}>
         导航右侧按钮
       </Box>
-      <Stack direction={'row'} gap={1} flexWrap={'wrap'} sx={{ mb: 1 }}>
-        {btns.map((btn: CardWebHeaderBtn, index: number) => {
-          return <Stack direction={'row'} alignItems={'center'} gap={0.5} key={index}
-            sx={{ p: 0.5, border: '1px solid', borderColor: selectedBtnIndex === index ? 'primary.main' : 'divider', borderRadius: '10px' }}>
-            <Button
-              variant={btn.variant}
-              size="small"
-              startIcon={btn.showIcon ? <Avatar src={btn.icon} sx={{ width: 24, height: 24 }} /> : undefined}
-              onClick={() => {
-                if (selectedBtnIndex === index) setSelectedBtnIndex(null)
-                else setSelectedBtnIndex(index)
-              }}
-            >
-              {btn.text}
-            </Button>
-            <IconButton size="small" onClick={() => {
-              const newBtns = [...btns]
-              newBtns.splice(index, 1)
-              setValue('btns', newBtns)
-            }} sx={{ color: 'text.auxiliary', ':hover': { color: 'error.main' } }}>
-              <Icon type="icon-icon_tool_close" />
-            </IconButton>
-          </Stack>
-        })}
-      </Stack>
-      {selectedBtnIndex !== null && <Controller
+      <Box sx={{ mb: (selectedBtnId !== null || btns.length > 0) ? 1 : 0 }}>
+        <DragBtn
+          data={btns}
+          selectedBtnId={selectedBtnId}
+          setSelectedBtnId={setSelectedBtnId}
+          onChange={(data) => {
+            if (!data.find(btn => btn.id === selectedBtnId)) setSelectedBtnId(null)
+            setValue('btns', data)
+            setIsEdit(true)
+          }}
+        />
+      </Box>
+      {selectedBtnId !== null && <Controller
         control={control}
         name="btns"
         render={({ field }) => {
-          const btn = field.value[selectedBtnIndex]
-          return <Box sx={{ border: '1px solid', borderColor: 'divider', p: 2, borderRadius: '10px' }}>
+          const btn = field.value.find((btn: CardWebHeaderBtn) => btn.id === selectedBtnId)!
+          return <Box sx={{ border: '1px solid', borderColor: 'divider', p: 2, borderRadius: '10px', mb: 1 }}>
             <Stack gap={1}>
               <Stack direction={'row'}>
                 <Box sx={{ fontSize: 14, lineHeight: '32px', width: 80 }}>
@@ -146,8 +143,10 @@ const CardWebHeader = () => {
                   value={btn.variant}
                   onChange={(e) => {
                     const newBtns = [...field.value]
-                    newBtns[selectedBtnIndex] = { ...btn, variant: e.target.value as 'contained' | 'outlined' }
+                    const index = newBtns.findIndex((btn: CardWebHeaderBtn) => btn.id === selectedBtnId)
+                    newBtns[index] = { ...btn, variant: e.target.value as 'contained' | 'outlined' }
                     field.onChange(newBtns)
+                    setIsEdit(true)
                   }}
                   row
                 >
@@ -164,8 +163,10 @@ const CardWebHeader = () => {
                   value={btn.text}
                   onChange={(e) => {
                     const newBtns = [...field.value]
-                    newBtns[selectedBtnIndex] = { ...btn, text: e.target.value }
+                    const index = newBtns.findIndex((btn: CardWebHeaderBtn) => btn.id === selectedBtnId)
+                    newBtns[index] = { ...btn, text: e.target.value }
                     field.onChange(newBtns)
+                    setIsEdit(true)
                   }}
                 />
               </Stack>
@@ -178,17 +179,19 @@ const CardWebHeader = () => {
                   value={btn.url}
                   onChange={(e) => {
                     const newBtns = [...field.value]
-                    newBtns[selectedBtnIndex] = { ...btn, url: e.target.value }
+                    const index = newBtns.findIndex((btn: CardWebHeaderBtn) => btn.id === selectedBtnId)
+                    newBtns[index] = { ...btn, url: e.target.value }
                     field.onChange(newBtns)
+                    setIsEdit(true)
                   }}
                 />
               </Stack>
-              <Stack direction={'row'}>
+              <Stack direction={'row'} alignItems={'center'}>
                 <Box sx={{ fontSize: 14, lineHeight: '32px', width: 80 }}>
                   图标
                 </Box>
                 <FormControl>
-                  <Stack direction={'row'} alignItems={'flex-start'} gap={2}>
+                  <Stack direction={'row'} alignItems={'center'} gap={2}>
                     <Stack direction={'row'} alignItems={'center'} gap={1}>
                       <Checkbox
                         size="small"
@@ -196,22 +199,28 @@ const CardWebHeader = () => {
                         checked={btn.showIcon}
                         onChange={(e) => {
                           const newBtns = [...field.value]
-                          newBtns[selectedBtnIndex] = { ...btn, showIcon: e.target.checked }
+                          const index = newBtns.findIndex((btn: CardWebHeaderBtn) => btn.id === selectedBtnId)
+                          newBtns[index] = { ...btn, showIcon: e.target.checked }
                           field.onChange(newBtns)
+                          setIsEdit(true)
                         }}
                       />
                       <Box sx={{ fontSize: 14, lineHeight: '32px' }}>展示图标</Box>
                     </Stack>
                     <UploadFile
                       name="icon"
+                      id={`${selectedBtnId}_icon`}
                       type="url"
+                      disabled={!btn.showIcon}
                       accept="image/*"
                       width={60}
                       value={btn.icon}
                       onChange={(url) => {
                         const newBtns = [...field.value]
-                        newBtns[selectedBtnIndex] = { ...btn, icon: url }
+                        const index = newBtns.findIndex((btn: CardWebHeaderBtn) => btn.id === selectedBtnId)
+                        newBtns[index] = { ...btn, icon: url }
                         field.onChange(newBtns)
+                        setIsEdit(true)
                       }}
                     />
                   </Stack>
@@ -225,8 +234,10 @@ const CardWebHeader = () => {
                   value={btn.target}
                   onChange={(e) => {
                     const newBtns = [...field.value]
-                    newBtns[selectedBtnIndex] = { ...btn, target: e.target.value as '_blank' | '_self' }
+                    const index = newBtns.findIndex((btn: CardWebHeaderBtn) => btn.id === selectedBtnId)
+                    newBtns[index] = { ...btn, target: e.target.value as '_blank' | '_self' }
                     field.onChange(newBtns)
+                    setIsEdit(true)
                   }}
                   row
                 >
@@ -239,11 +250,9 @@ const CardWebHeader = () => {
         }}
       />}
       <Button
-        variant="outlined"
         size="small"
         onClick={handleAddButton}
-        sx={{ mt: 1 }}
-        startIcon={<Icon type="icon-add" />}
+        startIcon={<Icon type="icon-add" sx={{ fontSize: '12px !important' }} />}
       >
         添加按钮
       </Button>

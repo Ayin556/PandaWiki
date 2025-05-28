@@ -100,7 +100,7 @@ const componentStyleOverrides = (theme: ThemeColor) => {
         },
         startIcon: {
           marginLeft: 0,
-          marginRight: 12,
+          marginRight: 8,
           '>*:nth-of-type(1)': {
             fontSize: 14,
           }
@@ -206,6 +206,14 @@ const componentStyleOverrides = (theme: ThemeColor) => {
           borderSpacing: '12px',
         }
       },
+    },
+    MuiPopover: {
+      styleOverrides: {
+        paper: {
+          borderRadius: '10px',
+          boxShadow: custom.selectPopupBoxShadow,
+        }
+      }
     },
     MuiMenu: {
       styleOverrides: {

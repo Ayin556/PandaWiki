@@ -4,7 +4,7 @@ import DocDelete from "@/pages/document/component/DocDelete"
 import { useAppSelector } from "@/store"
 import { getShortcutKeyText } from "@/utils"
 import { Box, Button, IconButton, Stack, Tooltip } from "@mui/material"
-import { Icon, MenuSelect, Message } from "ct-mui"
+import { Ellipsis, Icon, MenuSelect, Message } from "ct-mui"
 import dayjs from "dayjs"
 import { useState } from "react"
 
@@ -53,12 +53,12 @@ const EditorHeader = ({ editorRef, detail, onSave, refresh }: EditorHeaderProps)
   if (!detail) return null
 
   return <>
-    <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'} sx={{
+    <Stack direction={'row'} alignItems={'center'} gap={3} justifyContent={'space-between'} sx={{
       width: 800,
       margin: 'auto',
     }}>
-      <Box sx={{ fontSize: 18, fontWeight: 'bold' }}>{detail?.name}</Box>
-      <Stack direction={'row'} alignItems={'center'} gap={2}>
+      <Ellipsis sx={{ fontSize: 18, fontWeight: 'bold' }}>{detail?.name}</Ellipsis>
+      <Stack direction={'row'} alignItems={'center'} gap={2} flexShrink={0}>
         <Stack direction={'row'} alignItems={'center'} gap={0.5} sx={{ fontSize: 12, color: 'text.auxiliary' }}>
           <Icon type='icon-baocun' />
           {dayjs(detail.updated_at).format('YYYY-MM-DD HH:mm:ss')}
@@ -71,7 +71,7 @@ const EditorHeader = ({ editorRef, detail, onSave, refresh }: EditorHeaderProps)
               if (kb_id) {
                 createNode({ name: detail.name + ' [副本]', content: detail.content, kb_id: kb_id, type: 2 }).then((res) => {
                   Message.success('复制成功')
-                  window.open(`/doc/editor/${res.ids[0]}`, '_blank')
+                  window.open(`/doc/editor/${res.id}`, '_blank')
                 })
               }
             }

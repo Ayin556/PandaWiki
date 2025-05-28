@@ -29,7 +29,7 @@ const DocAddByCustomText = ({ open, data, onClose, refresh, type = 'customDoc' }
 
   const submit = (value: { name: string }) => {
     if (data) {
-      updateNode({ id: data.id, name: value.name }).then(() => {
+      updateNode({ id: data.id, kb_id: id, name: value.name }).then(() => {
         Message.success('修改成功')
         reset()
         handleClose()

@@ -1,7 +1,7 @@
 {
   "name": "panda-wiki",
   "private": true,
-  "version": "0.2.3",
+  "version": "0.3.6",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -40,7 +40,7 @@
     "@tiptap/react": "^2.12.0",
     "@tiptap/starter-kit": "^2.12.0",
     "axios": "^1.7.9",
-    "ct-mui": "1.0.1-beta.3",
+    "ct-mui": "1.0.1-beta.9",
     "ct-tiptap-editor": "^0.0.8",
     "dayjs": "^1.11.13",
     "dnd-kit-sortable-tree": "^0.1.73",
