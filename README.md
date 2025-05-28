@@ -47,7 +47,7 @@ PandaWiki 是一款 AI 驱动的开源知识库搭建系统，借助大模型的
 使用 root 权限执行以下命令进行安装
 
 ```bash
-bash -c "$(curl -fsSLk https://release.baizhi.cloud/pandawiki/manager.sh)"
+bash -c "$(curl -fsSLk https://release.baizhi.cloud/panda-wiki/manager.sh)"
 ```
 
 ### ⚙️ 初始化
