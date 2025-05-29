@@ -4,9 +4,9 @@
 
 
 <p align="center">
-  <a target="_blank" href="https://ly.safepoint.cloud/Br48PoX">🏠 官网</a> &nbsp; | &nbsp;
-  <a target="_blank" href="https://ly.safepoint.cloud/A4hGZLg">📖 帮助文档</a> &nbsp; | &nbsp;
-  <a target="_blank" href="https://ly.safepoint.cloud/hSMd4SH">🔍 演示 Demo</a> &nbsp; | &nbsp;
+  <a target="_blank" href="https://ly.safepoint.cloud/QuAr5qh">🏠 官网</a> &nbsp; | &nbsp;
+  <a target="_blank" href="https://ly.safepoint.cloud/Br48PoX">📖 帮助文档</a> &nbsp; | &nbsp;
+  <a target="_blank" href="https://ly.safepoint.cloud/Br48PoX">🔍 演示 Demo</a> &nbsp; | &nbsp;
   <a target="_blank" href="/images/banner.png">🙋‍♂️ 微信交流群</a>
 </p>
 
@@ -27,7 +27,7 @@ PandaWiki 是一款 AI 大模型驱动的**开源知识库搭建系统**，帮�
 | ------------------------------------------------- | ------------------------------------------------- | 
 | <img src="/images/screenshot-3.png" width=370 /> | <img src="/images/screenshot-4.png" width=370 /> | 
 
-查看 [演示 Demo](https://baizhi.cloud/)
+查看 [演示 Demo](https://ly.safepoint.cloud/Br48PoX)
 
 ## 🚀 上手指南
 
