@@ -7,12 +7,24 @@
   <a target="_blank" href="https://ly.safepoint.cloud/QuAr5qh">🏠 官网</a> &nbsp; | &nbsp;
   <a target="_blank" href="https://ly.safepoint.cloud/Br48PoX">📖 帮助文档</a> &nbsp; | &nbsp;
   <a target="_blank" href="https://ly.safepoint.cloud/Br48PoX">🔍 演示 Demo</a> &nbsp; | &nbsp;
-  <a target="_blank" href="/images/banner.png">🙋‍♂️ 微信交流群</a>
+  <a target="_blank" href="/images/wechat.png">🙋‍♂️ 微信交流群</a>
 </p>
 
 ## 👋 项目介绍
 
 PandaWiki 是一款 AI 大模型驱动的**开源知识库搭建系统**，帮助你快速构建智能化的 **产品文档、技术文档、FAQ、博客系统**，借助大模型的力量为你提供 **AI 创作、AI 问答、AI 搜索** 等能力。
+
+<p align="center">
+  <img src="/images/banner.png" width="400" />
+</p>
+
+
+## ⚡️ 界面展示
+
+| PandaWiki 控制台 | Wiki 网站前台 |
+| ------------------------------------------------- | ------------------------------------------------- | 
+| <img src="/images/screenshot-1.png" width=370 /> | <img src="/images/screenshot-2.png" width=370 /> |
+| <img src="/images/screenshot-3.png" width=370 /> | <img src="/images/screenshot-4.png" width=370 /> | 
 
 ## 🔥 功能与特色
 
@@ -20,14 +32,6 @@ PandaWiki 是一款 AI 大模型驱动的**开源知识库搭建系统**，帮�
 - 强大的富文本编辑能力：兼容 Markdown 和 HTML，支持导出为 word、pdf、markdown 等多种格式。
 - 轻松与第三方应用进行集成：支持做成网页挂件挂在其他网站上，支持做成钉钉、飞书、企业微信等聊天机器人。
 - 通过第三方来源导入内容：根据网页 URL 导入、通过网站 Sitemap 导入、通过 RSS 订阅、通过离线文件导入等。
-
-## ⚡️ 界面展示
-
-| <img src="/images/screenshot-1.png" width=370 /> | <img src="/images/screenshot-2.png" width=370 /> |
-| ------------------------------------------------- | ------------------------------------------------- | 
-| <img src="/images/screenshot-3.png" width=370 /> | <img src="/images/screenshot-4.png" width=370 /> | 
-
-查看 [演示 Demo](https://ly.safepoint.cloud/Br48PoX)
 
 ## 🚀 上手指南
 
