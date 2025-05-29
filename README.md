@@ -15,7 +15,7 @@
 PandaWiki 是一款 AI 大模型驱动的**开源知识库搭建系统**，帮助你快速构建智能化的 **产品文档、技术文档、FAQ、博客系统**，借助大模型的力量为你提供 **AI 创作、AI 问答、AI 搜索** 等能力。
 
 <p align="center">
-  <img src="/images/banner.png" width="400" />
+  <img src="/images/setup.png" width="400" />
 </p>
 
 
