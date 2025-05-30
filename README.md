@@ -54,11 +54,11 @@ bash -c "$(curl -fsSLk https://release.baizhi.cloud/panda-wiki/manager.sh)"
 在上一步中，安装命令执行结束后，你的终端会输出以下内容。
 
 ```
-   SUCCESS  控制台信息:
-   SUCCESS    访问地址(内网): http://*.*.*.*:2443
-   SUCCESS    访问地址(外网): http://*.*.*.*:2443
-   SUCCESS    用户名: admin
-   SUCCESS    密码: **********************
+SUCCESS  控制台信息:
+SUCCESS    访问地址(内网): http://*.*.*.*:2443
+SUCCESS    访问地址(外网): http://*.*.*.*:2443
+SUCCESS    用户名: admin
+SUCCESS    密码: **********************
 ```
 
 使用浏览器打开上述内容中的 “访问地址”，你将看到 PandaWiki 的控制台登录入口。
