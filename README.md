@@ -86,7 +86,6 @@ bash -c "$(curl -fsSLk https://release.baizhi.cloud/panda-wiki/manager.sh)"
 <img src="/images/modelconfig.png" width="800" />
 
 > 推荐使用 [百智云模型广场](https://baizhi.cloud/) 快速接入 AI 模型，注册即可获赠 5 元的模型使用额度。
-
 > 关于大模型的更多配置细节请参考 [接入 AI 模型](https://pandawiki.docs.baizhi.cloud/node/01971616-811c-70e1-82d9-706a202b8498)。
 
 #### 💪 开始使用
