@@ -67,12 +67,15 @@ const Login = () => {
             sx={{ mb: 4 }}
             onChange={(e) => setAccount(e.target.value)}
             placeholder='账号'
+            autoFocus
+            tabIndex={1}
             slotProps={{
               input: {
                 startAdornment: <Icon type='icon-zhanghao' sx={{ fontSize: 16, mr: 2, flexShrink: 0 }} />,
                 endAdornment: account ? <IconButton
                   onClick={() => setAccount('')}
                   size="small"
+                  tabIndex={-1}
                 >
                   <Icon type='icon-icon_tool_close' sx={{ fontSize: 14, color: 'text.auxiliary' }} />
                 </IconButton> : null
@@ -84,6 +87,7 @@ const Login = () => {
             fullWidth
             sx={{ mb: 4 }}
             onChange={(e) => setPassword(e.target.value)}
+            tabIndex={2}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 if (!account || !password) return
@@ -100,12 +104,14 @@ const Login = () => {
                   <IconButton
                     onClick={() => setSee(!see)}
                     size="small"
+                    tabIndex={-1}
                   >
                     <Icon type={see ? 'icon-kejian' : 'icon-bukejian'} sx={{ fontSize: 18, color: 'text.auxiliary' }} />
                   </IconButton>
                   <IconButton
                     onClick={() => setPassword('')}
                     size="small"
+                    tabIndex={-1}
                   >
                     <Icon type='icon-icon_tool_close' sx={{ fontSize: 14, color: 'text.auxiliary' }} />
                   </IconButton>

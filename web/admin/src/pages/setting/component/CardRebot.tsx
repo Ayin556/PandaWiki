@@ -3,7 +3,7 @@ import FeishuLogo from '@/assets/images/feishu.png'
 import PluginLogo from '@/assets/images/plugin.png'
 import WecomLogo from '@/assets/images/wecom.png'
 import Card from "@/components/Card"
-import { Box, Divider, Stack, Switch } from "@mui/material"
+import { Box, Stack, Switch } from "@mui/material"
 import { useState } from "react"
 
 const CardRebot = () => {
@@ -17,7 +17,7 @@ const CardRebot = () => {
       name: '网页挂件',
       icon: PluginLogo,
       configDisabled: true,
-      onClick: () => setWecomOpen(true)
+      onClick: () => setWebOpen(true)
     },
     3: {
       name: '钉钉机器人',
@@ -39,12 +39,11 @@ const CardRebot = () => {
     }
   }
   return <Card>
-    <Box sx={{ fontWeight: 'bold', m: 2 }}>问答机器人</Box>
-    <Divider />
+    <Box sx={{ fontWeight: 'bold', px: 2, py: 1.5, bgcolor: 'background.paper2' }}>问答机器人</Box>
     {Object.values(AppList).map((value, index) => <Box key={index}>
       <Stack direction='row' alignItems={'center'} justifyContent={'space-between'} sx={{ m: 2 }}>
         <Box sx={{ fontWeight: 'bold' }}>{value.name}</Box>
-        <Switch checked />
+        <Switch checked={false} />
       </Stack>
     </Box>)}
   </Card>

@@ -1,72 +1,109 @@
-import { getNodeList, NodeListItem } from "@/api"
+import { AppDetail, getNodeRecommend, RecommendNode, updateAppDetail, WelcomeSetting } from "@/api"
+import DragRecommend from "@/components/Drag/DragRecommend"
 import { FreeSoloAutocomplete } from "@/components/FreeSoloAutocomplete"
 import { useCommitPendingInput } from "@/hooks"
 import { useAppSelector } from "@/store"
-import { addOpacityToColor } from "@/utils"
-import { Autocomplete, Box, Button, Chip, Stack, TextField, useTheme } from "@mui/material"
-import { Ellipsis, Icon } from "ct-mui"
+import { Box, Button, Stack, TextField } from "@mui/material"
+import { Icon, Message } from "ct-mui"
 import { useEffect, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
+import AddRecommendContent from "./AddRecommendContent"
 
 interface CardWebWelcomeProps {
-  welcome: string
-  search_placeholder: string
-  recommend_questions: string[]
-  recommend_doc_ids: string[]
+  id: string
+  data: AppDetail
+  refresh: (value: WelcomeSetting) => void
 }
 
-const CardWebWelcome = () => {
-  const theme = useTheme()
+const CardWebWelcome = ({ id, data, refresh }: CardWebWelcomeProps) => {
   const { kb_id } = useAppSelector(state => state.config)
-  const [nodeList, setNodeList] = useState<NodeListItem[]>([])
-  const { control, handleSubmit, formState: { errors }, watch, setValue } = useForm<CardWebWelcomeProps>({
+  const [sorted, setSorted] = useState<RecommendNode[]>([])
+  const [isEdit, setIsEdit] = useState(false)
+  const [open, setOpen] = useState(false)
+  const { control, handleSubmit, formState: { errors }, watch, setValue } = useForm<WelcomeSetting>({
     defaultValues: {
-      welcome: '',
+      welcome_str: '',
       search_placeholder: '',
       recommend_questions: [],
-      recommend_doc_ids: [],
+      recommend_node_ids: [],
     }
   })
 
   const recommend_questions = watch('recommend_questions') || []
-  const recommend_doc_ids = watch('recommend_doc_ids') || []
+  const recommend_node_ids = watch('recommend_node_ids') || []
 
   const recommendQuestionsField = useCommitPendingInput<string>({
     value: recommend_questions,
     setValue: (value) => {
+      setIsEdit(true)
       setValue('recommend_questions', value)
     }
   })
 
-  const onSubmit = (data: CardWebWelcomeProps) => {
-    console.log(data)
+  const onSubmit = (value: WelcomeSetting) => {
+    updateAppDetail({ id }, { settings: { ...data.settings, ...value } }).then(() => {
+      refresh(value)
+      Message.success('保存成功')
+      setIsEdit(false)
+    })
+  }
+
+  const nodeRec = () => {
+    if (recommend_node_ids.length > 0) {
+      getNodeRecommend({ kb_id, node_ids: recommend_node_ids }).then((res) => {
+        setSorted(res)
+      })
+    }
   }
 
   useEffect(() => {
-    getNodeList({ kb_id: kb_id }).then((res) => {
-      setNodeList(res)
-    })
-  }, [])
+    if (recommend_node_ids.length > 0) {
+      nodeRec()
+    }
+  }, [recommend_node_ids])
+
+  useEffect(() => {
+    setSorted(data.recommend_nodes || [])
+    setValue('welcome_str', data.settings?.welcome_str || '')
+    setValue('search_placeholder', data.settings?.search_placeholder || '')
+    setValue('recommend_questions', data.settings?.recommend_questions || [])
+    setValue('recommend_node_ids', data.settings?.recommend_node_ids || [])
+  }, [data])
 
   return <>
     <Stack direction='row' alignItems={'center'} justifyContent={'space-between'} sx={{
       m: 2,
       height: 32,
+      fontWeight: 'bold',
     }}>
-      <Box sx={{ fontWeight: 'bold' }}>欢迎页面</Box>
-      <Button variant="contained" size="small" onClick={handleSubmit(onSubmit)}>保存</Button>
+      <Box sx={{
+        '&::before': {
+          content: '""',
+          display: 'inline-block',
+          width: 4,
+          height: 12,
+          bgcolor: 'common.black',
+          borderRadius: '2px',
+          mr: 1,
+        },
+      }}>欢迎页面</Box>
+      {isEdit && <Button variant="contained" size="small" onClick={handleSubmit(onSubmit)}>保存</Button>}
     </Stack>
     <Box sx={{ m: 2 }}>
       <Box sx={{ fontSize: 14, lineHeight: '32px', mb: 1 }}>欢迎标语</Box>
       <Controller
         control={control}
-        name="welcome"
+        name="welcome_str"
         render={({ field }) => <TextField
           fullWidth
           {...field}
           placeholder="输入欢迎标语"
-          error={!!errors.welcome}
-          helperText={errors.welcome?.message}
+          error={!!errors.welcome_str}
+          helperText={errors.welcome_str?.message}
+          onChange={(event) => {
+            setIsEdit(true)
+            field.onChange(event)
+          }}
         />}
       />
       <Box sx={{ fontSize: 14, lineHeight: '32px', mb: 1 }}>搜索框提示文字</Box>
@@ -79,6 +116,10 @@ const CardWebWelcome = () => {
           placeholder="输入搜索框提示文字"
           error={!!errors.search_placeholder}
           helperText={errors.search_placeholder?.message}
+          onChange={(event) => {
+            setIsEdit(true)
+            field.onChange(event)
+          }}
         />}
       />
       <Box sx={{ my: 1, fontSize: 14, lineHeight: '32px' }}>推荐问题</Box>
@@ -87,75 +128,31 @@ const CardWebWelcome = () => {
         {...recommendQuestionsField}
       />
       <Box sx={{ mb: '6px', mt: 2, fontSize: 14, lineHeight: '32px' }}>推荐内容</Box>
-      <Controller
-        control={control}
-        name="recommend_doc_ids"
-        render={({ field }) => <Autocomplete
-          {...field}
-          multiple
-          options={nodeList}
-          getOptionLabel={(option) => option.name}
-          disableCloseOnSelect
-          slotProps={{
-            paper: {
-              sx: {
-                borderRadius: '10px',
-              }
-            },
-            listbox: {
-              sx: {
-                p: '4px',
-                '.MuiAutocomplete-option': {
-                  borderRadius: '5px',
-                  fontSize: '12px',
-                  '&[aria-selected="true"]': {
-                    color: 'primary.main',
-                    backgroundColor: addOpacityToColor(theme.palette.primary.main, 0.1) + ' !important',
-                  }
-                }
-              }
-            },
+      <Box sx={{ mb: 1 }}>
+        <DragRecommend
+          data={sorted || []}
+          refresh={nodeRec}
+          onChange={(value) => {
+            setIsEdit(true)
+            setValue('recommend_node_ids', value.map(item => item.id))
           }}
-          renderOption={(props, option) => (
-            <Box component="li" {...props} sx={{ fontSize: 12 }}>
-              <Stack direction={'row'} alignItems={'center'} gap={1}>
-                <Icon type={option.type === 1 ? 'icon-wenjianjia' : 'icon-wenjian'} sx={{ fontSize: 14, color: '#2f80f7' }} />
-                <Ellipsis sx={{ width: '400px' }}>{option.name}</Ellipsis>
-              </Stack>
-            </Box>
-          )}
-          clearIcon={<Icon type='icon-icon_tool_close' sx={{ fontSize: 18, flexShrink: 0, color: 'text.auxiliary' }} />}
-          getOptionKey={(option) => option.id}
-          value={nodeList.filter(item => recommend_doc_ids.includes(item.id)) || []}
-          onChange={(_, newValue) => {
-            setValue('recommend_doc_ids', newValue.map(item => item.id))
-          }}
-          renderTags={(value, getTagProps) => {
-            return value.map((option, index: number) => {
-              return (
-                <Chip
-                  variant='outlined'
-                  size='small'
-                  label={<Ellipsis sx={{ fontSize: 12, maxWidth: 140 }}>{option.name}</Ellipsis>}
-                  {...getTagProps({ index })}
-                  key={index}
-                  icon={<Icon type={option.type === 1 ? 'icon-wenjianjia' : 'icon-wenjian'} sx={{
-                    fontSize: '14px !important',
-                    mx: '4px !important',
-                  }} />}
-                />
-              )
-            })
-          }}
-          renderInput={(params) => <TextField {...params} placeholder="选择推荐内容" />}
-          filterOptions={(options, { inputValue }) => {
-            const filterValue = inputValue.toLowerCase();
-            return options.filter(option =>
-              option.name.toLowerCase().includes(filterValue)
-            );
-          }}
-          popupIcon={<Icon type='icon-xiala' sx={{ fontSize: 24, color: 'text.primary' }} />}
-        />}
+        />
+      </Box>
+      <Button
+        size="small"
+        onClick={() => setOpen(true)}
+        startIcon={<Icon type="icon-add" sx={{ fontSize: '12px !important' }} />}
+      >
+        添加卡片
+      </Button>
+      <AddRecommendContent
+        open={open}
+        selected={recommend_node_ids}
+        onChange={(value: string[]) => {
+          setIsEdit(true)
+          setValue('recommend_node_ids', value)
+        }}
+        onClose={() => setOpen(false)}
       />
     </Box>
   </>

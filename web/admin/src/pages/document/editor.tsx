@@ -17,10 +17,10 @@ const DocEditor = () => {
   }
 
   const handleSave = () => {
-    if (!editorRef) return
+    if (!editorRef || !detail) return
     const { editor } = editorRef
     const content = editor.getHTML()
-    updateNode({ id, content }).then(() => {
+    updateNode({ id, content, kb_id: detail.kb_id }).then(() => {
       Message.success('保存成功')
       getDetail()
     })
@@ -52,7 +52,7 @@ const DocEditor = () => {
 
   if (!editorRef) return null
 
-  return <Box sx={{ color: 'text.primary' }}>
+  return <Box sx={{ color: 'text.primary', pb: 2 }}>
     <Box sx={{
       position: 'fixed',
       top: 0,
@@ -76,12 +76,12 @@ const DocEditor = () => {
       margin: 'auto',
       overflowY: 'auto',
       '.editor-container': {
-        mt: '101px',
-        borderRadius: '4px',
+        mt: '105px',
+        borderRadius: '6px',
         bgcolor: '#fff',
-        minHeight: 'calc(100vh - 101px)',
+        minHeight: 'calc(100vh - 105px - 16px)',
         '.tiptap': {
-          minHeight: 'calc(100vh - 101px)',
+          minHeight: 'calc(100vh - 105px - 16px)',
         }
       }
     }}>

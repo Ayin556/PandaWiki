@@ -10,6 +10,10 @@ export type ResposeList<T> = {
   data: T[]
 }
 
+export interface BaseItem {
+  id: string
+}
+
 export type TrendData = { count: number, date: string }
 
 // =============================================》user
@@ -34,11 +38,22 @@ export type UpdateUserInfo = {
 export type UpdateKnowledgeBaseData = {
   id: string,
   name: string,
-  hosts: string[],
-  ports: number[],
-  ssl_ports: number[],
-  private_key: string,
-  public_key: string,
+  access_settings: {
+    hosts?: string[],
+    ports?: number[],
+    ssl_ports?: number[],
+    private_key?: string,
+    public_key?: string,
+  }
+}
+
+export interface KnowledgeBaseFormData {
+  name: string
+  domain: string
+  http: boolean
+  https: boolean
+  httpsCert: string
+  httpsKey: string
 }
 
 export type KnowledgeBaseAccessSettings = {
@@ -62,6 +77,16 @@ export type KnowledgeBaseListItem = Pick<UpdateKnowledgeBaseData, 'id' | 'name'>
   stats: KnowledgeBaseStats
 }
 
+export interface CardWebHeaderBtn {
+  id: string
+  url: string
+  variant: 'contained' | 'outlined',
+  showIcon: boolean
+  icon: string
+  text: string
+  target: '_blank' | '_self'
+}
+
 // =============================================》node
 export type NodeListItem = {
   id: string,
@@ -69,14 +94,26 @@ export type NodeListItem = {
   type: 1 | 2,
   position: number,
   parent_id: string,
+  summary: string,
   created_at: string,
   updated_at: string,
+}
+
+export type GetNodeRecommendData = {
+  kb_id: string
+  node_ids: string[]
+}
+
+export type CreateNodeSummaryData = {
+  kb_id: string
+  id: string
 }
 
 export type NodeDetail = {
   content: string,
   created_at: string,
   id: string,
+  kb_id: string,
   meta: {
     summary: string
   },
@@ -100,19 +137,24 @@ export type NodeListFilterData = {
 export type NodeAction = 'delete'
 
 export type UpdateNodeActionData = {
-  ids: string[],
+  id: string,
+  kb_id: string,
   action: NodeAction
 }
 
 export type UpdateNodeData = {
   id: string,
+  kb_id: string,
   name?: string,
   content?: string
 }
 
-export type ParseNodeData = {
-  kb_id: string
-  type: 'RSS' | 'Sitemap' | 'URL'
+// =============================================》crawler
+
+export type ScrapeRSSItem = {
+  desc: string,
+  published: string,
+  title: string,
   url: string
 }
 
@@ -122,11 +164,6 @@ export type AppCommonInfo = {
   name: string
   type: keyof typeof AppType
 }
-
-export type CreateAppFormData = {
-  icon: string
-  associated_kb_ids: string[]
-} & AppCommonInfo
 
 export type AppStats = {
   day_counts: TrendData[],
@@ -168,25 +205,40 @@ export type FeishuBotSetting = {
   feishubot_welcome_str: string
 }
 
-export type AppSetting = {
-  icon: string,
-  desc: string,
-  welcome_str: string,
-  nav_bg_color: string,
-  nav_text_color: string,
-  recommend_questions: string[],
-  recommend_doc_ids: string[],
-  search_placeholder: string,
-  position: number[]
-  plugin_ids: string[]
-  associated_kb_ids: string[]
-} & DingBotSetting & WecomBotSetting & FeishuBotSetting
-
-export type RecommendDoc = {
-  id: string,
+export type HeaderSetting = {
   title: string,
-  url: string,
+  icon: string,
+  btns: CardWebHeaderBtn[],
+}
+
+export type WelcomeSetting = {
+  welcome_str: string,
+  search_placeholder: string,
+  recommend_questions: string[],
+  recommend_node_ids: string[],
+}
+
+export type SEOSetting = {
+  keyword: string,
+  desc: string,
+  auto_sitemap: boolean,
+}
+
+export type CustomCodeSetting = {
+  head_code: string,
+  body_code: string
+}
+
+export type AppSetting = HeaderSetting & WelcomeSetting & SEOSetting & CustomCodeSetting & DingBotSetting & WecomBotSetting & FeishuBotSetting
+
+export type RecommendNode = {
+  id: string,
+  name: string,
+  type: 1 | 2,
+  parent_id: string,
   summary: string
+  position: number
+  recommend_nodes?: RecommendNode[]
 }
 
 export type AppDetail = {
@@ -195,7 +247,7 @@ export type AppDetail = {
   stats: AppStats | null
   settings: AppSetting
   kb_id: string
-  recommend_docs: RecommendDoc[]
+  recommend_nodes: RecommendNode[]
 } & AppCommonInfo
 
 export type UpdateAppDetailData = {
@@ -304,6 +356,7 @@ export interface ITreeItem {
   level: number;
   order?: number;
   parentId?: string | null;
+  summary?: string
   children?: ITreeItem[];
   type: 1 | 2;
   isEditting?: boolean;

@@ -6,14 +6,16 @@ import CustomImage from '../CustomImage';
 
 interface UploadFileProps {
   type: 'url' | 'base64'
+  id: string
   name: string
+  disabled?: boolean
   value: string;
   accept: string;
   onChange: (url: string) => void;
   width?: number;
 }
 
-const UploadFile = ({ name, value, onChange, accept, type, width }: UploadFileProps) => {
+const UploadFile = ({ id, name, value, onChange, accept, type, width, disabled = false }: UploadFileProps) => {
   const [preview, setPreview] = useState<string>(value);
   const currentPreviewUrl = useRef<string | null>(null);
 
@@ -52,7 +54,7 @@ const UploadFile = ({ name, value, onChange, accept, type, width }: UploadFilePr
         const formData = new FormData()
         formData.append("file", file)
         const res = await uploadFile(formData);
-        onChange(location.origin + '/static-file/' + res.key);
+        onChange('/static-file/' + res.key);
         URL.revokeObjectURL(previewUrl);
         currentPreviewUrl.current = null;
       } catch (error) {
@@ -77,7 +79,8 @@ const UploadFile = ({ name, value, onChange, accept, type, width }: UploadFilePr
   return (
     <Box>
       <input
-        id={name}
+        id={id || name}
+        disabled={disabled}
         type="file"
         accept={accept}
         style={{ display: 'none' }}
@@ -85,7 +88,7 @@ const UploadFile = ({ name, value, onChange, accept, type, width }: UploadFilePr
       />
       <Box
         component="label"
-        htmlFor={name}
+        htmlFor={id || name}
         sx={{
           width: width || 190,
           height: width || 173.26,
@@ -114,7 +117,7 @@ const UploadFile = ({ name, value, onChange, accept, type, width }: UploadFilePr
               preview={false}
               alt="Preview"
               width="100%"
-              sx={{ objectFit: 'cover', cursor: 'pointer' }}
+              sx={{ objectFit: 'cover', cursor: disabled ? 'not-allowed' : 'pointer' }}
             />
             <IconButton size='small' className='upload-file-img-del-icon' sx={{
               transition: 'all 0.5s',

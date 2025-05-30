@@ -40,7 +40,7 @@ const MarkDown = ({ loading = false, content }: MarkDownProps) => {
         alignItems: 'flex-end',
         gap: '16px',
         fontSize: '12px',
-        color: 'text.auxiliary',
+        color: 'text.tertiary',
         marginBottom: '40px',
         lineHeight: '20px',
         bgcolor: 'background.paper',

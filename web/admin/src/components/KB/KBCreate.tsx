@@ -1,4 +1,4 @@
-import { createKnowledgeBase, getKnowledgeBaseList, UpdateKnowledgeBaseData } from "@/api"
+import { createKnowledgeBase, getKnowledgeBaseList, KnowledgeBaseFormData, UpdateKnowledgeBaseData } from "@/api"
 import { useAppDispatch, useAppSelector } from "@/store"
 import { setKbC, setKbId, setKbList } from "@/store/slices/config"
 import { CheckCircle } from "@mui/icons-material"
@@ -9,15 +9,6 @@ import { Controller, useForm } from "react-hook-form"
 import { useLocation } from "react-router-dom"
 import Card from "../Card"
 import FileText from "../UploadFile/FileText"
-
-interface FormData {
-  name: string
-  domain: string
-  http: boolean
-  https: boolean
-  httpsCert: string
-  httpsKey: string
-}
 
 const KBCreate = () => {
   const dispatch = useAppDispatch()
@@ -30,7 +21,7 @@ const KBCreate = () => {
   const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const { control, handleSubmit, formState: { errors }, watch, reset } = useForm<FormData>({
+  const { control, handleSubmit, formState: { errors }, watch, reset } = useForm<KnowledgeBaseFormData>({
     defaultValues: {
       name: '',
       domain: window.location.hostname,
@@ -46,8 +37,8 @@ const KBCreate = () => {
   const domain = watch('domain')
   const name = watch('name')
 
-  const onSubmit = (value: FormData) => {
-    const formData: Partial<UpdateKnowledgeBaseData> = { name: value.name }
+  const onSubmit = (value: KnowledgeBaseFormData) => {
+    const formData: Partial<UpdateKnowledgeBaseData['access_settings'] & { name: string }> = { name: value.name }
     if (value.domain) formData.hosts = [value.domain]
     if (value.http) formData.ports = [80]
     if (value.https) formData.ssl_ports = [443]
@@ -108,12 +99,16 @@ const KBCreate = () => {
       showCancel={false}
       okText='关闭'
       onCancel={() => {
-        reset()
         setSuccess(false)
+        setTimeout(() => {
+          reset()
+        }, 1000);
       }}
       onOk={() => {
-        reset()
         setSuccess(false)
+        setTimeout(() => {
+          reset()
+        }, 1000);
       }}
       closable={false}
       cancelText='关闭'

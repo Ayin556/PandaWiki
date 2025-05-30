@@ -4,7 +4,7 @@ import IconAnswer from '@/assets/images/answer.png';
 import { IconArrowUp } from '@/components/icons';
 import MarkDown from '@/components/markdown';
 import { StyledCard } from "@/components/StyledHTML";
-import { Box, Stack, TextField } from "@mui/material";
+import { Box, IconButton, Stack, TextField } from "@mui/material";
 import Image from "next/image";
 import { useState } from 'react';
 import ChatLoading from './ChatLoading';
@@ -33,7 +33,7 @@ const ChatResult = ({ conversation, answer, loading, thinking, onSearch, handleS
     }
   }
 
-  return <Box sx={{ position: 'relative', width: 'calc((100% - 24px) / 2)' }}>
+  return <Box sx={{ position: 'relative', width: 'calc((100% - 24px) * 0.6)' }}>
     <Stack direction='row' gap={1} alignItems='center' sx={{
       fontSize: '20px',
       fontWeight: '700',
@@ -135,17 +135,10 @@ const ChatResult = ({ conversation, answer, loading, thinking, onSearch, handleS
                   flexShrink: 0,
                   cursor: 'pointer',
                 }}>
-                  {loading ? <ChatLoading loading={loading} thinking={thinking} onClick={() => {
+                  {loading ? <ChatLoading thinking={thinking} onClick={() => {
                     setThinking(4)
                     handleSearchAbort()
-                  }} /> : <Box sx={(theme) => ({
-                    bgcolor: 'background.default2',
-                    borderRadius: '50%',
-                    p: 1,
-                    ':hover': {
-                      bgcolor: `rgba(${theme.palette.primary.mainChannel}, 0.1)`
-                    }
-                  })} onClick={() => {
+                  }} /> : <IconButton size='small' onClick={() => {
                     if (input.length > 0) {
                       handleSearchAbort()
                       setThinking(1)
@@ -153,7 +146,7 @@ const ChatResult = ({ conversation, answer, loading, thinking, onSearch, handleS
                     }
                   }}>
                     <IconArrowUp sx={{ fontSize: 12 }} />
-                  </Box>}
+                  </IconButton>}
                 </Box>
               }
             }}

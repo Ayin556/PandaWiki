@@ -1,5 +1,6 @@
 import { NodeDetail, updateNodeAction } from "@/api";
 import Card from "@/components/Card";
+import { useAppSelector } from "@/store";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ErrorIcon from '@mui/icons-material/Error';
 import { Box, Stack, useTheme } from "@mui/material";
@@ -14,11 +15,11 @@ interface DocDeleteProps {
 
 const DocDelete = ({ open, onClose, data, refresh }: DocDeleteProps) => {
   const theme = useTheme();
-
+  const { kb_id } = useAppSelector(state => state.config)
   if (!data) return null
 
   const submit = () => {
-    updateNodeAction({ ids: [data.id], action: 'delete' }).then(() => {
+    updateNodeAction({ id: data.id, kb_id, action: 'delete' }).then(() => {
       Message.success('删除成功')
       onClose()
       refresh?.();

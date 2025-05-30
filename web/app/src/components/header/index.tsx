@@ -1,8 +1,7 @@
 "use client"
 
-import logo from '@/assets/images/logo.png';
-import { Box, Stack, TextField } from "@mui/material";
-import Image from "next/image";
+import { useKBDetail } from '@/provider/kb-provider';
+import { Box, Button, Stack, TextField } from "@mui/material";
 import Link from "next/link";
 import { usePathname, useRouter } from 'next/navigation';
 import { KeyboardEvent, useState } from 'react';
@@ -10,6 +9,8 @@ import { StyledAppBar, StyledContainer, StyledHeaderBgi } from "../StyledHTML";
 import { IconSearch } from '../icons';
 
 const Header = ({ bgi }: { bgi?: string }) => {
+  const { kbDetail } = useKBDetail()
+  console.log(kbDetail)
   const router = useRouter();
   const pathname = usePathname();
   const [searchValue, setSearchValue] = useState('');
@@ -31,11 +32,12 @@ const Header = ({ bgi }: { bgi?: string }) => {
       zIndex: 1,
     }}>
       <Stack direction='row' alignItems='center' justifyContent='space-between'>
-        <Box sx={{ py: '20px', cursor: 'pointer' }} >
-          <Link href={'/'}>
-            <Image src={logo} alt='logo' height={24} />
-          </Link>
-        </Box>
+        <Link href={'/'}>
+          <Stack direction='row' alignItems='center' gap={1} sx={{ py: '20px', cursor: 'pointer' }} >
+            {kbDetail?.settings?.icon && <img src={kbDetail.settings.icon} alt='logo' width={24} height={24} />}
+            <Box>{kbDetail?.settings?.title}</Box>
+          </Stack>
+        </Link>
         <Stack direction='row' gap={3} alignItems="center">
           {pathname !== '/' && (
             <TextField
@@ -65,13 +67,22 @@ const Header = ({ bgi }: { bgi?: string }) => {
               }}
               InputProps={{
                 endAdornment: <IconSearch
-                  sx={{ cursor: 'pointer', color: 'text.auxiliary' }}
+                  sx={{ cursor: 'pointer', color: 'text.tertiary' }}
                 />
               }}
             />
           )}
-          {/* <Button variant='text' sx={{ minWidth: 'auto', p: 0 }}>按钮</Button>
-          <Button variant='text' sx={{ minWidth: 'auto', p: 0 }}>按钮</Button> */}
+          {kbDetail?.settings?.btns?.map((item, index) => (
+            <Link key={index} href={item.url} target={item.target}>
+              <Button
+                variant={item.variant}
+                startIcon={item.showIcon && item.icon ? <img src={item.icon} alt='logo' width={24} height={24} /> : null}
+                sx={{ textTransform: 'none' }}
+              >
+                {item.text}
+              </Button>
+            </Link>
+          ))}
         </Stack>
       </Stack>
     </StyledContainer>

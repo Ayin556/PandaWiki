@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: false,
+  allowedDevOrigins: ['10.10.18.71'],
   output: 'standalone',
   logging: {
     fetches: {
@@ -15,9 +16,9 @@ const nextConfig: NextConfig = {
         ...[
           {
             source: '/share/:path*',
-            destination: `http://${process.env.API_URL}/share/:path*`,
+            destination: `http://localhost:8000/share/:path*`,
             basePath: false as const,
-          },
+          }
         ]
       );
     }

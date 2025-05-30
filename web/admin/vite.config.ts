@@ -6,8 +6,8 @@ export default defineConfig({
   server: {
     hmr: true,
     proxy: {
-      "/api": "http://localhost:8000",
-      "/share": "http://localhost:8000",
+      "/api": "http://localhost:2443",
+      "/share": "http://localhost:2443",
       "/static-file": "http://localhost:9000",
     },
   },

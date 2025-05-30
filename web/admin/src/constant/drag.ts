@@ -9,6 +9,9 @@ export interface AppContextType {
   items: TreeItems<ITreeItem>;
   setItems: React.Dispatch<React.SetStateAction<TreeItems<ITreeItem>>>;
   refresh: () => void
+  type: 'select' | 'move'
+  selected?: string[]
+  onSelectChange?: (value: string[]) => void
 }
 
 // 使用正确的类型创建上下文
@@ -67,6 +70,7 @@ export function convertToTree(data: NodeListItem[]) {
   data.forEach(item => {
     map[item.id] = {
       id: item.id,
+      summary: item.summary,
       name: item.name,
       level: 0,
       order: item.position,

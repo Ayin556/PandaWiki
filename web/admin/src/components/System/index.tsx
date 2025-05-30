@@ -53,17 +53,17 @@ const System = () => {
           border: '1px solid',
           borderColor: 'divider',
         }}>
-          <Box sx={{ fontSize: 14, lineHeight: '24px', fontWeight: 'bold', mb: 2 }}>推理大模型</Box>
-          <Button
-            fullWidth
-            variant='outlined'
-            sx={{ height: 50, border: '1px dashed', borderColor: 'divider', mb: 2 }}
-            onClick={() => {
-              setAddOpen(true)
-            }}
-          >
-            添加推理模型
-          </Button>
+          <Stack direction={'row'} justifyContent={'space-between'}>
+            <Box sx={{ fontSize: 14, lineHeight: '24px', fontWeight: 'bold', mb: 2 }}>Chat 模型</Box>
+            <Button
+              variant='outlined'
+              onClick={() => {
+                setAddOpen(true)
+              }}
+            >
+              添加模型
+            </Button>
+          </Stack>
           {modelList.length > 0 ? <Stack
             direction={'row'}
             flexWrap={'wrap'}
@@ -76,54 +76,64 @@ const System = () => {
             <Box>暂无数据</Box>
           </Stack> : null}
         </Card>
-        {/* <Card sx={{ flex: 1, p: 2, overflow: 'hidden', overflowY: 'auto' }}>
-        <Box sx={{ fontSize: 14, lineHeight: '24px', fontWeight: 'bold', mb: 2 }}>Embeding 模型</Box>
-        <Button
-          fullWidth
-          variant='outlined'
-          sx={{ height: 50, border: '1px dashed', borderColor: 'divider', mb: 2 }}
-          onClick={() => {
-            setAddOpen(true)
-          }}
-        >
-          添加 Embeding 模型
-        </Button>
-        {modelList.length > 0 ? <Stack
-          direction={'row'}
-          flexWrap={'wrap'}
-          alignItems={'stretch'}
-          gap={2}
-        >
-          {modelList.map(it => <ModelItemCard key={it.id} it={it} refresh={getModel} />)}
-        </Stack> : !loading ? <Stack alignItems={'center'} sx={{ my: '0px', ml: 2, fontSize: 14 }}>
-          <img src={NoData} width={150} />
-          <Box>暂无数据</Box>
-        </Stack> : null}
-      </Card>
-      <Card sx={{ flex: 1, p: 2, overflow: 'hidden', overflowY: 'auto', mb: 2 }}>
-        <Box sx={{ fontSize: 14, lineHeight: '24px', fontWeight: 'bold', mb: 2 }}>Rerank 模型</Box>
-        <Button
-          fullWidth
-          variant='outlined'
-          sx={{ height: 50, border: '1px dashed', borderColor: 'divider', mb: 2 }}
-          onClick={() => {
-            setAddOpen(true)
-          }}
-        >
-          添加 Rerank 模型
-        </Button>
-        {modelList.length > 0 ? <Stack
-          direction={'row'}
-          flexWrap={'wrap'}
-          alignItems={'stretch'}
-          gap={2}
-        >
-          {modelList.map(it => <ModelItemCard key={it.id} it={it} refresh={getModel} />)}
-        </Stack> : !loading ? <Stack alignItems={'center'} sx={{ my: '0px', ml: 2, fontSize: 14 }}>
-          <img src={NoData} width={150} />
-          <Box>暂无数据</Box>
-        </Stack> : null}
-      </Card> */}
+        <Card sx={{
+          flex: 1,
+          p: 2,
+          overflow: 'hidden',
+          overflowY: 'auto',
+          border: '1px solid',
+          borderColor: 'divider',
+        }}>
+          <Stack direction={'row'} justifyContent={'space-between'}>
+            <Box sx={{ fontSize: 14, lineHeight: '24px', fontWeight: 'bold', mb: 2 }}>Embeding 模型</Box>
+            <Button
+              variant='outlined'
+              disabled
+            >
+              添加模型
+            </Button>
+          </Stack>
+          {modelList.length > 0 ? <Stack
+            direction={'row'}
+            flexWrap={'wrap'}
+            alignItems={'stretch'}
+            gap={2}
+          >
+            {modelList.map(it => <ModelItemCard key={it.id} it={it} refresh={getModel} />)}
+          </Stack> : !loading ? <Stack alignItems={'center'} sx={{ my: '0px', ml: 2, fontSize: 14 }}>
+            <img src={NoData} width={150} />
+            <Box>暂无数据</Box>
+          </Stack> : null}
+        </Card>
+        <Card sx={{
+          flex: 1,
+          p: 2,
+          overflow: 'hidden',
+          overflowY: 'auto',
+          border: '1px solid',
+          borderColor: 'divider',
+        }}>
+          <Stack direction={'row'} justifyContent={'space-between'}>
+            <Box sx={{ fontSize: 14, lineHeight: '24px', fontWeight: 'bold', mb: 2 }}>Rerank 模型</Box>
+            <Button
+              variant='outlined'
+              disabled
+            >
+              添加模型
+            </Button>
+          </Stack>
+          {modelList.length > 0 ? <Stack
+            direction={'row'}
+            flexWrap={'wrap'}
+            alignItems={'stretch'}
+            gap={2}
+          >
+            {modelList.map(it => <ModelItemCard key={it.id} it={it} refresh={getModel} />)}
+          </Stack> : !loading ? <Stack alignItems={'center'} sx={{ my: '0px', ml: 2, fontSize: 14 }}>
+            <img src={NoData} width={150} />
+            <Box>暂无数据</Box>
+          </Stack> : null}
+        </Card>
       </Stack>
     </Modal>
     <ModelAdd open={addOpen} onClose={() => setAddOpen(false)} refresh={getModel} />

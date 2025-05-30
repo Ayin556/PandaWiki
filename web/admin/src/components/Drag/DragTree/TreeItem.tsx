@@ -1,29 +1,150 @@
 import { createNode, ITreeItem, NodeDetail, updateNode } from "@/api";
 import { AppContext, updateTree } from "@/constant/drag";
+import DocAddByUrl from "@/pages/document/component/DocAddByUrl";
 import DocDelete from "@/pages/document/component/DocDelete";
 import { useAppSelector } from "@/store";
-import { Box, Button, IconButton, Stack, TextField } from "@mui/material";
-import { Icon, MenuSelect, Message } from "ct-mui";
+import { addOpacityToColor } from "@/utils";
+import { Box, Button, Checkbox, IconButton, Stack, TextField, useTheme } from "@mui/material";
+import { Ellipsis, Icon, MenuSelect, Message } from "ct-mui";
 import dayjs from "dayjs";
 import {
   SimpleTreeItemWrapper,
   TreeItemComponentProps
 } from "dnd-kit-sortable-tree";
-import React, { useContext, useState } from "react";
+import React, { useContext, useMemo, useState } from "react";
+import Summary from "./Summary";
 
 const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeItem>>((props, ref) => {
+  const theme = useTheme()
   const { kb_id: id } = useAppSelector(state => state.config)
   const { item, collapsed } = props;
   const context = useContext(AppContext);
   const [deleteOpen, setDeleteOpen] = useState(false)
+  const [summaryOpen, setSummaryOpen] = useState(false)
+
+  const [urlOpen, setUrlOpen] = useState(false)
+  const [key, setKey] = useState<'URL' | 'RSS' | 'Sitemap' | 'OfflineFile'>('URL')
 
   if (!context) {
     throw new Error("TreeItem 必须在 AppContext.Provider 内部使用");
   }
 
-  const { items, setItems, refresh } = context;
+  const { items, setItems, refresh, type, selected = [], onSelectChange } = context;
+
   const [value, setValue] = useState(item.name)
   const isEditting = item.isEditting ?? false;
+
+  const menuList = useMemo(() => [
+    ...(item.type === 1 ? [
+      {
+        label: '创建文件夹',
+        key: 'folder',
+        onClick: () => {
+          setItems(items.map(i => (i.id === item.id) ? ({
+            ...item,
+            children: [
+              ...(item.children ?? []),
+              {
+                id: new Date().getTime().toString(),
+                name: "",
+                level: 2,
+                type: 1,
+                isEditting: true,
+                parentId: item.id,
+              }
+            ]
+          }) : i))
+        }
+      },
+      {
+        label: '创建文档',
+        key: 'doc',
+        onClick: () => {
+          setItems(items.map(i => (i.id === item.id) ? ({
+            ...item,
+            children: [
+              ...(item.children ?? []),
+              {
+                id: `${items.length + 10}`,
+                name: "",
+                level: 2,
+                type: 2,
+                isEditting: true,
+                parentId: item.id,
+              }
+            ]
+          }) : i))
+        }
+      },
+      {
+        label: '导入文档',
+        key: 'third',
+        children: [
+          {
+            label: '通过 URL 导入',
+            key: 'URL',
+            onClick: () => {
+              setUrlOpen(true)
+            }
+          },
+          {
+            label: '通过 RSS 导入',
+            key: 'RSS',
+            onClick: () => {
+              setKey('RSS')
+              setUrlOpen(true)
+            }
+          },
+          {
+            label: '通过 Sitemap 导入',
+            key: 'Sitemap',
+            onClick: () => {
+              setKey('Sitemap')
+              setUrlOpen(true)
+            }
+          },
+          {
+            label: '通过离线文件导入',
+            key: 'OfflineFile',
+            onClick: () => {
+              setKey('OfflineFile')
+              setUrlOpen(true)
+            }
+          },
+        ]
+      },
+    ] : []),
+    ...(item.type === 2 ? [
+      {
+        label: item.summary ? '查看摘要' : '生成摘要',
+        key: 'summary',
+        onClick: () => setSummaryOpen(true)
+      }
+    ] : []),
+    ...(!isEditting ? [
+      {
+        label: '重命名',
+        key: 'rename',
+        onClick: () => {
+          if (!isEditting) {
+            const temp = [...items];
+            updateTree(temp, item.id, {
+              ...item,
+              isEditting: true,
+            });
+            setItems(temp);
+          }
+        }
+      }] : []),
+    {
+      label: '删除',
+      key: 'delete',
+      onClick: () => {
+        setDeleteOpen(true)
+      }
+    }
+  ], [item.type, isEditting, items])
+
 
   return <Box sx={{
     cursor: 'grab',
@@ -35,7 +156,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
       bgcolor: 'background.paper2',
       borderRadius: '10px',
     },
-    '&:has(input)': {
+    '&:has(.MuiInputBase-root)': {
       bgcolor: 'background.paper2',
       borderRadius: '10px',
     },
@@ -48,6 +169,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
     '& .dnd-sortable-tree_simple_tree-item-collapse_button': {
       position: 'absolute',
       left: -24,
+      top: type === 'select' ? 4 : 0,
       height: 28,
       width: 20,
       cursor: 'pointer',
@@ -82,7 +204,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
       <SimpleTreeItemWrapper
         {...props}
         ref={ref}
-        indentationWidth={31}
+        indentationWidth={23}
         disableCollapseOnItemClick
         showDragHandle={false}
       >
@@ -91,7 +213,10 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
           alignItems={'center'}
           justifyContent="space-between"
           gap={2}
-          flex={1} onClick={() => {
+          flex={1}
+          sx={{ pr: 2 }}
+          onClick={() => {
+            if (type === 'select') return
             if (item.type === 2) window.open(`/doc/editor/${item.id}`, '_blank')
           }}
         >
@@ -114,7 +239,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
             <Button variant="contained" size="small" onClick={(e) => {
               e.stopPropagation()
               if (item.name) {
-                updateNode({ id: item.id, name: value }).then(() => {
+                updateNode({ id: item.id, kb_id: id, name: value }).then(() => {
                   Message.success('更新成功')
                   refresh?.()
                 })
@@ -153,92 +278,117 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
                 setItems(temp);
               }
             }}>取消</Button>
-          </Stack> : <Stack direction="row" alignItems={'center'} gap={2} sx={{ fontSize: 14, cursor: 'pointer' }}>
-            {item.type === 1 ? <Icon type={collapsed ? 'icon-wenjianjia1' : 'icon-wenjianjiadakai'} />
-              : <Icon type='icon-wenjian' />}
-            <Box>{item.name}</Box>
+          </Stack> : <Stack direction="row" alignItems={'center'} gap={1} sx={{ fontSize: 14, cursor: 'pointer', ...(type === 'select' && { width: '100%', flex: 1 }) }}>
+            {item.type === 1 ? <Icon sx={{ flexShrink: 0 }} type={collapsed ? 'icon-wenjianjia' : 'icon-wenjianjia-kai'} />
+              : <Icon sx={{ flexShrink: 0 }} type='icon-wenjian' />}
+            {type === 'select' ? <Ellipsis sx={{ width: 0, flex: 1, overflow: 'hidden' }}>{item.name}</Ellipsis>
+              : <Box>{item.name}</Box>}
           </Stack>}
-          <Box sx={{ flex: 1, alignSelf: 'center', borderBottom: '1px dashed', borderColor: 'divider' }} />
-          <Stack direction="row" alignItems={'center'} gap={2}>
+          {type === 'select' && <Checkbox sx={{ flexShrink: 0 }} size="small" checked={selected.includes(item.id)} onChange={(e) => {
+            e.stopPropagation()
+            if (selected.includes(item.id)) {
+              onSelectChange?.(selected.filter(id => id !== item.id))
+            } else {
+              onSelectChange?.([...selected, item.id])
+            }
+          }} />}
+          {type === 'move' && <Box sx={{ flex: 1, alignSelf: 'center', borderBottom: '1px dashed', borderColor: 'divider' }} />}
+          {type === 'move' && <Stack direction="row" alignItems={'center'} gap={2} sx={{ flexShrink: 0 }}>
             <Box sx={{ fontSize: 12, fontFamily: 'monospace', color: 'text.auxiliary' }}>{dayjs(item.updated_at).fromNow()}</Box>
             <Box onClick={(e) => e.stopPropagation()}>
               <MenuSelect
-                list={[
-                  ...(item.type === 1 ? [
-                    {
-                      label: '创建文件夹',
-                      key: 'add-child',
-                      onClick: () => {
-                        setItems(items.map(i => (i.id === item.id) ? ({
-                          ...item,
-                          children: [
-                            ...(item.children ?? []),
-                            {
-                              id: `${items.length + 10}`,
-                              name: "",
-                              level: 2,
-                              type: 1,
-                              isEditting: true,
-                              parentId: item.id,
-                            }
-                          ]
-                        }) : i))
-                      }
-                    },
-                    {
-                      label: '创建文档',
-                      key: 'add-child',
-                      onClick: () => {
-                        setItems(items.map(i => (i.id === item.id) ? ({
-                          ...item,
-                          children: [
-                            ...(item.children ?? []),
-                            {
-                              id: `${items.length + 10}`,
-                              name: "",
-                              level: 2,
-                              type: 2,
-                              isEditting: true,
-                              parentId: item.id,
-                            }
-                          ]
-                        }) : i))
-                      }
-                    }
-                  ] : []),
-                  ...(!isEditting ? [
-                    {
-                      label: '重命名',
-                      key: 'rename',
-                      onClick: () => {
-                        if (!isEditting) {
-                          const temp = [...items];
-                          updateTree(temp, item.id, {
-                            ...item,
-                            isEditting: true,
-                          });
-                          setItems(temp);
-                        }
-                      }
-                    }] : []),
-                  {
-                    label: '删除',
-                    key: 'delete',
-                    onClick: () => {
-                      setDeleteOpen(true)
-                    }
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'right',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                childrenProps={{
+                  anchorOrigin: {
+                    vertical: 'top',
+                    horizontal: 'left',
+                  },
+                  transformOrigin: {
+                    vertical: 'top',
+                    horizontal: 'right',
                   }
-                ]}
+                }}
+                list={menuList.map(value => ({
+                  key: value.key,
+                  children: value.children?.map(it => ({
+                    key: it.key,
+                    onClick: it.onClick,
+                    label: <Box key={it.key}>
+                      <Stack
+                        direction={'row'}
+                        alignItems={'center'}
+                        gap={1}
+                        sx={{
+                          fontSize: 14, px: 2, lineHeight: '40px', height: 40, width: 180,
+                          borderRadius: '5px',
+                          cursor: 'pointer', ':hover': { bgcolor: addOpacityToColor(theme.palette.primary.main, 0.1) }
+                        }}
+                      >
+                        {it.label}
+                      </Stack>
+                    </Box>
+                  })),
+                  label: <Box key={value.key}>
+                    <Stack
+                      direction={'row'}
+                      alignItems={'center'}
+                      justifyContent={'space-between'}
+                      gap={1}
+                      sx={{
+                        fontSize: 14, pl: 2, pr: 1, lineHeight: '40px', height: 40, width: 180,
+                        borderRadius: '5px',
+                        cursor: 'pointer', ':hover': { bgcolor: addOpacityToColor(theme.palette.primary.main, 0.1) }
+                      }}
+                      onClick={value.onClick}
+                    >
+                      {value.label}
+                      {value.children && <Icon type='icon-xiala' sx={{ fontSize: 20, transform: 'rotate(-90deg)' }} />}
+                    </Stack>
+                    {value.key === 'third' && <Box
+                      sx={{
+                        width: 145,
+                        borderBottom: '1px dashed',
+                        borderColor: theme.palette.divider,
+                        my: 0.5,
+                        mx: 'auto'
+                      }} />}
+                  </Box>
+                }))}
                 context={<IconButton size="small">
                   <Icon type='icon-gengduo' />
                 </IconButton>}
               />
             </Box>
-          </Stack>
+          </Stack>}
         </Stack>
       </SimpleTreeItemWrapper>
     </Box>
-    <DocDelete open={deleteOpen} onClose={() => setDeleteOpen(false)} data={{ id: item.id, name: item.name } as NodeDetail} refresh={refresh} />
+    <DocAddByUrl
+      type={key}
+      open={urlOpen}
+      onCancel={() => setUrlOpen(false)}
+      parentId={item.id}
+      refresh={refresh}
+    />
+    <DocDelete
+      open={deleteOpen}
+      onClose={() => setDeleteOpen(false)}
+      data={{ id: item.id, name: item.name } as NodeDetail}
+      refresh={refresh} />
+    <Summary
+      data={item}
+      kb_id={id}
+      open={summaryOpen}
+      refresh={refresh}
+      onClose={() => setSummaryOpen(false)}
+    />
   </Box>
 });
 
