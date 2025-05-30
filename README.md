@@ -35,49 +35,60 @@ PandaWiki 是一款 AI 大模型驱动的**开源知识库搭建系统**，帮�
 
 ## 🚀 上手指南
 
-### 环境需求
+### 安装 PandaWiki
 
-安装 `PandaWiki` 前请确保你的系统环境符合以下要求
+你需要一台支持 Docker 20.x 以上版本的 Linux 系统来安装 PandaWiki。
 
-- 操作系统：Linux
-- CPU 指令架构：x86_64
-- 软件依赖：Docker 20.10.14 版本以上
-- 软件依赖：Docker Compose 2.0.0 版本以上
-- 推荐资源：1 核 CPU / 2 GB 内存 / 10 GB 磁盘
-- 最低资源：1 核 CPU / 1 GB 内存 / 5 GB 磁盘
-
-### 📦 一键安装
-
-使用 root 权限执行以下命令进行安装
+使用 root 权限登录你的服务器，然后执行以下命令。
 
 ```bash
 bash -c "$(curl -fsSLk https://release.baizhi.cloud/panda-wiki/manager.sh)"
 ```
 
-### ⚙️ 初始化
+根据命令提示的选项进行安装，命令执行过程将会持续几分钟，请耐心等待。
 
-#### 访问 PandaWiki 控制台
+> 关于安装与部署的更多细节请参考 [安装 PandaWiki](https://pandawiki.docs.baizhi.cloud/node/01971602-bb4e-7c90-99df-6d3c38cfd6d5)。
 
-安装完成后，控制台默认监听在 2443 端口，使用浏览器访问 https://127.0.0.1:2443 就能看到登录页面。
+### 登录 PandaWiki
 
-默认账号密码会在安装时随机生成，请查看安装命令的输出内容。
+在上一步中，安装命令执行结束后，你的终端会输出以下内容。
 
-#### ⚙️ 配置 AI 大模型
+```
+   SUCCESS  控制台信息:
+   SUCCESS    访问地址(内网): http://*.*.*.*:2443
+   SUCCESS    访问地址(外网): http://*.*.*.*:2443
+   SUCCESS    用户名: admin
+   SUCCESS    密码: **********************
+```
 
-在  PandaWiki 控制台的右上角点击 **系统配置** 按钮，在弹出窗口中配置供 PandaWiki 使用的大模型。
+使用浏览器打开上述内容中的 “访问地址”，你将看到 PandaWiki 的控制台登录入口。
 
-> PandaWiki 目前支持接入以下大模型
-> 
-> - **DeepSeek**：参考文档 [DeepSeek](https://platform.deepseek.com/)
-> - **OpenAI**：ChatGPT 所使用的大模型，参考文档 [OpenAI](https://platform.openai.com/)
->- **Ollama**：Ollama 通常是本地部署的大模型，参考文档 [Ollama](https://github.com/ollama/ollama/tree/main/docs)
->- **硅基流动**：参考文档 [SiliconFlow](https://docs.siliconflow.cn/)
->- **月之暗面**：Kimi 所使用的模型，参考文档 [Moonshot](https://platform.moonshot.cn/)
-> - **其他**：其他兼容 OpenAI 模型接口的 API
+使用上述内容中的 “用户名” 和 “密码” 登录即可。
+
+### 创建知识库
+
+首次登录 PandaWiki 之后，你需要先创建一个 “知识库”。
+
+“知识库” 是一组文档的集合，PandaWiki 将会根据知识库中的文档，为不同的知识库分别创建 “Wiki 网站”。
+
+> 关于知识库的更多配置细节请参考 [知识库设置](https://pandawiki.docs.baizhi.cloud/node/01971b5e-5bea-76d2-9f89-a95f98347bb0)。
+
+### 配置 AI 模型
+
+> PandaWiki 是由 AI 大模型驱动的 Wiki 系统，在未配置大模型的情况下 AI 创作、AI 问答、AI 搜索 等功能无法正常使用。
+
+点击 PandaWiki 控制台右上角的 “系统配置” 按钮，根据下方图片分别配置 “Chat 模型”、“Embeding 模型”、“Rerank 模型”。
+
+> 推荐使用 [百智云模型广场](https://baizhi.cloud/) 快速接入 AI 模型，注册即可获赠 5 元的模型使用额度。
+
+> 关于大模型的更多配置细节请参考 [接入 AI 模型](https://pandawiki.docs.baizhi.cloud/node/01971616-811c-70e1-82d9-706a202b8498)。
 
 #### 💪 开始使用
 
-完成以上配置后你就可以开始 PandaWiki 了，开始创建文档，并使用 AI 问答功能吧。
+如果你顺利完成了以上步骤，那么恭喜你，属于你的 PandaWiki 搭建成功，你可以：
+
+- 访问 **控制台** 来管理你的知识库内容
+- 访问 **Wiki 网站** 让你的用户使用知识库
 
 ## 社区交流
 
