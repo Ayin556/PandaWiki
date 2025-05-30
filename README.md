@@ -6,6 +6,7 @@
 <p align="center">
   <a target="_blank" href="https://ly.safepoint.cloud/QuAr5qh">🏠 官网</a> &nbsp; | &nbsp;
   <a target="_blank" href="https://ly.safepoint.cloud/Br48PoX">📖 帮助文档</a> &nbsp; | &nbsp;
+  <a target="_blank" href="https://ly.safepoint.cloud/8nIEE51">🔍 演示 Demo</a> &nbsp; | &nbsp;
   <a target="_blank" href="/images/wechat.png">🙋‍♂️ 微信交流群</a>
 </p>
 
