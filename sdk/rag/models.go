@@ -1,5 +1,7 @@
 package rag
 
+import "encoding/json"
+
 type CommonResponse struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
@@ -321,4 +323,58 @@ type RelatedQuestionsResponse struct {
 	Code    int      `json:"code"`
 	Data    []string `json:"data"`
 	Message string   `json:"message"`
+}
+
+// ModelConfig 模型配置
+type ModelConfig struct {
+	ID          string          `json:"id"`
+	Provider    string          `json:"provider"` //openai-compatible-api
+	Name        string          `json:"name"`
+	TaskType    string          `json:"task_type"` // embedding, rerank, chat
+	ApiBase     string          `json:"api_base"`
+	ApiKey      string          `json:"api_key"`
+	MaxTokens   int             `json:"max_tokens"`
+	IsDefault   bool            `json:"is_default"`
+	Enabled     bool            `json:"enabled"`
+	Config      json.RawMessage `json:"config,omitempty"`
+	Description string          `json:"description,omitempty"`
+	Version     string          `json:"version,omitempty"`
+	Timeout     int             `json:"timeout,omitempty"`
+	CreateTime  int64           `json:"create_time,omitempty"`
+	UpdateTime  int64           `json:"update_time,omitempty"`
+	Owner       string          `json:"owner,omitempty"`
+	QuotaLimit  int             `json:"quota_limit,omitempty"`
+}
+
+type AddModelConfigRequest struct {
+	Provider    string          `json:"provider"` //openai-compatible-api
+	Name        string          `json:"name"`
+	TaskType    string          `json:"task_type"` // embedding, rerank, chat
+	ApiBase     string          `json:"api_base"`
+	ApiKey      string          `json:"api_key"`
+	MaxTokens   int             `json:"max_tokens"`
+	IsDefault   bool            `json:"is_default"` // 是否默认
+	Enabled     bool            `json:"enabled"`    // 是否启用
+	Config      json.RawMessage `json:"config,omitempty"`
+	Description string          `json:"description,omitempty"`
+	Version     string          `json:"version,omitempty"`
+	Timeout     int             `json:"timeout,omitempty"`
+	CreateTime  int64           `json:"create_time,omitempty"`
+	UpdateTime  int64           `json:"update_time,omitempty"`
+	Owner       string          `json:"owner,omitempty"`
+	QuotaLimit  int             `json:"quota_limit,omitempty"`
+}
+
+type AddModelConfigResponse struct {
+	Code int         `json:"code"`
+	Data ModelConfig `json:"data"`
+}
+
+type ListModelConfigsResponse struct {
+	Code int           `json:"code"`
+	Data []ModelConfig `json:"data"`
+}
+
+type DeleteModelConfigsRequest struct {
+	ModelIDs []string `json:"ids"`
 }
