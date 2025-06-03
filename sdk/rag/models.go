@@ -375,6 +375,12 @@ type ListModelConfigsResponse struct {
 	Data []ModelConfig `json:"data"`
 }
 
+type ModelItem struct {
+	Name    string `json:"name"`
+	ApiBase string `json:"api_base"`
+}
+
 type DeleteModelConfigsRequest struct {
-	ModelIDs []string `json:"ids"`
+	ModelIDs []string    `json:"ids,omitempty"`
+	Models   []ModelItem `json:"models,omitempty"`
 }
