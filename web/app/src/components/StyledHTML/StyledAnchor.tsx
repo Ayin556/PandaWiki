@@ -8,7 +8,6 @@ const StyledAnchor = styled(Stack)(({ theme }) => ({
   right: `calc((100vw - ${theme.breakpoints.values.lg}px) / 2 - 8px)`,
   position: 'fixed',
   width: 250,
-  minHeight: '500px',
 }));
 
 export default StyledAnchor;

@@ -7,7 +7,13 @@ import { TiptapReader, UseTiptapEditorReturn } from 'ct-tiptap-editor';
 const DocContent = ({ info, editorRef }: { info: NodeDetail, editorRef: UseTiptapEditorReturn }) => {
   if (!editorRef) return null
 
-  return <Stack sx={{ width: 'calc(100% - 500px)', wordBreak: 'break-all', color: 'text.primary', px: 3 }}>
+  return <Stack sx={{
+    width: 'calc(100% - 500px)',
+    wordBreak: 'break-all',
+    color: 'text.primary',
+    ml: '250px',
+    px: 3,
+  }}>
     <Box sx={{
       fontSize: 32,
       lineHeight: '40px',
