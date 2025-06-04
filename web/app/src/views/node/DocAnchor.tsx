@@ -71,6 +71,7 @@ const DocAnchor = ({ title, headings, maxH }: DocAnchorProps) => {
       height: 'calc(100vh - 174px)',
       overflowY: 'auto',
       overflowX: 'hidden',
+      lineHeight: '32px',
       '&::-webkit-scrollbar': {
         display: 'none',
       },
