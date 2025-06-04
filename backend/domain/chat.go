@@ -1,85 +1,15 @@
 package domain
 
-import (
-	"time"
+type ChatRequest struct {
+	ConversationID string  `json:"conversation_id"`
+	Message        string  `json:"message" validate:"required"`
+	Nonce          string  `json:"nonce"`
+	AppType        AppType `json:"app_type" validate:"required,oneof=1 2"`
 
-	"github.com/cloudwego/eino/schema"
-)
+	KBID  string `json:"-" validate:"required"`
+	AppID string `json:"-"`
 
-type Conversation struct {
-	ID    string `json:"id"`
-	Nonce string `json:"nonce"`
+	ModelInfo *Model `json:"-"`
 
-	KBID  string `json:"kb_id" gorm:"index"`
-	AppID string `json:"app_id" gorm:"index"`
-
-	Subject string `json:"subject"` // subject for conversation, now is first question
-
-	RemoteIP string `json:"remote_ip"`
-
-	CreatedAt time.Time `json:"created_at"`
-}
-
-type ConversationMessage struct {
-	ID             string `json:"id" gorm:"primaryKey"`
-	ConversationID string `json:"conversation_id" gorm:"index"`
-	AppID          string `json:"app_id" gorm:"index"`
-
-	Role    schema.RoleType `json:"role"`
-	Content string          `json:"content"`
-
-	// model
-	Provider         ModelProvider `json:"provider"`
-	Model            string        `json:"model"`
-	PromptTokens     int           `json:"prompt_tokens" gorm:"default:0"`
-	CompletionTokens int           `json:"completion_tokens" gorm:"default:0"`
-	TotalTokens      int           `json:"total_tokens" gorm:"default:0"`
-
-	// stats
-	RemoteIP string `json:"remote_ip"`
-
-	CreatedAt time.Time `json:"created_at"`
-}
-
-type ConversationReference struct {
-	ConversationID string `json:"conversation_id" gorm:"index"`
-	AppID          string `json:"app_id"`
-
-	DocID   string `json:"doc_id"`
-	Title   string `json:"title"`
-	URL     string `json:"url"`
-	Favicon string `json:"favicon"`
-}
-
-type ConversationListReq struct {
-	KBID  string  `json:"kb_id" query:"kb_id" validate:"required"`
-	AppID *string `json:"app_id" query:"app_id"`
-
-	Subject *string `json:"subject" query:"subject"`
-
-	RemoteIP *string `json:"remote_ip" query:"remote_ip"`
-
-	Pager
-}
-
-type ConversationListItem struct {
-	ID      string `json:"id"`
-	AppName string `json:"app_name"`
-	Subject string `json:"subject"`
-
-	RemoteIP string `json:"remote_ip"`
-
-	CreatedAt time.Time `json:"created_at"`
-}
-
-type ConversationDetailResp struct {
-	ID       string `json:"id"`
-	AppID    string `json:"app_id"`
-	Subject  string `json:"subject"`
-	RemoteIP string `json:"remote_ip"`
-
-	Messages   []*ConversationMessage   `json:"messages" gorm:"-"`
-	References []*ConversationReference `json:"references" gorm:"-"`
-
-	CreatedAt time.Time `json:"created_at"`
+	RemoteIP string `json:"-"`
 }

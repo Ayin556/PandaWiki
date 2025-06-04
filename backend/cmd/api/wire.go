@@ -7,6 +7,7 @@ import (
 	"github.com/google/wire"
 
 	"github.com/chaitin/panda-wiki/config"
+	share "github.com/chaitin/panda-wiki/handler/share"
 	v1 "github.com/chaitin/panda-wiki/handler/v1"
 	"github.com/chaitin/panda-wiki/log"
 	"github.com/chaitin/panda-wiki/server/http"
@@ -21,14 +22,16 @@ func createApp() (*App, error) {
 
 			http.ProviderSet,
 			v1.ProviderSet,
+			share.ProviderSet,
 		),
 	)
 	return &App{}, nil
 }
 
 type App struct {
-	HTTPServer *http.HTTPServer
-	Handlers   *v1.APIHandlers
-	Config     *config.Config
-	Logger     *log.Logger
+	HTTPServer    *http.HTTPServer
+	Handlers      *v1.APIHandlers
+	ShareHandlers *share.ShareHandler
+	Config        *config.Config
+	Logger        *log.Logger
 }

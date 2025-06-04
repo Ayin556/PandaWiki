@@ -12,12 +12,12 @@ import (
 type APIHandlers struct {
 	UserHandler          *UserHandler
 	KnowledgeBaseHandler *KnowledgeBaseHandler
-	DocHandler           *DocHandler
+	NodeHandler          *NodeHandler
 	AppHandler           *AppHandler
 	FileHandler          *FileHandler
 	ModelHandler         *ModelHandler
-	ChatHandler          *ChatHandler
 	ConversationHandler  *ConversationHandler
+	CrawlerHandler       *CrawlerHandler
 }
 
 var ProviderSet = wire.NewSet(
@@ -26,14 +26,14 @@ var ProviderSet = wire.NewSet(
 	s3.ProviderSet,
 
 	handler.NewBaseHandler,
-	NewDocHandler,
+	NewNodeHandler,
 	NewAppHandler,
 	NewConversationHandler,
 	NewUserHandler,
 	NewFileHandler,
 	NewModelHandler,
 	NewKnowledgeBaseHandler,
-	NewChatHandler,
+	NewCrawlerHandler,
 
 	wire.Struct(new(APIHandlers), "*"),
 )

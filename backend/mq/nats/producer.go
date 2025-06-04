@@ -47,10 +47,10 @@ func (p *MQProducer) EnsureStreams() error {
 			Storage:    nats.FileStorage,
 			Retention:  nats.LimitsPolicy,
 			Discard:    nats.DiscardOld,
-			MaxAge:     7 * 24 * time.Hour,     // 7天过期
-			MaxBytes:   1 * 1024 * 1024 * 1024, // 1GB
-			MaxMsgs:    1000000,                // 100万条消息
-			MaxMsgSize: 50 * 1024 * 1024,       // 50MB
+			MaxAge:     7 * 24 * time.Hour,
+			MaxBytes:   1 * 1024 * 1024 * 1024,
+			MaxMsgs:    1000000,
+			MaxMsgSize: 50 * 1024 * 1024,
 			Replicas:   1,
 			Duplicates: 120 * time.Second,
 		})
@@ -71,20 +71,17 @@ func NewMQProducer(config *config.Config, logger *log.Logger) (*MQProducer, erro
 		nats.Name("panda-wiki"),
 	}
 
-	// 如果配置了用户名和密码，添加认证
 	if user := config.MQ.NATS.User; user != "" {
 		opts = append(opts, nats.UserInfo(user, config.MQ.NATS.Password))
 	}
 
 	server := config.MQ.NATS.Server
 
-	// 连接到 NATS 服务器
 	conn, err := nats.Connect(server, opts...)
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to NATS: %w", err)
 	}
 
-	// 获取 JetStream 上下文
 	js, err := conn.JetStream()
 	if err != nil {
 		conn.Close()

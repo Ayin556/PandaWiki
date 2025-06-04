@@ -121,54 +121,17 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "app id",
-                        "name": "id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/domain.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/domain.App"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/app/list": {
-            "get": {
-                "description": "Get app list",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "app"
-                ],
-                "summary": "Get app list",
-                "parameters": [
-                    {
-                        "type": "string",
                         "description": "kb id",
                         "name": "kb_id",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "app type",
+                        "name": "type",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -183,48 +146,11 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/domain.AppListItem"
-                                            }
+                                            "$ref": "#/definitions/domain.AppDetailResp"
                                         }
                                     }
                                 }
                             ]
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/chat/kb": {
-            "post": {
-                "description": "ChatToKB",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "chat"
-                ],
-                "summary": "ChatToKB",
-                "parameters": [
-                    {
-                        "description": "ChatToKBReq Request",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/domain.ChatToKBReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/domain.Response"
                         }
                     }
                 }
@@ -353,9 +279,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/doc": {
+        "/api/v1/crawler/parse_rss": {
             "post": {
-                "description": "Create Doc",
+                "description": "Parse RSS",
                 "consumes": [
                     "application/json"
                 ],
@@ -363,281 +289,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "doc"
+                    "crawler"
                 ],
-                "summary": "Create Doc",
-                "parameters": [
-                    {
-                        "description": "Doc",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/domain.CreateDocReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/domain.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object",
-                                            "additionalProperties": {
-                                                "type": "string"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/doc/action": {
-            "post": {
-                "description": "Doc Action",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "doc"
-                ],
-                "summary": "Doc Action",
-                "parameters": [
-                    {
-                        "description": "Action",
-                        "name": "action",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/domain.DocActionReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/domain.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object",
-                                            "additionalProperties": {
-                                                "type": "string"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/doc/chunk/list": {
-            "get": {
-                "description": "Get Chunk List",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "doc"
-                ],
-                "summary": "Get Chunk List",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Doc ID",
-                        "name": "doc_id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/domain.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/domain.ChunkListItemResp"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/doc/detail": {
-            "get": {
-                "description": "Get Doc Detail",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "doc"
-                ],
-                "summary": "Get Doc Detail",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Doc ID",
-                        "name": "doc_id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/domain.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/domain.DocDetailResp"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            },
-            "put": {
-                "description": "Update Doc Detail",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "doc"
-                ],
-                "summary": "Update Doc Detail",
-                "parameters": [
-                    {
-                        "description": "Doc",
-                        "name": "doc",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/domain.UpdateDocReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/domain.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/doc/list": {
-            "get": {
-                "description": "Get Doc List",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "doc"
-                ],
-                "summary": "Get Doc List",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "name": "kb_id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "name": "search",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/domain.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/domain.DocListItemResp"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/doc/parse_url": {
-            "post": {
-                "description": "Parse URL",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "doc"
-                ],
-                "summary": "Parse URL",
+                "summary": "Parse RSS",
                 "parameters": [
                     {
                         "description": "Parse URL",
@@ -662,6 +316,98 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "$ref": "#/definitions/domain.ParseURLResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/crawler/parse_sitemap": {
+            "post": {
+                "description": "Parse Sitemap",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "crawler"
+                ],
+                "summary": "Parse Sitemap",
+                "parameters": [
+                    {
+                        "description": "Parse URL",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.ParseURLReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/domain.ParseURLResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/crawler/scrape": {
+            "post": {
+                "description": "Scrape",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "crawler"
+                ],
+                "summary": "Scrape",
+                "parameters": [
+                    {
+                        "description": "Scrape",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.ScrapeReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/domain.ScrapeResp"
                                         }
                                     }
                                 }
@@ -947,66 +693,6 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
-            "delete": {
-                "description": "delete model",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "model"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "model id",
-                        "name": "id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/domain.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/model/activate": {
-            "post": {
-                "description": "activate model",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "model"
-                ],
-                "summary": "activate model",
-                "parameters": [
-                    {
-                        "description": "activate model request",
-                        "name": "model",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/domain.ActivateModelReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/domain.Response"
-                        }
-                    }
-                }
             }
         },
         "/api/v1/model/check": {
@@ -1171,10 +857,27 @@ const docTemplate = `{
                             "Ollama",
                             "DeepSeek",
                             "Moonshot",
-                            "AzureOpenAI"
+                            "AzureOpenAI",
+                            "BaiZhiCloud"
                         ],
                         "type": "string",
                         "name": "provider",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "chat",
+                            "embedding",
+                            "rerank"
+                        ],
+                        "type": "string",
+                        "x-enum-varnames": [
+                            "ModelTypeChat",
+                            "ModelTypeEmbedding",
+                            "ModelTypeRerank"
+                        ],
+                        "name": "type",
                         "in": "query",
                         "required": true
                     }
@@ -1196,6 +899,355 @@ const docTemplate = `{
                                     }
                                 }
                             ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/node": {
+            "post": {
+                "description": "Create Node",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "node"
+                ],
+                "summary": "Create Node",
+                "parameters": [
+                    {
+                        "description": "Node",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.CreateNodeReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/node/action": {
+            "post": {
+                "description": "Node Action",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "node"
+                ],
+                "summary": "Node Action",
+                "parameters": [
+                    {
+                        "description": "Action",
+                        "name": "action",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.NodeActionReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/node/detail": {
+            "get": {
+                "description": "Get Node Detail",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "node"
+                ],
+                "summary": "Get Node Detail",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/domain.NodeDetailResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update Node Detail",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "node"
+                ],
+                "summary": "Update Node Detail",
+                "parameters": [
+                    {
+                        "description": "Node",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.UpdateNodeReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/node/list": {
+            "get": {
+                "description": "Get Node List",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "node"
+                ],
+                "summary": "Get Node List",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "kb_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/domain.NodeListItemResp"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/node/move": {
+            "post": {
+                "description": "Move Node",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "node"
+                ],
+                "summary": "Move Node",
+                "parameters": [
+                    {
+                        "description": "Move Node",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.MoveNodeReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/node/recommend_nodes": {
+            "get": {
+                "description": "Recommend Nodes",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "node"
+                ],
+                "summary": "Recommend Nodes",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "kb_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "name": "node_ids",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/domain.RecommendNodeListResp"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/node/summary": {
+            "post": {
+                "description": "Summary Node",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "node"
+                ],
+                "summary": "Summary Node",
+                "parameters": [
+                    {
+                        "description": "Summary Node",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.NodeSummaryReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Response"
                         }
                     }
                 }
@@ -1242,6 +1294,40 @@ const docTemplate = `{
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/domain.CreateUserReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/user/delete": {
+            "delete": {
+                "description": "DeleteUser",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "DeleteUser",
+                "parameters": [
+                    {
+                        "description": "DeleteUser Request",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.DeleteUserReq"
                         }
                     }
                 ],
@@ -1361,9 +1447,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/share/v1/app/link": {
+        "/share/v1/app/web/info": {
             "get": {
-                "description": "Get app by link",
+                "description": "GetAppInfo",
                 "consumes": [
                     "application/json"
                 ],
@@ -1371,15 +1457,15 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "app"
+                    "share_app"
                 ],
-                "summary": "Get app by link",
+                "summary": "GetAppInfo",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "link",
-                        "name": "link",
-                        "in": "query",
+                        "description": "kb id",
+                        "name": "X-KB-ID",
+                        "in": "header",
                         "required": true
                     }
                 ],
@@ -1387,19 +1473,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/domain.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/domain.App"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/domain.Response"
                         }
                     }
                 }
@@ -1415,14 +1489,14 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "chat"
+                    "share_chat"
                 ],
                 "summary": "ChatMessage",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "app id",
-                        "name": "app_id",
+                        "description": "app type",
+                        "name": "app_type",
                         "in": "query",
                         "required": true
                     },
@@ -1445,66 +1519,129 @@ const docTemplate = `{
                     }
                 }
             }
-        }
-    },
-    "definitions": {
-        "domain.ActivateModelReq": {
-            "type": "object",
-            "required": [
-                "model_id"
-            ],
-            "properties": {
-                "model_id": {
-                    "type": "string"
+        },
+        "/share/v1/node/detail": {
+            "get": {
+                "description": "GetNodeDetail",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "share_node"
+                ],
+                "summary": "GetNodeDetail",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "kb id",
+                        "name": "X-KB-ID",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "node id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Response"
+                        }
+                    }
                 }
             }
         },
-        "domain.App": {
+        "/share/v1/node/list": {
+            "get": {
+                "description": "GetNodeList",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "share_node"
+                ],
+                "summary": "GetNodeList",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "kb id",
+                        "name": "X-KB-ID",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Response"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "domain.AccessSettings": {
             "type": "object",
             "properties": {
-                "created_at": {
+                "hosts": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "ports": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "private_key": {
                     "type": "string"
                 },
+                "public_key": {
+                    "type": "string"
+                },
+                "ssl_ports": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "domain.AppDetailResp": {
+            "type": "object",
+            "properties": {
                 "id": {
                     "type": "string"
                 },
                 "kb_id": {
                     "type": "string"
                 },
-                "link": {
-                    "type": "string"
-                },
                 "name": {
                     "type": "string"
                 },
-                "settings": {
-                    "$ref": "#/definitions/domain.AppSettings"
-                },
-                "type": {
-                    "$ref": "#/definitions/domain.AppType"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.AppListItem": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "link": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
+                "recommend_nodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.RecommendNodeListResp"
+                    }
                 },
                 "settings": {
-                    "$ref": "#/definitions/domain.AppSettings"
-                },
-                "stats": {
-                    "$ref": "#/definitions/domain.ConversationStatForApp"
+                    "$ref": "#/definitions/domain.AppSettingsResp"
                 },
                 "type": {
                     "$ref": "#/definitions/domain.AppType"
@@ -1514,42 +1651,31 @@ const docTemplate = `{
         "domain.AppSettings": {
             "type": "object",
             "properties": {
+                "auto_sitemap": {
+                    "type": "boolean"
+                },
+                "body_code": {
+                    "type": "string"
+                },
+                "btns": {
+                    "type": "array",
+                    "items": {}
+                },
                 "desc": {
+                    "description": "seo",
                     "type": "string"
                 },
-                "dingbot_aes_key": {
-                    "type": "string"
-                },
-                "dingbot_client_id": {
-                    "description": "dingbot",
-                    "type": "string"
-                },
-                "dingbot_token": {
-                    "type": "string"
-                },
-                "dingbot_welcome_str": {
-                    "type": "string"
-                },
-                "feishubot_app_id": {
-                    "description": "feishu",
-                    "type": "string"
-                },
-                "feishubot_app_secret": {
-                    "type": "string"
-                },
-                "feishubot_encrypt_key": {
-                    "type": "string"
-                },
-                "feishubot_verification_token": {
-                    "type": "string"
-                },
-                "feishubot_welcome_str": {
+                "head_code": {
+                    "description": "inject code",
                     "type": "string"
                 },
                 "icon": {
                     "type": "string"
                 },
-                "recommend_doc_ids": {
+                "keyword": {
+                    "type": "string"
+                },
+                "recommend_node_ids": {
                     "type": "array",
                     "items": {
                         "type": "string"
@@ -1564,29 +1690,64 @@ const docTemplate = `{
                 "search_placeholder": {
                     "type": "string"
                 },
-                "wecombot_agent_id": {
-                    "description": "Wecom",
-                    "type": "integer"
-                },
-                "wecombot_corp_id": {
-                    "type": "string"
-                },
-                "wecombot_corp_secret": {
-                    "type": "string"
-                },
-                "wecombot_suite_encoding_aes_key": {
-                    "type": "string"
-                },
-                "wecombot_suite_id": {
-                    "type": "string"
-                },
-                "wecombot_suite_token": {
-                    "type": "string"
-                },
-                "wecombot_welcome_str": {
+                "title": {
+                    "description": "nav",
                     "type": "string"
                 },
                 "welcome_str": {
+                    "description": "welcome",
+                    "type": "string"
+                }
+            }
+        },
+        "domain.AppSettingsResp": {
+            "type": "object",
+            "properties": {
+                "auto_sitemap": {
+                    "type": "boolean"
+                },
+                "body_code": {
+                    "type": "string"
+                },
+                "btns": {
+                    "type": "array",
+                    "items": {}
+                },
+                "desc": {
+                    "description": "seo",
+                    "type": "string"
+                },
+                "head_code": {
+                    "description": "inject code",
+                    "type": "string"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "keyword": {
+                    "type": "string"
+                },
+                "recommend_node_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "recommend_questions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "search_placeholder": {
+                    "type": "string"
+                },
+                "title": {
+                    "description": "nav",
+                    "type": "string"
+                },
+                "welcome_str": {
+                    "description": "welcome",
                     "type": "string"
                 }
             }
@@ -1595,25 +1756,31 @@ const docTemplate = `{
             "type": "integer",
             "enum": [
                 1,
-                2,
-                3,
-                4,
-                5
+                2
             ],
             "x-enum-varnames": [
                 "AppTypeWeb",
-                "AppTypeWidget",
-                "AppTypeDingbot",
-                "AppTypeFeishu",
-                "AppTypeWecom"
+                "AppTypeWidget"
             ]
         },
         "domain.ChatRequest": {
             "type": "object",
             "required": [
+                "app_type",
                 "message"
             ],
             "properties": {
+                "app_type": {
+                    "enum": [
+                        1,
+                        2
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.AppType"
+                        }
+                    ]
+                },
                 "conversation_id": {
                     "type": "string"
                 },
@@ -1625,45 +1792,13 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.ChatToKBMessage": {
-            "type": "object",
-            "required": [
-                "content",
-                "role"
-            ],
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "role": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.ChatToKBReq": {
-            "type": "object",
-            "required": [
-                "kb_id",
-                "messages"
-            ],
-            "properties": {
-                "kb_id": {
-                    "type": "string"
-                },
-                "messages": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/domain.ChatToKBMessage"
-                    }
-                }
-            }
-        },
         "domain.CheckModelReq": {
             "type": "object",
             "required": [
                 "base_url",
                 "model",
-                "provider"
+                "provider",
+                "type"
             ],
             "properties": {
                 "api_header": {
@@ -1690,11 +1825,24 @@ const docTemplate = `{
                         "SiliconFlow",
                         "Moonshot",
                         "Other",
-                        "AzureOpenAI"
+                        "AzureOpenAI",
+                        "BaiZhiCloud"
                     ],
                     "allOf": [
                         {
                             "$ref": "#/definitions/domain.ModelProvider"
+                        }
+                    ]
+                },
+                "type": {
+                    "enum": [
+                        "chat",
+                        "embedding",
+                        "rerank"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.ModelType"
                         }
                     ]
                 }
@@ -1711,37 +1859,6 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.ChunkListItemResp": {
-            "type": "object",
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "seq": {
-                    "type": "integer"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.ConversationCount": {
-            "type": "object",
-            "properties": {
-                "app_id": {
-                    "type": "string"
-                },
-                "count": {
-                    "type": "integer"
-                },
-                "date": {
-                    "type": "string"
-                }
-            }
-        },
         "domain.ConversationDetailResp": {
             "type": "object",
             "properties": {
@@ -1753,6 +1870,9 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "string"
+                },
+                "ip_address": {
+                    "$ref": "#/definitions/domain.IPAddress"
                 },
                 "messages": {
                     "type": "array",
@@ -1785,6 +1905,9 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "string"
+                },
+                "ip_address": {
+                    "$ref": "#/definitions/domain.IPAddress"
                 },
                 "remote_ip": {
                     "type": "string"
@@ -1850,37 +1973,14 @@ const docTemplate = `{
                 "conversation_id": {
                     "type": "string"
                 },
-                "doc_id": {
+                "name": {
                     "type": "string"
                 },
-                "favicon": {
-                    "type": "string"
-                },
-                "title": {
+                "node_id": {
                     "type": "string"
                 },
                 "url": {
                     "type": "string"
-                }
-            }
-        },
-        "domain.ConversationStatForApp": {
-            "type": "object",
-            "properties": {
-                "app_id": {
-                    "type": "string"
-                },
-                "day_counts": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/domain.ConversationCount"
-                    }
-                },
-                "last_24h_count": {
-                    "type": "integer"
-                },
-                "last_24h_ip_count": {
-                    "type": "integer"
                 }
             }
         },
@@ -1903,10 +2003,7 @@ const docTemplate = `{
                 "type": {
                     "enum": [
                         1,
-                        2,
-                        3,
-                        4,
-                        5
+                        2
                     ],
                     "allOf": [
                         {
@@ -1916,56 +2013,38 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.CreateDocReq": {
-            "type": "object",
-            "required": [
-                "kb_id",
-                "source"
-            ],
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "file_key": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "kb_id": {
-                    "type": "string"
-                },
-                "source": {
-                    "enum": [
-                        1,
-                        2,
-                        3
-                    ],
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/domain.DocSource"
-                        }
-                    ]
-                },
-                "title": {
-                    "type": "string"
-                },
-                "url": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
         "domain.CreateKnowledgeBaseReq": {
             "type": "object",
             "required": [
                 "name"
             ],
             "properties": {
+                "hosts": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "name": {
                     "type": "string"
+                },
+                "ports": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "private_key": {
+                    "type": "string"
+                },
+                "public_key": {
+                    "type": "string"
+                },
+                "ssl_ports": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 }
             }
         },
@@ -1974,7 +2053,8 @@ const docTemplate = `{
             "required": [
                 "base_url",
                 "model",
-                "provider"
+                "provider",
+                "type"
             ],
             "properties": {
                 "api_header": {
@@ -2001,11 +2081,57 @@ const docTemplate = `{
                         "SiliconFlow",
                         "Moonshot",
                         "Other",
-                        "AzureOpenAI"
+                        "AzureOpenAI",
+                        "BaiZhiCloud"
                     ],
                     "allOf": [
                         {
                             "$ref": "#/definitions/domain.ModelProvider"
+                        }
+                    ]
+                },
+                "type": {
+                    "enum": [
+                        "chat",
+                        "embedding",
+                        "rerank"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.ModelType"
+                        }
+                    ]
+                }
+            }
+        },
+        "domain.CreateNodeReq": {
+            "type": "object",
+            "required": [
+                "kb_id",
+                "name",
+                "type"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "kb_id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "parent_id": {
+                    "type": "string"
+                },
+                "type": {
+                    "enum": [
+                        1,
+                        2
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.NodeType"
                         }
                     ]
                 }
@@ -2027,154 +2153,16 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.DocActionReq": {
+        "domain.DeleteUserReq": {
             "type": "object",
             "required": [
-                "action",
-                "doc_ids"
+                "user_id"
             ],
             "properties": {
-                "action": {
-                    "type": "string",
-                    "enum": [
-                        "delete"
-                    ]
-                },
-                "doc_ids": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "domain.DocDetailResp": {
-            "type": "object",
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "error": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "meta": {
-                    "$ref": "#/definitions/domain.DocMeta"
-                },
-                "resource_type": {
-                    "$ref": "#/definitions/domain.ResourceType"
-                },
-                "source": {
-                    "$ref": "#/definitions/domain.DocSource"
-                },
-                "status": {
-                    "$ref": "#/definitions/domain.DocStatus"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "url": {
+                "user_id": {
                     "type": "string"
                 }
             }
-        },
-        "domain.DocListItemResp": {
-            "type": "object",
-            "properties": {
-                "chunk_count": {
-                    "type": "integer"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "error": {
-                    "type": "string"
-                },
-                "favicon": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "resource_type": {
-                    "$ref": "#/definitions/domain.ResourceType"
-                },
-                "source": {
-                    "$ref": "#/definitions/domain.DocSource"
-                },
-                "status": {
-                    "$ref": "#/definitions/domain.DocStatus"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "url": {
-                    "type": "string"
-                },
-                "word_count": {
-                    "type": "integer"
-                }
-            }
-        },
-        "domain.DocMeta": {
-            "type": "object",
-            "properties": {
-                "charset": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "doc_type": {
-                    "$ref": "#/definitions/domain.ResourceType"
-                },
-                "favicon": {
-                    "type": "string"
-                },
-                "keywords": {
-                    "type": "string"
-                },
-                "screenshot": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.DocSource": {
-            "type": "integer",
-            "enum": [
-                1,
-                2,
-                3
-            ],
-            "x-enum-varnames": [
-                "DocSourceURL",
-                "DocSourceFile",
-                "DocSourceManual"
-            ]
-        },
-        "domain.DocStatus": {
-            "type": "integer",
-            "enum": [
-                1,
-                2,
-                3
-            ],
-            "x-enum-varnames": [
-                "DocStatusPending",
-                "DocStatusPublished",
-                "DocStatusFailed"
-            ]
         },
         "domain.GetProviderModelListResp": {
             "type": "object",
@@ -2187,30 +2175,42 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.KBStats": {
+        "domain.IPAddress": {
             "type": "object",
             "properties": {
-                "chunk_count": {
-                    "type": "integer"
-                },
-                "doc_count": {
-                    "type": "integer"
-                },
-                "kb_id": {
+                "city": {
                     "type": "string"
                 },
-                "word_count": {
-                    "type": "integer"
+                "country": {
+                    "type": "string"
+                },
+                "ip": {
+                    "type": "string"
+                },
+                "province": {
+                    "type": "string"
                 }
             }
         },
         "domain.KnowledgeBaseDetail": {
             "type": "object",
             "properties": {
+                "access_settings": {
+                    "$ref": "#/definitions/domain.AccessSettings"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "dataset_id": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "string"
                 },
                 "name": {
+                    "type": "string"
+                },
+                "updated_at": {
                     "type": "string"
                 }
             }
@@ -2218,7 +2218,13 @@ const docTemplate = `{
         "domain.KnowledgeBaseListItem": {
             "type": "object",
             "properties": {
+                "access_settings": {
+                    "$ref": "#/definitions/domain.AccessSettings"
+                },
                 "created_at": {
+                    "type": "string"
+                },
+                "dataset_id": {
                     "type": "string"
                 },
                 "id": {
@@ -2226,9 +2232,6 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
-                },
-                "stats": {
-                    "$ref": "#/definitions/domain.KBStats"
                 },
                 "updated_at": {
                     "type": "string"
@@ -2283,9 +2286,6 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
-                "is_active": {
-                    "type": "boolean"
-                },
                 "model": {
                     "type": "string"
                 },
@@ -2297,6 +2297,9 @@ const docTemplate = `{
                 },
                 "total_tokens": {
                     "type": "integer"
+                },
+                "type": {
+                    "$ref": "#/definitions/domain.ModelType"
                 },
                 "updated_at": {
                     "type": "string"
@@ -2325,9 +2328,6 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
-                "is_active": {
-                    "type": "boolean"
-                },
                 "model": {
                     "type": "string"
                 },
@@ -2339,6 +2339,9 @@ const docTemplate = `{
                 },
                 "total_tokens": {
                     "type": "integer"
+                },
+                "type": {
+                    "$ref": "#/definitions/domain.ModelType"
                 }
             }
         },
@@ -2351,6 +2354,7 @@ const docTemplate = `{
                 "Moonshot",
                 "SiliconFlow",
                 "AzureOpenAI",
+                "BaiZhiCloud",
                 "Other"
             ],
             "x-enum-varnames": [
@@ -2360,7 +2364,152 @@ const docTemplate = `{
                 "ModelProviderBrandMoonshot",
                 "ModelProviderBrandSiliconFlow",
                 "ModelProviderBrandAzureOpenAI",
+                "ModelProviderBrandBaiZhiCloud",
                 "ModelProviderBrandOther"
+            ]
+        },
+        "domain.ModelType": {
+            "type": "string",
+            "enum": [
+                "chat",
+                "embedding",
+                "rerank"
+            ],
+            "x-enum-varnames": [
+                "ModelTypeChat",
+                "ModelTypeEmbedding",
+                "ModelTypeRerank"
+            ]
+        },
+        "domain.MoveNodeReq": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "next_id": {
+                    "type": "string"
+                },
+                "parent_id": {
+                    "type": "string"
+                },
+                "prev_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.NodeActionReq": {
+            "type": "object",
+            "required": [
+                "action",
+                "id",
+                "kb_id"
+            ],
+            "properties": {
+                "action": {
+                    "type": "string",
+                    "enum": [
+                        "delete"
+                    ]
+                },
+                "id": {
+                    "type": "string"
+                },
+                "kb_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.NodeDetailResp": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "kb_id": {
+                    "type": "string"
+                },
+                "meta": {
+                    "$ref": "#/definitions/domain.NodeMeta"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.NodeListItemResp": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "parent_id": {
+                    "type": "string"
+                },
+                "position": {
+                    "type": "number"
+                },
+                "summary": {
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/domain.NodeType"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.NodeMeta": {
+            "type": "object",
+            "properties": {
+                "summary": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.NodeSummaryReq": {
+            "type": "object",
+            "required": [
+                "id",
+                "kb_id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "kb_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.NodeType": {
+            "type": "integer",
+            "enum": [
+                1,
+                2
+            ],
+            "x-enum-varnames": [
+                "NodeTypeFolder",
+                "NodeTypeDocument"
             ]
         },
         "domain.ObjectUploadResp": {
@@ -2391,17 +2540,9 @@ const docTemplate = `{
         "domain.ParseURLReq": {
             "type": "object",
             "required": [
-                "type",
                 "url"
             ],
             "properties": {
-                "type": {
-                    "type": "string",
-                    "enum": [
-                        "RSS",
-                        "Sitemap"
-                    ]
-                },
                 "url": {
                     "type": "string"
                 }
@@ -2426,6 +2567,35 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.RecommendNodeListResp": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "parent_id": {
+                    "type": "string"
+                },
+                "position": {
+                    "type": "number"
+                },
+                "recommend_nodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.RecommendNodeListResp"
+                    }
+                },
+                "summary": {
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/domain.NodeType"
+                }
+            }
+        },
         "domain.ResetPasswordReq": {
             "type": "object",
             "required": [
@@ -2442,25 +2612,6 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.ResourceType": {
-            "type": "string",
-            "enum": [
-                "WebPage",
-                "PlainText",
-                "Excel",
-                "Word",
-                "PDF",
-                "Unknown"
-            ],
-            "x-enum-varnames": [
-                "ResourceTypeWebPage",
-                "ResourceTypePlainText",
-                "ResourceTypeExcel",
-                "ResourceTypeWord",
-                "ResourceTypePDF",
-                "ResourceTypeUnknown"
-            ]
-        },
         "domain.Response": {
             "type": "object",
             "properties": {
@@ -2470,6 +2621,25 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "domain.ScrapeReq": {
+            "type": "object",
+            "properties": {
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.ScrapeResp": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
                 }
             }
         },
@@ -2484,30 +2654,15 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.UpdateDocReq": {
-            "type": "object",
-            "required": [
-                "doc_id"
-            ],
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "doc_id": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
         "domain.UpdateKnowledgeBaseReq": {
             "type": "object",
             "required": [
-                "id",
-                "name"
+                "id"
             ],
             "properties": {
+                "access_settings": {
+                    "$ref": "#/definitions/domain.AccessSettings"
+                },
                 "id": {
                     "type": "string"
                 },
@@ -2521,7 +2676,9 @@ const docTemplate = `{
             "required": [
                 "base_url",
                 "id",
-                "model"
+                "model",
+                "provider",
+                "type"
             ],
             "properties": {
                 "api_header": {
@@ -2541,6 +2698,59 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "model": {
+                    "type": "string"
+                },
+                "provider": {
+                    "enum": [
+                        "OpenAI",
+                        "Ollama",
+                        "DeepSeek",
+                        "SiliconFlow",
+                        "Moonshot",
+                        "Other",
+                        "AzureOpenAI",
+                        "BaiZhiCloud"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.ModelProvider"
+                        }
+                    ]
+                },
+                "type": {
+                    "enum": [
+                        "chat",
+                        "embedding",
+                        "rerank"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.ModelType"
+                        }
+                    ]
+                }
+            }
+        },
+        "domain.UpdateNodeReq": {
+            "type": "object",
+            "required": [
+                "id",
+                "kb_id"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "kb_id": {
+                    "type": "string"
+                },
+                "meta": {
+                    "$ref": "#/definitions/domain.NodeMeta"
+                },
+                "name": {
                     "type": "string"
                 }
             }

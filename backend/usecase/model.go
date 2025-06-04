@@ -13,7 +13,9 @@ import (
 	"github.com/chaitin/panda-wiki/config"
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/log"
+	"github.com/chaitin/panda-wiki/repo/mq"
 	"github.com/chaitin/panda-wiki/repo/pg"
+	"github.com/chaitin/panda-wiki/store/rag"
 	"github.com/chaitin/panda-wiki/utils"
 )
 
@@ -21,22 +23,64 @@ type ModelUsecase struct {
 	modelRepo *pg.ModelRepository
 	logger    *log.Logger
 	config    *config.Config
+	nodeRepo  *pg.NodeRepository
+	ragRepo   *mq.RAGRepository
+	ragStore  rag.RAGService
 }
 
-func NewModelUsecase(modelRepo *pg.ModelRepository, logger *log.Logger, config *config.Config) *ModelUsecase {
+func NewModelUsecase(modelRepo *pg.ModelRepository, nodeRepo *pg.NodeRepository, ragRepo *mq.RAGRepository, ragStore rag.RAGService, logger *log.Logger, config *config.Config) *ModelUsecase {
 	return &ModelUsecase{
 		modelRepo: modelRepo,
 		logger:    logger.WithModule("usecase.model"),
 		config:    config,
+		nodeRepo:  nodeRepo,
+		ragRepo:   ragRepo,
+		ragStore:  ragStore,
 	}
 }
 
 func (u *ModelUsecase) Create(ctx context.Context, model *domain.Model) error {
-	return u.modelRepo.Create(ctx, model)
+	if model.Type == domain.ModelTypeEmbedding || model.Type == domain.ModelTypeRerank {
+		if id, err := u.ragStore.AddModel(ctx, model); err != nil {
+			return err
+		} else {
+			model.ID = id
+		}
+	}
+	if err := u.modelRepo.Create(ctx, model); err != nil {
+		return err
+	}
+	if model.Type == domain.ModelTypeEmbedding {
+		return u.TriggerUpsertRecords(ctx)
+	}
+	return nil
 }
 
 func (u *ModelUsecase) GetList(ctx context.Context) ([]*domain.ModelListItem, error) {
 	return u.modelRepo.GetList(ctx)
+}
+
+// trigger upsert records after embedding model is updated or created
+func (u *ModelUsecase) TriggerUpsertRecords(ctx context.Context) error {
+	// traverse all nodes
+	err := u.nodeRepo.TraverseNodesByCursor(ctx, func(node *domain.Node) error {
+		// async upsert vector content via mq
+		nodeContentVectorRequests := []*domain.NodeContentVectorRequest{
+			{
+				KBID:   node.KBID,
+				ID:     node.ID,
+				Action: "upsert",
+			},
+		}
+		if err := u.ragRepo.UpdateRecords(ctx, nodeContentVectorRequests); err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (u *ModelUsecase) Get(ctx context.Context, id string) (*domain.ModelDetailResp, error) {
@@ -44,27 +88,36 @@ func (u *ModelUsecase) Get(ctx context.Context, id string) (*domain.ModelDetailR
 }
 
 func (u *ModelUsecase) Update(ctx context.Context, req *domain.UpdateModelReq) error {
-	return u.modelRepo.Update(ctx, req)
+	if err := u.modelRepo.Update(ctx, req); err != nil {
+		return err
+	}
+	if req.Type == domain.ModelTypeEmbedding || req.Type == domain.ModelTypeRerank {
+		if err := u.ragStore.UpdateModel(ctx, &domain.Model{
+			ID:      req.ID,
+			Model:   req.Model,
+			Type:    req.Type,
+			BaseURL: req.BaseURL,
+			APIKey:  req.APIKey,
+		}); err != nil {
+			return err
+		}
+	}
+	if req.Type == domain.ModelTypeEmbedding {
+		return u.TriggerUpsertRecords(ctx)
+	}
+	return nil
 }
 
-func (u *ModelUsecase) Delete(ctx context.Context, id string) error {
-	return u.modelRepo.Delete(ctx, id)
-}
-
-func (u *ModelUsecase) GetInUseModel(ctx context.Context) (*domain.Model, error) {
-	return u.modelRepo.GetInUseModel(ctx)
+func (u *ModelUsecase) GetChatModel(ctx context.Context) (*domain.Model, error) {
+	return u.modelRepo.GetChatModel(ctx)
 }
 
 func (u *ModelUsecase) UpdateUsage(ctx context.Context, modelID string, usage *schema.TokenUsage) error {
 	return u.modelRepo.UpdateUsage(ctx, modelID, usage)
 }
 
-func (u *ModelUsecase) Activate(ctx context.Context, req *domain.ActivateModelReq) error {
-	return u.modelRepo.Activate(ctx, req.ModelID)
-}
-
 func (u *ModelUsecase) GetUserModelList(ctx context.Context, req *domain.GetProviderModelListReq) (*domain.GetProviderModelListResp, error) {
-	switch domain.ModelProvider(req.Provider) {
+	switch provider := domain.ModelProvider(req.Provider); provider {
 	case domain.ModelProviderBrandMoonshot, domain.ModelProviderBrandDeepSeek, domain.ModelProviderBrandAzureOpenAI:
 		return &domain.GetProviderModelListResp{
 			Models: domain.ModelProviderBrandModelsList[domain.ModelProvider(req.Provider)],
@@ -141,7 +194,28 @@ func (u *ModelUsecase) GetUserModelList(ctx context.Context, req *domain.GetProv
 			return nil, err
 		}
 		return &models, nil
-	case domain.ModelProviderBrandSiliconFlow:
+	case domain.ModelProviderBrandSiliconFlow, domain.ModelProviderBrandBaiZhiCloud:
+		if req.Type == domain.ModelTypeEmbedding || req.Type == domain.ModelTypeRerank {
+			if provider == domain.ModelProviderBrandBaiZhiCloud {
+				if req.Type == domain.ModelTypeEmbedding {
+					return &domain.GetProviderModelListResp{
+						Models: []domain.ProviderModelListItem{
+							{
+								Model: "bge-m3",
+							},
+						},
+					}, nil
+				} else {
+					return &domain.GetProviderModelListResp{
+						Models: []domain.ProviderModelListItem{
+							{
+								Model: "bge-reranker-v2-m3",
+							},
+						},
+					}, nil
+				}
+			}
+		}
 		u, err := url.Parse(req.BaseURL)
 		if err != nil {
 			return nil, err

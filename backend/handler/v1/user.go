@@ -35,6 +35,7 @@ func NewUserHandler(e *echo.Echo, baseHandler *handler.BaseHandler, logger *log.
 	group.GET("", h.GetUserInfo, h.auth.Authorize)
 	group.GET("/list", h.ListUsers, h.auth.Authorize)
 	group.PUT("/reset_password", h.ResetPassword, h.auth.Authorize)
+	group.DELETE("/delete", h.DeleteUser, h.auth.Authorize)
 
 	return h
 }
@@ -158,9 +159,64 @@ func (h *UserHandler) ResetPassword(c echo.Context) error {
 		return h.NewResponseWithError(c, "invalid request", err)
 	}
 
-	err := h.usecase.ResetPassword(c.Request().Context(), &req)
+	userID, ok := h.auth.MustGetUserID(c)
+	if !ok {
+		return h.NewResponseWithError(c, "failed to get user", nil)
+	}
+
+	user, err := h.usecase.GetUser(c.Request().Context(), userID)
+	if err != nil {
+		return h.NewResponseWithError(c, "failed to get user", err)
+	}
+	if user.Account == "admin" && userID == req.ID {
+		return h.NewResponseWithError(c, "请修改安装目录下 .env 文件中的 ADMIN_PASSWORD，并重启 panda-wiki-api 容器使更改生效。", nil)
+	}
+	if user.Account != "admin" && userID != req.ID {
+		return h.NewResponseWithError(c, "只有管理员可以重置其他用户密码", nil)
+	}
+	err = h.usecase.ResetPassword(c.Request().Context(), &req)
 	if err != nil {
 		return h.NewResponseWithError(c, "failed to reset password", err)
+	}
+
+	return h.NewResponseWithData(c, nil)
+}
+
+// DeleteUser
+//
+//	@Summary		DeleteUser
+//	@Description	DeleteUser
+//	@Tags			user
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body		domain.DeleteUserReq	true	"DeleteUser Request"
+//	@Success		200		{object}	domain.Response
+//	@Router			/api/v1/user/delete [delete]
+func (h *UserHandler) DeleteUser(c echo.Context) error {
+	var req domain.DeleteUserReq
+	if err := c.Bind(&req); err != nil {
+		return h.NewResponseWithError(c, "invalid request", err)
+	}
+
+	userID, ok := h.auth.MustGetUserID(c)
+	if !ok {
+		return h.NewResponseWithError(c, "failed to get user", nil)
+	}
+	if userID == req.UserID {
+		return h.NewResponseWithError(c, "cannot delete yourself", nil)
+	}
+
+	user, err := h.usecase.GetUser(c.Request().Context(), userID)
+	if err != nil {
+		return h.NewResponseWithError(c, "failed to get user", err)
+	}
+	if user.Account != "admin" {
+		return h.NewResponseWithError(c, "只有管理员可以删除用户", nil)
+	}
+
+	err = h.usecase.DeleteUser(c.Request().Context(), req.UserID)
+	if err != nil {
+		return h.NewResponseWithError(c, "failed to delete user", err)
 	}
 
 	return h.NewResponseWithData(c, nil)

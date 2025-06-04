@@ -44,8 +44,11 @@ type ResetPasswordReq struct {
 	NewPassword string `json:"new_password" validate:"required,min=8"`
 }
 
-// UserAccessTime 用户访问时间
 type UserAccessTime struct {
 	UserID    string    `json:"user_id"`
 	Timestamp time.Time `json:"timestamp"`
+}
+
+type DeleteUserReq struct {
+	UserID string `json:"user_id" validate:"required"`
 }

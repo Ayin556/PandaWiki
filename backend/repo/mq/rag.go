@@ -8,15 +8,15 @@ import (
 	"github.com/chaitin/panda-wiki/mq"
 )
 
-type VectorRepository struct {
+type RAGRepository struct {
 	producer mq.MQProducer
 }
 
-func NewVectorRepository(producer mq.MQProducer) *VectorRepository {
-	return &VectorRepository{producer: producer}
+func NewRAGRepository(producer mq.MQProducer) *RAGRepository {
+	return &RAGRepository{producer: producer}
 }
 
-func (r *VectorRepository) UpdateRecords(ctx context.Context, request []*domain.DocVectorContentRequest) error {
+func (r *RAGRepository) UpdateRecords(ctx context.Context, request []*domain.NodeContentVectorRequest) error {
 	for _, req := range request {
 		requestBytes, err := json.Marshal(req)
 		if err != nil {

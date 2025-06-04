@@ -64,10 +64,13 @@ func (r *ModelRepository) Update(ctx context.Context, req *domain.UpdateModelReq
 		Model(&domain.Model{}).
 		Where("id = ?", req.ID).
 		Updates(map[string]any{
-			"model":      req.Model,
-			"api_key":    req.APIKey,
-			"api_header": req.APIHeader,
-			"base_url":   req.BaseURL,
+			"model":       req.Model,
+			"api_key":     req.APIKey,
+			"api_header":  req.APIHeader,
+			"base_url":    req.BaseURL,
+			"api_version": req.APIVersion,
+			"provider":    req.Provider,
+			"type":        req.Type,
 		}).Error
 }
 
@@ -82,11 +85,11 @@ func (r *ModelRepository) Delete(ctx context.Context, id string) error {
 	})
 }
 
-func (r *ModelRepository) GetInUseModel(ctx context.Context) (*domain.Model, error) {
+func (r *ModelRepository) GetChatModel(ctx context.Context) (*domain.Model, error) {
 	var model domain.Model
 	if err := r.db.WithContext(ctx).
 		Model(&domain.Model{}).
-		Where("is_active = ?", true).
+		Where("type = ?", domain.ModelTypeChat).
 		First(&model).Error; err != nil {
 		return nil, err
 	}
@@ -103,24 +106,6 @@ func (r *ModelRepository) UpdateUsage(ctx context.Context, modelID string, usage
 				"completion_tokens": gorm.Expr("completion_tokens + ?", usage.CompletionTokens),
 				"total_tokens":      gorm.Expr("total_tokens + ?", usage.TotalTokens),
 			}).Error; err != nil {
-			return err
-		}
-		return nil
-	})
-}
-
-func (r *ModelRepository) Activate(ctx context.Context, modelID string) error {
-	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		// update model is_active to true
-		if err := tx.Model(&domain.Model{}).
-			Where("id = ?", modelID).
-			Update("is_active", true).Error; err != nil {
-			return err
-		}
-		// update all other models is_active to false
-		if err := tx.Model(&domain.Model{}).
-			Where("id != ?", modelID).
-			Update("is_active", false).Error; err != nil {
 			return err
 		}
 		return nil

@@ -11,7 +11,5 @@ var ProviderSet = wire.NewSet(
 	mq.ProviderSet,
 
 	cache.ProviderSet,
-	NewCrawlRepository,
-	NewSummaryRepository,
-	NewVectorRepository,
+	NewRAGRepository,
 )
