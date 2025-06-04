@@ -17,7 +17,7 @@ func (c *Client) AddModelConfig(ctx context.Context, req AddModelConfigRequest) 
 	return &resp.Data, nil
 }
 
-func (c *Client) GetModelConfigList(ctx context.Context, modelID string) ([]ModelConfig, error) {
+func (c *Client) GetModelConfigList(ctx context.Context) ([]ModelConfig, error) {
 	httpReq, err := c.newRequest(ctx, "GET", "models", nil)
 	if err != nil {
 		return nil, err
