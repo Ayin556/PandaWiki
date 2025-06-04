@@ -1,7 +1,6 @@
 import { addOpacityToColor, copyText } from '@/utils';
 import { Box, IconButton, useTheme } from '@mui/material';
 import { Icon } from 'ct-mui';
-import Image from 'next/image';
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import SyntaxHighlighter from 'react-syntax-highlighter';
@@ -110,9 +109,9 @@ const MarkDown = ({ loading = false, content }: MarkDownProps) => {
         img: (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
           const { style, alt, src, width, height, ...rest } = props;
           return (
-            <Image
+            <img
               alt={alt || 'markdown-img'}
-              src={(src || '') as string}
+              src={src || ''}
               {...rest}
               style={{
                 width: width || 'auto',

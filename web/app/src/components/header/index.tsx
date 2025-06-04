@@ -2,7 +2,6 @@
 
 import { useKBDetail } from '@/provider/kb-provider';
 import { Box, Button, Stack, TextField } from "@mui/material";
-import Image from 'next/image';
 import Link from "next/link";
 import { usePathname, useRouter } from 'next/navigation';
 import { KeyboardEvent, useState } from 'react';
@@ -34,7 +33,7 @@ const Header = ({ bgi }: { bgi?: string }) => {
       <Stack direction='row' alignItems='center' justifyContent='space-between' sx={{ height: '68px' }}>
         <Link href={'/'}>
           <Stack direction='row' alignItems='center' gap={1.5} sx={{ py: '20px', cursor: 'pointer' }} >
-            {kbDetail?.settings?.icon && <Image src={kbDetail?.settings?.icon} alt='logo' width={32} height={32} />}
+            {kbDetail?.settings?.icon && <img src={kbDetail?.settings?.icon} alt='logo' width={32} height={32} />}
             <Box sx={{ fontSize: 18 }}>{kbDetail?.settings?.title}</Box>
           </Stack>
         </Link>
@@ -76,7 +75,7 @@ const Header = ({ bgi }: { bgi?: string }) => {
             <Link key={index} href={item.url} target={item.target}>
               <Button
                 variant={item.variant}
-                startIcon={item.showIcon && item.icon ? <Image src={item.icon} alt='logo' width={24} height={24} /> : null}
+                startIcon={item.showIcon && item.icon ? <img src={item.icon} alt='logo' width={24} height={24} /> : null}
                 sx={{ textTransform: 'none' }}
               >
                 {item.text}
