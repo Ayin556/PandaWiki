@@ -95,3 +95,19 @@ export function getOrigin(req: any) {
   const host = req?.headers['x-forwarded-host'] || req?.headers.host;
   return `${protocol}://${host}`;
 }
+
+export const extractHeadings = (html: string) => {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+  const headings = doc.querySelectorAll('h1, h2, h3, h4, h5, h6');
+
+  return Array.from(headings).map(heading => {
+    const level = parseInt(heading.tagName[1]);
+    const id = heading.id || Math.random().toString(36).substring(2, 15)
+    return {
+      title: heading.textContent || '',
+      heading: level as 1 | 2 | 3 | 4 | 5 | 6,
+      id
+    };
+  });
+}

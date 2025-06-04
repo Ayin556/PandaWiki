@@ -2,8 +2,8 @@ import { createNode, NodeDetail } from "@/api"
 import DocAddByCustomText from "@/pages/document/component/DocAddByCustomText"
 import DocDelete from "@/pages/document/component/DocDelete"
 import { useAppSelector } from "@/store"
-import { getShortcutKeyText } from "@/utils"
-import { Box, Button, IconButton, Stack, Tooltip } from "@mui/material"
+import { addOpacityToColor, getShortcutKeyText } from "@/utils"
+import { Box, Button, IconButton, Stack, Tooltip, useTheme } from "@mui/material"
 import { Ellipsis, Icon, MenuSelect, Message } from "ct-mui"
 import dayjs from "dayjs"
 import { useState } from "react"
@@ -17,6 +17,7 @@ interface EditorHeaderProps {
 
 const EditorHeader = ({ editorRef, detail, onSave, refresh }: EditorHeaderProps) => {
   const { editor } = editorRef
+  const theme = useTheme()
   const { kb_id } = useAppSelector(state => state.config)
 
   const [renameOpen, setRenameOpen] = useState(false)
@@ -66,7 +67,18 @@ const EditorHeader = ({ editorRef, detail, onSave, refresh }: EditorHeaderProps)
         <MenuSelect list={[
           {
             key: 'copy',
-            label: '复制',
+            label: <Stack
+              direction={'row'}
+              alignItems={'center'}
+              gap={1}
+              sx={{
+                fontSize: 14, px: 2, lineHeight: '40px', height: 40, width: 80,
+                borderRadius: '5px',
+                cursor: 'pointer', ':hover': { bgcolor: addOpacityToColor(theme.palette.primary.main, 0.1) }
+              }}
+            >
+              复制
+            </Stack>,
             onClick: () => {
               if (kb_id) {
                 createNode({ name: detail.name + ' [副本]', content: detail.content, kb_id: kb_id, type: 2 }).then((res) => {
@@ -78,14 +90,40 @@ const EditorHeader = ({ editorRef, detail, onSave, refresh }: EditorHeaderProps)
           },
           {
             key: 'rename',
-            label: '重命名',
+            label: <Stack
+              direction={'row'}
+              alignItems={'center'}
+              gap={1}
+              sx={{
+                fontSize: 14, px: 2, lineHeight: '40px', height: 40, width: 80,
+                borderRadius: '5px',
+                cursor: 'pointer', ':hover': { bgcolor: addOpacityToColor(theme.palette.primary.main, 0.1) }
+              }}
+            >
+              重命名
+            </Stack>,
             onClick: () => {
               setRenameOpen(true)
             }
           },
           {
             key: 'delete',
-            label: '删除',
+            label: <Stack
+              direction={'row'}
+              alignItems={'center'}
+              gap={1}
+              sx={{
+                fontSize: 14,
+                px: 2,
+                lineHeight: '40px',
+                height: 40,
+                width: 80,
+                borderRadius: '5px',
+                cursor: 'pointer', ':hover': { bgcolor: addOpacityToColor(theme.palette.primary.main, 0.1) }
+              }}
+            >
+              删除
+            </Stack>,
             onClick: () => {
               setDelOpen(true)
             }
@@ -104,12 +142,34 @@ const EditorHeader = ({ editorRef, detail, onSave, refresh }: EditorHeaderProps)
           // },
           {
             key: 'html',
-            label: '导出 HTML',
+            label: <Stack
+              direction={'row'}
+              alignItems={'center'}
+              gap={1}
+              sx={{
+                fontSize: 14, px: 2, lineHeight: '40px', height: 40, width: 140,
+                borderRadius: '5px',
+                cursor: 'pointer', ':hover': { bgcolor: addOpacityToColor(theme.palette.primary.main, 0.1) }
+              }}
+            >
+              导出 HTML
+            </Stack>,
             onClick: () => handleExport('html')
           },
           {
             key: 'md',
-            label: '导出 Markdown',
+            label: <Stack
+              direction={'row'}
+              alignItems={'center'}
+              gap={1}
+              sx={{
+                fontSize: 14, px: 2, lineHeight: '40px', height: 40, width: 140,
+                borderRadius: '5px',
+                cursor: 'pointer', ':hover': { bgcolor: addOpacityToColor(theme.palette.primary.main, 0.1) }
+              }}
+            >
+              导出 Markdown
+            </Stack>,
             onClick: () => handleExport('md')
           }
         ]} context={<Button size="small" variant="outlined"

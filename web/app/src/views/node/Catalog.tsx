@@ -21,7 +21,8 @@ const Catalog = ({ nodes, activeId, onChange }: { nodes: NodeListItem[], activeI
         <Stack direction="row" alignItems="center" gap={1}>
           {item.type === 1 ? <IconFolder sx={{ flexShrink: 0 }} /> : <IconFile sx={{ flexShrink: 0 }} />}
           {item.type === 2 ? <Box sx={{ flex: 1, width: 0 }}>
-            <Ellipsis onClick={() => {
+            <Ellipsis onClick={(event) => {
+              event.stopPropagation()
               onChange(item.id)
               window.history.pushState(null, '', `/node/${item.id}`)
             }}>
@@ -46,11 +47,11 @@ const Catalog = ({ nodes, activeId, onChange }: { nodes: NodeListItem[], activeI
 
   return <Box sx={{
     width: 250,
-    top: 98,
     pr: 3,
     fontSize: 14,
+    borderRight: '1px solid',
+    borderColor: 'divider',
     lineHeight: '22px',
-    position: 'fixed',
     color: 'text.primary',
   }}>
     <Box sx={{
@@ -58,16 +59,7 @@ const Catalog = ({ nodes, activeId, onChange }: { nodes: NodeListItem[], activeI
       fontWeight: 'bold',
       mb: 2,
     }}>目录</Box>
-    <Box sx={{
-      maxHeight: 'calc(100vh - 200px)',
-      overflowY: 'auto',
-      overflowX: 'hidden',
-      '&::-webkit-scrollbar': {
-        display: 'none'
-      },
-      msOverflowStyle: 'none',
-      scrollbarWidth: 'none',
-    }}>
+    <Box>
       {tree.map((item) => renderNode(item))}
     </Box>
   </Box>

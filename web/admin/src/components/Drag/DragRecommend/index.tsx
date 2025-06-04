@@ -43,7 +43,9 @@ const DragRecommend: FC<DragRecommendProps> = ({ data, columns = 2, refresh, onC
     setActiveId(null);
   }, []);
   const handleRemove = useCallback((id: string) => {
+    console.log('handleRemove', id)
     const newData = data.filter(item => item.id !== id);
+    console.log('newData', newData)
     onChange(newData);
   }, [data, onChange]);
 

@@ -2,6 +2,7 @@
 
 import { useKBDetail } from '@/provider/kb-provider';
 import { Box, Button, Stack, TextField } from "@mui/material";
+import Image from 'next/image';
 import Link from "next/link";
 import { usePathname, useRouter } from 'next/navigation';
 import { KeyboardEvent, useState } from 'react';
@@ -10,7 +11,6 @@ import { IconSearch } from '../icons';
 
 const Header = ({ bgi }: { bgi?: string }) => {
   const { kbDetail } = useKBDetail()
-  console.log(kbDetail)
   const router = useRouter();
   const pathname = usePathname();
   const [searchValue, setSearchValue] = useState('');
@@ -25,17 +25,17 @@ const Header = ({ bgi }: { bgi?: string }) => {
   };
 
   return <StyledAppBar position='fixed'>
-    <Box sx={{ height: '68px', overflow: 'hidden', position: 'absolute', top: 0, left: 0, right: 0 }}>
-      <StyledHeaderBgi bgi={bgi} sx={{ backgroundSize: 'cover', height: '68px' }} />
+    <Box sx={{ height: '68px', overflow: 'hidden', position: 'fixed', top: 0, left: 0, right: 0 }}>
+      <StyledHeaderBgi bgi={bgi} sx={{ position: 'absolute', top: 0, left: 0, right: 0, backgroundSize: 'cover', height: '573px' }} />
     </Box>
     <StyledContainer sx={{
       zIndex: 1,
     }}>
-      <Stack direction='row' alignItems='center' justifyContent='space-between'>
+      <Stack direction='row' alignItems='center' justifyContent='space-between' sx={{ height: '68px' }}>
         <Link href={'/'}>
-          <Stack direction='row' alignItems='center' gap={1} sx={{ py: '20px', cursor: 'pointer' }} >
-            {kbDetail?.settings?.icon && <img src={kbDetail.settings.icon} alt='logo' width={24} height={24} />}
-            <Box>{kbDetail?.settings?.title}</Box>
+          <Stack direction='row' alignItems='center' gap={1.5} sx={{ py: '20px', cursor: 'pointer' }} >
+            {kbDetail?.settings?.icon && <Image src={kbDetail?.settings?.icon} alt='logo' width={32} height={32} />}
+            <Box sx={{ fontSize: 18 }}>{kbDetail?.settings?.title}</Box>
           </Stack>
         </Link>
         <Stack direction='row' gap={3} alignItems="center">
@@ -76,7 +76,7 @@ const Header = ({ bgi }: { bgi?: string }) => {
             <Link key={index} href={item.url} target={item.target}>
               <Button
                 variant={item.variant}
-                startIcon={item.showIcon && item.icon ? <img src={item.icon} alt='logo' width={24} height={24} /> : null}
+                startIcon={item.showIcon && item.icon ? <Image src={item.icon} alt='logo' width={24} height={24} /> : null}
                 sx={{ textTransform: 'none' }}
               >
                 {item.text}

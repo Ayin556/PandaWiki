@@ -8,10 +8,9 @@ const StyledHeaderBgi = styled('div')(({ bgi = headerBgi.src }: { bgi?: string }
   top: 0,
   left: 0,
   right: 0,
-  width: '100vw',
   height: '573px',
   backgroundImage: `url(${bgi})`,
-  backgroundSize: 'contain',
+  backgroundSize: 'cover',
   backgroundPosition: 'top center',
   backgroundRepeat: 'no-repeat',
 }));

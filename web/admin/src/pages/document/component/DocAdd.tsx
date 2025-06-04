@@ -34,6 +34,7 @@ const DocAdd = ({ refresh }: InputContentProps) => {
     URL: {
       label: '通过 URL 导入',
       onClick: () => {
+        setKey('URL')
         setUrlOpen(true)
       }
     },

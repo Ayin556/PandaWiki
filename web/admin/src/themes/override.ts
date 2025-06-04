@@ -110,9 +110,12 @@ const componentStyleOverrides = (theme: ThemeColor) => {
     MuiTooltip: {
       styleOverrides: {
         tooltip: {
-          padding: '4px 12px',
+          borderRadius: '10px',
+          maxWidth: '600px',
+          padding: '8px 16px',
           backgroundColor: theme.text.primary,
           fontSize: "12px",
+          lineHeight: '20px',
           color: theme.primary.contrastText,
         },
         arrow: {
@@ -421,6 +424,10 @@ const componentStyleOverrides = (theme: ThemeColor) => {
           },
           input: {
             height: '19px',
+            '&.Mui-disabled': {
+              color: `${theme.text.secondary} !important`,
+              '-webkit-text-fill-color': `${theme.text.secondary} !important`,
+            }
           }
         },
       },

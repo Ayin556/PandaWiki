@@ -99,6 +99,16 @@ export const VersionMap = {
 }
 
 export const ModelProvider = {
+  BaiZhiCloud: {
+    label: 'BaiZhiCloud',
+    cn: '百智云',
+    icon: 'icon-baizhiyunlogo',
+    urlWrite: false,
+    secretRequired: true,
+    customHeader: false,
+    modelDocumentUrl: 'https://modelsquare.docs.baizhi.cloud/',
+    defaultBaseUrl: 'https://model-square.app.baizhi.cloud/v1',
+  },
   DeepSeek: {
     label: 'DeepSeek',
     cn: '',

@@ -69,7 +69,7 @@ const Detail = ({ id, open, onClose }: { id: string, open: boolean, onClose: () 
           使用模型
           <Box>{models.join(', ')}</Box>
         </Stack>}
-        {stats.total_tokens && <Tooltip title={<Stack gap={1} sx={{ minWidth: 100, py: 1 }}>
+        {(stats.total_tokens || 0) > 0 && <Tooltip title={<Stack gap={1} sx={{ minWidth: 100, py: 1 }}>
           <Box>输入 Token 使用： {addCommasToNumber(stats.prompt_tokens || 0)}</Box>
           <Box>输出 Token 使用： {addCommasToNumber(stats.completion_tokens || 0)}</Box>
         </Stack>}>

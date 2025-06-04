@@ -12,21 +12,29 @@ const NodeFolder = ({ node }: { node: RecommendNode }) => {
       <Ellipsis sx={{ fontSize: '18px', lineHeight: '26px' }}>{node.name}</Ellipsis>
     </Stack>
     <Box sx={{ flex: 1 }}>
-      {node.recommend_nodes && node.recommend_nodes.length > 0 && node.recommend_nodes.sort((a, b) => (a.position ?? 0) - (b.position ?? 0)).slice(0, 4).map(it => <Box
-        key={it.id}
-        sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' } }}
-      >
-        <Link href={`/node/${node.id}`} target="_blank">
-          <Stack direction="row" alignItems={'center'} gap={1} sx={{ fontSize: 14, lineHeight: '21px' }}>
-            <IconFile sx={{ mt: '-2px' }} />
-            <Ellipsis>{it.name}</Ellipsis>
-          </Stack>
-        </Link>
-      </Box>)}
+      {node.recommend_nodes && node.recommend_nodes.length > 0 &&
+        node.recommend_nodes
+          .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
+          .slice(0, 4)
+          .map(it => <Box
+            key={it.id}
+            sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' } }}
+          >
+            <Link href={`/node/${it.id}`} target="_blank">
+              <Stack direction="row" alignItems={'center'} gap={1} sx={{ fontSize: 14, lineHeight: '21px' }}>
+                <IconFile sx={{ mt: '-2px' }} />
+                <Ellipsis>{it.name}</Ellipsis>
+              </Stack>
+            </Link>
+          </Box>)}
     </Box>
     <Stack direction="row" gap={2} justifyContent="flex-end" sx={{ mt: 2, flexShrink: 0 }}>
       <Link href={`/node/${node.id}`} target="_blank">
-        <Box sx={{ color: 'primary.main', fontSize: 14 }}>
+        <Box sx={{
+          color: 'primary.main', fontSize: 14, ':hover': {
+            fontWeight: 'bold'
+          }
+        }}>
           查看更多
         </Box>
       </Link>
@@ -38,6 +46,7 @@ const NodeFile = ({ node }: { node: RecommendNode }) => {
   return <Link href={`/node/${node.id}`} target="_blank">
     <Stack direction="column" justifyContent="space-between" sx={{ cursor: 'pointer', height: '100%' }}>
       <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2, flexShrink: 0 }}>
+        <IconFile />
         <Ellipsis sx={{ fontSize: '18px', lineHeight: '26px' }}>{node.name}</Ellipsis>
       </Stack>
       <Box sx={{ flex: 1 }}>
@@ -45,8 +54,12 @@ const NodeFile = ({ node }: { node: RecommendNode }) => {
           : <Box sx={{ color: 'text.disabled', fontSize: 14 }}>暂无摘要</Box>}
       </Box>
       <Stack direction="row" gap={2} justifyContent="flex-end" sx={{ mt: 2, flexShrink: 0 }}>
-        <Box sx={{ color: 'primary.main', fontSize: 14 }}>
-          查看更多
+        <Box sx={{
+          color: 'primary.main', fontSize: 14, ':hover': {
+            fontWeight: 'bold'
+          }
+        }}>
+          查看详情
         </Box>
       </Stack>
     </Stack>

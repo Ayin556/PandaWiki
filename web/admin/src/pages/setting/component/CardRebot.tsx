@@ -4,6 +4,7 @@ import PluginLogo from '@/assets/images/plugin.png'
 import WecomLogo from '@/assets/images/wecom.png'
 import Card from "@/components/Card"
 import { Box, Stack, Switch } from "@mui/material"
+import { Message } from 'ct-mui'
 import { useState } from "react"
 
 const CardRebot = () => {
@@ -43,7 +44,9 @@ const CardRebot = () => {
     {Object.values(AppList).map((value, index) => <Box key={index}>
       <Stack direction='row' alignItems={'center'} justifyContent={'space-between'} sx={{ m: 2 }}>
         <Box sx={{ fontWeight: 'bold' }}>{value.name}</Box>
-        <Switch checked={false} />
+        <Switch checked={false} onChange={() => {
+          Message.warning('敬请期待')
+        }} />
       </Stack>
     </Box>)}
   </Card>

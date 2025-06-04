@@ -1,25 +1,29 @@
 import { getModelList, ModelListItem } from "@/api"
-import NoData from '@/assets/images/nodata.png'
+import ErrorJSON from '@/assets/json/error.json'
 import Card from "@/components/Card"
-import { Box, Button, Stack } from "@mui/material"
+import { ModelProvider } from "@/constant/enums"
+import { addOpacityToColor } from "@/utils"
+import { Box, Button, Stack, Tooltip, useTheme } from "@mui/material"
 import { Icon, Modal } from "ct-mui"
 import { useEffect, useState } from "react"
+import LottieIcon from "../LottieIcon"
 import Member from "./component/Member"
 import ModelAdd from "./component/ModelAdd"
-import ModelItemCard from "./component/ModelItemCard"
 
 const System = () => {
+  const theme = useTheme()
   const [open, setOpen] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [modelList, setModelList] = useState<ModelListItem[]>([])
-  const [addOpen, setAddOpen] = useState(false)
 
+  const [addOpen, setAddOpen] = useState(false)
+  const [addType, setAddType] = useState<'chat' | 'embedding' | 'reranker'>('chat')
+  const [chatModelData, setChatModelData] = useState<ModelListItem | null>(null)
+  const [embeddingModelData, setEmbeddingModelData] = useState<ModelListItem | null>(null)
+  const [rerankerModelData, setRerankerModelData] = useState<ModelListItem | null>(null)
   const getModel = () => {
-    setLoading(true)
     getModelList().then(res => {
-      setModelList(res)
-    }).finally(() => {
-      setLoading(false)
+      setChatModelData(res.find(it => it.type === 'chat') || null)
+      setEmbeddingModelData(res.find(it => it.type === 'embedding') || null)
+      setRerankerModelData(res.find(it => it.type === 'reranker') || null)
     })
   }
 
@@ -28,14 +32,30 @@ const System = () => {
   }, [])
 
   return <>
-    <Button
-      size='small'
-      variant='outlined'
-      startIcon={<Icon type='icon-a-chilunshezhisheding' />}
-      onClick={() => setOpen(true)}
-    >
-      系统配置
-    </Button>
+    <Box sx={{ position: 'relative' }}>
+      <Button
+        size='small'
+        variant='outlined'
+        startIcon={<Icon type='icon-a-chilunshezhisheding' />}
+        onClick={() => setOpen(true)}
+      >
+        系统配置
+      </Button>
+      {(!chatModelData || !embeddingModelData || !rerankerModelData) && <Tooltip arrow title='暂未配置模型'>
+        <Stack alignItems={'center'} justifyContent={'center'} sx={{
+          width: 22,
+          height: 22,
+          cursor: 'pointer',
+          position: 'absolute', top: '-4px', right: '-8px', bgcolor: '#fff', borderRadius: '50%',
+        }}>
+          <LottieIcon
+            id='warning'
+            src={ErrorJSON}
+            style={{ width: 20, height: 20 }}
+          />
+        </Stack>
+      </Tooltip>}
+    </Box>
     <Modal
       title='系统配置'
       width={1000}
@@ -53,28 +73,65 @@ const System = () => {
           border: '1px solid',
           borderColor: 'divider',
         }}>
-          <Stack direction={'row'} justifyContent={'space-between'}>
-            <Box sx={{ fontSize: 14, lineHeight: '24px', fontWeight: 'bold', mb: 2 }}>Chat 模型</Box>
-            <Button
-              variant='outlined'
-              onClick={() => {
+          {!chatModelData ? <>
+            <Stack direction={'row'} alignItems={'center'} gap={1} sx={{ fontSize: 14, lineHeight: '24px', fontWeight: 'bold', mb: 2 }}>
+              Chat 模型
+              <Stack alignItems={'center'} justifyContent={'center'} sx={{
+                width: 22,
+                height: 22,
+                cursor: 'pointer',
+              }}>
+                <LottieIcon
+                  id='warning'
+                  src={ErrorJSON}
+                  style={{ width: 20, height: 20 }}
+                />
+              </Stack>
+            </Stack>
+            <Stack direction={'row'} alignItems={'center'} justifyContent={'center'} sx={{ my: '0px', ml: 2, fontSize: 14 }}>
+              <Box sx={{ height: '20px', color: 'text.auxiliary' }}>尚未配置，</Box>
+              <Button sx={{ minWidth: 0, px: 0, height: '20px' }} onClick={() => {
                 setAddOpen(true)
-              }}
-            >
-              添加模型
-            </Button>
-          </Stack>
-          {modelList.length > 0 ? <Stack
-            direction={'row'}
-            flexWrap={'wrap'}
-            alignItems={'stretch'}
-            gap={2}
-          >
-            {modelList.map(it => <ModelItemCard key={it.id} it={it} refresh={getModel} />)}
-          </Stack> : !loading ? <Stack alignItems={'center'} sx={{ my: '0px', ml: 2, fontSize: 14 }}>
-            <img src={NoData} width={150} />
-            <Box>暂无数据</Box>
-          </Stack> : null}
+                setAddType('chat')
+              }}>去添加</Button>
+            </Stack>
+          </> : <>
+            <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'} gap={1} sx={{ mt: 1 }}>
+              <Stack direction={'row'} alignItems={'center'} gap={1} sx={{ width: 500 }}>
+                <Icon type={ModelProvider[chatModelData.provider as keyof typeof ModelProvider].icon} sx={{ fontSize: 18 }} />
+                <Box sx={{ fontSize: 14, lineHeight: '20px', color: 'text.auxiliary' }}>
+                  {ModelProvider[chatModelData.provider as keyof typeof ModelProvider].cn
+                    || ModelProvider[chatModelData.provider as keyof typeof ModelProvider].label
+                    || '其他'}&nbsp;&nbsp;/
+                </Box>
+                <Box sx={{ fontSize: 14, lineHeight: '20px', fontFamily: 'Gbold', ml: -0.5 }}>{chatModelData.model}</Box>
+                <Box sx={{
+                  fontSize: 12,
+                  px: 1,
+                  lineHeight: '20px',
+                  borderRadius: '10px',
+                  bgcolor: addOpacityToColor(theme.palette.primary.main, 0.1),
+                  color: 'primary.main'
+                }}>
+                  Chat 模型
+                </Box>
+              </Stack>
+              <Box sx={{
+                fontSize: 12,
+                px: 1,
+                lineHeight: '20px',
+                borderRadius: '10px',
+                bgcolor: addOpacityToColor(theme.palette.success.main, 0.1),
+                color: 'success.main'
+              }}>状态正常</Box>
+              {chatModelData && <Button size="small" variant="outlined" onClick={() => {
+                setAddOpen(true)
+                setAddType('chat')
+              }}>
+                修改
+              </Button>}
+            </Stack>
+          </>}
         </Card>
         <Card sx={{
           flex: 1,
@@ -84,26 +141,65 @@ const System = () => {
           border: '1px solid',
           borderColor: 'divider',
         }}>
-          <Stack direction={'row'} justifyContent={'space-between'}>
-            <Box sx={{ fontSize: 14, lineHeight: '24px', fontWeight: 'bold', mb: 2 }}>Embeding 模型</Box>
-            <Button
-              variant='outlined'
-              disabled
-            >
-              添加模型
-            </Button>
-          </Stack>
-          {modelList.length > 0 ? <Stack
-            direction={'row'}
-            flexWrap={'wrap'}
-            alignItems={'stretch'}
-            gap={2}
-          >
-            {modelList.map(it => <ModelItemCard key={it.id} it={it} refresh={getModel} />)}
-          </Stack> : !loading ? <Stack alignItems={'center'} sx={{ my: '0px', ml: 2, fontSize: 14 }}>
-            <img src={NoData} width={150} />
-            <Box>暂无数据</Box>
-          </Stack> : null}
+          {!embeddingModelData ? <>
+            <Stack direction={'row'} alignItems={'center'} gap={1} sx={{ fontSize: 14, lineHeight: '24px', fontWeight: 'bold', mb: 2 }}>
+              Embeding 模型
+              <Stack alignItems={'center'} justifyContent={'center'} sx={{
+                width: 22,
+                height: 22,
+                cursor: 'pointer',
+              }}>
+                <LottieIcon
+                  id='warning'
+                  src={ErrorJSON}
+                  style={{ width: 20, height: 20 }}
+                />
+              </Stack>
+            </Stack>
+            <Stack direction={'row'} alignItems={'center'} justifyContent={'center'} sx={{ my: '0px', ml: 2, fontSize: 14 }}>
+              <Box sx={{ height: '20px', color: 'text.auxiliary' }}>尚未配置，</Box>
+              <Button sx={{ minWidth: 0, px: 0, height: '20px' }} onClick={() => {
+                setAddOpen(true)
+                setAddType('embedding')
+              }}>去添加</Button>
+            </Stack>
+          </> : <>
+            <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'} gap={1}>
+              <Stack direction={'row'} alignItems={'center'} gap={1} sx={{ width: 500 }}>
+                <Icon type={ModelProvider[embeddingModelData.provider as keyof typeof ModelProvider].icon} sx={{ fontSize: 18 }} />
+                <Box sx={{ fontSize: 14, lineHeight: '20px', color: 'text.auxiliary' }}>
+                  {ModelProvider[embeddingModelData.provider as keyof typeof ModelProvider].cn
+                    || ModelProvider[embeddingModelData.provider as keyof typeof ModelProvider].label
+                    || '其他'}&nbsp;&nbsp;/
+                </Box>
+                <Box sx={{ fontSize: 14, lineHeight: '20px', fontFamily: 'Gbold', ml: -0.5 }}>{embeddingModelData.model}</Box>
+                <Box sx={{
+                  fontSize: 12,
+                  px: 1,
+                  lineHeight: '20px',
+                  borderRadius: '10px',
+                  bgcolor: addOpacityToColor(theme.palette.primary.main, 0.1),
+                  color: 'primary.main'
+                }}>
+                  Embeding 模型
+                </Box>
+              </Stack>
+              <Box sx={{
+                fontSize: 12,
+                px: 1,
+                lineHeight: '20px',
+                borderRadius: '10px',
+                bgcolor: addOpacityToColor(theme.palette.success.main, 0.1),
+                color: 'success.main'
+              }}>状态正常</Box>
+              {embeddingModelData && <Button size="small" variant="outlined" onClick={() => {
+                setAddOpen(true)
+                setAddType('embedding')
+              }}>
+                修改
+              </Button>}
+            </Stack>
+          </>}
         </Card>
         <Card sx={{
           flex: 1,
@@ -113,30 +209,71 @@ const System = () => {
           border: '1px solid',
           borderColor: 'divider',
         }}>
-          <Stack direction={'row'} justifyContent={'space-between'}>
-            <Box sx={{ fontSize: 14, lineHeight: '24px', fontWeight: 'bold', mb: 2 }}>Rerank 模型</Box>
-            <Button
-              variant='outlined'
-              disabled
-            >
-              添加模型
-            </Button>
-          </Stack>
-          {modelList.length > 0 ? <Stack
-            direction={'row'}
-            flexWrap={'wrap'}
-            alignItems={'stretch'}
-            gap={2}
-          >
-            {modelList.map(it => <ModelItemCard key={it.id} it={it} refresh={getModel} />)}
-          </Stack> : !loading ? <Stack alignItems={'center'} sx={{ my: '0px', ml: 2, fontSize: 14 }}>
-            <img src={NoData} width={150} />
-            <Box>暂无数据</Box>
-          </Stack> : null}
+          {!rerankerModelData ? <>
+            <Stack direction={'row'} alignItems={'center'} gap={1} sx={{ fontSize: 14, lineHeight: '24px', fontWeight: 'bold', mb: 2 }}>
+              Rerank 模型
+              <Stack alignItems={'center'} justifyContent={'center'} sx={{
+                width: 22,
+                height: 22,
+                cursor: 'pointer',
+              }}>
+                <LottieIcon
+                  id='warning'
+                  src={ErrorJSON}
+                  style={{ width: 20, height: 20 }}
+                />
+              </Stack>
+            </Stack>
+            <Stack direction={'row'} alignItems={'center'} justifyContent={'center'} sx={{ my: '0px', ml: 2, fontSize: 14 }}>
+              <Box sx={{ height: '20px', color: 'text.auxiliary' }}>尚未配置，</Box>
+              <Button sx={{ minWidth: 0, px: 0, height: '20px' }} onClick={() => {
+                setAddOpen(true)
+                setAddType('reranker')
+              }} >去添加</Button>
+            </Stack>
+          </> : <>
+            <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'} gap={1}>
+              <Stack direction={'row'} alignItems={'center'} gap={1} sx={{ width: 500 }}>
+                <Icon type={ModelProvider[rerankerModelData.provider as keyof typeof ModelProvider].icon} sx={{ fontSize: 18 }} />
+                <Box sx={{ fontSize: 14, lineHeight: '20px', color: 'text.auxiliary' }}>
+                  {ModelProvider[rerankerModelData.provider as keyof typeof ModelProvider].cn
+                    || ModelProvider[rerankerModelData.provider as keyof typeof ModelProvider].label
+                    || '其他'}&nbsp;&nbsp;/
+                </Box>
+                <Box sx={{ fontSize: 14, lineHeight: '20px', fontFamily: 'Gbold', ml: -0.5 }}>{rerankerModelData.model}</Box>
+                <Box sx={{
+                  fontSize: 12,
+                  px: 1,
+                  lineHeight: '20px',
+                  borderRadius: '10px',
+                  bgcolor: addOpacityToColor(theme.palette.primary.main, 0.1),
+                  color: 'primary.main'
+                }}>
+                  Rerank 模型
+                </Box>
+              </Stack>
+              <Box sx={{
+                fontSize: 12,
+                px: 1,
+                lineHeight: '20px',
+                borderRadius: '10px',
+                bgcolor: addOpacityToColor(theme.palette.success.main, 0.1),
+                color: 'success.main'
+              }}>状态正常</Box>
+              {rerankerModelData && <Button size="small" variant="outlined" onClick={() => {
+                setAddOpen(true)
+                setAddType('reranker')
+              }}>
+                修改
+              </Button>}
+            </Stack>
+          </>}
         </Card>
       </Stack>
     </Modal>
-    <ModelAdd open={addOpen} onClose={() => setAddOpen(false)} refresh={getModel} />
+    <ModelAdd open={addOpen} type={addType} data={
+      addType === 'chat' ? chatModelData : addType === 'embedding' ? embeddingModelData : rerankerModelData
+    } onClose={() => setAddOpen(false)} refresh={getModel} />
   </>
 }
 export default System

@@ -37,11 +37,14 @@ const DocAddByCustomText = ({ open, data, onClose, refresh, type = 'customDoc' }
       })
     } else {
       if (!id) return
-      createNode({ name: value.name, content: '', kb_id: id, parent_id: null, type: type === 'docFile' ? 1 : 2 }).then(() => {
+      createNode({ name: value.name, content: '', kb_id: id, parent_id: null, type: type === 'docFile' ? 1 : 2 }).then(({ id }) => {
         Message.success('创建成功')
         reset()
         handleClose()
         refresh?.()
+        if (type === 'customDoc') {
+          window.open(`/doc/editor/${id}`, '_blank')
+        }
       })
     }
   }
