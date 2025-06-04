@@ -84,9 +84,9 @@ const FileText = ({
       >
         <input {...getInputProps()} />
         {dropFiles.length > 0 ? <CheckCircle sx={{ color: 'success.main', fontSize: 40, mb: 1 }} />
-          : <Icon type='icon-shangchuan' sx={{ fontSize: 40, mb: 1, color: 'text.secondary' }} />}
+          : <Icon type='icon-shangchuan' sx={{ fontSize: 40, mb: 1, color: 'text.disabled' }} />}
         <Typography variant='body1' sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          {dropFiles.length > 0 ? '文件已添加' : tip || '点击或拖拽文件到区域内'}
+          {dropFiles.length > 0 ? `${tip}已添加` : tip || '点击或拖拽文件到区域内'}
         </Typography>
       </Stack>
       <input

@@ -8,11 +8,16 @@ RUN npm install -g pnpm
 # 配置 pnpm 镜像
 RUN pnpm config set registry https://registry.npmmirror.com/
 
+# 使用非 root 用户目录
+RUN pnpm config set store-dir /app/.pnpm-store
+
 # 首先只复制依赖相关文件
 COPY package.json pnpm-lock.yaml ./
 
-# 安装依赖
-RUN pnpm install
+# 安装依赖，使用 BuildKit 缓存
+RUN --mount=type=cache,target=/app/.pnpm-store \
+    --mount=type=cache,target=/app/app-node_modules \
+    pnpm install --frozen-lockfile --prefer-offline
 
 # 然后复制其他源代码文件
 COPY . .

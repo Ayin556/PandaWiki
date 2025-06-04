@@ -10,6 +10,36 @@ import { useLocation } from "react-router-dom"
 import Card from "../Card"
 import FileText from "../UploadFile/FileText"
 
+// 验证规则常量
+const VALIDATION_RULES = {
+  name: {
+    required: {
+      value: true,
+      message: '知识库名称不能为空',
+    },
+  },
+  port: {
+    required: {
+      value: true,
+      message: '端口不能为空',
+    },
+    min: {
+      value: 1,
+      message: '端口号不能小于1',
+    },
+    max: {
+      value: 65535,
+      message: '端口号不能大于65535',
+    },
+  },
+  domain: {
+    pattern: {
+      value: /^(localhost|((([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?)\.)+[a-zA-Z]{2,})|(\d{1,3}(?:\.\d{1,3}){3})|(\[[0-9a-fA-F:]+\]))$/,
+      message: '请输入有效的域名、IP 或 localhost',
+    },
+  },
+}
+
 const KBCreate = () => {
   const dispatch = useAppDispatch()
   const { kb_c, kbList } = useAppSelector(state => state.config)
@@ -26,33 +56,33 @@ const KBCreate = () => {
       name: '',
       domain: window.location.hostname,
       http: true,
+      port: 80,
+      ssl_port: 443,
       https: false,
       httpsCert: '',
       httpsKey: '',
     }
   })
 
-  const http = watch('http')
-  const https = watch('https')
-  const domain = watch('domain')
-  const name = watch('name')
+  const { http, https, port, ssl_port, domain, name } = watch()
 
   const onSubmit = (value: KnowledgeBaseFormData) => {
     const formData: Partial<UpdateKnowledgeBaseData['access_settings'] & { name: string }> = { name: value.name }
     if (value.domain) formData.hosts = [value.domain]
-    if (value.http) formData.ports = [80]
-    if (value.https) formData.ssl_ports = [443]
-    if (value.httpsCert) formData.public_key = value.httpsCert
-    else if (https) {
-      Message.error('请上传证书文件')
-      return
+    if (value.http) formData.ports = [+value.port]
+    if (value.https) {
+      formData.ssl_ports = [+value.ssl_port]
+      if (value.httpsCert) formData.public_key = value.httpsCert
+      else {
+        Message.error('请上传 SSL 证书文件')
+        return
+      }
+      if (value.httpsKey) formData.private_key = value.httpsKey
+      else {
+        Message.error('请上传 SSL 私钥文件')
+        return
+      }
     }
-    if (value.httpsKey) formData.private_key = value.httpsKey
-    else if (https) {
-      Message.error('请上传私钥文件')
-      return
-    }
-
     createKnowledgeBase(formData).then(({ id }) => {
       Message.success('创建成功')
       setOpen(false)
@@ -118,18 +148,18 @@ const KBCreate = () => {
         {http && <Box>
           <Box
             component={'a'}
-            href={`http://${domain}`}
+            href={port === 80 ? `http://${domain}` : `http://${domain}:${port}`}
             target='_blank'
             sx={{ fontFamily: 'Gbold', color: 'text.primary', '&:hover': { color: 'primary.main' } }}
-          >{`http://${domain}`}</Box>
+          >{port === 80 ? `http://${domain}` : `http://${domain}:${port}`}</Box>
         </Box>}
         {https && <Box>
           <Box
             component={'a'}
-            href={`https://${domain}`}
+            href={ssl_port === 443 ? `https://${domain}` : `https://${domain}:${ssl_port}`}
             target='_blank'
             sx={{ fontFamily: 'Gbold', color: 'text.primary', '&:hover': { color: 'primary.main' } }}
-          >{`https://${domain}`}</Box>
+          >{ssl_port === 443 ? `https://${domain}` : `https://${domain}:${ssl_port}`}</Box>
         </Box>}
       </Card>
     </Modal>
@@ -152,12 +182,7 @@ const KBCreate = () => {
         <Controller
           control={control}
           name='name'
-          rules={{
-            required: {
-              value: true,
-              message: '知识库名称不能为空',
-            },
-          }}
+          rules={VALIDATION_RULES.name}
           render={({ field }) => <TextField
             {...field}
             label={<Box>
@@ -176,6 +201,7 @@ const KBCreate = () => {
         <Controller
           control={control}
           name='domain'
+          rules={VALIDATION_RULES.domain}
           render={({ field }) => <TextField
             {...field}
             label='域名'
@@ -197,7 +223,23 @@ const KBCreate = () => {
             sx={{ p: 0 }}
           />}
         />
-        <Box component={'label'} htmlFor='http' sx={{ cursor: 'pointer', fontSize: 14, color: http ? 'text.primary' : 'text.auxiliary' }}>启用 HTTP，默认使用 80 端口</Box>
+        <Box component={'label'} htmlFor='http' sx={{ width: 100, flexShrink: 0, cursor: 'pointer', fontSize: 14, color: http ? 'text.primary' : 'text.auxiliary' }}>
+          启用 HTTP
+        </Box>
+        {http && <Controller
+          control={control}
+          name='port'
+          rules={VALIDATION_RULES.port}
+          render={({ field }) => <TextField
+            {...field}
+            label='端口'
+            fullWidth
+            type='number'
+            value={+field.value || 80}
+            error={!!errors.port}
+            helperText={errors.port?.message}
+          />}
+        />}
       </Stack>
       <Stack direction={'row'} gap={2} alignItems={'center'} sx={{ mt: 1.5 }}>
         <Controller
@@ -211,7 +253,23 @@ const KBCreate = () => {
             sx={{ p: 0 }}
           />}
         />
-        <Box component={'label'} htmlFor='https' sx={{ cursor: 'pointer', fontSize: 14, color: https ? 'text.primary' : 'text.auxiliary' }}>启用 HTTPS，默认使用 443 端口</Box>
+        <Box component={'label'} htmlFor='https' sx={{ width: 100, flexShrink: 0, cursor: 'pointer', fontSize: 14, color: https ? 'text.primary' : 'text.auxiliary' }}>
+          启用 HTTPS
+        </Box>
+        {https && <Controller
+          control={control}
+          name='ssl_port'
+          rules={VALIDATION_RULES.port}
+          render={({ field }) => <TextField
+            {...field}
+            label='端口'
+            fullWidth
+            type='number'
+            value={+field.value || 443}
+            error={!!errors.ssl_port}
+            helperText={errors.ssl_port?.message}
+          />}
+        />}
       </Stack>
       {https && <Stack direction={'row'} gap={2} alignItems={'center'} sx={{ mt: 2 }}>
         <Controller
@@ -219,7 +277,7 @@ const KBCreate = () => {
           name='httpsCert'
           render={({ field }) => <FileText
             {...field}
-            tip={'证书文件'}
+            tip={'SSL 证书文件'}
           />}
         />
         <Controller
@@ -227,7 +285,7 @@ const KBCreate = () => {
           name='httpsKey'
           render={({ field }) => <FileText
             {...field}
-            tip={'私钥文件'}
+            tip={'SSL 私钥文件'}
           />}
         />
       </Stack>}

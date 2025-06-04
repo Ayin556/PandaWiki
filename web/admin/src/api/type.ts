@@ -52,6 +52,8 @@ export interface KnowledgeBaseFormData {
   domain: string
   http: boolean
   https: boolean
+  port: number
+  ssl_port: number
   httpsCert: string
   httpsKey: string
 }
