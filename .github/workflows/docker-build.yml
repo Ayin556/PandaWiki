@@ -23,10 +23,15 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Ensure node_modules exists
+        run: mkdir -p web/admin/node_modules web/admin/.pnpm-store
+
       - name: Cache node_modules
         uses: actions/cache@v3
         with:
-          path: web/admin/node_modules
+          path: |
+            web/admin/node_modules
+            web/admin/.pnpm-store
           key: ${{ runner.os }}-admin-node-${{ hashFiles('web/admin/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-admin-node-
@@ -59,6 +64,8 @@ jobs:
           file: ./web/admin/Dockerfile
           push: ${{ startsWith(github.ref, 'refs/tags/admin-v') || startsWith(github.ref, 'refs/tags/v') }}
           tags: chaitin-registry.cn-hangzhou.cr.aliyuncs.com/chaitin/panda-wiki-nginx:v${{ steps.get_version.outputs.VERSION }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   docker-app-build:
     runs-on: ubuntu-latest
@@ -71,10 +78,15 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Ensure node_modules exists
+        run: mkdir -p web/app/node_modules web/app/.pnpm-store
+
       - name: Cache node_modules
         uses: actions/cache@v3
         with:
-          path: web/app/node_modules
+          path: |
+            web/app/node_modules
+            web/app/.pnpm-store
           key: ${{ runner.os }}-app-node-${{ hashFiles('web/app/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-app-node-
@@ -107,3 +119,5 @@ jobs:
           file: ./web/app/Dockerfile
           push: ${{ startsWith(github.ref, 'refs/tags/app-v') || startsWith(github.ref, 'refs/tags/v') }}
           tags: chaitin-registry.cn-hangzhou.cr.aliyuncs.com/chaitin/panda-wiki-app:v${{ steps.get_version.outputs.VERSION }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
