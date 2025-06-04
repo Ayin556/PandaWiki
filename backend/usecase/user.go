@@ -75,3 +75,7 @@ func (u *UserUsecase) ListUsers(ctx context.Context) ([]*domain.UserListItemResp
 func (u *UserUsecase) ResetPassword(ctx context.Context, req *domain.ResetPasswordReq) error {
 	return u.repo.UpdateUserPassword(ctx, req.ID, req.NewPassword)
 }
+
+func (u *UserUsecase) DeleteUser(ctx context.Context, userID string) error {
+	return u.repo.DeleteUser(ctx, userID)
+}

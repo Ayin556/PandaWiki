@@ -5,23 +5,21 @@ import (
 
 	"github.com/chaitin/panda-wiki/repo/mq"
 	"github.com/chaitin/panda-wiki/repo/pg"
-	"github.com/chaitin/panda-wiki/store/vector"
+	"github.com/chaitin/panda-wiki/store/rag"
 	"github.com/chaitin/panda-wiki/usecase"
 )
 
 type MQHandlers struct {
-	DocMQHandler    *DocMQHandler
-	VectorMQHandler *VectorMQHandler
+	RAGMQHandler *RAGMQHandler
 }
 
 var ProviderSet = wire.NewSet(
 	pg.ProviderSet,
-	vector.ProviderSet,
+	rag.ProviderSet,
 	mq.ProviderSet,
 	usecase.NewLLMUsecase,
 
-	NewDocMQHandler,
-	NewVectorMQHandler,
+	NewRAGMQHandler,
 
 	wire.Struct(new(MQHandlers), "*"),
 )

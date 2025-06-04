@@ -1,9 +1,7 @@
 package v1
 
 import (
-	"crypto/md5"
-	"fmt"
-	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/google/uuid"
@@ -40,22 +38,9 @@ func NewAppHandler(e *echo.Echo, baseHandler *handler.BaseHandler, logger *log.L
 	group := e.Group("/api/v1/app", h.auth.Authorize)
 	group.POST("", h.CreateApp)
 	group.GET("/detail", h.GetAppDetail)
-	group.GET("/list", h.GetAppList)
 	group.PUT("", h.UpdateApp)
 	group.DELETE("", h.DeleteApp)
 
-	share := e.Group("share/v1/app", func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) error {
-			c.Response().Header().Set("Access-Control-Allow-Origin", "*")
-			c.Response().Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-			c.Response().Header().Set("Access-Control-Allow-Headers", "Content-Type, Origin, Accept")
-			if c.Request().Method == "OPTIONS" {
-				return c.NoContent(http.StatusOK)
-			}
-			return next(c)
-		}
-	})
-	share.GET("/link", h.GetByLink)
 	return h
 }
 
@@ -86,7 +71,6 @@ func (h *AppHandler) CreateApp(c echo.Context) error {
 		KBID: createAppRequest.KBID,
 		Name: createAppRequest.Name,
 		Type: createAppRequest.Type,
-		Link: fmt.Sprintf("%x", md5.Sum([]byte(id.String()))),
 		Settings: domain.AppSettings{
 			Icon: createAppRequest.Icon,
 		},
@@ -107,43 +91,29 @@ func (h *AppHandler) CreateApp(c echo.Context) error {
 //	@Tags			app
 //	@Accept			json
 //	@Produce		json
-//	@Param			id	query		string	true	"app id"
-//	@Success		200	{object}	domain.Response{data=domain.App}
+//	@Param			kb_id	query		string	true	"kb id"
+//	@Param			type	query		string	true	"app type"
+//	@Success		200		{object}	domain.Response{data=domain.AppDetailResp}
 //	@Router			/api/v1/app/detail [get]
 func (h *AppHandler) GetAppDetail(c echo.Context) error {
-	id := c.QueryParam("id")
-	if id == "" {
-		return h.NewResponseWithError(c, "id is required", nil)
-	}
-	ctx := c.Request().Context()
-
-	app, err := h.usecase.GetAppDetail(ctx, id)
-	if err != nil {
-		return h.NewResponseWithError(c, "get app detail failed", err)
-	}
-	return h.NewResponseWithData(c, app)
-}
-
-// GetAppList get app list
-//
-//	@Summary		Get app list
-//	@Description	Get app list
-//	@Tags			app
-//	@Accept			json
-//	@Produce		json
-//	@Param			kb_id	query		string	true	"kb id"
-//	@Success		200		{object}	domain.Response{data=[]domain.AppListItem}
-//	@Router			/api/v1/app/list [get]
-func (h *AppHandler) GetAppList(c echo.Context) error {
 	kbID := c.QueryParam("kb_id")
 	if kbID == "" {
 		return h.NewResponseWithError(c, "kb id is required", nil)
 	}
-	apps, err := h.usecase.GetAppList(c.Request().Context(), kbID)
-	if err != nil {
-		return h.NewResponseWithError(c, "get app list failed", err)
+	appType := c.QueryParam("type")
+	if appType == "" {
+		return h.NewResponseWithError(c, "type is required", nil)
 	}
-	return h.NewResponseWithData(c, apps)
+	appTypeInt, err := strconv.ParseInt(appType, 10, 64)
+	if err != nil {
+		return h.NewResponseWithError(c, "invalid app type", err)
+	}
+	ctx := c.Request().Context()
+	app, err := h.usecase.GetAppDetailByKBIDAndAppType(ctx, kbID, domain.AppType(appTypeInt))
+	if err != nil {
+		return h.NewResponseWithError(c, "get app detail failed", err)
+	}
+	return h.NewResponseWithData(c, app)
 }
 
 // UpdateApp update app
@@ -195,28 +165,4 @@ func (h *AppHandler) DeleteApp(c echo.Context) error {
 	}
 
 	return h.NewResponseWithData(c, nil)
-}
-
-// GetByLink get app by link
-//
-//	@Summary		Get app by link
-//	@Description	Get app by link
-//	@Tags			app
-//	@Accept			json
-//	@Produce		json
-//	@Param			link	query		string	true	"link"
-//	@Success		200		{object}	domain.Response{data=domain.App}
-//	@Router			/share/v1/app/link [get]
-func (h *AppHandler) GetByLink(c echo.Context) error {
-	link := c.QueryParam("link")
-	if link == "" {
-		return h.NewResponseWithError(c, "link is required", nil)
-	}
-
-	app, err := h.usecase.GetAppByLink(c.Request().Context(), link)
-	if err != nil {
-		return h.NewResponseWithError(c, "app not found", err)
-	}
-
-	return h.NewResponseWithData(c, app)
 }

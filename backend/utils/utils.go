@@ -1,8 +1,6 @@
 package utils
 
 import (
-	"bytes"
-	"encoding/xml"
 	"fmt"
 	"io"
 	"net/http"
@@ -43,15 +41,6 @@ func DecodeBytes(data []byte) string {
 	return string(data)
 }
 
-// LoadXML load xml content
-func LoadXML(content string) (*xml.Decoder, error) {
-	decoder := xml.NewDecoder(bytes.NewReader([]byte(content)))
-	decoder.Strict = false
-	decoder.AutoClose = xml.HTMLAutoClose
-	decoder.Entity = xml.HTMLEntity
-	return decoder, nil
-}
-
 // IsURLValid check if url is valid
 func IsURLValid(urlStr string) bool {
 	u, err := url.Parse(urlStr)
@@ -82,24 +71,6 @@ func URLNormalize(urlStr string) string {
 	}
 
 	return u.String()
-}
-
-// DomainFromURL extract domain from url
-func DomainFromURL(urlStr string) string {
-	u, err := url.Parse(urlStr)
-	if err != nil {
-		return ""
-	}
-	return u.Hostname()
-}
-
-// URLOrigin get url origin
-func URLOrigin(urlStr string) string {
-	u, err := url.Parse(urlStr)
-	if err != nil {
-		return ""
-	}
-	return fmt.Sprintf("%s://%s", u.Scheme, u.Host)
 }
 
 // decode decode bytes with specified encoding

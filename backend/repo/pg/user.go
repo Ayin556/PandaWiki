@@ -102,3 +102,7 @@ func (r *UserRepository) UpdateUserPassword(ctx context.Context, userID string, 
 	}
 	return r.db.WithContext(ctx).Model(&domain.User{}).Where("id = ?", userID).Update("password", string(hashedPassword)).Error
 }
+
+func (r *UserRepository) DeleteUser(ctx context.Context, userID string) error {
+	return r.db.WithContext(ctx).Model(&domain.User{}).Where("id = ?", userID).Delete(&domain.User{}).Error
+}

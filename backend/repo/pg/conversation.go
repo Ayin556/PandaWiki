@@ -86,38 +86,6 @@ func (r *ConversationRepository) GetConversationReferences(ctx context.Context, 
 	return references, nil
 }
 
-func (r *ConversationRepository) GetConversationStatForApp(ctx context.Context) (map[string]*domain.ConversationStatForApp, error) {
-	stats := []*domain.ConversationStatForApp{}
-	if err := r.db.WithContext(ctx).
-		Model(&domain.Conversation{}).
-		Where("created_at > NOW() - INTERVAL '24 hours'").
-		Select("app_id, COUNT(distinct(remote_ip)) as last_24h_ip_count, COUNT(*) as last_24h_count").
-		Group("app_id").
-		Find(&stats).Error; err != nil {
-		return nil, err
-	}
-
-	dayCounts := []*domain.ConversationCount{}
-	if err := r.db.WithContext(ctx).
-		Model(&domain.Conversation{}).
-		Select("app_id, DATE(created_at) as date, COUNT(*) as count").
-		Group("app_id, DATE(created_at)").
-		Find(&dayCounts).Error; err != nil {
-		return nil, err
-	}
-
-	statMap := make(map[string]*domain.ConversationStatForApp)
-	for _, stat := range stats {
-		statMap[stat.AppID] = stat
-	}
-	for _, dayCount := range dayCounts {
-		if stat, ok := statMap[dayCount.AppID]; ok {
-			stat.DayCounts = append(stat.DayCounts, dayCount)
-		}
-	}
-	return statMap, nil
-}
-
 func (r *ConversationRepository) GetConversationMessagesByID(ctx context.Context, conversationID string) ([]*domain.ConversationMessage, error) {
 	messages := []*domain.ConversationMessage{}
 	if err := r.db.WithContext(ctx).

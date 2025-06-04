@@ -8,50 +8,33 @@ import (
 
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/log"
+	"github.com/chaitin/panda-wiki/repo/ipdb"
 	"github.com/chaitin/panda-wiki/repo/pg"
 )
 
 type ConversationUsecase struct {
-	repo    *pg.ConversationRepository
-	docRepo *pg.DocRepository
-	logger  *log.Logger
+	repo     *pg.ConversationRepository
+	nodeRepo *pg.NodeRepository
+	logger   *log.Logger
+	ipRepo   *ipdb.IPAddressRepo
 }
 
 func NewConversationUsecase(
 	repo *pg.ConversationRepository,
-	docRepo *pg.DocRepository,
+	nodeRepo *pg.NodeRepository,
 	logger *log.Logger,
+	ipRepo *ipdb.IPAddressRepo,
 ) *ConversationUsecase {
 	return &ConversationUsecase{
-		repo:    repo,
-		docRepo: docRepo,
-		logger:  logger.WithModule("usecase.conversation"),
+		repo:     repo,
+		nodeRepo: nodeRepo,
+		ipRepo:   ipRepo,
+		logger:   logger.WithModule("usecase.conversation"),
 	}
 }
 
 func (u *ConversationUsecase) CreateChatConversationMessage(ctx context.Context, kbID string, conversation *domain.ConversationMessage) error {
 	references := extractReferencesBlock(conversation.ID, conversation.AppID, conversation.Content)
-	if len(references) > 0 {
-		urls := lo.Map(references, func(ref *domain.ConversationReference, _ int) string {
-			return ref.URL
-		})
-		// get docs by urls
-		urlDocs, err := u.docRepo.GetDocsByURLs(ctx, kbID, urls)
-		if err != nil {
-			return err
-		}
-		lo.Map(references, func(ref *domain.ConversationReference, _ int) *domain.ConversationReference {
-			doc, ok := urlDocs[ref.URL]
-			if !ok {
-				return ref
-			} else {
-				ref.DocID = doc.ID
-				ref.Title = doc.Meta.Title
-				ref.Favicon = doc.Meta.Favicon
-			}
-			return ref
-		})
-	}
 	return u.repo.CreateConversationMessage(ctx, conversation, references)
 }
 
@@ -60,7 +43,20 @@ func (u *ConversationUsecase) GetConversationList(ctx context.Context, request *
 	if err != nil {
 		return nil, err
 	}
+	// get ip address
+	ipAddressMap := make(map[string]*domain.IPAddress)
 	lo.Map(conversations, func(conversation *domain.ConversationListItem, _ int) *domain.ConversationListItem {
+		if _, ok := ipAddressMap[conversation.RemoteIP]; !ok {
+			ipAddress, err := u.ipRepo.GetIPAddress(ctx, conversation.RemoteIP)
+			if err != nil {
+				u.logger.Error("get ip address failed", log.Error(err), log.String("ip", conversation.RemoteIP))
+				return conversation
+			}
+			ipAddressMap[conversation.RemoteIP] = ipAddress
+			conversation.IPAddress = ipAddress
+		} else {
+			conversation.IPAddress = ipAddressMap[conversation.RemoteIP]
+		}
 		return conversation
 	})
 	return domain.NewPaginatedResult(conversations, total), nil
@@ -70,6 +66,13 @@ func (u *ConversationUsecase) GetConversationDetail(ctx context.Context, convers
 	conversation, err := u.repo.GetConversationDetail(ctx, conversationID)
 	if err != nil {
 		return nil, err
+	}
+	// get ip address
+	ipAddress, err := u.ipRepo.GetIPAddress(ctx, conversation.RemoteIP)
+	if err != nil {
+		u.logger.Error("get ip address failed", log.Error(err), log.String("ip", conversation.RemoteIP))
+	} else {
+		conversation.IPAddress = ipAddress
 	}
 	// get messages
 	messages, err := u.repo.GetConversationMessagesByID(ctx, conversationID)
@@ -109,8 +112,8 @@ func extractReferencesBlock(conversationID, appID, text string) []*domain.Conver
 	for _, match := range matches {
 		if len(match) == 4 {
 			refs = append(refs, &domain.ConversationReference{
-				Title: match[2],
-				URL:   match[3],
+				Name: match[2],
+				URL:  match[3],
 
 				ConversationID: conversationID,
 				AppID:          appID,
