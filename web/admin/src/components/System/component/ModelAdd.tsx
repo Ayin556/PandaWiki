@@ -28,7 +28,7 @@ interface AddModelForm {
 const titleMap = {
   chat: 'Chat 模型',
   embedding: 'Embedding 模型',
-  rerank: 'Reranker 模型',
+  rerank: 'Rerank 模型',
 }
 
 const ModelAdd = ({ open, onClose, refresh, data, type = 'chat' }: AddModelProps) => {
