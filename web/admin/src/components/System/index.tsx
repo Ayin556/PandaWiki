@@ -15,7 +15,7 @@ const System = () => {
   const [open, setOpen] = useState(false)
 
   const [addOpen, setAddOpen] = useState(false)
-  const [addType, setAddType] = useState<'chat' | 'embedding' | 'reranker'>('chat')
+  const [addType, setAddType] = useState<'chat' | 'embedding' | 'rerank'>('chat')
   const [chatModelData, setChatModelData] = useState<ModelListItem | null>(null)
   const [embeddingModelData, setEmbeddingModelData] = useState<ModelListItem | null>(null)
   const [rerankerModelData, setRerankerModelData] = useState<ModelListItem | null>(null)
@@ -23,7 +23,7 @@ const System = () => {
     getModelList().then(res => {
       setChatModelData(res.find(it => it.type === 'chat') || null)
       setEmbeddingModelData(res.find(it => it.type === 'embedding') || null)
-      setRerankerModelData(res.find(it => it.type === 'reranker') || null)
+      setRerankerModelData(res.find(it => it.type === 'rerank') || null)
     })
   }
 
@@ -228,7 +228,7 @@ const System = () => {
               <Box sx={{ height: '20px', color: 'text.auxiliary' }}>尚未配置，</Box>
               <Button sx={{ minWidth: 0, px: 0, height: '20px' }} onClick={() => {
                 setAddOpen(true)
-                setAddType('reranker')
+                setAddType('rerank')
               }} >去添加</Button>
             </Stack>
           </> : <>
@@ -262,7 +262,7 @@ const System = () => {
               }}>状态正常</Box>
               {rerankerModelData && <Button size="small" variant="outlined" onClick={() => {
                 setAddOpen(true)
-                setAddType('reranker')
+                setAddType('rerank')
               }}>
                 修改
               </Button>}

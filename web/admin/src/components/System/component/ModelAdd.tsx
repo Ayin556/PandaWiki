@@ -9,7 +9,7 @@ import { Controller, useForm } from "react-hook-form"
 interface AddModelProps {
   open: boolean
   data: ModelListItem | null
-  type: 'chat' | 'embedding' | 'reranker'
+  type: 'chat' | 'embedding' | 'rerank'
   onClose: () => void
   refresh: () => void
 }
@@ -22,20 +22,20 @@ interface AddModelForm {
   api_key: string
   api_header_key: string
   api_header_value: string
-  type: 'chat' | 'embedding' | 'reranker'
+  type: 'chat' | 'embedding' | 'rerank'
 }
 
 const titleMap = {
   chat: 'Chat 模型',
   embedding: 'Embedding 模型',
-  reranker: 'Reranker 模型',
+  rerank: 'Reranker 模型',
 }
 
 const ModelAdd = ({ open, onClose, refresh, data, type = 'chat' }: AddModelProps) => {
   const theme = useTheme()
 
   let providers: Record<string, any> = ModelProvider
-  if (type === 'embedding' || type === 'reranker') {
+  if (type === 'embedding' || type === 'rerank') {
     providers = { BaiZhiCloud: ModelProvider.BaiZhiCloud, Other: ModelProvider.Other }
   }
 
