@@ -20,7 +20,7 @@ const Footer = () => {
   }}>
     <Stack direction={'row'} alignItems={'center'} justifyContent={'center'} gap={0.5}>
       本网站由
-      <Image src={logo} alt="PandaWiki" width={16} height={16} />
+      <Image src={logo.src} alt="PandaWiki" width={16} height={16} />
       <Box sx={{ fontWeight: 'bold', color: '#000' }}>PandaWiki</Box>
       提供技术支持
     </Stack>
