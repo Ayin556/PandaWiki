@@ -270,6 +270,7 @@ export type AppConfigEditData = {
 // =============================================》model
 
 export type GetModelNameData = {
+  type: 'chat' | 'embedding' | 'reranker',
   provider: keyof typeof ModelProvider | '',
   api_header: string,
   api_key: string,
@@ -293,6 +294,7 @@ export type ModelListItem = {
   id: string,
   model: keyof typeof IconMap,
   is_active: boolean
+  type: 'chat' | 'embedding' | 'reranker'
   api_version: string,
   prompt_tokens: number,
   total_tokens: number
@@ -311,6 +313,12 @@ export type ConversationListItem = {
   created_at: string,
   id: string,
   model: string,
+  ip_address: {
+    city: string,
+    country: string,
+    ip: string,
+    province: string
+  },
   remote_ip: string,
   subject: string
 }

@@ -16,7 +16,12 @@ const nextConfig: NextConfig = {
         ...[
           {
             source: '/share/:path*',
-            destination: `http://localhost:8000/share/:path*`,
+            destination: `${process.env.NEXT_PUBLIC_API_URL}/share/:path*`,
+            basePath: false as const,
+          },
+          {
+            source: '/static-file/:path*',
+            destination: `${process.env.NEXT_PUBLIC_API_URL}/static-file/:path*`,
             basePath: false as const,
           }
         ]

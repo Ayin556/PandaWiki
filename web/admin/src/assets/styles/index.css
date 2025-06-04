@@ -196,10 +196,29 @@ input {
   appearance: textfield;
 }
 
-.five-ellipsis {
+[class^="ellipsis-"] {
+  display: -webkit-box;
   -webkit-box-orient: vertical;
-  display: -webkit-box !important;
-  -webkit-line-clamp: 5;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.ellipsis-1 {
+  -webkit-line-clamp: 1;
+}
+
+.ellipsis-2 {
+  -webkit-line-clamp: 2;
+}
+
+.ellipsis-3 {
+  -webkit-line-clamp: 3;
+}
+
+.ellipsis-5 {
+  -webkit-line-clamp: 4;
+}
+
+.ellipsis-5 {
+  -webkit-line-clamp: 5;
 }

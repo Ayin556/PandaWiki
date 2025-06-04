@@ -132,7 +132,8 @@ const CardWebHeader = ({ id, data, refresh }: CardWebHeaderProps) => {
         control={control}
         name="btns"
         render={({ field }) => {
-          const btn = field.value.find((btn: CardWebHeaderBtn) => btn.id === selectedBtnId)!
+          const btn = field.value.find((btn: CardWebHeaderBtn) => btn.id === selectedBtnId)
+          if (!btn) return <></>
           return <Box sx={{ border: '1px solid', borderColor: 'divider', p: 2, borderRadius: '10px', mb: 1 }}>
             <Stack gap={1}>
               <Stack direction={'row'}>

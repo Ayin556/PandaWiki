@@ -7,6 +7,7 @@
 body {
   font-family: var(--font-gilory), var(--font-puhuiti), 'Roboto', 'Helvetica',
     'Arial', sans-serif !important;
+  background-color: #fff !important;
 }
 
 a {

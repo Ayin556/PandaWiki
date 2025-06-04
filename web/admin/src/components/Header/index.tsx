@@ -1,4 +1,4 @@
-import { IconButton, Stack } from '@mui/material';
+import { IconButton, Stack, Tooltip } from '@mui/material';
 import { Icon, Message } from 'ct-mui';
 import { useNavigate } from 'react-router-dom';
 import System from '../System';
@@ -24,20 +24,22 @@ const Header = () => {
     <Bread />
     <Stack direction={'row'} alignItems={'center'} gap={2}>
       <System />
-      <IconButton title='退出登录' size='small' sx={{
-        bgcolor: 'background.paper',
-        width: '24px',
-        height: '24px',
-        '&:hover': {
-          color: 'primary.main',
-        }
-      }} onClick={() => {
-        Message.success('退出登录成功')
-        localStorage.removeItem('panda_wiki_token')
-        navigate('/login')
-      }}>
-        <Icon type='icon-dengchu' sx={{ fontSize: 18 }} />
-      </IconButton>
+      <Tooltip arrow title='退出登录'>
+        <IconButton size='small' sx={{
+          bgcolor: 'background.paper',
+          width: '24px',
+          height: '24px',
+          '&:hover': {
+            color: 'primary.main',
+          }
+        }} onClick={() => {
+          Message.success('退出登录成功')
+          localStorage.removeItem('panda_wiki_token')
+          navigate('/login')
+        }}>
+          <Icon type='icon-dengchu' sx={{ fontSize: 18 }} />
+        </IconButton>
+      </Tooltip>
     </Stack>
   </Stack>
 }

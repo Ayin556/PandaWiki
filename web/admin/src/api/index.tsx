@@ -48,6 +48,9 @@ export const createUser = (data: UserForm): Promise<void> =>
 export const updateUser = (data: UpdateUserInfo): Promise<void> =>
   request({ url: 'api/v1/user/reset_password', method: 'put', data })
 
+export const deleteUser = (body: { user_id: string }): Promise<void> =>
+  request({ url: 'api/v1/user/delete', method: 'delete', data: body })
+
 // =============================================》knowledge base
 
 export const getKnowledgeBaseList = (): Promise<KnowledgeBaseListItem[]> =>
@@ -93,8 +96,8 @@ export const getNodeRecommend = (params: GetNodeRecommendData): Promise<Recommen
 
 // =============================================》crawler
 
-export const scrapeCrawler = (data: { url: string }): Promise<{ content: string, title: string }> =>
-  request({ url: 'api/v1/crawler/scrape', method: 'post', data })
+export const scrapeCrawler = (data: { url: string }, config?: { signal: AbortSignal }): Promise<{ content: string, title: string }> =>
+  request({ url: 'api/v1/crawler/scrape', method: 'post', data, ...config })
 
 export const scrapeRSS = (data: { url: string }): Promise<{ items: ScrapeRSSItem[] }> =>
   request({ url: 'api/v1/crawler/parse_rss', method: 'post', data })

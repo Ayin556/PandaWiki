@@ -2,14 +2,13 @@
 import { Stack, styled } from "@mui/material";
 
 const StyledAnchor = styled(Stack)(({ theme }) => ({
+  gap: '8px',
+  fontSize: 14,
   top: 98,
   right: `calc((100vw - ${theme.breakpoints.values.lg}px) / 2 - 8px)`,
   position: 'fixed',
-  width: '194px',
+  width: 250,
   minHeight: '500px',
-  borderLeft: `1px solid ${theme.palette.divider}`,
-  paddingLeft: theme.spacing(3),
-  marginLeft: theme.spacing(7),
 }));
 
 export default StyledAnchor;

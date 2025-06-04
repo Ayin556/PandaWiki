@@ -1,4 +1,5 @@
 import { KBDetail } from "@/assets/type";
+import Footer from "@/components/footer";
 import KBProvider from "@/provider/kb-provider";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import parse from 'html-react-parser';
@@ -42,7 +43,7 @@ const puhuiti = localFont({
 
 const getKBDetailCached = cache(async (kb_id: string) => {
   try {
-    const res = await fetch(`${process.env.API_URL}/share/v1/app/web/info`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/share/v1/app/web/info`, {
       cache: 'no-store',
       method: 'GET',
       headers: {
@@ -67,7 +68,7 @@ export const viewport: Viewport = {
 
 export async function generateMetadata(): Promise<Metadata> {
   const headersList = await headers()
-  const kb_id = headersList.get('x-kb-id') || ''
+  const kb_id = headersList.get('x-kb-id') || process.env.DEV_KB_ID || ''
 
   const kbDetail = await getKBDetailCached(kb_id)
   if (!kbDetail) {
@@ -96,9 +97,8 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const headersList = await headers()
-  const kb_id = headersList.get('x-kb-id') || ''
+  const kb_id = headersList.get('x-kb-id') || process.env.DEV_KB_ID || ''
   const kbDetail = await getKBDetailCached(kb_id)
-  console.log(kbDetail)
 
   return (
     <html lang="en">
@@ -112,6 +112,7 @@ export default async function RootLayout({
           <KBProvider kbDetail={kbDetail} kb_id={kb_id}>
             {children}
           </KBProvider>
+          <Footer />
         </AppRouterCacheProvider>
         {kbDetail?.settings?.body_code && (
           <>{parse(kbDetail.settings.body_code)}</>

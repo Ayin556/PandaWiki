@@ -49,16 +49,16 @@ const CardWebWelcome = ({ id, data, refresh }: CardWebWelcomeProps) => {
   }
 
   const nodeRec = () => {
-    if (recommend_node_ids.length > 0) {
-      getNodeRecommend({ kb_id, node_ids: recommend_node_ids }).then((res) => {
-        setSorted(res)
-      })
-    }
+    getNodeRecommend({ kb_id, node_ids: recommend_node_ids }).then((res) => {
+      setSorted(res)
+    })
   }
 
   useEffect(() => {
     if (recommend_node_ids.length > 0) {
       nodeRec()
+    } else {
+      setSorted([])
     }
   }, [recommend_node_ids])
 

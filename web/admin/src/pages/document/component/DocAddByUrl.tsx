@@ -40,6 +40,7 @@ type Item = {
 }
 
 const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddByUrlProps) => {
+
   const { kb_id } = useAppSelector(state => state.config)
   const [step, setStep] = useState<1 | 2 | 3>(1)
   const [loading, setLoading] = useState(false)
@@ -66,7 +67,6 @@ const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddB
     const newFiles = acceptedFiles.filter((_, i) => i !== index)
     setAcceptedFiles(newFiles)
   }
-
 
   const handleCancel = () => {
     setIsCancelled(true)
@@ -104,7 +104,6 @@ const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddB
     setCurrentFileIndex(0)
     const urls: string[] = []
     const errorIdx: number[] = []
-
     try {
       for (let i = 0; i < acceptedFiles.length; i++) {
         setCurrentFileIndex(i)
@@ -124,57 +123,57 @@ const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddB
         const res = await scrapeCrawler({ url })
         setItems(prev => [...prev, { ...res, url, success: -1, id: '' }])
       }
+      setLoading(false)
     } catch (error) {
       console.error(error)
     }
-    setLoading(false)
+  }
+
+  const handleURL = async () => {
+    const newQueue: (() => Promise<any>)[] = []
+    if (type === 'URL') {
+      const urls = url.split('\n')
+      for (const url of urls) {
+        newQueue.push(async () => {
+          const res = await scrapeCrawler({ url })
+          setItems(prev => [...prev, { ...res, url, success: -1, id: '' }])
+        })
+      }
+    }
+    if (type === 'RSS') {
+      const { items = [] } = await scrapeRSS({ url })
+      for (const item of items) {
+        if (item.url) {
+          newQueue.push(async () => {
+            const res = await scrapeCrawler({ url: item.url })
+            setItems(prev => [...prev, { ...res, url: item.url, success: -1, id: '' }])
+          })
+        }
+      }
+    }
+    if (type === 'Sitemap') {
+      const res = await scrapeSitemap({ url })
+      const urls = res.items.map(item => item.url)
+      for (const url of urls) {
+        newQueue.push(async () => {
+          const res = await scrapeCrawler({ url })
+          setItems(prev => [...prev, { ...res, url, success: -1, id: '' }])
+        })
+      }
+    }
+    setStep(2)
+    setRequestQueue(newQueue)
   }
 
   const handleOk = async () => {
     if (step === 3) {
       handleCancel()
       refresh()
-      return
     } else if (step === 1) {
       setLoading(true)
-      if (type === 'OfflineFile') {
-        handleOfflineFile()
-        return
-      }
-      setStep(2)
-
       setIsCancelled(false)
-      const newQueue: (() => Promise<any>)[] = []
-
-      if (type === 'URL') {
-        const urls = url.split('\n')
-        for (const url of urls) {
-          newQueue.push(async () => {
-            const res = await scrapeCrawler({ url })
-            setItems(prev => [...prev, { ...res, url, success: -1, id: '' }])
-          })
-        }
-      } else if (type === 'RSS') {
-        const { items = [] } = await scrapeRSS({ url })
-        newQueue.push(async () => {
-          for (const item of items) {
-            const res = await scrapeCrawler({ url: item.url })
-            setItems(prev => [...prev, { ...res, url: item.url, success: -1, id: '' }])
-          }
-        })
-      } else if (type === 'Sitemap') {
-        const res = await scrapeSitemap({ url })
-        const urls = res.items.map(item => item.url)
-        for (const url of urls) {
-          newQueue.push(async () => {
-            const res = await scrapeCrawler({ url })
-            setItems(prev => [...prev, { ...res, url, success: -1, id: '' }])
-          })
-        }
-      }
-      setTimeout(() => {
-        setRequestQueue(newQueue)
-      }, 50);
+      if (type === 'OfflineFile') handleOfflineFile()
+      else handleURL()
     } else if (step === 2) {
       if (selectIds.length === 0) {
         Message.error('请选择要导入的文档')
@@ -224,24 +223,42 @@ const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddB
     }
   }
 
-  useEffect(() => {
-    if (requestQueue.length > 0 && !isCancelled) {
-      const newQueue = [...requestQueue]
-      const requests = newQueue.splice(0, 2)
-
-      Promise.all(requests.map(request => request()))
-        .then(() => {
-          setRequestQueue(newQueue)
-        })
-        .catch(error => {
-          console.error('请求执行出错:', error)
-          setRequestQueue(newQueue)
-        })
+  const processUrl = async () => {
+    if (isCancelled) {
+      setItems([])
     }
-    if (requestQueue.length === 0) {
+    if (requestQueue.length === 0 || isCancelled) {
       setLoading(false)
+      setRequestQueue([])
+      return
     }
-  }, [requestQueue, isCancelled])
+
+    setLoading(true)
+    const newQueue = [...requestQueue]
+    const requests = newQueue.splice(0, 2)
+
+    try {
+      await Promise.all(requests.map(request => request()))
+      if (newQueue.length > 0 && !isCancelled) {
+        setRequestQueue(newQueue)
+      } else {
+        setLoading(false)
+        setRequestQueue([])
+      }
+    } catch (error) {
+      console.error('请求执行出错:', error)
+      if (newQueue.length > 0 && !isCancelled) {
+        setRequestQueue(newQueue)
+      } else {
+        setLoading(false)
+        setRequestQueue([])
+      }
+    }
+  }
+
+  useEffect(() => {
+    processUrl()
+  }, [requestQueue.length, isCancelled])
 
   return <Modal
     title={`通过 ${type === 'OfflineFile' ? '离线文件' : type} 导入`}

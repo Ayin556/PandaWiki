@@ -1,7 +1,7 @@
 import { createNodeSummary, ITreeItem } from "@/api"
 import Card from "@/components/Card"
 import { CheckCircle } from "@mui/icons-material"
-import { Stack } from "@mui/material"
+import { Button, Stack } from "@mui/material"
 import { Ellipsis, Icon, Modal } from "ct-mui"
 import { useEffect, useState } from "react"
 
@@ -20,6 +20,10 @@ const Summary = ({ open, data, kb_id, refresh, onClose }: SummaryProps) => {
 
   const handleOk = () => {
     setLoading(true)
+    if (data.summary) {
+      onClose()
+      return
+    }
     createNodeSummary({ kb_id, id: data.id }).then((res) => {
       setSummary(res.summary)
       setSuccess(true)
@@ -39,12 +43,15 @@ const Summary = ({ open, data, kb_id, refresh, onClose }: SummaryProps) => {
   return <Modal
     open={open}
     onCancel={onClose}
+    disableEscapeKeyDown
+    closable={false}
     title={success ? <Stack direction='row' alignItems='center' gap={1}>
       <CheckCircle sx={{ color: 'success.main' }} />
       摘要生成成功
     </Stack> : data.summary ? '文档摘要' : '确认为以下文档生成摘要？'}
     onOk={handleOk}
-    okText={data.summary ? '重新生成' : '生成'}
+    okText={data.summary ? '关闭' : '生成'}
+    showCancel={!data.summary}
     okButtonProps={{ loading }}
   >
     {!data.summary && !summary && <Stack direction='row' alignItems='center' gap={0.5}>
@@ -54,6 +61,9 @@ const Summary = ({ open, data, kb_id, refresh, onClose }: SummaryProps) => {
     {summary && <Card sx={{ p: 2, bgcolor: 'background.paper2', fontSize: 14 }}>
       {summary}
     </Card>}
+    {!loading && summary && <Button sx={{ minWidth: 'auto' }} onClick={handleOk} startIcon={
+      <Icon type='icon-shuaxin' />
+    }>重新生成</Button>}
   </Modal>
 }
 

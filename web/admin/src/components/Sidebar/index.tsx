@@ -103,7 +103,7 @@ const Sidebar = () => {
           color: 'primary.main',
         }
       }} startIcon={<Icon type='icon-a-Webyingyong' />}
-        onClick={() => window.open('https://docs.web2gpt.ai/', '_blank')}
+        onClick={() => window.open('https://baizhi.cloud/landing/pandawiki', '_blank')}
       >官方网站</Button>
       <Button variant='outlined' sx={{
         fontSize: 14,
@@ -121,7 +121,7 @@ const Sidebar = () => {
           color: 'primary.main',
         }
       }} startIcon={<Icon type='icon-bangzhuwendang1' />}
-        onClick={() => window.open('https://docs.web2gpt.ai/', '_blank')}
+        onClick={() => window.open('https://pandawiki.docs.baizhi.cloud/', '_blank')}
       >帮助文档</Button>
       <Button variant='outlined' sx={{
         fontSize: 14,

@@ -41,6 +41,13 @@ const Conversation = () => {
       dataIndex: 'remote_ip',
       title: '客户端',
       width: 160,
+      render: (text: string, record: ConversationListItem) => {
+        const { city = '', country = '', province = '' } = record.ip_address
+        return <>
+          <Box>{text}</Box>
+          <Box sx={{ color: 'text.auxiliary', fontSize: 12 }}>{country === '中国' ? `${province}-${city}` : `${country}`}</Box>
+        </>
+      }
     },
     {
       dataIndex: 'created_at',

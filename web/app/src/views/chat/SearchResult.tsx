@@ -22,6 +22,8 @@ const SearchResult = ({ list, loading }: { list: ChunkResultItem[], loading: boo
         <Box key={item.node_id} sx={{
           borderBottom: idx === list.length - 1 ? 'none' : '1px dashed',
           borderColor: 'divider',
+          mt: 1,
+          pb: 1,
         }}>
           <Link href={`/node/${item.node_id}`} target="_blank">
             <Stack direction='row' alignItems='center' gap={3} justifyContent='space-between' sx={(theme) => ({
@@ -29,9 +31,9 @@ const SearchResult = ({ list, loading }: { list: ChunkResultItem[], loading: boo
               px: 2,
               py: '14px',
               cursor: 'pointer',
-              bgcolor: 'background.paper',
+              bgcolor: 'background.default',
               '&:hover': {
-                bgcolor: `rgba(${theme.vars.palette.primary.mainChannel} / 0.1)`,
+                bgcolor: 'background.paper',
                 '.hover-primary': {
                   color: theme.vars.palette.primary.main,
                   fontWeight: '700',
@@ -49,13 +51,13 @@ const SearchResult = ({ list, loading }: { list: ChunkResultItem[], loading: boo
           </Link>
         </Box>
       ))}
-      {loading && <Box>
+      {loading && <Box sx={{ mt: 1 }}>
         <Stack gap={1} sx={{
           borderRadius: '10px',
           px: 2,
           py: '14px',
           cursor: 'pointer',
-          bgcolor: 'background.paper',
+          bgcolor: 'background.default',
         }}>
           <Skeleton variant="text" sx={{ width: '40%', height: '24px' }} />
           <Skeleton variant="text" sx={{ width: '100%', height: '20px' }} />

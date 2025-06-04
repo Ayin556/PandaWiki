@@ -11,7 +11,7 @@ import {
   SimpleTreeItemWrapper,
   TreeItemComponentProps
 } from "dnd-kit-sortable-tree";
-import React, { useContext, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import Summary from "./Summary";
 
 const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeItem>>((props, ref) => {
@@ -33,6 +33,13 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
 
   const [value, setValue] = useState(item.name)
   const isEditting = item.isEditting ?? false;
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isEditting && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isEditting]);
 
   const menuList = useMemo(() => [
     ...(item.type === 1 ? [
@@ -226,7 +233,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
             <TextField
               size="small"
               value={value}
-              autoFocus
+              inputRef={inputRef}
               placeholder="请输入文档名称"
               sx={{
                 width: 300,

@@ -8,7 +8,8 @@ import { useEffect, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 interface AddModelProps {
   open: boolean
-  data?: ModelListItem
+  data: ModelListItem | null
+  type: 'chat' | 'embedding' | 'reranker'
   onClose: () => void
   refresh: () => void
 }
@@ -21,19 +22,33 @@ interface AddModelForm {
   api_key: string
   api_header_key: string
   api_header_value: string
+  type: 'chat' | 'embedding' | 'reranker'
 }
 
-const ModelAdd = ({ open, onClose, refresh, data }: AddModelProps) => {
+const titleMap = {
+  chat: 'Chat 模型',
+  embedding: 'Embedding 模型',
+  reranker: 'Reranker 模型',
+}
+
+const ModelAdd = ({ open, onClose, refresh, data, type = 'chat' }: AddModelProps) => {
   const theme = useTheme()
+
+  let providers: Record<string, any> = ModelProvider
+  if (type === 'embedding' || type === 'reranker') {
+    providers = { BaiZhiCloud: ModelProvider.BaiZhiCloud, Other: ModelProvider.Other }
+  }
+
   const { formState: { errors }, handleSubmit, control, reset, setValue, watch } = useForm<AddModelForm>({
     defaultValues: {
-      provider: data?.provider || 'DeepSeek',
-      base_url: data?.base_url || ModelProvider.DeepSeek.defaultBaseUrl,
-      model: data?.model || '',
-      api_version: data?.api_version || '',
-      api_key: data?.api_key || '',
-      api_header_key: data?.api_header?.split('=')[0] || '',
-      api_header_value: data?.api_header?.split('=')[1] || '',
+      type,
+      provider: 'BaiZhiCloud',
+      base_url: providers.BaiZhiCloud.defaultBaseUrl,
+      model: '',
+      api_version: '',
+      api_key: '',
+      api_header_key: '',
+      api_header_value: '',
     }
   })
 
@@ -46,6 +61,26 @@ const ModelAdd = ({ open, onClose, refresh, data }: AddModelProps) => {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
 
+  const handleReset = () => {
+    onClose()
+    reset({
+      type,
+      provider: 'BaiZhiCloud',
+      model: '',
+      base_url: '',
+      api_key: '',
+      api_version: '',
+      api_header_key: '',
+      api_header_value: '',
+    })
+    setModelUserList([])
+    setSuccess(false)
+    setLoading(false)
+    setModelLoading(false)
+    setError('')
+    refresh()
+  }
+
   const getModel = (value: AddModelForm) => {
     let header = ''
     if (value.api_header_key && value.api_header_value) {
@@ -53,6 +88,7 @@ const ModelAdd = ({ open, onClose, refresh, data }: AddModelProps) => {
     }
     setModelLoading(true)
     getModelNameList({
+      type,
       api_key: value.api_key,
       base_url: value.base_url,
       provider: value.provider,
@@ -78,6 +114,7 @@ const ModelAdd = ({ open, onClose, refresh, data }: AddModelProps) => {
     setError('')
     setLoading(true)
     testModel({
+      type,
       api_key: value.api_key,
       base_url: value.base_url,
       api_version: value.api_version,
@@ -91,6 +128,7 @@ const ModelAdd = ({ open, onClose, refresh, data }: AddModelProps) => {
       } else {
         if (data) {
           updateModel({
+            type,
             api_key: value.api_key,
             base_url: value.base_url,
             model: value.model,
@@ -100,14 +138,13 @@ const ModelAdd = ({ open, onClose, refresh, data }: AddModelProps) => {
             provider: value.provider,
           }).then(() => {
             Message.success('修改成功')
-            reset()
-            onClose()
-            refresh()
+            handleReset()
           }).finally(() => {
             setLoading(false)
           })
         } else {
           createModel({
+            type,
             api_key: value.api_key,
             base_url: value.base_url,
             model: value.model,
@@ -115,9 +152,7 @@ const ModelAdd = ({ open, onClose, refresh, data }: AddModelProps) => {
             provider: value.provider,
           }).then(() => {
             Message.success('添加成功')
-            reset()
-            onClose()
-            refresh()
+            handleReset()
           }).finally(() => {
             setLoading(false)
           })
@@ -128,48 +163,56 @@ const ModelAdd = ({ open, onClose, refresh, data }: AddModelProps) => {
     })
   }
 
+  const resetCurData = (value: ModelListItem) => {
+    if (value.provider && value.provider !== 'Other') {
+      getModel({
+        api_key: value.api_key || '',
+        base_url: value.base_url || '',
+        model: value.model || '',
+        provider: value.provider || '',
+        api_version: value.api_version || '',
+        api_header_key: value.api_header?.split('=')[0] || '',
+        api_header_value: value.api_header?.split('=')[1] || '',
+        type,
+      })
+    }
+    reset({
+      type,
+      provider: value.provider || 'Other',
+      model: value.model || '',
+      base_url: value.base_url || '',
+      api_key: value.api_key || '',
+      api_version: value.api_version || '',
+      api_header_key: value.api_header?.split('=')[0] || '',
+      api_header_value: value.api_header?.split('=')[1] || '',
+    })
+  }
+
   useEffect(() => {
     if (open) {
       if (data) {
-        if (data.provider && data.provider !== 'Other') {
-          getModel({
-            api_key: data.api_key || '',
-            base_url: data.base_url || '',
-            model: data.model || '',
-            provider: data.provider || '',
-            api_version: data.api_version || '',
-            api_header_key: data.api_header?.split('=')[0] || '',
-            api_header_value: data.api_header?.split('=')[1] || '',
-          })
-        }
-        reset({
-          provider: data.provider || 'Other',
-          model: data.model || '',
-          base_url: data.base_url || '',
-          api_key: data.api_key || '',
-          api_version: data.api_version || '',
-          api_header_key: data.api_header?.split('=')[0] || '',
-          api_header_value: data.api_header?.split('=')[1] || '',
-        })
+        resetCurData(data)
       } else {
-        reset()
+        reset({
+          type,
+          provider: 'BaiZhiCloud',
+          model: '',
+          base_url: providers.BaiZhiCloud.defaultBaseUrl,
+          api_key: '',
+          api_version: '',
+          api_header_key: '',
+          api_header_value: '',
+        })
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, open])
 
   return <Modal
-    title={data ? '修改第三方模型' : '添加第三方模型'}
+    title={data ? `修改 ${titleMap[type]}` : `添加 ${titleMap[type]}`}
     open={open}
     width={800}
-    onCancel={() => {
-      reset()
-      setModelUserList([])
-      setSuccess(false)
-      setLoading(false)
-      setError('')
-      onClose()
-    }}
+    onCancel={handleReset}
     okText='保存'
     onOk={handleSubmit(onSubmit)}
     okButtonProps={{
@@ -180,7 +223,7 @@ const ModelAdd = ({ open, onClose, refresh, data }: AddModelProps) => {
     <Stack direction={'row'} alignItems={'stretch'} gap={3}>
       <Stack gap={1} sx={{ width: 200, flexShrink: 0, bgcolor: 'background.paper2', borderRadius: '10px', p: 1 }}>
         <Box sx={{ fontSize: 14, lineHeight: '24px', fontWeight: 'bold', p: 1 }}>模型供应商</Box>
-        {Object.values(ModelProvider).map(it => <Stack
+        {Object.values(providers).map(it => <Stack
           direction={'row'}
           alignItems={'center'}
           gap={1.5}
@@ -196,19 +239,23 @@ const ModelAdd = ({ open, onClose, refresh, data }: AddModelProps) => {
             }
           }}
           onClick={() => {
-            if (data) return
-            setModelUserList([])
-            setError('')
-            setSuccess(false)
-            reset({
-              provider: it.label as keyof typeof ModelProvider,
-              base_url: it.label === 'AzureOpenAI' ? '' : it.defaultBaseUrl,
-              model: '',
-              api_version: '',
-              api_key: '',
-              api_header_key: '',
-              api_header_value: '',
-            })
+            if (data && data.provider === it.label) {
+              resetCurData(data)
+            } else {
+              setModelUserList([])
+              setError('')
+              setModelLoading(false)
+              setSuccess(false)
+              reset({
+                provider: it.label as keyof typeof ModelProvider,
+                base_url: it.label === 'AzureOpenAI' ? '' : it.defaultBaseUrl,
+                model: '',
+                api_version: '',
+                api_key: '',
+                api_header_key: '',
+                api_header_value: '',
+              })
+            }
           }}
         >
           <Icon type={it.icon} sx={{ fontSize: 18 }} />
@@ -231,9 +278,9 @@ const ModelAdd = ({ open, onClose, refresh, data }: AddModelProps) => {
           render={({ field }) => <TextField
             {...field}
             fullWidth
-            disabled={!ModelProvider[providerBrand].urlWrite}
+            disabled={!providers[providerBrand].urlWrite}
             size='small'
-            placeholder={ModelProvider[providerBrand].defaultBaseUrl}
+            placeholder={providers[providerBrand].defaultBaseUrl}
             error={!!errors.base_url}
             helperText={errors.base_url?.message}
             onChange={e => {
@@ -247,12 +294,12 @@ const ModelAdd = ({ open, onClose, refresh, data }: AddModelProps) => {
         <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'} sx={{ fontSize: 14, lineHeight: '32px', mt: 2 }}>
           <Box>
             API Secret
-            {ModelProvider[providerBrand].secretRequired && <Box component={'span'} sx={{ color: 'red' }}> *</Box>}
+            {providers[providerBrand].secretRequired && <Box component={'span'} sx={{ color: 'red' }}> *</Box>}
           </Box>
-          {ModelProvider[providerBrand].modelDocumentUrl && <Box
+          {providers[providerBrand].modelDocumentUrl && <Box
             component={'span'}
             sx={{ color: 'primary.main', cursor: 'pointer', ml: 1, textAlign: 'right' }}
-            onClick={() => window.open(ModelProvider[providerBrand].modelDocumentUrl, '_blank')}
+            onClick={() => window.open(providers[providerBrand].modelDocumentUrl, '_blank')}
           >查看文档</Box>}
         </Stack>
         <Controller
@@ -260,7 +307,7 @@ const ModelAdd = ({ open, onClose, refresh, data }: AddModelProps) => {
           name='api_key'
           rules={{
             required: {
-              value: ModelProvider[providerBrand].secretRequired,
+              value: providers[providerBrand].secretRequired,
               message: 'API Secret 不能为空',
             },
           }}
@@ -349,7 +396,7 @@ const ModelAdd = ({ open, onClose, refresh, data }: AddModelProps) => {
               {modelUserList.map(it => <MenuItem key={it.model} value={it.model}>{it.model}</MenuItem>)}
             </TextField>}
           />
-          {ModelProvider[providerBrand].customHeader && <>
+          {providers[providerBrand].customHeader && <>
             <Box sx={{ fontSize: 14, lineHeight: '32px', mt: 2 }}>
               Header
             </Box>

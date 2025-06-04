@@ -37,7 +37,7 @@ const Version = () => {
         color: 'primary.main',
       }
     }} onClick={() => {
-      window.open('https://docs.web2gpt.ai/zh/%E7%89%88%E6%9C%AC%E6%9B%B4%E6%96%B0%E8%AE%B0%E5%BD%95')
+      window.open('https://pandawiki.docs.baizhi.cloud/node/01971615-05b8-7924-9af7-15f73784f893')
     }}>
       <Stack direction={'row'} alignItems={'center'} gap={0.5}>
         <Icon type='icon-banben' sx={{ fontSize: 16, color: 'success.main' }} />
