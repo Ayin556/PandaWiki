@@ -21,8 +21,7 @@ COPY .env .env
 # 构建应用
 RUN pnpm run build
 
-# 使用 nginx 作为生产环境的基础镜像
-FROM nginx:alpine
+FROM node:20-alpine
 
 COPY --from=builder /app/public ./public
 ENV NODE_ENV=production
