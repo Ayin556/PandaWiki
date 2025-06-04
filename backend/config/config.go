@@ -8,16 +8,17 @@ import (
 )
 
 type Config struct {
-	Log           LogConfig       `mapstructure:"log"`
-	HTTP          HTTPConfig      `mapstructure:"http"`
-	AdminPassword string          `mapstructure:"admin_password"`
-	PG            PGConfig        `mapstructure:"pg"`
-	MQ            MQConfig        `mapstructure:"mq"`
-	Embedding     EmbeddingConfig `mapstructure:"embedding"`
-	Vector        VectorConfig    `mapstructure:"vector"`
-	Redis         RedisConfig     `mapstructure:"redis"`
-	Auth          AuthConfig      `mapstructure:"auth"`
-	S3            S3Config        `mapstructure:"s3"`
+	Log           LogConfig   `mapstructure:"log"`
+	HTTP          HTTPConfig  `mapstructure:"http"`
+	AdminPassword string      `mapstructure:"admin_password"`
+	PG            PGConfig    `mapstructure:"pg"`
+	MQ            MQConfig    `mapstructure:"mq"`
+	RAG           RAGConfig   `mapstructure:"rag"`
+	Redis         RedisConfig `mapstructure:"redis"`
+	Auth          AuthConfig  `mapstructure:"auth"`
+	S3            S3Config    `mapstructure:"s3"`
+	CaddyAPI      string      `mapstructure:"caddy_api"`
+	SubnetPrefix  string      `mapstructure:"subnet_prefix"`
 }
 
 type LogConfig struct {
@@ -43,31 +44,14 @@ type NATSConfig struct {
 	Password string `mapstructure:"password"`
 }
 
-type EmbeddingConfig struct {
-	Provider             string    `mapstructure:"provider"`
-	RerankTopK           int       `mapstructure:"rerank_top_k"`
-	RerankScoreThreshold float64   `mapstructure:"rerank_score_threshold"`
-	BGE                  BGEConfig `mapstructure:"bge"`
+type RAGConfig struct {
+	Provider string      `mapstructure:"provider"`
+	CTRAG    CTRAGConfig `mapstructure:"ct_rag"`
 }
 
-type BGEConfig struct {
-	Host           string `mapstructure:"host"`
-	Token          string `mapstructure:"token"`
-	EmbeddingModel string `mapstructure:"embedding_model"`
-	RerankModel    string `mapstructure:"rerank_model"`
-}
-
-type VectorConfig struct {
-	Provider  string       `mapstructure:"provider"`
-	QueryTopK int          `mapstructure:"query_top_k"`
-	Qdrant    QdrantConfig `mapstructure:"qdrant"`
-}
-
-type QdrantConfig struct {
-	Host       string `mapstructure:"host"`
-	Port       int    `mapstructure:"port"`
-	APIKey     string `mapstructure:"api_key"`
-	Collection string `mapstructure:"collection"`
+type CTRAGConfig struct {
+	BaseURL string `mapstructure:"base_url"`
+	APIKey  string `mapstructure:"api_key"`
 }
 
 type RedisConfig struct {
@@ -93,6 +77,10 @@ type S3Config struct {
 
 func NewConfig() (*Config, error) {
 	// set default config
+	SUBNET_PREFIX := os.Getenv("SUBNET_PREFIX")
+	if SUBNET_PREFIX == "" {
+		SUBNET_PREFIX = "169.254.15"
+	}
 	defaultConfig := &Config{
 		Log: LogConfig{
 			Level: 0,
@@ -107,30 +95,16 @@ func NewConfig() (*Config, error) {
 		MQ: MQConfig{
 			Type: "nats",
 			NATS: NATSConfig{
-				Server:   "nats://panda-wiki-nats:4222",
+				Server:   fmt.Sprintf("nats://%s.13:4222", SUBNET_PREFIX),
 				User:     "panda-wiki",
 				Password: "",
 			},
 		},
-		Embedding: EmbeddingConfig{
-			Provider:             "bge",
-			RerankTopK:           5,
-			RerankScoreThreshold: 0.1,
-			BGE: BGEConfig{
-				Host:           "https://api.siliconflow.com",
-				Token:          "",
-				EmbeddingModel: "bge-m3",
-				RerankModel:    "bge-reranker-v2-m3",
-			},
-		},
-		Vector: VectorConfig{
-			Provider:  "qdrant",
-			QueryTopK: 10,
-			Qdrant: QdrantConfig{
-				Host:       "panda-wiki-vector-db",
-				Port:       6334,
-				APIKey:     "",
-				Collection: "panda-wiki",
+		RAG: RAGConfig{
+			Provider: "ct",
+			CTRAG: CTRAGConfig{
+				BaseURL: fmt.Sprintf("http://%s.18:8080/api/v1", SUBNET_PREFIX),
+				APIKey:  "sk-1234567890",
 			},
 		},
 		Redis: RedisConfig{
@@ -147,6 +121,8 @@ func NewConfig() (*Config, error) {
 			SecretKey:   "",
 			MaxFileSize: 5242880, // 5MB
 		},
+		CaddyAPI:     "/app/run/caddy-admin.sock",
+		SubnetPrefix: "169.254.15",
 	}
 
 	viper.AddConfigPath(".")
@@ -181,9 +157,6 @@ func overrideWithEnv(c *Config) {
 	if env := os.Getenv("NATS_PASSWORD"); env != "" {
 		c.MQ.NATS.Password = env
 	}
-	if env := os.Getenv("QDRANT_API_KEY"); env != "" {
-		c.Vector.Qdrant.APIKey = env
-	}
 	if env := os.Getenv("REDIS_PASSWORD"); env != "" {
 		c.Redis.Password = env
 	}
@@ -195,6 +168,9 @@ func overrideWithEnv(c *Config) {
 	}
 	if env := os.Getenv("ADMIN_PASSWORD"); env != "" {
 		c.AdminPassword = env
+	}
+	if env := os.Getenv("SUBNET_PREFIX"); env != "" {
+		c.SubnetPrefix = env
 	}
 }
 

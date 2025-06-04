@@ -1,43 +1,51 @@
 package usecase
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"slices"
 	"time"
 
+	"github.com/cloudwego/eino-ext/components/model/deepseek"
 	"github.com/cloudwego/eino-ext/components/model/openai"
 	"github.com/cloudwego/eino/components/model"
 	"github.com/cloudwego/eino/components/prompt"
 	"github.com/cloudwego/eino/schema"
+	"github.com/samber/lo"
 
 	"github.com/chaitin/panda-wiki/config"
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/log"
 	"github.com/chaitin/panda-wiki/repo/pg"
-	"github.com/chaitin/panda-wiki/store/vector"
+	"github.com/chaitin/panda-wiki/store/rag"
 	"github.com/chaitin/panda-wiki/utils"
 )
 
 type LLMUsecase struct {
-	vector           vector.VectorStore
+	rag              rag.RAGService
 	conversationRepo *pg.ConversationRepository
+	kbRepo           *pg.KnowledgeBaseRepository
+	nodeRepo         *pg.NodeRepository
 	config           *config.Config
 	logger           *log.Logger
 }
 
-func NewLLMUsecase(config *config.Config, vector vector.VectorStore, conversationRepo *pg.ConversationRepository, logger *log.Logger) *LLMUsecase {
+func NewLLMUsecase(config *config.Config, rag rag.RAGService, conversationRepo *pg.ConversationRepository, kbRepo *pg.KnowledgeBaseRepository, nodeRepo *pg.NodeRepository, logger *log.Logger) *LLMUsecase {
 	return &LLMUsecase{
 		config:           config,
-		vector:           vector,
+		rag:              rag,
 		conversationRepo: conversationRepo,
-		logger:           logger.WithModule("llm_usecase"),
+		kbRepo:           kbRepo,
+		nodeRepo:         nodeRepo,
+		logger:           logger.WithModule("usecase.llm"),
 	}
 }
 
-func (u *LLMUsecase) GetChatModel(ctx context.Context, model *domain.Model) (model.ChatModel, error) {
+func (u *LLMUsecase) GetChatModel(ctx context.Context, model *domain.Model) (model.BaseChatModel, error) {
 	// config chat model
 	var temprature float32 = 0.0
 	config := &openai.ChatModelConfig{
@@ -59,61 +67,39 @@ func (u *LLMUsecase) GetChatModel(ctx context.Context, model *domain.Model) (mod
 			config.HTTPClient = client
 		}
 	}
-	chatModel, err := openai.NewChatModel(ctx, config)
-	if err != nil {
-		return nil, fmt.Errorf("create chat model failed: %w", err)
-	}
-	return chatModel, nil
-}
-
-func (u *LLMUsecase) FormatKBMessage(ctx context.Context, kbIDs []string, messages []*domain.ChatToKBMessage) ([]*schema.Message, error) {
-	kbMessages := make([]*schema.Message, 0)
-	for _, msg := range messages {
-		switch msg.Role {
-		case "user":
-			kbMessages = append(kbMessages, schema.UserMessage(msg.Content))
-		case "assistant":
-			kbMessages = append(kbMessages, schema.AssistantMessage(msg.Content, nil))
-		default:
-			continue
+	switch model.Provider {
+	case domain.ModelProviderBrandDeepSeek:
+		config := &deepseek.ChatModelConfig{
+			BaseURL:     model.BaseURL,
+			APIKey:      model.APIKey,
+			Model:       string(model.Model),
+			Temperature: temprature,
 		}
-	}
-	if len(kbMessages) > 0 {
-		question := kbMessages[len(kbMessages)-1].Content
-		// get related documents from vectordb
-		records, err := u.vector.QueryRecords(ctx, kbIDs, question)
+		chatModel, err := deepseek.NewChatModel(ctx, config)
 		if err != nil {
-			return nil, fmt.Errorf("get vector failed: %w", err)
+			return nil, fmt.Errorf("create chat model failed: %w", err)
 		}
-		documents := domain.FormatDocChunks(records)
-
-		template := prompt.FromMessages(schema.GoTemplate,
-			schema.SystemMessage(domain.SystemPrompt),
-			schema.UserMessage(domain.UserQuestionFormatter),
-		)
-		formattedMessages, err := template.Format(ctx, map[string]any{
-			"CurrentDate": time.Now().Format("2006-01-02"),
-			"Question":    question,
-			"Documents":   documents,
-		})
+		return chatModel, nil
+	default:
+		chatModel, err := openai.NewChatModel(ctx, config)
 		if err != nil {
-			return nil, fmt.Errorf("format messages failed: %w", err)
+			return nil, fmt.Errorf("create chat model failed: %w", err)
 		}
-		kbMessages = slices.Insert(formattedMessages, 1, kbMessages[:len(kbMessages)-1]...)
+		return chatModel, nil
 	}
-	return kbMessages, nil
 }
 
 func (u *LLMUsecase) FormatConversationMessages(
 	ctx context.Context,
 	conversationID string,
 	kbID string,
-) ([]*schema.Message, error) {
+) ([]*schema.Message, []*domain.RankedNodeChunks, error) {
 	messages := make([]*schema.Message, 0)
+	rankedNodes := make([]*domain.RankedNodeChunks, 0)
 
 	msgs, err := u.conversationRepo.GetConversationMessagesByID(ctx, conversationID)
 	if err != nil {
-		return nil, fmt.Errorf("get conversation messages failed: %w", err)
+		return nil, nil, fmt.Errorf("get conversation messages failed: %w", err)
 	}
 	if len(msgs) > 0 {
 		historyMessages := make([]*schema.Message, 0)
@@ -134,12 +120,49 @@ func (u *LLMUsecase) FormatConversationMessages(
 				schema.SystemMessage(domain.SystemPrompt),
 				schema.UserMessage(domain.UserQuestionFormatter),
 			)
-			// get related documents from vectordb
-			records, err := u.vector.QueryRecords(ctx, []string{kbID}, question)
+			// query dataset id from kb
+			kb, err := u.kbRepo.GetKnowledgeBaseByID(ctx, kbID)
 			if err != nil {
-				return nil, fmt.Errorf("get vector failed: %w", err)
+				return nil, nil, fmt.Errorf("get kb failed: %w", err)
 			}
-			documents := domain.FormatDocChunks(records)
+			// get related documents from vectordb
+			records, err := u.rag.QueryRecords(ctx, []string{kb.DatasetID}, question)
+			if err != nil {
+				return nil, nil, fmt.Errorf("get vector failed: %w", err)
+			}
+			u.logger.Info("get related documents from vectordb", log.Any("record_count", len(records)))
+			rankedNodesMap := make(map[string]*domain.RankedNodeChunks)
+			// get raw node by doc_id
+			if len(records) > 0 {
+				docIDs := lo.Uniq(lo.Map(records, func(item *domain.NodeContentChunk, _ int) string {
+					return item.DocID
+				}))
+				u.logger.Info("docIDs", log.Any("docIDs", docIDs))
+				docIDNode, err := u.nodeRepo.GetNodesByDocIDs(ctx, docIDs)
+				if err != nil {
+					return nil, nil, fmt.Errorf("get nodes by ids failed: %w", err)
+				}
+				u.logger.Info("get nodes by ids", log.Any("docIDNode", docIDNode))
+				for _, record := range records {
+					if nodeChunk, ok := rankedNodesMap[record.DocID]; !ok {
+						if docNode, ok := docIDNode[record.DocID]; ok {
+							rankNodeChunk := &domain.RankedNodeChunks{
+								NodeID:      docNode.ID,
+								NodeName:    docNode.Name,
+								NodeSummary: docNode.Meta.Summary,
+								Chunks:      []*domain.NodeContentChunk{record},
+							}
+							rankedNodes = append(rankedNodes, rankNodeChunk)
+							rankedNodesMap[record.DocID] = rankNodeChunk
+						}
+					} else {
+						nodeChunk.Chunks = append(nodeChunk.Chunks, record)
+					}
+				}
+			}
+			u.logger.Info("ranked nodes", log.Int("rankedNodesCount", len(rankedNodes)))
+			documents := domain.FormatNodeChunks(rankedNodes)
+			u.logger.Debug("documents", log.String("documents", documents))
 
 			formattedMessages, err := template.Format(ctx, map[string]any{
 				"CurrentDate": time.Now().Format("2006-01-02"),
@@ -147,17 +170,17 @@ func (u *LLMUsecase) FormatConversationMessages(
 				"Documents":   documents,
 			})
 			if err != nil {
-				return nil, fmt.Errorf("format messages failed: %w", err)
+				return nil, nil, fmt.Errorf("format messages failed: %w", err)
 			}
 			messages = slices.Insert(formattedMessages, 1, historyMessages[:len(historyMessages)-1]...)
 		}
 	}
-	return messages, nil
+	return messages, rankedNodes, nil
 }
 
 func (u *LLMUsecase) ChatWithAgent(
 	ctx context.Context,
-	chatModel model.ChatModel,
+	chatModel model.BaseChatModel,
 	messages []*schema.Message,
 	usage *schema.TokenUsage,
 	onChunk func(ctx context.Context, dataType, chunk string) error,
@@ -166,6 +189,8 @@ func (u *LLMUsecase) ChatWithAgent(
 	if err != nil {
 		return fmt.Errorf("stream failed: %w", err)
 	}
+	firstReasoning := false
+	firstData := false
 
 	for {
 		msg, err := resp.Recv()
@@ -174,6 +199,25 @@ func (u *LLMUsecase) ChatWithAgent(
 		}
 		if err != nil {
 			return fmt.Errorf("recv failed: %w", err)
+		}
+		reasoning, ok := deepseek.GetReasoningContent(msg)
+		if ok {
+			if !firstReasoning {
+				firstReasoning = true
+				reasoning = "<think>" + reasoning
+			}
+			if err := onChunk(ctx, "data", reasoning); err != nil {
+				return fmt.Errorf("on chunk reasoning: %w", err)
+			}
+			continue
+		}
+		if firstReasoning && !firstData {
+			firstData = true
+			msg.Content = "</think>\n" + msg.Content
+			if err := onChunk(ctx, "data", msg.Content); err != nil {
+				return fmt.Errorf("on chunk data: %w", err)
+			}
+			continue
 		}
 		if err := onChunk(ctx, "data", msg.Content); err != nil {
 			return fmt.Errorf("on chunk data: %w", err)
@@ -188,8 +232,68 @@ func (u *LLMUsecase) ChatWithAgent(
 	return nil
 }
 
+func (u *LLMUsecase) Generate(
+	ctx context.Context,
+	chatModel model.BaseChatModel,
+	messages []*schema.Message,
+) (string, error) {
+	resp, err := chatModel.Generate(ctx, messages)
+	if err != nil {
+		return "", fmt.Errorf("generate failed: %w", err)
+	}
+	return resp.Content, nil
+}
+
 func (u *LLMUsecase) CheckModel(ctx context.Context, req *domain.CheckModelReq) (*domain.CheckModelResp, error) {
 	checkResp := &domain.CheckModelResp{}
+
+	if req.Type == domain.ModelTypeEmbedding || req.Type == domain.ModelTypeRerank {
+		url := req.BaseURL
+		reqBody := map[string]any{}
+		if req.Type == domain.ModelTypeEmbedding {
+			reqBody = map[string]any{
+				"model":           req.Model,
+				"input":           "PandaWiki is a platform for creating and sharing knowledge bases.",
+				"encoding_format": "float",
+			}
+			url = req.BaseURL + "/embeddings"
+		}
+		if req.Type == domain.ModelTypeRerank {
+			reqBody = map[string]any{
+				"model": req.Model,
+				"documents": []string{
+					"PandaWiki is a platform for creating and sharing knowledge bases.",
+					"PandaWiki is a platform for creating and sharing knowledge bases.",
+					"PandaWiki is a platform for creating and sharing knowledge bases.",
+				},
+				"query": "PandaWiki",
+			}
+			url = req.BaseURL + "/rerank"
+		}
+		body, err := json.Marshal(reqBody)
+		if err != nil {
+			checkResp.Error = fmt.Sprintf("marshal request body failed: %s", err.Error())
+			return checkResp, nil
+		}
+		request, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewBuffer(body))
+		if err != nil {
+			checkResp.Error = fmt.Sprintf("new request failed: %s", err.Error())
+			return checkResp, nil
+		}
+		request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", req.APIKey))
+		request.Header.Set("Content-Type", "application/json")
+		resp, err := http.DefaultClient.Do(request)
+		if err != nil {
+			checkResp.Error = fmt.Sprintf("send request failed: %s", err.Error())
+			return checkResp, nil
+		}
+		defer resp.Body.Close()
+		if resp.StatusCode != http.StatusOK {
+			checkResp.Error = fmt.Sprintf("request failed: %s", resp.Status)
+			return checkResp, nil
+		}
+		return checkResp, nil
+	}
 	config := &openai.ChatModelConfig{
 		APIKey:  req.APIKey,
 		BaseURL: req.BaseURL,

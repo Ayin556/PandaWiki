@@ -34,8 +34,6 @@ func NewModelHandler(echo *echo.Echo, baseHandler *handler.BaseHandler, logger *
 	group.POST("/check", handler.CheckModel)
 	group.POST("/provider/supported", handler.GetProviderSupportedModelList)
 	group.PUT("", handler.UpdateModel)
-	group.DELETE("", handler.DeleteModel)
-	group.POST("/activate", handler.ActivateModel)
 
 	return handler
 }
@@ -111,6 +109,7 @@ func (h *ModelHandler) CreateModel(c echo.Context) error {
 		APIHeader:  req.APIHeader,
 		BaseURL:    req.BaseURL,
 		APIVersion: req.APIVersion,
+		Type:       req.Type,
 	}
 	if err := h.usecase.Create(ctx, model); err != nil {
 		return h.NewResponseWithError(c, "create model failed", err)
@@ -138,27 +137,6 @@ func (h *ModelHandler) UpdateModel(c echo.Context) error {
 	ctx := c.Request().Context()
 	if err := h.usecase.Update(ctx, &req); err != nil {
 		return h.NewResponseWithError(c, "update model failed", err)
-	}
-	return h.NewResponseWithData(c, nil)
-}
-
-// delete model
-//
-//	@Description	delete model
-//	@Tags			model
-//	@Accept			json
-//	@Produce		json
-//	@Param			id	query		string	true	"model id"
-//	@Success		200	{object}	domain.Response
-//	@Router			/api/v1/model [delete]
-func (h *ModelHandler) DeleteModel(c echo.Context) error {
-	id := c.QueryParam("id")
-	if id == "" {
-		return h.NewResponseWithError(c, "id is required", nil)
-	}
-	ctx := c.Request().Context()
-	if err := h.usecase.Delete(ctx, id); err != nil {
-		return h.NewResponseWithError(c, "delete model failed", err)
 	}
 	return h.NewResponseWithData(c, nil)
 }
@@ -214,28 +192,4 @@ func (h *ModelHandler) GetProviderSupportedModelList(c echo.Context) error {
 		return h.NewResponseWithError(c, "get user model list failed", err)
 	}
 	return h.NewResponseWithData(c, models)
-}
-
-// activate model
-//
-//	@Summary		activate model
-//	@Description	activate model
-//	@Tags			model
-//	@Accept			json
-//	@Param			model	body		domain.ActivateModelReq	true	"activate model request"
-//	@Success		200		{object}	domain.Response
-//	@Router			/api/v1/model/activate [post]
-func (h *ModelHandler) ActivateModel(c echo.Context) error {
-	var req domain.ActivateModelReq
-	if err := c.Bind(&req); err != nil {
-		return h.NewResponseWithError(c, "invalid request", err)
-	}
-	if err := c.Validate(&req); err != nil {
-		return h.NewResponseWithError(c, "invalid request", err)
-	}
-	ctx := c.Request().Context()
-	if err := h.usecase.Activate(ctx, &req); err != nil {
-		return h.NewResponseWithError(c, "activate model failed", err)
-	}
-	return h.NewResponseWithData(c, nil)
 }

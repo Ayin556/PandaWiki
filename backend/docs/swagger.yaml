@@ -1,72 +1,60 @@
 definitions:
-  domain.ActivateModelReq:
+  domain.AccessSettings:
     properties:
-      model_id:
+      hosts:
+        items:
+          type: string
+        type: array
+      ports:
+        items:
+          type: integer
+        type: array
+      private_key:
         type: string
-    required:
-    - model_id
+      public_key:
+        type: string
+      ssl_ports:
+        items:
+          type: integer
+        type: array
     type: object
-  domain.App:
+  domain.AppDetailResp:
     properties:
-      created_at:
-        type: string
       id:
         type: string
       kb_id:
         type: string
-      link:
-        type: string
       name:
         type: string
+      recommend_nodes:
+        items:
+          $ref: '#/definitions/domain.RecommendNodeListResp'
+        type: array
       settings:
-        $ref: '#/definitions/domain.AppSettings'
-      type:
-        $ref: '#/definitions/domain.AppType'
-      updated_at:
-        type: string
-    type: object
-  domain.AppListItem:
-    properties:
-      id:
-        type: string
-      link:
-        type: string
-      name:
-        type: string
-      settings:
-        $ref: '#/definitions/domain.AppSettings'
-      stats:
-        $ref: '#/definitions/domain.ConversationStatForApp'
+        $ref: '#/definitions/domain.AppSettingsResp'
       type:
         $ref: '#/definitions/domain.AppType'
     type: object
   domain.AppSettings:
     properties:
+      auto_sitemap:
+        type: boolean
+      body_code:
+        type: string
+      btns:
+        items: {}
+        type: array
       desc:
+        description: seo
         type: string
-      dingbot_aes_key:
-        type: string
-      dingbot_client_id:
-        description: dingbot
-        type: string
-      dingbot_token:
-        type: string
-      dingbot_welcome_str:
-        type: string
-      feishubot_app_id:
-        description: feishu
-        type: string
-      feishubot_app_secret:
-        type: string
-      feishubot_encrypt_key:
-        type: string
-      feishubot_verification_token:
-        type: string
-      feishubot_welcome_str:
+      head_code:
+        description: inject code
         type: string
       icon:
         type: string
-      recommend_doc_ids:
+      keyword:
+        type: string
+      recommend_node_ids:
         items:
           type: string
         type: array
@@ -76,40 +64,65 @@ definitions:
         type: array
       search_placeholder:
         type: string
-      wecombot_agent_id:
-        description: Wecom
-        type: integer
-      wecombot_corp_id:
-        type: string
-      wecombot_corp_secret:
-        type: string
-      wecombot_suite_encoding_aes_key:
-        type: string
-      wecombot_suite_id:
-        type: string
-      wecombot_suite_token:
-        type: string
-      wecombot_welcome_str:
+      title:
+        description: nav
         type: string
       welcome_str:
+        description: welcome
+        type: string
+    type: object
+  domain.AppSettingsResp:
+    properties:
+      auto_sitemap:
+        type: boolean
+      body_code:
+        type: string
+      btns:
+        items: {}
+        type: array
+      desc:
+        description: seo
+        type: string
+      head_code:
+        description: inject code
+        type: string
+      icon:
+        type: string
+      keyword:
+        type: string
+      recommend_node_ids:
+        items:
+          type: string
+        type: array
+      recommend_questions:
+        items:
+          type: string
+        type: array
+      search_placeholder:
+        type: string
+      title:
+        description: nav
+        type: string
+      welcome_str:
+        description: welcome
         type: string
     type: object
   domain.AppType:
     enum:
     - 1
     - 2
-    - 3
-    - 4
-    - 5
     type: integer
     x-enum-varnames:
     - AppTypeWeb
     - AppTypeWidget
-    - AppTypeDingbot
-    - AppTypeFeishu
-    - AppTypeWecom
   domain.ChatRequest:
     properties:
+      app_type:
+        allOf:
+        - $ref: '#/definitions/domain.AppType'
+        enum:
+        - 1
+        - 2
       conversation_id:
         type: string
       message:
@@ -117,29 +130,8 @@ definitions:
       nonce:
         type: string
     required:
+    - app_type
     - message
-    type: object
-  domain.ChatToKBMessage:
-    properties:
-      content:
-        type: string
-      role:
-        type: string
-    required:
-    - content
-    - role
-    type: object
-  domain.ChatToKBReq:
-    properties:
-      kb_id:
-        type: string
-      messages:
-        items:
-          $ref: '#/definitions/domain.ChatToKBMessage'
-        type: array
-    required:
-    - kb_id
-    - messages
     type: object
   domain.CheckModelReq:
     properties:
@@ -165,36 +157,25 @@ definitions:
         - Moonshot
         - Other
         - AzureOpenAI
+        - BaiZhiCloud
+      type:
+        allOf:
+        - $ref: '#/definitions/domain.ModelType'
+        enum:
+        - chat
+        - embedding
+        - rerank
     required:
     - base_url
     - model
     - provider
+    - type
     type: object
   domain.CheckModelResp:
     properties:
       content:
         type: string
       error:
-        type: string
-    type: object
-  domain.ChunkListItemResp:
-    properties:
-      content:
-        type: string
-      id:
-        type: string
-      seq:
-        type: integer
-      title:
-        type: string
-    type: object
-  domain.ConversationCount:
-    properties:
-      app_id:
-        type: string
-      count:
-        type: integer
-      date:
         type: string
     type: object
   domain.ConversationDetailResp:
@@ -205,6 +186,8 @@ definitions:
         type: string
       id:
         type: string
+      ip_address:
+        $ref: '#/definitions/domain.IPAddress'
       messages:
         items:
           $ref: '#/definitions/domain.ConversationMessage'
@@ -226,6 +209,8 @@ definitions:
         type: string
       id:
         type: string
+      ip_address:
+        $ref: '#/definitions/domain.IPAddress'
       remote_ip:
         type: string
       subject:
@@ -267,27 +252,12 @@ definitions:
         type: string
       conversation_id:
         type: string
-      doc_id:
+      name:
         type: string
-      favicon:
-        type: string
-      title:
+      node_id:
         type: string
       url:
         type: string
-    type: object
-  domain.ConversationStatForApp:
-    properties:
-      app_id:
-        type: string
-      day_counts:
-        items:
-          $ref: '#/definitions/domain.ConversationCount'
-        type: array
-      last_24h_count:
-        type: integer
-      last_24h_ip_count:
-        type: integer
     type: object
   domain.CreateAppReq:
     properties:
@@ -303,44 +273,30 @@ definitions:
         enum:
         - 1
         - 2
-        - 3
-        - 4
-        - 5
     required:
     - kb_id
     - type
     type: object
-  domain.CreateDocReq:
-    properties:
-      content:
-        type: string
-      file_key:
-        items:
-          type: string
-        type: array
-      kb_id:
-        type: string
-      source:
-        allOf:
-        - $ref: '#/definitions/domain.DocSource'
-        enum:
-        - 1
-        - 2
-        - 3
-      title:
-        type: string
-      url:
-        items:
-          type: string
-        type: array
-    required:
-    - kb_id
-    - source
-    type: object
   domain.CreateKnowledgeBaseReq:
     properties:
+      hosts:
+        items:
+          type: string
+        type: array
       name:
         type: string
+      ports:
+        items:
+          type: integer
+        type: array
+      private_key:
+        type: string
+      public_key:
+        type: string
+      ssl_ports:
+        items:
+          type: integer
+        type: array
     required:
     - name
     type: object
@@ -368,10 +324,40 @@ definitions:
         - Moonshot
         - Other
         - AzureOpenAI
+        - BaiZhiCloud
+      type:
+        allOf:
+        - $ref: '#/definitions/domain.ModelType'
+        enum:
+        - chat
+        - embedding
+        - rerank
     required:
     - base_url
     - model
     - provider
+    - type
+    type: object
+  domain.CreateNodeReq:
+    properties:
+      content:
+        type: string
+      kb_id:
+        type: string
+      name:
+        type: string
+      parent_id:
+        type: string
+      type:
+        allOf:
+        - $ref: '#/definitions/domain.NodeType'
+        enum:
+        - 1
+        - 2
+    required:
+    - kb_id
+    - name
+    - type
     type: object
   domain.CreateUserReq:
     properties:
@@ -384,107 +370,13 @@ definitions:
     - account
     - password
     type: object
-  domain.DocActionReq:
+  domain.DeleteUserReq:
     properties:
-      action:
-        enum:
-        - delete
+      user_id:
         type: string
-      doc_ids:
-        items:
-          type: string
-        type: array
     required:
-    - action
-    - doc_ids
+    - user_id
     type: object
-  domain.DocDetailResp:
-    properties:
-      content:
-        type: string
-      created_at:
-        type: string
-      error:
-        type: string
-      id:
-        type: string
-      meta:
-        $ref: '#/definitions/domain.DocMeta'
-      resource_type:
-        $ref: '#/definitions/domain.ResourceType'
-      source:
-        $ref: '#/definitions/domain.DocSource'
-      status:
-        $ref: '#/definitions/domain.DocStatus'
-      updated_at:
-        type: string
-      url:
-        type: string
-    type: object
-  domain.DocListItemResp:
-    properties:
-      chunk_count:
-        type: integer
-      created_at:
-        type: string
-      error:
-        type: string
-      favicon:
-        type: string
-      id:
-        type: string
-      resource_type:
-        $ref: '#/definitions/domain.ResourceType'
-      source:
-        $ref: '#/definitions/domain.DocSource'
-      status:
-        $ref: '#/definitions/domain.DocStatus'
-      title:
-        type: string
-      updated_at:
-        type: string
-      url:
-        type: string
-      word_count:
-        type: integer
-    type: object
-  domain.DocMeta:
-    properties:
-      charset:
-        type: string
-      description:
-        type: string
-      doc_type:
-        $ref: '#/definitions/domain.ResourceType'
-      favicon:
-        type: string
-      keywords:
-        type: string
-      screenshot:
-        type: string
-      title:
-        type: string
-    type: object
-  domain.DocSource:
-    enum:
-    - 1
-    - 2
-    - 3
-    type: integer
-    x-enum-varnames:
-    - DocSourceURL
-    - DocSourceFile
-    - DocSourceManual
-  domain.DocStatus:
-    enum:
-    - 1
-    - 2
-    - 3
-    type: integer
-    x-enum-varnames:
-    - DocStatusPending
-    - DocStatusPublished
-    - DocStatusFailed
   domain.GetProviderModelListResp:
     properties:
       models:
@@ -492,34 +384,44 @@ definitions:
           $ref: '#/definitions/domain.ProviderModelListItem'
         type: array
     type: object
-  domain.KBStats:
+  domain.IPAddress:
     properties:
-      chunk_count:
-        type: integer
-      doc_count:
-        type: integer
-      kb_id:
+      city:
         type: string
-      word_count:
-        type: integer
+      country:
+        type: string
+      ip:
+        type: string
+      province:
+        type: string
     type: object
   domain.KnowledgeBaseDetail:
     properties:
+      access_settings:
+        $ref: '#/definitions/domain.AccessSettings'
+      created_at:
+        type: string
+      dataset_id:
+        type: string
       id:
         type: string
       name:
+        type: string
+      updated_at:
         type: string
     type: object
   domain.KnowledgeBaseListItem:
     properties:
+      access_settings:
+        $ref: '#/definitions/domain.AccessSettings'
       created_at:
+        type: string
+      dataset_id:
         type: string
       id:
         type: string
       name:
         type: string
-      stats:
-        $ref: '#/definitions/domain.KBStats'
       updated_at:
         type: string
     type: object
@@ -555,8 +457,6 @@ definitions:
         type: string
       id:
         type: string
-      is_active:
-        type: boolean
       model:
         type: string
       prompt_tokens:
@@ -565,6 +465,8 @@ definitions:
         $ref: '#/definitions/domain.ModelProvider'
       total_tokens:
         type: integer
+      type:
+        $ref: '#/definitions/domain.ModelType'
       updated_at:
         type: string
     type: object
@@ -583,8 +485,6 @@ definitions:
         type: integer
       id:
         type: string
-      is_active:
-        type: boolean
       model:
         type: string
       prompt_tokens:
@@ -593,6 +493,8 @@ definitions:
         $ref: '#/definitions/domain.ModelProvider'
       total_tokens:
         type: integer
+      type:
+        $ref: '#/definitions/domain.ModelType'
     type: object
   domain.ModelProvider:
     enum:
@@ -602,6 +504,7 @@ definitions:
     - Moonshot
     - SiliconFlow
     - AzureOpenAI
+    - BaiZhiCloud
     - Other
     type: string
     x-enum-varnames:
@@ -611,7 +514,105 @@ definitions:
     - ModelProviderBrandMoonshot
     - ModelProviderBrandSiliconFlow
     - ModelProviderBrandAzureOpenAI
+    - ModelProviderBrandBaiZhiCloud
     - ModelProviderBrandOther
+  domain.ModelType:
+    enum:
+    - chat
+    - embedding
+    - rerank
+    type: string
+    x-enum-varnames:
+    - ModelTypeChat
+    - ModelTypeEmbedding
+    - ModelTypeRerank
+  domain.MoveNodeReq:
+    properties:
+      id:
+        type: string
+      next_id:
+        type: string
+      parent_id:
+        type: string
+      prev_id:
+        type: string
+    required:
+    - id
+    type: object
+  domain.NodeActionReq:
+    properties:
+      action:
+        enum:
+        - delete
+        type: string
+      id:
+        type: string
+      kb_id:
+        type: string
+    required:
+    - action
+    - id
+    - kb_id
+    type: object
+  domain.NodeDetailResp:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      kb_id:
+        type: string
+      meta:
+        $ref: '#/definitions/domain.NodeMeta'
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  domain.NodeListItemResp:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      parent_id:
+        type: string
+      position:
+        type: number
+      summary:
+        type: string
+      type:
+        $ref: '#/definitions/domain.NodeType'
+      updated_at:
+        type: string
+    type: object
+  domain.NodeMeta:
+    properties:
+      summary:
+        type: string
+    type: object
+  domain.NodeSummaryReq:
+    properties:
+      id:
+        type: string
+      kb_id:
+        type: string
+    required:
+    - id
+    - kb_id
+    type: object
+  domain.NodeType:
+    enum:
+    - 1
+    - 2
+    type: integer
+    x-enum-varnames:
+    - NodeTypeFolder
+    - NodeTypeDocument
   domain.ObjectUploadResp:
     properties:
       key:
@@ -630,15 +631,9 @@ definitions:
     type: object
   domain.ParseURLReq:
     properties:
-      type:
-        enum:
-        - RSS
-        - Sitemap
-        type: string
       url:
         type: string
     required:
-    - type
     - url
     type: object
   domain.ParseURLResp:
@@ -653,6 +648,25 @@ definitions:
       model:
         type: string
     type: object
+  domain.RecommendNodeListResp:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      parent_id:
+        type: string
+      position:
+        type: number
+      recommend_nodes:
+        items:
+          $ref: '#/definitions/domain.RecommendNodeListResp'
+        type: array
+      summary:
+        type: string
+      type:
+        $ref: '#/definitions/domain.NodeType'
+    type: object
   domain.ResetPasswordReq:
     properties:
       id:
@@ -664,22 +678,6 @@ definitions:
     - id
     - new_password
     type: object
-  domain.ResourceType:
-    enum:
-    - WebPage
-    - PlainText
-    - Excel
-    - Word
-    - PDF
-    - Unknown
-    type: string
-    x-enum-varnames:
-    - ResourceTypeWebPage
-    - ResourceTypePlainText
-    - ResourceTypeExcel
-    - ResourceTypeWord
-    - ResourceTypePDF
-    - ResourceTypeUnknown
   domain.Response:
     properties:
       data: {}
@@ -688,6 +686,18 @@ definitions:
       success:
         type: boolean
     type: object
+  domain.ScrapeReq:
+    properties:
+      url:
+        type: string
+    type: object
+  domain.ScrapeResp:
+    properties:
+      content:
+        type: string
+      title:
+        type: string
+    type: object
   domain.UpdateAppReq:
     properties:
       name:
@@ -695,26 +705,16 @@ definitions:
       settings:
         $ref: '#/definitions/domain.AppSettings'
     type: object
-  domain.UpdateDocReq:
-    properties:
-      content:
-        type: string
-      doc_id:
-        type: string
-      title:
-        type: string
-    required:
-    - doc_id
-    type: object
   domain.UpdateKnowledgeBaseReq:
     properties:
+      access_settings:
+        $ref: '#/definitions/domain.AccessSettings'
       id:
         type: string
       name:
         type: string
     required:
     - id
-    - name
     type: object
   domain.UpdateModelReq:
     properties:
@@ -731,10 +731,47 @@ definitions:
         type: string
       model:
         type: string
+      provider:
+        allOf:
+        - $ref: '#/definitions/domain.ModelProvider'
+        enum:
+        - OpenAI
+        - Ollama
+        - DeepSeek
+        - SiliconFlow
+        - Moonshot
+        - Other
+        - AzureOpenAI
+        - BaiZhiCloud
+      type:
+        allOf:
+        - $ref: '#/definitions/domain.ModelType'
+        enum:
+        - chat
+        - embedding
+        - rerank
     required:
     - base_url
     - id
     - model
+    - provider
+    - type
+    type: object
+  domain.UpdateNodeReq:
+    properties:
+      content:
+        type: string
+      id:
+        type: string
+      kb_id:
+        type: string
+      meta:
+        $ref: '#/definitions/domain.NodeMeta'
+      name:
+        type: string
+    required:
+    - id
+    - kb_id
     type: object
   domain.UserInfoResp:
     properties:
@@ -845,37 +882,16 @@ paths:
       - application/json
       description: Get app detail
       parameters:
-      - description: app id
-        in: query
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/domain.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/domain.App'
-              type: object
-      summary: Get app detail
-      tags:
-      - app
-  /api/v1/app/list:
-    get:
-      consumes:
-      - application/json
-      description: Get app list
-      parameters:
       - description: kb id
         in: query
         name: kb_id
         required: true
         type: string
+      - description: app type
+        in: query
+        name: type
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -886,35 +902,11 @@ paths:
             - $ref: '#/definitions/domain.Response'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/domain.AppListItem'
-                  type: array
+                  $ref: '#/definitions/domain.AppDetailResp'
               type: object
-      summary: Get app list
+      summary: Get app detail
       tags:
       - app
-  /api/v1/chat/kb:
-    post:
-      consumes:
-      - application/json
-      description: ChatToKB
-      parameters:
-      - description: ChatToKBReq Request
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/domain.ChatToKBReq'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/domain.Response'
-      summary: ChatToKB
-      tags:
-      - chat
   /api/v1/conversation:
     get:
       consumes:
@@ -990,174 +982,11 @@ paths:
       summary: get conversation detail
       tags:
       - conversation
-  /api/v1/doc:
+  /api/v1/crawler/parse_rss:
     post:
       consumes:
       - application/json
-      description: Create Doc
-      parameters:
-      - description: Doc
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/domain.CreateDocReq'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/domain.Response'
-            - properties:
-                data:
-                  additionalProperties:
-                    type: string
-                  type: object
-              type: object
-      summary: Create Doc
-      tags:
-      - doc
-  /api/v1/doc/action:
-    post:
-      consumes:
-      - application/json
-      description: Doc Action
-      parameters:
-      - description: Action
-        in: body
-        name: action
-        required: true
-        schema:
-          $ref: '#/definitions/domain.DocActionReq'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/domain.Response'
-            - properties:
-                data:
-                  additionalProperties:
-                    type: string
-                  type: object
-              type: object
-      summary: Doc Action
-      tags:
-      - doc
-  /api/v1/doc/chunk/list:
-    get:
-      consumes:
-      - application/json
-      description: Get Chunk List
-      parameters:
-      - description: Doc ID
-        in: query
-        name: doc_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/domain.Response'
-            - properties:
-                data:
-                  items:
-                    $ref: '#/definitions/domain.ChunkListItemResp'
-                  type: array
-              type: object
-      summary: Get Chunk List
-      tags:
-      - doc
-  /api/v1/doc/detail:
-    get:
-      consumes:
-      - application/json
-      description: Get Doc Detail
-      parameters:
-      - description: Doc ID
-        in: query
-        name: doc_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/domain.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/domain.DocDetailResp'
-              type: object
-      summary: Get Doc Detail
-      tags:
-      - doc
-    put:
-      consumes:
-      - application/json
-      description: Update Doc Detail
-      parameters:
-      - description: Doc
-        in: body
-        name: doc
-        required: true
-        schema:
-          $ref: '#/definitions/domain.UpdateDocReq'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/domain.Response'
-      summary: Update Doc Detail
-      tags:
-      - doc
-  /api/v1/doc/list:
-    get:
-      consumes:
-      - application/json
-      description: Get Doc List
-      parameters:
-      - in: query
-        name: kb_id
-        required: true
-        type: string
-      - in: query
-        name: search
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/domain.Response'
-            - properties:
-                data:
-                  items:
-                    $ref: '#/definitions/domain.DocListItemResp'
-                  type: array
-              type: object
-      summary: Get Doc List
-      tags:
-      - doc
-  /api/v1/doc/parse_url:
-    post:
-      consumes:
-      - application/json
-      description: Parse URL
+      description: Parse RSS
       parameters:
       - description: Parse URL
         in: body
@@ -1177,9 +1006,63 @@ paths:
                 data:
                   $ref: '#/definitions/domain.ParseURLResp'
               type: object
-      summary: Parse URL
+      summary: Parse RSS
       tags:
-      - doc
+      - crawler
+  /api/v1/crawler/parse_sitemap:
+    post:
+      consumes:
+      - application/json
+      description: Parse Sitemap
+      parameters:
+      - description: Parse URL
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/domain.ParseURLReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.ParseURLResp'
+              type: object
+      summary: Parse Sitemap
+      tags:
+      - crawler
+  /api/v1/crawler/scrape:
+    post:
+      consumes:
+      - application/json
+      description: Scrape
+      parameters:
+      - description: Scrape
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/domain.ScrapeReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.ScrapeResp'
+              type: object
+      summary: Scrape
+      tags:
+      - crawler
   /api/v1/file/upload:
     post:
       consumes:
@@ -1315,25 +1198,6 @@ paths:
       tags:
       - knowledge_base
   /api/v1/model:
-    delete:
-      consumes:
-      - application/json
-      description: delete model
-      parameters:
-      - description: model id
-        in: query
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/domain.Response'
-      tags:
-      - model
     post:
       consumes:
       - application/json
@@ -1373,26 +1237,6 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/domain.Response'
-      tags:
-      - model
-  /api/v1/model/activate:
-    post:
-      consumes:
-      - application/json
-      description: activate model
-      parameters:
-      - description: activate model request
-        in: body
-        name: model
-        required: true
-        schema:
-          $ref: '#/definitions/domain.ActivateModelReq'
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/domain.Response'
-      summary: activate model
       tags:
       - model
   /api/v1/model/check:
@@ -1491,10 +1335,23 @@ paths:
         - DeepSeek
         - Moonshot
         - AzureOpenAI
+        - BaiZhiCloud
         in: query
         name: provider
         required: true
         type: string
+      - enum:
+        - chat
+        - embedding
+        - rerank
+        in: query
+        name: type
+        required: true
+        type: string
+        x-enum-varnames:
+        - ModelTypeChat
+        - ModelTypeEmbedding
+        - ModelTypeRerank
       produces:
       - application/json
       responses:
@@ -1510,6 +1367,219 @@ paths:
       summary: get provider supported model list
       tags:
       - model
+  /api/v1/node:
+    post:
+      consumes:
+      - application/json
+      description: Create Node
+      parameters:
+      - description: Node
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/domain.CreateNodeReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.Response'
+            - properties:
+                data:
+                  additionalProperties:
+                    type: string
+                  type: object
+              type: object
+      summary: Create Node
+      tags:
+      - node
+  /api/v1/node/action:
+    post:
+      consumes:
+      - application/json
+      description: Node Action
+      parameters:
+      - description: Action
+        in: body
+        name: action
+        required: true
+        schema:
+          $ref: '#/definitions/domain.NodeActionReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.Response'
+            - properties:
+                data:
+                  additionalProperties:
+                    type: string
+                  type: object
+              type: object
+      summary: Node Action
+      tags:
+      - node
+  /api/v1/node/detail:
+    get:
+      consumes:
+      - application/json
+      description: Get Node Detail
+      parameters:
+      - description: ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.NodeDetailResp'
+              type: object
+      summary: Get Node Detail
+      tags:
+      - node
+    put:
+      consumes:
+      - application/json
+      description: Update Node Detail
+      parameters:
+      - description: Node
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/domain.UpdateNodeReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Response'
+      summary: Update Node Detail
+      tags:
+      - node
+  /api/v1/node/list:
+    get:
+      consumes:
+      - application/json
+      description: Get Node List
+      parameters:
+      - in: query
+        name: kb_id
+        required: true
+        type: string
+      - in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.NodeListItemResp'
+                  type: array
+              type: object
+      summary: Get Node List
+      tags:
+      - node
+  /api/v1/node/move:
+    post:
+      consumes:
+      - application/json
+      description: Move Node
+      parameters:
+      - description: Move Node
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/domain.MoveNodeReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Response'
+      summary: Move Node
+      tags:
+      - node
+  /api/v1/node/recommend_nodes:
+    get:
+      consumes:
+      - application/json
+      description: Recommend Nodes
+      parameters:
+      - in: query
+        name: kb_id
+        required: true
+        type: string
+      - collectionFormat: csv
+        in: query
+        items:
+          type: string
+        name: node_ids
+        required: true
+        type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.RecommendNodeListResp'
+                  type: array
+              type: object
+      summary: Recommend Nodes
+      tags:
+      - node
+  /api/v1/node/summary:
+    post:
+      consumes:
+      - application/json
+      description: Summary Node
+      parameters:
+      - description: Summary Node
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/domain.NodeSummaryReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Response'
+      summary: Summary Node
+      tags:
+      - node
   /api/v1/user:
     get:
       consumes:
@@ -1543,6 +1613,28 @@ paths:
           schema:
             $ref: '#/definitions/domain.Response'
       summary: CreateUser
+      tags:
+      - user
+  /api/v1/user/delete:
+    delete:
+      consumes:
+      - application/json
+      description: DeleteUser
+      parameters:
+      - description: DeleteUser Request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/domain.DeleteUserReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Response'
+      summary: DeleteUser
       tags:
       - user
   /api/v1/user/list:
@@ -1611,15 +1703,15 @@ paths:
       summary: ResetPassword
       tags:
       - user
-  /share/v1/app/link:
+  /share/v1/app/web/info:
     get:
       consumes:
       - application/json
-      description: Get app by link
+      description: GetAppInfo
       parameters:
-      - description: link
-        in: query
-        name: link
+      - description: kb id
+        in: header
+        name: X-KB-ID
         required: true
         type: string
       produces:
@@ -1628,24 +1720,19 @@ paths:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/domain.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/domain.App'
-              type: object
-      summary: Get app by link
+            $ref: '#/definitions/domain.Response'
+      summary: GetAppInfo
       tags:
-      - app
+      - share_app
   /share/v1/chat/message:
     post:
       consumes:
       - application/json
       description: ChatMessage
       parameters:
-      - description: app id
+      - description: app type
         in: query
-        name: app_id
+        name: app_type
         required: true
         type: string
       - description: request
@@ -1663,5 +1750,52 @@ paths:
             $ref: '#/definitions/domain.Response'
       summary: ChatMessage
       tags:
-      - chat
+      - share_chat
+  /share/v1/node/detail:
+    get:
+      consumes:
+      - application/json
+      description: GetNodeDetail
+      parameters:
+      - description: kb id
+        in: header
+        name: X-KB-ID
+        required: true
+        type: string
+      - description: node id
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Response'
+      summary: GetNodeDetail
+      tags:
+      - share_node
+  /share/v1/node/list:
+    get:
+      consumes:
+      - application/json
+      description: GetNodeList
+      parameters:
+      - description: kb id
+        in: header
+        name: X-KB-ID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Response'
+      summary: GetNodeList
+      tags:
+      - share_node
 swagger: "2.0"

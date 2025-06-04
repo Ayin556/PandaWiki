@@ -1,0 +1,177 @@
+package domain
+
+import (
+	"database/sql/driver"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"time"
+)
+
+const (
+	MaxPosition float64 = 1e38
+)
+
+type NodeType uint16
+
+const (
+	NodeTypeFolder   NodeType = 1
+	NodeTypeDocument NodeType = 2
+)
+
+// table: nodes
+type Node struct {
+	ID string `json:"id" gorm:"primaryKey"`
+
+	KBID string `json:"kb_id" gorm:"index"`
+
+	Type NodeType `json:"type"`
+
+	Name    string   `json:"name"`
+	Content string   `json:"content"`
+	Meta    NodeMeta `json:"meta" gorm:"type:jsonb"` // summary
+
+	ParentID string  `json:"parent_id"`
+	Position float64 `json:"position"`
+
+	DocID string `json:"doc_id"` // for rag service
+
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
+type NodeMeta struct {
+	Summary string `json:"summary"`
+}
+
+func (d *NodeMeta) Value() (driver.Value, error) {
+	return json.Marshal(d)
+}
+
+func (d *NodeMeta) Scan(value any) error {
+	bytes, ok := value.([]byte)
+	if !ok {
+		return errors.New(fmt.Sprint("invalid node meta type:", value))
+	}
+	return json.Unmarshal(bytes, d)
+}
+
+type CreateNodeReq struct {
+	KBID     string   `json:"kb_id" validate:"required"`
+	ParentID string   `json:"parent_id"`
+	Type     NodeType `json:"type" validate:"required,oneof=1 2"`
+
+	Name    string `json:"name" validate:"required"`
+	Content string `json:"content"`
+}
+
+type GetNodeListReq struct {
+	KBID   string `json:"kb_id" query:"kb_id" validate:"required"`
+	Search string `json:"search" query:"search"`
+}
+
+type NodeListItemResp struct {
+	ID        string    `json:"id"`
+	Type      NodeType  `json:"type"`
+	Name      string    `json:"name"`
+	Summary   string    `json:"summary"`
+	Position  float64   `json:"position"`
+	ParentID  string    `json:"parent_id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
+type NodeDetailResp struct {
+	ID   string `json:"id"`
+	KBID string `json:"kb_id"`
+
+	Name    string   `json:"name"`
+	Content string   `json:"content"`
+	Meta    NodeMeta `json:"meta"`
+
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
+type NodeContentChunk struct {
+	ID    string `json:"id"`
+	KBID  string `json:"kb_id"`
+	DocID string `json:"doc_id"`
+
+	Seq     uint   `json:"seq"`
+	Name    string `json:"name"`
+	Content string `json:"content"`
+}
+
+type RankedNodeChunks struct {
+	NodeID      string
+	NodeName    string
+	NodeSummary string
+	Chunks      []*NodeContentChunk
+}
+
+func (n *RankedNodeChunks) GetURL() string {
+	return fmt.Sprintf("/node/%s", n.NodeID)
+}
+
+type ChunkListItemResp struct {
+	ID      string `json:"id"`
+	Seq     uint   `json:"seq"`
+	Name    string `json:"name"`
+	Content string `json:"content"`
+}
+
+type NodeCotentChunkSSE struct {
+	NodeID  string `json:"node_id"`
+	Name    string `json:"name"`
+	Summary string `json:"summary"`
+}
+
+type RecommendNodeListResp struct {
+	ID             string                   `json:"id"`
+	Name           string                   `json:"name"`
+	Type           NodeType                 `json:"type"`
+	Summary        string                   `json:"summary"`
+	ParentID       string                   `json:"parent_id"`
+	Position       float64                  `json:"position"`
+	RecommendNodes []*RecommendNodeListResp `json:"recommend_nodes,omitempty" gorm:"-"`
+}
+
+type NodeActionReq struct {
+	ID     string `json:"id" validate:"required"`
+	KBID   string `json:"kb_id" validate:"required"`
+	Action string `json:"action" validate:"required,oneof=delete"`
+}
+
+type UpdateNodeReq struct {
+	ID      string    `json:"id" validate:"required"`
+	KBID    string    `json:"kb_id" validate:"required"`
+	Name    *string   `json:"name"`
+	Content *string   `json:"content"`
+	Meta    *NodeMeta `json:"meta"`
+}
+
+type ShareNodeListItemResp struct {
+	ID       string   `json:"id"`
+	Name     string   `json:"name"`
+	Type     NodeType `json:"type"`
+	ParentID string   `json:"parent_id"`
+	Position float64  `json:"position"`
+}
+
+type MoveNodeReq struct {
+	ID       string `json:"id" validate:"required"`
+	ParentID string `json:"parent_id"`
+	PrevID   string `json:"prev_id"`
+	NextID   string `json:"next_id"`
+}
+
+type NodeSummaryReq struct {
+	ID   string `json:"id" validate:"required"`
+	KBID string `json:"kb_id" validate:"required"`
+}
+
+type GetRecommendNodeListReq struct {
+	KBID    string   `json:"kb_id" validate:"required" query:"kb_id"`
+	NodeIDs []string `json:"node_ids" validate:"required" query:"node_ids[]"`
+}

@@ -1,8 +1,10 @@
 package v1
 
 import (
-	"github.com/google/uuid"
+	"errors"
+
 	"github.com/labstack/echo/v4"
+	"github.com/samber/lo"
 
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/handler"
@@ -64,18 +66,30 @@ func (h *KnowledgeBaseHandler) CreateKnowledgeBase(c echo.Context) error {
 	if err := c.Validate(&req); err != nil {
 		return h.NewResponseWithError(c, "invalid request", err)
 	}
+	req.Hosts = lo.Uniq(req.Hosts)
+	req.Ports = lo.Uniq(req.Ports)
+	req.SSLPorts = lo.Uniq(req.SSLPorts)
 
-	id := uuid.New().String()
-	err := h.usecase.CreateKnowledgeBase(c.Request().Context(), &domain.KnowledgeBase{
-		ID:   id,
-		Name: req.Name,
-	})
+	if len(req.Hosts) == 0 {
+		return h.NewResponseWithError(c, "hosts is required", nil)
+	}
+	if len(req.Ports)+len(req.SSLPorts) == 0 {
+		return h.NewResponseWithError(c, "ports is required", nil)
+	}
+
+	did, err := h.usecase.CreateKnowledgeBase(c.Request().Context(), &req)
 	if err != nil {
+		if errors.Is(err, domain.ErrPortHostAlreadyExists) {
+			return h.NewResponseWithError(c, "端口或域名已被其他知识库占用", nil)
+		}
+		if errors.Is(err, domain.ErrSyncCaddyConfigFailed) {
+			return h.NewResponseWithError(c, "端口可能已被其他程序占用，请检查", nil)
+		}
 		return h.NewResponseWithError(c, "failed to create knowledge base", err)
 	}
 
 	return h.NewResponseWithData(c, map[string]string{
-		"id": id,
+		"id": did,
 	})
 }
 
@@ -117,10 +131,7 @@ func (h *KnowledgeBaseHandler) UpdateKnowledgeBase(c echo.Context) error {
 		return h.NewResponseWithError(c, "invalid request", err)
 	}
 
-	err := h.usecase.UpdateKnowledgeBase(c.Request().Context(), &domain.KnowledgeBase{
-		ID:   req.ID,
-		Name: req.Name,
-	})
+	err := h.usecase.UpdateKnowledgeBase(c.Request().Context(), &req)
 	if err != nil {
 		return h.NewResponseWithError(c, "failed to update knowledge base", err)
 	}

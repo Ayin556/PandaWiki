@@ -9,19 +9,19 @@ package main
 import (
 	"github.com/chaitin/panda-wiki/config"
 	"github.com/chaitin/panda-wiki/handler"
+	"github.com/chaitin/panda-wiki/handler/share"
 	"github.com/chaitin/panda-wiki/handler/v1"
 	"github.com/chaitin/panda-wiki/log"
 	"github.com/chaitin/panda-wiki/middleware"
 	"github.com/chaitin/panda-wiki/mq"
-	cache2 "github.com/chaitin/panda-wiki/repo/cache"
+	ipdb2 "github.com/chaitin/panda-wiki/repo/ipdb"
 	mq2 "github.com/chaitin/panda-wiki/repo/mq"
 	pg2 "github.com/chaitin/panda-wiki/repo/pg"
 	"github.com/chaitin/panda-wiki/server/http"
-	"github.com/chaitin/panda-wiki/store/cache"
+	"github.com/chaitin/panda-wiki/store/ipdb"
 	"github.com/chaitin/panda-wiki/store/pg"
+	"github.com/chaitin/panda-wiki/store/rag"
 	"github.com/chaitin/panda-wiki/store/s3"
-	"github.com/chaitin/panda-wiki/store/vector"
-	"github.com/chaitin/panda-wiki/store/vector/embedding"
 	"github.com/chaitin/panda-wiki/usecase"
 )
 
@@ -53,62 +53,74 @@ func createApp() (*App, error) {
 		return nil, err
 	}
 	userHandler := v1.NewUserHandler(echo, baseHandler, logger, userUsecase, authMiddleware, configConfig)
-	knowledgeBaseRepository := pg2.NewKnowledgeBaseRepository(db)
-	embeddingEmbedding, err := embedding.NewEmbedding(configConfig, logger)
+	ragService, err := rag.NewRAGService(configConfig, logger)
 	if err != nil {
 		return nil, err
 	}
-	vectorStore, err := vector.NewVectorStore(configConfig, logger, embeddingEmbedding)
+	knowledgeBaseRepository := pg2.NewKnowledgeBaseRepository(db, configConfig, logger, ragService)
+	knowledgeBaseUsecase, err := usecase.NewKnowledgeBaseUsecase(knowledgeBaseRepository, ragService, logger, configConfig)
 	if err != nil {
 		return nil, err
 	}
-	knowledgeBaseUsecase := usecase.NewKnowledgeBaseUsecase(knowledgeBaseRepository, vectorStore, logger)
 	conversationRepository := pg2.NewConversationRepository(db)
-	llmUsecase := usecase.NewLLMUsecase(configConfig, vectorStore, conversationRepository, logger)
+	nodeRepository := pg2.NewNodeRepository(db, logger)
+	llmUsecase := usecase.NewLLMUsecase(configConfig, ragService, conversationRepository, knowledgeBaseRepository, nodeRepository, logger)
 	knowledgeBaseHandler := v1.NewKnowledgeBaseHandler(baseHandler, echo, knowledgeBaseUsecase, llmUsecase, authMiddleware, logger)
-	docRepository := pg2.NewDocRepository(db, logger)
 	mqProducer, err := mq.NewMQProducer(configConfig, logger)
 	if err != nil {
 		return nil, err
 	}
-	cacheCache, err := cache.NewCache(configConfig)
-	if err != nil {
-		return nil, err
-	}
-	expireTaskRepo := cache2.NewExpireTaskRepo(cacheCache)
-	crawlRepository := mq2.NewCrawlRepository(mqProducer, expireTaskRepo, logger)
-	vectorRepository := mq2.NewVectorRepository(mqProducer)
+	ragRepository := mq2.NewRAGRepository(mqProducer)
+	modelRepository := pg2.NewModelRepository(db, logger)
+	modelUsecase := usecase.NewModelUsecase(modelRepository, nodeRepository, ragRepository, ragService, logger, configConfig)
 	minioClient, err := s3.NewMinioClient(configConfig)
 	if err != nil {
 		return nil, err
 	}
-	docUsecase := usecase.NewDocUsecase(docRepository, crawlRepository, vectorRepository, logger, minioClient)
-	docHandler := v1.NewDocHandler(baseHandler, echo, docUsecase, authMiddleware, logger)
+	nodeUsecase := usecase.NewNodeUsecase(nodeRepository, ragRepository, llmUsecase, modelUsecase, logger, minioClient)
+	nodeHandler := v1.NewNodeHandler(baseHandler, echo, nodeUsecase, authMiddleware, logger)
 	appRepository := pg2.NewAppRepository(db)
-	appUsecase := usecase.NewAppUsecase(appRepository, docRepository, conversationRepository, logger)
-	modelRepository := pg2.NewModelRepository(db, logger)
-	modelUsecase := usecase.NewModelUsecase(modelRepository, logger, configConfig)
-	conversationUsecase := usecase.NewConversationUsecase(conversationRepository, docRepository, logger)
+	appUsecase := usecase.NewAppUsecase(appRepository, nodeUsecase, conversationRepository, logger, configConfig)
+	ipdbIPDB, err := ipdb.NewIPDB(configConfig, logger)
+	if err != nil {
+		return nil, err
+	}
+	ipAddressRepo := ipdb2.NewIPAddressRepo(ipdbIPDB, logger)
+	conversationUsecase := usecase.NewConversationUsecase(conversationRepository, nodeRepository, logger, ipAddressRepo)
 	appHandler := v1.NewAppHandler(echo, baseHandler, logger, authMiddleware, appUsecase, modelUsecase, conversationUsecase, configConfig)
 	fileHandler := v1.NewFileHandler(echo, baseHandler, logger, authMiddleware, minioClient, configConfig)
 	modelHandler := v1.NewModelHandler(echo, baseHandler, logger, authMiddleware, modelUsecase, llmUsecase)
-	chatHandler := v1.NewChatHandler(echo, baseHandler, logger, authMiddleware, appUsecase, llmUsecase, conversationUsecase, modelUsecase, configConfig)
 	conversationHandler := v1.NewConversationHandler(echo, baseHandler, logger, authMiddleware, conversationUsecase)
+	crawlerUsecase, err := usecase.NewCrawlerUsecase(logger)
+	if err != nil {
+		return nil, err
+	}
+	crawlerHandler := v1.NewCrawlerHandler(echo, baseHandler, authMiddleware, logger, configConfig, crawlerUsecase)
 	apiHandlers := &v1.APIHandlers{
 		UserHandler:          userHandler,
 		KnowledgeBaseHandler: knowledgeBaseHandler,
-		DocHandler:           docHandler,
+		NodeHandler:          nodeHandler,
 		AppHandler:           appHandler,
 		FileHandler:          fileHandler,
 		ModelHandler:         modelHandler,
-		ChatHandler:          chatHandler,
 		ConversationHandler:  conversationHandler,
+		CrawlerHandler:       crawlerHandler,
+	}
+	shareNodeHandler := share.NewShareNodeHandler(baseHandler, echo, nodeUsecase, logger)
+	shareAppHandler := share.NewShareAppHandler(echo, baseHandler, logger, appUsecase)
+	chatUsecase := usecase.NewChatUsecase(llmUsecase, conversationUsecase, modelUsecase, appUsecase, logger)
+	shareChatHandler := share.NewShareChatHandler(echo, baseHandler, logger, appUsecase, chatUsecase, conversationUsecase, modelUsecase)
+	shareHandler := &share.ShareHandler{
+		ShareNodeHandler: shareNodeHandler,
+		ShareAppHandler:  shareAppHandler,
+		ShareChatHandler: shareChatHandler,
 	}
 	app := &App{
-		HTTPServer: httpServer,
-		Handlers:   apiHandlers,
-		Config:     configConfig,
-		Logger:     logger,
+		HTTPServer:    httpServer,
+		Handlers:      apiHandlers,
+		ShareHandlers: shareHandler,
+		Config:        configConfig,
+		Logger:        logger,
 	}
 	return app, nil
 }
@@ -116,8 +128,9 @@ func createApp() (*App, error) {
 // wire.go:
 
 type App struct {
-	HTTPServer *http.HTTPServer
-	Handlers   *v1.APIHandlers
-	Config     *config.Config
-	Logger     *log.Logger
+	HTTPServer    *http.HTTPServer
+	Handlers      *v1.APIHandlers
+	ShareHandlers *share.ShareHandler
+	Config        *config.Config
+	Logger        *log.Logger
 }

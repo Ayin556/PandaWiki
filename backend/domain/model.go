@@ -13,14 +13,16 @@ const (
 	ModelProviderBrandMoonshot    ModelProvider = "Moonshot"
 	ModelProviderBrandSiliconFlow ModelProvider = "SiliconFlow"
 	ModelProviderBrandAzureOpenAI ModelProvider = "AzureOpenAI"
+	ModelProviderBrandBaiZhiCloud ModelProvider = "BaiZhiCloud"
 	ModelProviderBrandOther       ModelProvider = "Other"
 )
 
-type TokenType string
+type ModelType string
 
 const (
-	TokenTypePrompt     TokenType = "prompt"
-	TokenTypeCompletion TokenType = "completion"
+	ModelTypeChat      ModelType = "chat"
+	ModelTypeEmbedding ModelType = "embedding"
+	ModelTypeRerank    ModelType = "rerank"
 )
 
 type Model struct {
@@ -31,6 +33,7 @@ type Model struct {
 	APIHeader  string        `json:"api_header"`
 	BaseURL    string        `json:"base_url"`
 	APIVersion string        `json:"api_version"` // for azure openai
+	Type       ModelType     `json:"type" gorm:"default:chat;uniqueIndex"`
 
 	IsActive bool `json:"is_active" gorm:"default:false"`
 
@@ -50,8 +53,7 @@ type ModelListItem struct {
 	APIHeader  string        `json:"api_header"`
 	BaseURL    string        `json:"base_url"`
 	APIVersion string        `json:"api_version"` // for azure openai
-
-	IsActive bool `json:"is_active"`
+	Type       ModelType     `json:"type"`
 
 	PromptTokens     uint64 `json:"prompt_tokens"`
 	CompletionTokens uint64 `json:"completion_tokens"`
@@ -69,12 +71,8 @@ type CreateModelReq struct {
 }
 
 type UpdateModelReq struct {
-	ID         string `json:"id" validate:"required"`
-	Model      string `json:"model" validate:"required"`
-	APIKey     string `json:"api_key"`
-	APIHeader  string `json:"api_header"`
-	BaseURL    string `json:"base_url" validate:"required"`
-	APIVersion string `json:"api_version"` // for azure openai
+	ID string `json:"id" validate:"required"`
+	BaseModelInfo
 }
 
 type CheckModelReq struct {
@@ -82,12 +80,13 @@ type CheckModelReq struct {
 }
 
 type BaseModelInfo struct {
-	Provider   ModelProvider `json:"provider" validate:"required,oneof=OpenAI Ollama DeepSeek SiliconFlow Moonshot Other AzureOpenAI"`
+	Provider   ModelProvider `json:"provider" validate:"required,oneof=OpenAI Ollama DeepSeek SiliconFlow Moonshot Other AzureOpenAI BaiZhiCloud"`
 	Model      string        `json:"model" validate:"required"`
 	BaseURL    string        `json:"base_url" validate:"required"`
 	APIKey     string        `json:"api_key"`
 	APIHeader  string        `json:"api_header"`
 	APIVersion string        `json:"api_version"` // for azure openai
+	Type       ModelType     `json:"type" validate:"required,oneof=chat embedding rerank"`
 }
 
 type CheckModelResp struct {
@@ -126,10 +125,11 @@ var ModelProviderBrandModelsList = map[ModelProvider][]ProviderModelListItem{
 }
 
 type GetProviderModelListReq struct {
-	Provider  string `json:"provider" query:"provider" validate:"required,oneof=SiliconFlow OpenAI Ollama DeepSeek Moonshot AzureOpenAI"`
-	BaseURL   string `json:"base_url" query:"base_url" validate:"required"`
-	APIKey    string `json:"api_key" query:"api_key"`
-	APIHeader string `json:"api_header" query:"api_header"`
+	Provider  string    `json:"provider" query:"provider" validate:"required,oneof=SiliconFlow OpenAI Ollama DeepSeek Moonshot AzureOpenAI BaiZhiCloud"`
+	BaseURL   string    `json:"base_url" query:"base_url" validate:"required"`
+	APIKey    string    `json:"api_key" query:"api_key"`
+	APIHeader string    `json:"api_header" query:"api_header"`
+	Type      ModelType `json:"type" query:"type" validate:"required,oneof=chat embedding rerank"`
 }
 
 type GetProviderModelListResp struct {

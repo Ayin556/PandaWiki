@@ -8,16 +8,12 @@ package main
 
 import (
 	"github.com/chaitin/panda-wiki/config"
-	mq3 "github.com/chaitin/panda-wiki/handler/mq"
+	mq2 "github.com/chaitin/panda-wiki/handler/mq"
 	"github.com/chaitin/panda-wiki/log"
 	"github.com/chaitin/panda-wiki/mq"
-	cache2 "github.com/chaitin/panda-wiki/repo/cache"
-	mq2 "github.com/chaitin/panda-wiki/repo/mq"
 	pg2 "github.com/chaitin/panda-wiki/repo/pg"
-	"github.com/chaitin/panda-wiki/store/cache"
 	"github.com/chaitin/panda-wiki/store/pg"
-	"github.com/chaitin/panda-wiki/store/vector"
-	"github.com/chaitin/panda-wiki/store/vector/embedding"
+	"github.com/chaitin/panda-wiki/store/rag"
 )
 
 // Injectors from wire.go:
@@ -32,40 +28,22 @@ func createApp() (*App, error) {
 	if err != nil {
 		return nil, err
 	}
+	ragService, err := rag.NewRAGService(configConfig, logger)
+	if err != nil {
+		return nil, err
+	}
 	db, err := pg.NewDB(configConfig)
 	if err != nil {
 		return nil, err
 	}
-	docRepository := pg2.NewDocRepository(db, logger)
-	cacheCache, err := cache.NewCache(configConfig)
+	nodeRepository := pg2.NewNodeRepository(db, logger)
+	knowledgeBaseRepository := pg2.NewKnowledgeBaseRepository(db, configConfig, logger, ragService)
+	ragmqHandler, err := mq2.NewRAGMQHandler(mqConsumer, logger, ragService, nodeRepository, knowledgeBaseRepository)
 	if err != nil {
 		return nil, err
 	}
-	expireTaskRepo := cache2.NewExpireTaskRepo(cacheCache)
-	mqProducer, err := mq.NewMQProducer(configConfig, logger)
-	if err != nil {
-		return nil, err
-	}
-	vectorRepository := mq2.NewVectorRepository(mqProducer)
-	docMQHandler, err := mq3.NewDocMQHandler(mqConsumer, docRepository, expireTaskRepo, vectorRepository, logger)
-	if err != nil {
-		return nil, err
-	}
-	embeddingEmbedding, err := embedding.NewEmbedding(configConfig, logger)
-	if err != nil {
-		return nil, err
-	}
-	vectorStore, err := vector.NewVectorStore(configConfig, logger, embeddingEmbedding)
-	if err != nil {
-		return nil, err
-	}
-	vectorMQHandler, err := mq3.NewVectorMQHandler(mqConsumer, logger, vectorStore, docRepository)
-	if err != nil {
-		return nil, err
-	}
-	mqHandlers := &mq3.MQHandlers{
-		DocMQHandler:    docMQHandler,
-		VectorMQHandler: vectorMQHandler,
+	mqHandlers := &mq2.MQHandlers{
+		RAGMQHandler: ragmqHandler,
 	}
 	app := &App{
 		MQConsumer: mqConsumer,
@@ -80,5 +58,5 @@ func createApp() (*App, error) {
 type App struct {
 	MQConsumer mq.MQConsumer
 	Config     *config.Config
-	MQHandlers *mq3.MQHandlers
+	MQHandlers *mq2.MQHandlers
 }

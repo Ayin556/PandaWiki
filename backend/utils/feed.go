@@ -23,6 +23,18 @@ type Feed struct {
 	Items       []FeedItem
 }
 
+// cleanXMLContent removes illegal XML characters from the content
+func cleanXMLContent(content string) string {
+	return strings.Map(func(r rune) rune {
+		// Check if the character is a valid XML character
+		// XML 1.0 spec: https://www.w3.org/TR/xml/#charsets
+		if r == 0x9 || r == 0xA || r == 0xD || (r >= 0x20 && r <= 0xD7FF) || (r >= 0xE000 && r <= 0xFFFD) || (r >= 0x10000 && r <= 0x10FFFF) {
+			return r
+		}
+		return -1 // Remove invalid characters
+	}, content)
+}
+
 // ParseFeed parses a feed URL and returns a generic Feed structure
 func ParseFeed(url string) (*Feed, error) {
 	// Get feed content
@@ -33,14 +45,16 @@ func ParseFeed(url string) (*Feed, error) {
 
 	// Decode content
 	decoded := DecodeBytes(content)
-	decodedBytes := []byte(decoded)
+	// Clean illegal XML characters
+	cleaned := cleanXMLContent(decoded)
+	decodedBytes := []byte(cleaned)
 
 	// Try to detect feed format and parse accordingly
-	if strings.Contains(decoded, "<rss") {
+	if strings.Contains(cleaned, "<rss") {
 		return parseRSS(decodedBytes)
-	} else if strings.Contains(decoded, "<feed") {
+	} else if strings.Contains(cleaned, "<feed") {
 		return parseAtom(decodedBytes)
-	} else if strings.Contains(decoded, "\"version\":") {
+	} else if strings.Contains(cleaned, "\"version\":") {
 		return parseJSONFeed(decodedBytes)
 	}
 
@@ -55,11 +69,24 @@ func parseRSS(content []byte) (*Feed, error) {
 			Title       string `xml:"title"`
 			Description string `xml:"description"`
 			Link        string `xml:"link"`
-			Items       []struct {
-				Title       string `xml:"title"`
-				Link        string `xml:"link"`
+			AtomLink    struct {
+				Href string `xml:"href,attr"`
+			} `xml:"http://www.w3.org/2005/Atom link"`
+			Items []struct {
+				Title string `xml:"title"`
+				Links []struct {
+					Href  string `xml:"href,attr"`
+					Value string `xml:",chardata"`
+				} `xml:"link"`
 				Description string `xml:"description"`
 				PubDate     string `xml:"pubDate"`
+				Guid        struct {
+					IsPermaLink string `xml:"isPermaLink,attr"`
+					Value       string `xml:",chardata"`
+				} `xml:"guid"`
+				AtomLink struct {
+					Href string `xml:"href,attr"`
+				} `xml:"http://www.w3.org/2005/Atom link"`
 			} `xml:"item"`
 		} `xml:"channel"`
 	}
@@ -77,12 +104,27 @@ func parseRSS(content []byte) (*Feed, error) {
 	}
 
 	for _, item := range rssFeed.Channel.Items {
-		feed.Items = append(feed.Items, FeedItem{
+		feedItem := FeedItem{
 			Title:       item.Title,
-			Link:        item.Link,
 			Description: item.Description,
 			Published:   item.PubDate,
-		})
+		}
+
+		// Try to get link from various sources in order of preference
+		if len(item.Links) > 0 {
+			// Try href attribute first, then value
+			if item.Links[0].Href != "" {
+				feedItem.Link = item.Links[0].Href
+			} else if item.Links[0].Value != "" {
+				feedItem.Link = item.Links[0].Value
+			}
+		} else if item.AtomLink.Href != "" {
+			feedItem.Link = item.AtomLink.Href
+		} else if item.Guid.Value != "" && (item.Guid.IsPermaLink == "" || item.Guid.IsPermaLink == "true") {
+			feedItem.Link = item.Guid.Value
+		}
+
+		feed.Items = append(feed.Items, feedItem)
 	}
 
 	return feed, nil

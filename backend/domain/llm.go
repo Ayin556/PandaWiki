@@ -5,19 +5,6 @@ import (
 	"strings"
 )
 
-type ChatRequest struct {
-	ConversationID string  `json:"conversation_id"`
-	Message        string  `json:"message" validate:"required"`
-	Nonce          string  `json:"nonce"`
-	AppID          string  `json:"-"`
-	KBID           string  `json:"-"`
-	AppType        AppType `json:"-"`
-
-	ModelInfo *Model `json:"-"`
-
-	RemoteIP string `json:"-"`
-}
-
 var SystemPrompt = `
 你是一个专业的AI知识库问答助手，要按照以下步骤回答用户问题。
 
@@ -76,10 +63,16 @@ var UserQuestionFormatter = `
 </documents>
 `
 
-func FormatDocChunks(searchResults []*DocChunk) string {
-	searchResultStr := make([]string, 0)
-	for _, result := range searchResults {
-		searchResultStr = append(searchResultStr, fmt.Sprintf("<document>\nID: %s\n标题: %s\nURL: %s\n内容: %s\n</document>", result.ID, result.Title, result.URL, result.Content))
+func FormatNodeChunks(nodeChunks []*RankedNodeChunks) string {
+	documents := make([]string, 0)
+	for _, result := range nodeChunks {
+		document := strings.Builder{}
+		document.WriteString(fmt.Sprintf("<document>\nID: %s\n标题: %s\nURL: %s\n内容:\n", result.NodeID, result.NodeName, result.GetURL()))
+		for _, chunk := range result.Chunks {
+			document.WriteString(fmt.Sprintf("%s\n", chunk.Content))
+		}
+		document.WriteString("</document>")
+		documents = append(documents, document.String())
 	}
-	return strings.Join(searchResultStr, "\n")
+	return strings.Join(documents, "\n")
 }
