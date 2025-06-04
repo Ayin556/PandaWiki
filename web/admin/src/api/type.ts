@@ -270,7 +270,7 @@ export type AppConfigEditData = {
 // =============================================》model
 
 export type GetModelNameData = {
-  type: 'chat' | 'embedding' | 'reranker',
+  type: 'chat' | 'embedding' | 'rerank',
   provider: keyof typeof ModelProvider | '',
   api_header: string,
   api_key: string,
@@ -293,7 +293,7 @@ export type ModelListItem = {
   completion_tokens: number,
   id: string,
   model: keyof typeof IconMap,
-  type: 'chat' | 'embedding' | 'reranker'
+  type: 'chat' | 'embedding' | 'rerank'
   api_version: string,
   prompt_tokens: number,
   total_tokens: number

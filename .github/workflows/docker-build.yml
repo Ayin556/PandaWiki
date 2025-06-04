@@ -27,7 +27,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: web/admin/node_modules
-          key: ${{ runner.os }}-admin-node-${{ hashFiles('web/admin/package.json', 'web/admin/pnpm-lock.yaml') }}
+          key: ${{ runner.os }}-admin-node-${{ hashFiles('web/admin/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-admin-node-
 
@@ -75,7 +75,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: web/app/node_modules
-          key: ${{ runner.os }}-app-node-${{ hashFiles('web/app/package.json', 'web/app/pnpm-lock.yaml') }}
+          key: ${{ runner.os }}-app-node-${{ hashFiles('web/app/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-app-node-
 
