@@ -141,9 +141,6 @@ export const deleteModel = (params: { id: string, }): Promise<void> =>
 export const updateModel = (data: UpdateModelData): Promise<void> =>
   request({ url: 'api/v1/model', method: 'put', data })
 
-export const updateModelActivate = (data: { model_id: string }): Promise<void> =>
-  request({ url: 'api/v1/model/activate', method: 'post', data })
-
 // =============================================》share
 
 export const getAppLink = (params: { link: string }): Promise<AppDetail> =>

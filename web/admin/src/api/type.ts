@@ -293,7 +293,6 @@ export type ModelListItem = {
   completion_tokens: number,
   id: string,
   model: keyof typeof IconMap,
-  is_active: boolean
   type: 'chat' | 'embedding' | 'reranker'
   api_version: string,
   prompt_tokens: number,
