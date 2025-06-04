@@ -24,7 +24,7 @@ const Setting = () => {
   return <Stack direction={'row'} gap={2} sx={{ pb: 2 }}>
     <Stack gap={2} sx={{ width: 'calc((100% - 16px) / 2)' }}>
       <CardKB kb={kb} />
-      <CardRebot />
+      <CardRebot kb={kb} />
     </Stack>
     <Stack gap={2} sx={{ width: 'calc((100% - 16px) / 2)' }}>
       <CardWeb kb={kb} refresh={getKb} />

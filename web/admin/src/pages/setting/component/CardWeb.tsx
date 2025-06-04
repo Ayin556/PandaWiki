@@ -1,7 +1,7 @@
 import { getAppDetail, KnowledgeBaseListItem } from "@/api"
 import Card from "@/components/Card"
+import ShowText from "@/components/ShowText"
 import { Box, Button, Divider, Stack } from "@mui/material"
-import { Ellipsis } from "ct-mui"
 import { useEffect, useState } from "react"
 import CardWebCustomCode from "./CardWebCustomCode"
 import CardWebHeader from "./CardWebHeader"
@@ -62,25 +62,14 @@ const CardWeb = ({ kb, refresh }: CardWebProps) => {
           if (port === 443) url.push(`https://${it}`)
           else url.push(`https://${it}:${port}`)
         })
-        return url.map((it, index) => <Ellipsis
+        return url.map((it, index) => <ShowText
           key={index}
-          sx={{
-            width: '100%',
-            fontSize: 14,
-            px: 3,
-            lineHeight: '52px',
-            fontFamily: 'monospace',
-            bgcolor: 'background.paper2',
-            borderRadius: '10px',
-            cursor: 'pointer',
-            '&:hover': {
-              color: 'primary.main',
-            }
-          }}
+          text={it}
+          copyable={false}
           onClick={() => {
             window.open(it, '_blank')
           }}
-        >{it}</Ellipsis>)
+        />)
       })}
     </Stack>
     <Divider sx={{ my: 2 }} />

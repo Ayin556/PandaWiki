@@ -106,7 +106,7 @@ const CardWebWelcome = ({ id, data, refresh }: CardWebWelcomeProps) => {
           }}
         />}
       />
-      <Box sx={{ fontSize: 14, lineHeight: '32px', mb: 1 }}>搜索框提示文字</Box>
+      <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>搜索框提示文字</Box>
       <Controller
         control={control}
         name="search_placeholder"
@@ -127,7 +127,7 @@ const CardWebWelcome = ({ id, data, refresh }: CardWebWelcomeProps) => {
         placeholder='回车确认，填写下一个推荐问题'
         {...recommendQuestionsField}
       />
-      <Box sx={{ mb: '6px', mt: 2, fontSize: 14, lineHeight: '32px' }}>推荐内容</Box>
+      <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>推荐内容</Box>
       <Box sx={{ mb: 1 }}>
         <DragRecommend
           data={sorted || []}

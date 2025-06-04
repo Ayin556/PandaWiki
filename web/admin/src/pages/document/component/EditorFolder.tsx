@@ -48,7 +48,7 @@ const EditorFolder = () => {
     if (kb_id) getData();
   }, [getData, kb_id]);
 
-  return <Stack gap={1.5} sx={{
+  return <Stack sx={{
     borderRadius: '6px',
     bgcolor: 'background.paper',
   }}>
@@ -63,6 +63,14 @@ const EditorFolder = () => {
     <Stack gap={1.5} sx={{
       py: 2,
       px: 3,
+      maxHeight: 'calc(100vh - 178px)',
+      overflowY: 'auto',
+      overflowX: 'hidden',
+      '&::-webkit-scrollbar': {
+        display: 'none',
+      },
+      '-ms-overflow-style': 'none',
+      'scrollbar-width': 'none',
     }}>
       {renderTree(data)}
     </Stack>
