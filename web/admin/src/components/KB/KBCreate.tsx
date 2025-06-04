@@ -42,7 +42,7 @@ const VALIDATION_RULES = {
 
 const KBCreate = () => {
   const dispatch = useAppDispatch()
-  const { kb_c, kbList } = useAppSelector(state => state.config)
+  const { kb_c, kbList, modelStatus } = useAppSelector(state => state.config)
 
   const location = useLocation()
   const { pathname } = location
@@ -105,7 +105,7 @@ const KBCreate = () => {
           dispatch(setKbId(res[0]?.id || ''))
         }
       } else {
-        setOpen(true)
+        if (modelStatus) setOpen(true)
       }
     })
   }
@@ -117,7 +117,7 @@ const KBCreate = () => {
   useEffect(() => {
     getKbList()
     dispatch(setKbC(false))
-  }, [pathname])
+  }, [pathname, modelStatus])
 
   return <>
     <Modal

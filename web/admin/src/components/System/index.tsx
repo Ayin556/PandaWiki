@@ -2,6 +2,8 @@ import { getModelList, ModelListItem } from "@/api"
 import ErrorJSON from '@/assets/json/error.json'
 import Card from "@/components/Card"
 import { ModelProvider } from "@/constant/enums"
+import { useAppDispatch } from "@/store"
+import { setModelStatus } from "@/store/slices/config"
 import { addOpacityToColor } from "@/utils"
 import { Box, Button, Stack, Tooltip, useTheme } from "@mui/material"
 import { Icon, Modal } from "ct-mui"
@@ -13,17 +15,27 @@ import ModelAdd from "./component/ModelAdd"
 const System = () => {
   const theme = useTheme()
   const [open, setOpen] = useState(false)
-
+  const dispatch = useAppDispatch()
   const [addOpen, setAddOpen] = useState(false)
   const [addType, setAddType] = useState<'chat' | 'embedding' | 'rerank'>('chat')
   const [chatModelData, setChatModelData] = useState<ModelListItem | null>(null)
   const [embeddingModelData, setEmbeddingModelData] = useState<ModelListItem | null>(null)
-  const [rerankerModelData, setRerankerModelData] = useState<ModelListItem | null>(null)
+  const [rerankModelData, setRerankModelData] = useState<ModelListItem | null>(null)
+
+  const disabledClose = !chatModelData || !embeddingModelData || !rerankModelData
+
   const getModel = () => {
     getModelList().then(res => {
-      setChatModelData(res.find(it => it.type === 'chat') || null)
-      setEmbeddingModelData(res.find(it => it.type === 'embedding') || null)
-      setRerankerModelData(res.find(it => it.type === 'rerank') || null)
+      const chat = res.find(it => it.type === 'chat') || null
+      const embedding = res.find(it => it.type === 'embedding') || null
+      const rerank = res.find(it => it.type === 'rerank') || null
+      setChatModelData(chat)
+      setEmbeddingModelData(embedding)
+      setRerankModelData(rerank)
+
+      const status = chat && embedding && rerank
+      dispatch(setModelStatus(status))
+      if (!status) setOpen(true)
     })
   }
 
@@ -41,7 +53,7 @@ const System = () => {
       >
         系统配置
       </Button>
-      {(!chatModelData || !embeddingModelData || !rerankerModelData) && <Tooltip arrow title='暂未配置模型'>
+      {(!chatModelData || !embeddingModelData || !rerankModelData) && <Tooltip arrow title='暂未配置模型'>
         <Stack alignItems={'center'} justifyContent={'center'} sx={{
           width: 22,
           height: 22,
@@ -60,6 +72,8 @@ const System = () => {
       title='系统配置'
       width={1000}
       open={open}
+      closable={!disabledClose}
+      disableEscapeKeyDown={disabledClose}
       footer={null}
       onCancel={() => setOpen(false)}
     >
@@ -209,7 +223,7 @@ const System = () => {
           border: '1px solid',
           borderColor: 'divider',
         }}>
-          {!rerankerModelData ? <>
+          {!rerankModelData ? <>
             <Stack direction={'row'} alignItems={'center'} gap={1} sx={{ fontSize: 14, lineHeight: '24px', fontWeight: 'bold', mb: 2 }}>
               Rerank 模型
               <Stack alignItems={'center'} justifyContent={'center'} sx={{
@@ -234,13 +248,13 @@ const System = () => {
           </> : <>
             <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'} gap={1}>
               <Stack direction={'row'} alignItems={'center'} gap={1} sx={{ width: 500 }}>
-                <Icon type={ModelProvider[rerankerModelData.provider as keyof typeof ModelProvider].icon} sx={{ fontSize: 18 }} />
+                <Icon type={ModelProvider[rerankModelData.provider as keyof typeof ModelProvider].icon} sx={{ fontSize: 18 }} />
                 <Box sx={{ fontSize: 14, lineHeight: '20px', color: 'text.auxiliary' }}>
-                  {ModelProvider[rerankerModelData.provider as keyof typeof ModelProvider].cn
-                    || ModelProvider[rerankerModelData.provider as keyof typeof ModelProvider].label
+                  {ModelProvider[rerankModelData.provider as keyof typeof ModelProvider].cn
+                    || ModelProvider[rerankModelData.provider as keyof typeof ModelProvider].label
                     || '其他'}&nbsp;&nbsp;/
                 </Box>
-                <Box sx={{ fontSize: 14, lineHeight: '20px', fontFamily: 'Gbold', ml: -0.5 }}>{rerankerModelData.model}</Box>
+                <Box sx={{ fontSize: 14, lineHeight: '20px', fontFamily: 'Gbold', ml: -0.5 }}>{rerankModelData.model}</Box>
                 <Box sx={{
                   fontSize: 12,
                   px: 1,
@@ -260,7 +274,7 @@ const System = () => {
                 bgcolor: addOpacityToColor(theme.palette.success.main, 0.1),
                 color: 'success.main'
               }}>状态正常</Box>
-              {rerankerModelData && <Button size="small" variant="outlined" onClick={() => {
+              {rerankModelData && <Button size="small" variant="outlined" onClick={() => {
                 setAddOpen(true)
                 setAddType('rerank')
               }}>
@@ -272,7 +286,7 @@ const System = () => {
       </Stack>
     </Modal>
     <ModelAdd open={addOpen} type={addType} data={
-      addType === 'chat' ? chatModelData : addType === 'embedding' ? embeddingModelData : rerankerModelData
+      addType === 'chat' ? chatModelData : addType === 'embedding' ? embeddingModelData : rerankModelData
     } onClose={() => setAddOpen(false)} refresh={getModel} />
   </>
 }

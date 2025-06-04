@@ -6,6 +6,7 @@ export interface config {
   kb_id: string
   kbList: KnowledgeBaseListItem[]
   kb_c: boolean
+  modelStatus: boolean
 }
 const initialState: config = {
   user: {
@@ -15,7 +16,8 @@ const initialState: config = {
   },
   kb_id: '',
   kbList: [],
-  kb_c: false
+  kb_c: false,
+  modelStatus: false
 }
 
 const configSlice = createSlice({
@@ -34,9 +36,12 @@ const configSlice = createSlice({
     },
     setKbC(state, { payload }) {
       state.kb_c = payload
+    },
+    setModelStatus(state, { payload }) {
+      state.modelStatus = payload
     }
   },
 })
 
-export const { setUser, setKbId, setKbList, setKbC } = configSlice.actions;
+export const { setUser, setKbId, setKbList, setKbC, setModelStatus } = configSlice.actions;
 export default configSlice.reducer
