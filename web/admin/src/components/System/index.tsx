@@ -157,7 +157,7 @@ const System = () => {
         }}>
           {!embeddingModelData ? <>
             <Stack direction={'row'} alignItems={'center'} gap={1} sx={{ fontSize: 14, lineHeight: '24px', fontWeight: 'bold', mb: 2 }}>
-              Embeding 模型
+              Embedding 模型
               <Stack alignItems={'center'} justifyContent={'center'} sx={{
                 width: 22,
                 height: 22,
@@ -195,7 +195,7 @@ const System = () => {
                   bgcolor: addOpacityToColor(theme.palette.primary.main, 0.1),
                   color: 'primary.main'
                 }}>
-                  Embeding 模型
+                  Embedding 模型
                 </Box>
               </Stack>
               <Box sx={{

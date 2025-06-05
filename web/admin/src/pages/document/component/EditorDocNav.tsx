@@ -62,8 +62,8 @@ const EditorDocNav = ({ title, headers, maxH }: EditorDocNavProps) => {
       '&::-webkit-scrollbar': {
         display: 'none',
       },
-      '-ms-overflow-style': 'none',
-      'scrollbar-width': 'none',
+      msOverflowStyle: 'none',
+      scrollbarWidth: 'none',
     }}>
       {!!title && <Ellipsis arrow sx={{
         fontSize: 14,
