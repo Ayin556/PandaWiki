@@ -102,7 +102,7 @@ const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddB
     if (isUploading === 1) return
     setIsUploading(1)
     setCurrentFileIndex(0)
-    const urls: string[] = []
+    const urls: { url: string, title: string }[] = []
     const errorIdx: number[] = []
     try {
       for (let i = 0; i < acceptedFiles.length; i++) {
@@ -112,16 +112,16 @@ const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddB
           const url = await getUrlByUploadFile(acceptedFiles[i], (progress) => {
             setUploadProgress(progress)
           })
-          urls.push(url)
+          urls.push({ url, title: acceptedFiles[i].name.split('.')[0] })
         } catch (error) {
           errorIdx.push(i)
           console.error(`文件 ${acceptedFiles[i].name} 上传失败:`, error)
         }
       }
       setStep(2)
-      for (const url of urls) {
+      for (const { url, title } of urls) {
         const res = await scrapeCrawler({ url })
-        setItems(prev => [...prev, { ...res, url, success: -1, id: '' }])
+        setItems(prev => [...prev, { ...res, url, title: title || res.title, success: -1, id: '' }])
       }
       setLoading(false)
     } catch (error) {
