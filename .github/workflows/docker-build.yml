@@ -57,6 +57,10 @@ jobs:
             echo "VERSION=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
           fi
 
+      - name: Set environment variables
+        run: |
+          echo "VITE_APP_VERSION=${{ steps.get_version.outputs.VERSION }}" >> web/admin/.env.production
+
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
@@ -111,6 +115,10 @@ jobs:
           else
             echo "VERSION=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
           fi
+
+      - name: Set environment variables
+        run: |
+          echo "VITE_APP_VERSION=${{ steps.get_version.outputs.VERSION }}" >> web/app/.env.production
 
       - name: Build and push
         uses: docker/build-push-action@v5
