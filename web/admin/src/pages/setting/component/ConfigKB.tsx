@@ -61,7 +61,7 @@ const ConfigKB = () => {
     </Stack>
     <Stack direction={'row'} alignItems={'flex-start'} gap={2} sx={{ mt: 1 }}>
       <Box sx={{ fontSize: 14, lineHeight: '36px', height: '36px', width: 150 }}>
-        访问前台网站方式
+        访问门户网站方式
       </Box>
       <Stack gap={1} sx={{ fontSize: 14, lineHeight: '36px', fontFamily: 'GBold' }}>
         {kb?.access_settings?.ports && kb.access_settings.ports.length > 0 && kb.access_settings.hosts && <Box

@@ -144,7 +144,7 @@ const KBCreate = () => {
       cancelText='关闭'
     >
       <Card sx={{ p: 2, fontSize: 14, bgcolor: 'background.paper2' }}>
-        <Box sx={{ color: 'text.auxiliary', mb: 1 }}>打开以下地址访问前台网站</Box>
+        <Box sx={{ color: 'text.auxiliary', mb: 1 }}>打开以下地址访问门户网站</Box>
         {http && <Box>
           <Box
             component={'a'}
@@ -196,7 +196,7 @@ const KBCreate = () => {
           />}
         />
       </Box>
-      <Divider textAlign="left" sx={{ my: 2, fontSize: 14, lineHeight: '32px', color: 'text.auxiliary' }}>前台网站访问方式</Divider>
+      <Divider textAlign="left" sx={{ my: 2, fontSize: 14, lineHeight: '32px', color: 'text.auxiliary' }}>门户网站访问方式</Divider>
       <Box>
         <Controller
           control={control}

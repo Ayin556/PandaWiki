@@ -27,7 +27,7 @@ const Application = () => {
 
   const AppList = {
     1: {
-      name: '前台网站',
+      name: '门户网站',
       icon: AppLogo,
       configDisabled: false,
       onClick: () => setWebOpen(true)
