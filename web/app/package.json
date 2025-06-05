@@ -1,6 +1,6 @@
 {
   "name": "web",
-  "version": "0.8.2",
+  "version": "0.9.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack -p 3010",
@@ -22,6 +22,7 @@
     "html-react-parser": "^5.2.5",
     "next": "15.3.2",
     "react": "^19.0.0",
+    "react-device-detect": "^2.2.3",
     "react-dom": "^19.0.0",
     "react-markdown": "^10.1.0",
     "react-syntax-highlighter": "^15.6.1",

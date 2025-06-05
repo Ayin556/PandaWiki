@@ -1,10 +1,10 @@
+
 import Header from '@/components/header';
-import { StyledContainer, StyledHeaderBgi } from '@/components/StyledHTML';
+import { StyledContainer } from '@/components/StyledHTML';
 import { lightTheme } from '@/theme';
 import { Box } from '@mui/material';
 import { ThemeProvider } from 'ct-mui';
 import React from 'react';
-
 
 const Layout = async ({
   children,
@@ -12,9 +12,8 @@ const Layout = async ({
   children: React.ReactNode
 }>) => {
   return <ThemeProvider theme={lightTheme}>
-    <StyledHeaderBgi />
     <Header />
-    <Box sx={{ mt: 8, position: 'relative', zIndex: 1 }}>
+    <Box sx={{ position: 'relative', zIndex: 1 }}>
       <StyledContainer>
         {children}
       </StyledContainer>

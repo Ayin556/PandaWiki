@@ -75,8 +75,8 @@ const DocAnchor = ({ title, headings, maxH }: DocAnchorProps) => {
       '&::-webkit-scrollbar': {
         display: 'none',
       },
-      '-ms-overflow-style': 'none',
-      'scrollbar-width': 'none',
+      msOverflowStyle: 'none',
+      scrollbarWidth: 'none',
     }}>
       {headings.filter(it => levels.includes(it.heading)).map((heading) => {
         const idx = levels.indexOf(heading.heading)

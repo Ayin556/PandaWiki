@@ -1,18 +1,23 @@
 'use client';
 
+import IconAnswer from '@/assets/images/answer.png';
 import { ChunkResultItem } from '@/assets/type';
+import { useMobile } from '@/provider/mobile-provider';
 import { isInIframe } from '@/utils';
 import SSEClient from '@/utils/fetch';
 import { Box, Stack } from '@mui/material';
 import { message } from 'ct-mui';
+import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import ChatResult from './ChatResult';
+import ChatTab from './ChatTab';
 import SearchResult from './SearchResult';
 import { AnswerStatus } from './constant';
 
 const Chat = () => {
   const inIframe = isInIframe();
+  const { mobile = false } = useMobile()
   const searchParams = useSearchParams();
   const search = searchParams.get('search');
 
@@ -32,6 +37,8 @@ const Chat = () => {
   const [conversationId, setConversationId] = useState('');
   const [answer, setAnswer] = useState('');
   const [isUserScrolling, setIsUserScrolling] = useState(false);
+
+  const [showType, setShowType] = useState<'chat' | 'search'>('chat');
 
   const chatAnswer = async (q: string) => {
     setChunkLoading(true);
@@ -155,10 +162,11 @@ const Chat = () => {
     });
   }, []);
 
-  return (
-    <Box sx={{ pt: 4 }}>
-      <Stack alignItems="stretch" direction="row" gap={3}>
-        <ChatResult
+  if (mobile) {
+    return <Box sx={{ pt: 12, minHeight: 'calc(100vh - 40px)' }}>
+      <ChatTab showType={showType} setShowType={setShowType} />
+      <Box sx={{ mx: 3 }}>
+        {showType === 'chat' ? <ChatResult
           conversation={conversation}
           answer={answer}
           loading={loading}
@@ -166,8 +174,46 @@ const Chat = () => {
           setThinking={setThinking}
           onSearch={onSearch}
           handleSearchAbort={handleSearchAbort}
-        />
-        <SearchResult list={chunkResult} loading={chunkLoading} />
+        /> : <SearchResult list={chunkResult} loading={chunkLoading} />}
+      </Box>
+    </Box>
+  }
+
+  return (
+    <Box sx={{ pt: 12, minHeight: 'calc(100vh - 40px)' }}>
+      <Stack alignItems="stretch" direction="row" gap={3}>
+        <Box sx={{ position: 'relative', width: 'calc((100% - 24px) * 0.6)' }}>
+          <Stack direction='row' gap={1} alignItems='center' sx={{
+            fontSize: '20px',
+            fontWeight: '700',
+            lineHeight: '28px',
+            mb: 2,
+            height: '28px',
+          }}>
+            <Box>
+              <Image src={IconAnswer.src} alt='智能回答' width={24} height={24} />
+            </Box>
+            智能回答
+          </Stack>
+          <ChatResult
+            conversation={conversation}
+            answer={answer}
+            loading={loading}
+            thinking={thinking}
+            setThinking={setThinking}
+            onSearch={onSearch}
+            handleSearchAbort={handleSearchAbort}
+          />
+        </Box>
+        <Box sx={{ width: 'calc((100% - 24px) * 0.4)' }}>
+          <Box sx={{
+            fontSize: '20px',
+            fontWeight: '700',
+            lineHeight: '28px',
+            mb: 2,
+          }}>搜索结果</Box>
+          <SearchResult list={chunkResult} loading={chunkLoading} />
+        </Box>
       </Stack>
     </Box>
   );
