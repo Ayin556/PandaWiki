@@ -1,8 +1,9 @@
 'use client'
 
-import { NodeDetail, NodeListItem } from "@/assets/type";
+import { NodeDetail } from "@/assets/type";
 import { useKBDetail } from "@/provider/kb-provider";
 import { useMobile } from "@/provider/mobile-provider";
+import { useNodeList } from "@/provider/nodelist-provider";
 import { Box, Stack } from "@mui/material";
 import { useTiptapEditor } from "ct-tiptap-editor";
 import { useParams } from "next/navigation";
@@ -12,11 +13,13 @@ import CatalogH5 from "./CatalogH5";
 import DocAnchor from "./DocAnchor";
 import DocContent from "./DocContent";
 
-const Doc = ({ node: defaultNode, nodeList }: { node?: NodeDetail, nodeList: NodeListItem[] }) => {
+const Doc = ({ node: defaultNode }: { node?: NodeDetail }) => {
   const { id: defaultId } = useParams()
-  console.log('defaultId', defaultId)
+
+  const { nodeList } = useNodeList()
   const { kb_id } = useKBDetail()
   const { mobile } = useMobile()
+
   const [id, setId] = useState(defaultId as string || '')
   const [node, setNode] = useState<NodeDetail | undefined>(defaultNode)
   const [headings, setHeadings] = useState<{ id: string, title: string, heading: number }[]>([])

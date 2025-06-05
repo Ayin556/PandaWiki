@@ -36,8 +36,8 @@ importers:
         specifier: 2.0.0
         version: 2.0.0(1579928bcf445789b8faa270ae6165be)
       ct-tiptap-editor:
-        specifier: ^0.2.6
-        version: 0.2.6(@tiptap/extension-code-block@2.12.0(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0))(@types/react@19.1.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: ^0.2.8
+        version: 0.2.8(@tiptap/extension-code-block@2.12.0(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0))(@types/react@19.1.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       html-react-parser:
         specifier: ^5.2.5
         version: 5.2.5(@types/react@19.1.4)(react@19.1.0)
@@ -1284,8 +1284,8 @@ packages:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
 
-  ct-tiptap-editor@0.2.6:
-    resolution: {integrity: sha512-mRJBKQOkjJp1TvhLNLZnlzj66C2CXWsZhn10cpCJllYpx9rcrb5nesYIZHLakBmfizSxDEJIKe2+RJVojDoyaw==}
+  ct-tiptap-editor@0.2.8:
+    resolution: {integrity: sha512-Ze+aS2iM/fgHlYctH/zsvChN8yFrCa3rnTsyszJslzSO3pKKpLmH1c9rSj1rwfjiZSBQPcWm8nlJ8bt37a2DHA==}
     peerDependencies:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
@@ -4062,7 +4062,7 @@ snapshots:
       react-dom: 19.1.0(react@19.1.0)
       react-virtuoso: 4.12.7(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
 
-  ct-tiptap-editor@0.2.6(@tiptap/extension-code-block@2.12.0(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0))(@types/react@19.1.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+  ct-tiptap-editor@0.2.8(@tiptap/extension-code-block@2.12.0(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0))(@types/react@19.1.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       '@emotion/react': 11.14.0(@types/react@19.1.4)(react@19.1.0)
       '@emotion/styled': 11.14.0(@emotion/react@11.14.0(@types/react@19.1.4)(react@19.1.0))(@types/react@19.1.4)(react@19.1.0)

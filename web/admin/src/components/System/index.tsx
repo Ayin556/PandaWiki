@@ -101,6 +101,13 @@ const System = () => {
                   style={{ width: 20, height: 20 }}
                 />
               </Stack>
+              <Box sx={{ color: 'error.main' }}>
+                未配置无法使用，如果没有可用模型，可参考&nbsp;
+                <Box component={'a'} sx={{ color: 'primary.main', cursor: 'pointer' }}
+                  href='https://pandawiki.docs.baizhi.cloud/node/01973ffe-e1bc-7165-9a71-e7aa461c05ea'
+                  target='_blank'
+                >文档</Box>
+              </Box>
             </Stack>
             <Stack direction={'row'} alignItems={'center'} justifyContent={'center'} sx={{ my: '0px', ml: 2, fontSize: 14 }}>
               <Box sx={{ height: '20px', color: 'text.auxiliary' }}>尚未配置，</Box>
@@ -169,6 +176,13 @@ const System = () => {
                   style={{ width: 20, height: 20 }}
                 />
               </Stack>
+              <Box sx={{ color: 'error.main' }}>
+                未配置无法使用，如果没有可用模型，可参考&nbsp;
+                <Box component={'a'} sx={{ color: 'primary.main', cursor: 'pointer' }}
+                  href='https://pandawiki.docs.baizhi.cloud/node/01973ffe-e1bc-7165-9a71-e7aa461c05ea'
+                  target='_blank'
+                >文档</Box>
+              </Box>
             </Stack>
             <Stack direction={'row'} alignItems={'center'} justifyContent={'center'} sx={{ my: '0px', ml: 2, fontSize: 14 }}>
               <Box sx={{ height: '20px', color: 'text.auxiliary' }}>尚未配置，</Box>
@@ -237,6 +251,13 @@ const System = () => {
                   style={{ width: 20, height: 20 }}
                 />
               </Stack>
+              <Box sx={{ color: 'error.main' }}>
+                未配置无法使用，如果没有可用模型，可参考&nbsp;
+                <Box component={'a'} sx={{ color: 'primary.main', cursor: 'pointer' }}
+                  href='https://pandawiki.docs.baizhi.cloud/node/01973ffe-e1bc-7165-9a71-e7aa461c05ea'
+                  target='_blank'
+                >文档</Box>
+              </Box>
             </Stack>
             <Stack direction={'row'} alignItems={'center'} justifyContent={'center'} sx={{ my: '0px', ml: 2, fontSize: 14 }}>
               <Box sx={{ height: '20px', color: 'text.auxiliary' }}>尚未配置，</Box>

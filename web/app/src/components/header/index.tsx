@@ -22,6 +22,7 @@ const Header = () => {
   const [searchValue, setSearchValue] = useState('');
 
   const isDoc = pathname.includes('/node')
+  const isChat = pathname.includes('/chat')
 
   const bgi = isDoc ? docHeaderBgi.src : mobile ? h5HeaderBgi.src : headerBgi.src
   const bgiHeight = (isDoc || !mobile) ? '573px' : '326px'
@@ -108,7 +109,6 @@ const Header = () => {
                 }}
               />
             )}
-            {!mobile && <PageChange />}
             {!mobile && kbDetail?.settings?.btns?.map((item, index) => (
               <Link key={index} href={item.url} target={item.target}>
                 <Button
@@ -121,6 +121,7 @@ const Header = () => {
               </Link>
             ))}
             {mobile && <NavBtns detail={kbDetail} />}
+            {!mobile && !isChat && <PageChange />}
           </Stack>
         </Stack>
       </StyledContainer>

@@ -1,7 +1,8 @@
-import { KBDetail } from "@/assets/type";
+import { KBDetail, NodeListItem } from "@/assets/type";
 import Footer from "@/components/footer";
 import KBProvider from "@/provider/kb-provider";
 import MobileProvider from "@/provider/mobile-provider";
+import NodeListProvider from "@/provider/nodelist-provider";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import parse from 'html-react-parser';
 import type { Metadata, Viewport } from "next";
@@ -61,6 +62,25 @@ const getKBDetailCached = cache(async (kb_id: string) => {
   }
 })
 
+
+
+const getNodeListCached = cache(async (kb_id: string) => {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/share/v1/node/list`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-kb-id': kb_id,
+      }
+    });
+    const result = await res.json()
+    return result.data as NodeListItem[]
+  } catch (error) {
+    console.error('Error fetching document content:', error);
+    return undefined
+  }
+})
+
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
@@ -99,11 +119,14 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const headersList = await headers()
+
   const kb_id = headersList.get('x-kb-id') || process.env.DEV_KB_ID || ''
   const kbDetail = await getKBDetailCached(kb_id)
+  const nodeList = await getNodeListCached(kb_id)
 
   const userAgent = headersList.get('user-agent');
   const { isMobile } = getSelectorsByUserAgent(userAgent || '');
+
 
   return (
     <html lang="en">
@@ -115,9 +138,11 @@ export default async function RootLayout({
       <body className={`${gilory.variable} ${puhuiti.variable}`}>
         <AppRouterCacheProvider>
           <KBProvider kbDetail={kbDetail} kb_id={kb_id}>
-            <MobileProvider mobile={isMobile}>
-              {children}
-            </MobileProvider>
+            <NodeListProvider nodeList={nodeList} >
+              <MobileProvider mobile={isMobile}>
+                {children}
+              </MobileProvider>
+            </NodeListProvider>
           </KBProvider>
           <Footer />
         </AppRouterCacheProvider>
@@ -125,6 +150,6 @@ export default async function RootLayout({
           <>{parse(kbDetail.settings.body_code)}</>
         )}
       </body>
-    </html>
+    </html >
   );
 }
