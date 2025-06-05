@@ -40,7 +40,7 @@ const EditorDocNav = ({ title, headers, maxH }: EditorDocNavProps) => {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [headers])
 
-  return <Stack gap={1} sx={{
+  return <Stack sx={{
     width: 292,
     borderRadius: '6px',
     bgcolor: 'background.paper',
@@ -56,7 +56,7 @@ const EditorDocNav = ({ title, headers, maxH }: EditorDocNavProps) => {
     <Stack gap={1} sx={{
       py: 2,
       px: 3,
-      maxHeight: 'calc(100vh - 301px)',
+      maxHeight: 'calc(100vh - 178px)',
       overflowY: 'auto',
       overflowX: 'hidden',
       '&::-webkit-scrollbar': {

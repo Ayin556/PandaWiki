@@ -18,13 +18,8 @@ const SearchResult = ({ list, loading }: { list: ChunkResultItem[], loading: boo
       height: 'calc(100vh - 226px)',
       overflow: 'auto',
     }}>
-      {list.map((item, idx) => (
-        <Box key={item.node_id} sx={{
-          borderBottom: idx === list.length - 1 ? 'none' : '1px dashed',
-          borderColor: 'divider',
-          mt: 1,
-          pb: 1,
-        }}>
+      {list.map(item => (
+        <Box key={item.node_id}>
           <Link href={`/node/${item.node_id}`} target="_blank">
             <Stack direction='row' alignItems='center' gap={3} justifyContent='space-between' sx={(theme) => ({
               borderRadius: '10px',
@@ -41,9 +36,7 @@ const SearchResult = ({ list, loading }: { list: ChunkResultItem[], loading: boo
               }
             })}>
               <Box sx={{ width: 'calc(100% - 80px)' }}>
-                <Box className='hover-primary' sx={{
-                  lineHeight: '24px',
-                }}>{item.name}</Box>
+                <Ellipsis className='hover-primary' sx={{ lineHeight: '24px' }}>{item.name}</Ellipsis>
                 <Ellipsis sx={{ fontSize: 12, color: 'text.tertiary', lineHeight: '20px' }}>{item.summary}</Ellipsis>
               </Box>
               <IconArrowUp className='hover-primary' sx={{ color: 'text.tertiary', flexShrink: 0, fontSize: 16, transform: 'rotate(90deg)' }} />
@@ -55,9 +48,6 @@ const SearchResult = ({ list, loading }: { list: ChunkResultItem[], loading: boo
         <Stack gap={1} sx={{
           borderRadius: '10px',
           px: 2,
-          py: '14px',
-          cursor: 'pointer',
-          bgcolor: 'background.default',
         }}>
           <Skeleton variant="text" sx={{ width: '40%', height: '24px' }} />
           <Skeleton variant="text" sx={{ width: '100%', height: '20px' }} />

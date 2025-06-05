@@ -49,6 +49,7 @@ const Catalog = ({ nodes, activeId, onChange }: { nodes: NodeListItem[], activeI
     width: 250,
     pr: 3,
     fontSize: 14,
+    position: 'fixed',
     borderRight: '1px solid',
     borderColor: 'divider',
     lineHeight: '22px',
@@ -59,7 +60,16 @@ const Catalog = ({ nodes, activeId, onChange }: { nodes: NodeListItem[], activeI
       fontWeight: 'bold',
       mb: 2,
     }}>目录</Box>
-    <Box>
+    <Box sx={{
+      height: 'calc(100vh - 174px)',
+      overflowY: 'auto',
+      overflowX: 'hidden',
+      '&::-webkit-scrollbar': {
+        display: 'none',
+      },
+      '-ms-overflow-style': 'none',
+      'scrollbar-width': 'none',
+    }}>
       {tree.map((item) => renderNode(item))}
     </Box>
   </Box>

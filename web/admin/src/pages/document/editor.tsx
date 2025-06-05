@@ -25,7 +25,7 @@ const DocEditor = () => {
     })
   }
 
-  const handleUpdate = async () => {
+  const updateNav = async () => {
     if (!editorRef) return
     const headings = await editorRef.getNavs() || []
     setHeadings(headings)
@@ -39,6 +39,7 @@ const DocEditor = () => {
     updateNode({ id, content, kb_id: detail.kb_id }).then(() => {
       Message.success(auto ? '自动保存成功' : '保存成功')
       getDetail()
+      updateNav()
     })
   }
 
@@ -53,9 +54,6 @@ const DocEditor = () => {
     content: '',
     onSave: () => handleSave(false),
     onImageUpload: handleImageUpload,
-    onUpdate: () => {
-      handleUpdate()
-    }
   })
 
   useEffect(() => {
@@ -114,7 +112,7 @@ const DocEditor = () => {
     }}>
       <Box sx={{
         width: 292,
-        position: 'relative',
+        position: 'fixed',
         zIndex: 1,
         mr: 1,
       }}>
@@ -122,15 +120,16 @@ const DocEditor = () => {
       </Box>
       <Box className='editor-content' sx={{
         width: 800,
+        ml: '300px',
         position: 'relative',
         zIndex: 1,
         '.editor-container': {
           p: 8,
           borderRadius: '6px',
           bgcolor: '#fff',
-          minHeight: 'calc(100vh - 105px - 16px)',
+          minHeight: 'calc(100vh - 121px)',
           '.tiptap': {
-            minHeight: 'calc(100vh - 105px - 16px)',
+            minHeight: 'calc(100vh - 121px)',
           }
         }
       }}>

@@ -183,10 +183,10 @@ export type AppListItem = {
 } & AppCommonInfo
 
 export type DingBotSetting = {
-  dingbot_client_id: string,
-  dingbot_token: string,
-  dingbot_aes_key: string,
-  dingbot_welcome_str: string,
+  dingtalk_bot_client_id: string,
+  dingtalk_bot_token: string,
+  dingtalk_bot_aes_key: string,
+  dingtalk_bot_welcome_str: string,
 }
 
 export type WecomBotSetting = {

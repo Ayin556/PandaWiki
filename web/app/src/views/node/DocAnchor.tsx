@@ -1,6 +1,7 @@
 'use client'
 
 import { StyledAnchor } from "@/components/StyledHTML";
+import { Box } from "@mui/material";
 import { Ellipsis } from "ct-mui";
 import { useEffect, useState } from "react";
 
@@ -61,24 +62,37 @@ const DocAnchor = ({ title, headings, maxH }: DocAnchorProps) => {
     {title && <Ellipsis arrow sx={{
       fontWeight: 'bold',
       cursor: 'pointer',
+      mb: 1,
       color: 'text.secondary',
     }}>
       {title}
     </Ellipsis>}
-    {headings.filter(it => levels.includes(it.heading)).map((heading) => {
-      const idx = levels.indexOf(heading.heading)
-      return <Ellipsis key={heading.id} arrow sx={{
-        cursor: 'pointer',
-        ml: (idx + 1) * 2,
-        ...HeadingSx[idx],
-        color: activeId === heading.id ? 'primary.main' : HeadingSx[idx].color,
-        ':hover': {
-          color: 'primary.main'
-        }
-      }} onClick={(e) => handleClick(e, heading.id)}>
-        {heading.title}
-      </Ellipsis>
-    })}
+    <Box sx={{
+      height: 'calc(100vh - 174px)',
+      overflowY: 'auto',
+      overflowX: 'hidden',
+      lineHeight: '32px',
+      '&::-webkit-scrollbar': {
+        display: 'none',
+      },
+      '-ms-overflow-style': 'none',
+      'scrollbar-width': 'none',
+    }}>
+      {headings.filter(it => levels.includes(it.heading)).map((heading) => {
+        const idx = levels.indexOf(heading.heading)
+        return <Ellipsis key={heading.id} arrow sx={{
+          cursor: 'pointer',
+          ml: (idx + 1) * 2,
+          ...HeadingSx[idx],
+          color: activeId === heading.id ? 'primary.main' : HeadingSx[idx].color,
+          ':hover': {
+            color: 'primary.main'
+          }
+        }} onClick={(e) => handleClick(e, heading.id)}>
+          {heading.title}
+        </Ellipsis>
+      })}
+    </Box>
   </StyledAnchor>
 }
 

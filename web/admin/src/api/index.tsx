@@ -115,7 +115,8 @@ export const uploadFile = (
   request({ url: 'api/v1/file/upload', method: 'post', data, ...config, headers: { 'Content-Type': 'multipart/form-data' } })
 
 // =============================================》app
-export const getAppDetail = (params: { kb_id: string, type: 1 }): Promise<AppDetail> =>
+
+export const getAppDetail = (params: { kb_id: string, type: number }): Promise<AppDetail> =>
   request({ url: 'api/v1/app/detail', method: 'get', params })
 
 export const updateAppDetail = (params: { id: string, }, app: UpdateAppDetailData): Promise<void> =>

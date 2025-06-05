@@ -113,7 +113,7 @@ const CardWebHeader = ({ id, data, refresh }: CardWebHeaderProps) => {
           }}
         />}
       />
-      <Box sx={{ mb: '6px', my: 1, fontSize: 14, lineHeight: '32px' }}>
+      <Box sx={{ my: 1, fontSize: 14, lineHeight: '32px' }}>
         导航右侧按钮
       </Box>
       <Box sx={{ mb: (selectedBtnId !== null || btns.length > 0) ? 1 : 0 }}>
