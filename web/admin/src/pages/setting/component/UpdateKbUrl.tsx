@@ -90,7 +90,7 @@ const UpdateKbUrl = ({ open, data, onCancel, refresh }: UpdateKbUrlProps) => {
   return <Modal
     open={open}
     onCancel={onCancel}
-    title='修改前台网址访问方式'
+    title='修改门户网址访问方式'
     onOk={handleSubmit(onSubmit)}
   >
     <Box>

@@ -11,7 +11,7 @@ export default function NotFound() {
     <ThemeProvider theme={lightTheme}>
       <Box
         sx={{
-          pt: 8,
+          pt: 28,
           height: '100vh',
           backgroundColor: 'background.default',
         }}
@@ -26,13 +26,9 @@ export default function NotFound() {
           justifyContent='center'
           alignItems='center'
         >
-          <Image src={notFound.src} alt='404' />
+          <Image src={notFound.src} alt='404' width={200} height={200} />
           <Stack gap={3} alignItems='center'>
-            <Box
-              sx={{
-                color: `rgba(255, 255, 255, 0.5)`,
-              }}
-            >
+            <Box>
               页面未找到
             </Box>
             <Button variant='contained' component={Link} href='/' size='large'>

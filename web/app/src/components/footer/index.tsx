@@ -1,8 +1,7 @@
-'use client'
-
 import logo from '@/assets/images/logo.png';
 import { Box, Stack } from "@mui/material";
 import Image from "next/image";
+import Link from 'next/link';
 
 const Footer = () => {
   return <Box sx={{
@@ -14,14 +13,21 @@ const Footer = () => {
     lineHeight: '40px',
     bgcolor: '#fff',
     zIndex: 1,
-    cursor: 'pointer',
-  }} onClick={() => {
-    window.open('https://pandawiki.docs.baizhi.cloud/', '_blank')
   }}>
     <Stack direction={'row'} alignItems={'center'} justifyContent={'center'} gap={0.5}>
       本网站由
-      <Image src={logo.src} alt="PandaWiki" width={16} height={16} />
-      <Box sx={{ fontWeight: 'bold', color: '#000' }}>PandaWiki</Box>
+      <Link href={'https://pandawiki.docs.baizhi.cloud/'} target='_blank'>
+        <Stack direction={'row'} alignItems={'center'} gap={0.5} sx={{
+          color: '#000',
+          cursor: 'pointer',
+          '&:hover': {
+            color: '#556AFF',
+          }
+        }}>
+          <Image src={logo.src} alt="PandaWiki" width={16} height={16} />
+          <Box sx={{ fontWeight: 'bold' }}>PandaWiki</Box>
+        </Stack>
+      </Link>
       提供技术支持
     </Stack>
   </Box>

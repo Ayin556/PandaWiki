@@ -30,7 +30,7 @@ const CardWeb = ({ kb, refresh }: CardWebProps) => {
   if (!info.id) return <></>
 
   return <Card>
-    <Box sx={{ fontWeight: 'bold', px: 2, py: 1.5, bgcolor: 'background.paper2' }}>前台网站</Box>
+    <Box sx={{ fontWeight: 'bold', px: 2, py: 1.5, bgcolor: 'background.paper2' }}>门户网站</Box>
     <Stack direction='row' alignItems={'center'} justifyContent={'space-between'} sx={{
       m: 2,
       height: 32,
