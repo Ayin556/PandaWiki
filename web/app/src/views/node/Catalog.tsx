@@ -67,8 +67,8 @@ const Catalog = ({ nodes, activeId, onChange }: { nodes: NodeListItem[], activeI
       '&::-webkit-scrollbar': {
         display: 'none',
       },
-      '-ms-overflow-style': 'none',
-      'scrollbar-width': 'none',
+      msOverflowStyle: 'none',
+      scrollbarWidth: 'none',
     }}>
       {tree.map((item) => renderNode(item))}
     </Box>

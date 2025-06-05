@@ -1,16 +1,18 @@
+export interface NavBtn {
+  id: string
+  url: string
+  variant: 'contained' | 'outlined',
+  showIcon: boolean
+  icon: string
+  text: string
+  target: '_blank' | '_self'
+}
+
 export interface KBDetail {
   name: string,
   settings: {
     title: string,
-    btns: {
-      id: string
-      url: string
-      variant: 'contained' | 'outlined',
-      showIcon: boolean
-      icon: string
-      text: string
-      target: '_blank' | '_self'
-    }[],
+    btns: NavBtn[],
     icon: string,
     welcome_str: string,
     search_placeholder: string,

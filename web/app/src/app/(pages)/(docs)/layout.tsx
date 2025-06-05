@@ -1,6 +1,5 @@
-import DocHeaderBgi from '@/assets/images/doc-header-bg.png';
 import Header from '@/components/header';
-import { StyledContainer, StyledHeaderBgi } from '@/components/StyledHTML';
+import { StyledContainer } from '@/components/StyledHTML';
 import { lightTheme } from '@/theme';
 import { ThemeProvider } from 'ct-mui';
 
@@ -10,8 +9,7 @@ const Layout = async ({
   children: React.ReactNode;
 }>) => {
   return <ThemeProvider theme={lightTheme}>
-    <StyledHeaderBgi bgi={DocHeaderBgi.src} />
-    <Header bgi={DocHeaderBgi.src} />
+    <Header />
     <StyledContainer>
       {children}
     </StyledContainer>

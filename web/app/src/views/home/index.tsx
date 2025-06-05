@@ -2,13 +2,34 @@
 
 import { IconSearch } from "@/components/icons";
 import { useKBDetail } from "@/provider/kb-provider";
-import { Box, TextField } from "@mui/material";
+import { useMobile } from "@/provider/mobile-provider";
+import { Box, styled, TextField } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import NodeList from "./NodeList";
 import QuestionList from "./QuestionList";
 
+const StyledWelcomeStr = styled(Box)(({ mobile }: { mobile: boolean }) => ({
+  fontSize: '40px',
+  textAlign: 'center',
+  fontWeight: '700',
+  lineHeight: '44px',
+  ...(mobile && {
+    fontSize: '32px',
+    lineHeight: '40px',
+  }),
+}))
+
+const StyledSearch = styled(Box)(({ mobile }: { mobile: boolean }) => ({
+  width: '656px',
+  margin: '40px auto 0',
+  ...(mobile && {
+    width: 'calc(100% - 48px)',
+  }),
+}))
+
 const Home = () => {
+  const { mobile = false } = useMobile()
   const { kbDetail } = useKBDetail()
 
   const [searchText, setSearchText] = useState("");
@@ -26,15 +47,15 @@ const Home = () => {
     }
   };
 
-  return <Box sx={{ pt: 10 }}>
-    <Box sx={{ fontSize: '40px', textAlign: 'center', fontWeight: '700', lineHeight: '44px' }}>
+  return <Box sx={{ pt: mobile ? 13 : 18, minHeight: 'calc(100vh - 40px)' }}>
+    <StyledWelcomeStr mobile={mobile}>
       {kbDetail?.settings?.welcome_str}
-    </Box>
-    <Box sx={{ width: '656px', mx: 'auto', mt: 5 }}>
+    </StyledWelcomeStr>
+    <StyledSearch mobile={mobile}>
       <TextField
         fullWidth
         sx={{
-          width: '656px',
+          width: '100%',
           bgcolor: 'background.default',
           borderRadius: '10px',
           overflow: 'hidden',
@@ -65,8 +86,8 @@ const Home = () => {
           />
         }}
       />
-    </Box>
-    <QuestionList />
+    </StyledSearch>
+    {!mobile && <QuestionList />}
     <NodeList />
   </Box>;
 };

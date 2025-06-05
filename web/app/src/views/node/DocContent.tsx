@@ -1,19 +1,31 @@
 'use client'
 
 import { NodeDetail } from "@/assets/type";
-import { Box, Divider, Stack } from "@mui/material";
+import { useMobile } from "@/provider/mobile-provider";
+import { Box, Divider, Stack, styled } from "@mui/material";
 import { TiptapReader, UseTiptapEditorReturn } from 'ct-tiptap-editor';
 
+const StyledDocContent = styled(Stack)(({ mobile }: { mobile: boolean }) => ({
+  width: 'calc(100% - 500px)',
+  marginLeft: '250px',
+  wordBreak: 'break-all',
+  color: 'text.primary',
+  padding: `0 24px`,
+  ...(mobile && {
+    width: '100%',
+    marginLeft: 0,
+    marginTop: '160px',
+    table: {
+      minWidth: 'auto !important',
+    },
+  }),
+}))
+
 const DocContent = ({ info, editorRef }: { info: NodeDetail, editorRef: UseTiptapEditorReturn }) => {
+  const { mobile = false } = useMobile()
   if (!editorRef) return null
 
-  return <Stack sx={{
-    width: 'calc(100% - 500px)',
-    wordBreak: 'break-all',
-    color: 'text.primary',
-    ml: '250px',
-    px: 3,
-  }}>
+  return <StyledDocContent mobile={mobile}>
     <Box sx={{
       fontSize: 32,
       lineHeight: '40px',
@@ -25,7 +37,7 @@ const DocContent = ({ info, editorRef }: { info: NodeDetail, editorRef: UseTipta
     }}>
       <TiptapReader editorRef={editorRef} />
     </Box>
-  </Stack>
+  </StyledDocContent>
 };
 
 export default DocContent;

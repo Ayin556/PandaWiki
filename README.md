@@ -2,7 +2,6 @@
   <img src="/images/banner.png" width="400" />
 </p>
 
-
 <p align="center">
   <a target="_blank" href="https://ly.safepoint.cloud/QuAr5qh">🏠 官网</a> &nbsp; | &nbsp;
   <a target="_blank" href="https://ly.safepoint.cloud/Br48PoX">📖 帮助文档</a> &nbsp; | &nbsp;
@@ -18,13 +17,12 @@ PandaWiki 是一款 AI 大模型驱动的**开源知识库搭建系统**，帮�
   <img src="/images/setup.png" width="800" />
 </p>
 
-
 ## ⚡️ 界面展示
 
-| PandaWiki 控制台 | Wiki 网站前台 |
-| ------------------------------------------------- | ------------------------------------------------- | 
+| PandaWiki 控制台                                 | Wiki 网站前台                                    |
+| ------------------------------------------------ | ------------------------------------------------ |
 | <img src="/images/screenshot-1.png" width=370 /> | <img src="/images/screenshot-2.png" width=370 /> |
-| <img src="/images/screenshot-3.png" width=370 /> | <img src="/images/screenshot-4.png" width=370 /> | 
+| <img src="/images/screenshot-3.png" width=370 /> | <img src="/images/screenshot-4.png" width=370 /> |
 
 ## 🔥 功能与特色
 

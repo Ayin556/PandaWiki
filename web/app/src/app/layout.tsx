@@ -1,12 +1,14 @@
 import { KBDetail } from "@/assets/type";
 import Footer from "@/components/footer";
 import KBProvider from "@/provider/kb-provider";
+import MobileProvider from "@/provider/mobile-provider";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import parse from 'html-react-parser';
 import type { Metadata, Viewport } from "next";
 import localFont from 'next/font/local';
 import { headers } from "next/headers";
 import { cache } from "react";
+import { getSelectorsByUserAgent } from "react-device-detect";
 import "./globals.css";
 
 const gilory = localFont({
@@ -100,6 +102,9 @@ export default async function RootLayout({
   const kb_id = headersList.get('x-kb-id') || process.env.DEV_KB_ID || ''
   const kbDetail = await getKBDetailCached(kb_id)
 
+  const userAgent = headersList.get('user-agent');
+  const { isMobile } = getSelectorsByUserAgent(userAgent || '');
+
   return (
     <html lang="en">
       <head>
@@ -110,7 +115,9 @@ export default async function RootLayout({
       <body className={`${gilory.variable} ${puhuiti.variable}`}>
         <AppRouterCacheProvider>
           <KBProvider kbDetail={kbDetail} kb_id={kb_id}>
-            {children}
+            <MobileProvider mobile={isMobile}>
+              {children}
+            </MobileProvider>
           </KBProvider>
           <Footer />
         </AppRouterCacheProvider>
