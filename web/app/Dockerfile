@@ -5,9 +5,6 @@ WORKDIR /app
 # 安装 pnpm
 RUN npm install -g pnpm
 
-# 配置 pnpm 镜像
-RUN pnpm config set registry https://registry.npmmirror.com/
-
 # 使用非 root 用户目录
 RUN pnpm config set store-dir /app/.pnpm-store
 
