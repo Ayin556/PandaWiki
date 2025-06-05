@@ -1,43 +1,28 @@
 'use client'
 
 import { NodeListItem } from "@/assets/type";
-import { useKBDetail } from "@/provider/kb-provider";
+import { useNodeList } from "@/provider/nodelist-provider";
 import { CusTabs } from "ct-mui";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 
 const PageChange = () => {
-  const { kb_id } = useKBDetail()
+  const { nodeList } = useNodeList()
   const pathname = usePathname();
   const router = useRouter();
   const [value, setValue] = useState('home');
   const [firstNodeId, setFirstNodeId] = useState('')
-
-  const getNavList = async () => {
-    try {
-      const res = await fetch(`/share/v1/node/list`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-kb-id': kb_id || '',
-        }
-      });
-      const result = await res.json()
-      const firstNode = result.data.sort((a: NodeListItem, b: NodeListItem) => a.position - b.position)[0]
-      setFirstNodeId(firstNode.id)
-    } catch (error) {
-      console.error('Error fetching document content:', error);
-      return undefined
-    }
-  }
 
   useEffect(() => {
     setValue(pathname.split('/')[1] || 'home');
   }, [pathname])
 
   useEffect(() => {
-    getNavList()
+    if (nodeList) {
+      const firstNode = nodeList.sort((a: NodeListItem, b: NodeListItem) => a.position - b.position)[0]
+      setFirstNodeId(firstNode.id)
+    }
   }, [])
 
   return <CusTabs
