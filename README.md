@@ -109,3 +109,8 @@ SUCCESS    密码: **********************
 - 你必须以相同的许可证开源你的修改
 - 如果你通过网络提供服务，也必须开源你的代码
 - 商业使用需要遵守相同的开源要求
+
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=chaitin/PandaWiki&type=Date)](https://www.star-history.com/#chaitin/PandaWiki&Date)
