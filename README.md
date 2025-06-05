@@ -61,9 +61,20 @@ SUCCESS    密码: **********************
 
 使用浏览器打开上述内容中的 “访问地址”，你将看到 PandaWiki 的控制台登录入口，使用上述内容中的 “用户名” 和 “密码” 登录即可。
 
+### 配置 AI 模型
+
+> PandaWiki 是由 AI 大模型驱动的 Wiki 系统，在未配置大模型的情况下 AI 创作、AI 问答、AI 搜索 等功能无法正常使用。
+> 
+首次登录时会提示需要先配置 AI 模型，根据下方图片分别配置 “Chat 模型”、“Embedding 模型”、“Rerank 模型”。
+
+<img src="/images/modelconfig.png" width="800" />
+
+> 推荐使用 [百智云模型广场](https://baizhi.cloud/) 快速接入 AI 模型，注册即可获赠 5 元的模型使用额度。
+> 关于大模型的更多配置细节请参考 [接入 AI 模型](https://pandawiki.docs.baizhi.cloud/node/01971616-811c-70e1-82d9-706a202b8498)。
+
 ### 创建知识库
 
-首次登录 PandaWiki 之后，你需要先创建一个 “知识库”。
+一切配置就绪后，你需要先创建一个 “知识库”。
 
 “知识库” 是一组文档的集合，PandaWiki 将会根据知识库中的文档，为不同的知识库分别创建 “Wiki 网站”。
 
@@ -71,18 +82,7 @@ SUCCESS    密码: **********************
 
 > 关于知识库的更多配置细节请参考 [知识库设置](https://pandawiki.docs.baizhi.cloud/node/01971b5e-5bea-76d2-9f89-a95f98347bb0)。
 
-### 配置 AI 模型
-
-> PandaWiki 是由 AI 大模型驱动的 Wiki 系统，在未配置大模型的情况下 AI 创作、AI 问答、AI 搜索 等功能无法正常使用。
-
-点击 PandaWiki 控制台右上角的 “系统配置” 按钮，根据下方图片分别配置 “Chat 模型”、“Embedding 模型”、“Rerank 模型”。
-
-<img src="/images/modelconfig.png" width="800" />
-
-> 推荐使用 [百智云模型广场](https://baizhi.cloud/) 快速接入 AI 模型，注册即可获赠 5 元的模型使用额度。
-> 关于大模型的更多配置细节请参考 [接入 AI 模型](https://pandawiki.docs.baizhi.cloud/node/01971616-811c-70e1-82d9-706a202b8498)。
-
-#### 💪 开始使用
+### 💪 开始使用
 
 如果你顺利完成了以上步骤，那么恭喜你，属于你的 PandaWiki 搭建成功，你可以：
 
