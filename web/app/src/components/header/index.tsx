@@ -12,6 +12,7 @@ import { KeyboardEvent, useState } from 'react';
 import { StyledAppBar, StyledContainer, StyledHeaderBgi } from "../StyledHTML";
 import { IconSearch } from '../icons';
 import NavBtns from './NavBtns';
+import PageChange from './PageChange';
 
 const Header = () => {
   const { mobile } = useMobile()
@@ -107,6 +108,7 @@ const Header = () => {
                 }}
               />
             )}
+            {!mobile && <PageChange />}
             {!mobile && kbDetail?.settings?.btns?.map((item, index) => (
               <Link key={index} href={item.url} target={item.target}>
                 <Button

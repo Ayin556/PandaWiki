@@ -6,7 +6,7 @@ import { useMobile } from "@/provider/mobile-provider";
 import { Box, Stack } from "@mui/material";
 import { useTiptapEditor } from "ct-tiptap-editor";
 import { useParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Catalog from "./Catalog";
 import CatalogH5 from "./CatalogH5";
 import DocAnchor from "./DocAnchor";
@@ -14,6 +14,7 @@ import DocContent from "./DocContent";
 
 const Doc = ({ node: defaultNode, nodeList }: { node?: NodeDetail, nodeList: NodeListItem[] }) => {
   const { id: defaultId } = useParams()
+  console.log('defaultId', defaultId)
   const { kb_id } = useKBDetail()
   const { mobile } = useMobile()
   const [id, setId] = useState(defaultId as string || '')
@@ -26,7 +27,7 @@ const Doc = ({ node: defaultNode, nodeList }: { node?: NodeDetail, nodeList: Nod
     editable: false,
   })
 
-  const getData = useCallback(async (id: string) => {
+  const getData = async (id: string) => {
     try {
       const res = await fetch(`/share/v1/node/detail?id=${id}`, {
         method: 'GET',
@@ -40,7 +41,7 @@ const Doc = ({ node: defaultNode, nodeList }: { node?: NodeDetail, nodeList: Nod
     } catch (error) {
       console.error('Error fetching document content:', error);
     }
-  }, [kb_id])
+  }
 
   useEffect(() => {
     if (node) {
@@ -54,9 +55,9 @@ const Doc = ({ node: defaultNode, nodeList }: { node?: NodeDetail, nodeList: Nod
   }, [node])
 
   useEffect(() => {
-    getData(id)
+    if (id !== defaultId) getData(id)
     window.scrollTo({ top: 0, behavior: 'smooth' })
-  }, [id, getData])
+  }, [id])
 
   if (mobile) {
     return <Box sx={{ mt: '60px', position: 'relative', zIndex: 1, minHeight: 'calc(100vh - 201px)' }}>
