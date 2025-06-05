@@ -58,7 +58,7 @@ const Doc = ({ node: defaultNode }: { node?: NodeDetail }) => {
   }, [node])
 
   useEffect(() => {
-    if (id !== defaultId) getData(id)
+    getData(id)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [id])
 
