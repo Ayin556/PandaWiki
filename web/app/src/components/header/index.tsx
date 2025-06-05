@@ -109,7 +109,6 @@ const Header = () => {
                 }}
               />
             )}
-            {!mobile && !isChat && <PageChange />}
             {!mobile && kbDetail?.settings?.btns?.map((item, index) => (
               <Link key={index} href={item.url} target={item.target}>
                 <Button
@@ -122,6 +121,7 @@ const Header = () => {
               </Link>
             ))}
             {mobile && <NavBtns detail={kbDetail} />}
+            {!mobile && !isChat && <PageChange />}
           </Stack>
         </Stack>
       </StyledContainer>
