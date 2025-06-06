@@ -32,15 +32,18 @@ const DocEditor = () => {
     setMaxH(Math.min(...headings.map((h: any) => h.heading)))
   }
 
-  const handleSave = (auto?: boolean) => {
+  const handleSave = async (auto?: boolean) => {
     if (!editorRef || !detail) return
     const { editor } = editorRef
     const content = editor.getHTML()
-    updateNode({ id, content, kb_id: detail.kb_id }).then(() => {
+    try {
+      await updateNode({ id, content, kb_id: detail.kb_id })
       Message.success(auto ? '自动保存成功' : '保存成功')
       getDetail()
       updateNav()
-    })
+    } catch (error) {
+      Message.error('保存失败')
+    }
   }
 
   const handleImageUpload = async (file: File) => {
@@ -57,31 +60,33 @@ const DocEditor = () => {
   })
 
   useEffect(() => {
-    if (detail && detail.content && editorRef) {
-      editorRef.setContent(detail.content).then((headings) => {
+    if (timer.current) clearTimeout(timer.current)
+    if (detail && editorRef) {
+      editorRef.setContent(detail.content || '').then((headings) => {
         setHeadings(headings)
         setMaxH(Math.min(...headings.map(h => h.heading)))
       })
+      timer.current = setInterval(() => {
+        handleSave(true)
+      }, 1000 * 60)
+    }
+    return () => {
+      if (timer.current) clearInterval(timer.current)
     }
   }, [detail])
 
   useEffect(() => {
-    if (id) {
-      getDetail()
-      if (timer.current) clearTimeout(timer.current)
+    if (id) getDetail()
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        handleSave(true)
+      }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id])
-
-  useEffect(() => {
-    if (timer.current) clearInterval(timer.current)
-    timer.current = setInterval(() => {
-      handleSave(true)
-    }, 1000 * 60)
+    document.addEventListener('visibilitychange', handleVisibilityChange)
     return () => {
-      if (timer.current) clearInterval(timer.current)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
-  }, [])
+  }, [id])
 
   if (!editorRef) return null
 
@@ -116,7 +121,7 @@ const DocEditor = () => {
         zIndex: 1,
         mr: 1,
       }}>
-        <EditorFolder />
+        <EditorFolder editorRef={editorRef} content={detail?.content || ''} save={handleSave} />
       </Box>
       <Box className='editor-content' sx={{
         width: 800,

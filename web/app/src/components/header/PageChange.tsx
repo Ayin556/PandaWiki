@@ -1,16 +1,19 @@
 'use client'
 
-import { NodeListItem } from "@/assets/type";
 import { useNodeList } from "@/provider/nodelist-provider";
+import { convertToTree } from "@/utils/drag";
 import { CusTabs } from "ct-mui";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 
 const PageChange = () => {
-  const { nodeList } = useNodeList()
   const pathname = usePathname();
   const router = useRouter();
+
+  const { nodeList } = useNodeList()
+  const tree = convertToTree(nodeList || [])
+
   const [value, setValue] = useState('home');
   const [firstNodeId, setFirstNodeId] = useState('')
 
@@ -19,11 +22,27 @@ const PageChange = () => {
   }, [pathname])
 
   useEffect(() => {
-    if (nodeList) {
-      const firstNode = nodeList.sort((a: NodeListItem, b: NodeListItem) => a.position - b.position)[0]
-      setFirstNodeId(firstNode.id)
+    if (tree.length > 0) {
+      const findFirstType2Node = (nodes: any[]): string | null => {
+        for (const node of nodes) {
+          if (node.type === 2) {
+            return node.id;
+          }
+          if (node.children && node.children.length > 0) {
+            const found = findFirstType2Node(node.children);
+            if (found) return found;
+          }
+        }
+        return null;
+      };
+      const firstType2Id = findFirstType2Node(tree);
+      if (firstType2Id) {
+        setFirstNodeId(firstType2Id);
+      }
     }
-  }, [])
+  }, [tree])
+
+  if (!firstNodeId) return null
 
   return <CusTabs
     sx={{
