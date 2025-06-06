@@ -4,9 +4,10 @@ import { useAppSelector } from "@/store"
 import { Box, Stack } from "@mui/material"
 import { Ellipsis, Icon } from "ct-mui"
 import { useCallback, useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 
 const EditorFolder = () => {
+  const { id } = useParams()
   const navigate = useNavigate()
   const { kb_id } = useAppSelector(state => state.config)
   const [data, setData] = useState<ITreeItem[]>([])
@@ -26,6 +27,7 @@ const EditorFolder = () => {
         <Stack direction={'row'} alignItems={'center'} gap={1} sx={{
           cursor: 'pointer',
           fontSize: item.type === 1 ? 16 : 14,
+          color: id === item.id ? 'primary.main' : 'text.primary',
           '&:hover': {
             color: 'primary.main',
           }
