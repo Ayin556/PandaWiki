@@ -57,31 +57,24 @@ const DocEditor = () => {
   })
 
   useEffect(() => {
+    if (timer.current) clearTimeout(timer.current)
     if (detail && detail.content && editorRef) {
       editorRef.setContent(detail.content).then((headings) => {
         setHeadings(headings)
         setMaxH(Math.min(...headings.map(h => h.heading)))
       })
+      timer.current = setInterval(() => {
+        handleSave(true)
+      }, 1000 * 60)
+    }
+    return () => {
+      if (timer.current) clearInterval(timer.current)
     }
   }, [detail])
 
   useEffect(() => {
-    if (id) {
-      getDetail()
-      if (timer.current) clearTimeout(timer.current)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (id) getDetail()
   }, [id])
-
-  useEffect(() => {
-    if (timer.current) clearInterval(timer.current)
-    timer.current = setInterval(() => {
-      handleSave(true)
-    }, 1000 * 60)
-    return () => {
-      if (timer.current) clearInterval(timer.current)
-    }
-  }, [])
 
   if (!editorRef) return null
 
