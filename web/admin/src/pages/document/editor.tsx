@@ -32,15 +32,18 @@ const DocEditor = () => {
     setMaxH(Math.min(...headings.map((h: any) => h.heading)))
   }
 
-  const handleSave = (auto?: boolean) => {
+  const handleSave = async (auto?: boolean) => {
     if (!editorRef || !detail) return
     const { editor } = editorRef
     const content = editor.getHTML()
-    updateNode({ id, content, kb_id: detail.kb_id }).then(() => {
+    try {
+      await updateNode({ id, content, kb_id: detail.kb_id })
       Message.success(auto ? '自动保存成功' : '保存成功')
       getDetail()
       updateNav()
-    })
+    } catch (error) {
+      Message.error('保存失败')
+    }
   }
 
   const handleImageUpload = async (file: File) => {
@@ -73,8 +76,15 @@ const DocEditor = () => {
   }, [detail])
 
   useEffect(() => {
-    if (id) {
-      getDetail()
+    if (id) getDetail()
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        handleSave(true)
+      }
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
   }, [id])
 
@@ -111,7 +121,7 @@ const DocEditor = () => {
         zIndex: 1,
         mr: 1,
       }}>
-        <EditorFolder />
+        <EditorFolder editorRef={editorRef} content={detail?.content || ''} save={handleSave} />
       </Box>
       <Box className='editor-content' sx={{
         width: 800,

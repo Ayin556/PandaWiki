@@ -5,18 +5,19 @@ import { useAppSelector } from "@/store"
 import { addOpacityToColor, getShortcutKeyText } from "@/utils"
 import { Box, Button, IconButton, Stack, Tooltip, useTheme } from "@mui/material"
 import { Ellipsis, Icon, MenuSelect, Message } from "ct-mui"
+import { UseTiptapEditorReturn } from "ct-tiptap-editor"
 import dayjs from "dayjs"
 import { useState } from "react"
 
 interface EditorHeaderProps {
-  editorRef: any
+  editorRef: UseTiptapEditorReturn
   detail: NodeDetail | null
   onSave?: () => void
   refresh?: () => void
 }
 
 const EditorHeader = ({ editorRef, detail, onSave, refresh }: EditorHeaderProps) => {
-  const { editor } = editorRef
+  const editor = editorRef?.editor || null
   const theme = useTheme()
   const { kb_id } = useAppSelector(state => state.config)
 
