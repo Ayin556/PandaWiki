@@ -42,6 +42,8 @@ const PageChange = () => {
     }
   }, [tree])
 
+  if (!firstNodeId) return null
+
   return <CusTabs
     sx={{
       bgcolor: 'transparent',
