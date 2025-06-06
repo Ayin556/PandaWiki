@@ -58,8 +58,8 @@ const DocEditor = () => {
 
   useEffect(() => {
     if (timer.current) clearTimeout(timer.current)
-    if (detail && detail.content && editorRef) {
-      editorRef.setContent(detail.content).then((headings) => {
+    if (detail && editorRef) {
+      editorRef.setContent(detail.content || '').then((headings) => {
         setHeadings(headings)
         setMaxH(Math.min(...headings.map(h => h.heading)))
       })
@@ -73,7 +73,9 @@ const DocEditor = () => {
   }, [detail])
 
   useEffect(() => {
-    if (id) getDetail()
+    if (id) {
+      getDetail()
+    }
   }, [id])
 
   if (!editorRef) return null
