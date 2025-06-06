@@ -1,44 +1,49 @@
 FROM node:20-alpine AS builder
 
+# 接收宿主机缓存路径
+ARG NODE_MODULES_CACHE
+ARG PNPM_STORE_CACHE
+
 WORKDIR /app
 
 # 安装 pnpm
 RUN npm install -g pnpm
 
-# 使用非 root 用户目录
-RUN pnpm config set store-dir /app/.pnpm-store
+# 1. 尝试从宿主机缓存恢复 node_modules
+RUN if [ -d "$NODE_MODULES_CACHE" ] && [ "$(ls -A $NODE_MODULES_CACHE)" ]; then \
+      mkdir -p /app/node_modules && \
+      cp -r "$NODE_MODULES_CACHE"/* /app/node_modules/; \
+    fi
 
-# 首先只复制依赖相关文件
+# 2. 设置 pnpm store 路径
+RUN if [ -d "$PNPM_STORE_CACHE" ]; then \
+      pnpm config set store-dir "$PNPM_STORE_CACHE"; \
+    fi
+
 COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile --prefer-offline
 
-# 安装依赖，使用 BuildKit 缓存
-RUN --mount=type=cache,target=/app/.pnpm-store \
-    --mount=type=cache,target=/app/app-node_modules \
-    pnpm install --frozen-lockfile --prefer-offline
+# 保存缓存
+RUN if [ "$GITHUB_EVENT_NAME" != "pull_request" ] && [ -n "$NODE_MODULES_CACHE" ]; then \
+      mkdir -p "$NODE_MODULES_CACHE" && \
+      rm -rf "$NODE_MODULES_CACHE"/* && \
+      cp -r /app/node_modules/* "$NODE_MODULES_CACHE/"; \
+    fi
 
-# 然后复制其他源代码文件
 COPY . .
 COPY .env .env
-
-# 构建应用
 RUN pnpm run build
 
+# 生产阶段
 FROM node:20-alpine
-
 COPY --from=builder /app/public ./public
 ENV NODE_ENV=production
-
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nextjs -u 1001
-
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nextjs -u 1001
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
 USER nextjs
-
 EXPOSE 3010
-
 ENV PORT=3010
 ENV HOSTNAME="0.0.0.0"
-
 CMD ["node", "server.js"]
