@@ -184,8 +184,7 @@ export type AppListItem = {
 
 export type DingBotSetting = {
   dingtalk_bot_client_id: string,
-  dingtalk_bot_token: string,
-  dingtalk_bot_aes_key: string,
+  dingtalk_bot_client_secret: string,
   dingtalk_bot_welcome_str: string,
 }
 
