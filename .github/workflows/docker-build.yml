@@ -1,4 +1,4 @@
-name: Docker Build and Push
+name: Docker Build with Push
 
 on:
   push:
@@ -23,18 +23,22 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Ensure node_modules exists
-        run: mkdir -p web/admin/node_modules web/admin/.pnpm-store
+      # 创建宿主机缓存目录
+      - name: Prepare cache directories
+        run: |
+          mkdir -p ./.cache/admin/node_modules
+          mkdir -p ./.cache/admin/.pnpm-store
 
-      - name: Cache node_modules
+      # 缓存宿主机目录
+      - name: Cache PNPM dependencies
         uses: actions/cache@v3
         with:
           path: |
-            web/admin/node_modules
-            web/admin/.pnpm-store
-          key: ${{ runner.os }}-admin-node-${{ hashFiles('web/admin/pnpm-lock.yaml') }}
+            ./.cache/admin/node_modules
+            ./.cache/admin/.pnpm-store
+          key: ${{ runner.os }}-admin-${{ hashFiles('web/admin/pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-admin-node-
+            ${{ runner.os }}-admin-
 
       - name: Login to Aliyun Container Registry
         if: startsWith(github.ref, 'refs/tags/admin-v') || startsWith(github.ref, 'refs/tags/v')
@@ -61,6 +65,7 @@ jobs:
         run: |
           echo "VITE_APP_VERSION=${{ steps.get_version.outputs.VERSION }}" >> web/admin/.env.production
 
+      # 构建时挂载缓存目录
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
@@ -68,6 +73,9 @@ jobs:
           file: ./web/admin/Dockerfile
           push: ${{ startsWith(github.ref, 'refs/tags/admin-v') || startsWith(github.ref, 'refs/tags/v') }}
           tags: chaitin-registry.cn-hangzhou.cr.aliyuncs.com/chaitin/panda-wiki-nginx:v${{ steps.get_version.outputs.VERSION }}
+          build-args: |
+            NODE_MODULES_CACHE=./.cache/admin/node_modules
+            PNPM_STORE_CACHE=./.cache/admin/.pnpm-store
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -82,18 +90,20 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Ensure node_modules exists
-        run: mkdir -p web/app/node_modules web/app/.pnpm-store
+      - name: Prepare cache directories
+        run: |
+          mkdir -p ./.cache/app/node_modules
+          mkdir -p ./.cache/app/.pnpm-store
 
-      - name: Cache node_modules
+      - name: Cache PNPM dependencies
         uses: actions/cache@v3
         with:
           path: |
-            web/app/node_modules
-            web/app/.pnpm-store
-          key: ${{ runner.os }}-app-node-${{ hashFiles('web/app/pnpm-lock.yaml') }}
+            ./.cache/app/node_modules
+            ./.cache/app/.pnpm-store
+          key: ${{ runner.os }}-app-${{ hashFiles('web/app/pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-app-node-
+            ${{ runner.os }}-app-
 
       - name: Login to Aliyun Container Registry
         if: startsWith(github.ref, 'refs/tags/app-v') || startsWith(github.ref, 'refs/tags/v')
@@ -123,5 +133,8 @@ jobs:
           file: ./web/app/Dockerfile
           push: ${{ startsWith(github.ref, 'refs/tags/app-v') || startsWith(github.ref, 'refs/tags/v') }}
           tags: chaitin-registry.cn-hangzhou.cr.aliyuncs.com/chaitin/panda-wiki-app:v${{ steps.get_version.outputs.VERSION }}
+          build-args: |
+            NODE_MODULES_CACHE=./.cache/app/node_modules
+            PNPM_STORE_CACHE=./.cache/app/.pnpm-store
           cache-from: type=gha
           cache-to: type=gha,mode=max
