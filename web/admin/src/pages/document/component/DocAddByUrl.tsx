@@ -55,7 +55,7 @@ const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddB
   const [isUploading, setIsUploading] = useState(0)
   const [currentFileIndex, setCurrentFileIndex] = useState(0)
   const [uploadProgress, setUploadProgress] = useState(0)
-  const [size] = useState(1024 * 1024 * 5)
+  const [size] = useState(1024 * 1024 * 20)
 
   const onChangeFile = (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
     setAcceptedFiles(acceptedFiles)
