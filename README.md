@@ -65,7 +65,7 @@ SUCCESS    密码: **********************
 
 > PandaWiki 是由 AI 大模型驱动的 Wiki 系统，在未配置大模型的情况下 AI 创作、AI 问答、AI 搜索 等功能无法正常使用。
 > 
-首次登录时会提示需要先配置 AI 模型，根据下方图片分别配置 “Chat 模型”、“Embedding 模型”、“Rerank 模型”。
+首次登录时会提示需要先配置 AI 模型，根据下方图片配置 “Chat 模型”。
 
 <img src="/images/modelconfig.png" width="800" />
 
