@@ -1,11 +1,13 @@
 import { ITreeItem } from "@/assets/type"
 import { IconArrowDown, IconFile, IconFolder } from "@/components/icons"
+import { useMobile } from "@/provider/mobile-provider"
 import { Box, Stack } from "@mui/material"
 import { Ellipsis } from "ct-mui"
 import { useState } from "react"
 
 const CatalogFolder = ({ item, activeId, onChange }: { item: ITreeItem, activeId: string, onChange: (id: string) => void }) => {
   const [isExpanded, setIsExpanded] = useState(true)
+  const { mobile } = useMobile()
 
   return <Box key={item.id}>
     <Box sx={{
@@ -38,7 +40,7 @@ const CatalogFolder = ({ item, activeId, onChange }: { item: ITreeItem, activeId
       </Stack>
     </Box>
     {item.children && item.children.length > 0 && isExpanded && (
-      <Box sx={{ ml: 2.5 }}>
+      <Box sx={{ ml: mobile ? 3 : 2.75 }}>
         {item.children.map((child) =>
           <CatalogFolder key={child.id} item={child} activeId={activeId} onChange={onChange} />
         )}
