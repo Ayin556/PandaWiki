@@ -82,7 +82,7 @@ const DocAnchor = ({ title, headings, maxH }: DocAnchorProps) => {
         const idx = levels.indexOf(heading.heading)
         return <Ellipsis key={heading.id} arrow sx={{
           cursor: 'pointer',
-          ml: (idx + 1) * 2,
+          pl: (idx + 1) * 2,
           ...HeadingSx[idx],
           color: activeId === heading.id ? 'primary.main' : HeadingSx[idx].color,
           ':hover': {

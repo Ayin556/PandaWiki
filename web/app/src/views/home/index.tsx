@@ -48,7 +48,7 @@ const Home = () => {
   };
 
   return <Box sx={{ pt: mobile ? 13 : 18, minHeight: 'calc(100vh - 40px)' }}>
-    <StyledWelcomeStr mobile={mobile}>
+    <StyledWelcomeStr mobile={mobile} sx={{ color: 'text.primary' }}>
       {kbDetail?.settings?.welcome_str}
     </StyledWelcomeStr>
     <StyledSearch mobile={mobile}>

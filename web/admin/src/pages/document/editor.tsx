@@ -64,6 +64,7 @@ const DocEditor = () => {
     content: '',
     onSave: () => handleSave(false),
     onImageUpload: handleImageUpload,
+    onFileUpload: handleFileUpload,
   })
 
   useEffect(() => {
@@ -116,7 +117,7 @@ const DocEditor = () => {
       }}>
         <EditorHeader editorRef={editorRef} detail={detail} onSave={handleSave} refresh={getDetail} />
       </Box>
-      <TiptapToolbar editorRef={editorRef} onFileUpload={handleFileUpload} />
+      <TiptapToolbar editorRef={editorRef} />
     </Box>
     <Stack direction='row' alignItems={'flex-start'} sx={{
       width: 1400,

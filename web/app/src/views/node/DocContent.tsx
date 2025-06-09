@@ -30,6 +30,7 @@ const DocContent = ({ info, editorRef }: { info: NodeDetail, editorRef: UseTipta
       fontSize: 32,
       lineHeight: '40px',
       fontWeight: '700',
+      color: 'text.primary'
     }}>{info?.name}</Box>
     <Divider sx={{ my: 3 }} />
     <Box sx={{

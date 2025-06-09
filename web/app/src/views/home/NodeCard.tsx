@@ -72,7 +72,8 @@ const DocCard = ({ node }: { node: RecommendNode }) => {
     transition: 'all 0.3s ease',
     ':hover': {
       boxShadow: '0px 0px 10px 0px rgba(0, 0, 0, 0.1)',
-    }
+    },
+    color: 'text.primary',
   }}>
     {node.type === 2 ? <NodeFile node={node} /> : <NodeFolder node={node} />}
   </StyledCard>
