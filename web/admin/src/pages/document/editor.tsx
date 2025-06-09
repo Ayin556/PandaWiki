@@ -53,6 +53,13 @@ const DocEditor = () => {
     return Promise.resolve('/static-file/' + key)
   }
 
+  const handleFileUpload = async (file: File) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    const { key } = await uploadFile(formData)
+    return Promise.resolve('/static-file/' + key)
+  }
+
   const editorRef = useTiptapEditor({
     content: '',
     onSave: () => handleSave(false),
@@ -62,6 +69,8 @@ const DocEditor = () => {
   useEffect(() => {
     if (timer.current) clearTimeout(timer.current)
     if (detail && editorRef) {
+      const content = editorRef.editor.getHTML()
+      if (content === detail.content) return
       editorRef.setContent(detail.content || '').then((headings) => {
         setHeadings(headings)
         setMaxH(Math.min(...headings.map(h => h.heading)))
@@ -107,7 +116,7 @@ const DocEditor = () => {
       }}>
         <EditorHeader editorRef={editorRef} detail={detail} onSave={handleSave} refresh={getDetail} />
       </Box>
-      <TiptapToolbar editorRef={editorRef} />
+      <TiptapToolbar editorRef={editorRef} onFileUpload={handleFileUpload} />
     </Box>
     <Stack direction='row' alignItems={'flex-start'} sx={{
       width: 1400,
