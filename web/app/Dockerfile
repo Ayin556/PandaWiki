@@ -1,10 +1,11 @@
 FROM node:20-alpine
-COPY public ./public
+
 ENV NODE_ENV=production
 RUN addgroup -g 1001 -S nodejs && \
     adduser -S nextjs -u 1001
-COPY --chown=nextjs:nodejs .next/standalone ./
-COPY --chown=nextjs:nodejs .next/static ./.next/static
+COPY --chown=nextjs:nodejs public ./public
+COPY --chown=nextjs:nodejs dist/standalone ./
+COPY --chown=nextjs:nodejs dist/static ./dist/static
 USER nextjs
 EXPOSE 3010
 ENV PORT=3010
