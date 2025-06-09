@@ -20,8 +20,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+        with:
+          platforms: linux/amd64,linux/arm64
 
       # 创建宿主机缓存目录
       - name: Prepare cache directories
@@ -72,6 +77,7 @@ jobs:
           context: ./web/admin
           file: ./web/admin/Dockerfile
           push: ${{ startsWith(github.ref, 'refs/tags/admin-v') || startsWith(github.ref, 'refs/tags/v') }}
+          platforms: linux/amd64,linux/arm64
           tags: chaitin-registry.cn-hangzhou.cr.aliyuncs.com/chaitin/panda-wiki-nginx:v${{ steps.get_version.outputs.VERSION }}
           build-args: |
             NODE_MODULES_CACHE=./.cache/admin/node_modules
@@ -87,8 +93,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+        with:
+          platforms: linux/amd64,linux/arm64
 
       - name: Prepare cache directories
         run: |
@@ -132,6 +143,7 @@ jobs:
           context: ./web/app
           file: ./web/app/Dockerfile
           push: ${{ startsWith(github.ref, 'refs/tags/app-v') || startsWith(github.ref, 'refs/tags/v') }}
+          platforms: linux/amd64,linux/arm64
           tags: chaitin-registry.cn-hangzhou.cr.aliyuncs.com/chaitin/panda-wiki-app:v${{ steps.get_version.outputs.VERSION }}
           build-args: |
             NODE_MODULES_CACHE=./.cache/app/node_modules
