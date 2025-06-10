@@ -101,7 +101,10 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: ${{ matrix.project }}-build
-          path: web/${{ matrix.project }}/dist
+
+      - name: Extract files
+        run: |
+          tar -xvf dist.tar
 
       - name: Check file structure
         run: |
@@ -123,14 +126,6 @@ jobs:
           registry: chaitin-registry.cn-hangzhou.cr.aliyuncs.com
           username: ${{ secrets.CT_ALIYUN_USER }}
           password: ${{ secrets.CT_ALIYUN_PASS }}
-          
-      - name: Check file structure
-        run: |
-          echo "Current directory: $(pwd)"
-          echo "Listing web/${{ matrix.project }} directory:"
-          ls -la web/${{ matrix.project }}
-          echo "Listing web/${{ matrix.project }}/dist directory:"
-          ls -la web/${{ matrix.project }}/dist
           
       - name: Package and push
         uses: docker/build-push-action@v5
