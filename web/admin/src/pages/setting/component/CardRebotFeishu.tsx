@@ -117,7 +117,7 @@ const CardRebotFeishu = ({ kb }: { kb: KnowledgeBaseListItem }) => {
           helperText={errors.feishu_bot_app_secret?.message}
         />}
       />
-      <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
+      {/* <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
         用户欢迎语
       </Box>
       <Controller
@@ -137,7 +137,7 @@ const CardRebotFeishu = ({ kb }: { kb: KnowledgeBaseListItem }) => {
           error={!!errors.feishu_bot_welcome_str}
           helperText={errors.feishu_bot_welcome_str?.message}
         />}
-      />
+      /> */}
     </Box >
   </>
 }
