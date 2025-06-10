@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  distDir: 'dist',
   reactStrictMode: false,
   allowedDevOrigins: ['10.10.18.71'],
   output: 'standalone',
