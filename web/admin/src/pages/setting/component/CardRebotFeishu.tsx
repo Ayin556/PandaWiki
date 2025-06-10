@@ -17,7 +17,7 @@ const CardRebotFeishu = ({ kb }: { kb: KnowledgeBaseListItem }) => {
   })
 
   const getDetail = () => {
-    getAppDetail({ kb_id: kb.id, type: 5 }).then(res => {
+    getAppDetail({ kb_id: kb.id, type: 4 }).then(res => {
       setDetail(res)
       reset({
         feishu_bot_app_id: res.settings.feishu_bot_app_id,
@@ -45,7 +45,7 @@ const CardRebotFeishu = ({ kb }: { kb: KnowledgeBaseListItem }) => {
 
   useEffect(() => {
     getDetail()
-  }, [])
+  }, [kb])
 
   return <>
     <Stack direction='row' alignItems={'center'} justifyContent={'space-between'} sx={{

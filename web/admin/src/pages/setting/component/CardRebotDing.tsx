@@ -45,7 +45,7 @@ const CardRebotDing = ({ kb }: { kb: KnowledgeBaseListItem }) => {
 
   useEffect(() => {
     getDetail()
-  }, [])
+  }, [kb])
 
   return <>
     <Stack direction='row' alignItems={'center'} justifyContent={'space-between'} sx={{
