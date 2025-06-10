@@ -125,3 +125,20 @@ export const copyText = (text: string, callback?: () => void) => {
     Message.error('复制失败，请手动复制')
   }
 }
+
+export const validateUrl = (url: string): boolean => {
+  try {
+    const pattern = /^(https?|ftp):\/\/(([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}|(\d{1,3}\.){3}\d{1,3}|\[[a-fA-F0-9:]+\])(:\d+)?(\/.*)?$/;
+    if (!pattern.test(url)) return false
+
+    const parsed = new URL(url);
+
+    return (['http:', 'https:', 'ftp:'].includes(parsed.protocol) &&
+      !!parsed.hostname && (parsed.hostname.includes('.') ||
+        /^(\d{1,3}\.){3}\d{1,3}$/.test(parsed.hostname) ||
+        parsed.hostname.startsWith('[')))
+
+  } catch {
+    return false;
+  }
+}

@@ -24,7 +24,7 @@ const CardRebot = ({ kb }: { kb: KnowledgeBaseListItem }) => {
       name: '飞书机器人',
       icon: FeishuLogo,
       configDisabled: true,
-    }
+    },
   }
   return <Card>
     <Box sx={{ fontWeight: 'bold', px: 2, py: 1.5, bgcolor: 'background.paper2' }}>问答机器人</Box>
@@ -32,6 +32,10 @@ const CardRebot = ({ kb }: { kb: KnowledgeBaseListItem }) => {
     <Divider sx={{ my: 2 }} />
     <CardRebotDing kb={kb} />
     <Divider sx={{ my: 2 }} />
+    {/* <CardRebotFeishu kb={kb} />
+    <Divider sx={{ my: 2 }} /> */}
+    {/* <CardRebotWecom kb={kb} />
+    <Divider sx={{ my: 2 }} /> */}
     {Object.values(AppList).map((value, index) => <Box key={index}>
       <Stack direction='row' alignItems={'center'} justifyContent={'space-between'} sx={{ m: 2 }}>
         <Box sx={{ fontWeight: 'bold' }}>{value.name}</Box>

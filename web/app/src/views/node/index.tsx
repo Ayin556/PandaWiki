@@ -4,7 +4,8 @@ import { NodeDetail } from "@/assets/type";
 import { useKBDetail } from "@/provider/kb-provider";
 import { useMobile } from "@/provider/mobile-provider";
 import { useNodeList } from "@/provider/nodelist-provider";
-import { Box, Stack } from "@mui/material";
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { Box, Fab, Stack, Zoom } from "@mui/material";
 import { useTiptapEditor } from "ct-tiptap-editor";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -29,6 +30,25 @@ const Doc = ({ node: defaultNode }: { node?: NodeDetail }) => {
     content: node?.content || '',
     editable: false,
   })
+
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  const handleScroll = () => {
+    if (window.scrollY > 300) {
+      setShowScrollTop(true);
+    } else {
+      setShowScrollTop(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const getData = async (id: string) => {
     try {
@@ -66,6 +86,22 @@ const Doc = ({ node: defaultNode }: { node?: NodeDetail }) => {
     return <Box sx={{ mt: '60px', position: 'relative', zIndex: 1, minHeight: 'calc(100vh - 201px)' }}>
       {nodeList && <CatalogH5 activeId={id} nodes={nodeList} onChange={setId} />}
       {node && <DocContent info={node} editorRef={editorRef} />}
+      <Zoom in={showScrollTop}>
+        <Fab
+          size="small"
+          onClick={scrollToTop}
+          sx={{
+            backgroundColor: '#fff',
+            color: '#000',
+            position: 'fixed',
+            bottom: 66,
+            right: 16,
+            zIndex: 1000,
+          }}
+        >
+          <KeyboardArrowUpIcon sx={{ fontSize: 24 }} />
+        </Fab>
+      </Zoom>
     </Box>
   }
 
@@ -73,6 +109,22 @@ const Doc = ({ node: defaultNode }: { node?: NodeDetail }) => {
     {nodeList && <Catalog activeId={id} nodes={nodeList} onChange={setId} />}
     {node && <DocContent info={node} editorRef={editorRef} />}
     {node && <DocAnchor title={node?.name} headings={headings} maxH={maxH} />}
+    <Zoom in={showScrollTop}>
+      <Fab
+        size="small"
+        onClick={scrollToTop}
+        sx={{
+          backgroundColor: '#fff',
+          color: '#000',
+          position: 'fixed',
+          bottom: 108,
+          right: 16,
+          zIndex: 1000,
+        }}
+      >
+        <KeyboardArrowUpIcon sx={{ fontSize: 24 }} />
+      </Fab>
+    </Zoom>
   </Stack>
 };
 

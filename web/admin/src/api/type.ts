@@ -39,11 +39,12 @@ export type UpdateKnowledgeBaseData = {
   id: string,
   name: string,
   access_settings: {
-    hosts?: string[],
-    ports?: number[],
-    ssl_ports?: number[],
+    hosts?: string[] | null,
+    ports?: number[] | null,
+    ssl_ports?: number[] | null,
     private_key?: string,
     public_key?: string,
+    base_url?: string,
   }
 }
 
@@ -63,6 +64,7 @@ export type KnowledgeBaseAccessSettings = {
   ports: number[] | null,
   private_key: string,
   public_key: string,
+  base_url: string,
   ssl_ports: number[] | null
 }
 
@@ -189,21 +191,19 @@ export type DingBotSetting = {
 }
 
 export type WecomBotSetting = {
-  wecombot_agent_id: number
-  wecombot_corp_secret: string
-  wecombot_suite_token: string
-  wecombot_suite_id: string
-  wecombot_suite_encoding_aes_key: string
-  wecombot_corp_id: string
-  wecombot_welcome_str: string
+  wecom_bot_agent_id: number
+  wecom_bot_corp_secret: string
+  wecom_bot_suite_token: string
+  wecom_bot_suite_id: string
+  wecom_bot_suite_encoding_aes_key: string
+  wecom_bot_corp_id: string
+  wecom_bot_welcome_str: string
 }
 
 export type FeishuBotSetting = {
-  feishubot_app_id: string
-  feishubot_app_secret: string
-  feishubot_verification_token: string
-  feishubot_encrypt_key: string
-  feishubot_welcome_str: string
+  feishu_bot_app_id: string
+  feishu_bot_app_secret: string
+  feishu_bot_welcome_str: string
 }
 
 export type HeaderSetting = {
@@ -230,7 +230,9 @@ export type CustomCodeSetting = {
   body_code: string
 }
 
-export type AppSetting = HeaderSetting & WelcomeSetting & SEOSetting & CustomCodeSetting & DingBotSetting & WecomBotSetting & FeishuBotSetting
+export type AppSetting = HeaderSetting & WelcomeSetting & SEOSetting & CustomCodeSetting & DingBotSetting & WecomBotSetting & FeishuBotSetting & {
+  base_url: string
+}
 
 export type RecommendNode = {
   id: string,

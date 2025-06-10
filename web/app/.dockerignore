@@ -4,7 +4,5 @@ node_modules
 *.log
 .env.local
 next-env.d.ts
-dist
-.next
 coverage
 .DS_Store 
