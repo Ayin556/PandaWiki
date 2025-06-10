@@ -97,7 +97,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: ${{ matrix.project }}-build
-          path: web/${{ matrix.project }}/dist
+          path: dist
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
