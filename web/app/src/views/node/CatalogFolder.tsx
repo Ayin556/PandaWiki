@@ -11,6 +11,7 @@ const CatalogFolder = ({ item, activeId, onChange }: { item: ITreeItem, activeId
 
   return <Box key={item.id}>
     <Box sx={{
+      position: 'relative',
       lineHeight: '32px',
       cursor: 'pointer',
       color: activeId === item.id ? 'primary.main' : 'inherit',
@@ -19,10 +20,10 @@ const CatalogFolder = ({ item, activeId, onChange }: { item: ITreeItem, activeId
     }} onClick={() => {
       setIsExpanded(!isExpanded)
     }}>
+      {item.type === 1 && <Box sx={{ position: 'absolute', left: -18, top: 2 }}>
+        <IconArrowDown sx={{ fontSize: 16, transform: isExpanded ? 'none' : 'rotate(-90deg)', transition: 'transform 0.2s' }} />
+      </Box>}
       <Stack direction="row" alignItems="center" gap={1}>
-        {item.type === 1 && <Box sx={{ flexShrink: 0 }}>
-          <IconArrowDown sx={{ transform: isExpanded ? 'none' : 'rotate(-90deg)', transition: 'transform 0.2s' }} />
-        </Box>}
         {item.type === 1 ? <IconFolder sx={{ flexShrink: 0 }} /> : <IconFile sx={{ flexShrink: 0 }} />}
         {item.type === 2 ? <Box sx={{ flex: 1, width: 0 }}>
           <Ellipsis onClick={(event) => {
