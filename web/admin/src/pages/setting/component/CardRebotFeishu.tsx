@@ -1,39 +1,39 @@
-import { AppDetail, DingBotSetting, getAppDetail, KnowledgeBaseListItem, updateAppDetail } from "@/api"
+import { AppDetail, FeishuBotSetting, getAppDetail, KnowledgeBaseListItem, updateAppDetail } from "@/api"
 import { Box, Button, Stack, TextField } from "@mui/material"
 import { Message } from "ct-mui"
 import { useEffect, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 
-const CardRebotDing = ({ kb }: { kb: KnowledgeBaseListItem }) => {
+const CardRebotFeishu = ({ kb }: { kb: KnowledgeBaseListItem }) => {
   const [isEdit, setIsEdit] = useState(false)
   const [detail, setDetail] = useState<AppDetail | null>(null)
 
-  const { control, handleSubmit, formState: { errors }, reset } = useForm<DingBotSetting>({
+  const { control, handleSubmit, formState: { errors }, reset } = useForm<FeishuBotSetting>({
     defaultValues: {
-      dingtalk_bot_client_id: '',
-      dingtalk_bot_client_secret: '',
-      dingtalk_bot_welcome_str: '',
+      feishu_bot_app_id: '',
+      feishu_bot_app_secret: '',
+      feishu_bot_welcome_str: '',
     }
   })
 
   const getDetail = () => {
-    getAppDetail({ kb_id: kb.id, type: 3 }).then(res => {
+    getAppDetail({ kb_id: kb.id, type: 5 }).then(res => {
       setDetail(res)
       reset({
-        dingtalk_bot_client_id: res.settings.dingtalk_bot_client_id,
-        dingtalk_bot_client_secret: res.settings.dingtalk_bot_client_secret,
-        dingtalk_bot_welcome_str: res.settings.dingtalk_bot_welcome_str,
+        feishu_bot_app_id: res.settings.feishu_bot_app_id,
+        feishu_bot_app_secret: res.settings.feishu_bot_app_secret,
+        feishu_bot_welcome_str: res.settings.feishu_bot_welcome_str,
       })
     })
   }
 
-  const onSubmit = (data: DingBotSetting) => {
+  const onSubmit = (data: FeishuBotSetting) => {
     if (!detail) return
     updateAppDetail({ id: detail.id }, {
       settings: {
-        dingtalk_bot_client_id: data.dingtalk_bot_client_id,
-        dingtalk_bot_client_secret: data.dingtalk_bot_client_secret,
-        dingtalk_bot_welcome_str: data.dingtalk_bot_welcome_str,
+        feishu_bot_app_id: data.feishu_bot_app_id,
+        feishu_bot_app_secret: data.feishu_bot_app_secret,
+        feishu_bot_welcome_str: data.feishu_bot_welcome_str,
       }
     }).then(() => {
       Message.success('保存成功')
@@ -63,58 +63,58 @@ const CardRebotDing = ({ kb }: { kb: KnowledgeBaseListItem }) => {
           borderRadius: '2px',
           mr: 1,
         },
-      }}>钉钉机器人</Box>
+      }}>飞书机器人</Box>
       {isEdit && <Button variant="contained" size="small" onClick={handleSubmit(onSubmit)}>保存</Button>}
     </Stack>
     <Box sx={{ m: 2 }}>
       <Stack direction='row' alignItems={'center'} justifyContent={'space-between'} sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
         <Box sx={{ fontSize: 14, lineHeight: '32px' }}>
-          Client ID
+          App ID
           <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
         </Box>
-        <Button size="small" component='a' href='https://pandawiki.docs.baizhi.cloud/node/01971b5f-258e-7c3d-b26a-42e96aea068b' target="_blank">使用方法</Button>
+        <Button size="small" component='a' href='https://pandawiki.docs.baizhi.cloud/node/01971b5f-4520-7c4b-8b4e-683ec5235adc' target="_blank">使用方法</Button>
       </Stack>
       <Controller
         control={control}
-        name="dingtalk_bot_client_id"
+        name="feishu_bot_app_id"
         rules={{
-          required: 'Client ID',
+          required: 'App ID',
         }}
         render={({ field }) => <TextField
           {...field}
           fullWidth
-          placeholder="> 钉钉开发平台 > 钉钉应用 > 凭证与基础信息 > Client ID"
+          placeholder="> 飞书开放平台 > 凭证与基础信息 > 应用凭证 > App ID"
           onChange={(e) => {
             field.onChange(e.target.value)
             setIsEdit(true)
           }}
-          error={!!errors.dingtalk_bot_client_id}
-          helperText={errors.dingtalk_bot_client_id?.message}
+          error={!!errors.feishu_bot_app_id}
+          helperText={errors.feishu_bot_app_id?.message}
         />}
       />
       <Stack direction='row' alignItems={'center'} justifyContent={'space-between'} sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
         <Box sx={{ fontSize: 14, lineHeight: '32px' }}>
-          Client Secret
+          App Secret
           <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
         </Box>
-        {/* <Button size="small" component='a' href='https://pandawiki.docs.baizhi.cloud/node/01971b5f-258e-7c3d-b26a-42e96aea068b' target="_blank">使用方法</Button> */}
+        {/* <Button size="small" component='a' href='https://pandawiki.docs.baizhi.cloud/node/01971b5f-4520-7c4b-8b4e-683ec5235adc' target="_blank">使用方法</Button> */}
       </Stack>
       <Controller
         control={control}
-        name="dingtalk_bot_client_secret"
+        name="feishu_bot_app_secret"
         rules={{
-          required: 'Client Secret',
+          required: 'App Secret',
         }}
         render={({ field }) => <TextField
           {...field}
           fullWidth
-          placeholder="> 钉钉开发平台 > 钉钉应用 > 凭证与基础信息 > Client Secret"
+          placeholder="> 飞书开放平台 > 凭证与基础信息 > 应用凭证 > App Secret"
           onChange={(e) => {
             field.onChange(e.target.value)
             setIsEdit(true)
           }}
-          error={!!errors.dingtalk_bot_client_secret}
-          helperText={errors.dingtalk_bot_client_secret?.message}
+          error={!!errors.feishu_bot_app_secret}
+          helperText={errors.feishu_bot_app_secret?.message}
         />}
       />
       <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
@@ -122,7 +122,7 @@ const CardRebotDing = ({ kb }: { kb: KnowledgeBaseListItem }) => {
       </Box>
       <Controller
         control={control}
-        name="dingtalk_bot_welcome_str"
+        name="feishu_bot_welcome_str"
         render={({ field }) => <TextField
           {...field}
           multiline
@@ -134,12 +134,12 @@ const CardRebotDing = ({ kb }: { kb: KnowledgeBaseListItem }) => {
             field.onChange(e.target.value)
             setIsEdit(true)
           }}
-          error={!!errors.dingtalk_bot_welcome_str}
-          helperText={errors.dingtalk_bot_welcome_str?.message}
+          error={!!errors.feishu_bot_welcome_str}
+          helperText={errors.feishu_bot_welcome_str?.message}
         />}
       />
     </Box >
   </>
 }
 
-export default CardRebotDing
+export default CardRebotFeishu
