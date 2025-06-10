@@ -80,7 +80,7 @@ const UpdateKbUrl = ({ open, data, onCancel, refresh }: UpdateKbUrlProps) => {
         return
       }
     }
-    updateKnowledgeBase({ id: data.id, access_settings: formData }).then(() => {
+    updateKnowledgeBase({ id: data.id, access_settings: { ...data.access_settings, ...formData } }).then(() => {
       Message.success('更新成功')
       refresh()
       onCancel()

@@ -39,9 +39,9 @@ export type UpdateKnowledgeBaseData = {
   id: string,
   name: string,
   access_settings: {
-    hosts?: string[],
-    ports?: number[],
-    ssl_ports?: number[],
+    hosts?: string[] | null,
+    ports?: number[] | null,
+    ssl_ports?: number[] | null,
     private_key?: string,
     public_key?: string,
     base_url?: string,

@@ -18,7 +18,7 @@ const CardVisit = ({ kb, refresh }: { kb: KnowledgeBaseListItem, refresh: () => 
         throw new Error('请输入正确的网址')
       }
 
-      updateKnowledgeBase({ id: kb.id, access_settings: { base_url: url } }).then(() => {
+      updateKnowledgeBase({ id: kb.id, access_settings: { ...kb.access_settings, base_url: url } }).then(() => {
         Message.success('保存成功')
         setIsEdit(false)
         refresh()
