@@ -73,12 +73,15 @@ jobs:
             echo "VITE_APP_VERSION=${{ steps.get_version.outputs.VERSION }}" >> .env.production
           fi
           pnpm run build
+          
+      - name: 'Tar files'
+        run: tar -cvf web/${{ matrix.project }}/dist.tar web/${{ matrix.project }}/dist
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.project }}-build
-          path: web/${{ matrix.project }}/dist
+          path: web/${{ matrix.project }}/dist.tar
           if-no-files-found: error
           include-hidden-files: true
 
