@@ -2,6 +2,5 @@ node_modules
 .git
 .gitignore
 *.log
-dist
 coverage
 .DS_Store 
