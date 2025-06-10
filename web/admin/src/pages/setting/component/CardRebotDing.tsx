@@ -45,7 +45,7 @@ const CardRebotDing = ({ kb }: { kb: KnowledgeBaseListItem }) => {
 
   useEffect(() => {
     getDetail()
-  }, [])
+  }, [kb])
 
   return <>
     <Stack direction='row' alignItems={'center'} justifyContent={'space-between'} sx={{
@@ -117,7 +117,7 @@ const CardRebotDing = ({ kb }: { kb: KnowledgeBaseListItem }) => {
           helperText={errors.dingtalk_bot_client_secret?.message}
         />}
       />
-      <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
+      {/* <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
         用户欢迎语
       </Box>
       <Controller
@@ -137,7 +137,7 @@ const CardRebotDing = ({ kb }: { kb: KnowledgeBaseListItem }) => {
           error={!!errors.dingtalk_bot_welcome_str}
           helperText={errors.dingtalk_bot_welcome_str?.message}
         />}
-      />
+      /> */}
     </Box >
   </>
 }

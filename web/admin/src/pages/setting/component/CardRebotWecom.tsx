@@ -54,7 +54,7 @@ const CardRebotWecom = ({ kb }: { kb: KnowledgeBaseListItem }) => {
 
   useEffect(() => {
     getDetail()
-  }, [])
+  }, [kb])
 
   return <>
     <Stack direction='row' alignItems={'center'} justifyContent={'space-between'} sx={{
@@ -201,7 +201,7 @@ const CardRebotWecom = ({ kb }: { kb: KnowledgeBaseListItem }) => {
           helperText={errors.wecom_bot_suite_encoding_aes_key?.message}
         />}
       />
-      <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
+      {/* <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
         用户欢迎语
       </Box>
       <Controller
@@ -221,7 +221,7 @@ const CardRebotWecom = ({ kb }: { kb: KnowledgeBaseListItem }) => {
           error={!!errors.wecom_bot_welcome_str}
           helperText={errors.wecom_bot_welcome_str?.message}
         />}
-      />
+      /> */}
     </Box >
   </>
 }

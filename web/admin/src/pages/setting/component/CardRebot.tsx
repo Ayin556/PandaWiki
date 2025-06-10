@@ -1,5 +1,4 @@
 import { KnowledgeBaseListItem } from '@/api'
-import FeishuLogo from '@/assets/images/feishu.png'
 import PluginLogo from '@/assets/images/plugin.png'
 import WecomLogo from '@/assets/images/wecom.png'
 import Card from "@/components/Card"
@@ -7,6 +6,7 @@ import { Box, Divider, Stack, Switch } from "@mui/material"
 import { Message } from 'ct-mui'
 import CardRebotApi from './CardRebotApi'
 import CardRebotDing from './CardRebotDing'
+import CardRebotFeishu from './CardRebotFeishu'
 
 const CardRebot = ({ kb }: { kb: KnowledgeBaseListItem }) => {
   const AppList = {
@@ -20,11 +20,6 @@ const CardRebot = ({ kb }: { kb: KnowledgeBaseListItem }) => {
       icon: WecomLogo,
       configDisabled: true,
     },
-    5: {
-      name: '飞书机器人',
-      icon: FeishuLogo,
-      configDisabled: true,
-    },
   }
   return <Card>
     <Box sx={{ fontWeight: 'bold', px: 2, py: 1.5, bgcolor: 'background.paper2' }}>问答机器人</Box>
@@ -32,8 +27,8 @@ const CardRebot = ({ kb }: { kb: KnowledgeBaseListItem }) => {
     <Divider sx={{ my: 2 }} />
     <CardRebotDing kb={kb} />
     <Divider sx={{ my: 2 }} />
-    {/* <CardRebotFeishu kb={kb} />
-    <Divider sx={{ my: 2 }} /> */}
+    <CardRebotFeishu kb={kb} />
+    <Divider sx={{ my: 2 }} />
     {/* <CardRebotWecom kb={kb} />
     <Divider sx={{ my: 2 }} /> */}
     {Object.values(AppList).map((value, index) => <Box key={index}>
