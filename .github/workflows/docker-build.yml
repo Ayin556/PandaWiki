@@ -74,20 +74,13 @@ jobs:
           fi
           pnpm run build
 
-      - name: Check file structure
-        run: |
-          echo "Current directory: $(pwd)"
-          echo "Listing web/${{ matrix.project }} directory:"
-          ls -la web/${{ matrix.project }}/dist
-          echo "Listing web/${{ matrix.project }}/dist directory:"
-          ls -la web/${{ matrix.project }}/dist/standalone/node_modules
-
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.project }}-build
           path: web/${{ matrix.project }}/dist
           if-no-files-found: error
+          include-hidden-files: true
 
   package:
     needs: build
