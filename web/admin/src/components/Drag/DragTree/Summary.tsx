@@ -18,12 +18,9 @@ const Summary = ({ open, data, kb_id, refresh, onClose }: SummaryProps) => {
   const [success, setSuccess] = useState(false)
   const [summary, setSummary] = useState('')
 
-  const handleOk = () => {
+  const createSummary = () => {
+    setSuccess(false)
     setLoading(true)
-    if (data.summary) {
-      onClose()
-      return
-    }
     createNodeSummary({ kb_id, id: data.id }).then((res) => {
       setSummary(res.summary)
       setSuccess(true)
@@ -31,6 +28,14 @@ const Summary = ({ open, data, kb_id, refresh, onClose }: SummaryProps) => {
     }).finally(() => {
       setLoading(false)
     })
+  }
+
+  const handleOk = () => {
+    if (data.summary) {
+      onClose()
+      return
+    }
+    createSummary()
   }
 
   useEffect(() => {
@@ -61,7 +66,7 @@ const Summary = ({ open, data, kb_id, refresh, onClose }: SummaryProps) => {
     {summary && <Card sx={{ p: 2, bgcolor: 'background.paper2', fontSize: 14 }}>
       {summary}
     </Card>}
-    {!loading && summary && <Button sx={{ minWidth: 'auto' }} onClick={handleOk} startIcon={
+    {!loading && summary && <Button sx={{ minWidth: 'auto' }} onClick={createSummary} startIcon={
       <Icon type='icon-shuaxin' />
     }>重新生成</Button>}
   </Modal>
