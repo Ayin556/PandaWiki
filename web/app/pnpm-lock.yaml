@@ -36,8 +36,8 @@ importers:
         specifier: 2.0.0
         version: 2.0.0(1579928bcf445789b8faa270ae6165be)
       ct-tiptap-editor:
-        specifier: ^0.4.3
-        version: 0.4.3(@tiptap/extension-code-block@2.12.0(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0))(@types/react@19.1.4)(prosemirror-model@1.25.1)(prosemirror-view@1.39.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: ^0.4.6
+        version: 0.4.6(@tiptap/extension-code-block@2.12.0(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0))(@types/react@19.1.4)(prosemirror-model@1.25.1)(prosemirror-view@1.39.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
@@ -1294,8 +1294,8 @@ packages:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
 
-  ct-tiptap-editor@0.4.3:
-    resolution: {integrity: sha512-zjry+GdjLl8T+4GlEDHWJp0/r40bNiiwQDUFNH6MHr87QFlR3fEXp6r+pqpxktuMcSxhgMwjrlOBn3T+tYXU0A==}
+  ct-tiptap-editor@0.4.6:
+    resolution: {integrity: sha512-R5JD6s747pZNJX2sKUTE7xn18diL3D65ZQjNjsLzkobjzUFCyumaApndNjoKyeNDerzkAjQcX6gkbAvCpIBr0Q==}
     peerDependencies:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
@@ -4109,7 +4109,7 @@ snapshots:
       react-dom: 19.1.0(react@19.1.0)
       react-virtuoso: 4.12.7(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
 
-  ct-tiptap-editor@0.4.3(@tiptap/extension-code-block@2.12.0(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0))(@types/react@19.1.4)(prosemirror-model@1.25.1)(prosemirror-view@1.39.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+  ct-tiptap-editor@0.4.6(@tiptap/extension-code-block@2.12.0(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0))(@types/react@19.1.4)(prosemirror-model@1.25.1)(prosemirror-view@1.39.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       '@emotion/react': 11.14.0(@types/react@19.1.4)(react@19.1.0)
       '@emotion/styled': 11.14.0(@emotion/react@11.14.0(@types/react@19.1.4)(react@19.1.0))(@types/react@19.1.4)(react@19.1.0)
