@@ -73,11 +73,11 @@ export const deleteKnowledgeBase = (params: { id: string }): Promise<void> =>
 export const getNodeList = (params: NodeListFilterData): Promise<NodeListItem[]> =>
   request({ url: 'api/v1/node/list', method: 'get', params })
 
-export const moveNode = (data: { id: string, parent_id: string | null, next_id: string | null, prev_id: string | null }): Promise<void> =>
-  request({ url: 'api/v1/node/move', method: 'post', data })
-
 export const getNodeDetail = (params: { id: string }): Promise<NodeDetail> =>
   request({ url: 'api/v1/node/detail', method: 'get', params })
+
+export const moveNode = (data: { id: string, parent_id: string | null, next_id: string | null, prev_id: string | null }): Promise<void> =>
+  request({ url: 'api/v1/node/move', method: 'post', data })
 
 export const updateNodeAction = (data: UpdateNodeActionData): Promise<void> =>
   request({ url: 'api/v1/node/action', method: 'post', data })

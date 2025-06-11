@@ -1,4 +1,5 @@
 import { createNode, ITreeItem, updateNode } from "@/api";
+import Emoji from "@/components/Emoji";
 import { AppContext, updateTree } from "@/constant/drag";
 import DocAddByUrl from "@/pages/document/component/DocAddByUrl";
 import DocDelete from "@/pages/document/component/DocDelete";
@@ -32,8 +33,14 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
   const { items, setItems, refresh, type, selected = [], onSelectChange, batchOpen } = context;
 
   const [value, setValue] = useState(item.name)
+  const [emoji, setEmoji] = useState(item.emoji)
   const isEditting = item.isEditting ?? false;
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setValue(item.name)
+    setEmoji(item.emoji)
+  }, [item])
 
   useEffect(() => {
     if (isEditting && inputRef.current) {
@@ -152,7 +159,6 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
     }
   ], [item.type, isEditting, items])
 
-
   return <Box sx={{
     cursor: 'grab',
     pl: batchOpen ? 0 : 4,
@@ -242,6 +248,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
             {item.isEditting ? <Stack direction="row" alignItems={'center'} gap={2}
               onClick={(e) => e.stopPropagation()}
             >
+              <Emoji type={item.type} collapsed={collapsed} value={emoji} onChange={setEmoji} />
               <TextField
                 size="small"
                 value={value}
@@ -258,7 +265,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
               <Button variant="contained" size="small" onClick={(e) => {
                 e.stopPropagation()
                 if (item.name) {
-                  updateNode({ id: item.id, kb_id: id, name: value }).then(() => {
+                  updateNode({ id: item.id, kb_id: id, name: value, emoji }).then(() => {
                     Message.success('更新成功')
                     refresh?.()
                   })
@@ -267,7 +274,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
                     Message.error('文档名称不能为空')
                     return
                   }
-                  createNode({ name: value, content: '', kb_id: id, parent_id: item.parentId, type: item.type }).then(() => {
+                  createNode({ name: value, content: '', kb_id: id, parent_id: item.parentId, type: item.type, emoji }).then(() => {
                     Message.success('创建成功')
                     refresh?.()
                   })
@@ -298,8 +305,22 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
                 }
               }}>取消</Button>
             </Stack> : <Stack direction="row" alignItems={'center'} gap={1} sx={{ fontSize: 14, cursor: 'pointer', ...(type === 'select' && { width: '100%', flex: 1 }) }}>
-              {item.type === 1 ? <Icon sx={{ flexShrink: 0 }} type={collapsed ? 'icon-wenjianjia' : 'icon-wenjianjia-kai'} />
-                : <Icon sx={{ flexShrink: 0 }} type='icon-wenjian' />}
+              <Box onClick={(e) => e.stopPropagation()} sx={{ flexShrink: 0, cursor: 'pointer' }}>
+                <Emoji sx={{ width: 24, height: 24, fontSize: 14 }} type={item.type} collapsed={collapsed} value={item.emoji} onChange={async (value) => {
+                  try {
+                    await updateNode({ id: item.id, kb_id: id, emoji: value })
+                    Message.success('更新成功')
+                    const temp = [...items];
+                    updateTree(temp, item.id, {
+                      ...item,
+                      emoji: value,
+                    })
+                    setItems(temp)
+                  } catch (error) {
+                    Message.error('更新失败')
+                  }
+                }} />
+              </Box>
               {type === 'select' ? <Ellipsis sx={{ width: 0, flex: 1, overflow: 'hidden' }}>{item.name}</Ellipsis>
                 : <Box>{item.name}</Box>}
             </Stack>}

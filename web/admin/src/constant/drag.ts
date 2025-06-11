@@ -75,6 +75,7 @@ export function convertToTree(data: NodeListItem[]) {
       name: item.name,
       level: 0,
       order: item.position,
+      emoji: item.emoji,
       type: item.type,
       parentId: item.parent_id || null,
       children: [],

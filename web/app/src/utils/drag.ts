@@ -9,6 +9,7 @@ export function convertToTree(data: NodeListItem[]) {
       id: item.id,
       name: item.name,
       level: 0,
+      emoji: item.emoji,
       order: item.position,
       type: item.type,
       parentId: item.parent_id || null,

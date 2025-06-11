@@ -1,4 +1,5 @@
-import { createNode, NodeDetail } from "@/api"
+import { createNode, NodeDetail, updateNode } from "@/api"
+import Emoji from "@/components/Emoji"
 import DocAddByCustomText from "@/pages/document/component/DocAddByCustomText"
 import DocDelete from "@/pages/document/component/DocDelete"
 import { useAppSelector } from "@/store"
@@ -59,7 +60,15 @@ const EditorHeader = ({ editorRef, detail, onSave, refresh }: EditorHeaderProps)
       width: 800,
       margin: 'auto',
     }}>
-      <Ellipsis sx={{ fontSize: 18, fontWeight: 'bold' }}>{detail?.name}</Ellipsis>
+      <Stack direction={'row'} alignItems={'center'} gap={1} flexShrink={0}>
+        <Emoji type={detail?.type} value={detail?.meta?.emoji} onChange={(value) => {
+          updateNode({ id: detail.id, kb_id: kb_id, emoji: value }).then(() => {
+            Message.success('修改成功')
+            refresh?.()
+          })
+        }} />
+        <Ellipsis sx={{ fontSize: 18, fontWeight: 'bold' }}>{detail?.name}</Ellipsis>
+      </Stack>
       <Stack direction={'row'} alignItems={'center'} gap={2} flexShrink={0}>
         <Stack direction={'row'} alignItems={'center'} gap={0.5} sx={{ fontSize: 12, color: 'text.auxiliary' }}>
           <Icon type='icon-baocun' />
@@ -183,12 +192,12 @@ const EditorHeader = ({ editorRef, detail, onSave, refresh }: EditorHeaderProps)
         </Tooltip>
       </Stack>
     </Stack>
-    <DocAddByCustomText open={renameOpen} onClose={() => {
+    <DocAddByCustomText type={detail.type} open={renameOpen} onClose={() => {
       setRenameOpen(false)
-    }} data={detail} refresh={refresh} />
+    }} data={{ id: detail.id, name: detail.name, emoji: detail.meta?.emoji || '' }} refresh={refresh} />
     <DocDelete open={delOpen} onClose={() => {
       setDelOpen(false)
-    }} data={[{ id: detail.id, name: detail.name, type: 2 }]} refresh={() => {
+    }} data={[{ id: detail.id, name: detail.name, type: detail.type }]} refresh={() => {
       setTimeout(() => {
         window.close();
       }, 1500)

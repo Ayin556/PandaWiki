@@ -38,7 +38,8 @@ const DocEditor = () => {
     const content = editor.getHTML()
     try {
       await updateNode({ id, content, kb_id: detail.kb_id })
-      Message.success(auto ? '自动保存成功' : '保存成功')
+      if (auto === true) Message.success('自动保存成功')
+      else if (auto === undefined) Message.success('保存成功')
       getDetail()
       updateNav()
     } catch (error) {
@@ -62,7 +63,7 @@ const DocEditor = () => {
 
   const editorRef = useTiptapEditor({
     content: '',
-    onSave: () => handleSave(false),
+    onSave: () => handleSave(),
     onImageUpload: handleImageUpload,
     onFileUpload: handleFileUpload,
   })
@@ -115,7 +116,10 @@ const DocEditor = () => {
         borderColor: 'divider',
         py: 1,
       }}>
-        <EditorHeader editorRef={editorRef} detail={detail} onSave={handleSave} refresh={getDetail} />
+        <EditorHeader editorRef={editorRef} detail={detail} onSave={handleSave} refresh={async () => {
+          await handleSave(false)
+          getDetail()
+        }} />
       </Box>
       <TiptapToolbar editorRef={editorRef} />
     </Box>

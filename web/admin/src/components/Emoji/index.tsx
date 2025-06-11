@@ -1,57 +1,77 @@
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
-import { Box } from '@mui/material';
+import { IconButton, Popover, SxProps } from '@mui/material';
 import { Icon } from 'ct-mui';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 
 interface EmojiPickerProps {
-  defaultValue?: string;
+  type: 1 | 2
+  value?: string;
+  collapsed?: boolean;
   onChange: (emoji: string) => void;
+  sx?: SxProps
 }
 
 const EmojiPicker: React.FC<EmojiPickerProps> = ({
-  defaultValue,
+  type,
+  value,
   onChange,
+  collapsed,
+  sx
 }) => {
-  const [showPicker, setShowPicker] = useState(false);
-  const [emoji, setEmoji] = useState(defaultValue || '');
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const handleSelect = useCallback((emoji: any) => {
     onChange(emoji.native);
-    setEmoji(emoji.native);
-    setShowPicker(false);
+    handleClose();
   }, [onChange]);
 
-  const togglePicker = useCallback(() => {
-    setShowPicker(prev => !prev);
-  }, []);
+  const open = Boolean(anchorEl);
+  const id = open ? 'emoji-picker' : undefined;
 
   return (
-    <Box sx={{
-      position: 'relative',
-    }}>
-      <Box sx={{ fontSize: 14, lineHeight: '36px', mt: 1 }}>添加 Icon</Box>
-      <Box onClick={togglePicker} sx={{
-        fontSize: '24px',
+    <>
+      <IconButton size='small' aria-describedby={id} onClick={handleClick} sx={{
         cursor: 'pointer',
-        padding: '4px',
+        height: 28,
+        color: 'text.primary',
+        ...sx
       }}>
-        {emoji ? emoji : <Icon type='icon-wenjian' />}
-      </Box>
-      {showPicker && <Picker
-        data={data}
-        set='native'
-        theme='light'
-        locale='中文'
-        onEmojiSelect={handleSelect}
-        previewPosition="none"
-        searchPosition="sticky"
-        skinTonePosition="none"
-        perLine={9}
-        emojiSize={24}
-        navPosition="none"
-      />}
-    </Box>
+        {value || <Icon type={type === 1 ? collapsed ? 'icon-wenjianjia' : 'icon-wenjianjia-kai' : 'icon-wenjian'} sx={{ fontSize: 16 }} />}
+      </IconButton>
+      <Popover
+        id={id}
+        open={open}
+        onClose={handleClose}
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+      >
+        <Picker
+          data={data}
+          set='native'
+          theme='light'
+          locale='zh'
+          onEmojiSelect={handleSelect}
+          previewPosition="none"
+          searchPosition="sticky"
+          skinTonePosition="none"
+          perLine={9}
+          emojiSize={24}
+        />
+      </Popover>
+    </>
   );
 };
 
