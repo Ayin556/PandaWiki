@@ -47,25 +47,29 @@ const DocEditor = () => {
     }
   }
 
-  const handleImageUpload = async (file: File) => {
+  const handleUpload = async (
+    file: File,
+    onProgress?: (progress: { progress: number }) => void,
+    abortSignal?: AbortSignal
+  ) => {
     const formData = new FormData()
     formData.append('file', file)
-    const { key } = await uploadFile(formData)
-    return Promise.resolve('/static-file/' + key)
-  }
-
-  const handleFileUpload = async (file: File) => {
-    const formData = new FormData()
-    formData.append('file', file)
-    const { key } = await uploadFile(formData)
+    const { key } = await uploadFile(formData, {
+      onUploadProgress: (event) => {
+        onProgress?.(event)
+      },
+      abortSignal
+    })
     return Promise.resolve('/static-file/' + key)
   }
 
   const editorRef = useTiptapEditor({
     content: '',
     onSave: () => handleSave(),
-    onImageUpload: handleImageUpload,
-    onFileUpload: handleFileUpload,
+    onUpload: handleUpload,
+    onError: (error: Error) => {
+      Message.error(error.message)
+    }
   })
 
   useEffect(() => {

@@ -90,10 +90,7 @@ const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddB
     formData.append("file", file)
     formData.append("kb_id", kb_id)
     const response = await uploadFile(formData, {
-      onUploadProgress: (progressEvent) => {
-        const percent = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 1))
-        onProgress(percent)
-      }
+      onUploadProgress: (event) => onProgress(event.progress)
     })
     return '/static-file/' + response.key
   }

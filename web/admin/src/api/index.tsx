@@ -1,4 +1,3 @@
-import { AxiosProgressEvent } from "axios"
 import request from "./request"
 import {
   AppDetail,
@@ -110,9 +109,21 @@ export const scrapeSitemap = (data: { url: string }): Promise<{ items: ScrapeRSS
 export const uploadFile = (
   data: FormData,
   config?: {
-    onUploadProgress: (progressEvent: AxiosProgressEvent) => void
-  }): Promise<{ key: string }> =>
-  request({ url: 'api/v1/file/upload', method: 'post', data, ...config, headers: { 'Content-Type': 'multipart/form-data' } })
+    onUploadProgress?: (event: { progress: number }) => void,
+    abortSignal?: AbortSignal
+  }
+): Promise<{ key: string }> =>
+  request({
+    url: 'api/v1/file/upload',
+    method: 'post',
+    data,
+    onUploadProgress: config?.onUploadProgress ? (progressEvent) => {
+      const progress = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 1))
+      config.onUploadProgress?.({ progress })
+    } : undefined,
+    signal: config?.abortSignal,
+    headers: { 'Content-Type': 'multipart/form-data' }
+  })
 
 // =============================================》app
 
