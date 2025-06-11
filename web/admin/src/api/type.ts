@@ -141,7 +141,7 @@ export type NodeListFilterData = {
 export type NodeAction = 'delete'
 
 export type UpdateNodeActionData = {
-  id: string,
+  ids: string[],
   kb_id: string,
   action: NodeAction
 }
@@ -188,6 +188,7 @@ export type DingBotSetting = {
   dingtalk_bot_client_id: string,
   dingtalk_bot_client_secret: string,
   dingtalk_bot_welcome_str: string,
+  dingtalk_bot_template_id: string,
 }
 
 export type WecomBotSetting = {

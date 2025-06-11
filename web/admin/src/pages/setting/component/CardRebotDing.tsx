@@ -13,6 +13,7 @@ const CardRebotDing = ({ kb }: { kb: KnowledgeBaseListItem }) => {
       dingtalk_bot_client_id: '',
       dingtalk_bot_client_secret: '',
       dingtalk_bot_welcome_str: '',
+      dingtalk_bot_template_id: '',
     }
   })
 
@@ -23,6 +24,7 @@ const CardRebotDing = ({ kb }: { kb: KnowledgeBaseListItem }) => {
         dingtalk_bot_client_id: res.settings.dingtalk_bot_client_id,
         dingtalk_bot_client_secret: res.settings.dingtalk_bot_client_secret,
         dingtalk_bot_welcome_str: res.settings.dingtalk_bot_welcome_str,
+        dingtalk_bot_template_id: res.settings.dingtalk_bot_template_id,
       })
     })
   }
@@ -34,6 +36,7 @@ const CardRebotDing = ({ kb }: { kb: KnowledgeBaseListItem }) => {
         dingtalk_bot_client_id: data.dingtalk_bot_client_id,
         dingtalk_bot_client_secret: data.dingtalk_bot_client_secret,
         dingtalk_bot_welcome_str: data.dingtalk_bot_welcome_str,
+        dingtalk_bot_template_id: data.dingtalk_bot_template_id,
       }
     }).then(() => {
       Message.success('保存成功')
@@ -115,6 +118,31 @@ const CardRebotDing = ({ kb }: { kb: KnowledgeBaseListItem }) => {
           }}
           error={!!errors.dingtalk_bot_client_secret}
           helperText={errors.dingtalk_bot_client_secret?.message}
+        />}
+      />
+      <Stack direction='row' alignItems={'center'} justifyContent={'space-between'} sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
+        <Box sx={{ fontSize: 14, lineHeight: '32px' }}>
+          Template ID
+          <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
+        </Box>
+        {/* <Button size="small" component='a' href='https://pandawiki.docs.baizhi.cloud/node/01971b5f-258e-7c3d-b26a-42e96aea068b' target="_blank">使用方法</Button> */}
+      </Stack>
+      <Controller
+        control={control}
+        name="dingtalk_bot_template_id"
+        rules={{
+          required: 'Template ID',
+        }}
+        render={({ field }) => <TextField
+          {...field}
+          fullWidth
+          placeholder="> 钉钉开发平台 > 卡片平台 > 模板列表 > 模板 ID"
+          onChange={(e) => {
+            field.onChange(e.target.value)
+            setIsEdit(true)
+          }}
+          error={!!errors.dingtalk_bot_template_id}
+          helperText={errors.dingtalk_bot_template_id?.message}
         />}
       />
       {/* <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>

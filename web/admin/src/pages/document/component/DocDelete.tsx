@@ -1,15 +1,14 @@
-import { NodeDetail, updateNodeAction } from "@/api";
+import { updateNodeAction } from "@/api";
 import Card from "@/components/Card";
 import { useAppSelector } from "@/store";
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ErrorIcon from '@mui/icons-material/Error';
 import { Box, Stack, useTheme } from "@mui/material";
-import { Ellipsis, Message, Modal } from "ct-mui";
+import { Ellipsis, Icon, Message, Modal } from "ct-mui";
 
 interface DocDeleteProps {
   open: boolean
   onClose: () => void
-  data: NodeDetail | null
+  data: { id: string, name: string, type: number }[]
   refresh?: () => void
 }
 
@@ -19,7 +18,7 @@ const DocDelete = ({ open, onClose, data, refresh }: DocDeleteProps) => {
   if (!data) return null
 
   const submit = () => {
-    updateNodeAction({ id: data.id, kb_id, action: 'delete' }).then(() => {
+    updateNodeAction({ ids: data.map(item => item.id), kb_id, action: 'delete' }).then(() => {
       Message.success('删除成功')
       onClose()
       refresh?.();
@@ -39,19 +38,20 @@ const DocDelete = ({ open, onClose, data, refresh }: DocDeleteProps) => {
     onOk={submit}
   >
     <Card sx={{
-      fontSize: 14, p: 1, maxHeight: 'calc(100vh - 250px)', overflowY: 'auto', overflowX: 'hidden',
+      fontSize: 14, p: 1, px: 2, maxHeight: 'calc(100vh - 250px)', overflowY: 'auto', overflowX: 'hidden',
       bgcolor: 'background.paper2',
     }}>
-      <Stack direction='row' gap={2} sx={{
+      {data.map(item => <Stack key={item.id} direction='row' alignItems={'center'} gap={2} sx={{
         borderBottom: '1px solid',
         borderColor: theme.palette.divider,
         py: 1,
       }}>
-        <ArrowForwardIosIcon sx={{ fontSize: 12, mt: '4px' }} />
+        {item.type === 1 ? <Icon sx={{ flexShrink: 0 }} type={'icon-wenjianjia'} />
+          : <Icon sx={{ flexShrink: 0 }} type='icon-wenjian' />}
         <Box sx={{ width: '100%' }}>
-          <Ellipsis sx={{ width: 'calc(100% - 30px)' }}>{data.name || '-'}</Ellipsis>
+          <Ellipsis sx={{ width: 'calc(100% - 40px)' }}>{item.name || '-'}</Ellipsis>
         </Box>
-      </Stack>
+      </Stack>)}
     </Card>
   </Modal>
 }

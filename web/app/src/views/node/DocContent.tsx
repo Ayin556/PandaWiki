@@ -1,9 +1,16 @@
 'use client'
 
 import { NodeDetail } from "@/assets/type";
+import { IconClock } from "@/components/icons";
 import { useMobile } from "@/provider/mobile-provider";
 import { Box, Divider, Stack, styled } from "@mui/material";
 import { TiptapReader, UseTiptapEditorReturn } from 'ct-tiptap-editor';
+import dayjs from "dayjs";
+import 'dayjs/locale/zh-cn';
+import relativeTime from "dayjs/plugin/relativeTime";
+
+dayjs.extend(relativeTime);
+dayjs.locale('zh-cn')
 
 const StyledDocContent = styled(Stack)(({ mobile }: { mobile: boolean }) => ({
   width: 'calc(100% - 500px)',
@@ -32,7 +39,11 @@ const DocContent = ({ info, editorRef }: { info: NodeDetail, editorRef: UseTipta
       fontWeight: '700',
       color: 'text.primary'
     }}>{info?.name}</Box>
-    <Divider sx={{ my: 3 }} />
+    <Stack direction={'row'} alignItems={'center'} gap={0.5} sx={{ mt: 1, color: 'text.tertiary' }}>
+      <IconClock />
+      <Box sx={{ fontSize: 12 }}>{dayjs(info?.updated_at).fromNow()}更新</Box>
+    </Stack>
+    <Divider sx={{ mb: 3, mt: 1 }} />
     <Box sx={{
       mb: 8
     }}>

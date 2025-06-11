@@ -1,4 +1,4 @@
-import { createNode, NodeDetail, updateNode } from "@/api"
+import { createNode, updateNode } from "@/api"
 import { useAppSelector } from "@/store"
 import { Box, TextField } from "@mui/material"
 import { Message, Modal } from "ct-mui"
@@ -7,7 +7,7 @@ import { Controller, useForm } from "react-hook-form"
 
 interface DocAddByCustomTextProps {
   open: boolean
-  data?: NodeDetail | null
+  data?: { id: string, name: string } | null
   onClose: () => void
   refresh?: () => void
   type?: 'docFile' | 'customDoc'
@@ -16,9 +16,10 @@ const DocAddByCustomText = ({ open, data, onClose, refresh, type = 'customDoc' }
   const { kb_id: id } = useAppSelector(state => state.config)
   const text = type === 'docFile' ? '文件夹' : '文档'
 
-  const { control, handleSubmit, reset, formState: { errors } } = useForm<{ name: string }>({
+  const { control, handleSubmit, reset, formState: { errors } } = useForm<{ name: string, emoji: string }>({
     defaultValues: {
       name: '',
+      emoji: '',
     }
   })
 
@@ -85,6 +86,9 @@ const DocAddByCustomText = ({ open, data, onClose, refresh, type = 'customDoc' }
         />
       )}
     />
+    {/* <Emoji onChange={(emoji) => {
+      console.log(emoji)
+    }} /> */}
   </Modal>
 }
 
