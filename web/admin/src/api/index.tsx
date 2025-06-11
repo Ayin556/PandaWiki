@@ -104,6 +104,12 @@ export const scrapeRSS = (data: { url: string }): Promise<{ items: ScrapeRSSItem
 export const scrapeSitemap = (data: { url: string }): Promise<{ items: ScrapeRSSItem[] }> =>
   request({ url: 'api/v1/crawler/parse_sitemap', method: 'post', data })
 
+export const getNotionIntegration = (data: { integration: string }): Promise<{ id: string, title: string }[]> =>
+  request({ url: 'api/v1/crawler/notion/get_list', method: 'post', data })
+
+export const getNotionIntegrationDetail = (data: { pages: { id: string, title: string }[], integration: string }): Promise<{ content: string, title: string }[]> =>
+  request({ url: 'api/v1/crawler/notion/get_doc', method: 'post', data })
+
 // =============================================》file
 
 export const uploadFile = (

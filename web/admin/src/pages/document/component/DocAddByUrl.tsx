@@ -1,4 +1,4 @@
-import { createNode, scrapeCrawler, scrapeRSS, scrapeSitemap, uploadFile } from "@/api"
+import { createNode, getNotionIntegration, getNotionIntegrationDetail, scrapeCrawler, scrapeRSS, scrapeSitemap, uploadFile } from "@/api"
 import Upload from "@/components/UploadFile/Drag"
 import { useAppSelector } from "@/store"
 import { formatByte } from "@/utils"
@@ -9,7 +9,7 @@ import { useEffect, useState } from "react"
 import { FileRejection } from "react-dropzone"
 
 type DocAddByUrlProps = {
-  type: 'OfflineFile' | 'URL' | 'RSS' | 'Sitemap'
+  type: 'OfflineFile' | 'URL' | 'RSS' | 'Sitemap' | 'Notion'
   parentId?: string | null
   open: boolean
   refresh: () => void
@@ -155,6 +155,15 @@ const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddB
         newQueue.push(async () => {
           const res = await scrapeCrawler({ url })
           setItems(prev => [...prev, { ...res, url, success: -1, id: '' }])
+        })
+      }
+    }
+    if (type === 'Notion') {
+      const data = await getNotionIntegration({ integration: url })
+      for (const item of data) {
+        newQueue.push(async () => {
+          const res = await getNotionIntegrationDetail({ pages: [item], integration: url })
+          setItems(prev => [...prev, { ...res[0], url: item.id, success: -1, id: '' }])
         })
       }
     }
@@ -340,7 +349,7 @@ const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddB
       multiline={type === 'URL'}
       rows={type === 'URL' ? 4 : 1}
       value={url}
-      placeholder={type === 'URL' ? '每行一个 URL' : `${type} 地址`}
+      placeholder={type === 'URL' ? '每行一个 URL' : type === 'Notion' ? 'Notion Integration' : `${type} 地址`}
       autoFocus
       onChange={(e) => setUrl(e.target.value)}
     />)}

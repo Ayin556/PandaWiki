@@ -13,7 +13,7 @@ const DocAdd = ({ refresh }: InputContentProps) => {
   const theme = useTheme()
   const [customDocOpen, setCustomDocOpen] = useState(false)
   const [urlOpen, setUrlOpen] = useState(false)
-  const [key, setKey] = useState<'OfflineFile' | 'URL' | 'RSS' | 'Sitemap'>('URL')
+  const [key, setKey] = useState<'OfflineFile' | 'URL' | 'RSS' | 'Sitemap' | 'Notion'>('URL')
   const [docFileKey, setDocFileKey] = useState<1 | 2>(1)
 
   const ImportContentWays = {
@@ -59,6 +59,13 @@ const DocAdd = ({ refresh }: InputContentProps) => {
         setKey('OfflineFile')
       }
     },
+    Notion: {
+      label: '通过 Notion 导入',
+      onClick: () => {
+        setUrlOpen(true)
+        setKey('Notion')
+      }
+    }
   }
 
   const close = () => {
