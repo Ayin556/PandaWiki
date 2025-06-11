@@ -96,6 +96,7 @@ export type NodeListItem = {
   id: string,
   name: string,
   type: 1 | 2,
+  emoji: string,
   position: number,
   parent_id: string,
   summary: string,
@@ -114,12 +115,14 @@ export type CreateNodeSummaryData = {
 }
 
 export type NodeDetail = {
+  type: 1 | 2,
   content: string,
   created_at: string,
   id: string,
   kb_id: string,
   meta: {
-    summary: string
+    emoji?: string,
+    summary?: string
   },
   name: string,
   updated_at: string
@@ -131,6 +134,7 @@ export type CreateNodeData = {
   name?: string
   parent_id?: string | null
   type: 1 | 2
+  emoji?: string
 }
 
 export type NodeListFilterData = {
@@ -150,7 +154,8 @@ export type UpdateNodeData = {
   id: string,
   kb_id: string,
   name?: string,
-  content?: string
+  content?: string,
+  emoji?: string
 }
 
 // =============================================》crawler
@@ -366,6 +371,7 @@ export interface ITreeItem {
   name: string;
   level: number;
   order?: number;
+  emoji?: string
   parentId?: string | null;
   summary?: string
   children?: ITreeItem[];

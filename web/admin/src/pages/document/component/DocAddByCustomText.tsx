@@ -1,4 +1,5 @@
 import { createNode, updateNode } from "@/api"
+import Emoji from "@/components/Emoji"
 import { useAppSelector } from "@/store"
 import { Box, TextField } from "@mui/material"
 import { Message, Modal } from "ct-mui"
@@ -7,14 +8,14 @@ import { Controller, useForm } from "react-hook-form"
 
 interface DocAddByCustomTextProps {
   open: boolean
-  data?: { id: string, name: string } | null
+  data?: { id: string, name: string, emoji: string } | null
   onClose: () => void
   refresh?: () => void
-  type?: 'docFile' | 'customDoc'
+  type?: 1 | 2
 }
-const DocAddByCustomText = ({ open, data, onClose, refresh, type = 'customDoc' }: DocAddByCustomTextProps) => {
+const DocAddByCustomText = ({ open, data, onClose, refresh, type = 2 }: DocAddByCustomTextProps) => {
   const { kb_id: id } = useAppSelector(state => state.config)
-  const text = type === 'docFile' ? '文件夹' : '文档'
+  const text = type === 1 ? '文件夹' : '文档'
 
   const { control, handleSubmit, reset, formState: { errors } } = useForm<{ name: string, emoji: string }>({
     defaultValues: {
@@ -28,9 +29,9 @@ const DocAddByCustomText = ({ open, data, onClose, refresh, type = 'customDoc' }
     onClose()
   }
 
-  const submit = (value: { name: string }) => {
+  const submit = (value: { name: string, emoji: string }) => {
     if (data) {
-      updateNode({ id: data.id, kb_id: id, name: value.name }).then(() => {
+      updateNode({ id: data.id, kb_id: id, name: value.name, emoji: value.emoji }).then(() => {
         Message.success('修改成功')
         reset()
         handleClose()
@@ -38,12 +39,12 @@ const DocAddByCustomText = ({ open, data, onClose, refresh, type = 'customDoc' }
       })
     } else {
       if (!id) return
-      createNode({ name: value.name, content: '', kb_id: id, parent_id: null, type: type === 'docFile' ? 1 : 2 }).then(({ id }) => {
+      createNode({ name: value.name, content: '', kb_id: id, parent_id: null, type, emoji: value.emoji }).then(({ id }) => {
         Message.success('创建成功')
         reset()
         handleClose()
         refresh?.()
-        if (type === 'customDoc') {
+        if (type === 2) {
           window.open(`/doc/editor/${id}`, '_blank')
         }
       })
@@ -54,6 +55,7 @@ const DocAddByCustomText = ({ open, data, onClose, refresh, type = 'customDoc' }
     if (data) {
       reset({
         name: data.name || '',
+        emoji: data.emoji || '',
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -86,9 +88,19 @@ const DocAddByCustomText = ({ open, data, onClose, refresh, type = 'customDoc' }
         />
       )}
     />
-    {/* <Emoji onChange={(emoji) => {
-      console.log(emoji)
-    }} /> */}
+    <Box sx={{ fontSize: 14, lineHeight: '36px', mt: 1 }}>
+      {text}图标
+    </Box>
+    <Controller
+      control={control}
+      name="emoji"
+      render={({ field }) => (
+        <Emoji
+          {...field}
+          type={type}
+        />
+      )}
+    />
   </Modal>
 }
 

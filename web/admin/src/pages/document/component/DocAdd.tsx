@@ -14,20 +14,20 @@ const DocAdd = ({ refresh }: InputContentProps) => {
   const [customDocOpen, setCustomDocOpen] = useState(false)
   const [urlOpen, setUrlOpen] = useState(false)
   const [key, setKey] = useState<'OfflineFile' | 'URL' | 'RSS' | 'Sitemap'>('URL')
-  const [docFileKey, setDocFileKey] = useState<'docFile' | 'customDoc'>('docFile')
+  const [docFileKey, setDocFileKey] = useState<1 | 2>(1)
 
   const ImportContentWays = {
     docFile: {
       label: '创建文件夹',
       onClick: () => {
-        setDocFileKey('docFile')
+        setDocFileKey(1)
         setCustomDocOpen(true)
       }
     },
     customDoc: {
       label: '创建文档',
       onClick: () => {
-        setDocFileKey('customDoc')
+        setDocFileKey(2)
         setCustomDocOpen(true)
       }
     },
