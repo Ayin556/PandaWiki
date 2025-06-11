@@ -1,4 +1,4 @@
-import { createNode, ITreeItem, NodeDetail, updateNode } from "@/api";
+import { createNode, ITreeItem, updateNode } from "@/api";
 import { AppContext, updateTree } from "@/constant/drag";
 import DocAddByUrl from "@/pages/document/component/DocAddByUrl";
 import DocDelete from "@/pages/document/component/DocDelete";
@@ -29,7 +29,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
     throw new Error("TreeItem 必须在 AppContext.Provider 内部使用");
   }
 
-  const { items, setItems, refresh, type, selected = [], onSelectChange } = context;
+  const { items, setItems, refresh, type, selected = [], onSelectChange, batchOpen } = context;
 
   const [value, setValue] = useState(item.name)
   const isEditting = item.isEditting ?? false;
@@ -155,7 +155,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
 
   return <Box sx={{
     cursor: 'grab',
-    pl: 4,
+    pl: batchOpen ? 0 : 4,
     '&:active': {
       cursor: 'grabbing',
     },
@@ -176,7 +176,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
     '& .dnd-sortable-tree_simple_tree-item-collapse_button': {
       position: 'absolute',
       left: -24,
-      top: type === 'select' ? 4 : 0,
+      top: type === 'select' ? -4 : 0,
       height: 28,
       width: 20,
       cursor: 'pointer',
@@ -207,176 +207,181 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
       flex: 1,
     },
   }}>
-    <Box onClick={(e) => e.stopPropagation()}>
-      <SimpleTreeItemWrapper
-        {...props}
-        ref={ref}
-        indentationWidth={23}
-        disableCollapseOnItemClick
-        showDragHandle={false}
-      >
-        <Stack
-          direction="row"
-          alignItems={'center'}
-          justifyContent="space-between"
-          gap={2}
-          flex={1}
-          sx={{ pr: 2 }}
-          onClick={() => {
-            if (type === 'select') return
-            if (item.type === 2) window.open(`/doc/editor/${item.id}`, '_blank')
-          }}
+    <Stack direction="row" alignItems={'center'} gap={2} onClick={(e) => e.stopPropagation()}>
+      {(batchOpen || type === 'select') && <Checkbox
+        sx={{ flexShrink: 0, color: 'text.disabled', width: '35px', height: '35px' }}
+        checked={selected.includes(item.id)}
+        onChange={(e) => {
+          e.stopPropagation()
+          onSelectChange?.(item.id)
+        }}
+      />}
+      <Box sx={{ flex: 1 }}>
+        <SimpleTreeItemWrapper
+          {...props}
+          ref={ref}
+          indentationWidth={23}
+          disableCollapseOnItemClick
+          showDragHandle={false}
         >
-          {item.isEditting ? <Stack direction="row" alignItems={'center'} gap={2}
-            onClick={(e) => e.stopPropagation()}
+          <Stack
+            direction="row"
+            alignItems={'center'}
+            justifyContent="space-between"
+            gap={2}
+            flex={1}
+            sx={{ pr: 2 }}
+            onClick={() => {
+              if (type === 'select') {
+                onSelectChange?.(item.id)
+                return
+              }
+              if (item.type === 2) window.open(`/doc/editor/${item.id}`, '_blank')
+            }}
           >
-            <TextField
-              size="small"
-              value={value}
-              inputRef={inputRef}
-              placeholder="请输入文档名称"
-              sx={{
-                width: 300,
-                input: {
-                  bgcolor: 'background.paper'
-                }
-              }}
-              onChange={(e) => setValue(e.target.value)}
-            />
-            <Button variant="contained" size="small" onClick={(e) => {
-              e.stopPropagation()
-              if (item.name) {
-                updateNode({ id: item.id, kb_id: id, name: value }).then(() => {
-                  Message.success('更新成功')
-                  refresh?.()
-                })
-              } else {
-                if (value === '') {
-                  Message.error('文档名称不能为空')
-                  return
-                }
-                createNode({ name: value, content: '', kb_id: id, parent_id: item.parentId, type: item.type }).then(() => {
-                  Message.success('创建成功')
-                  refresh?.()
-                })
-              }
-            }}>保存</Button>
-            <Button variant="outlined" size="small" onClick={(e) => {
-              e.stopPropagation()
-              if (!item.name) {
-                const temp = [...items];
-                const removeItem = (items: ITreeItem[], id: string) => {
-                  return items.filter(item => {
-                    if (item.id === id) return false;
-                    if (item.children) {
-                      item.children = removeItem(item.children, id);
-                    }
-                    return true;
-                  });
-                };
-                const newItems = removeItem(temp, item.id);
-                setItems(newItems);
-              } else {
-                const temp = [...items];
-                updateTree(temp, item.id, {
-                  ...item,
-                  isEditting: false,
-                });
-                setItems(temp);
-              }
-            }}>取消</Button>
-          </Stack> : <Stack direction="row" alignItems={'center'} gap={1} sx={{ fontSize: 14, cursor: 'pointer', ...(type === 'select' && { width: '100%', flex: 1 }) }}>
-            {item.type === 1 ? <Icon sx={{ flexShrink: 0 }} type={collapsed ? 'icon-wenjianjia' : 'icon-wenjianjia-kai'} />
-              : <Icon sx={{ flexShrink: 0 }} type='icon-wenjian' />}
-            {type === 'select' ? <Ellipsis sx={{ width: 0, flex: 1, overflow: 'hidden' }}>{item.name}</Ellipsis>
-              : <Box>{item.name}</Box>}
-          </Stack>}
-          {type === 'select' && <Checkbox sx={{ flexShrink: 0 }} size="small" checked={selected.includes(item.id)} onChange={(e) => {
-            e.stopPropagation()
-            if (selected.includes(item.id)) {
-              onSelectChange?.(selected.filter(id => id !== item.id))
-            } else {
-              onSelectChange?.([...selected, item.id])
-            }
-          }} />}
-          {type === 'move' && <Box sx={{ flex: 1, alignSelf: 'center', borderBottom: '1px dashed', borderColor: 'divider' }} />}
-          {type === 'move' && <Stack direction="row" alignItems={'center'} gap={2} sx={{ flexShrink: 0 }}>
-            <Box sx={{ fontSize: 12, fontFamily: 'monospace', color: 'text.auxiliary' }}>{dayjs(item.updated_at).fromNow()}</Box>
-            <Box onClick={(e) => e.stopPropagation()}>
-              <MenuSelect
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'right',
-                }}
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                childrenProps={{
-                  anchorOrigin: {
-                    vertical: 'top',
-                    horizontal: 'left',
-                  },
-                  transformOrigin: {
-                    vertical: 'top',
-                    horizontal: 'right',
+            {item.isEditting ? <Stack direction="row" alignItems={'center'} gap={2}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <TextField
+                size="small"
+                value={value}
+                inputRef={inputRef}
+                placeholder="请输入文档名称"
+                sx={{
+                  width: 300,
+                  input: {
+                    bgcolor: 'background.paper'
                   }
                 }}
-                list={menuList.map(value => ({
-                  key: value.key,
-                  children: value.children?.map(it => ({
-                    key: it.key,
-                    onClick: it.onClick,
-                    label: <Box key={it.key}>
+                onChange={(e) => setValue(e.target.value)}
+              />
+              <Button variant="contained" size="small" onClick={(e) => {
+                e.stopPropagation()
+                if (item.name) {
+                  updateNode({ id: item.id, kb_id: id, name: value }).then(() => {
+                    Message.success('更新成功')
+                    refresh?.()
+                  })
+                } else {
+                  if (value === '') {
+                    Message.error('文档名称不能为空')
+                    return
+                  }
+                  createNode({ name: value, content: '', kb_id: id, parent_id: item.parentId, type: item.type }).then(() => {
+                    Message.success('创建成功')
+                    refresh?.()
+                  })
+                }
+              }}>保存</Button>
+              <Button variant="outlined" size="small" onClick={(e) => {
+                e.stopPropagation()
+                if (!item.name) {
+                  const temp = [...items];
+                  const removeItem = (items: ITreeItem[], id: string) => {
+                    return items.filter(item => {
+                      if (item.id === id) return false;
+                      if (item.children) {
+                        item.children = removeItem(item.children, id);
+                      }
+                      return true;
+                    });
+                  };
+                  const newItems = removeItem(temp, item.id);
+                  setItems(newItems);
+                } else {
+                  const temp = [...items];
+                  updateTree(temp, item.id, {
+                    ...item,
+                    isEditting: false,
+                  });
+                  setItems(temp);
+                }
+              }}>取消</Button>
+            </Stack> : <Stack direction="row" alignItems={'center'} gap={1} sx={{ fontSize: 14, cursor: 'pointer', ...(type === 'select' && { width: '100%', flex: 1 }) }}>
+              {item.type === 1 ? <Icon sx={{ flexShrink: 0 }} type={collapsed ? 'icon-wenjianjia' : 'icon-wenjianjia-kai'} />
+                : <Icon sx={{ flexShrink: 0 }} type='icon-wenjian' />}
+              {type === 'select' ? <Ellipsis sx={{ width: 0, flex: 1, overflow: 'hidden' }}>{item.name}</Ellipsis>
+                : <Box>{item.name}</Box>}
+            </Stack>}
+            {type === 'move' && <Box sx={{ flex: 1, alignSelf: 'center', borderBottom: '1px dashed', borderColor: 'divider' }} />}
+            {type === 'move' && <Stack direction="row" alignItems={'center'} gap={2} sx={{ flexShrink: 0 }}>
+              <Box sx={{ fontSize: 12, fontFamily: 'monospace', color: 'text.auxiliary' }}>{dayjs(item.updated_at).fromNow()}</Box>
+              <Box onClick={(e) => e.stopPropagation()}>
+                <MenuSelect
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                  }}
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  childrenProps={{
+                    anchorOrigin: {
+                      vertical: 'top',
+                      horizontal: 'left',
+                    },
+                    transformOrigin: {
+                      vertical: 'top',
+                      horizontal: 'right',
+                    }
+                  }}
+                  list={menuList.map(value => ({
+                    key: value.key,
+                    children: value.children?.map(it => ({
+                      key: it.key,
+                      onClick: it.onClick,
+                      label: <Box key={it.key}>
+                        <Stack
+                          direction={'row'}
+                          alignItems={'center'}
+                          gap={1}
+                          sx={{
+                            fontSize: 14, px: 2, lineHeight: '40px', height: 40, width: 180,
+                            borderRadius: '5px',
+                            cursor: 'pointer', ':hover': { bgcolor: addOpacityToColor(theme.palette.primary.main, 0.1) }
+                          }}
+                        >
+                          {it.label}
+                        </Stack>
+                      </Box>
+                    })),
+                    label: <Box key={value.key}>
                       <Stack
                         direction={'row'}
                         alignItems={'center'}
+                        justifyContent={'space-between'}
                         gap={1}
                         sx={{
-                          fontSize: 14, px: 2, lineHeight: '40px', height: 40, width: 180,
+                          fontSize: 14, pl: 2, pr: 1, lineHeight: '40px', height: 40, width: 180,
                           borderRadius: '5px',
                           cursor: 'pointer', ':hover': { bgcolor: addOpacityToColor(theme.palette.primary.main, 0.1) }
                         }}
+                        onClick={value.onClick}
                       >
-                        {it.label}
+                        {value.label}
+                        {value.children && <Icon type='icon-xiala' sx={{ fontSize: 20, transform: 'rotate(-90deg)' }} />}
                       </Stack>
+                      {value.key === 'third' && <Box
+                        sx={{
+                          width: 145,
+                          borderBottom: '1px dashed',
+                          borderColor: theme.palette.divider,
+                          my: 0.5,
+                          mx: 'auto'
+                        }} />}
                     </Box>
-                  })),
-                  label: <Box key={value.key}>
-                    <Stack
-                      direction={'row'}
-                      alignItems={'center'}
-                      justifyContent={'space-between'}
-                      gap={1}
-                      sx={{
-                        fontSize: 14, pl: 2, pr: 1, lineHeight: '40px', height: 40, width: 180,
-                        borderRadius: '5px',
-                        cursor: 'pointer', ':hover': { bgcolor: addOpacityToColor(theme.palette.primary.main, 0.1) }
-                      }}
-                      onClick={value.onClick}
-                    >
-                      {value.label}
-                      {value.children && <Icon type='icon-xiala' sx={{ fontSize: 20, transform: 'rotate(-90deg)' }} />}
-                    </Stack>
-                    {value.key === 'third' && <Box
-                      sx={{
-                        width: 145,
-                        borderBottom: '1px dashed',
-                        borderColor: theme.palette.divider,
-                        my: 0.5,
-                        mx: 'auto'
-                      }} />}
-                  </Box>
-                }))}
-                context={<IconButton size="small">
-                  <Icon type='icon-gengduo' />
-                </IconButton>}
-              />
-            </Box>
-          </Stack>}
-        </Stack>
-      </SimpleTreeItemWrapper>
-    </Box>
+                  }))}
+                  context={<IconButton size="small">
+                    <Icon type='icon-gengduo' />
+                  </IconButton>}
+                />
+              </Box>
+            </Stack>}
+          </Stack>
+        </SimpleTreeItemWrapper>
+      </Box>
+    </Stack>
     <DocAddByUrl
       type={key}
       open={urlOpen}
@@ -387,7 +392,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
     <DocDelete
       open={deleteOpen}
       onClose={() => setDeleteOpen(false)}
-      data={{ id: item.id, name: item.name } as NodeDetail}
+      data={[{ id: item.id, name: item.name, type: item.type }]}
       refresh={refresh} />
     <Summary
       data={item}

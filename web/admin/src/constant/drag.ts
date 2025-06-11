@@ -11,7 +11,8 @@ export interface AppContextType {
   refresh: () => void
   type: 'select' | 'move'
   selected?: string[]
-  onSelectChange?: (value: string[]) => void
+  onSelectChange?: (value: string) => void
+  batchOpen: boolean
 }
 
 // 使用正确的类型创建上下文

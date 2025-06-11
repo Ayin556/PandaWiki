@@ -31,6 +31,14 @@ const AddRecommendContent = ({ open, selected, onChange, onClose }: AddRecommend
     })
   }, [kb_id])
 
+  const onSelectChange = useCallback((id: string) => {
+    if (selectedIds.includes(id)) {
+      setSelectedIds(selectedIds.filter(item => item !== id))
+    } else {
+      setSelectedIds([...selectedIds, id])
+    }
+  }, [selectedIds])
+
   useEffect(() => {
     setSelectedIds(selected)
   }, [selected])
@@ -56,7 +64,8 @@ const AddRecommendContent = ({ open, selected, onChange, onClose }: AddRecommend
       selected={selectedIds}
       data={list}
       refresh={getData}
-      onSelectChange={setSelectedIds}
+      batchOpen={true}
+      onSelectChange={onSelectChange}
     /> : <Stack alignItems={'center'} justifyContent={'center'}>
       <img src={Nodata} alt="empty" style={{ width: 100, height: 100 }} />
       <Box sx={{ fontSize: 12, lineHeight: '20px', color: 'text.auxiliary', mt: 1 }}>

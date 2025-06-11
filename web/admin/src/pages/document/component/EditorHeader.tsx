@@ -188,7 +188,7 @@ const EditorHeader = ({ editorRef, detail, onSave, refresh }: EditorHeaderProps)
     }} data={detail} refresh={refresh} />
     <DocDelete open={delOpen} onClose={() => {
       setDelOpen(false)
-    }} data={detail} refresh={() => {
+    }} data={[{ id: detail.id, name: detail.name, type: 2 }]} refresh={() => {
       setTimeout(() => {
         window.close();
       }, 1500)

@@ -12,11 +12,12 @@ import TreeItem from "./TreeItem";
 interface DragTreeProps {
   data: ITreeItem[]
   refresh: () => void
+  batchOpen: boolean
   type?: 'select' | 'move'
   selected?: string[]
-  onSelectChange?: (value: string[]) => void
+  onSelectChange?: (value: string) => void
 }
-const DragTree = ({ data, refresh, type = 'move', selected, onSelectChange }: DragTreeProps) => {
+const DragTree = ({ data, refresh, batchOpen, type = 'move', selected, onSelectChange }: DragTreeProps) => {
   const [items, setItems] = useState<TreeItems<ITreeItem>>(data);
 
   useEffect(() => {
@@ -29,7 +30,8 @@ const DragTree = ({ data, refresh, type = 'move', selected, onSelectChange }: Dr
     refresh,
     type,
     selected,
-    onSelectChange
+    onSelectChange,
+    batchOpen,
   }}>
     <DndContext>
       <SortableTree
