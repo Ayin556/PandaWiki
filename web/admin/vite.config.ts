@@ -18,7 +18,7 @@ export default defineConfig({
         secure: false,
         changeOrigin: true
       },
-      "/static-file": "http://localhost:9000",
+      "/static-file": "http://169.254.15.12:9000",
     },
   },
   plugins: [
