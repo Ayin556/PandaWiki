@@ -10,7 +10,7 @@ const NodeFolder = ({ node }: { node: RecommendNode }) => {
   const children = node.recommend_nodes?.sort((a, b) => (a.position ?? 0) - (b.position ?? 0)) || []
   return <Stack direction="column" justifyContent="space-between" sx={{ cursor: 'pointer', height: '100%' }}>
     <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2, flexShrink: 0 }}>
-      <IconFolder />
+      {node.emoji ? <Box sx={{ flexShrink: 0, fontSize: 14 }}>{node.emoji}</Box> : <IconFolder sx={{ flexShrink: 0 }} />}
       <Ellipsis sx={{ fontSize: '18px', lineHeight: '26px' }}>{node.name}</Ellipsis>
     </Stack>
     <Box sx={{ flex: 1 }}>
@@ -21,7 +21,7 @@ const NodeFolder = ({ node }: { node: RecommendNode }) => {
         >
           <Link href={`/node/${it.id}`} target="_blank">
             <Stack direction="row" alignItems={'center'} gap={1} sx={{ fontSize: 14, lineHeight: '21px' }}>
-              <IconFile sx={{ mt: '-2px' }} />
+              {it.emoji ? <Box sx={{ flexShrink: 0, color: 'text.primary', fontSize: 12 }}>{it.emoji}</Box> : <IconFile sx={{ mt: '-2px' }} />}
               <Ellipsis>{it.name}</Ellipsis>
             </Stack>
           </Link>
@@ -45,7 +45,7 @@ const NodeFile = ({ node }: { node: RecommendNode }) => {
   return <Link href={`/node/${node.id}`} target="_blank">
     <Stack direction="column" justifyContent="space-between" sx={{ cursor: 'pointer', height: '100%' }}>
       <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2, flexShrink: 0 }}>
-        <IconFile />
+        {node.emoji ? <Box sx={{ flexShrink: 0, fontSize: 14 }}>{node.emoji}</Box> : <IconFile sx={{ flexShrink: 0 }} />}
         <Ellipsis sx={{ fontSize: '18px', lineHeight: '26px' }}>{node.name}</Ellipsis>
       </Stack>
       <Box sx={{ flex: 1 }}>

@@ -31,6 +31,7 @@ export type RecommendNode = {
   id: string,
   name: string,
   type: 1 | 2,
+  emoji: string,
   parent_id: string,
   summary: string
   position: number
@@ -46,6 +47,7 @@ export interface NodeDetail {
   updated_at: string
   meta: {
     summary: string
+    emoji?: string
   }
 }
 
@@ -53,6 +55,7 @@ export interface NodeListItem {
   id: string,
   name: string,
   type: 1 | 2,
+  emoji: string,
   position: number,
   parent_id: string,
   summary: string,
@@ -75,4 +78,5 @@ export interface ITreeItem {
   parentId?: string | null;
   children?: ITreeItem[];
   type: 1 | 2;
+  emoji?: string
 }

@@ -315,7 +315,6 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
                       ...item,
                       emoji: value,
                     })
-                    console.log('temp', temp)
                     setItems(temp)
                   } catch (error) {
                     Message.error('更新失败')

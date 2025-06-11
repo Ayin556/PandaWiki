@@ -24,7 +24,7 @@ const CatalogFolder = ({ item, activeId, onChange }: { item: ITreeItem, activeId
         <IconArrowDown sx={{ fontSize: 16, transform: isExpanded ? 'none' : 'rotate(-90deg)', transition: 'transform 0.2s' }} />
       </Box>}
       <Stack direction="row" alignItems="center" gap={1}>
-        {item.type === 1 ? <IconFolder sx={{ flexShrink: 0 }} /> : <IconFile sx={{ flexShrink: 0 }} />}
+        {item.emoji ? <Box sx={{ flexShrink: 0, fontSize: 12 }}>{item.emoji}</Box> : item.type === 1 ? <IconFolder sx={{ flexShrink: 0 }} /> : <IconFile sx={{ flexShrink: 0 }} />}
         {item.type === 2 ? <Box sx={{ flex: 1, width: 0 }}>
           <Ellipsis onClick={(event) => {
             event.stopPropagation()
