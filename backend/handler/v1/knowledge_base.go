@@ -133,6 +133,12 @@ func (h *KnowledgeBaseHandler) UpdateKnowledgeBase(c echo.Context) error {
 
 	err := h.usecase.UpdateKnowledgeBase(c.Request().Context(), &req)
 	if err != nil {
+		if errors.Is(err, domain.ErrPortHostAlreadyExists) {
+			return h.NewResponseWithError(c, "端口或域名已被其他知识库占用", nil)
+		}
+		if errors.Is(err, domain.ErrSyncCaddyConfigFailed) {
+			return h.NewResponseWithError(c, "端口可能已被其他程序占用，请检查", nil)
+		}
 		return h.NewResponseWithError(c, "failed to update knowledge base", err)
 	}
 

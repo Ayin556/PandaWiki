@@ -24,4 +24,5 @@ var ProviderSet = wire.NewSet(
 	NewKnowledgeBaseUsecase,
 	NewChatUsecase,
 	NewCrawlerUsecase,
+	NewCreationUsecase,
 )

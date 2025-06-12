@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"github.com/google/uuid"
 
@@ -54,6 +55,7 @@ func (r *NodeRepository) Create(ctx context.Context, req *domain.CreateNodeReq) 
 			KBID:      req.KBID,
 			Name:      req.Name,
 			Content:   req.Content,
+			Meta:      domain.NodeMeta{Emoji: req.Emoji},
 			Type:      req.Type,
 			ParentID:  req.ParentID,
 			Position:  newPos,
@@ -75,7 +77,7 @@ func (r *NodeRepository) GetList(ctx context.Context, req *domain.GetNodeListReq
 	query := r.db.WithContext(ctx).
 		Model(&domain.Node{}).
 		Where("nodes.kb_id = ?", req.KBID).
-		Select("nodes.id, nodes.type, nodes.name, nodes.parent_id, nodes.position, nodes.created_at, nodes.updated_at, nodes.meta->>'summary' as summary")
+		Select("nodes.id, nodes.type, nodes.name, nodes.parent_id, nodes.position, nodes.created_at, nodes.updated_at, nodes.meta->>'summary' as summary, nodes.meta->>'emoji' as emoji")
 	if req.Search != "" {
 		searchPattern := "%" + req.Search + "%"
 		query = query.Where("name LIKE ? OR content LIKE ?", searchPattern, searchPattern)
@@ -93,6 +95,9 @@ func (r *NodeRepository) UpdateNodeContent(ctx context.Context, req *domain.Upda
 	}
 	if req.Content != nil {
 		updateMap["content"] = *req.Content
+	}
+	if req.Emoji != nil {
+		updateMap["meta"] = gorm.Expr("jsonb_set(meta, '{emoji}', to_jsonb(?::text))", *req.Emoji)
 	}
 	if len(updateMap) > 0 {
 		return r.db.WithContext(ctx).
@@ -115,17 +120,22 @@ func (r *NodeRepository) GetByID(ctx context.Context, id string) (*domain.NodeDe
 	return node, nil
 }
 
-func (r *NodeRepository) Delete(ctx context.Context, kbID, id string) error {
-	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		if err := tx.
-			Model(&domain.Node{}).
-			Where("id = ?", id).
-			Where("kb_id = ?", kbID).
-			Delete(&domain.Node{}).Error; err != nil {
-			return err
-		}
-		return nil
-	})
+func (r *NodeRepository) Delete(ctx context.Context, kbID string, ids []string) ([]string, error) {
+	var nodes []*domain.Node
+	if err := r.db.WithContext(ctx).
+		Model(&domain.Node{}).
+		Where("id IN ?", ids).
+		Where("kb_id = ?", kbID).
+		Where("doc_id IS NOT NULL AND doc_id != ''").
+		Clauses(clause.Returning{Columns: []clause.Column{{Name: "doc_id"}}}).
+		Delete(&nodes).Error; err != nil {
+		return nil, err
+	}
+	docIDs := make([]string, 0, len(nodes))
+	for _, node := range nodes {
+		docIDs = append(docIDs, node.DocID)
+	}
+	return docIDs, nil
 }
 
 func (r *NodeRepository) GetNodeByID(ctx context.Context, id string) (*domain.Node, error) {
@@ -161,7 +171,7 @@ func (r *NodeRepository) GetRecommendNodeListByIDs(ctx context.Context, kbID str
 		Model(&domain.Node{}).
 		Where("kb_id = ?", kbID).
 		Where("id IN ?", ids).
-		Select("id, name, type, meta->>'summary' as summary, parent_id, position").
+		Select("id, name, type, meta->>'summary' as summary, meta->>'emoji' as emoji, parent_id, position").
 		Find(&nodes).Error; err != nil {
 		return nil, err
 	}
@@ -174,7 +184,7 @@ func (r *NodeRepository) GetRecommendNodeListByParentIDs(ctx context.Context, kb
 		Model(&domain.Node{}).
 		Where("kb_id = ? AND parent_id IN ?", kbID, parentIDs).
 		Where("type != ?", domain.NodeTypeFolder).
-		Select("id, name, type, meta->>'summary' as summary, parent_id, position").
+		Select("id, name, type, meta->>'summary' as summary, meta->>'emoji' as emoji, parent_id, position").
 		Find(&nodes).Error; err != nil {
 		return nil, err
 	}
@@ -194,7 +204,7 @@ func (r *NodeRepository) GetNodeListByKBID(ctx context.Context, kbID string) ([]
 	if err := r.db.WithContext(ctx).
 		Model(&domain.Node{}).
 		Where("kb_id = ?", kbID).
-		Select("id, name, type, parent_id, position").
+		Select("id, name, type, parent_id, position, meta->>'emoji' as emoji").
 		Find(&nodes).Error; err != nil {
 		return nil, err
 	}
@@ -251,8 +261,11 @@ func (r *NodeRepository) MoveNodeBetween(ctx context.Context, id string, parentI
 func (r *NodeRepository) UpdateNodeDocID(ctx context.Context, id, docID string) error {
 	return r.db.WithContext(ctx).
 		Model(&domain.Node{}).
+		Omit("updated_at").
 		Where("id = ?", id).
-		Update("doc_id", docID).Error
+		Updates(map[string]any{
+			"doc_id": docID,
+		}).Error
 }
 
 func (r *NodeRepository) UpdateNodeSummary(ctx context.Context, kbID, id, summary string) error {

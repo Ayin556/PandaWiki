@@ -74,11 +74,11 @@ func (h *RAGMQHandler) HandleNodeContentVectorRequest(ctx context.Context, msg t
 			h.logger.Error("get kb failed", log.Error(err))
 			return err
 		}
-		if err := h.rag.DeleteRecords(ctx, kb.DatasetID, []string{request.ID}); err != nil {
+		if err := h.rag.DeleteRecords(ctx, kb.DatasetID, []string{request.DocID}); err != nil {
 			h.logger.Error("delete node content vector failed", log.Error(err))
 			return err
 		}
-		h.logger.Info("delete node content vector success", log.Any("deleted_id", request.ID))
+		h.logger.Info("delete node content vector success", log.Any("deleted_id", request.ID), log.Any("deleted_doc_id", request.DocID))
 	}
 
 	return nil

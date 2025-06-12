@@ -12,7 +12,6 @@ import (
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 
 	"github.com/chaitin/panda-wiki/config"
 	"github.com/chaitin/panda-wiki/domain"
@@ -44,9 +43,6 @@ func NewKnowledgeBaseRepository(db *pg.DB, config *config.Config, logger *log.Lo
 	if len(kbList) > 0 {
 		if err := r.SyncKBAccessSettingsToCaddy(ctx, kbList); err != nil {
 			r.logger.Error("failed to sync kb access settings to caddy", "error", err)
-		}
-		if err := r.migrateKnowledgeBaseDatasetID(ctx); err != nil {
-			r.logger.Error("failed to update knowledge base dataset id", "error", err)
 		}
 	}
 	return r
@@ -107,6 +103,11 @@ func (r *KnowledgeBaseRepository) SyncKBAccessSettingsToCaddy(ctx context.Contex
 		if _, ok := ports[port]; ok {
 			server["automatic_https"] = map[string]any{
 				"disable": true,
+			}
+		} else {
+			server["automatic_https"] = map[string]any{
+				"disable_certificates": true,
+				"disable_redirects":    true,
 			}
 		}
 		routes := make([]map[string]any, 0)
@@ -339,69 +340,6 @@ func (r *KnowledgeBaseRepository) GetKnowledgeBaseList(ctx context.Context) ([]*
 		return nil, err
 	}
 	return kbs, nil
-}
-
-// update kb dataset_id in transaction with get_dataset_id
-func (r *KnowledgeBaseRepository) migrateKnowledgeBaseDatasetID(ctx context.Context) error {
-	err := r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		// select null dataset_id for update
-		var kb []*domain.KnowledgeBase
-		if err := tx.Model(&domain.KnowledgeBase{}).
-			Clauses(clause.Locking{Strength: "UPDATE"}).
-			Where("dataset_id IS NULL OR dataset_id = ''").
-			Find(&kb).Error; err != nil {
-			return err
-		}
-		if len(kb) == 0 {
-			return nil
-		}
-		modelList, err := r.rag.GetModelList(ctx)
-		if err != nil {
-			return err
-		}
-		embeddingModel := ""
-		for _, model := range modelList {
-			if model.Type == domain.ModelTypeEmbedding {
-				embeddingModel = model.ID
-				break
-			}
-		}
-		if embeddingModel == "" {
-			model := &domain.Model{
-				Model:   "bge-m3",
-				BaseURL: "https://api.example.com/v1",
-				APIKey:  "sk-xxxx",
-				Type:    domain.ModelTypeEmbedding,
-			}
-			_, err := r.rag.AddModel(ctx, model)
-			if err != nil {
-				return err
-			}
-			defer func() {
-				if err := r.rag.DeleteModel(ctx, model); err != nil {
-					r.logger.Error("failed to delete embedding model", "error", err)
-				}
-			}()
-		}
-		for _, kb := range kb {
-			datasetID, err := r.rag.CreateKnowledgeBase(ctx)
-			if err != nil {
-				return err
-			}
-			if err := tx.Model(&domain.KnowledgeBase{}).Where("id = ?", kb.ID).Update("dataset_id", datasetID).Error; err != nil {
-				return err
-			}
-		}
-		return nil
-	})
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (r *KnowledgeBaseRepository) UpdateKnowledgeBaseDatasetID(ctx context.Context, kbID, datasetID string) error {
-	return r.db.WithContext(ctx).Model(&domain.KnowledgeBase{}).Where("id = ?", kbID).Update("dataset_id", datasetID).Error
 }
 
 func (r *KnowledgeBaseRepository) UpdateKnowledgeBase(ctx context.Context, req *domain.UpdateKnowledgeBaseReq) error {

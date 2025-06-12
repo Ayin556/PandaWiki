@@ -28,6 +28,7 @@ type AccessSettings struct {
 	PublicKey  string   `json:"public_key"`
 	PrivateKey string   `json:"private_key"`
 	Hosts      []string `json:"hosts"`
+	BaseURL    string   `json:"base_url"`
 }
 
 func (s *AccessSettings) Scan(value any) error {
