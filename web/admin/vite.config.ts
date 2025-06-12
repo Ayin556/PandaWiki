@@ -8,13 +8,13 @@ export default defineConfig({
     proxy: {
       "/api": {
         // target: "https://10.10.18.71:2443",
-        target: "http://localhost:8000",
+        target: "http://localhost:9000",
         secure: false,
         changeOrigin: true
       },
       "/share": {
         // target: "https://10.10.18.71:2443",
-        target: "http://localhost:8000",
+        target: "http://localhost:9000",
         secure: false,
         changeOrigin: true
       },
