@@ -1,4 +1,4 @@
-import { createNode, scrapeCrawler, scrapeRSS, scrapeSitemap, uploadFile } from "@/api"
+import { createNode, getNotionIntegration, getNotionIntegrationDetail, scrapeCrawler, scrapeRSS, scrapeSitemap, uploadFile } from "@/api"
 import Upload from "@/components/UploadFile/Drag"
 import { useAppSelector } from "@/store"
 import { formatByte } from "@/utils"
@@ -9,7 +9,7 @@ import { useEffect, useState } from "react"
 import { FileRejection } from "react-dropzone"
 
 type DocAddByUrlProps = {
-  type: 'OfflineFile' | 'URL' | 'RSS' | 'Sitemap'
+  type: 'OfflineFile' | 'URL' | 'RSS' | 'Sitemap' | 'Notion'
   parentId?: string | null
   open: boolean
   refresh: () => void
@@ -155,6 +155,15 @@ const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddB
         newQueue.push(async () => {
           const res = await scrapeCrawler({ url })
           setItems(prev => [...prev, { ...res, url, success: -1, id: '' }])
+        })
+      }
+    }
+    if (type === 'Notion') {
+      const data = await getNotionIntegration({ integration: url })
+      for (const item of data) {
+        newQueue.push(async () => {
+          const res = await getNotionIntegrationDetail({ pages: [item], integration: url })
+          setItems(prev => [...prev, { ...res[0], url: item.id, success: -1, id: '' }])
         })
       }
     }
@@ -335,15 +344,29 @@ const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddB
           </List>
         </Box>
       )}
-    </Box> : <TextField
-      fullWidth
-      multiline={type === 'URL'}
-      rows={type === 'URL' ? 4 : 1}
-      value={url}
-      placeholder={type === 'URL' ? '每行一个 URL' : `${type} 地址`}
-      autoFocus
-      onChange={(e) => setUrl(e.target.value)}
-    />)}
+    </Box> : <>
+      <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'} sx={{
+        fontSize: 14,
+        lineHeight: '32px',
+        mb: 1,
+      }}>
+        {type === 'Notion' ? 'Notion Integration' : `${type} 地址`}
+        {type === 'Notion' && <Box component='a'
+          href='https://pandawiki.docs.baizhi.cloud/node/01975f23-1c18-74aa-9a05-955b5128c49d' target='_blank'
+          sx={{ fontSize: 12, color: 'primary.main' }}>
+          使用方法
+        </Box>}
+      </Stack>
+      <TextField
+        fullWidth
+        multiline={type === 'URL'}
+        rows={type === 'URL' ? 4 : 1}
+        value={url}
+        placeholder={type === 'URL' ? '每行一个 URL' : type === 'Notion' ? 'Notion Integration' : `${type} 地址`}
+        autoFocus
+        onChange={(e) => setUrl(e.target.value)}
+      />
+    </>)}
     {step !== 1 && <Box sx={{
       borderRadius: '10px',
       border: '1px solid',
