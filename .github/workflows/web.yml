@@ -3,9 +3,9 @@ name: Docker Build with Push
 on:
   push:
     branches:
+      - frontend-*
       - admin-*
       - app-*
-      - main
     tags:
       - "admin-v[0-9]+.[0-9]+.[0-9]+*"
       - "app-v[0-9]+.[0-9]+.[0-9]+*"
@@ -73,7 +73,7 @@ jobs:
             echo "VITE_APP_VERSION=${{ steps.get_version.outputs.VERSION }}" >> .env.production
           fi
           pnpm run build
-          
+
       - name: 'Tar files'
         run: tar -cvf web/${{ matrix.project }}/dist.tar web/${{ matrix.project }}/dist
 
@@ -126,7 +126,7 @@ jobs:
           registry: chaitin-registry.cn-hangzhou.cr.aliyuncs.com
           username: ${{ secrets.CT_ALIYUN_USER }}
           password: ${{ secrets.CT_ALIYUN_PASS }}
-          
+
       - name: Package and push
         uses: docker/build-push-action@v5
         with:
