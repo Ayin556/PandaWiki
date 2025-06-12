@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"sync"
 
 	"github.com/jomei/notionapi"
 
@@ -36,13 +37,18 @@ type File struct {
 }
 
 type NotionClient struct {
+	root   *ProcessorTree
 	token  string
 	client *notionapi.Client
 	logger *log.Logger
 }
 
+func (c *NotionClient) GetTreeRes() []byte {
+	return c.root.GetResult()
+}
 func NewNotionClient(token string, logger *log.Logger) *NotionClient {
 	return &NotionClient{
+		root:   NewProcessorTree(),
 		token:  token,
 		logger: logger.WithModule("usecase.NotionClient"),
 		client: notionapi.NewClient(notionapi.Token(token)),
@@ -94,72 +100,77 @@ func (c *NotionClient) GetList(ctx context.Context, titleContain string) ([]doma
 	return result, nil
 }
 
-func (c *NotionClient) GetPagesContent(Pages []domain.PageInfo) ([]domain.Page, error) {
-	var result []domain.Page
-	for _, page := range Pages {
-		res, err := c.getPageContent(page)
-		if err != nil {
-			return nil, fmt.Errorf("get Pages %s error: %s", page.Id, err.Error())
-		}
-		result = append(result, *res)
-	}
-	return result, nil
-}
-
-func (c *NotionClient) getPageContent(Page domain.PageInfo) (*domain.Page, error) {
-	buf, err := c.getBlock(Page.Id)
+func (c *NotionClient) GetPageContent(ctx context.Context, Page domain.PageInfo) (*domain.Page, error) {
+	err := c.getBlock(ctx, Page.Id, "", c.root.root)
 	if err != nil {
 		return nil, fmt.Errorf("get Page %s error: %s", Page.Id, err.Error())
 	}
+	res := c.GetTreeRes()
+	c.logger.Debug("get Page content", log.String("page_id", Page.Id), log.String("content", string(res)))
 
 	return &domain.Page{
 		ID:      Page.Id,
 		Title:   Page.Title,
-		Content: string(buf),
+		Content: string(res),
 	}, nil
 }
-func (c *NotionClient) getBlock(id string) ([]byte, error) {
-	var result []byte
-	b, err := c.client.Block.Get(context.Background(), notionapi.BlockID(id))
 
+func (c *NotionClient) getBlock(ctx context.Context, id string, prefix string, node *Node) error {
+
+	b, err := c.client.Block.Get(ctx, notionapi.BlockID(id))
 	if err != nil {
 		c.logger.Error("get block error", log.String("block_id", id), log.Error(err))
-		return []byte{}, fmt.Errorf("get block %s error: %s", id, err.Error())
+		return fmt.Errorf("get block %s error: %s", id, err.Error())
 	}
 	if b.GetType() == notionapi.BlockType(notionapi.BlockTypeUnsupported) {
 		c.logger.Error("get block error", log.String("block_id", id), log.Error(err), log.String("block_type", b.GetType().String()))
-		return []byte{}, nil
+		return nil
 	}
-	c.logger.Info("block", log.String("block_id", id), log.String("block_type", b.GetType().String()))
-
-	if !b.GetHasChildren() {
-		return []byte(c.BlockToMarkdown(b)), nil
+	res := c.BlockToMarkdown(ctx, b)
+	err = c.root.Add(node, []byte(prefix+res))
+	//if type is table, return
+	if b.GetType() == notionapi.BlockType(notionapi.BlockTypeTableBlock) {
+		return nil
 	}
-
-	childerns, err := c.client.Block.GetChildren(context.Background(), notionapi.BlockID(id), &notionapi.Pagination{})
 	if err != nil {
-		c.logger.Error("get block's children error", log.String("block_id", id), log.Error(err))
-		return []byte{}, fmt.Errorf("get block's children %s error: %s", id, err.Error())
+		return fmt.Errorf("add data %s error: %s", id, err.Error())
 	}
+	if !b.GetHasChildren() {
+		return nil
+	}
+
+	childerns, err := c.client.Block.GetChildren(ctx, notionapi.BlockID(id), &notionapi.Pagination{})
+	if err != nil {
+		c.logger.Info("get block's children error", log.String("block_id", id), log.Error(err))
+		return fmt.Errorf("get block's children %s error: %s", id, err.Error())
+	}
+	wg := sync.WaitGroup{}
 	for _, childern := range childerns.Results {
 
 		Id := childern.GetID().String()
-
-		buf, err := c.getBlock(Id)
-		if err != nil {
-			c.logger.Error("get block child error", log.String("block_id", Id), log.Error(err))
+		if childern.GetType().String() == string(notionapi.BlockTypeBulletedListItem) {
+			prefix += "	"
 		}
-		result = append(result, buf...)
+		nowNode, err := c.root.GetNode(node)
+		if err != nil {
+			return fmt.Errorf("get node %s error: %s", id, err.Error())
+		}
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			c.getBlock(ctx, Id, prefix, nowNode)
+		}()
 
 	}
-	return result, nil
+	wg.Wait()
+	return nil
 }
 
-func (c *NotionClient) GetPages(req []domain.PageInfo) ([]*notionapi.Page, error) {
+func (c *NotionClient) GetPages(ctx context.Context, req []domain.PageInfo) ([]*notionapi.Page, error) {
 	var result []*notionapi.Page
 
 	for _, r := range req {
-		page, err := c.client.Page.Get(context.Background(), notionapi.PageID(r.Id))
+		page, err := c.client.Page.Get(ctx, notionapi.PageID(r.Id))
 		if err != nil {
 			return nil, err
 		}
@@ -168,7 +179,7 @@ func (c *NotionClient) GetPages(req []domain.PageInfo) ([]*notionapi.Page, error
 	return result, nil
 }
 
-func (c *NotionClient) BlockToMarkdown(block notionapi.Block) string {
+func (c *NotionClient) BlockToMarkdown(ctx context.Context, block notionapi.Block) string {
 	switch block.GetType() {
 	case notionapi.BlockTypeHeading1:
 		return fmt.Sprintf("# %s\n", block.GetRichTextString())
@@ -181,14 +192,13 @@ func (c *NotionClient) BlockToMarkdown(block notionapi.Block) string {
 	case notionapi.BlockTypeBulletedListItem:
 		return fmt.Sprintf("- %s\n", block.GetRichTextString())
 	case notionapi.BlockTypeNumberedListItem:
-		num := c.getNumberedListNumber(block)
+		num := c.getNumberedListNumber(ctx, block)
 		return fmt.Sprintf("%d. %s\n", num, block.GetRichTextString())
 	case notionapi.BlockTypeToggle:
 		return fmt.Sprintf("::: toggle\n%s\n:::\n", block.GetRichTextString())
 	case notionapi.BlockTypeQuote:
 		return fmt.Sprintf("> %s\n", block.GetRichTextString())
 	case notionapi.BlockTypeCode:
-
 		return fmt.Sprintf("```\n%s\n```\n", block.GetRichTextString())
 	case notionapi.BlockTypeTableRowBlock:
 
@@ -208,18 +218,16 @@ func (c *NotionClient) BlockToMarkdown(block notionapi.Block) string {
 		return buf.String()
 
 	case notionapi.BlockTypeTableBlock:
-		ch, _ := c.client.Block.GetChildren(context.Background(), notionapi.BlockID(block.GetID().String()), &notionapi.Pagination{})
-		hasRow := block.(*notionapi.TableBlock).Table.HasRowHeader
+		ch, _ := c.client.Block.GetChildren(ctx, notionapi.BlockID(block.GetID().String()), &notionapi.Pagination{})
+
 		var res strings.Builder
 
 		for i, temp := range ch.Results {
-
-			res.Write([]byte(c.BlockToMarkdown(temp)))
-			if i == 0 && hasRow {
-				len := len(temp.(*notionapi.TableRowBlock).TableRow.Cells) + 1
-
+			res.Write([]byte(c.BlockToMarkdown(ctx, temp)))
+			if i == 0 {
+				len := len(temp.(*notionapi.TableRowBlock).TableRow.Cells)
 				for j := 0; j < len; j++ {
-					res.Write([]byte("| ---"))
+					res.Write([]byte("| --- "))
 				}
 				res.Write([]byte("|\n"))
 			}
@@ -276,10 +284,9 @@ func (c *NotionClient) getImageURL(block notionapi.Block) (string, error) {
 }
 
 // 获取当前ListBlock的序号
-func (c *NotionClient) getNumberedListNumber(block notionapi.Block) int {
-
+func (c *NotionClient) getNumberedListNumber(ctx context.Context, block notionapi.Block) int {
 	parentId := block.GetParent().BlockID.String()
-	children, err := c.client.Block.GetChildren(context.Background(), notionapi.BlockID(parentId), &notionapi.Pagination{})
+	children, err := c.client.Block.GetChildren(ctx, notionapi.BlockID(parentId), &notionapi.Pagination{})
 	if err != nil {
 		return 1
 	}
