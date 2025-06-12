@@ -21,12 +21,12 @@ import (
 type DingTalkClient struct {
 	ctx          context.Context
 	cancel       context.CancelFunc
-	ClientID     string
-	ClientSecret string
-	TemplateID   string // 4d18414c-aabc-4ec8-9e67-4ceefeada72a.schema
+	clientID     string
+	clientSecret string
+	templateID   string // 4d18414c-aabc-4ec8-9e67-4ceefeada72a.schema
 	oauthClient  *dingtalkoauth2_1_0.Client
 	cardClient   *dingtalkcard_1_0.Client
-	getQA        func(ctx context.Context, msg string, dataCh chan string) error
+	getQA        func(ctx context.Context, msg string) (chan string, error)
 	logger       *log.Logger
 	tokenCache   struct {
 		accessToken string
@@ -35,7 +35,7 @@ type DingTalkClient struct {
 	tokenMutex sync.RWMutex
 }
 
-func NewDingTalkClient(ctx context.Context, cancel context.CancelFunc, clientId, clientSecret, templateID string, logger *log.Logger, getQA func(ctx context.Context, msg string, dataCh chan string) error) (*DingTalkClient, error) {
+func NewDingTalkClient(ctx context.Context, cancel context.CancelFunc, clientId, clientSecret, templateID string, logger *log.Logger, getQA func(ctx context.Context, msg string) (chan string, error)) (*DingTalkClient, error) {
 	config := &openapi.Config{}
 	config.Protocol = tea.String("https")
 	config.RegionId = tea.String("central")
@@ -50,9 +50,9 @@ func NewDingTalkClient(ctx context.Context, cancel context.CancelFunc, clientId,
 	return &DingTalkClient{
 		ctx:          ctx,
 		cancel:       cancel,
-		ClientID:     clientId,
-		ClientSecret: clientSecret,
-		TemplateID:   templateID,
+		clientID:     clientId,
+		clientSecret: clientSecret,
+		templateID:   templateID,
 		oauthClient:  oauthClient,
 		cardClient:   cardClient,
 		getQA:        getQA,
@@ -78,8 +78,8 @@ func (c *DingTalkClient) GetAccessToken() (string, error) {
 	}
 
 	request := &dingtalkoauth2_1_0.GetAccessTokenRequest{
-		AppKey:    tea.String(c.ClientID),
-		AppSecret: tea.String(c.ClientSecret),
+		AppKey:    tea.String(c.clientID),
+		AppSecret: tea.String(c.clientSecret),
 	}
 	response, tryErr := func() (_resp *dingtalkoauth2_1_0.GetAccessTokenResponse, _e error) {
 		defer func() {
@@ -130,12 +130,10 @@ func (c *DingTalkClient) UpdateAIStreamCard(trackID, content string, isFinalize 
 	return nil
 }
 
-func (c *DingTalkClient) OnChatBotMessageReceived(ctx context.Context, data *chatbot.BotCallbackDataModel) ([]byte, error) {
-	question := data.Text.Content
-
+func (c *DingTalkClient) CreateAndDeliverCard(ctx context.Context, trackID string, data *chatbot.BotCallbackDataModel) error {
 	accessToken, err := c.GetAccessToken()
 	if err != nil {
-		return nil, err
+		return fmt.Errorf("failed to get access token while creating and delivering card: %w", err)
 	}
 
 	createAndDeliverHeaders := &dingtalkcard_1_0.CreateAndDeliverHeaders{}
@@ -147,10 +145,9 @@ func (c *DingTalkClient) OnChatBotMessageReceived(ctx context.Context, data *cha
 	cardData := &dingtalkcard_1_0.CreateAndDeliverRequestCardData{
 		CardParamMap: cardDataCardParamMap,
 	}
-	trackID := uuid.New().String()
 
 	createAndDeliverRequest := &dingtalkcard_1_0.CreateAndDeliverRequest{
-		CardTemplateId: tea.String(c.TemplateID),
+		CardTemplateId: tea.String(c.templateID),
 		OutTrackId:     tea.String(trackID),
 		CardData:       cardData,
 		CallbackType:   tea.String("STREAM"),
@@ -167,7 +164,7 @@ func (c *DingTalkClient) OnChatBotMessageReceived(ctx context.Context, data *cha
 		createAndDeliverRequest.SetOpenSpaceId(openSpaceId)
 		createAndDeliverRequest.SetImGroupOpenDeliverModel(
 			&dingtalkcard_1_0.CreateAndDeliverRequestImGroupOpenDeliverModel{
-				RobotCode: tea.String(c.ClientID),
+				RobotCode: tea.String(c.clientID),
 			})
 	} else if data.ConversationType == "1" {
 		openSpaceId := fmt.Sprintf("dtv1.card//%s.%s", "IM_ROBOT", data.SenderStaffId)
@@ -176,14 +173,25 @@ func (c *DingTalkClient) OnChatBotMessageReceived(ctx context.Context, data *cha
 			SpaceType: tea.String("IM_GROUP"),
 		})
 	} else {
-		c.logger.Error("invalid conversation type", log.String("conversation_type", data.ConversationType))
-		return nil, fmt.Errorf("invalid conversation type: %s", data.ConversationType)
+		return fmt.Errorf("invalid conversation type: %s", data.ConversationType)
 	}
 
 	_, err = c.cardClient.CreateAndDeliverWithOptions(createAndDeliverRequest, createAndDeliverHeaders, &util.RuntimeOptions{})
 	if err != nil {
-		c.logger.Error("CreateAndDeliver", log.Error(err))
-		return nil, fmt.Errorf("failed to create and deliver card: %w", err)
+		return fmt.Errorf("failed to create and deliver card: %w", err)
+	}
+	return nil
+}
+
+func (c *DingTalkClient) OnChatBotMessageReceived(ctx context.Context, data *chatbot.BotCallbackDataModel) ([]byte, error) {
+	question := data.Text.Content
+	trackID := uuid.New().String()
+
+	c.logger.Info("dingtalk client received message", log.String("question", question), log.String("track_id", trackID))
+	// create and deliver card
+	if err := c.CreateAndDeliverCard(ctx, trackID, data); err != nil {
+		c.logger.Error("CreateAndDeliverCard", log.Error(err))
+		return nil, err
 	}
 
 	initialContent := fmt.Sprintf("**%s**\n\n%s", question, "稍等，让我想一想……")
@@ -193,17 +201,15 @@ func (c *DingTalkClient) OnChatBotMessageReceived(ctx context.Context, data *cha
 		c.UpdateAIStreamCard(trackID, "出错了，请稍后再试", true)
 	}
 
-	contentCh := make(chan string)
+	contentCh, err := c.getQA(ctx, question)
+	if err != nil {
+		c.logger.Error("dingtalk client failed to get answer", log.Error(err))
+		c.UpdateAIStreamCard(trackID, "出错了，请稍后再试", true)
+		return nil, err
+	}
+
 	updateTicker := time.NewTicker(1500 * time.Millisecond)
 	defer updateTicker.Stop()
-
-	go func() {
-		err = c.getQA(ctx, question, contentCh)
-		if err != nil {
-			contentCh <- err.Error()
-		}
-		close(contentCh)
-	}()
 
 	ans := fmt.Sprintf("**%s**\n\n", question)
 	fullContent := fmt.Sprintf("**%s**\n\n", question)
@@ -212,8 +218,10 @@ func (c *DingTalkClient) OnChatBotMessageReceived(ctx context.Context, data *cha
 		case content, ok := <-contentCh:
 			if !ok {
 				if err := c.UpdateAIStreamCard(trackID, fullContent, true); err != nil {
-					c.logger.Error("UpdateInteractiveCard", log.Error(err))
-					c.UpdateAIStreamCard(trackID, "出错了，请稍后再试", true)
+					c.logger.Error("UpdateInteractiveCard in contentCh", log.Error(err))
+					if err := c.UpdateAIStreamCard(trackID, "出错了，请稍后再试", true); err != nil {
+						c.logger.Error("UpdateInteractiveCard in contentCh failed", log.Error(err))
+					}
 				}
 				return []byte(""), nil
 			}
@@ -223,8 +231,11 @@ func (c *DingTalkClient) OnChatBotMessageReceived(ctx context.Context, data *cha
 				continue
 			}
 			if err := c.UpdateAIStreamCard(trackID, fullContent, false); err != nil {
-				c.logger.Error("UpdateInteractiveCard", log.Error(err))
-				c.UpdateAIStreamCard(trackID, "出错了，请稍后再试", true)
+				c.logger.Error("UpdateInteractiveCard in ticker", log.Error(err))
+				if err := c.UpdateAIStreamCard(trackID, "出错了，请稍后再试", true); err != nil {
+					c.logger.Error("UpdateInteractiveCard in ticker failed", log.Error(err))
+				}
+				return []byte(""), nil
 			}
 		}
 	}
@@ -232,8 +243,8 @@ func (c *DingTalkClient) OnChatBotMessageReceived(ctx context.Context, data *cha
 
 func (c *DingTalkClient) Start() error {
 	cli := client.NewStreamClient(client.WithAppCredential(client.NewAppCredentialConfig(
-		c.ClientID,
-		c.ClientSecret,
+		c.clientID,
+		c.clientSecret,
 	)))
 	cli.RegisterChatBotCallbackRouter(c.OnChatBotMessageReceived)
 	if err := cli.Start(c.ctx); err != nil {
