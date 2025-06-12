@@ -14,24 +14,98 @@ import (
 
 type CrawlerHandler struct {
 	*handler.BaseHandler
-	logger  *log.Logger
-	usecase *usecase.CrawlerUsecase
-	config  *config.Config
+	logger          *log.Logger
+	usecase         *usecase.CrawlerUsecase
+	notnion_usecase *usecase.NotionUseCase
+	config          *config.Config
 }
 
-func NewCrawlerHandler(echo *echo.Echo, baseHandler *handler.BaseHandler, auth middleware.AuthMiddleware, logger *log.Logger, config *config.Config, usecase *usecase.CrawlerUsecase) *CrawlerHandler {
+func NewCrawlerHandler(echo *echo.Echo, baseHandler *handler.BaseHandler, auth middleware.AuthMiddleware, logger *log.Logger, config *config.Config, usecase *usecase.CrawlerUsecase, notnion_usecase *usecase.NotionUseCase) *CrawlerHandler {
 	h := &CrawlerHandler{
-		BaseHandler: baseHandler,
-		logger:      logger,
-		config:      config,
-		usecase:     usecase,
+		BaseHandler:     baseHandler,
+		logger:          logger.WithModule("handler.v1.crawler"),
+		config:          config,
+		usecase:         usecase,
+		notnion_usecase: notnion_usecase,
 	}
 	group := echo.Group("/api/v1/crawler", auth.Authorize)
 	group.POST("/parse_rss", h.ParseRSS)
 	group.POST("/parse_sitemap", h.ParseSitemap)
 	group.POST("/scrape", h.Scrape)
-
+	// notion app
+	group.POST("/notion/get_list", h.NotionGetList)
+	group.POST("/notion/get_doc", h.GetDocs)
 	return h
+}
+
+/*
+curl -X POST \
+  http://10.10.7.195:8000/api/v1/crawler/notion/get_list \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDk3MTcxNDAsImlkIjoiZDZhNTE2MGMtNjU3Ni00MzdmLTk5NzYtMWViMmYxNDJhNzhkIn0.ne9vjlo2_V_2xfcEqMHN9ZkazZajEXcImBtfeKHkwXo" \
+  -d '{"integration": "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", "caption_title": ""}' \
+  --insecure
+*/
+// NotionGetList
+//
+//	@Summary		NotionGetList
+//	@Description	NotionGetList
+//	@Tags			crawler
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body		domain.NotnionGetListReq	true	"Notion Get List"
+//	@Success		200		{object}	domain.Response{data=[]domain.PageInfo}
+//	@Router			/api/v1/crawler/notion/get_list [post]
+func (h *CrawlerHandler) NotionGetList(c echo.Context) error {
+	var req domain.NotnionGetListReq
+	if err := c.Bind(&req); err != nil {
+		return h.NewResponseWithError(c, "request body is invalid", err)
+	}
+	if err := c.Validate(req); err != nil {
+		return h.NewResponseWithError(c, "validate request body failed", err)
+	}
+	resp, err := h.notnion_usecase.GetList(c.Request().Context(), req.Intregration, req.CationTitle)
+	//notnion := usecase.NewNotionClient(req.Intregration, h.logger)
+	//resp, err := notnion.GetList(c.Request().Context(), req.CationTitle)
+	if err != nil {
+		return h.NewResponseWithError(c, "parse notion failed", err)
+	}
+	return h.NewResponseWithData(c, resp)
+}
+
+/*
+curl -X POST \
+	http://10.10.7.195:8000/api/v1/crawler/notion/get_doc \
+	-H "Content-Type: application/json" \
+	-H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDk3MTcxNDAsImlkIjoiZDZhNTE2MGMtNjU3Ni00MzdmLTk5NzYtMWViMmYxNDJhNzhkIn0.ne9vjlo2_V_2xfcEqMHN9ZkazZajEXcImBtfeKHkwXo" \
+	-d '{"integration": "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","pages": [{"id": "20e3d80d-fab4-809c-a04c-d8df3821d961", "title": "28th Birthday"}]}' \
+	--insecure
+*/
+// GetDocs
+//
+//	@Summary		GetDocs
+//	@Description	GetDocs
+//	@Tags			crawler
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body		domain.GetDocsReq	true	"Get Docs"
+//	@Success		200		{object}	domain.Response{data=[]domain.Page}
+//	@Router			/api/v1/crawler/notion/get_doc [post]
+func (h *CrawlerHandler) GetDocs(c echo.Context) error {
+
+	var req domain.GetDocsReq
+	if err := c.Bind(&req); err != nil {
+		return h.NewResponseWithError(c, "request body failed", err)
+	}
+	if err := c.Validate(req); err != nil {
+		return h.NewResponseWithError(c, "validate request body failed", err)
+	}
+	resp, err := h.notnion_usecase.GetDocs(c.Request().Context(), req)
+	//resp, err := usecase.NewNotionClient(req.Integration, h.logger).GetPagesContent(req.PageIDs)
+	if err != nil {
+		return h.NewResponseWithError(c, "get Docs failed", err)
+	}
+	return h.NewResponseWithData(c, resp)
 }
 
 // Parse RSS

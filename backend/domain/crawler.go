@@ -36,3 +36,12 @@ type ScrapeResponse struct {
 type ScrapeRequest struct {
 	URL string `json:"url"`
 }
+
+type ParseNotionReq struct {
+	URL         string `json:"url" validate:"required"`
+	Integration string `json:"integration" validate:"required"`
+}
+type NotnionGetListReq struct {
+	Intregration string `json:"integration"`
+	CationTitle  string `json:"cation_title"`
+}
