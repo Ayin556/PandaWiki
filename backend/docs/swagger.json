@@ -239,6 +239,104 @@
                 }
             }
         },
+        "/api/v1/crawler/notion/get_doc": {
+            "post": {
+                "description": "GetDocs",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "crawler"
+                ],
+                "summary": "GetDocs",
+                "parameters": [
+                    {
+                        "description": "Get Docs",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.GetDocsReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/domain.Page"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/crawler/notion/get_list": {
+            "post": {
+                "description": "NotionGetList",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "crawler"
+                ],
+                "summary": "NotionGetList",
+                "parameters": [
+                    {
+                        "description": "Notion Get List",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.NotnionGetListReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/domain.PageInfo"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/crawler/parse_rss": {
             "post": {
                 "description": "Parse RSS",
@@ -2174,6 +2272,20 @@
                 }
             }
         },
+        "domain.GetDocsReq": {
+            "type": "object",
+            "properties": {
+                "integration": {
+                    "type": "string"
+                },
+                "pages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.PageInfo"
+                    }
+                }
+            }
+        },
         "domain.GetProviderModelListResp": {
             "type": "object",
             "properties": {
@@ -2534,10 +2646,49 @@
                 "NodeTypeDocument"
             ]
         },
+        "domain.NotnionGetListReq": {
+            "type": "object",
+            "properties": {
+                "cation_title": {
+                    "type": "string"
+                },
+                "integration": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.ObjectUploadResp": {
             "type": "object",
             "properties": {
                 "key": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.Page": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "parent_id": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.PageInfo": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "title": {
                     "type": "string"
                 }
             }

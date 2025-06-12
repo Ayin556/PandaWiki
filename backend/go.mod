@@ -16,6 +16,7 @@ require (
 	github.com/golang-migrate/migrate/v4 v4.18.3
 	github.com/google/uuid v1.6.0
 	github.com/google/wire v0.6.0
+	github.com/jomei/notionapi v1.13.3
 	github.com/labstack/echo-jwt/v4 v4.3.1
 	github.com/labstack/echo/v4 v4.13.3
 	github.com/larksuite/oapi-sdk-go/v3 v3.4.18
