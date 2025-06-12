@@ -71,14 +71,14 @@ func (h *FileHandler) Upload(c echo.Context) error {
 	if ext == "" {
 		return h.NewResponseWithError(c, "file ext not supported", fmt.Errorf("file (%s) ext (%s) not supported", file.Filename, ext))
 	}
-	if !lo.Contains([]string{".html", ".htm", ".md", ".txt", ".pdf", ".xlsx", ".xls", ".docx", ".png", ".jpg", ".jpeg", ".gif", ".webp"}, ext) {
+	if !lo.Contains([]string{".html", ".htm", ".md", ".txt", ".pdf", ".xlsx", ".xls", ".docx", ".png", ".jpg", ".jpeg", ".gif", ".webp", ".mp4", ".avi", ".mkv", ".mov", ".wmv", ".flv", ".webm", ".mpg", ".mpeg", ".3gp", ".ts", ".m2ts", ".vob", ".rm", ".rmvb"}, ext) {
 		return h.NewResponseWithError(c, "file ext not supported", fmt.Errorf("file (%s) ext (%s) not supported", file.Filename, ext))
 	}
 	filename := fmt.Sprintf("%s/%s%s", kbID, uuid.New().String(), ext)
 
 	maxSize := h.config.S3.MaxFileSize
 	size := file.Size
-	if size > int64(maxSize) { // 5MB
+	if size > int64(maxSize) { // 20MB
 		return h.NewResponseWithError(c, "file size too large", nil)
 	}
 

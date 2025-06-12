@@ -12,5 +12,6 @@ var TopicConsumerName = map[string]string{
 type NodeContentVectorRequest struct {
 	KBID   string `json:"kb_id"`
 	ID     string `json:"id"`
+	DocID  string `json:"doc_id"`
 	Action string `json:"action"` // upsert, delete
 }

@@ -10,24 +10,26 @@ import (
 
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/log"
+	"github.com/chaitin/panda-wiki/repo/pg"
 )
 
 type ChatUsecase struct {
 	llmUsecase          *LLMUsecase
 	conversationUsecase *ConversationUsecase
 	modelUsecase        *ModelUsecase
-	appUsecase          *AppUsecase
+	appRepo             *pg.AppRepository
 	logger              *log.Logger
 }
 
-func NewChatUsecase(llmUsecase *LLMUsecase, conversationUsecase *ConversationUsecase, modelUsecase *ModelUsecase, appUsecase *AppUsecase, logger *log.Logger) *ChatUsecase {
-	return &ChatUsecase{
+func NewChatUsecase(llmUsecase *LLMUsecase, conversationUsecase *ConversationUsecase, modelUsecase *ModelUsecase, appRepo *pg.AppRepository, logger *log.Logger) *ChatUsecase {
+	u := &ChatUsecase{
 		llmUsecase:          llmUsecase,
 		conversationUsecase: conversationUsecase,
 		modelUsecase:        modelUsecase,
-		appUsecase:          appUsecase,
+		appRepo:             appRepo,
 		logger:              logger.WithModule("usecase.chat"),
 	}
+	return u
 }
 
 func (u *ChatUsecase) Chat(ctx context.Context, req *domain.ChatRequest) (<-chan domain.SSEEvent, error) {
@@ -35,14 +37,14 @@ func (u *ChatUsecase) Chat(ctx context.Context, req *domain.ChatRequest) (<-chan
 	go func() {
 		defer close(eventCh)
 		// 1. get app detail and validate app
-		appDetail, err := u.appUsecase.GetAppDetailByKBIDAndAppType(ctx, req.KBID, req.AppType)
+		app, err := u.appRepo.GetOrCreateApplByKBIDAndType(ctx, req.KBID, req.AppType)
 		if err != nil {
 			eventCh <- domain.SSEEvent{Type: "error", Content: "app not found"}
 			return
 		}
-		req.KBID = appDetail.KBID
-		req.AppID = appDetail.ID
-		req.AppType = appDetail.Type
+		req.KBID = app.KBID
+		req.AppID = app.ID
+		req.AppType = app.Type
 		// 2. get model and validate model
 		model, err := u.modelUsecase.GetChatModel(ctx)
 		if err != nil {

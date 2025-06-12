@@ -69,20 +69,20 @@ func (u *NodeUsecase) GetByID(ctx context.Context, id string) (*domain.NodeDetai
 func (u *NodeUsecase) NodeAction(ctx context.Context, req *domain.NodeActionReq) error {
 	switch req.Action {
 	case "delete":
-		if err := u.nodeRepo.Delete(ctx, req.KBID, req.ID); err != nil {
+		docIDs, err := u.nodeRepo.Delete(ctx, req.KBID, req.IDs)
+		if err != nil {
 			return err
 		}
-		nodeVectorContentRequests := []*domain.NodeContentVectorRequest{
-			{
+		nodeVectorContentRequests := make([]*domain.NodeContentVectorRequest, 0, len(docIDs))
+		for _, docID := range docIDs {
+			nodeVectorContentRequests = append(nodeVectorContentRequests, &domain.NodeContentVectorRequest{
 				KBID:   req.KBID,
-				ID:     req.ID,
+				DocID:  docID,
 				Action: "delete",
-			},
+			})
 		}
-		if len(nodeVectorContentRequests) > 0 {
-			if err := u.ragRepo.UpdateRecords(ctx, nodeVectorContentRequests); err != nil {
-				return err
-			}
+		if err := u.ragRepo.UpdateRecords(ctx, nodeVectorContentRequests); err != nil {
+			return err
 		}
 	}
 	return nil

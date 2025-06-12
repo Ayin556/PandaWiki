@@ -119,7 +119,7 @@ func NewConfig() (*Config, error) {
 			Endpoint:    "panda-wiki-minio:9000",
 			AccessKey:   "s3panda-wiki",
 			SecretKey:   "",
-			MaxFileSize: 5242880, // 5MB
+			MaxFileSize: 20971520, // 20MB
 		},
 		CaddyAPI:     "/app/run/caddy-admin.sock",
 		SubnetPrefix: "169.254.15",

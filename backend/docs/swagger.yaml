@@ -1,6 +1,8 @@
 definitions:
   domain.AccessSettings:
     properties:
+      base_url:
+        type: string
       hosts:
         items:
           type: string
@@ -47,6 +49,18 @@ definitions:
       desc:
         description: seo
         type: string
+      dingtalk_bot_client_id:
+        description: DingTalkBot
+        type: string
+      dingtalk_bot_client_secret:
+        type: string
+      dingtalk_bot_template_id:
+        type: string
+      feishu_bot_app_id:
+        description: FeishuBot
+        type: string
+      feishu_bot_app_secret:
+        type: string
       head_code:
         description: inject code
         type: string
@@ -83,6 +97,18 @@ definitions:
       desc:
         description: seo
         type: string
+      dingtalk_bot_client_id:
+        description: DingTalkBot
+        type: string
+      dingtalk_bot_client_secret:
+        type: string
+      dingtalk_bot_template_id:
+        type: string
+      feishu_bot_app_id:
+        description: FeishuBot
+        type: string
+      feishu_bot_app_secret:
+        type: string
       head_code:
         description: inject code
         type: string
@@ -111,10 +137,14 @@ definitions:
     enum:
     - 1
     - 2
+    - 3
+    - 4
     type: integer
     x-enum-varnames:
     - AppTypeWeb
     - AppTypeWidget
+    - AppTypeDingTalkBot
+    - AppTypeFeishuBot
   domain.ChatRequest:
     properties:
       app_type:
@@ -123,6 +153,7 @@ definitions:
         enum:
         - 1
         - 2
+        - 3
       conversation_id:
         type: string
       message:
@@ -259,24 +290,6 @@ definitions:
       url:
         type: string
     type: object
-  domain.CreateAppReq:
-    properties:
-      icon:
-        type: string
-      kb_id:
-        type: string
-      name:
-        type: string
-      type:
-        allOf:
-        - $ref: '#/definitions/domain.AppType'
-        enum:
-        - 1
-        - 2
-    required:
-    - kb_id
-    - type
-    type: object
   domain.CreateKnowledgeBaseReq:
     properties:
       hosts:
@@ -341,6 +354,8 @@ definitions:
   domain.CreateNodeReq:
     properties:
       content:
+        type: string
+      emoji:
         type: string
       kb_id:
         type: string
@@ -545,13 +560,15 @@ definitions:
         enum:
         - delete
         type: string
-      id:
-        type: string
+      ids:
+        items:
+          type: string
+        type: array
       kb_id:
         type: string
     required:
     - action
-    - id
+    - ids
     - kb_id
     type: object
   domain.NodeDetailResp:
@@ -568,12 +585,16 @@ definitions:
         $ref: '#/definitions/domain.NodeMeta'
       name:
         type: string
+      type:
+        $ref: '#/definitions/domain.NodeType'
       updated_at:
         type: string
     type: object
   domain.NodeListItemResp:
     properties:
       created_at:
+        type: string
+      emoji:
         type: string
       id:
         type: string
@@ -592,6 +613,8 @@ definitions:
     type: object
   domain.NodeMeta:
     properties:
+      emoji:
+        type: string
       summary:
         type: string
     type: object
@@ -650,6 +673,8 @@ definitions:
     type: object
   domain.RecommendNodeListResp:
     properties:
+      emoji:
+        type: string
       id:
         type: string
       name:
@@ -761,12 +786,12 @@ definitions:
     properties:
       content:
         type: string
+      emoji:
+        type: string
       id:
         type: string
       kb_id:
         type: string
-      meta:
-        $ref: '#/definitions/domain.NodeMeta'
       name:
         type: string
     required:
@@ -834,25 +859,6 @@ paths:
           schema:
             $ref: '#/definitions/domain.Response'
       summary: Delete app
-      tags:
-      - app
-    post:
-      consumes:
-      - application/json
-      description: Create app
-      parameters:
-      - description: create app request
-        in: body
-        name: create_app_request
-        required: true
-        schema:
-          $ref: '#/definitions/domain.CreateAppReq'
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/domain.Response'
-      summary: Create app
       tags:
       - app
     put:

@@ -79,14 +79,15 @@ func createApp() (*App, error) {
 	}
 	nodeUsecase := usecase.NewNodeUsecase(nodeRepository, ragRepository, llmUsecase, modelUsecase, logger, minioClient)
 	nodeHandler := v1.NewNodeHandler(baseHandler, echo, nodeUsecase, authMiddleware, logger)
-	appRepository := pg2.NewAppRepository(db)
-	appUsecase := usecase.NewAppUsecase(appRepository, nodeUsecase, conversationRepository, logger, configConfig)
+	appRepository := pg2.NewAppRepository(db, logger)
 	ipdbIPDB, err := ipdb.NewIPDB(configConfig, logger)
 	if err != nil {
 		return nil, err
 	}
 	ipAddressRepo := ipdb2.NewIPAddressRepo(ipdbIPDB, logger)
 	conversationUsecase := usecase.NewConversationUsecase(conversationRepository, nodeRepository, logger, ipAddressRepo)
+	chatUsecase := usecase.NewChatUsecase(llmUsecase, conversationUsecase, modelUsecase, appRepository, logger)
+	appUsecase := usecase.NewAppUsecase(appRepository, nodeUsecase, logger, configConfig, chatUsecase)
 	appHandler := v1.NewAppHandler(echo, baseHandler, logger, authMiddleware, appUsecase, modelUsecase, conversationUsecase, configConfig)
 	fileHandler := v1.NewFileHandler(echo, baseHandler, logger, authMiddleware, minioClient, configConfig)
 	modelHandler := v1.NewModelHandler(echo, baseHandler, logger, authMiddleware, modelUsecase, llmUsecase)
@@ -96,6 +97,8 @@ func createApp() (*App, error) {
 		return nil, err
 	}
 	crawlerHandler := v1.NewCrawlerHandler(echo, baseHandler, authMiddleware, logger, configConfig, crawlerUsecase)
+	creationUsecase := usecase.NewCreationUsecase(logger, llmUsecase, modelUsecase)
+	creationHandler := v1.NewCreationHandler(echo, baseHandler, logger, creationUsecase)
 	apiHandlers := &v1.APIHandlers{
 		UserHandler:          userHandler,
 		KnowledgeBaseHandler: knowledgeBaseHandler,
@@ -105,10 +108,10 @@ func createApp() (*App, error) {
 		ModelHandler:         modelHandler,
 		ConversationHandler:  conversationHandler,
 		CrawlerHandler:       crawlerHandler,
+		CreationHandler:      creationHandler,
 	}
 	shareNodeHandler := share.NewShareNodeHandler(baseHandler, echo, nodeUsecase, logger)
 	shareAppHandler := share.NewShareAppHandler(echo, baseHandler, logger, appUsecase)
-	chatUsecase := usecase.NewChatUsecase(llmUsecase, conversationUsecase, modelUsecase, appUsecase, logger)
 	shareChatHandler := share.NewShareChatHandler(echo, baseHandler, logger, appUsecase, chatUsecase, conversationUsecase, modelUsecase)
 	shareHandler := &share.ShareHandler{
 		ShareNodeHandler: shareNodeHandler,

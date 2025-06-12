@@ -48,35 +48,6 @@ const docTemplate = `{
                     }
                 }
             },
-            "post": {
-                "description": "Create app",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "app"
-                ],
-                "summary": "Create app",
-                "parameters": [
-                    {
-                        "description": "create app request",
-                        "name": "create_app_request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/domain.CreateAppReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/domain.Response"
-                        }
-                    }
-                }
-            },
             "delete": {
                 "description": "Delete app",
                 "consumes": [
@@ -1596,6 +1567,9 @@ const docTemplate = `{
         "domain.AccessSettings": {
             "type": "object",
             "properties": {
+                "base_url": {
+                    "type": "string"
+                },
                 "hosts": {
                     "type": "array",
                     "items": {
@@ -1665,6 +1639,23 @@ const docTemplate = `{
                     "description": "seo",
                     "type": "string"
                 },
+                "dingtalk_bot_client_id": {
+                    "description": "DingTalkBot",
+                    "type": "string"
+                },
+                "dingtalk_bot_client_secret": {
+                    "type": "string"
+                },
+                "dingtalk_bot_template_id": {
+                    "type": "string"
+                },
+                "feishu_bot_app_id": {
+                    "description": "FeishuBot",
+                    "type": "string"
+                },
+                "feishu_bot_app_secret": {
+                    "type": "string"
+                },
                 "head_code": {
                     "description": "inject code",
                     "type": "string"
@@ -1717,6 +1708,23 @@ const docTemplate = `{
                     "description": "seo",
                     "type": "string"
                 },
+                "dingtalk_bot_client_id": {
+                    "description": "DingTalkBot",
+                    "type": "string"
+                },
+                "dingtalk_bot_client_secret": {
+                    "type": "string"
+                },
+                "dingtalk_bot_template_id": {
+                    "type": "string"
+                },
+                "feishu_bot_app_id": {
+                    "description": "FeishuBot",
+                    "type": "string"
+                },
+                "feishu_bot_app_secret": {
+                    "type": "string"
+                },
                 "head_code": {
                     "description": "inject code",
                     "type": "string"
@@ -1756,11 +1764,15 @@ const docTemplate = `{
             "type": "integer",
             "enum": [
                 1,
-                2
+                2,
+                3,
+                4
             ],
             "x-enum-varnames": [
                 "AppTypeWeb",
-                "AppTypeWidget"
+                "AppTypeWidget",
+                "AppTypeDingTalkBot",
+                "AppTypeFeishuBot"
             ]
         },
         "domain.ChatRequest": {
@@ -1773,7 +1785,8 @@ const docTemplate = `{
                 "app_type": {
                     "enum": [
                         1,
-                        2
+                        2,
+                        3
                     ],
                     "allOf": [
                         {
@@ -1984,35 +1997,6 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.CreateAppReq": {
-            "type": "object",
-            "required": [
-                "kb_id",
-                "type"
-            ],
-            "properties": {
-                "icon": {
-                    "type": "string"
-                },
-                "kb_id": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "type": {
-                    "enum": [
-                        1,
-                        2
-                    ],
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/domain.AppType"
-                        }
-                    ]
-                }
-            }
-        },
         "domain.CreateKnowledgeBaseReq": {
             "type": "object",
             "required": [
@@ -2113,6 +2097,9 @@ const docTemplate = `{
             ],
             "properties": {
                 "content": {
+                    "type": "string"
+                },
+                "emoji": {
                     "type": "string"
                 },
                 "kb_id": {
@@ -2405,7 +2392,7 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "action",
-                "id",
+                "ids",
                 "kb_id"
             ],
             "properties": {
@@ -2415,8 +2402,11 @@ const docTemplate = `{
                         "delete"
                     ]
                 },
-                "id": {
-                    "type": "string"
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "kb_id": {
                     "type": "string"
@@ -2444,6 +2434,9 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "type": {
+                    "$ref": "#/definitions/domain.NodeType"
+                },
                 "updated_at": {
                     "type": "string"
                 }
@@ -2453,6 +2446,9 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "created_at": {
+                    "type": "string"
+                },
+                "emoji": {
                     "type": "string"
                 },
                 "id": {
@@ -2481,6 +2477,9 @@ const docTemplate = `{
         "domain.NodeMeta": {
             "type": "object",
             "properties": {
+                "emoji": {
+                    "type": "string"
+                },
                 "summary": {
                     "type": "string"
                 }
@@ -2570,6 +2569,9 @@ const docTemplate = `{
         "domain.RecommendNodeListResp": {
             "type": "object",
             "properties": {
+                "emoji": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "string"
                 },
@@ -2741,14 +2743,14 @@ const docTemplate = `{
                 "content": {
                     "type": "string"
                 },
+                "emoji": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "string"
                 },
                 "kb_id": {
                     "type": "string"
-                },
-                "meta": {
-                    "$ref": "#/definitions/domain.NodeMeta"
                 },
                 "name": {
                     "type": "string"
