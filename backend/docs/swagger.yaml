@@ -392,6 +392,15 @@ definitions:
     required:
     - user_id
     type: object
+  domain.GetDocsReq:
+    properties:
+      integration:
+        type: string
+      pages:
+        items:
+          $ref: '#/definitions/domain.PageInfo'
+        type: array
+    type: object
   domain.GetProviderModelListResp:
     properties:
       models:
@@ -636,9 +645,34 @@ definitions:
     x-enum-varnames:
     - NodeTypeFolder
     - NodeTypeDocument
+  domain.NotnionGetListReq:
+    properties:
+      cation_title:
+        type: string
+      integration:
+        type: string
+    type: object
   domain.ObjectUploadResp:
     properties:
       key:
+        type: string
+    type: object
+  domain.Page:
+    properties:
+      content:
+        type: string
+      id:
+        type: string
+      parent_id:
+        type: string
+      title:
+        type: string
+    type: object
+  domain.PageInfo:
+    properties:
+      id:
+        type: string
+      title:
         type: string
     type: object
   domain.ParseURLItem:
@@ -998,6 +1032,64 @@ paths:
       summary: get conversation detail
       tags:
       - conversation
+  /api/v1/crawler/notion/get_doc:
+    post:
+      consumes:
+      - application/json
+      description: GetDocs
+      parameters:
+      - description: Get Docs
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/domain.GetDocsReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.Page'
+                  type: array
+              type: object
+      summary: GetDocs
+      tags:
+      - crawler
+  /api/v1/crawler/notion/get_list:
+    post:
+      consumes:
+      - application/json
+      description: NotionGetList
+      parameters:
+      - description: Notion Get List
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/domain.NotnionGetListReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.PageInfo'
+                  type: array
+              type: object
+      summary: NotionGetList
+      tags:
+      - crawler
   /api/v1/crawler/parse_rss:
     post:
       consumes:
