@@ -2,9 +2,7 @@ package v1
 
 import (
 	"strconv"
-	"time"
 
-	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 
 	"github.com/chaitin/panda-wiki/config"
@@ -36,52 +34,11 @@ func NewAppHandler(e *echo.Echo, baseHandler *handler.BaseHandler, logger *log.L
 		config:              config,
 	}
 	group := e.Group("/api/v1/app", h.auth.Authorize)
-	group.POST("", h.CreateApp)
 	group.GET("/detail", h.GetAppDetail)
 	group.PUT("", h.UpdateApp)
 	group.DELETE("", h.DeleteApp)
 
 	return h
-}
-
-// CreateApp create app
-//
-//	@Summary		Create app
-//	@Description	Create app
-//	@Tags			app
-//	@Accept			json
-//	@Param			create_app_request	body		domain.CreateAppReq	true	"create app request"
-//	@Success		200					{object}	domain.Response
-//	@Router			/api/v1/app [post]
-func (h *AppHandler) CreateApp(c echo.Context) error {
-	createAppRequest := domain.CreateAppReq{}
-	if err := c.Bind(&createAppRequest); err != nil {
-		return h.NewResponseWithError(c, "invalid request", err)
-	}
-	if err := c.Validate(&createAppRequest); err != nil {
-		return h.NewResponseWithError(c, "invalid request", err)
-	}
-
-	id, err := uuid.NewV7()
-	if err != nil {
-		return h.NewResponseWithError(c, "create app id failed", err)
-	}
-	app := &domain.App{
-		ID:   id.String(),
-		KBID: createAppRequest.KBID,
-		Name: createAppRequest.Name,
-		Type: createAppRequest.Type,
-		Settings: domain.AppSettings{
-			Icon: createAppRequest.Icon,
-		},
-		CreatedAt: time.Now(),
-	}
-	if err := h.usecase.CreateApp(c.Request().Context(), app); err != nil {
-		return h.NewResponseWithError(c, "create app failed", err)
-	}
-	return h.NewResponseWithData(c, map[string]string{
-		"id": app.ID,
-	})
 }
 
 // GetAppDetail get app detail

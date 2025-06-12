@@ -42,6 +42,7 @@ type Node struct {
 
 type NodeMeta struct {
 	Summary string `json:"summary"`
+	Emoji   string `json:"emoji"`
 }
 
 func (d *NodeMeta) Value() (driver.Value, error) {
@@ -63,6 +64,8 @@ type CreateNodeReq struct {
 
 	Name    string `json:"name" validate:"required"`
 	Content string `json:"content"`
+
+	Emoji string `json:"emoji"`
 }
 
 type GetNodeListReq struct {
@@ -75,6 +78,7 @@ type NodeListItemResp struct {
 	Type      NodeType  `json:"type"`
 	Name      string    `json:"name"`
 	Summary   string    `json:"summary"`
+	Emoji     string    `json:"emoji"`
 	Position  float64   `json:"position"`
 	ParentID  string    `json:"parent_id"`
 	CreatedAt time.Time `json:"created_at"`
@@ -85,6 +89,7 @@ type NodeDetailResp struct {
 	ID   string `json:"id"`
 	KBID string `json:"kb_id"`
 
+	Type    NodeType `json:"type"`
 	Name    string   `json:"name"`
 	Content string   `json:"content"`
 	Meta    NodeMeta `json:"meta"`
@@ -110,8 +115,8 @@ type RankedNodeChunks struct {
 	Chunks      []*NodeContentChunk
 }
 
-func (n *RankedNodeChunks) GetURL() string {
-	return fmt.Sprintf("/node/%s", n.NodeID)
+func (n *RankedNodeChunks) GetURL(baseURL string) string {
+	return fmt.Sprintf("%s/node/%s", baseURL, n.NodeID)
 }
 
 type ChunkListItemResp struct {
@@ -134,21 +139,22 @@ type RecommendNodeListResp struct {
 	Summary        string                   `json:"summary"`
 	ParentID       string                   `json:"parent_id"`
 	Position       float64                  `json:"position"`
+	Emoji          string                   `json:"emoji"`
 	RecommendNodes []*RecommendNodeListResp `json:"recommend_nodes,omitempty" gorm:"-"`
 }
 
 type NodeActionReq struct {
-	ID     string `json:"id" validate:"required"`
-	KBID   string `json:"kb_id" validate:"required"`
-	Action string `json:"action" validate:"required,oneof=delete"`
+	IDs    []string `json:"ids" validate:"required"`
+	KBID   string   `json:"kb_id" validate:"required"`
+	Action string   `json:"action" validate:"required,oneof=delete"`
 }
 
 type UpdateNodeReq struct {
-	ID      string    `json:"id" validate:"required"`
-	KBID    string    `json:"kb_id" validate:"required"`
-	Name    *string   `json:"name"`
-	Content *string   `json:"content"`
-	Meta    *NodeMeta `json:"meta"`
+	ID      string  `json:"id" validate:"required"`
+	KBID    string  `json:"kb_id" validate:"required"`
+	Name    *string `json:"name"`
+	Content *string `json:"content"`
+	Emoji   *string `json:"emoji"`
 }
 
 type ShareNodeListItemResp struct {
@@ -157,6 +163,7 @@ type ShareNodeListItemResp struct {
 	Type     NodeType `json:"type"`
 	ParentID string   `json:"parent_id"`
 	Position float64  `json:"position"`
+	Emoji    string   `json:"emoji"`
 }
 
 type MoveNodeReq struct {

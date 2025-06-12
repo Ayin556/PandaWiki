@@ -2,21 +2,26 @@ package pg
 
 import (
 	"context"
+	"errors"
+
+	"github.com/google/uuid"
+	"gorm.io/gorm"
 
 	"github.com/chaitin/panda-wiki/domain"
+	"github.com/chaitin/panda-wiki/log"
 	"github.com/chaitin/panda-wiki/store/pg"
 )
 
 type AppRepository struct {
-	db *pg.DB
+	db     *pg.DB
+	logger *log.Logger
 }
 
-func NewAppRepository(db *pg.DB) *AppRepository {
-	return &AppRepository{db: db}
-}
-
-func (r *AppRepository) CreateApp(ctx context.Context, req *domain.App) error {
-	return r.db.WithContext(ctx).Create(req).Error
+func NewAppRepository(db *pg.DB, logger *log.Logger) *AppRepository {
+	return &AppRepository{
+		db:     db,
+		logger: logger.WithModule("repo.pg.app"),
+	}
 }
 
 func (r *AppRepository) GetAppDetail(ctx context.Context, id string) (*domain.App, error) {
@@ -45,13 +50,38 @@ func (r *AppRepository) DeleteApp(ctx context.Context, id string) error {
 	return r.db.WithContext(ctx).Delete(&domain.App{}, "id = ?", id).Error
 }
 
-func (r *AppRepository) GetAppDetailByKBIDAndType(ctx context.Context, kbID string, appType domain.AppType) (*domain.App, error) {
+func (r *AppRepository) GetOrCreateApplByKBIDAndType(ctx context.Context, kbID string, appType domain.AppType) (*domain.App, error) {
 	app := &domain.App{}
+	r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		err := tx.Model(&domain.App{}).Where("kb_id = ? AND type = ?", kbID, appType).First(app).Error
+		if err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				// create app if kb is exist
+				if err := tx.Model(&domain.KnowledgeBase{}).Where("id = ?", kbID).First(&domain.KnowledgeBase{}).Error; err != nil {
+					return err
+				}
+				app = &domain.App{
+					ID:   uuid.New().String(),
+					KBID: kbID,
+					Type: appType,
+				}
+				return tx.Create(app).Error
+			}
+			return err
+		}
+		return nil
+	})
+	return app, nil
+}
+
+// GetAppsByTypes returns all apps of a specific type
+func (r *AppRepository) GetAppsByTypes(ctx context.Context, appTypes []domain.AppType) ([]*domain.App, error) {
+	var apps []*domain.App
 	if err := r.db.WithContext(ctx).
 		Model(&domain.App{}).
-		Where("kb_id = ? AND type = ?", kbID, appType).
-		First(app).Error; err != nil {
+		Where("type IN (?)", appTypes).
+		Find(&apps).Error; err != nil {
 		return nil, err
 	}
-	return app, nil
+	return apps, nil
 }

@@ -63,11 +63,11 @@ var UserQuestionFormatter = `
 </documents>
 `
 
-func FormatNodeChunks(nodeChunks []*RankedNodeChunks) string {
+func FormatNodeChunks(nodeChunks []*RankedNodeChunks, baseURL string) string {
 	documents := make([]string, 0)
 	for _, result := range nodeChunks {
 		document := strings.Builder{}
-		document.WriteString(fmt.Sprintf("<document>\nID: %s\n标题: %s\nURL: %s\n内容:\n", result.NodeID, result.NodeName, result.GetURL()))
+		document.WriteString(fmt.Sprintf("<document>\nID: %s\n标题: %s\nURL: %s\n内容:\n", result.NodeID, result.NodeName, result.GetURL(baseURL)))
 		for _, chunk := range result.Chunks {
 			document.WriteString(fmt.Sprintf("%s\n", chunk.Content))
 		}

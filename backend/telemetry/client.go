@@ -154,7 +154,7 @@ func (c *Client) reportInstallation() error {
 	if err != nil {
 		return fmt.Errorf("marshal installation event: %w", err)
 	}
-	eventEncrypted, err := Encrypt([]byte("bd2599605d301656c8f6"), eventRaw)
+	eventEncrypted, err := Encrypt([]byte("SZ3SDP38y9Gg2c6yHdLPgDeX"), eventRaw)
 	if err != nil {
 		return fmt.Errorf("encrypt installation event: %w", err)
 	}
