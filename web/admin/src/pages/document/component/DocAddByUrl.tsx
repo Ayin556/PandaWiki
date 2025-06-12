@@ -344,15 +344,29 @@ const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddB
           </List>
         </Box>
       )}
-    </Box> : <TextField
-      fullWidth
-      multiline={type === 'URL'}
-      rows={type === 'URL' ? 4 : 1}
-      value={url}
-      placeholder={type === 'URL' ? '每行一个 URL' : type === 'Notion' ? 'Notion Integration' : `${type} 地址`}
-      autoFocus
-      onChange={(e) => setUrl(e.target.value)}
-    />)}
+    </Box> : <>
+      <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'} sx={{
+        fontSize: 14,
+        lineHeight: '32px',
+        mb: 1,
+      }}>
+        {type === 'Notion' ? 'Notion Integration' : `${type} 地址`}
+        {type === 'Notion' && <Box component='a'
+          href='https://pandawiki.docs.baizhi.cloud/node/01975f23-1c18-74aa-9a05-955b5128c49d' target='_blank'
+          sx={{ fontSize: 12, color: 'primary.main' }}>
+          使用方法
+        </Box>}
+      </Stack>
+      <TextField
+        fullWidth
+        multiline={type === 'URL'}
+        rows={type === 'URL' ? 4 : 1}
+        value={url}
+        placeholder={type === 'URL' ? '每行一个 URL' : type === 'Notion' ? 'Notion Integration' : `${type} 地址`}
+        autoFocus
+        onChange={(e) => setUrl(e.target.value)}
+      />
+    </>)}
     {step !== 1 && <Box sx={{
       borderRadius: '10px',
       border: '1px solid',
