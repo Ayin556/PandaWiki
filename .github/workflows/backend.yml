@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - backend-*
-      - main
     tags:
       - "backend-v[0-9]+.[0-9]+.[0-9]+*"
       - "v[0-9]+.[0-9]+.[0-9]+*"
