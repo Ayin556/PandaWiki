@@ -377,6 +377,40 @@
                 }
             }
         },
+        "/api/v1/creation/text": {
+            "post": {
+                "description": "Text creation",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "creation"
+                ],
+                "summary": "Text creation",
+                "parameters": [
+                    {
+                        "description": "text creation request",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.TextReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/file/upload": {
             "post": {
                 "description": "Upload File",
@@ -2630,6 +2664,21 @@
                     "type": "string"
                 },
                 "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.TextReq": {
+            "type": "object",
+            "required": [
+                "text"
+            ],
+            "properties": {
+                "action": {
+                    "description": "action: improve, summary, extend, shorten, etc.",
+                    "type": "string"
+                },
+                "text": {
                     "type": "string"
                 }
             }

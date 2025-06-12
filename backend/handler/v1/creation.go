@@ -30,6 +30,16 @@ func NewCreationHandler(echo *echo.Echo, baseHandler *handler.BaseHandler, logge
 	return h
 }
 
+// Text text creation
+//
+//	@Summary		Text creation
+//	@Description	Text creation
+//	@Tags			creation
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body		domain.TextReq	true	"text creation request"
+//	@Success		200		{string}	string			"success"
+//	@Router			/api/v1/creation/text [post]
 func (h *CreationHandler) Text(c echo.Context) error {
 	var req domain.TextReq
 	if err := c.Bind(&req); err != nil {

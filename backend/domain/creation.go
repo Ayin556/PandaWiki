@@ -1,7 +1,6 @@
 package domain
 
 type TextReq struct {
-	Text        string `json:"text" validate:"required"`
-	Stream      bool   `json:"stream"`
-	Instruction string `json:"instruction"` // instruction: improve, summary, extend, shorten, etc.
+	Text   string `json:"text" validate:"required"`
+	Action string `json:"action"` // action: improve, summary, extend, shorten, etc.
 }

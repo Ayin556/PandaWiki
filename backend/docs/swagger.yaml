@@ -723,6 +723,16 @@ definitions:
       title:
         type: string
     type: object
+  domain.TextReq:
+    properties:
+      action:
+        description: 'action: improve, summary, extend, shorten, etc.'
+        type: string
+      text:
+        type: string
+    required:
+    - text
+    type: object
   domain.UpdateAppReq:
     properties:
       name:
@@ -1069,6 +1079,28 @@ paths:
       summary: Scrape
       tags:
       - crawler
+  /api/v1/creation/text:
+    post:
+      consumes:
+      - application/json
+      description: Text creation
+      parameters:
+      - description: text creation request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/domain.TextReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            type: string
+      summary: Text creation
+      tags:
+      - creation
   /api/v1/file/upload:
     post:
       consumes:
