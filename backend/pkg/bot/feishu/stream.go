@@ -40,22 +40,22 @@ func (l *FeishuBotLogger) Warn(ctx context.Context, args ...interface{}) {
 type FeishuClient struct {
 	ctx          context.Context
 	cancel       context.CancelFunc
-	ClientID     string
-	ClientSecret string
+	clientID     string
+	clientSecret string
 	logger       *log.Logger
 	client       *lark.Client
 	msgMap       sync.Map
-	getQA        func(ctx context.Context, msg string, dataCh chan string) error
+	getQA        func(ctx context.Context, msg string) (chan string, error)
 }
 
-func NewFeishuClient(ctx context.Context, cancel context.CancelFunc, clientID, clientSecret string, logger *log.Logger, getQA func(ctx context.Context, msg string, dataCh chan string) error) *FeishuClient {
+func NewFeishuClient(ctx context.Context, cancel context.CancelFunc, clientID, clientSecret string, logger *log.Logger, getQA func(ctx context.Context, msg string) (chan string, error)) *FeishuClient {
 	client := lark.NewClient(clientID, clientSecret, lark.WithLogger(&FeishuBotLogger{logger: logger}))
 
 	c := &FeishuClient{
 		ctx:          ctx,
 		cancel:       cancel,
-		ClientID:     clientID,
-		ClientSecret: clientSecret,
+		clientID:     clientID,
+		clientSecret: clientSecret,
 		client:       client,
 		logger:       logger,
 		getQA:        getQA,
@@ -129,14 +129,11 @@ func (c *FeishuClient) sendQACard(ctx context.Context, receiveIdType string, rec
 		return
 	}
 
-	answerCh := make(chan string, 10)
-	go func() {
-		defer close(answerCh)
-		if err := c.getQA(ctx, question, answerCh); err != nil {
-			c.logger.Error("failed to get answer", log.Error(err))
-			answerCh <- "出错了，请稍后再试"
-		}
-	}()
+	answerCh, err := c.getQA(ctx, question)
+	if err != nil {
+		c.logger.Error("feishu client failed to get answer", log.Error(err))
+		return
+	}
 
 	answer := ""
 	seq := 1
@@ -205,10 +202,11 @@ func (c *FeishuClient) Start() error {
 			return nil
 		})
 
-	cli := larkws.NewClient(c.ClientID, c.ClientSecret,
+	cli := larkws.NewClient(c.clientID, c.clientSecret,
 		larkws.WithEventHandler(eventHandler),
 		larkws.WithLogger(&FeishuBotLogger{logger: c.logger}),
 	)
+	// FIXME: goroutine leak in larkws.Start
 	err := cli.Start(c.ctx)
 	if err != nil {
 		return fmt.Errorf("failed to start feishu client: %w", err)

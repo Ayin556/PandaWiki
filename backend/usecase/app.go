@@ -81,8 +81,8 @@ func (u *AppUsecase) UpdateApp(ctx context.Context, id string, appRequest *domai
 	return nil
 }
 
-func (u *AppUsecase) getQAFunc(kbID string, appType domain.AppType) func(ctx context.Context, msg string, dataCh chan string) error {
-	return func(ctx context.Context, msg string, dataCh chan string) error {
+func (u *AppUsecase) getQAFunc(kbID string, appType domain.AppType) func(ctx context.Context, msg string) (chan string, error) {
+	return func(ctx context.Context, msg string) (chan string, error) {
 		eventCh, err := u.chatUsecase.Chat(ctx, &domain.ChatRequest{
 			Message:  msg,
 			KBID:     kbID,
@@ -90,17 +90,19 @@ func (u *AppUsecase) getQAFunc(kbID string, appType domain.AppType) func(ctx con
 			RemoteIP: "",
 		})
 		if err != nil {
-			return err
+			return nil, err
 		}
+		contentCh := make(chan string, 10)
+		defer close(contentCh)
 		for event := range eventCh {
 			if event.Type == "done" || event.Type == "error" {
 				break
 			}
 			if event.Type == "data" {
-				dataCh <- event.Content
+				contentCh <- event.Content
 			}
 		}
-		return nil
+		return contentCh, nil
 	}
 }
 
