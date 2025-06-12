@@ -36,8 +36,8 @@ importers:
         specifier: 2.0.0
         version: 2.0.0(1579928bcf445789b8faa270ae6165be)
       ct-tiptap-editor:
-        specifier: ^0.4.7
-        version: 0.4.7(@tiptap/extension-code-block@2.12.0(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0))(@types/react@19.1.4)(prosemirror-model@1.25.1)(prosemirror-view@1.39.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: 0.5.1
+        version: 0.5.1(@tiptap/extension-code-block@2.12.0(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0))(@types/react@19.1.4)(prosemirror-view@1.39.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
@@ -1294,8 +1294,8 @@ packages:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
 
-  ct-tiptap-editor@0.4.7:
-    resolution: {integrity: sha512-cCM4sBu38dM37EH/jdCAxSElKsKbApL6ihSC4KEWHi/0JXoVFQR9mgKuMSYBHBYls+juraxm9RF2O82pqm73Qw==}
+  ct-tiptap-editor@0.5.1:
+    resolution: {integrity: sha512-8Si5SIm34QJLm+GgKZXyVbDx29lQnlVZfJ95qcPTirMgf61jjYRku0YfRqyH5MhidPIiHn6phezBLWWg5n5+oQ==}
     peerDependencies:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
@@ -4109,7 +4109,7 @@ snapshots:
       react-dom: 19.1.0(react@19.1.0)
       react-virtuoso: 4.12.7(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
 
-  ct-tiptap-editor@0.4.7(@tiptap/extension-code-block@2.12.0(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0))(@types/react@19.1.4)(prosemirror-model@1.25.1)(prosemirror-view@1.39.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+  ct-tiptap-editor@0.5.1(@tiptap/extension-code-block@2.12.0(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0))(@types/react@19.1.4)(prosemirror-view@1.39.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       '@emotion/react': 11.14.0(@types/react@19.1.4)(react@19.1.0)
       '@emotion/styled': 11.14.0(@emotion/react@11.14.0(@types/react@19.1.4)(react@19.1.0))(@types/react@19.1.4)(react@19.1.0)
@@ -4147,6 +4147,7 @@ snapshots:
       ct-mui: 1.0.1-beta.3(1579928bcf445789b8faa270ae6165be)
       highlight.js: 11.11.1
       lowlight: 3.3.0
+      prosemirror-model: 1.25.1
       prosemirror-state: 1.4.3
       react: 19.1.0
       react-colorful: 5.6.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -4163,7 +4164,6 @@ snapshots:
       - '@mui/utils'
       - '@tiptap/extension-code-block'
       - '@types/react'
-      - prosemirror-model
       - prosemirror-view
       - react-redux
       - supports-color

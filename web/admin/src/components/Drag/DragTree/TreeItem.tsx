@@ -24,7 +24,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
   const [summaryOpen, setSummaryOpen] = useState(false)
 
   const [urlOpen, setUrlOpen] = useState(false)
-  const [key, setKey] = useState<'URL' | 'RSS' | 'Sitemap' | 'OfflineFile'>('URL')
+  const [key, setKey] = useState<'URL' | 'RSS' | 'Sitemap' | 'OfflineFile' | 'Notion'>('URL')
 
   if (!context) {
     throw new Error("TreeItem 必须在 AppContext.Provider 内部使用");
@@ -125,6 +125,14 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
               setUrlOpen(true)
             }
           },
+          {
+            label: '通过 Notion 导入',
+            key: 'Notion',
+            onClick: () => {
+              setKey('Notion')
+              setUrlOpen(true)
+            }
+          }
         ]
       },
     ] : []),

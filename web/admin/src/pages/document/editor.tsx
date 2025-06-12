@@ -66,6 +66,7 @@ const DocEditor = () => {
   const editorRef = useTiptapEditor({
     content: '',
     onSave: () => handleSave(),
+    aiUrl: '/api/v1/creation/text',
     onUpload: handleUpload,
     onError: (error: Error) => {
       Message.error(error.message)
