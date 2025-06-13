@@ -96,7 +96,7 @@ func createApp() (*App, error) {
 	if err != nil {
 		return nil, err
 	}
-	notionUseCase := usecase.NewNotionUsecase(logger)
+	notionUseCase := usecase.NewNotionUsecase(logger, minioClient)
 	crawlerHandler := v1.NewCrawlerHandler(echo, baseHandler, authMiddleware, logger, configConfig, crawlerUsecase, notionUseCase)
 	creationUsecase := usecase.NewCreationUsecase(logger, llmUsecase, modelUsecase)
 	creationHandler := v1.NewCreationHandler(echo, baseHandler, logger, creationUsecase)

@@ -1,17 +1,24 @@
 package utils
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
+	"net/url"
+	"path/filepath"
 	"strings"
 	"sync"
 
+	"github.com/google/uuid"
 	"github.com/jomei/notionapi"
+	"github.com/minio/minio-go/v7"
 
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/log"
+	"github.com/chaitin/panda-wiki/store/s3"
 )
 
 // Block represents a Notion block
@@ -37,21 +44,25 @@ type File struct {
 }
 
 type NotionClient struct {
-	root   *ProcessorTree
-	token  string
-	client *notionapi.Client
-	logger *log.Logger
+	kbID        string
+	root        *ProcessorTree
+	token       string
+	client      *notionapi.Client
+	logger      *log.Logger
+	minioClient *s3.MinioClient
 }
 
 func (c *NotionClient) GetTreeRes() []byte {
 	return c.root.GetResult()
 }
-func NewNotionClient(token string, logger *log.Logger) *NotionClient {
+func NewNotionClient(token string, logger *log.Logger, kbID string, minioClient *s3.MinioClient) *NotionClient {
 	return &NotionClient{
-		root:   NewProcessorTree(),
-		token:  token,
-		logger: logger.WithModule("usecase.NotionClient"),
-		client: notionapi.NewClient(notionapi.Token(token)),
+		kbID:        kbID,
+		minioClient: minioClient,
+		root:        NewProcessorTree(),
+		token:       token,
+		logger:      logger.WithModule("usecase.NotionClient"),
+		client:      notionapi.NewClient(notionapi.Token(token)),
 	}
 }
 
@@ -250,7 +261,7 @@ func (c *NotionClient) BlockToMarkdown(ctx context.Context, block notionapi.Bloc
 		}
 		return fmt.Sprintf("- [ ] %s\n", block.GetRichTextString())
 	case notionapi.BlockTypeImage:
-		url, err := c.getImageURL(block)
+		url, err := c.getImageURL(ctx, block)
 		if err != nil {
 			return err.Error()
 		}
@@ -259,7 +270,7 @@ func (c *NotionClient) BlockToMarkdown(ctx context.Context, block notionapi.Bloc
 		return ""
 	}
 }
-func (c *NotionClient) getImageURL(block notionapi.Block) (string, error) {
+func (c *NotionClient) getImageURL(ctx context.Context, block notionapi.Block) (string, error) {
 	url := "https://api.notion.com/v1/blocks/" + block.GetID().String()
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -279,8 +290,8 @@ func (c *NotionClient) getImageURL(block notionapi.Block) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return data.Image.File.URL, nil
 
+	return c.UploadImage(ctx, data.Image.File.URL, c.kbID)
 }
 
 // 获取当前ListBlock的序号
@@ -301,4 +312,75 @@ func (c *NotionClient) getNumberedListNumber(ctx context.Context, block notionap
 		}
 	}
 	return i
+}
+
+func (c *NotionClient) UploadImage(ctx context.Context, imageURL string, kbID string) (string, error) {
+
+	resp, err := http.Get(imageURL)
+	if err != nil {
+		return "", fmt.Errorf("failed to fetch image: %v", err)
+	}
+	defer resp.Body.Close()
+
+	// 检查状态码
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("HTTP request failed with status: %s", resp.Status)
+	}
+
+	// 读取图片数据
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("failed to read image data: %v", err)
+	}
+
+	// 获取图片名称（从 URL 路径中提取）
+	parsedURL, err := url.Parse(imageURL)
+	if err != nil {
+		return "", fmt.Errorf("failed to parse URL: %v", err)
+	}
+	_, filename := filepath.Split(parsedURL.Path)
+	// 解码可能的 URL 编码（如中文文件名）
+	decodedName, err := url.PathUnescape(filename)
+	if err != nil {
+		decodedName = filename // 如果解码失败，使用原始名称
+	}
+
+	// 获取 Content-Type
+	contentType := resp.Header.Get("Content-Type")
+
+	ext := strings.ToLower(filepath.Ext(decodedName))
+	if contentType == "" {
+		// 如果未提供 Content-Type，尝试从文件名推断
+		switch ext {
+		case ".png":
+			contentType = "image/png"
+		case ".jpg", ".jpeg":
+			contentType = "image/jpeg"
+		case ".gif":
+			contentType = "image/gif"
+		case ".webp":
+			contentType = "image/webp"
+		default:
+			contentType = "application/octet-stream" // 未知类型
+		}
+	}
+	if kbID == "" {
+		kbID = "default_kbID"
+	}
+	imgName := fmt.Sprintf("%s/%s%s", kbID, uuid.New().String(), ext)
+
+	c.minioClient.PutObject(
+		ctx,
+		domain.Bucket,
+		imgName,
+		bytes.NewReader(data),
+		int64(len(data)),
+		minio.PutObjectOptions{
+			ContentType: contentType,
+			UserMetadata: map[string]string{
+				"originalname": decodedName,
+			},
+		},
+	)
+	return fmt.Sprintf("/%s/%s", domain.Bucket, imgName), nil
 }
