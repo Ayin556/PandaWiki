@@ -162,7 +162,7 @@ const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddB
       const data = await getNotionIntegration({ integration: url })
       for (const item of data) {
         newQueue.push(async () => {
-          const res = await getNotionIntegrationDetail({ pages: [item], integration: url })
+          const res = await getNotionIntegrationDetail({ pages: [item], integration: url, kb_id })
           setItems(prev => [...prev, { ...res[0], url: item.id, success: -1, id: '' }])
         })
       }

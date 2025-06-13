@@ -107,7 +107,7 @@ export const scrapeSitemap = (data: { url: string }): Promise<{ items: ScrapeRSS
 export const getNotionIntegration = (data: { integration: string }): Promise<{ id: string, title: string }[]> =>
   request({ url: 'api/v1/crawler/notion/get_list', method: 'post', data })
 
-export const getNotionIntegrationDetail = (data: { pages: { id: string, title: string }[], integration: string }): Promise<{ content: string, title: string }[]> =>
+export const getNotionIntegrationDetail = (data: { pages: { id: string, title: string }[], integration: string, kb_id: string }): Promise<{ content: string, title: string }[]> =>
   request({ url: 'api/v1/crawler/notion/get_doc', method: 'post', data })
 
 // =============================================》file
