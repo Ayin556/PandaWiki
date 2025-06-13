@@ -87,7 +87,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
                 level: 2,
                 type: 2,
                 isEditting: true,
-                parentId: item.i/*  */d,
+                parentId: item.id,
               }
             ]
           });
