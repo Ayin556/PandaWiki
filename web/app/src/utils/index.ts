@@ -1,4 +1,5 @@
 import { message } from "ct-mui";
+import { ResolvingMetadata } from "next";
 
 export function addOpacityToColor(color: string, opacity: number) {
   let red, green, blue;
@@ -111,3 +112,27 @@ export const extractHeadings = (html: string) => {
     };
   });
 }
+
+
+export const formatMeta = async (
+  {
+    title,
+    description,
+    keywords,
+  }: { title?: string; description?: string; keywords?: string | string[] },
+  parent: ResolvingMetadata 
+) => {
+  const keywordsIsEmpty =
+    !keywords || (Array.isArray(keywords) && !keywords.length);
+  const {
+    title: parentTitle,
+    description: parentDescription,
+    keywords: parentKeywords,
+  } = await parent;
+
+  return {
+    title: title ? `${parentTitle?.absolute} - ${title}` : parentTitle,
+    description: description || parentDescription,
+    keywords: keywordsIsEmpty ? parentKeywords : keywords,
+  };
+};

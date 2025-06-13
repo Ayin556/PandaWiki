@@ -1,9 +1,27 @@
 import { NodeDetail } from "@/assets/type";
+import { formatMeta } from "@/utils";
 import Doc from "@/views/node";
+import { ResolvingMetadata } from "next";
 import { headers } from "next/headers";
 
 export interface PageProps {
   params: Promise<{ id: string }>
+}
+
+export async function generateMetadata(
+  { params }: PageProps,
+  parent: ResolvingMetadata
+) {
+  const { id } = await params;
+  const headersList = await headers();
+  const kb_id = headersList.get('x-kb-id') || process.env.DEV_KB_ID || '';
+  const node = await getNodeDetail(id, kb_id);
+  return await formatMeta(
+    {
+      title: node?.name,
+    },
+    parent
+  );
 }
 
 async function getNodeDetail(id: string, kb_id: string) {
