@@ -54,7 +54,8 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
         label: '创建文件夹',
         key: 'folder',
         onClick: () => {
-          setItems(items.map(i => (i.id === item.id) ? ({
+          const temp = [...items];
+          updateTree(temp, item.id, {
             ...item,
             children: [
               ...(item.children ?? []),
@@ -67,14 +68,16 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
                 parentId: item.id,
               }
             ]
-          }) : i))
+          });
+          setItems(temp);
         }
       },
       {
         label: '创建文档',
         key: 'doc',
         onClick: () => {
-          setItems(items.map(i => (i.id === item.id) ? ({
+          const temp = [...items];
+          updateTree(temp, item.id, {
             ...item,
             children: [
               ...(item.children ?? []),
@@ -87,7 +90,8 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
                 parentId: item.id,
               }
             ]
-          }) : i))
+          });
+          setItems(temp);
         }
       },
       {
