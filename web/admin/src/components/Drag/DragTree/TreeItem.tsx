@@ -77,21 +77,21 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
         key: 'doc',
         onClick: () => {
           const temp = [...items];
-           updateTree(temp, item.id, {
-              ...item,
-              children: [
-                ...(item.children ?? []),
-                {
-                  id: `${items.length + 10}`,
-                  name: "",
-                  level: 2,
-                  type: 2,
-                  isEditting: true,
-                  parentId: item.id,
-                }
-              ]
-           });
-           setItems(temp);
+          updateTree(temp, item.id, {
+            ...item,
+            children: [
+              ...(item.children ?? []),
+              {
+                id: `${items.length + 10}`,
+                name: "",
+                level: 2,
+                type: 2,
+                isEditting: true,
+                parentId: item.i/*  */d,
+              }
+            ]
+          });
+          setItems(temp);
         }
       },
       {
