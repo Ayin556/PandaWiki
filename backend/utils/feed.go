@@ -8,11 +8,17 @@ import (
 )
 
 // FeedItem represents a single item in any feed format
+// FeedItem 表示任意Feed格式中的单个条目
+// 字段说明：
+// Title: 条目标题
+// Link: 条目链接（URL）
+// Description: 条目描述内容
+// Published: 发布时间（字符串格式，具体格式由Feed源决定）
 type FeedItem struct {
-	Title       string
-	Link        string
-	Description string
-	Published   string
+	Title       string // 条目标题
+	Link        string // 条目链接URL
+	Description string // 条目描述内容
+	Published   string // 发布时间（字符串格式）
 }
 
 // Feed represents a generic feed structure
@@ -35,7 +41,12 @@ func cleanXMLContent(content string) string {
 	}, content)
 }
 
-// ParseFeed parses a feed URL and returns a generic Feed structure
+// ParseFeed 解析指定URL的Feed内容，返回通用Feed结构
+// 参数：
+// url: 要解析的Feed内容URL
+// 返回值：
+// *Feed: 解析后的通用Feed结构（包含标题、描述、链接和条目列表）
+// error: 解析过程中出现的错误（网络错误、格式不支持等）
 func ParseFeed(url string) (*Feed, error) {
 	// Get feed content
 	content, err := HTTPGet(url)
@@ -61,7 +72,10 @@ func ParseFeed(url string) (*Feed, error) {
 	return nil, fmt.Errorf("unsupported feed format")
 }
 
-// parseRSS parses RSS format
+// parseRSS 解析RSS格式（如RSS 2.0）的内容
+// 参数：content - RSS格式的字节内容
+// 返回值：解析后的通用Feed结构或错误
+// 注意：处理链接时按以下优先级获取：link标签的href属性 > link标签文本值 > Atom扩展链接 > Guid（永久链接）
 func parseRSS(content []byte) (*Feed, error) {
 	type RSSFeed struct {
 		XMLName xml.Name `xml:"rss"`
@@ -130,7 +144,10 @@ func parseRSS(content []byte) (*Feed, error) {
 	return feed, nil
 }
 
-// parseAtom parses Atom format
+// parseAtom 解析Atom 1.0格式的内容
+// 参数：content - Atom格式的字节内容
+// 返回值：解析后的通用Feed结构或错误
+// 注意：Feed链接取第一个link元素的href属性（建议优先使用rel="alternate"的链接）
 func parseAtom(content []byte) (*Feed, error) {
 	type AtomFeed struct {
 		XMLName  xml.Name `xml:"feed"`
@@ -179,7 +196,10 @@ func parseAtom(content []byte) (*Feed, error) {
 	return feed, nil
 }
 
-// parseJSONFeed parses JSON Feed format
+// parseJSONFeed 解析JSON Feed格式（如1.1版本）的内容
+// 参数：content - JSON Feed格式的字节内容
+// 返回值：解析后的通用Feed结构或错误
+// 字段映射：home_page_url -> Feed.Link; date_published -> FeedItem.Published
 func parseJSONFeed(content []byte) (*Feed, error) {
 	type JSONFeed struct {
 		Version     string `json:"version"`
