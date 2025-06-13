@@ -13,4 +13,5 @@ type PageInfo struct {
 type GetDocsReq struct {
 	Integration string     `json:"integration"`
 	PageIDs     []PageInfo `json:"pages"`
+	KbID        string     `json:"kb_id" binding:"required"`
 }

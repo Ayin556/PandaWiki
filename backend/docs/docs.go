@@ -2289,6 +2289,9 @@ const docTemplate = `{
                 "integration": {
                     "type": "string"
                 },
+                "kb_id": {
+                    "type": "string"
+                },
                 "pages": {
                     "type": "array",
                     "items": {

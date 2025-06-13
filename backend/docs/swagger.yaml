@@ -396,6 +396,8 @@ definitions:
     properties:
       integration:
         type: string
+      kb_id:
+        type: string
       pages:
         items:
           $ref: '#/definitions/domain.PageInfo'
