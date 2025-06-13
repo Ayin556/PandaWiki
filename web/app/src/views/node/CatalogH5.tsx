@@ -32,6 +32,12 @@ const CatalogH5 = ({
     }
   }, [open])
 
+  const onCatalogClick = (id: string) => {
+    onChange(id)
+    setOpen(false)
+  }
+
+
   return <Box sx={{
     position: 'fixed',
     top: '60px',
@@ -98,7 +104,7 @@ const CatalogH5 = ({
       scrollbarWidth: 'none',
     }}>
       <Box sx={{ py: 3 }}>
-        {tree.map((item) => <CatalogFolder key={item.id} item={item} activeId={activeId} onChange={onChange} />)}
+        {tree.map((item) => <CatalogFolder key={item.id} item={item} activeId={activeId} onChange={onCatalogClick} />)}
       </Box>
     </Box>
   </Box>

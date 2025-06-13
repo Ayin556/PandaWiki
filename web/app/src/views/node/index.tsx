@@ -13,6 +13,7 @@ import Catalog from "./Catalog";
 import CatalogH5 from "./CatalogH5";
 import DocAnchor from "./DocAnchor";
 import DocContent from "./DocContent";
+import useScroll from "./useScroll";
 
 const Doc = ({ node: defaultNode }: { node?: NodeDetail }) => {
   const { id: defaultId } = useParams()
@@ -30,6 +31,8 @@ const Doc = ({ node: defaultNode }: { node?: NodeDetail }) => {
     content: node?.content || '',
     editable: false,
   })
+
+  const { activeHeading } = useScroll(headings)
 
   const [showScrollTop, setShowScrollTop] = useState(false);
 
@@ -108,7 +111,7 @@ const Doc = ({ node: defaultNode }: { node?: NodeDetail }) => {
   return <Stack direction='row' alignItems={'stretch'} sx={{ mt: '92px', position: 'relative', zIndex: 1, minHeight: 'calc(100vh - 132px)' }}>
     {nodeList && <Catalog activeId={id} nodes={nodeList} onChange={setId} />}
     {node && <DocContent info={node} editorRef={editorRef} />}
-    {node && <DocAnchor title={node?.name} headings={headings} maxH={maxH} />}
+    {node && <DocAnchor title={node?.name} headings={headings} maxH={maxH} activeHeading={activeHeading} />}
     <Zoom in={showScrollTop}>
       <Fab
         size="small"
