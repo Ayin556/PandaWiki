@@ -1,5 +1,6 @@
 "use client";
 
+import { useTheme, useMediaQuery } from '@mui/material';
 import { createContext, useContext } from 'react';
 
 export const MobileContext = createContext<{
@@ -17,5 +18,9 @@ export default function MobileProvider({
   children: React.ReactNode
   mobile?: boolean
 }) {
-  return <MobileContext.Provider value={{ mobile }}>{children}</MobileContext.Provider>
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'), {
+    defaultMatches: mobile,
+  });
+  return <MobileContext.Provider value={{ mobile: isMobile }}>{children}</MobileContext.Provider>
 }
