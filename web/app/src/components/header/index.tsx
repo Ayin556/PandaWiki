@@ -2,7 +2,7 @@
 
 import docHeaderBgi from '@/assets/images/doc-header-bg.png';
 import h5HeaderBgi from '@/assets/images/h5-header-bg.png';
-import headerBgi from '@/assets/images/header-bg.png';
+import headerBgi from '@/assets/images/header-bg.jpg';
 import { useKBDetail } from '@/provider/kb-provider';
 import { useMobile } from '@/provider/mobile-provider';
 import { Box, Button, IconButton, Stack, TextField } from "@mui/material";

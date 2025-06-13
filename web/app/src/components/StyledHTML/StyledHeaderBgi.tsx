@@ -1,6 +1,6 @@
 'use client';
 
-import headerBgi from '@/assets/images/header-bg.png';
+import headerBgi from '@/assets/images/header-bg.jpg';
 import { styled } from '@mui/material';
 
 const StyledHeaderBgi = styled('div')(({ height = '573px', bgi = headerBgi.src }: { height?: string, bgi?: string }) => ({
