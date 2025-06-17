@@ -49,7 +49,7 @@ const PageChange = () => {
       bgcolor: 'transparent',
       border: '1px solid',
       borderColor: 'primary.main',
-      height: 36.5,
+      height: 36,
       p: '2px',
       borderRadius: '6px',
       '.MuiTab-root': {
@@ -61,12 +61,12 @@ const PageChange = () => {
         }
       },
       '.MuiTabs-scroller': {
-        height: 30.5,
+        height: 30,
         borderRadius: '4px',
       },
       '.MuiTabs-indicator': {
         width: 88,
-        height: 30.5,
+        height: 30,
         borderRadius: '4px',
         bgcolor: 'primary.main',
       }

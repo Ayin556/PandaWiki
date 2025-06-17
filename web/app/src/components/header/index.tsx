@@ -1,6 +1,5 @@
 "use client"
 
-import docHeaderBgi from '@/assets/images/doc-header-bg.png';
 import h5HeaderBgi from '@/assets/images/h5-header-bg.png';
 import headerBgi from '@/assets/images/header-bg.jpg';
 import { useKBDetail } from '@/provider/kb-provider';
@@ -21,11 +20,10 @@ const Header = () => {
   const pathname = usePathname();
   const [searchValue, setSearchValue] = useState('');
 
-  const isDoc = pathname.includes('/node')
   const isChat = pathname.includes('/chat')
 
-  const bgi = isDoc ? docHeaderBgi.src : mobile ? h5HeaderBgi.src : headerBgi.src
-  const bgiHeight = (isDoc || !mobile) ? '573px' : '326px'
+  const bgi = mobile ? h5HeaderBgi.src : headerBgi.src
+  const bgiHeight = !mobile ? '573px' : '326px'
   const headerHeight = mobile ? '60px' : '68px'
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -38,9 +36,9 @@ const Header = () => {
   };
 
   return <>
-    <StyledHeaderBgi height={bgiHeight} bgi={bgi} />
+    {!isChat && <StyledHeaderBgi height={bgiHeight} bgi={bgi} />}
     <StyledAppBar position='fixed'>
-      <Box sx={{ height: headerHeight, overflow: 'hidden', position: 'fixed', top: 0, left: 0, right: 0 }}>
+      {!isChat && <Box sx={{ height: headerHeight, overflow: 'hidden', position: 'fixed', top: 0, left: 0, right: 0 }}>
         <StyledHeaderBgi
           bgi={bgi}
           height={bgiHeight}
@@ -50,7 +48,7 @@ const Header = () => {
             zIndex: 1,
           }}
         />
-      </Box>
+      </Box>}
       <StyledContainer sx={{
         zIndex: 1,
         ...(mobile && {

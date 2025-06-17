@@ -1,13 +1,11 @@
 'use client';
 
-import IconAnswer from '@/assets/images/answer.png';
 import { ChunkResultItem } from '@/assets/type';
 import { useMobile } from '@/provider/mobile-provider';
 import { isInIframe } from '@/utils';
 import SSEClient from '@/utils/fetch';
 import { Box, Stack } from '@mui/material';
 import { message } from 'ct-mui';
-import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import ChatResult from './ChatResult';
@@ -28,7 +26,7 @@ const Chat = () => {
     chunk_result: ChunkResultItem[];
   }> | null>(null);
 
-  const [conversation, setConversation] = useState<any[]>([]);
+  const [conversation, setConversation] = useState<{ q: string, a: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const [thinking, setThinking] = useState<keyof typeof AnswerStatus>(4);
   const [nonce, setNonce] = useState('');
@@ -105,11 +103,8 @@ const Chat = () => {
 
   const onSearch = (q: string, reset: boolean = false) => {
     if (loading || !q.trim()) return;
-    const newConversation = reset ? [] : [...conversation];
-    if (answer) {
-      newConversation.push({ role: 'assistant', content: answer });
-    }
-    newConversation.push({ role: 'user', content: q });
+    const newConversation = reset ? [] : [...conversation.slice(0, -1), { ...conversation[conversation.length - 1], a: answer }];
+    newConversation.push({ q, a: '' });
     setConversation(newConversation);
     setAnswer('');
     setTimeout(() => {
@@ -182,19 +177,7 @@ const Chat = () => {
   return (
     <Box sx={{ pt: 12, minHeight: 'calc(100vh - 40px)' }}>
       <Stack alignItems="stretch" direction="row" gap={3}>
-        <Box sx={{ position: 'relative', width: 'calc((100% - 24px) * 0.6)' }}>
-          <Stack direction='row' gap={1} alignItems='center' sx={{
-            fontSize: '20px',
-            fontWeight: '700',
-            lineHeight: '28px',
-            mb: 2,
-            height: '28px',
-          }}>
-            <Box>
-              <Image src={IconAnswer.src} alt='智能回答' width={24} height={24} />
-            </Box>
-            智能回答
-          </Stack>
+        <Box sx={{ position: 'relative', flex: 1 }}>
           <ChatResult
             conversation={conversation}
             answer={answer}
@@ -205,7 +188,15 @@ const Chat = () => {
             handleSearchAbort={handleSearchAbort}
           />
         </Box>
-        <Box sx={{ width: 'calc((100% - 24px) * 0.4)' }}>
+        <Box sx={{
+          flexShrink: 0,
+          width: 388,
+          border: '1px solid',
+          borderColor: 'divider',
+          borderRadius: '10px',
+          p: 3,
+          bgcolor: 'background.paper',
+        }}>
           <Box sx={{
             fontSize: '20px',
             fontWeight: '700',

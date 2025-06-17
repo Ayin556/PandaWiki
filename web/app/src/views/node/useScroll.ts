@@ -12,6 +12,7 @@ const useScroll = (headings: Heading[]) => {
   useEffect(() => {
     const levels = Array.from(new Set(headings.map(it => it.heading).sort((a, b) => a - b))).slice(0, 3)
     const showHeader = headings.filter(header => levels.includes(header.heading))
+
     const handleScroll = () => {
       const offset = 80
       const scrollPosition = window.scrollY + offset
@@ -25,26 +26,28 @@ const useScroll = (headings: Heading[]) => {
 
       if (activeHeader) {
         setActiveHeading(activeHeader)
-        location.hash = activeHeader.title
+        location.hash = activeHeader.title + '__' + activeHeader.id.split('heading-')[1]
       }
     }
 
-    const hash = decodeURI(location.hash.slice(1));
-    if (hash) {
-      const activeHeader = showHeader.find(header => header.title === hash)
+    const hash = decodeURI(location.hash.slice(1)) || '';
+    const id = hash.split('__')[1] || ''
+    if (id) {
+      const activeHeader = showHeader.find(header => header.id === `heading-${id}`)
       if (activeHeader) {
         setActiveHeading(activeHeader)
         const element = document.getElementById(activeHeader.id)
-        if (element)  {
+        if (element) {
           const offset = 80;
           const elementPosition = element.getBoundingClientRect().top;
           const offsetPosition = elementPosition + window.scrollY - offset;
-    
+
           window.scrollTo({
             top: offsetPosition,
           });
         }
-      
+      } else {
+        location.hash = ''
       }
     }
 

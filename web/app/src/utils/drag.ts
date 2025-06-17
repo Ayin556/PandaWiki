@@ -38,3 +38,20 @@ export function convertToTree(data: NodeListItem[]) {
 
   return tree;
 }
+
+export const filterEmptyFolders = (data: ITreeItem[]): ITreeItem[] => {
+  return data
+    .map(item => {
+      if (item.children && item.children.length > 0) {
+        const filteredChildren = filterEmptyFolders(item.children)
+        return { ...item, children: filteredChildren }
+      }
+      return item
+    })
+    .filter(item => {
+      if (item.type === 1) {
+        return item.children && item.children.length > 0
+      }
+      return true
+    })
+}

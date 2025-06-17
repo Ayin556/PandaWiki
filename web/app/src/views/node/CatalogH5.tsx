@@ -48,6 +48,7 @@ const CatalogH5 = ({
   }}>
     <Box sx={{
       position: 'absolute',
+      zIndex: 1,
       top: 0,
       left: 0,
       right: 0,
@@ -70,9 +71,6 @@ const CatalogH5 = ({
         mx: 3,
         position: 'relative',
         zIndex: 2,
-        boxSizing: 'border-box',
-        borderBottom: '1px solid',
-        borderColor: 'divider',
       }}
       onClick={() => setOpen(!open)}>
       <Stack direction='row' alignItems='center' gap={1}>
