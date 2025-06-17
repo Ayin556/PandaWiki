@@ -13,9 +13,9 @@ interface CardCatalogProps {
 
 const CardCatalog = ({ id, data, refresh }: CardCatalogProps) => {
   const [isEdit, setIsEdit] = useState(false)
-  const { control, handleSubmit, formState: { errors }, watch, setValue } = useForm<CatalogSetting>({
+  const { control, handleSubmit, setValue } = useForm<CatalogSetting>({
     defaultValues: {
-      catalog_expanded: true,
+      catalog_expanded: 1,
     }
   })
 
@@ -28,7 +28,7 @@ const CardCatalog = ({ id, data, refresh }: CardCatalogProps) => {
   }
 
   useEffect(() => {
-    setValue('catalog_expanded', data.settings?.catalog_expanded || true)
+    setValue('catalog_expanded', data.settings?.catalog_expanded)
   }, [data])
 
   return <>
@@ -56,11 +56,11 @@ const CardCatalog = ({ id, data, refresh }: CardCatalogProps) => {
         control={control}
         name="catalog_expanded"
         render={({ field }) => <RadioGroup row {...field} onChange={(e) => {
-          field.onChange(e.target.value)
+          field.onChange(+e.target.value as 1 | 2)
           setIsEdit(true)
         }}>
-          <FormControlLabel value={true} control={<Radio size='small' />} label={<Box sx={{ width: 120 }}>默认展开</Box>} />
-          <FormControlLabel value={false} control={<Radio size='small' />} label={<Box sx={{ width: 120 }}>默认折叠</Box>} />
+          <FormControlLabel value={1} control={<Radio size='small' />} label={<Box sx={{ width: 120 }}>默认展开</Box>} />
+          <FormControlLabel value={2} control={<Radio size='small' />} label={<Box sx={{ width: 120 }}>默认折叠</Box>} />
         </RadioGroup>}
       />
     </Stack>

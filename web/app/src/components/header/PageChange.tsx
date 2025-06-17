@@ -14,11 +14,11 @@ const PageChange = () => {
   const { nodeList } = useNodeList()
   const tree = convertToTree(nodeList || [])
 
-  const [value, setValue] = useState('home');
+  const [value, setValue] = useState('welcome');
   const [firstNodeId, setFirstNodeId] = useState('')
 
   useEffect(() => {
-    setValue(pathname.split('/')[1] || 'home');
+    setValue(pathname.split('/')[1] || 'welcome');
   }, [pathname])
 
   useEffect(() => {
@@ -61,15 +61,15 @@ const PageChange = () => {
     }}
     value={value}
     change={(value: string) => {
-      if (value === 'home') {
-        router.push('/')
+      if (value === 'welcome') {
+        router.push('/welcome')
       } else {
         router.push(`/node/${firstNodeId}`)
       }
     }}
     list={[{
       label: '问答模式',
-      value: 'home',
+      value: 'welcome',
     }, {
       label: '文档模式',
       value: 'node',

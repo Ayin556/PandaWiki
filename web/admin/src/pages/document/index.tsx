@@ -25,6 +25,10 @@ const Content = () => {
   const search = searchParams.get('search') || ''
   const [supportSelect, setBatchOpen] = useState(false)
 
+  const [publish, setPublish] = useState({
+    published: 0,
+    unpublished: 0,
+  })
   const [list, setList] = useState<NodeListItem[]>([])
   const [selected, setSelected] = useState<string[]>([])
   const [data, setData] = useState<ITreeItem[]>([])
@@ -95,6 +99,11 @@ const Content = () => {
     if (search) params.search = search
     getNodeList(params).then(res => {
       setList(res || [])
+      const fileData = res.filter(it => it.type === 2)
+      setPublish({
+        unpublished: fileData.filter(it => it.status === 1).length,
+        published: fileData.filter(it => it.status === 2).length,
+      })
       const v = convertToTree(res || [])
       setData(v)
     })
@@ -120,7 +129,19 @@ const Content = () => {
   return <>
     <Card>
       <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'} sx={{ p: 2 }}>
-        <Box sx={{ fontSize: 16, fontWeight: 700 }}>目录</Box>
+        <Stack direction={'row'} alignItems={'center'} gap={0} sx={{ fontSize: 16, fontWeight: 700 }}>
+          <Box>目录</Box>
+          {publish.unpublished > 0 && <>
+            <Box sx={{ color: 'error.main', fontSize: 12, fontWeight: 'normal', ml: 2 }}>
+              {publish.unpublished} 个文档未发布，
+            </Box>
+            <Button size="small" sx={{ minWidth: 0, p: 0, fontSize: 12 }} onClick={() => {
+              setPublishOpen(true)
+            }}>
+              去发布
+            </Button>
+          </>}
+        </Stack>
         <Stack direction={'row'} alignItems={'center'} gap={2}>
           <DocSearch />
           <DocAdd refresh={getData} />
@@ -142,22 +163,6 @@ const Content = () => {
                   批量操作
                 </Stack>
               },
-              {
-                key: 'publish',
-                label: <Stack
-                  direction={'row'}
-                  alignItems={'center'}
-                  gap={1}
-                  sx={{
-                    fontSize: 14, px: 2, lineHeight: '40px', height: 40, width: 180,
-                    borderRadius: '5px',
-                    cursor: 'pointer', ':hover': { bgcolor: addOpacityToColor(theme.palette.primary.main, 0.1) }
-                  }}
-                  onClick={() => setPublishOpen(true)}
-                >
-                  批量发布
-                </Stack>
-              }
             ]}
             context={<Box>
               <IconButton size="small">

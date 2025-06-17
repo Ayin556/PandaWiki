@@ -14,7 +14,7 @@ const useScroll = (headings: Heading[]) => {
     const showHeader = headings.filter(header => levels.includes(header.heading))
 
     const handleScroll = () => {
-      const offset = 80
+      const offset = 64
       const scrollPosition = window.scrollY + offset
 
       const activeHeader = showHeader.find(header => {
@@ -26,14 +26,13 @@ const useScroll = (headings: Heading[]) => {
 
       if (activeHeader) {
         setActiveHeading(activeHeader)
-        location.hash = activeHeader.title + '__' + activeHeader.id
+        location.hash = activeHeader.title
       }
     }
 
-    const hash = decodeURI(location.hash.slice(1)) || '';
-    const id = hash.split('__')[1] || ''
-    if (id) {
-      const activeHeader = showHeader.find(header => header.id === id)
+    const hash = decodeURIComponent(location.hash) || '';
+    if (hash) {
+      const activeHeader = showHeader.find(header => header.title === hash.slice(1))
       if (activeHeader) {
         setActiveHeading(activeHeader)
         const element = document.getElementById(activeHeader.id)
@@ -46,8 +45,6 @@ const useScroll = (headings: Heading[]) => {
             top: offsetPosition,
           });
         }
-      } else {
-        location.hash = ''
       }
     }
 

@@ -38,7 +38,7 @@ const lightTheme = createTheme(
         primary: '#21222D',
         secondary: 'rgba(33,34,45, 0.7)',
         tertiary: 'rgba(33,34,45, 0.5)',
-        disabled: 'rgba(33,34,45, 0.2)',
+        disabled: 'rgba(33,34,45, 0.3)',
       },
       divider: '#ECEEF1',
     },

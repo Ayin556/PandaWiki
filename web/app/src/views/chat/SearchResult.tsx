@@ -30,7 +30,6 @@ const SearchResult = ({ list, loading }: { list: ChunkResultItem[], loading: boo
             '&:hover': {
               '.hover-primary': {
                 color: theme.vars.palette.primary.main,
-                fontWeight: '700',
               }
             }
           })}>

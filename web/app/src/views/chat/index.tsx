@@ -103,10 +103,14 @@ const Chat = () => {
 
   const onSearch = (q: string, reset: boolean = false) => {
     if (loading || !q.trim()) return;
-    const newConversation = reset ? [] : [...conversation.slice(0, -1), { ...conversation[conversation.length - 1], a: answer }];
+    const newConversation = reset ? [] : [...conversation.slice(0, -1)];
+    if (answer) {
+      newConversation.push({ q: conversation[conversation.length - 1].q, a: answer });
+    }
     newConversation.push({ q, a: '' });
     setConversation(newConversation);
     setAnswer('');
+    setChunkResult([]);
     setTimeout(() => {
       chatAnswer(q);
     }, 0);

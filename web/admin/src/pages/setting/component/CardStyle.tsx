@@ -13,15 +13,20 @@ interface CardStyleProps {
 
 const CardStyle = ({ id, data, refresh }: CardStyleProps) => {
   const [isEdit, setIsEdit] = useState(false)
-  const { control, handleSubmit, formState: { errors }, watch, setValue } = useForm<StyleSetting>({
+  const { control, handleSubmit, setValue } = useForm<StyleSetting>({
     defaultValues: {
       default_display_mode: 1,
-      mode_switch_visible: true,
+      mode_switch_visible: 1,
     }
   })
 
   const onSubmit = (value: StyleSetting) => {
-    updateAppDetail({ id }, { settings: { ...data.settings, ...value } }).then(() => {
+    updateAppDetail({ id }, {
+      settings: {
+        ...data.settings,
+        ...value
+      }
+    }).then(() => {
       refresh(value)
       Message.success('保存成功')
       setIsEdit(false)
@@ -29,8 +34,8 @@ const CardStyle = ({ id, data, refresh }: CardStyleProps) => {
   }
 
   useEffect(() => {
-    setValue('default_display_mode', data.settings?.default_display_mode || 1)
-    setValue('mode_switch_visible', data.settings?.mode_switch_visible || true)
+    setValue('default_display_mode', data.settings?.default_display_mode)
+    setValue('mode_switch_visible', data.settings?.mode_switch_visible)
   }, [data])
 
   return <>
@@ -58,7 +63,7 @@ const CardStyle = ({ id, data, refresh }: CardStyleProps) => {
         control={control}
         name="default_display_mode"
         render={({ field }) => <RadioGroup row {...field} onChange={(e) => {
-          field.onChange(e.target.value)
+          field.onChange(+e.target.value as 1 | 2)
           setIsEdit(true)
         }}>
           <FormControlLabel value={1} control={<Radio size='small' />} label={<Box sx={{ width: 120 }}>问答模式</Box>} />
@@ -72,11 +77,11 @@ const CardStyle = ({ id, data, refresh }: CardStyleProps) => {
         control={control}
         name="mode_switch_visible"
         render={({ field }) => <RadioGroup row {...field} onChange={(e) => {
-          field.onChange(e.target.value)
+          field.onChange(+e.target.value as 1 | 2)
           setIsEdit(true)
         }}>
-          <FormControlLabel value={true} control={<Radio size='small' />} label={<Box sx={{ width: 120 }}>展示切换按钮</Box>} />
-          <FormControlLabel value={false} control={<Radio size='small' />} label={<Box sx={{ width: 120 }}>隐藏切换按钮</Box>} />
+          <FormControlLabel value={1} control={<Radio size='small' />} label={<Box sx={{ width: 120 }}>展示切换按钮</Box>} />
+          <FormControlLabel value={2} control={<Radio size='small' />} label={<Box sx={{ width: 120 }}>隐藏切换按钮</Box>} />
         </RadioGroup>}
       />
     </Stack>

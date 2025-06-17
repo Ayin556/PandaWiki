@@ -23,9 +23,9 @@ export interface KBDetail {
     auto_sitemap: boolean,
     head_code: string,
     body_code: string,
-    catalog_expanded: boolean,
+    catalog_expanded: 1 | 2,
     default_display_mode: 1 | 2, // 1 是智能问答，2 是知识库
-    mode_switch_visible: boolean,
+    mode_switch_visible: 1 | 2,
   },
   recommend_nodes: RecommendNode[]
 }

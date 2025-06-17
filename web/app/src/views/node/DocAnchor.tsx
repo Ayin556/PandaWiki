@@ -1,7 +1,6 @@
 'use client'
 
 import { Box } from "@mui/material";
-import { Ellipsis } from "ct-mui";
 
 interface Heading {
   id: string
@@ -37,7 +36,7 @@ const DocAnchor = ({ title, headings, activeHeading }: DocAnchorProps) => {
         top: offsetPosition,
         behavior: 'smooth'
       });
-      location.hash = heading.title + '__' + heading.id
+      location.hash = encodeURIComponent(heading.title)
     }
   };
 
@@ -61,7 +60,7 @@ const DocAnchor = ({ title, headings, activeHeading }: DocAnchorProps) => {
       mb: 1,
       color: 'text.secondary',
     }}>
-      大纲
+      内容大纲
     </Box>}
     <Box sx={{
       maxHeight: 'calc(100vh - 174px)',
@@ -76,17 +75,20 @@ const DocAnchor = ({ title, headings, activeHeading }: DocAnchorProps) => {
     }}>
       {headings.filter(it => levels.includes(it.heading)).map((heading) => {
         const idx = levels.indexOf(heading.heading)
-        return <Ellipsis key={heading.id} arrow sx={{
+        return <Box key={heading.id} sx={{
           cursor: 'pointer',
           pl: idx * 2,
           ...HeadingSx[idx],
           color: activeHeading?.id === heading.id ? 'primary.main' : HeadingSx[idx].color,
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
           ':hover': {
             color: 'primary.main'
           }
         }} onClick={(e) => handleClick(e, heading)}>
           {heading.title}
-        </Ellipsis>
+        </Box>
       })}
     </Box>
   </Box>

@@ -8,7 +8,7 @@ import CatalogFolder from "./CatalogFolder";
 
 const Catalog = ({ nodes, activeId, onChange }: { nodes: NodeListItem[], activeId: string, onChange: (id: string) => void }) => {
   const { kbDetail } = useKBDetail()
-  const catalogFolderExpand = kbDetail?.settings?.catalog_expanded || true
+  const catalogFolderExpand = kbDetail?.settings?.catalog_expanded !== 2
   const tree = addExpandState(filterEmptyFolders(convertToTree(nodes) || []), activeId, catalogFolderExpand)
 
   return <Box sx={{
@@ -22,6 +22,7 @@ const Catalog = ({ nodes, activeId, onChange }: { nodes: NodeListItem[], activeI
     borderColor: 'divider',
     lineHeight: '22px',
     color: 'text.primary',
+    bgcolor: 'background.paper',
   }}>
     <Box sx={{
       px: 2,

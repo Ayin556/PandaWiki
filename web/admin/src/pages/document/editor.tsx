@@ -151,7 +151,7 @@ const DocEditor = () => {
         position: 'relative',
         zIndex: 1,
         '.editor-container': {
-          p: 8,
+          p: 4,
           borderRadius: '6px',
           bgcolor: '#fff',
           minHeight: 'calc(100vh - 121px)',

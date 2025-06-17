@@ -1,4 +1,4 @@
-import { addRelease, getNodeList, ITreeItem } from "@/api";
+import { addRelease, getNodeList, ITreeItem, NodeListItem } from "@/api";
 import Card from "@/components/Card";
 import DragTree from "@/components/Drag/DragTree";
 import { convertToTree } from "@/constant/drag";
@@ -6,7 +6,8 @@ import { useAppSelector } from "@/store";
 import { filterEmptyFolders, getFlattenIds } from "@/utils/tree";
 import { Box, Checkbox, Stack, TextField } from "@mui/material";
 import { Message, Modal } from "ct-mui";
-import { useEffect, useState } from "react";
+import dayjs from "dayjs";
+import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 interface VersionPublishProps {
@@ -23,8 +24,10 @@ const VersionPublish = ({ open, defaultSelected = [], onClose, refresh }: Versio
   const [folderIds, setFolderIds] = useState<string[]>([])
   const [allIds, setAllIds] = useState<string[]>([])
   const [treeList, setTreeList] = useState<ITreeItem[]>([])
+  const [total, setTotal] = useState(0)
+  const [list, setList] = useState<NodeListItem[]>([])
 
-  const { handleSubmit, control, formState: { errors }, reset } = useForm({
+  const { handleSubmit, control, formState: { errors }, reset, setValue } = useForm({
     defaultValues: {
       tag: '',
       message: '',
@@ -35,6 +38,9 @@ const VersionPublish = ({ open, defaultSelected = [], onClose, refresh }: Versio
   const getData = () => {
     getNodeList({ kb_id }).then(res => {
       const unPublishedData = res?.filter(item => (item.status === 1 || item.type === 1)) || []
+      setList(unPublishedData)
+      setTotal(unPublishedData.filter(item => item.type === 2).length)
+      // const unPublishedData = res?.filter(item => (item.status === 1 || item.type === 1)) || []
       const treeData = convertToTree(unPublishedData || [])
       const showTreeData = filterEmptyFolders(treeData)
       setTreeList(showTreeData)
@@ -53,7 +59,7 @@ const VersionPublish = ({ open, defaultSelected = [], onClose, refresh }: Versio
         refresh()
       })
     } else {
-      Message.error(allIds.length > 0 ? '请选择要发布的文档' : '暂无未发布文档')
+      Message.error(total > 0 ? '请选择要发布的文档' : '暂无未发布文档')
     }
   }
 
@@ -61,8 +67,14 @@ const VersionPublish = ({ open, defaultSelected = [], onClose, refresh }: Versio
     if (open) {
       setSelected(defaultSelected);
       getData();
+      setValue('tag', `${dayjs().format('YYYYMMDD')}-${Math.random().toString(36).substring(2, 8)}`)
+      setValue('message', `${dayjs().format('YYYY 年 MM 月 DD 日 HH 时 mm 分 ss 秒')}发布`)
     }
   }, [open, kb_id]);
+
+  const selectedTotal = useMemo(() => {
+    return list.filter(item => selected.includes(item.id) && item.type === 2).length;
+  }, [selected, list]);
 
   return <Modal
     title='发布新版本'
@@ -88,7 +100,10 @@ const VersionPublish = ({ open, defaultSelected = [], onClose, refresh }: Versio
           helperText={errors.tag?.message}
         />}
       />
-      <Box sx={{ fontSize: 14, lineHeight: '32px', mt: 1 }}>版本描述</Box>
+      <Box sx={{ fontSize: 14, lineHeight: '32px', mt: 1 }}>
+        版本描述
+        <Box component='span' sx={{ color: 'error.main', ml: 0.5 }}>*</Box>
+      </Box>
       <Controller
         control={control}
         name='message'
@@ -113,16 +128,16 @@ const VersionPublish = ({ open, defaultSelected = [], onClose, refresh }: Versio
         mt: 1,
       }}>
         <Box>
-          更新未发布文档
+          未发布文档
           <Box component='span' sx={{ color: 'text.auxiliary', fontSize: 12, pl: 1 }}>
-            共 {allIds.length} 个，已选中 {selected.length} 个
+            共 {total} 个，已选中 {selectedTotal} 个
           </Box>
         </Box>
         <Stack direction='row' alignItems={'center'}>
           <Box sx={{ color: 'text.auxiliary', fontSize: 12 }}>全选</Box>
           <Checkbox size='small' sx={{ p: 0, color: 'text.disabled', width: '35px', height: '35px' }}
-            checked={selected.length === allIds.length} onChange={() => {
-              setSelected(selected.length === allIds.length ? [] : allIds)
+            checked={selectedTotal === total} onChange={() => {
+              setSelected(selectedTotal === total ? [] : list.map(item => item.id))
             }} />
         </Stack>
       </Stack>
@@ -148,7 +163,7 @@ const VersionPublish = ({ open, defaultSelected = [], onClose, refresh }: Versio
             onChange={field.onChange}
           />}
         />
-        <Box>当前选中文档自动生成摘要</Box>
+        <Box>为当前选中文档自动生成摘要</Box>
       </Stack>
     </>
   </Modal>

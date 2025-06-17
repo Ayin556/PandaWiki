@@ -268,11 +268,11 @@ export type CustomCodeSetting = {
 
 export type StyleSetting = {
   default_display_mode: 1 | 2,
-  mode_switch_visible: boolean,
+  mode_switch_visible: 1 | 2,
 }
 
 export type CatalogSetting = {
-  catalog_expanded: boolean,
+  catalog_expanded: 1 | 2,
 }
 
 export type AppSetting = HeaderSetting & WelcomeSetting & SEOSetting & CustomCodeSetting & DingBotSetting & WecomBotSetting & FeishuBotSetting & StyleSetting & CatalogSetting & {
