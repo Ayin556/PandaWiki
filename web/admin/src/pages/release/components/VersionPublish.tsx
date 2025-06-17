@@ -92,6 +92,7 @@ const VersionPublish = ({ open, defaultSelected = [], onClose, refresh }: Versio
       <Controller
         control={control}
         name='message'
+        rules={{ required: '版本描述不能为空' }}
         render={({ field }) => <TextField
           {...field}
           fullWidth
@@ -99,6 +100,8 @@ const VersionPublish = ({ open, defaultSelected = [], onClose, refresh }: Versio
           rows={2}
           size='small'
           placeholder='请输入版本描述'
+          error={!!errors.message}
+          helperText={errors.message?.message}
         />}
       />
       <Stack direction='row' component='label' alignItems={'center'} justifyContent={'space-between'} gap={1} sx={{

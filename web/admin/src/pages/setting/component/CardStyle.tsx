@@ -15,8 +15,8 @@ const CardStyle = ({ id, data, refresh }: CardStyleProps) => {
   const [isEdit, setIsEdit] = useState(false)
   const { control, handleSubmit, formState: { errors }, watch, setValue } = useForm<StyleSetting>({
     defaultValues: {
-      default_mode: 1,
-      visible_mode_switch: true,
+      default_display_mode: 1,
+      mode_switch_visible: true,
     }
   })
 
@@ -29,8 +29,8 @@ const CardStyle = ({ id, data, refresh }: CardStyleProps) => {
   }
 
   useEffect(() => {
-    setValue('default_mode', data.settings?.default_mode || 1)
-    setValue('visible_mode_switch', data.settings?.visible_mode_switch || true)
+    setValue('default_display_mode', data.settings?.default_display_mode || 1)
+    setValue('mode_switch_visible', data.settings?.mode_switch_visible || true)
   }, [data])
 
   return <>
@@ -56,7 +56,7 @@ const CardStyle = ({ id, data, refresh }: CardStyleProps) => {
       <Box sx={{ fontSize: 14, lineHeight: '32px' }}>默认模式</Box>
       <Controller
         control={control}
-        name="default_mode"
+        name="default_display_mode"
         render={({ field }) => <RadioGroup row {...field} onChange={(e) => {
           field.onChange(e.target.value)
           setIsEdit(true)
@@ -70,7 +70,7 @@ const CardStyle = ({ id, data, refresh }: CardStyleProps) => {
       <Box sx={{ fontSize: 14, lineHeight: '32px' }}>页面模式切换按钮</Box>
       <Controller
         control={control}
-        name="visible_mode_switch"
+        name="mode_switch_visible"
         render={({ field }) => <RadioGroup row {...field} onChange={(e) => {
           field.onChange(e.target.value)
           setIsEdit(true)

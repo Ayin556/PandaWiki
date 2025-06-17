@@ -15,7 +15,7 @@ const CardCatalog = ({ id, data, refresh }: CardCatalogProps) => {
   const [isEdit, setIsEdit] = useState(false)
   const { control, handleSubmit, formState: { errors }, watch, setValue } = useForm<CatalogSetting>({
     defaultValues: {
-      catalog_expend: true,
+      catalog_expanded: true,
     }
   })
 
@@ -28,7 +28,7 @@ const CardCatalog = ({ id, data, refresh }: CardCatalogProps) => {
   }
 
   useEffect(() => {
-    setValue('catalog_expend', data.settings?.catalog_expend || true)
+    setValue('catalog_expanded', data.settings?.catalog_expanded || true)
   }, [data])
 
   return <>
@@ -54,7 +54,7 @@ const CardCatalog = ({ id, data, refresh }: CardCatalogProps) => {
       <Box sx={{ fontSize: 14, lineHeight: '32px' }}>导航中的文件夹</Box>
       <Controller
         control={control}
-        name="catalog_expend"
+        name="catalog_expanded"
         render={({ field }) => <RadioGroup row {...field} onChange={(e) => {
           field.onChange(e.target.value)
           setIsEdit(true)
