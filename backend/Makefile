@@ -1,5 +1,8 @@
 generate:
-	swag fmt && swag init -g cmd/api/main.go --pd && wire cmd/api/wire.go && wire cmd/consumer/wire.go
+	swag fmt && swag init -g cmd/api/main.go --pd \
+	&& wire cmd/api/wire.go \
+	&& wire cmd/consumer/wire.go \
+	&& wire cmd/migrate/wire.go
 
 SEQ_NAME=init
 migrate_sql:

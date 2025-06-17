@@ -9,9 +9,9 @@ var TopicConsumerName = map[string]string{
 	VectorTaskTopic: "panda-wiki-vector-consumer",
 }
 
-type NodeContentVectorRequest struct {
-	KBID   string `json:"kb_id"`
-	ID     string `json:"id"`
-	DocID  string `json:"doc_id"`
-	Action string `json:"action"` // upsert, delete
+type NodeReleaseVectorRequest struct {
+	KBID          string `json:"kb_id"`
+	NodeReleaseID string `json:"node_release_id"`
+	DocID         string `json:"doc_id"` // for delete
+	Action        string `json:"action"` // upsert, delete, summary
 }

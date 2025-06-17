@@ -7,6 +7,7 @@ import (
 	mqRepo "github.com/chaitin/panda-wiki/repo/mq"
 	"github.com/chaitin/panda-wiki/repo/pg"
 	"github.com/chaitin/panda-wiki/store/rag"
+	"github.com/chaitin/panda-wiki/store/s3"
 )
 
 var ProviderSet = wire.NewSet(
@@ -14,6 +15,7 @@ var ProviderSet = wire.NewSet(
 	mqRepo.ProviderSet,
 	ipdb.ProviderSet,
 	rag.ProviderSet,
+	s3.ProviderSet,
 
 	NewLLMUsecase,
 	NewNodeUsecase,
@@ -27,4 +29,5 @@ var ProviderSet = wire.NewSet(
 	NewCreationUsecase,
 	NewNotionUsecase,
 	NewEpubUsecase,
+	NewFileUsecase,
 )
