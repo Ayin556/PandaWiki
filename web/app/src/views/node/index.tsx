@@ -15,6 +15,7 @@ import CatalogH5 from "./CatalogH5";
 import DocAnchor from "./DocAnchor";
 import DocContent from "./DocContent";
 import DocHeader from "./DocHeader";
+import DocSearch from "./DocSearch";
 import useScroll from "./useScroll";
 
 const Doc = ({ node: defaultNode }: { node?: NodeDetail }) => {
@@ -72,7 +73,7 @@ const Doc = ({ node: defaultNode }: { node?: NodeDetail }) => {
 
   useEffect(() => {
     if (node) {
-      if (editorRef) {
+      if (editorRef && editorRef.editor) {
         editorRef.setContent(node?.content || '').then((headings) => {
           setHeadings(headings)
         })
@@ -86,9 +87,10 @@ const Doc = ({ node: defaultNode }: { node?: NodeDetail }) => {
   }, [id])
 
   if (mobile) {
-    return <Box sx={{ mt: '60px', position: 'relative', zIndex: 1, minHeight: 'calc(100vh - 201px)' }}>
+    return <Box sx={{ mt: '60px', position: 'relative', zIndex: 1, minHeight: 'calc(100vh - 42px)' }}>
       <Header />
       {nodeList && <CatalogH5 activeId={id} nodes={nodeList} onChange={setId} />}
+      <Box sx={{ height: 24 }} />
       {node && <DocContent info={node} editorRef={editorRef} />}
       <Zoom in={showScrollTop}>
         <Fab
@@ -113,6 +115,7 @@ const Doc = ({ node: defaultNode }: { node?: NodeDetail }) => {
     <Catalog activeId={id} nodes={nodeList || []} onChange={setId} />
     <DocHeader />
     <Box sx={{ pt: '96px', position: 'relative', zIndex: 1, minHeight: 'calc(100vh - 132px)' }}>
+      <DocSearch />
       <DocContent info={node} editorRef={editorRef} />
     </Box>
     <DocAnchor title={node?.name || ''} headings={headings} activeHeading={activeHeading} />

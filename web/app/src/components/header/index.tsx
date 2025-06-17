@@ -2,9 +2,11 @@
 
 import h5HeaderBgi from '@/assets/images/h5-header-bg.png';
 import headerBgi from '@/assets/images/header-bg.jpg';
+import Logo from '@/assets/images/logo.png';
 import { useKBDetail } from '@/provider/kb-provider';
 import { useMobile } from '@/provider/mobile-provider';
 import { Box, Button, IconButton, Stack, TextField } from "@mui/material";
+import Image from 'next/image';
 import Link from "next/link";
 import { usePathname, useRouter } from 'next/navigation';
 import { KeyboardEvent, useState } from 'react';
@@ -60,7 +62,8 @@ const Header = () => {
         <Stack direction='row' alignItems='center' justifyContent='space-between' sx={{ height: headerHeight }}>
           <Link href={'/'}>
             <Stack direction='row' alignItems='center' gap={1.5} sx={{ py: '20px', cursor: 'pointer' }} >
-              {kbDetail?.settings?.icon && <img src={kbDetail?.settings?.icon} alt='logo' width={32} height={32} />}
+              {kbDetail?.settings?.icon ? <img src={kbDetail?.settings?.icon} alt='logo' width={32} height={32} />
+                : <Image src={Logo.src} width={32} height={32} alt='logo' />}
               <Box sx={{ fontSize: 18 }}>{kbDetail?.settings?.title}</Box>
             </Stack>
           </Link>

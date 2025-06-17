@@ -1,9 +1,11 @@
+import Logo from '@/assets/images/logo.png';
 import NavBtns from "@/components/header/NavBtns";
 import PageChange from "@/components/header/PageChange";
 import { IconSearch } from "@/components/icons";
 import { useKBDetail } from "@/provider/kb-provider";
 import { useMobile } from "@/provider/mobile-provider";
 import { Box, Button, IconButton, Stack, TextField } from "@mui/material";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -42,7 +44,8 @@ const DocHeader = () => {
   }}>
     <Link href={'/'}>
       <Stack direction='row' alignItems='center' gap={1.5} sx={{ py: '20px', cursor: 'pointer' }} >
-        {kbDetail?.settings?.icon && <img src={kbDetail?.settings?.icon} alt='logo' width={32} height={32} />}
+        {kbDetail?.settings?.icon ? <img src={kbDetail?.settings?.icon} alt='logo' width={32} height={32} />
+          : <Image src={Logo.src} width={32} height={32} alt='logo' />}
         <Box sx={{ fontSize: 18 }}>{kbDetail?.settings?.title}</Box>
       </Stack>
     </Link>
@@ -63,7 +66,7 @@ const DocHeader = () => {
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="搜索..."
+          placeholder={kbDetail?.settings?.search_placeholder || "搜索..."}
           sx={{
             width: 300,
             height: 36,

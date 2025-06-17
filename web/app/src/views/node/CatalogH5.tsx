@@ -44,7 +44,7 @@ const CatalogH5 = ({
     left: 0,
     right: 0,
     width: '100%',
-    zIndex: 1,
+    zIndex: 2,
   }}>
     <Box sx={{
       position: 'absolute',

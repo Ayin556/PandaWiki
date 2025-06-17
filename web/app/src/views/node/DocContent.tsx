@@ -22,10 +22,12 @@ const DocContent = ({ info, editorRef }: { info?: NodeDetail, editorRef: UseTipt
     wordBreak: 'break-all',
     color: 'text.primary',
     padding: `0 24px`,
+    position: 'relative',
+    zIndex: 1,
     ...(mobile && {
       width: '100%',
       marginLeft: 0,
-      marginTop: '137px',
+      marginTop: '160px',
       table: {
         minWidth: 'auto !important',
       },

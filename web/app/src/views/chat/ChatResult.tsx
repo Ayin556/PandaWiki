@@ -83,6 +83,10 @@ const ChatResult = ({ conversation, answer, loading, thinking, onSearch, handleS
         bgcolor: 'background.default',
         borderRadius: '10px',
         boxShadow: '0px 4px 8px 4px rgba(54,59,76,0.06)',
+        ...(mobile && {
+          mx: 2,
+          mb: 1,
+        }),
       }}>
         <TextField
           fullWidth

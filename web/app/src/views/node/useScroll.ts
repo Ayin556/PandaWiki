@@ -26,14 +26,14 @@ const useScroll = (headings: Heading[]) => {
 
       if (activeHeader) {
         setActiveHeading(activeHeader)
-        location.hash = activeHeader.title + '__' + activeHeader.id.split('heading-')[1]
+        location.hash = activeHeader.title + '__' + activeHeader.id
       }
     }
 
     const hash = decodeURI(location.hash.slice(1)) || '';
     const id = hash.split('__')[1] || ''
     if (id) {
-      const activeHeader = showHeader.find(header => header.id === `heading-${id}`)
+      const activeHeader = showHeader.find(header => header.id === id)
       if (activeHeader) {
         setActiveHeading(activeHeader)
         const element = document.getElementById(activeHeader.id)

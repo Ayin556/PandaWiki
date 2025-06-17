@@ -37,7 +37,7 @@ const DocAnchor = ({ title, headings, activeHeading }: DocAnchorProps) => {
         top: offsetPosition,
         behavior: 'smooth'
       });
-      location.hash = heading.title + '__' + heading.id.split('heading-')[1]
+      location.hash = heading.title + '__' + heading.id
     }
   };
 
