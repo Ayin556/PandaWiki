@@ -1896,6 +1896,14 @@ const docTemplate = `{
                     "type": "array",
                     "items": {}
                 },
+                "catalog_expanded": {
+                    "description": "web app nav settings",
+                    "type": "integer"
+                },
+                "default_display_mode": {
+                    "description": "1: QA mode, 2: doc mode",
+                    "type": "integer"
+                },
                 "desc": {
                     "description": "seo",
                     "type": "string"
@@ -1926,6 +1934,9 @@ const docTemplate = `{
                 },
                 "keyword": {
                     "type": "string"
+                },
+                "mode_switch_visible": {
+                    "type": "integer"
                 },
                 "recommend_node_ids": {
                     "type": "array",
@@ -1965,6 +1976,14 @@ const docTemplate = `{
                     "type": "array",
                     "items": {}
                 },
+                "catalog_expanded": {
+                    "description": "web nav settings",
+                    "type": "integer"
+                },
+                "default_display_mode": {
+                    "description": "1: QA mode, 2: doc mode",
+                    "type": "integer"
+                },
                 "desc": {
                     "description": "seo",
                     "type": "string"
@@ -1995,6 +2014,9 @@ const docTemplate = `{
                 },
                 "keyword": {
                     "type": "string"
+                },
+                "mode_switch_visible": {
+                    "type": "integer"
                 },
                 "recommend_node_ids": {
                     "type": "array",
