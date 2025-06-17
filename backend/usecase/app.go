@@ -117,6 +117,10 @@ func (u *AppUsecase) updateFeishuBot(app *domain.App) {
 		}
 	}
 
+	if app.Settings.FeishuBotAppID == "" || app.Settings.FeishuBotAppSecret == "" {
+		return
+	}
+
 	getQA := u.getQAFunc(app.KBID, app.Type)
 
 	botCtx, cancel := context.WithCancel(context.Background())
@@ -151,6 +155,10 @@ func (u *AppUsecase) updateDingTalkBot(app *domain.App) {
 			bot.Stop()
 			delete(u.dingTalkBots, app.ID)
 		}
+	}
+
+	if app.Settings.DingTalkBotClientID == "" || app.Settings.DingTalkBotClientSecret == "" {
+		return
 	}
 
 	getQA := u.getQAFunc(app.KBID, app.Type)

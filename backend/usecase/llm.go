@@ -16,6 +16,7 @@ import (
 	"github.com/cloudwego/eino/components/prompt"
 	"github.com/cloudwego/eino/schema"
 	"github.com/samber/lo"
+	"gorm.io/gorm"
 
 	"github.com/chaitin/panda-wiki/config"
 	"github.com/chaitin/panda-wiki/domain"
@@ -30,17 +31,19 @@ type LLMUsecase struct {
 	conversationRepo *pg.ConversationRepository
 	kbRepo           *pg.KnowledgeBaseRepository
 	nodeRepo         *pg.NodeRepository
+	modelRepo        *pg.ModelRepository
 	config           *config.Config
 	logger           *log.Logger
 }
 
-func NewLLMUsecase(config *config.Config, rag rag.RAGService, conversationRepo *pg.ConversationRepository, kbRepo *pg.KnowledgeBaseRepository, nodeRepo *pg.NodeRepository, logger *log.Logger) *LLMUsecase {
+func NewLLMUsecase(config *config.Config, rag rag.RAGService, conversationRepo *pg.ConversationRepository, kbRepo *pg.KnowledgeBaseRepository, nodeRepo *pg.NodeRepository, modelRepo *pg.ModelRepository, logger *log.Logger) *LLMUsecase {
 	return &LLMUsecase{
 		config:           config,
 		rag:              rag,
 		conversationRepo: conversationRepo,
 		kbRepo:           kbRepo,
 		nodeRepo:         nodeRepo,
+		modelRepo:        modelRepo,
 		logger:           logger.WithModule("usecase.llm"),
 	}
 }
@@ -125,12 +128,12 @@ func (u *LLMUsecase) FormatConversationMessages(
 			if err != nil {
 				return nil, nil, fmt.Errorf("get kb failed: %w", err)
 			}
-			// get related documents from vectordb
+			// get related documents from raglite
 			records, err := u.rag.QueryRecords(ctx, []string{kb.DatasetID}, question)
 			if err != nil {
-				return nil, nil, fmt.Errorf("get vector failed: %w", err)
+				return nil, nil, fmt.Errorf("get records from raglite failed: %w", err)
 			}
-			u.logger.Info("get related documents from vectordb", log.Any("record_count", len(records)))
+			u.logger.Info("get related documents from raglite", log.Any("record_count", len(records)))
 			rankedNodesMap := make(map[string]*domain.RankedNodeChunks)
 			// get raw node by doc_id
 			if len(records) > 0 {
@@ -138,7 +141,7 @@ func (u *LLMUsecase) FormatConversationMessages(
 					return item.DocID
 				}))
 				u.logger.Info("docIDs", log.Any("docIDs", docIDs))
-				docIDNode, err := u.nodeRepo.GetNodesByDocIDs(ctx, docIDs)
+				docIDNode, err := u.nodeRepo.GetNodeReleasesByDocIDs(ctx, docIDs)
 				if err != nil {
 					return nil, nil, fmt.Errorf("get nodes by ids failed: %w", err)
 				}
@@ -147,7 +150,7 @@ func (u *LLMUsecase) FormatConversationMessages(
 					if nodeChunk, ok := rankedNodesMap[record.DocID]; !ok {
 						if docNode, ok := docIDNode[record.DocID]; ok {
 							rankNodeChunk := &domain.RankedNodeChunks{
-								NodeID:      docNode.ID,
+								NodeID:      docNode.NodeID,
 								NodeName:    docNode.Name,
 								NodeSummary: docNode.Meta.Summary,
 								Chunks:      []*domain.NodeContentChunk{record},
@@ -362,4 +365,32 @@ func getHttpClientWithAPIHeaderMap(header string) *http.Client {
 		return client
 	}
 	return nil
+}
+
+func (u *LLMUsecase) SummaryNode(ctx context.Context, nodeRelease *domain.NodeRelease) (string, error) {
+	model, err := u.modelRepo.GetChatModel(ctx)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return "", domain.ErrModelNotConfigured
+		}
+		return "", err
+	}
+	chatModel, err := u.GetChatModel(ctx, model)
+	if err != nil {
+		return "", err
+	}
+	summary, err := u.Generate(ctx, chatModel, []*schema.Message{
+		{
+			Role:    "system",
+			Content: "你是文档总结助手，请根据文档内容总结出文档的摘要。摘要是纯文本，应该简洁明了，不要超过160个字。",
+		},
+		{
+			Role:    "user",
+			Content: fmt.Sprintf("文档名称：%s\n文档内容：%s", nodeRelease.Name, nodeRelease.Content),
+		},
+	})
+	if err != nil {
+		return "", err
+	}
+	return summary, nil
 }

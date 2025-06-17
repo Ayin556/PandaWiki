@@ -10,23 +10,28 @@ import (
 	"github.com/chaitin/panda-wiki/mq/types"
 	"github.com/chaitin/panda-wiki/repo/pg"
 	"github.com/chaitin/panda-wiki/store/rag"
+	"github.com/chaitin/panda-wiki/usecase"
 )
 
 type RAGMQHandler struct {
-	consumer mq.MQConsumer
-	logger   *log.Logger
-	rag      rag.RAGService
-	nodeRepo *pg.NodeRepository
-	kbRepo   *pg.KnowledgeBaseRepository
+	consumer   mq.MQConsumer
+	logger     *log.Logger
+	rag        rag.RAGService
+	nodeRepo   *pg.NodeRepository
+	kbRepo     *pg.KnowledgeBaseRepository
+	modelRepo  *pg.ModelRepository
+	llmUsecase *usecase.LLMUsecase
 }
 
-func NewRAGMQHandler(consumer mq.MQConsumer, logger *log.Logger, rag rag.RAGService, nodeRepo *pg.NodeRepository, kbRepo *pg.KnowledgeBaseRepository) (*RAGMQHandler, error) {
+func NewRAGMQHandler(consumer mq.MQConsumer, logger *log.Logger, rag rag.RAGService, nodeRepo *pg.NodeRepository, kbRepo *pg.KnowledgeBaseRepository, llmUsecase *usecase.LLMUsecase, modelRepo *pg.ModelRepository) (*RAGMQHandler, error) {
 	h := &RAGMQHandler{
-		consumer: consumer,
-		logger:   logger.WithModule("mq.vector"),
-		rag:      rag,
-		nodeRepo: nodeRepo,
-		kbRepo:   kbRepo,
+		consumer:   consumer,
+		logger:     logger.WithModule("mq.rag"),
+		rag:        rag,
+		nodeRepo:   nodeRepo,
+		kbRepo:     kbRepo,
+		llmUsecase: llmUsecase,
+		modelRepo:  modelRepo,
 	}
 	if err := consumer.RegisterHandler(domain.VectorTaskTopic, h.HandleNodeContentVectorRequest); err != nil {
 		return nil, err
@@ -35,7 +40,7 @@ func NewRAGMQHandler(consumer mq.MQConsumer, logger *log.Logger, rag rag.RAGServ
 }
 
 func (h *RAGMQHandler) HandleNodeContentVectorRequest(ctx context.Context, msg types.Message) error {
-	var request domain.NodeContentVectorRequest
+	var request domain.NodeReleaseVectorRequest
 	err := json.Unmarshal(msg.GetData(), &request)
 	if err != nil {
 		h.logger.Error("unmarshal node content vector request failed", log.Error(err))
@@ -44,7 +49,7 @@ func (h *RAGMQHandler) HandleNodeContentVectorRequest(ctx context.Context, msg t
 	switch request.Action {
 	case "upsert":
 		h.logger.Debug("upsert node content vector request", "request", request)
-		node, err := h.nodeRepo.GetNodeByID(ctx, request.ID)
+		nodeRelease, err := h.nodeRepo.GetNodeReleaseByID(ctx, request.NodeReleaseID)
 		if err != nil {
 			h.logger.Error("get node content by ids failed", log.Error(err))
 			return err
@@ -55,18 +60,32 @@ func (h *RAGMQHandler) HandleNodeContentVectorRequest(ctx context.Context, msg t
 			return err
 		}
 		// upsert node content chunks
-		docID, err := h.rag.UpsertRecords(ctx, kb.DatasetID, node)
+		docID, err := h.rag.UpsertRecords(ctx, kb.DatasetID, nodeRelease)
 		if err != nil {
 			h.logger.Error("upsert node content vector failed", log.Error(err))
 			return err
 		}
 		// update node doc_id
-		if err := h.nodeRepo.UpdateNodeDocID(ctx, request.ID, docID); err != nil {
-			h.logger.Error("update node doc_id failed", log.String("node_id", request.ID), log.Error(err))
+		if err := h.nodeRepo.UpdateNodeReleaseDocID(ctx, request.NodeReleaseID, docID); err != nil {
+			h.logger.Error("update node doc_id failed", log.String("node_id", request.NodeReleaseID), log.Error(err))
 			return err
 		}
-		h.logger.Info("upsert node content vector success", log.Any("updated_ids", request.ID))
+		// delete old RAG records
+		// get old doc_ids by node_id
+		oldDocIDs, err := h.nodeRepo.GetOldNodeDocIDsByNodeID(ctx, nodeRelease.ID, nodeRelease.NodeID)
+		if err != nil {
+			h.logger.Error("get old doc_ids by node_id failed", log.String("node_id", nodeRelease.NodeID), log.Error(err))
+			return err
+		}
+		if len(oldDocIDs) > 0 {
+			// delete old RAG records
+			if err := h.rag.DeleteRecords(ctx, kb.DatasetID, oldDocIDs); err != nil {
+				h.logger.Error("delete old RAG records failed", log.String("kb_id", kb.ID), log.Error(err))
+				return err
+			}
+		}
 
+		h.logger.Info("upsert node content vector success", log.Any("updated_ids", request.NodeReleaseID))
 	case "delete":
 		h.logger.Info("delete node content vector request", log.Any("request", request))
 		kb, err := h.kbRepo.GetKnowledgeBaseByID(ctx, request.KBID)
@@ -78,7 +97,24 @@ func (h *RAGMQHandler) HandleNodeContentVectorRequest(ctx context.Context, msg t
 			h.logger.Error("delete node content vector failed", log.Error(err))
 			return err
 		}
-		h.logger.Info("delete node content vector success", log.Any("deleted_id", request.ID), log.Any("deleted_doc_id", request.DocID))
+		h.logger.Info("delete node content vector success", log.Any("deleted_id", request.NodeReleaseID), log.Any("deleted_doc_id", request.DocID))
+	case "summary":
+		h.logger.Info("summary node content vector request", log.Any("request", request))
+		nodeRelease, err := h.nodeRepo.GetNodeReleaseByID(ctx, request.NodeReleaseID)
+		if err != nil {
+			h.logger.Error("get node release by id failed", log.Error(err))
+			return err
+		}
+		summary, err := h.llmUsecase.SummaryNode(ctx, nodeRelease)
+		if err != nil {
+			h.logger.Error("summary node content failed", log.Error(err))
+			return err
+		}
+		if err := h.nodeRepo.UpdateNodeReleaseSummary(ctx, request.KBID, request.NodeReleaseID, summary); err != nil {
+			h.logger.Error("update node release summary failed", log.Error(err))
+			return err
+		}
+		h.logger.Info("summary node content vector success", log.Any("summary_id", request.NodeReleaseID), log.Any("summary", summary))
 	}
 
 	return nil

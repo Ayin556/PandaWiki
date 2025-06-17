@@ -82,3 +82,45 @@ type KnowledgeBaseDetail struct {
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
+
+// table: kb_releases
+type KBRelease struct {
+	ID        string    `json:"id" gorm:"primaryKey"`
+	KBID      string    `json:"kb_id" gorm:"index"`
+	Tag       string    `json:"tag"`
+	Message   string    `json:"message"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
+// table: kb_release_node_releases
+type KBReleaseNodeRelease struct {
+	ID            string    `json:"id" gorm:"primaryKey"`
+	KBID          string    `json:"kb_id" gorm:"index"`
+	ReleaseID     string    `json:"release_id" gorm:"index"`
+	NodeID        string    `json:"node_id"`
+	NodeReleaseID string    `json:"node_release_id" gorm:"index"`
+	CreatedAt     time.Time `json:"created_at"`
+}
+
+type CreateKBReleaseReq struct {
+	KBID        string   `json:"kb_id" validate:"required"`
+	Message     string   `json:"message" validate:"required"`
+	Tag         string   `json:"tag" validate:"required"`
+	NodeIDs     []string `json:"node_ids"` // create release after these nodes published
+	AutoSummary *bool    `json:"auto_summary"`
+}
+
+type KBReleaseListItemResp struct {
+	ID        string    `json:"id"`
+	KBID      string    `json:"kb_id"`
+	Message   string    `json:"message"`
+	Tag       string    `json:"tag"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
+type GetKBReleaseListReq struct {
+	KBID string `json:"kb_id" query:"kb_id" validate:"required"`
+	Pager
+}
+
+type GetKBReleaseListResp = PaginatedResult[[]KBReleaseListItemResp]

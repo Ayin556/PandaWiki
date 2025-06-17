@@ -16,7 +16,7 @@ func NewRAGRepository(producer mq.MQProducer) *RAGRepository {
 	return &RAGRepository{producer: producer}
 }
 
-func (r *RAGRepository) UpdateRecords(ctx context.Context, request []*domain.NodeContentVectorRequest) error {
+func (r *RAGRepository) AsyncUpdateNodeReleaseVector(ctx context.Context, request []*domain.NodeReleaseVectorRequest) error {
 	for _, req := range request {
 		requestBytes, err := json.Marshal(req)
 		if err != nil {

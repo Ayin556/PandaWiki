@@ -1,15 +1,8 @@
 package v1
 
 import (
-	"fmt"
-	"mime"
-	"path/filepath"
-	"strings"
-
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
-	"github.com/minio/minio-go/v7"
-	"github.com/samber/lo"
 
 	"github.com/chaitin/panda-wiki/config"
 	"github.com/chaitin/panda-wiki/domain"
@@ -17,23 +10,24 @@ import (
 	"github.com/chaitin/panda-wiki/log"
 	"github.com/chaitin/panda-wiki/middleware"
 	"github.com/chaitin/panda-wiki/store/s3"
+	"github.com/chaitin/panda-wiki/usecase"
 )
 
 type FileHandler struct {
 	*handler.BaseHandler
 	logger      *log.Logger
 	auth        middleware.AuthMiddleware
-	minioClient *s3.MinioClient
 	config      *config.Config
+	fileUsecase *usecase.FileUsecase
 }
 
-func NewFileHandler(echo *echo.Echo, baseHandler *handler.BaseHandler, logger *log.Logger, auth middleware.AuthMiddleware, minioClient *s3.MinioClient, config *config.Config) *FileHandler {
+func NewFileHandler(echo *echo.Echo, baseHandler *handler.BaseHandler, logger *log.Logger, auth middleware.AuthMiddleware, minioClient *s3.MinioClient, config *config.Config, fileUsecase *usecase.FileUsecase) *FileHandler {
 	h := &FileHandler{
 		BaseHandler: baseHandler,
 		logger:      logger.WithModule("handler.v1.file"),
 		auth:        auth,
-		minioClient: minioClient,
 		config:      config,
+		fileUsecase: fileUsecase,
 	}
 	group := echo.Group("/api/v1/file", h.auth.Authorize)
 	group.POST("/upload", h.Upload)
@@ -61,50 +55,12 @@ func (h *FileHandler) Upload(c echo.Context) error {
 		return h.NewResponseWithError(c, "failed to get file", err)
 	}
 
-	src, err := file.Open()
-	if err != nil {
-		return h.NewResponseWithError(c, "failed to open file", err)
-	}
-	defer src.Close()
-
-	ext := strings.ToLower(filepath.Ext(file.Filename))
-	if ext == "" {
-		return h.NewResponseWithError(c, "file ext not supported", fmt.Errorf("file (%s) ext (%s) not supported", file.Filename, ext))
-	}
-	if !lo.Contains([]string{".html", ".htm", ".md", ".txt", ".pdf", ".xlsx", ".xls", ".docx", ".png", ".jpg", ".jpeg", ".gif", ".webp", ".mp4", ".avi", ".mkv", ".mov", ".wmv", ".flv", ".webm", ".mpg", ".mpeg", ".3gp", ".ts", ".m2ts", ".vob", ".rm", ".rmvb"}, ext) {
-		return h.NewResponseWithError(c, "file ext not supported", fmt.Errorf("file (%s) ext (%s) not supported", file.Filename, ext))
-	}
-	filename := fmt.Sprintf("%s/%s%s", kbID, uuid.New().String(), ext)
-
-	maxSize := h.config.S3.MaxFileSize
-	size := file.Size
-	if size > int64(maxSize) { // 20MB
-		return h.NewResponseWithError(c, "file size too large", nil)
-	}
-
-	contentType := file.Header.Get("Content-Type")
-	if contentType == "" {
-		contentType = mime.TypeByExtension(ext)
-	}
-
-	resp, err := h.minioClient.PutObject(
-		cxt,
-		domain.Bucket,
-		filename,
-		src,
-		size,
-		minio.PutObjectOptions{
-			ContentType: contentType,
-			UserMetadata: map[string]string{
-				"originalname": file.Filename,
-			},
-		},
-	)
+	key, err := h.fileUsecase.UploadFile(cxt, kbID, file)
 	if err != nil {
 		return h.NewResponseWithError(c, "upload failed", err)
 	}
 
 	return h.NewResponseWithData(c, domain.ObjectUploadResp{
-		Key: resp.Key,
+		Key: key,
 	})
 }

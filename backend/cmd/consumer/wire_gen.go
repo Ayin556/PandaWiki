@@ -14,6 +14,7 @@ import (
 	pg2 "github.com/chaitin/panda-wiki/repo/pg"
 	"github.com/chaitin/panda-wiki/store/pg"
 	"github.com/chaitin/panda-wiki/store/rag"
+	"github.com/chaitin/panda-wiki/usecase"
 )
 
 // Injectors from wire.go:
@@ -38,7 +39,10 @@ func createApp() (*App, error) {
 	}
 	nodeRepository := pg2.NewNodeRepository(db, logger)
 	knowledgeBaseRepository := pg2.NewKnowledgeBaseRepository(db, configConfig, logger, ragService)
-	ragmqHandler, err := mq2.NewRAGMQHandler(mqConsumer, logger, ragService, nodeRepository, knowledgeBaseRepository)
+	conversationRepository := pg2.NewConversationRepository(db)
+	modelRepository := pg2.NewModelRepository(db, logger)
+	llmUsecase := usecase.NewLLMUsecase(configConfig, ragService, conversationRepository, knowledgeBaseRepository, nodeRepository, modelRepository, logger)
+	ragmqHandler, err := mq2.NewRAGMQHandler(mqConsumer, logger, ragService, nodeRepository, knowledgeBaseRepository, llmUsecase, modelRepository)
 	if err != nil {
 		return nil, err
 	}

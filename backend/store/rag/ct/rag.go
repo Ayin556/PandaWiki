@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 
+	htmltomarkdown "github.com/JohannesKaufmann/html-to-markdown/v2"
 	"github.com/google/uuid"
 
 	"github.com/chaitin/pandawiki/sdk/rag"
@@ -62,20 +64,21 @@ func (s *CTRAG) QueryRecords(ctx context.Context, datasetIDs []string, query str
 	return nodeChunks, nil
 }
 
-func (s *CTRAG) UpsertRecords(ctx context.Context, datasetID string, node *domain.Node) (string, error) {
-	// delete old doc by node.doc_id
-	if node.DocID != "" {
-		if err := s.client.DeleteDocuments(ctx, node.KBID, []string{node.DocID}); err != nil {
-			s.logger.Error("delete old doc failed", log.String("kbID", node.KBID), log.String("docID", node.DocID), log.Error(err))
-		}
-	}
+func (s *CTRAG) UpsertRecords(ctx context.Context, datasetID string, nodeRelease *domain.NodeRelease) (string, error) {
 	// create new doc and return new_doc.doc_id
-	tempName := fmt.Sprintf("%s.txt", node.ID)
-	tempFile, err := os.CreateTemp("", tempName)
+	tempFile, err := os.CreateTemp("", fmt.Sprintf("%s-*.md", nodeRelease.ID))
 	if err != nil {
 		return "", fmt.Errorf("create temp file failed: %w", err)
 	}
-	if _, err := tempFile.Write([]byte(node.Content)); err != nil {
+	// convert html to markdown
+	markdown := nodeRelease.Content
+	if strings.HasPrefix(nodeRelease.Content, "<") {
+		markdown, err = htmltomarkdown.ConvertString(nodeRelease.Content)
+		if err != nil {
+			return "", fmt.Errorf("convert html to markdown failed: %w", err)
+		}
+	}
+	if _, err := tempFile.Write([]byte(markdown)); err != nil {
 		return "", fmt.Errorf("write temp file failed: %w", err)
 	}
 	if err := tempFile.Close(); err != nil {
@@ -92,8 +95,8 @@ func (s *CTRAG) UpsertRecords(ctx context.Context, datasetID string, node *domai
 	return docs[0].ID, nil
 }
 
-func (s *CTRAG) DeleteRecords(ctx context.Context, datasetID string, nodeIDs []string) error {
-	if err := s.client.DeleteDocuments(ctx, datasetID, nodeIDs); err != nil {
+func (s *CTRAG) DeleteRecords(ctx context.Context, datasetID string, docIDs []string) error {
+	if err := s.client.DeleteDocuments(ctx, datasetID, docIDs); err != nil {
 		return err
 	}
 	return nil

@@ -5,7 +5,6 @@ import (
 
 	"github.com/chaitin/panda-wiki/handler"
 	"github.com/chaitin/panda-wiki/middleware"
-	"github.com/chaitin/panda-wiki/store/s3"
 	"github.com/chaitin/panda-wiki/usecase"
 )
 
@@ -24,7 +23,6 @@ type APIHandlers struct {
 var ProviderSet = wire.NewSet(
 	middleware.ProviderSet,
 	usecase.ProviderSet,
-	s3.ProviderSet,
 
 	handler.NewBaseHandler,
 	NewNodeHandler,

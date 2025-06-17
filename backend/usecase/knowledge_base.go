@@ -2,29 +2,36 @@ package usecase
 
 import (
 	"context"
+	"fmt"
+	"time"
 
 	"github.com/google/uuid"
 
 	"github.com/chaitin/panda-wiki/config"
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/log"
+	"github.com/chaitin/panda-wiki/repo/mq"
 	"github.com/chaitin/panda-wiki/repo/pg"
 	"github.com/chaitin/panda-wiki/store/rag"
 )
 
 type KnowledgeBaseUsecase struct {
-	repo   *pg.KnowledgeBaseRepository
-	rag    rag.RAGService
-	logger *log.Logger
-	config *config.Config
+	repo     *pg.KnowledgeBaseRepository
+	nodeRepo *pg.NodeRepository
+	ragRepo  *mq.RAGRepository
+	rag      rag.RAGService
+	logger   *log.Logger
+	config   *config.Config
 }
 
-func NewKnowledgeBaseUsecase(repo *pg.KnowledgeBaseRepository, rag rag.RAGService, logger *log.Logger, config *config.Config) (*KnowledgeBaseUsecase, error) {
+func NewKnowledgeBaseUsecase(repo *pg.KnowledgeBaseRepository, nodeRepo *pg.NodeRepository, ragRepo *mq.RAGRepository, rag rag.RAGService, logger *log.Logger, config *config.Config) (*KnowledgeBaseUsecase, error) {
 	u := &KnowledgeBaseUsecase{
-		repo:   repo,
-		rag:    rag,
-		logger: logger.WithModule("usecase.knowledge_base"),
-		config: config,
+		repo:     repo,
+		nodeRepo: nodeRepo,
+		ragRepo:  ragRepo,
+		rag:      rag,
+		logger:   logger.WithModule("usecase.knowledge_base"),
+		config:   config,
 	}
 	return u, nil
 }
@@ -82,4 +89,64 @@ func (u *KnowledgeBaseUsecase) DeleteKnowledgeBase(ctx context.Context, kbID str
 		return err
 	}
 	return nil
+}
+
+func (u *KnowledgeBaseUsecase) CreateKBRelease(ctx context.Context, req *domain.CreateKBReleaseReq) (string, error) {
+	if len(req.NodeIDs) > 0 {
+		// create published nodes
+		releaseIDs, err := u.nodeRepo.CreateNodeReleases(ctx, req.KBID, req.NodeIDs)
+		if err != nil {
+			return "", fmt.Errorf("failed to create published nodes: %w", err)
+		}
+		if len(releaseIDs) > 0 {
+			// async upsert vector content via mq
+			nodeContentVectorRequests := make([]*domain.NodeReleaseVectorRequest, 0)
+			for _, releaseID := range releaseIDs {
+				nodeContentVectorRequests = append(nodeContentVectorRequests, &domain.NodeReleaseVectorRequest{
+					KBID:          req.KBID,
+					NodeReleaseID: releaseID,
+					Action:        "upsert",
+				})
+			}
+			if err := u.ragRepo.AsyncUpdateNodeReleaseVector(ctx, nodeContentVectorRequests); err != nil {
+				return "", err
+			}
+			// create summary
+			if req.AutoSummary != nil && *req.AutoSummary {
+				summaryRequests := make([]*domain.NodeReleaseVectorRequest, 0)
+				for _, releaseID := range releaseIDs {
+					summaryRequests = append(summaryRequests, &domain.NodeReleaseVectorRequest{
+						KBID:          req.KBID,
+						NodeReleaseID: releaseID,
+						Action:        "summary",
+					})
+				}
+				if err := u.ragRepo.AsyncUpdateNodeReleaseVector(ctx, summaryRequests); err != nil {
+					return "", err
+				}
+			}
+		}
+	}
+
+	release := &domain.KBRelease{
+		ID:        uuid.New().String(),
+		KBID:      req.KBID,
+		Message:   req.Message,
+		Tag:       req.Tag,
+		CreatedAt: time.Now(),
+	}
+	if err := u.repo.CreateKBRelease(ctx, release); err != nil {
+		return "", fmt.Errorf("failed to create kb release: %w", err)
+	}
+
+	return release.ID, nil
+}
+
+func (u *KnowledgeBaseUsecase) GetKBReleaseList(ctx context.Context, req *domain.GetKBReleaseListReq) (*domain.GetKBReleaseListResp, error) {
+	total, releases, err := u.repo.GetKBReleaseList(ctx, req.KBID)
+	if err != nil {
+		return nil, err
+	}
+
+	return domain.NewPaginatedResult(releases, uint64(total)), nil
 }

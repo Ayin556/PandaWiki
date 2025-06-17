@@ -43,6 +43,9 @@ func NewKnowledgeBaseHandler(
 	group.GET("/detail", h.GetKnowledgeBaseDetail)
 	group.PUT("/detail", h.UpdateKnowledgeBase)
 	group.DELETE("/detail", h.DeleteKnowledgeBase)
+	// release
+	group.POST("/release", h.CreateKBRelease)
+	group.GET("/release/list", h.GetKBReleaseList)
 
 	return h
 }
@@ -191,4 +194,60 @@ func (h *KnowledgeBaseHandler) DeleteKnowledgeBase(c echo.Context) error {
 	}
 
 	return h.NewResponseWithData(c, nil)
+}
+
+// CreateKBRelease
+//
+//	@Summary		CreateKBRelease
+//	@Description	CreateKBRelease
+//	@Tags			knowledge_base
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body		domain.CreateKBReleaseReq	true	"CreateKBRelease Request"
+//	@Success		200		{object}	domain.Response
+//	@Router			/api/v1/knowledge_base/release [post]
+func (h *KnowledgeBaseHandler) CreateKBRelease(c echo.Context) error {
+	req := &domain.CreateKBReleaseReq{}
+	if err := c.Bind(req); err != nil {
+		return h.NewResponseWithError(c, "request body is invalid", err)
+	}
+	if err := c.Validate(req); err != nil {
+		return h.NewResponseWithError(c, "validate request body failed", err)
+	}
+
+	id, err := h.usecase.CreateKBRelease(c.Request().Context(), req)
+	if err != nil {
+		return h.NewResponseWithError(c, "create kb release failed", err)
+	}
+
+	return h.NewResponseWithData(c, map[string]any{
+		"id": id,
+	})
+}
+
+// GetKBReleaseList
+//
+//	@Summary		GetKBReleaseList
+//	@Description	GetKBReleaseList
+//	@Tags			knowledge_base
+//	@Accept			json
+//	@Produce		json
+//	@Param			kb_id	query		string	true	"Knowledge Base ID"
+//	@Success		200		{object}	domain.Response{data=domain.GetKBReleaseListResp}
+//	@Router			/api/v1/knowledge_base/release/list [get]
+func (h *KnowledgeBaseHandler) GetKBReleaseList(c echo.Context) error {
+	var req domain.GetKBReleaseListReq
+	if err := c.Bind(&req); err != nil {
+		return h.NewResponseWithError(c, "request params is invalid", err)
+	}
+	if err := c.Validate(req); err != nil {
+		return h.NewResponseWithError(c, "validate request params failed", err)
+	}
+
+	resp, err := h.usecase.GetKBReleaseList(c.Request().Context(), &req)
+	if err != nil {
+		return h.NewResponseWithError(c, "get kb release list failed", err)
+	}
+
+	return h.NewResponseWithData(c, resp)
 }

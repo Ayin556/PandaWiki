@@ -399,3 +399,69 @@ func (r *KnowledgeBaseRepository) DeleteKnowledgeBase(ctx context.Context, kbID 
 		return nil
 	})
 }
+
+func (r *KnowledgeBaseRepository) CreateKBRelease(ctx context.Context, release *domain.KBRelease) error {
+	if err := r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		// create new release
+		if err := tx.Create(release).Error; err != nil {
+			return err
+		}
+		// create release node for all released nodes
+		var nodeReleases []*domain.NodeRelease
+		if err := tx.Where("kb_id = ?", release.KBID).
+			Select("DISTINCT ON (node_id) id, node_id").
+			Order("node_id, created_at DESC").
+			Find(&nodeReleases).Error; err != nil {
+			return err
+		}
+		if len(nodeReleases) == 0 {
+			return nil
+		}
+		kbReleaseNodeReleases := make([]*domain.KBReleaseNodeRelease, len(nodeReleases))
+		for i, nodeRelease := range nodeReleases {
+			kbReleaseNodeReleases[i] = &domain.KBReleaseNodeRelease{
+				ID:            uuid.New().String(),
+				KBID:          release.KBID,
+				ReleaseID:     release.ID,
+				NodeID:        nodeRelease.NodeID,
+				NodeReleaseID: nodeRelease.ID,
+				CreatedAt:     time.Now(),
+			}
+		}
+		if err := tx.CreateInBatches(&kbReleaseNodeReleases, 100).Error; err != nil {
+			return err
+		}
+		return nil
+	}); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *KnowledgeBaseRepository) GetKBReleaseList(ctx context.Context, kbID string) (int64, []domain.KBReleaseListItemResp, error) {
+	var total int64
+	if err := r.db.Model(&domain.KBRelease{}).Where("kb_id = ?", kbID).Count(&total).Error; err != nil {
+		return 0, nil, err
+	}
+
+	var releases []domain.KBReleaseListItemResp
+	if err := r.db.Model(&domain.KBRelease{}).
+		Where("kb_id = ?", kbID).
+		Order("created_at DESC").
+		Find(&releases).Error; err != nil {
+		return 0, nil, err
+	}
+
+	return total, releases, nil
+}
+
+func (r *KnowledgeBaseRepository) GetLatestRelease(ctx context.Context, kbID string) (*domain.KBRelease, error) {
+	var release domain.KBRelease
+	if err := r.db.WithContext(ctx).
+		Where("kb_id = ?", kbID).
+		Order("created_at DESC").
+		First(&release).Error; err != nil {
+		return nil, err
+	}
+	return &release, nil
+}
