@@ -287,6 +287,15 @@ func (r *KnowledgeBaseRepository) CreateKnowledgeBase(ctx context.Context, kb *d
 			r.logger.Error("failed to sync kb access settings to caddy", "error", err)
 			return err
 		}
+		type AppBtn struct {
+			ID       string `json:"id"`
+			Icon     string `json:"icon"`
+			ShowIcon bool   `json:"showIcon"`
+			Target   string `json:"target"`
+			Text     string `json:"text"`
+			URL      string `json:"url"`
+			Variant  string `json:"variant"`
+		}
 		if err := tx.Create(&domain.App{
 			ID:   uuid.New().String(),
 			KBID: kb.ID,
@@ -296,7 +305,28 @@ func (r *KnowledgeBaseRepository) CreateKnowledgeBase(ctx context.Context, kb *d
 				Title:      kb.Name,
 				Desc:       kb.Name,
 				Keyword:    kb.Name,
+				Icon:       domain.DefaultPandaWikiIconB64,
 				WelcomeStr: fmt.Sprintf("欢迎使用%s", kb.Name),
+				Btns: []any{
+					AppBtn{
+						ID:       uuid.New().String(),
+						Icon:     domain.DefaultGitHubIconB64,
+						ShowIcon: true,
+						Target:   "_blank",
+						Text:     "GitHub",
+						URL:      "https://ly.safepoint.cloud/XEyeWqL",
+						Variant:  "contained",
+					},
+					AppBtn{
+						ID:       uuid.New().String(),
+						Icon:     "",
+						ShowIcon: false,
+						Target:   "_blank",
+						Text:     "PandaWiki",
+						URL:      "https://pandawiki.docs.baizhi.cloud",
+						Variant:  "outlined",
+					},
+				},
 			},
 		}).Error; err != nil {
 			return err
