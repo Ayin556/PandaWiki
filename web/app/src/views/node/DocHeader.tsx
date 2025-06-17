@@ -15,6 +15,8 @@ const DocHeader = () => {
   const pathname = usePathname();
   const [searchValue, setSearchValue] = useState('');
 
+  const modeSwitchVisible = kbDetail?.settings?.mode_switch_visible || true
+
   const isDoc = pathname.includes('/node')
   const isChat = pathname.includes('/chat')
 
@@ -101,7 +103,7 @@ const DocHeader = () => {
         </Link>
       ))}
       {mobile && <NavBtns detail={kbDetail} />}
-      {!mobile && !isChat && kbDetail?.settings?.mode_switch_visible && <PageChange />}
+      {!mobile && !isChat && modeSwitchVisible && <PageChange />}
     </Stack>
   </Stack>
 }

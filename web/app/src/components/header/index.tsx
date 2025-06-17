@@ -21,6 +21,7 @@ const Header = () => {
   const [searchValue, setSearchValue] = useState('');
 
   const isChat = pathname.includes('/chat')
+  const modeSwitchVisible = kbDetail?.settings?.mode_switch_visible || true
 
   const bgi = mobile ? h5HeaderBgi.src : headerBgi.src
   const bgiHeight = !mobile ? '573px' : '326px'
@@ -119,7 +120,7 @@ const Header = () => {
               </Link>
             ))}
             {mobile && <NavBtns detail={kbDetail} />}
-            {!mobile && !isChat && kbDetail?.settings?.mode_switch_visible && <PageChange />}
+            {!mobile && !isChat && modeSwitchVisible && <PageChange />}
           </Stack>
         </Stack>
       </StyledContainer>
