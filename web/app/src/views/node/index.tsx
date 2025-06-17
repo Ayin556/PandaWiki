@@ -34,7 +34,6 @@ const Doc = ({ node: defaultNode }: { node?: NodeDetail }) => {
   })
 
   const { activeHeading } = useScroll(headings)
-  console.log(activeHeading)
 
   const [showScrollTop, setShowScrollTop] = useState(false);
 
@@ -75,7 +74,6 @@ const Doc = ({ node: defaultNode }: { node?: NodeDetail }) => {
     if (node) {
       if (editorRef) {
         editorRef.setContent(node?.content || '').then((headings) => {
-          console.log(headings)
           setHeadings(headings)
         })
       }

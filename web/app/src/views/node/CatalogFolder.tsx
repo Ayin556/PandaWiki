@@ -6,7 +6,7 @@ import { Ellipsis } from "ct-mui"
 import { useState } from "react"
 
 const CatalogFolder = ({ item, activeId, onChange, depth = 1 }: { item: ITreeItem, activeId: string, onChange: (id: string) => void, depth?: number }) => {
-  const [isExpanded, setIsExpanded] = useState(true)
+  const [isExpanded, setIsExpanded] = useState(item.defaultExpand ?? true)
   const { mobile } = useMobile()
 
   return <Box key={item.id}>

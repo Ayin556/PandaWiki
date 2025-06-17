@@ -3,14 +3,16 @@ import Footer from "@/components/footer";
 import KBProvider from "@/provider/kb-provider";
 import MobileProvider from "@/provider/mobile-provider";
 import NodeListProvider from "@/provider/nodelist-provider";
+import { convertToTree, findFirstType2Node } from "@/utils/drag";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
-import parse, {DOMNode, domToReact} from 'html-react-parser';
+import parse, { DOMNode, domToReact } from 'html-react-parser';
 import type { Metadata, Viewport } from "next";
 import localFont from 'next/font/local';
 import { headers } from "next/headers";
+import { redirect } from 'next/navigation';
+import Script from 'next/script';
 import { cache } from "react";
 import { getSelectorsByUserAgent } from "react-device-detect";
-import Script from 'next/script'
 import "./globals.css";
 
 const gilory = localFont({
@@ -120,17 +122,25 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const headersList = await headers()
+  const pathname = headersList.get('x-pathname') || '/'
 
   const kb_id = headersList.get('x-kb-id') || process.env.DEV_KB_ID || ''
   const kbDetail = await getKBDetailCached(kb_id)
   const nodeList = await getNodeListCached(kb_id)
+
+  if (kbDetail?.settings?.default_display_mode === 2 && pathname === '/') {
+    const id = findFirstType2Node(convertToTree(nodeList || []))
+    if (nodeList && nodeList.length > 0 && id) {
+      redirect(`/node/${id}`)
+    }
+  }
 
   const userAgent = headersList.get('user-agent');
   const { isMobile } = getSelectorsByUserAgent(userAgent || '');
   const options = {
     replace(domNode: DOMNode) {
       if (domNode.type === 'script') {
-        if(!domNode.children) return <Script {...domNode.attribs}/>;
+        if (!domNode.children) return <Script {...domNode.attribs} />;
         return <Script {...domNode.attribs}>{domToReact(domNode.children as any, options)}</Script>
       }
     },

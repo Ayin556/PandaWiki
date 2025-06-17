@@ -55,3 +55,50 @@ export const filterEmptyFolders = (data: ITreeItem[]): ITreeItem[] => {
       return true
     })
 }
+
+export const findFirstType2Node = (nodes: ITreeItem[]): string | null => {
+  for (const node of nodes) {
+    if (node.type === 2) {
+      return node.id;
+    }
+    if (node.children && node.children.length > 0) {
+      const found = findFirstType2Node(node.children);
+      if (found) return found;
+    }
+  }
+  return null;
+};
+
+export const addExpandState = (nodes: ITreeItem[], activeId: string, defaultExpand: boolean): ITreeItem[] => {
+  const findParentPath = (nodes: ITreeItem[], targetId: string, path: string[] = []): string[] | null => {
+    for (const node of nodes) {
+      if (node.id === targetId) {
+        return path;
+      }
+      if (node.children && node.children.length > 0) {
+        const found = findParentPath(node.children, targetId, [...path, node.id]);
+        if (found) return found;
+      }
+    }
+    return null;
+  };
+
+  const parentPath = findParentPath(nodes, activeId) || [];
+  const parentSet = new Set(parentPath);
+
+  const addExpand = (nodes: ITreeItem[]): ITreeItem[] => {
+    return nodes.map(node => {
+      const isExpanded = parentSet.has(node.id) ? true : defaultExpand;
+      if (node.children && node.children.length > 0) {
+        return {
+          ...node,
+          defaultExpand: isExpanded,
+          children: addExpand(node.children)
+        };
+      }
+      return node;
+    });
+  };
+
+  return addExpand(nodes);
+};

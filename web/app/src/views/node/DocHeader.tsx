@@ -101,7 +101,7 @@ const DocHeader = () => {
         </Link>
       ))}
       {mobile && <NavBtns detail={kbDetail} />}
-      {!mobile && !isChat && <PageChange />}
+      {!mobile && !isChat && kbDetail?.settings?.mode_switch_visible && <PageChange />}
     </Stack>
   </Stack>
 }

@@ -22,7 +22,10 @@ export interface KBDetail {
     keyword: string,
     auto_sitemap: boolean,
     head_code: string,
-    body_code: string
+    body_code: string,
+    catalog_expanded: boolean,
+    default_display_mode: 1 | 2, // 1 是智能问答，2 是知识库
+    mode_switch_visible: boolean,
   },
   recommend_nodes: RecommendNode[]
 }
@@ -78,5 +81,6 @@ export interface ITreeItem {
   parentId?: string | null;
   children?: ITreeItem[];
   type: 1 | 2;
-  emoji?: string
+  emoji?: string;
+  defaultExpand?: boolean;
 }

@@ -1,7 +1,7 @@
 'use client'
 
 import { useNodeList } from "@/provider/nodelist-provider";
-import { convertToTree } from "@/utils/drag";
+import { convertToTree, findFirstType2Node } from "@/utils/drag";
 import { CusTabs } from "ct-mui";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -23,18 +23,6 @@ const PageChange = () => {
 
   useEffect(() => {
     if (tree.length > 0) {
-      const findFirstType2Node = (nodes: any[]): string | null => {
-        for (const node of nodes) {
-          if (node.type === 2) {
-            return node.id;
-          }
-          if (node.children && node.children.length > 0) {
-            const found = findFirstType2Node(node.children);
-            if (found) return found;
-          }
-        }
-        return null;
-      };
       const firstType2Id = findFirstType2Node(tree);
       if (firstType2Id) {
         setFirstNodeId(firstType2Id);

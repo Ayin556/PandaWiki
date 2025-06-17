@@ -1,12 +1,15 @@
 'use client'
 
 import { NodeListItem } from "@/assets/type";
-import { convertToTree, filterEmptyFolders } from "@/utils/drag";
+import { useKBDetail } from "@/provider/kb-provider";
+import { addExpandState, convertToTree, filterEmptyFolders } from "@/utils/drag";
 import { Box } from "@mui/material";
 import CatalogFolder from "./CatalogFolder";
 
 const Catalog = ({ nodes, activeId, onChange }: { nodes: NodeListItem[], activeId: string, onChange: (id: string) => void }) => {
-  const tree = filterEmptyFolders(convertToTree(nodes) || [])
+  const { kbDetail } = useKBDetail()
+  const catalogFolderExpand = kbDetail?.settings?.catalog_expanded || false
+  const tree = addExpandState(filterEmptyFolders(convertToTree(nodes) || []), activeId, catalogFolderExpand)
 
   return <Box sx={{
     width: 216,
