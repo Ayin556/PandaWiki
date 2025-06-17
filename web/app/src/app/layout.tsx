@@ -4,12 +4,13 @@ import KBProvider from "@/provider/kb-provider";
 import MobileProvider from "@/provider/mobile-provider";
 import NodeListProvider from "@/provider/nodelist-provider";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
-import parse from 'html-react-parser';
+import parse, {DOMNode, domToReact} from 'html-react-parser';
 import type { Metadata, Viewport } from "next";
 import localFont from 'next/font/local';
 import { headers } from "next/headers";
 import { cache } from "react";
 import { getSelectorsByUserAgent } from "react-device-detect";
+import Script from 'next/script'
 import "./globals.css";
 
 const gilory = localFont({
@@ -126,13 +127,19 @@ export default async function RootLayout({
 
   const userAgent = headersList.get('user-agent');
   const { isMobile } = getSelectorsByUserAgent(userAgent || '');
-
-
+  const options = {
+    replace(domNode: DOMNode) {
+      if (domNode.type === 'script') {
+        if(!domNode.children) return <Script {...domNode.attribs}/>;
+        return <Script {...domNode.attribs}>{domToReact(domNode.children as any, options)}</Script>
+      }
+    },
+  };
   return (
     <html lang="en">
       <head>
         {kbDetail?.settings?.head_code && (
-          <>{parse(kbDetail.settings.head_code)}</>
+          <>{parse(kbDetail.settings.head_code, options)}</>
         )}
       </head>
       <body className={`${gilory.variable} ${puhuiti.variable}`}>
@@ -147,7 +154,7 @@ export default async function RootLayout({
           <Footer />
         </AppRouterCacheProvider>
         {kbDetail?.settings?.body_code && (
-          <>{parse(kbDetail.settings.body_code)}</>
+          <>{parse(kbDetail.settings.body_code, options)}</>
         )}
       </body>
     </html >
