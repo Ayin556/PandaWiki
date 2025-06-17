@@ -3,18 +3,15 @@
 
 import { IconArrowUp } from '@/components/icons';
 import MarkDown from '@/components/markdown';
-import { StyledCard } from "@/components/StyledHTML";
 import { useMobile } from '@/provider/mobile-provider';
-import { Box, IconButton, Stack, TextField } from "@mui/material";
-import { useState } from 'react';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Accordion, AccordionDetails, AccordionSummary, Box, IconButton, Stack, TextField } from "@mui/material";
+import { useEffect, useState } from 'react';
 import ChatLoading from './ChatLoading';
 import { AnswerStatus } from './constant';
 
 interface ChatResultProps {
-  conversation: {
-    role: 'user' | 'assistant';
-    content: string;
-  }[];
+  conversation: { q: string, a: string }[];
   answer: string;
   loading: boolean;
   thinking: keyof typeof AnswerStatus;
@@ -34,43 +31,62 @@ const ChatResult = ({ conversation, answer, loading, thinking, onSearch, handleS
     }
   }
 
-  return <StyledCard sx={{
-    height: mobile ? 'calc(100vh - 313px)' : 'calc(100vh - 226px)',
+  const scrollToBottom = () => {
+    const container = document.querySelector('.conversation-container')
+    if (container) {
+      container.scrollTo({
+        top: container.scrollHeight,
+        behavior: 'smooth'
+      })
+    }
+  }
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [answer, conversation])
+
+  return <Box className='conversation-container' sx={{
+    height: mobile ? 'calc(100vh - 313px)' : 'calc(100vh - 266px)',
     overflow: 'auto',
+    '&::-webkit-scrollbar': {
+      display: 'none'
+    },
+    scrollbarWidth: 'none',
+    msOverflowStyle: 'none',
   }}>
-    <Stack direction='column' gap={2} sx={{
-      mb: mobile ? 0 : '132px',
-    }}>
-      {conversation.map((message, index) => (
-        <Box key={index} sx={{
-          borderRadius: '10px',
-        }}>
-          {message.role === 'user' ? <Box sx={{ fontWeight: '700', lineHeight: '24px' }}>
-            {message.content}
-          </Box> : <Box>
-            <MarkDown content={message.content} />
-          </Box>}
-        </Box>
+    <Stack direction='column' gap={2} >
+      {conversation.map((item, index) => (
+        <Accordion key={index} defaultExpanded={index === conversation.length - 1}>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Box sx={{ fontWeight: '700', lineHeight: '24px' }}>
+              {item.q}
+            </Box>
+          </AccordionSummary>
+          <AccordionDetails>
+            <MarkDown content={item.a} />
+            {index === conversation.length - 1 && answer && <MarkDown content={answer} />}
+          </AccordionDetails>
+        </Accordion>
       ))}
-      {answer && <Box>
-        <MarkDown content={answer} />
-      </Box>}
     </Stack>
     <Box sx={{
       position: 'absolute',
-      bottom: 1,
-      left: 1,
-      right: mobile ? 0 : 24,
+      left: 0,
+      right: 0,
+      bottom: 0,
       borderRadius: '10px',
       bgcolor: 'background.default',
-      p: 3,
-      pr: mobile ? 3 : 0,
     }}>
       <Box sx={{
-        p: 2,
+        px: 3,
+        py: 2,
         bgcolor: 'background.default',
         borderRadius: '10px',
         boxShadow: '0px 4px 8px 4px rgba(54,59,76,0.06)',
+        ...(mobile && {
+          mx: 2,
+          mb: 1,
+        }),
       }}>
         <TextField
           fullWidth
@@ -141,7 +157,7 @@ const ChatResult = ({ conversation, answer, loading, thinking, onSearch, handleS
         />
       </Box>
     </Box>
-  </StyledCard>
+  </Box >
 }
 
 export default ChatResult;

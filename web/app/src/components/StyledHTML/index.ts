@@ -1,4 +1,3 @@
-export { default as StyledAnchor } from './StyledAnchor';
 export { default as StyledAppBar } from './StyledAppBar';
 export { default as StyledCard } from './StyledCard';
 export { default as StyledContainer } from './StyledContainer';

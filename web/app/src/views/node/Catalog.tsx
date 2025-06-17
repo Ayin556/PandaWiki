@@ -1,34 +1,39 @@
 'use client'
 
 import { NodeListItem } from "@/assets/type";
-import { convertToTree } from "@/utils/drag";
+import { useKBDetail } from "@/provider/kb-provider";
+import { addExpandState, convertToTree, filterEmptyFolders } from "@/utils/drag";
 import { Box } from "@mui/material";
 import CatalogFolder from "./CatalogFolder";
 
 const Catalog = ({ nodes, activeId, onChange }: { nodes: NodeListItem[], activeId: string, onChange: (id: string) => void }) => {
-  const tree = convertToTree(nodes)
+  const { kbDetail } = useKBDetail()
+  const catalogFolderExpand = kbDetail?.settings?.catalog_expanded !== 2
+  const tree = addExpandState(filterEmptyFolders(convertToTree(nodes) || []), activeId, catalogFolderExpand)
 
   return <Box sx={{
-    width: 250,
-    pr: 3,
-    fontSize: 14,
+    width: 216,
+    px: 2,
+    py: 3,
+    fontSize: 12,
     position: 'fixed',
+    zIndex: 5,
     borderRight: '1px solid',
     borderColor: 'divider',
     lineHeight: '22px',
     color: 'text.primary',
+    bgcolor: 'background.paper',
   }}>
     <Box sx={{
-      fontSize: 16,
+      px: 2,
+      pb: 1,
+      lineHeight: '22px',
+      fontSize: 14,
       fontWeight: 'bold',
-      mb: 2,
-      ml: -2,
-      pl: 2
     }}>目录</Box>
     <Box sx={{
-      ml: -2,
       pl: 2,
-      height: 'calc(100vh - 174px)',
+      height: 'calc(100vh - 78px)',
       overflowY: 'auto',
       overflowX: 'hidden',
       '&::-webkit-scrollbar': {

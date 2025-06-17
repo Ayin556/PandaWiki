@@ -38,7 +38,7 @@ const lightTheme = createTheme(
         primary: '#21222D',
         secondary: 'rgba(33,34,45, 0.7)',
         tertiary: 'rgba(33,34,45, 0.5)',
-        disabled: 'rgba(33,34,45, 0.2)',
+        disabled: 'rgba(33,34,45, 0.3)',
       },
       divider: '#ECEEF1',
     },
@@ -132,6 +132,55 @@ const lightTheme = createTheme(
           },
         },
       },
+      MuiAccordion: {
+        styleOverrides: {
+          root: {
+            padding: '24px',
+            borderRadius: '10px !important',
+            border: '1px solid',
+            backgroundColor: 'var(--mui-palette-background-paper)',
+            borderColor: 'var(--mui-palette-divider)',
+            boxShadow: 'none',
+            '&.Mui-expanded': {
+              margin: 0,
+            },
+          },
+        },
+      },
+      MuiAccordionSummary: {
+        styleOverrides: {
+          root: {
+            margin: 0,
+            padding: 0,
+            paddingBottom: '8px',
+            minHeight: '0 !important',
+            '&.Mui-expanded': {
+              minHeight: 0,
+            },
+            '&:before': {
+              display: 'none',
+            }
+          },
+          content: {
+            margin: 0,
+            fontSize: 20,
+            lineHeight: '28px',
+            '&.Mui-expanded': {
+              margin: 0,
+            },
+          }
+        },
+      },
+      MuiAccordionDetails: {
+        styleOverrides: {
+          root: {
+            borderTop: '1px solid',
+            borderColor: 'var(--mui-palette-divider)',
+            padding: 0,
+            paddingTop: '24px',
+          }
+        }
+      }
     },
   },
   zhCN,

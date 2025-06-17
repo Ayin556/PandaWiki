@@ -4,13 +4,13 @@ import KBProvider from "@/provider/kb-provider";
 import MobileProvider from "@/provider/mobile-provider";
 import NodeListProvider from "@/provider/nodelist-provider";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
-import parse, {DOMNode, domToReact} from 'html-react-parser';
+import parse, { DOMNode, domToReact } from 'html-react-parser';
 import type { Metadata, Viewport } from "next";
 import localFont from 'next/font/local';
 import { headers } from "next/headers";
+import Script from 'next/script';
 import { cache } from "react";
 import { getSelectorsByUserAgent } from "react-device-detect";
-import Script from 'next/script'
 import "./globals.css";
 
 const gilory = localFont({
@@ -130,7 +130,7 @@ export default async function RootLayout({
   const options = {
     replace(domNode: DOMNode) {
       if (domNode.type === 'script') {
-        if(!domNode.children) return <Script {...domNode.attribs}/>;
+        if (!domNode.children) return <Script {...domNode.attribs} />;
         return <Script {...domNode.attribs}>{domToReact(domNode.children as any, options)}</Script>
       }
     },

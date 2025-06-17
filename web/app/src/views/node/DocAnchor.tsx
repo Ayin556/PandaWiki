@@ -1,9 +1,6 @@
 'use client'
 
-import { StyledAnchor } from "@/components/StyledHTML";
 import { Box } from "@mui/material";
-import { Ellipsis } from "ct-mui";
-import { useEffect, useState } from "react";
 
 interface Heading {
   id: string
@@ -14,17 +11,16 @@ interface Heading {
 interface DocAnchorProps {
   title: string
   headings: Heading[]
-  maxH: number
   activeHeading: Heading | null
 }
 
 const HeadingSx = [
-  { fontSize: 14, fontWeight: 400, color: 'text.secondary' },
-  { fontSize: 14, fontWeight: 400, color: 'text.tertiary' },
-  { fontSize: 14, fontWeight: 400, color: 'text.disabled' },
+  { fontWeight: 400, color: 'text.secondary' },
+  { fontWeight: 400, color: 'text.tertiary' },
+  { fontWeight: 400, color: 'text.disabled' },
 ]
 
-const DocAnchor = ({ title, headings, maxH, activeHeading }: DocAnchorProps) => {
+const DocAnchor = ({ title, headings, activeHeading }: DocAnchorProps) => {
   const levels = Array.from(new Set(headings.map(it => it.heading).sort((a, b) => a - b))).slice(0, 3)
 
 
@@ -40,21 +36,34 @@ const DocAnchor = ({ title, headings, maxH, activeHeading }: DocAnchorProps) => 
         top: offsetPosition,
         behavior: 'smooth'
       });
-      location.hash = heading.title
+      location.hash = encodeURIComponent(heading.title)
     }
   };
 
-  return <StyledAnchor>
-    {title && <Ellipsis arrow sx={{
+  return <Box sx={{
+    gap: '8px',
+    fontSize: 12,
+    position: 'fixed',
+    zIndex: 5,
+    top: 96,
+    right: 16,
+    width: 200,
+    bgcolor: 'background.paper',
+    borderRadius: '10px',
+    border: '1px solid',
+    borderColor: 'divider',
+    padding: '16px',
+  }}>
+    {title && <Box sx={{
       fontWeight: 'bold',
       cursor: 'pointer',
       mb: 1,
       color: 'text.secondary',
     }}>
-      {title}
-    </Ellipsis>}
+      内容大纲
+    </Box>}
     <Box sx={{
-      height: 'calc(100vh - 174px)',
+      maxHeight: 'calc(100vh - 174px)',
       overflowY: 'auto',
       overflowX: 'hidden',
       lineHeight: '32px',
@@ -66,20 +75,23 @@ const DocAnchor = ({ title, headings, maxH, activeHeading }: DocAnchorProps) => 
     }}>
       {headings.filter(it => levels.includes(it.heading)).map((heading) => {
         const idx = levels.indexOf(heading.heading)
-        return <Ellipsis key={heading.id} arrow sx={{
+        return <Box key={heading.id} sx={{
           cursor: 'pointer',
-          pl: (idx + 1) * 2,
+          pl: idx * 2,
           ...HeadingSx[idx],
           color: activeHeading?.id === heading.id ? 'primary.main' : HeadingSx[idx].color,
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
           ':hover': {
             color: 'primary.main'
           }
         }} onClick={(e) => handleClick(e, heading)}>
           {heading.title}
-        </Ellipsis>
+        </Box>
       })}
     </Box>
-  </StyledAnchor>
+  </Box>
 }
 
 export default DocAnchor;

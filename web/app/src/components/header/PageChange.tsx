@@ -1,7 +1,7 @@
 'use client'
 
 import { useNodeList } from "@/provider/nodelist-provider";
-import { convertToTree } from "@/utils/drag";
+import { convertToTree, findFirstType2Node } from "@/utils/drag";
 import { CusTabs } from "ct-mui";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -14,27 +14,15 @@ const PageChange = () => {
   const { nodeList } = useNodeList()
   const tree = convertToTree(nodeList || [])
 
-  const [value, setValue] = useState('home');
+  const [value, setValue] = useState('welcome');
   const [firstNodeId, setFirstNodeId] = useState('')
 
   useEffect(() => {
-    setValue(pathname.split('/')[1] || 'home');
+    setValue(pathname.split('/')[1] || 'welcome');
   }, [pathname])
 
   useEffect(() => {
     if (tree.length > 0) {
-      const findFirstType2Node = (nodes: any[]): string | null => {
-        for (const node of nodes) {
-          if (node.type === 2) {
-            return node.id;
-          }
-          if (node.children && node.children.length > 0) {
-            const found = findFirstType2Node(node.children);
-            if (found) return found;
-          }
-        }
-        return null;
-      };
       const firstType2Id = findFirstType2Node(tree);
       if (firstType2Id) {
         setFirstNodeId(firstType2Id);
@@ -49,7 +37,7 @@ const PageChange = () => {
       bgcolor: 'transparent',
       border: '1px solid',
       borderColor: 'primary.main',
-      height: 36.5,
+      height: 36,
       p: '2px',
       borderRadius: '6px',
       '.MuiTab-root': {
@@ -61,27 +49,27 @@ const PageChange = () => {
         }
       },
       '.MuiTabs-scroller': {
-        height: 30.5,
+        height: 30,
         borderRadius: '4px',
       },
       '.MuiTabs-indicator': {
         width: 88,
-        height: 30.5,
+        height: 30,
         borderRadius: '4px',
         bgcolor: 'primary.main',
       }
     }}
     value={value}
     change={(value: string) => {
-      if (value === 'home') {
-        router.push('/')
+      if (value === 'welcome') {
+        router.push('/welcome')
       } else {
         router.push(`/node/${firstNodeId}`)
       }
     }}
     list={[{
       label: '问答模式',
-      value: 'home',
+      value: 'welcome',
     }, {
       label: '文档模式',
       value: 'node',
