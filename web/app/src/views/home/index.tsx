@@ -1,5 +1,6 @@
 "use client";
 
+import Footer from "@/components/footer";
 import { IconSearch } from "@/components/icons";
 import { useKBDetail } from "@/provider/kb-provider";
 import { useMobile } from "@/provider/mobile-provider";
@@ -30,7 +31,7 @@ const StyledSearch = styled(Box)(({ mobile }: { mobile: boolean }) => ({
 
 const Home = () => {
   const { mobile = false } = useMobile()
-  const { kbDetail } = useKBDetail()
+  const { kbDetail, themeMode } = useKBDetail()
 
   const [searchText, setSearchText] = useState("");
   const router = useRouter();
@@ -47,7 +48,10 @@ const Home = () => {
     }
   };
 
-  return <Box sx={{ pt: mobile ? 13 : 18, minHeight: 'calc(100vh - 40px)' }}>
+  return <Box sx={{
+    pt: mobile ? 13 : 18,
+    minHeight: 'calc(100vh - 40px)',
+  }}>
     <StyledWelcomeStr mobile={mobile} sx={{ color: 'text.primary' }}>
       {kbDetail?.settings?.welcome_str}
     </StyledWelcomeStr>
@@ -56,7 +60,6 @@ const Home = () => {
         fullWidth
         sx={{
           width: '100%',
-          bgcolor: 'background.default',
           borderRadius: '10px',
           overflow: 'hidden',
           '& .MuiInputBase-input': {
@@ -89,6 +92,7 @@ const Home = () => {
     </StyledSearch>
     {!mobile && <QuestionList />}
     <NodeList />
+    <Footer />
   </Box>;
 };
 

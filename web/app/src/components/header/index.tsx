@@ -5,11 +5,11 @@ import headerBgi from '@/assets/images/header-bg.jpg';
 import Logo from '@/assets/images/logo.png';
 import { useKBDetail } from '@/provider/kb-provider';
 import { useMobile } from '@/provider/mobile-provider';
-import { Box, Button, IconButton, Stack } from "@mui/material";
+import { AppBar, Box, Button, IconButton, Stack } from "@mui/material";
 import Image from 'next/image';
 import Link from "next/link";
 import { usePathname, useRouter } from 'next/navigation';
-import { StyledAppBar, StyledContainer, StyledHeaderBgi } from "../StyledHTML";
+import { StyledContainer } from "../StyledHTML";
 import { IconSearch } from '../icons';
 import NavBtns from './NavBtns';
 import PageChange from './PageChange';
@@ -38,9 +38,22 @@ const Header = () => {
   // };
 
   return <>
-    {!isChat && <StyledHeaderBgi height={bgiHeight} bgi={bgi} />}
-    <StyledAppBar position='fixed' showBorder={isChat && !mobile}>
-      {!isChat && <Box sx={{ height: headerHeight, overflow: 'hidden', position: 'fixed', top: 0, left: 0, right: 0 }}>
+    {/* {!isChat && <StyledHeaderBgi height={bgiHeight} bgi={bgi} />} */}
+    <AppBar position='fixed' sx={{
+      bgcolor: 'background.default',
+      color: 'text.primary',
+      boxShadow: 'none',
+      borderBottom: '1px solid',
+      borderColor: 'divider',
+    }}>
+      {/* {!isChat && <Box sx={{
+        height: headerHeight,
+        overflow: 'hidden',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0
+      }}>
         <StyledHeaderBgi
           bgi={bgi}
           height={bgiHeight}
@@ -50,7 +63,7 @@ const Header = () => {
             zIndex: 1,
           }}
         />
-      </Box>}
+      </Box>} */}
       <StyledContainer sx={{
         zIndex: 1,
         ...(mobile && {
@@ -60,7 +73,7 @@ const Header = () => {
       }}>
         <Stack direction='row' alignItems='center' justifyContent='space-between' sx={{ height: headerHeight }}>
           <Link href={'/'}>
-            <Stack direction='row' alignItems='center' gap={1.5} sx={{ py: '20px', cursor: 'pointer', '&:hover': { color: 'primary.main' } }} >
+            <Stack direction='row' alignItems='center' gap={1.5} sx={{ py: '20px', cursor: 'pointer', color: 'text.primary', '&:hover': { color: 'primary.main' } }} >
               {kbDetail?.settings?.icon ? <img src={kbDetail?.settings?.icon} alt='logo' width={32} height={32} />
                 : <Image src={Logo.src} width={32} height={32} alt='logo' />}
               <Box sx={{ fontSize: 18 }}>{kbDetail?.settings?.title}</Box>
@@ -123,11 +136,11 @@ const Header = () => {
               </Link>
             ))}
             {mobile && <NavBtns detail={kbDetail} />}
-            {!mobile && !isChat && modeSwitchVisible && <PageChange />}
+            {!mobile && modeSwitchVisible && <PageChange />}
           </Stack>
         </Stack>
       </StyledContainer>
-    </StyledAppBar>
+    </AppBar>
   </>
 };
 

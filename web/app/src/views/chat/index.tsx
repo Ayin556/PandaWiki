@@ -1,6 +1,7 @@
 'use client';
 
 import { ChunkResultItem } from '@/assets/type';
+import Footer from '@/components/footer';
 import { useMobile } from '@/provider/mobile-provider';
 import { isInIframe } from '@/utils';
 import SSEClient from '@/utils/fetch';
@@ -175,12 +176,16 @@ const Chat = () => {
           handleSearchAbort={handleSearchAbort}
         /> : <SearchResult list={chunkResult} loading={chunkLoading} />}
       </Box>
+      <Footer />
     </Box>
   }
 
   return (
-    <Box sx={{ pt: 12, minHeight: 'calc(100vh - 40px)' }}>
-      <Stack alignItems="stretch" direction="row" gap={3}>
+    <Box sx={{ pt: 12, minHeight: '100vh' }}>
+      <Stack alignItems="stretch" direction="row" gap={3} sx={{
+        height: 'calc(100vh - 160px)',
+        mb: 3,
+      }}>
         <Box sx={{ position: 'relative', flex: 1 }}>
           <ChatResult
             conversation={conversation}
@@ -199,7 +204,7 @@ const Chat = () => {
           borderColor: 'divider',
           borderRadius: '10px',
           p: 3,
-          bgcolor: 'background.paper',
+          bgcolor: 'background.default',
         }}>
           <Box sx={{
             fontSize: '20px',
@@ -210,6 +215,7 @@ const Chat = () => {
           <SearchResult list={chunkResult} loading={chunkLoading} />
         </Box>
       </Stack>
+      <Footer />
     </Box>
   );
 };
