@@ -95,13 +95,12 @@ const CardStyle = ({ id, data, refresh }: CardStyleProps) => {
         {...field}
         sx={{ mx: 2, width: 'calc(100% - 32px)', height: 52 }}
         onChange={(e) => {
-          field.onChange(e.target.value as 'light' | 'dark' | 'auto')
+          field.onChange(e.target.value as 'light' | 'dark')
           setIsEdit(true)
         }}
       >
         <MenuItem value='light'>浅色模式</MenuItem>
         <MenuItem value='dark'>深色模式</MenuItem>
-        <MenuItem value='auto'>跟随系统</MenuItem>
       </Select>}
     />
   </>

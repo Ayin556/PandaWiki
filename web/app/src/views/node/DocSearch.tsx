@@ -8,7 +8,7 @@ import { useState } from "react"
 
 const DocSearch = () => {
   const router = useRouter();
-  const { kbDetail } = useKBDetail()
+  const { kbDetail, themeMode } = useKBDetail()
   const [searchText, setSearchText] = useState('')
 
   const handleSearch = () => {
@@ -38,6 +38,7 @@ const DocSearch = () => {
         fontFamily: 'Mono',
       },
       '& .MuiOutlinedInput-root': {
+        bgcolor: themeMode === 'dark' ? 'background.paper' : 'background.default',
         pr: '18px',
         '& fieldset': {
           borderRadius: '10px',

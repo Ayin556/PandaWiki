@@ -20,7 +20,7 @@ const QuestionList = () => {
           borderColor: 'divider',
           px: 2,
           cursor: 'pointer',
-          bgcolor: 'background.default',
+          bgcolor: themeMode === 'dark' ? 'background.paper' : 'background.default',
           '&:hover': {
             borderColor: 'primary.main',
             color: 'primary.main',

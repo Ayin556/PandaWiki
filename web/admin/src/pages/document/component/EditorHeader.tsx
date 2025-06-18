@@ -197,7 +197,7 @@ const EditorHeader = ({ editorRef, detail, onSave, refresh }: EditorHeaderProps)
     }} data={{ id: detail.id, name: detail.name, emoji: detail.meta?.emoji || '' }} refresh={refresh} />
     <DocDelete open={delOpen} onClose={() => {
       setDelOpen(false)
-    }} data={[{ ...detail, emoji: detail.meta?.emoji || '', parent_id: '', summary: detail.meta?.summary || '', position: 0, status: 1 } as NodeListItem]} refresh={() => {
+    }} data={[{ ...detail, emoji: detail.meta?.emoji || '', parent_id: '', summary: detail.meta?.summary || '', position: 0, status: 1, visibility: 2 } as NodeListItem]} refresh={() => {
       setTimeout(() => {
         window.close();
       }, 1500)
