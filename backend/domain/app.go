@@ -61,9 +61,10 @@ type AppSettings struct {
 	FeishuBotAppID     string `json:"feishu_bot_app_id,omitempty"`
 	FeishuBotAppSecret string `json:"feishu_bot_app_secret,omitempty"`
 	// web app nav settings
-	CatalogExpanded    int `json:"catalog_expanded,omitempty"`
-	DefaultDisplayMode int `json:"default_display_mode,omitempty"` // 1: QA mode, 2: doc mode
-	ModeSwitchVisible  int `json:"mode_switch_visible,omitempty"`
+	CatalogExpanded    int    `json:"catalog_expanded,omitempty"`
+	DefaultDisplayMode int    `json:"default_display_mode,omitempty"` // 1: QA mode, 2: doc mode
+	ModeSwitchVisible  int    `json:"mode_switch_visible,omitempty"`
+	ThemeMode          string `json:"theme_mode,omitempty"`
 }
 
 func (s *AppSettings) Scan(value any) error {
@@ -115,9 +116,10 @@ type AppSettingsResp struct {
 	FeishuBotAppID     string `json:"feishu_bot_app_id,omitempty"`
 	FeishuBotAppSecret string `json:"feishu_bot_app_secret,omitempty"`
 	// web nav settings
-	CatalogExpanded    int `json:"catalog_expanded,omitempty"`
-	DefaultDisplayMode int `json:"default_display_mode,omitempty"` // 1: QA mode, 2: doc mode
-	ModeSwitchVisible  int `json:"mode_switch_visible,omitempty"`
+	CatalogExpanded    int    `json:"catalog_expanded,omitempty"`
+	DefaultDisplayMode int    `json:"default_display_mode,omitempty"` // 1: QA mode, 2: doc mode
+	ModeSwitchVisible  int    `json:"mode_switch_visible,omitempty"`
+	ThemeMode          string `json:"theme_mode,omitempty"`
 }
 
 func (s *AppSettingsResp) Scan(value any) error {

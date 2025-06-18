@@ -1953,6 +1953,9 @@ const docTemplate = `{
                 "search_placeholder": {
                     "type": "string"
                 },
+                "theme_mode": {
+                    "type": "string"
+                },
                 "title": {
                     "description": "nav",
                     "type": "string"
@@ -2031,6 +2034,9 @@ const docTemplate = `{
                     }
                 },
                 "search_placeholder": {
+                    "type": "string"
+                },
+                "theme_mode": {
                     "type": "string"
                 },
                 "title": {

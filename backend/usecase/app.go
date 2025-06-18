@@ -232,6 +232,7 @@ func (u *AppUsecase) GetAppDetailByKBIDAndAppType(ctx context.Context, kbID stri
 		CatalogExpanded:    app.Settings.CatalogExpanded,
 		DefaultDisplayMode: app.Settings.DefaultDisplayMode,
 		ModeSwitchVisible:  app.Settings.ModeSwitchVisible,
+		ThemeMode:          app.Settings.ThemeMode,
 	}
 	if len(app.Settings.RecommendNodeIDs) > 0 {
 		nodes, err := u.nodeUsecase.GetRecommendNodeList(ctx, &domain.GetRecommendNodeListReq{
@@ -270,6 +271,7 @@ func (u *AppUsecase) GetWebAppInfo(ctx context.Context, kbID string) (*domain.Ap
 			CatalogExpanded:    app.Settings.CatalogExpanded,
 			DefaultDisplayMode: app.Settings.DefaultDisplayMode,
 			ModeSwitchVisible:  app.Settings.ModeSwitchVisible,
+			ThemeMode:          app.Settings.ThemeMode,
 		},
 	}
 	if len(app.Settings.RecommendNodeIDs) > 0 {
