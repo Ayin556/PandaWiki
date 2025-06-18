@@ -25,12 +25,11 @@ const DocSearch = () => {
 
   return <TextField
     sx={{
-      width: 'calc(100% - 500px)',
-      marginLeft: '250px',
-      bgcolor: 'background.default',
+      width: 'calc(100% - 485px)',
+      marginLeft: '261px',
       borderRadius: '10px',
       mb: 3,
-      px: 3,
+      px: 10,
       overflow: 'hidden',
       '& .MuiInputBase-input': {
         p: 2,

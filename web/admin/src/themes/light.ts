@@ -2,6 +2,7 @@ const light = {
   primary: {
     main: "#3248F2",
     contrastText: "#fff",
+    lighter: "#E6E8EC",
   },
   secondary: {
     main: "#3366FF",

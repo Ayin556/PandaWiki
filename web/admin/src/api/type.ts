@@ -269,6 +269,7 @@ export type CustomCodeSetting = {
 export type StyleSetting = {
   default_display_mode: 1 | 2,
   mode_switch_visible: 1 | 2,
+  theme_mode: 'light' | 'dark' | 'auto'
 }
 
 export type CatalogSetting = {

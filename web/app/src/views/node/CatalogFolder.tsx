@@ -9,7 +9,7 @@ const CatalogFolder = ({ item, activeId, onChange, depth = 1 }: { item: ITreeIte
 
   return <Box key={item.id}>
     <Box sx={{
-      pl: depth * 2,
+      pl: (depth - 1) * 2,
       position: 'relative',
       lineHeight: '36px',
       cursor: 'pointer',
@@ -23,10 +23,10 @@ const CatalogFolder = ({ item, activeId, onChange, depth = 1 }: { item: ITreeIte
     }} onClick={() => {
       setIsExpanded(!isExpanded)
     }}>
-      {item.type === 1 && <Box sx={{ position: 'absolute', left: -2, top: 2 }}>
+      {item.type === 1 && <Box sx={{ position: 'absolute', left: -2 + (depth - 2) * 16, top: 4 }}>
         <IconArrowDown sx={{ fontSize: 16, transform: isExpanded ? 'none' : 'rotate(-90deg)', transition: 'transform 0.2s' }} />
       </Box>}
-      <Stack direction="row" alignItems="center" gap={1}>
+      <Stack direction="row" alignItems="center" gap={0.5}>
         {item.emoji ? <Box sx={{ flexShrink: 0, fontSize: 12 }}>{item.emoji}</Box> : item.type === 1 ? <IconFolder sx={{ flexShrink: 0 }} /> : <IconFile sx={{ flexShrink: 0 }} />}
         {item.type === 2 ? <Box sx={{ flex: 1, width: 0 }}>
           <Ellipsis onClick={(event) => {

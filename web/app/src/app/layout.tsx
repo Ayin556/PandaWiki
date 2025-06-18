@@ -1,9 +1,10 @@
 import { KBDetail, NodeListItem } from "@/assets/type";
-import Footer from "@/components/footer";
 import KBProvider from "@/provider/kb-provider";
 import MobileProvider from "@/provider/mobile-provider";
 import NodeListProvider from "@/provider/nodelist-provider";
+import { darkTheme, lightTheme } from "@/theme";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
+import { ThemeProvider } from "ct-mui";
 import parse, { DOMNode, domToReact } from 'html-react-parser';
 import type { Metadata, Viewport } from "next";
 import localFont from 'next/font/local';
@@ -120,12 +121,14 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const headersList = await headers()
+  const userAgent = headersList.get('user-agent');
 
   const kb_id = headersList.get('x-kb-id') || process.env.DEV_KB_ID || ''
-  const kbDetail = await getKBDetailCached(kb_id)
   const nodeList = await getNodeListCached(kb_id)
+  const kbDetail = await getKBDetailCached(kb_id)
 
-  const userAgent = headersList.get('user-agent');
+  const themeMode = kbDetail?.settings?.theme_mode || 'light'
+
   const { isMobile } = getSelectorsByUserAgent(userAgent || '');
   const options = {
     replace(domNode: DOMNode) {
@@ -135,6 +138,7 @@ export default async function RootLayout({
       }
     },
   };
+
   return (
     <html lang="en">
       <head>
@@ -143,16 +147,17 @@ export default async function RootLayout({
         )}
       </head>
       <body className={`${gilory.variable} ${puhuiti.variable}`}>
-        <AppRouterCacheProvider>
-          <KBProvider kbDetail={kbDetail} kb_id={kb_id}>
-            <NodeListProvider nodeList={nodeList} >
-              <MobileProvider mobile={isMobile}>
-                {children}
-              </MobileProvider>
-            </NodeListProvider>
-          </KBProvider>
-          <Footer />
-        </AppRouterCacheProvider>
+        <ThemeProvider theme={themeMode === 'dark' ? darkTheme : lightTheme}>
+          <AppRouterCacheProvider>
+            <KBProvider kbDetail={kbDetail} kb_id={kb_id} themeMode={themeMode || 'light'}>
+              <NodeListProvider nodeList={nodeList} >
+                <MobileProvider mobile={isMobile}>
+                  {children}
+                </MobileProvider>
+              </NodeListProvider>
+            </KBProvider>
+          </AppRouterCacheProvider>
+        </ThemeProvider>
         {kbDetail?.settings?.body_code && (
           <>{parse(kbDetail.settings.body_code, options)}</>
         )}

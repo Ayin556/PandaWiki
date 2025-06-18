@@ -1,6 +1,6 @@
 'use client';
 import notFound from '@/assets/images/404.png';
-import { lightTheme } from '@/theme';
+import { darkTheme } from '@/theme';
 import { Box, Button, Stack } from '@mui/material';
 import { ThemeProvider } from 'ct-mui';
 import Image from 'next/image';
@@ -8,7 +8,7 @@ import Link from 'next/link';
 
 export default function NotFound() {
   return (
-    <ThemeProvider theme={lightTheme}>
+    <ThemeProvider theme={darkTheme}>
       <Box
         sx={{
           pt: 28,

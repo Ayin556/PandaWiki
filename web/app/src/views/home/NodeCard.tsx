@@ -1,6 +1,6 @@
 import { RecommendNode } from "@/assets/type";
 import { IconFile, IconFolder } from "@/components/icons";
-import { StyledCard } from "@/components/StyledHTML";
+import { useKBDetail } from "@/provider/kb-provider";
 import { useMobile } from "@/provider/mobile-provider";
 import { Box, Stack } from "@mui/material";
 import { Ellipsis } from "ct-mui";
@@ -66,17 +66,23 @@ const NodeFile = ({ node }: { node: RecommendNode }) => {
 }
 
 const DocCard = ({ node }: { node: RecommendNode }) => {
+  const { themeMode } = useKBDetail()
   const { mobile = false } = useMobile()
-  return <StyledCard sx={{
+  return <Box sx={{
+    border: `1px solid`,
+    borderColor: 'divider',
+    borderRadius: '10px',
+    padding: '24px',
     width: mobile ? 'calc(100% - 48px)' : 'calc((100% - 32px) / 3)',
     transition: 'all 0.3s ease',
+    color: 'text.primary',
+    bgcolor: 'background.default',
     ':hover': {
       boxShadow: '0px 0px 10px 0px rgba(0, 0, 0, 0.1)',
     },
-    color: 'text.primary',
   }}>
     {node.type === 2 ? <NodeFile node={node} /> : <NodeFolder node={node} />}
-  </StyledCard>
+  </Box>
 };
 
 export default DocCard;

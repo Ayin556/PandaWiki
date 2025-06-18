@@ -3,6 +3,7 @@
 
 import { IconArrowUp } from '@/components/icons';
 import MarkDown from '@/components/markdown';
+import { useKBDetail } from '@/provider/kb-provider';
 import { useMobile } from '@/provider/mobile-provider';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary, Box, IconButton, Stack, TextField } from "@mui/material";
@@ -23,6 +24,7 @@ interface ChatResultProps {
 const ChatResult = ({ conversation, answer, loading, thinking, onSearch, handleSearchAbort, setThinking }: ChatResultProps) => {
   const [input, setInput] = useState('')
   const { mobile = false } = useMobile()
+  const { themeMode } = useKBDetail()
 
   const handleSearch = () => {
     if (input.length > 0) {
@@ -56,7 +58,9 @@ const ChatResult = ({ conversation, answer, loading, thinking, onSearch, handleS
   }}>
     <Stack direction='column' gap={2} >
       {conversation.map((item, index) => (
-        <Accordion key={index} defaultExpanded={index === conversation.length - 1}>
+        <Accordion key={index} defaultExpanded={index === conversation.length - 1} sx={{
+          bgcolor: 'background.default',
+        }}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Box sx={{ fontWeight: '700', lineHeight: '24px' }}>
               {item.q}
@@ -75,14 +79,14 @@ const ChatResult = ({ conversation, answer, loading, thinking, onSearch, handleS
       right: 0,
       bottom: 0,
       borderRadius: '10px',
-      bgcolor: 'background.default',
+      border: '1px solid',
+      borderColor: 'divider',
     }}>
       <Box sx={{
+        bgcolor: 'background.default',
         px: 3,
         py: 2,
-        bgcolor: 'background.default',
         borderRadius: '10px',
-        boxShadow: '0px 4px 8px 4px rgba(54,59,76,0.06)',
         ...(mobile && {
           mx: 2,
           mb: 1,
@@ -94,7 +98,6 @@ const ChatResult = ({ conversation, answer, loading, thinking, onSearch, handleS
           rows={2}
           sx={{
             '.MuiInputBase-root': {
-              bgcolor: 'background.default',
               p: 0,
               overflow: 'hidden',
               height: '52px !important',

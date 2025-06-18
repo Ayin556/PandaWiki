@@ -15,7 +15,7 @@ const NodeList = () => {
     gap={2}
     sx={{
       mt: '60px',
-      mb: 10,
+      pb: 10,
       ...(mobile && {
         gap: 2,
         mt: 5,

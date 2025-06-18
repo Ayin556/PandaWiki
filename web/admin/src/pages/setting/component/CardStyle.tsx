@@ -1,6 +1,6 @@
 import { updateAppDetail } from "@/api"
 import { AppDetail, StyleSetting } from "@/api/type"
-import { Box, Button, FormControlLabel, Radio, RadioGroup, Stack } from "@mui/material"
+import { Box, Button, FormControlLabel, MenuItem, Radio, RadioGroup, Select, Stack } from "@mui/material"
 import { Message } from "ct-mui"
 import { useEffect, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
@@ -17,6 +17,7 @@ const CardStyle = ({ id, data, refresh }: CardStyleProps) => {
     defaultValues: {
       default_display_mode: 1,
       mode_switch_visible: 1,
+      theme_mode: 'light',
     }
   })
 
@@ -36,6 +37,7 @@ const CardStyle = ({ id, data, refresh }: CardStyleProps) => {
   useEffect(() => {
     setValue('default_display_mode', data.settings?.default_display_mode)
     setValue('mode_switch_visible', data.settings?.mode_switch_visible)
+    setValue('theme_mode', data.settings?.theme_mode)
   }, [data])
 
   return <>
@@ -58,7 +60,7 @@ const CardStyle = ({ id, data, refresh }: CardStyleProps) => {
       {isEdit && <Button variant="contained" size="small" onClick={handleSubmit(onSubmit)}>保存</Button>}
     </Stack>
     <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'} sx={{ mx: 2 }}>
-      <Box sx={{ fontSize: 14, lineHeight: '32px' }}>默认模式</Box>
+      <Box sx={{ fontSize: 14, lineHeight: '32px' }}>页面模式</Box>
       <Controller
         control={control}
         name="default_display_mode"
@@ -85,6 +87,23 @@ const CardStyle = ({ id, data, refresh }: CardStyleProps) => {
         </RadioGroup>}
       />
     </Stack>
+    <Box sx={{ fontSize: 14, lineHeight: '32px', mx: 2, mb: 1 }}>配色方案</Box>
+    <Controller
+      control={control}
+      name="theme_mode"
+      render={({ field }) => <Select
+        {...field}
+        sx={{ mx: 2, width: 'calc(100% - 32px)', height: 52 }}
+        onChange={(e) => {
+          field.onChange(e.target.value as 'light' | 'dark' | 'auto')
+          setIsEdit(true)
+        }}
+      >
+        <MenuItem value='light'>浅色模式</MenuItem>
+        <MenuItem value='dark'>深色模式</MenuItem>
+        <MenuItem value='auto'>跟随系统</MenuItem>
+      </Select>}
+    />
   </>
 }
 

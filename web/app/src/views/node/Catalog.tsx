@@ -12,7 +12,7 @@ const Catalog = ({ nodes, activeId, onChange }: { nodes: NodeListItem[], activeI
   const tree = addExpandState(filterEmptyFolders(convertToTree(nodes) || []), activeId, catalogFolderExpand)
 
   return <Box sx={{
-    width: 216,
+    width: 261,
     px: 2,
     py: 3,
     fontSize: 12,

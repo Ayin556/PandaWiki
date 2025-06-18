@@ -1,5 +1,4 @@
-import { lightTheme } from '@/theme';
-import { ThemeProvider } from 'ct-mui';
+import { Box } from '@mui/material';
 import React from 'react';
 
 const Layout = async ({
@@ -7,9 +6,11 @@ const Layout = async ({
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
-  return <ThemeProvider theme={lightTheme}>
+  return <Box sx={{
+    bgcolor: 'background.paper',
+  }}>
     {children}
-  </ThemeProvider>
+  </Box>
 };
 
 export default Layout;

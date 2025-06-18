@@ -1,6 +1,7 @@
 'use client'
 
 import { NodeDetail } from "@/assets/type";
+import Footer from "@/components/footer";
 import Header from "@/components/header";
 import { useKBDetail } from "@/provider/kb-provider";
 import { useMobile } from "@/provider/mobile-provider";
@@ -97,8 +98,8 @@ const Doc = ({ node: defaultNode }: { node?: NodeDetail }) => {
           size="small"
           onClick={scrollToTop}
           sx={{
-            backgroundColor: '#fff',
-            color: '#000',
+            backgroundColor: 'background.paper',
+            color: 'text.primary',
             position: 'fixed',
             bottom: 66,
             right: 16,
@@ -114,18 +115,19 @@ const Doc = ({ node: defaultNode }: { node?: NodeDetail }) => {
   return <Box>
     <Catalog activeId={id} nodes={nodeList || []} onChange={setId} />
     <DocHeader />
-    <Box sx={{ pt: '96px', position: 'relative', zIndex: 1, minHeight: 'calc(100vh - 132px)' }}>
+    <Box sx={{ pt: '96px', position: 'relative', zIndex: 1, minHeight: 'calc(100vh - 40px)', pb: 10 }}>
       <DocSearch />
       <DocContent info={node} editorRef={editorRef} />
     </Box>
     <DocAnchor title={node?.name || ''} headings={headings} activeHeading={activeHeading} />
+    <Footer />
     <Zoom in={showScrollTop}>
       <Fab
         size="small"
         onClick={scrollToTop}
         sx={{
-          backgroundColor: '#fff',
-          color: '#000',
+          backgroundColor: 'background.paper',
+          color: 'text.primary',
           position: 'fixed',
           bottom: 66,
           right: 16,

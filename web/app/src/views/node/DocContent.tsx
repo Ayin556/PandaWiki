@@ -1,7 +1,7 @@
 'use client'
 
 import { NodeDetail } from "@/assets/type";
-import { IconClock } from "@/components/icons";
+import { IconFile, IconFolder } from "@/components/icons";
 import { useMobile } from "@/provider/mobile-provider";
 import { Box, Stack } from "@mui/material";
 import { TiptapReader, UseTiptapEditorReturn } from 'ct-tiptap-editor';
@@ -17,11 +17,11 @@ const DocContent = ({ info, editorRef }: { info?: NodeDetail, editorRef: UseTipt
   if (!editorRef || !info) return null
 
   return <Box sx={{
-    width: 'calc(100% - 500px)',
-    marginLeft: '250px',
+    width: 'calc(100% - 485px)',
+    marginLeft: '261px',
     wordBreak: 'break-all',
     color: 'text.primary',
-    padding: `0 24px`,
+    px: 10,
     position: 'relative',
     zIndex: 1,
     ...(mobile && {
@@ -40,15 +40,22 @@ const DocContent = ({ info, editorRef }: { info?: NodeDetail, editorRef: UseTipt
       border: '1px solid',
       borderColor: 'divider',
     }}>
-      <Box sx={{ fontSize: 32, lineHeight: '40px', fontWeight: '700', color: 'text.primary' }}>
+      <Stack direction={'row'} alignItems={'flex-start'} gap={1} sx={{ fontSize: 32, lineHeight: '40px', fontWeight: '700', color: 'text.primary' }}>
+        {info?.meta?.emoji ? <Box sx={{ flexShrink: 0 }}>{info?.meta?.emoji}</Box>
+          : info?.type === 1 ? <IconFolder sx={{ flexShrink: 0, mt: 0.5 }} />
+            : <IconFile sx={{ flexShrink: 0, mt: 0.5 }} />}
         {info?.name}
-      </Box>
-      <Stack direction={'row'} alignItems={'center'} gap={0.5} sx={{ color: 'text.tertiary' }}>
-        <IconClock />
-        <Box sx={{ fontSize: 12 }}>{dayjs(info?.updated_at).fromNow()}更新</Box>
       </Stack>
+      <Box sx={{ fontSize: 12, textAlign: 'right', width: 100, color: 'text.tertiary', flexShrink: 0 }}>
+        <Box>{dayjs(info?.created_at).fromNow()}创建</Box>
+        {info?.updated_at && info.updated_at.slice(0, 1) !== '0' && <Box>{dayjs(info.updated_at).fromNow()}更新</Box>}
+      </Box>
     </Stack>
-    <Box sx={{ mt: 3 }}>
+    <Box sx={{
+      mt: 3, '.tiptap.ProseMirror': {
+        color: 'text.primary',
+      }
+    }}>
       <TiptapReader editorRef={editorRef} />
     </Box>
   </Box>

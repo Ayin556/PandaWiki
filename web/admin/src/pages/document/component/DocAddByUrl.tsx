@@ -350,7 +350,7 @@ const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddB
         lineHeight: '32px',
         mb: 1,
       }}>
-        {type === 'Notion' ? 'Notion Integration' : `${type} 地址`}
+        {type === 'Notion' ? 'Integration Secret' : `${type} 地址`}
         {type === 'Notion' && <Box component='a'
           href='https://pandawiki.docs.baizhi.cloud/node/01975f23-1c18-74aa-9a05-955b5128c49d' target='_blank'
           sx={{ fontSize: 12, color: 'primary.main' }}>
@@ -362,7 +362,7 @@ const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddB
         multiline={type === 'URL'}
         rows={type === 'URL' ? 4 : 1}
         value={url}
-        placeholder={type === 'URL' ? '每行一个 URL' : type === 'Notion' ? 'Notion Integration' : `${type} 地址`}
+        placeholder={type === 'URL' ? '每行一个 URL' : type === 'Notion' ? 'Integration Secret' : `${type} 地址`}
         autoFocus
         onChange={(e) => setUrl(e.target.value)}
       />
