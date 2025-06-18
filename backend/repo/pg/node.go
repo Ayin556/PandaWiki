@@ -201,7 +201,7 @@ func (r *NodeRepository) GetLatestNodeReleaseByNodeID(ctx context.Context, nodeI
 	if err := r.db.WithContext(ctx).
 		Model(&domain.NodeRelease{}).
 		Where("node_id = ?", nodeID).
-		Order("created_at DESC").
+		Order("updated_at DESC").
 		First(&nodeRelease).Error; err != nil {
 		return nil, err
 	}
@@ -376,6 +376,7 @@ func (r *NodeRepository) UpdateNodeReleaseDocID(ctx context.Context, id, docID s
 func (r *NodeRepository) UpdateNodeReleaseSummary(ctx context.Context, kbID, nodeReleaseID, summary string) error {
 	return r.db.WithContext(ctx).
 		Model(&domain.NodeRelease{}).
+		Omit("updated_at").
 		Where("kb_id = ? AND id = ?", kbID, nodeReleaseID).
 		Update("meta", gorm.Expr("jsonb_set(meta, '{summary}', to_jsonb(?::text))", summary)).Error
 }
@@ -384,8 +385,8 @@ func (r *NodeRepository) UpdateNodeReleaseSummary(ctx context.Context, kbID, nod
 func (r *NodeRepository) TraverseNodesByCursor(ctx context.Context, callback func(*domain.NodeRelease) error) error {
 	rows, err := r.db.WithContext(ctx).
 		Model(&domain.NodeRelease{}).
-		Select("id, kb_id, node_id").
-		Order("id ASC").
+		Select("DISTINCT ON (node_id) id, node_id, kb_id").
+		Order("node_id, updated_at DESC").
 		Rows()
 	if err != nil {
 		return err
@@ -439,7 +440,8 @@ func (r *NodeRepository) CreateNodeReleases(ctx context.Context, kbID string, no
 				Content:    updatedNode.Content,
 				ParentID:   updatedNode.ParentID,
 				Position:   updatedNode.Position,
-				CreatedAt:  time.Now(),
+				CreatedAt:  updatedNode.CreatedAt,
+				UpdatedAt:  time.Now(),
 			}
 			nodeReleases[i] = nodeRelease
 		}
@@ -474,6 +476,7 @@ func (r *NodeRepository) GetOldNodeDocIDsByNodeID(ctx context.Context, nodeRelea
 		if err := tx.Model(&domain.NodeRelease{}).
 			Where("node_id = ?", nodeID).
 			Where("id != ?", nodeReleaseID).
+			Omit("updated_at").
 			Update("doc_id", "").Error; err != nil {
 			return err
 		}
