@@ -1942,6 +1942,9 @@
                 "search_placeholder": {
                     "type": "string"
                 },
+                "theme_mode": {
+                    "type": "string"
+                },
                 "title": {
                     "description": "nav",
                     "type": "string"
@@ -2020,6 +2023,9 @@
                     }
                 },
                 "search_placeholder": {
+                    "type": "string"
+                },
+                "theme_mode": {
                     "type": "string"
                 },
                 "title": {
