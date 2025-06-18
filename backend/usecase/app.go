@@ -93,15 +93,17 @@ func (u *AppUsecase) getQAFunc(kbID string, appType domain.AppType) func(ctx con
 			return nil, err
 		}
 		contentCh := make(chan string, 10)
-		defer close(contentCh)
-		for event := range eventCh {
-			if event.Type == "done" || event.Type == "error" {
-				break
+		go func() {
+			defer close(contentCh)
+			for event := range eventCh {
+				if event.Type == "done" || event.Type == "error" {
+					break
+				}
+				if event.Type == "data" {
+					contentCh <- event.Content
+				}
 			}
-			if event.Type == "data" {
-				contentCh <- event.Content
-			}
-		}
+		}()
 		return contentCh, nil
 	}
 }
