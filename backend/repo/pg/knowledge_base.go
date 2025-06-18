@@ -440,7 +440,7 @@ func (r *KnowledgeBaseRepository) CreateKBRelease(ctx context.Context, release *
 		var nodeReleases []*domain.NodeRelease
 		if err := tx.Where("kb_id = ?", release.KBID).
 			Select("DISTINCT ON (node_id) id, node_id").
-			Order("node_id, created_at DESC").
+			Order("node_id, updated_at DESC").
 			Find(&nodeReleases).Error; err != nil {
 			return err
 		}
