@@ -110,15 +110,15 @@ func (u *ModelUsecase) initEmbeddingAndRerankModel(ctx context.Context) error {
 }
 
 func (u *ModelUsecase) Create(ctx context.Context, model *domain.Model) error {
+	if err := u.modelRepo.Create(ctx, model); err != nil {
+		return err
+	}
 	if model.Type == domain.ModelTypeEmbedding || model.Type == domain.ModelTypeRerank {
 		if id, err := u.ragStore.AddModel(ctx, model); err != nil {
 			return err
 		} else {
 			model.ID = id
 		}
-	}
-	if err := u.modelRepo.Create(ctx, model); err != nil {
-		return err
 	}
 	if model.Type == domain.ModelTypeEmbedding {
 		return u.TriggerUpsertRecords(ctx)

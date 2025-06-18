@@ -1849,6 +1849,9 @@ const docTemplate = `{
                 "public_key": {
                     "type": "string"
                 },
+                "simple_auth": {
+                    "$ref": "#/definitions/domain.SimpleAuth"
+                },
                 "ssl_ports": {
                     "type": "array",
                     "items": {
@@ -3100,6 +3103,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.SimpleAuth": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "password": {
                     "type": "string"
                 }
             }
