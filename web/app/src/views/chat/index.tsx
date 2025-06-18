@@ -2,6 +2,7 @@
 
 import { ChunkResultItem } from '@/assets/type';
 import Footer from '@/components/footer';
+import { useKBDetail } from '@/provider/kb-provider';
 import { useMobile } from '@/provider/mobile-provider';
 import { isInIframe } from '@/utils';
 import SSEClient from '@/utils/fetch';
@@ -19,6 +20,7 @@ const Chat = () => {
   const { mobile = false } = useMobile()
   const searchParams = useSearchParams();
   const search = searchParams.get('search');
+  const { themeMode } = useKBDetail()
 
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
   const sseClientRef = useRef<SSEClient<{
@@ -181,41 +183,50 @@ const Chat = () => {
   }
 
   return (
-    <Box sx={{ pt: 12, minHeight: '100vh' }}>
-      <Stack alignItems="stretch" direction="row" gap={3} sx={{
-        height: 'calc(100vh - 160px)',
-        mb: 3,
+    <Box sx={{
+      pt: 12,
+      minHeight: '100vh',
+      bgcolor: themeMode === 'dark' ? 'background.default' : 'background.paper'
+    }}>
+      <Box sx={{
+        margin: '0 auto',
+        maxWidth: '1200px',
       }}>
-        <Box sx={{ position: 'relative', flex: 1 }}>
-          <ChatResult
-            conversation={conversation}
-            answer={answer}
-            loading={loading}
-            thinking={thinking}
-            setThinking={setThinking}
-            onSearch={onSearch}
-            handleSearchAbort={handleSearchAbort}
-          />
-        </Box>
-        <Box sx={{
-          flexShrink: 0,
-          width: 388,
-          border: '1px solid',
-          borderColor: 'divider',
-          borderRadius: '10px',
-          p: 3,
-          bgcolor: 'background.default',
+        <Stack alignItems="stretch" direction="row" gap={3} sx={{
+          height: 'calc(100vh - 160px)',
+          mb: 3,
         }}>
+          <Box sx={{ position: 'relative', flex: 1 }}>
+            <ChatResult
+              conversation={conversation}
+              answer={answer}
+              loading={loading}
+              thinking={thinking}
+              setThinking={setThinking}
+              onSearch={onSearch}
+              handleSearchAbort={handleSearchAbort}
+            />
+          </Box>
           <Box sx={{
-            fontSize: '20px',
-            fontWeight: '700',
-            lineHeight: '28px',
-            mb: 2,
-          }}>搜索结果</Box>
-          <SearchResult list={chunkResult} loading={chunkLoading} />
-        </Box>
-      </Stack>
-      <Footer />
+            flexShrink: 0,
+            width: 388,
+            border: '1px solid',
+            borderColor: 'divider',
+            borderRadius: '10px',
+            p: 3,
+            bgcolor: themeMode === 'dark' ? 'background.paper' : 'background.default',
+          }}>
+            <Box sx={{
+              fontSize: '20px',
+              fontWeight: '700',
+              lineHeight: '28px',
+              mb: 2,
+            }}>搜索结果</Box>
+            <SearchResult list={chunkResult} loading={chunkLoading} />
+          </Box>
+        </Stack>
+        <Footer />
+      </Box>
     </Box>
   );
 };

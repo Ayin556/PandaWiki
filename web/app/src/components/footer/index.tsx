@@ -1,9 +1,11 @@
 import logo from '@/assets/images/logo.png';
+import { useKBDetail } from '@/provider/kb-provider';
 import { Box, Stack } from "@mui/material";
 import Image from "next/image";
 import Link from 'next/link';
 
 const Footer = () => {
+  const { themeMode } = useKBDetail()
   return <Box sx={{
     position: 'relative',
     fontSize: '12px',
@@ -12,6 +14,7 @@ const Footer = () => {
     height: 40,
     lineHeight: '40px',
     zIndex: 1,
+    bgcolor: 'background.default',
   }}>
     <Stack direction={'row'} alignItems={'center'} justifyContent={'center'} gap={0.5}>
       本网站由

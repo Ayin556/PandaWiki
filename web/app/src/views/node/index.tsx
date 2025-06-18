@@ -115,7 +115,14 @@ const Doc = ({ node: defaultNode }: { node?: NodeDetail }) => {
   return <Box>
     <Catalog activeId={id} nodes={nodeList || []} onChange={setId} />
     <DocHeader />
-    <Box sx={{ pt: '96px', position: 'relative', zIndex: 1, minHeight: 'calc(100vh - 40px)', pb: 10 }}>
+    <Box sx={{
+      pt: '96px',
+      position: 'relative',
+      zIndex: 1,
+      minHeight: 'calc(100vh - 40px)',
+      pb: 10,
+      bgcolor: 'background.default',
+    }}>
       <DocSearch />
       <DocContent info={node} editorRef={editorRef} />
     </Box>

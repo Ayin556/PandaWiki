@@ -14,8 +14,6 @@ const Layout = async ({
       position: 'relative',
       zIndex: 1,
       width: '100%',
-      margin: '0 auto',
-      maxWidth: '1200px',
     }}>
       {children}
     </Box>

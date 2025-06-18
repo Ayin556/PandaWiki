@@ -47,7 +47,7 @@ const lightTheme = createTheme(
         styleOverrides: {
           root: {
             borderRadius: '10px !important',
-            backgroundColor: 'var(--mui-palette-background-default)',
+            // backgroundColor: 'var(--mui-palette-background-default)',
             fontFamily: 'var(--font-gilory), var(--font-puhuiti)',
             '.MuiOutlinedInput-notchedOutline': {
               borderColor: 'transparent',
@@ -185,7 +185,7 @@ const darkTheme = createTheme(
       },
       background: {
         default: '#141923',
-        paper: '#141923',
+        paper: '#202531',
       },
       text: {
         primary: '#FFFFFF',

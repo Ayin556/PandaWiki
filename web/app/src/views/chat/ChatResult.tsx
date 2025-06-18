@@ -83,7 +83,7 @@ const ChatResult = ({ conversation, answer, loading, thinking, onSearch, handleS
       borderColor: 'divider',
     }}>
       <Box sx={{
-        bgcolor: 'background.default',
+        bgcolor: themeMode === 'dark' ? 'background.paper' : 'background.default',
         px: 3,
         py: 2,
         borderRadius: '10px',
@@ -102,6 +102,7 @@ const ChatResult = ({ conversation, answer, loading, thinking, onSearch, handleS
               overflow: 'hidden',
               height: '52px !important',
               transition: 'all 0.5s ease-in-out',
+              bgcolor: themeMode === 'dark' ? 'background.paper' : 'background.default',
             },
             textarea: {
               lineHeight: '26px',

@@ -45,11 +45,8 @@ const DragTree = ({
         onItemsChanged={(items: TreeItems<ITreeItem>, reason: ItemChangedReason<ITreeItem>) => {
           if (reason.type === 'dropped') {
             const { draggedItem } = reason;
-            console.log('draggedItem', draggedItem)
             const { parentId = null, id } = draggedItem
             const { prevItemId, nextItemId } = getSiblingItemIds(items, id)
-            console.log('prevItemId', prevItemId)
-            console.log('nextItemId', nextItemId)
             moveNode({ id, parent_id: parentId, next_id: nextItemId, prev_id: prevItemId }).then(() => {
               refresh?.()
             })
