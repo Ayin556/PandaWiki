@@ -132,18 +132,19 @@ export function getSiblingItemIds(items: TreeItems<ITreeItem>, draggedId: string
   // 构建父子关系 Map
   const parentMap = new Map<string, { parent: TreeItems<ITreeItem>; index: number }>();
 
-  const buildParentMap = (tree: TreeItems<ITreeItem>, parent: TreeItems<ITreeItem> | null = null) => {
+  const buildParentMap = (tree: TreeItems<ITreeItem>, parentArray: TreeItems<ITreeItem>) => {
     tree.forEach((item, index) => {
-      if (parent) {
-        parentMap.set(item.id, { parent, index });
-      }
+      // 将当前项添加到 parentMap，记录它在父级数组中的位置
+      parentMap.set(item.id, { parent: parentArray, index });
+
       if (item.children?.length) {
         buildParentMap(item.children as TreeItems<ITreeItem>, item.children as TreeItems<ITreeItem>);
       }
     });
   };
 
-  buildParentMap(items);
+  // 对根节点也要建立映射，父级数组就是 items 本身
+  buildParentMap(items, items);
 
   const draggedItem = parentMap.get(draggedId);
   if (draggedItem) {
