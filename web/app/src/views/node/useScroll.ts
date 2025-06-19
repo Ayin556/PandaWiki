@@ -13,12 +13,12 @@ const useScroll = (headings: Heading[]) => {
   const isManualScroll = useRef(false) // 标记是否为手动滚动，避免循环
 
   // 防抖函数
-  const debounce = (func: Function, delay: number) => {
-    return (...args: any[]) => {
+  const debounce = <T extends (...args: any[]) => any>(func: T, delay: number) => {
+    return (...args: Parameters<T>) => {
       if (scrollTimeoutRef.current) {
         clearTimeout(scrollTimeoutRef.current)
       }
-      scrollTimeoutRef.current = setTimeout(() => func.apply(null, args), delay)
+      scrollTimeoutRef.current = setTimeout(() => func(...args), delay)
     }
   }
 
@@ -81,7 +81,7 @@ const useScroll = (headings: Heading[]) => {
   }, [headings])
 
   // 滚动事件处理（带防抖）
-  const handleScroll = useCallback(
+  const debouncedScrollHandler = useCallback(
     debounce(() => {
       // 如果是手动滚动过程中，不更新活跃标题和hash
       if (isManualScroll.current) return
@@ -137,18 +137,18 @@ const useScroll = (headings: Heading[]) => {
   // 监听滚动事件
   useEffect(() => {
     if (headings.length > 0) {
-      window.addEventListener('scroll', handleScroll)
+      window.addEventListener('scroll', debouncedScrollHandler)
       // 初始检查
-      handleScroll()
+      debouncedScrollHandler()
     }
 
     return () => {
-      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('scroll', debouncedScrollHandler)
       if (scrollTimeoutRef.current) {
         clearTimeout(scrollTimeoutRef.current)
       }
     }
-  }, [headings, handleScroll])
+  }, [headings, debouncedScrollHandler])
 
   return {
     activeHeading,
