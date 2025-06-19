@@ -1,16 +1,24 @@
 import { useKBDetail } from "@/provider/kb-provider";
 import { Box, Stack } from "@mui/material";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const QuestionList = () => {
   const { kbDetail, themeMode } = useKBDetail()
+  const router = useRouter();
 
   if (!kbDetail?.settings?.recommend_questions) return null
 
+  const handleQuestionClick = (question: string) => {
+    sessionStorage.setItem('chat_search_query', question);
+    router.push('/chat');
+  };
+
   return <Stack direction="row" alignItems={'center'} justifyContent={'center'} flexWrap="wrap" gap={2} sx={{ mt: 3, mb: 10 }}>
     {kbDetail?.settings?.recommend_questions?.map((item) => (
-      <Link href={`/chat?search=${item}`} key={item} target="_blank">
-        <Box sx={{
+      <Box
+        key={item}
+        onClick={() => handleQuestionClick(item)}
+        sx={{
           border: '1px solid',
           borderRadius: '16px',
           fontSize: 14,
@@ -25,8 +33,10 @@ const QuestionList = () => {
             borderColor: 'primary.main',
             color: 'primary.main',
           }
-        }}>{item}</Box>
-      </Link>
+        }}
+      >
+        {item}
+      </Box>
     ))}
   </Stack>
 }

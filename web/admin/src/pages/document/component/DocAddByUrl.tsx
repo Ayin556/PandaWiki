@@ -117,7 +117,7 @@ const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddB
       }
       setStep(2)
       for (const { url, title } of urls) {
-        const res = await scrapeCrawler({ url })
+        const res = await scrapeCrawler({ url, kb_id })
         setItems(prev => [...prev, { ...res, url, title: title || res.title, success: -1, id: '' }])
       }
       setLoading(false)
@@ -132,7 +132,7 @@ const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddB
       const urls = url.split('\n')
       for (const url of urls) {
         newQueue.push(async () => {
-          const { title = url, content } = await scrapeCrawler({ url })
+          const { title = url, content } = await scrapeCrawler({ url, kb_id })
           setItems(prev => [...prev, { title, content, url, success: -1, id: '' }])
         })
       }
@@ -142,7 +142,7 @@ const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddB
       for (const item of items) {
         if (item.url) {
           newQueue.push(async () => {
-            const res = await scrapeCrawler({ url: item.url })
+            const res = await scrapeCrawler({ url: item.url, kb_id })
             setItems(prev => [...prev, { ...res, url: item.url, success: -1, id: '' }])
           })
         }
@@ -153,7 +153,7 @@ const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddB
       const urls = res.items.map(item => item.url)
       for (const url of urls) {
         newQueue.push(async () => {
-          const res = await scrapeCrawler({ url })
+          const res = await scrapeCrawler({ url, kb_id })
           setItems(prev => [...prev, { ...res, url, success: -1, id: '' }])
         })
       }

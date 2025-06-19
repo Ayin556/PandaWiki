@@ -8,7 +8,6 @@ import { isInIframe } from '@/utils';
 import SSEClient from '@/utils/fetch';
 import { Box, Stack } from '@mui/material';
 import { message } from 'ct-mui';
-import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import ChatResult from './ChatResult';
 import ChatTab from './ChatTab';
@@ -18,8 +17,6 @@ import { AnswerStatus } from './constant';
 const Chat = () => {
   const inIframe = isInIframe();
   const { mobile = false } = useMobile()
-  const searchParams = useSearchParams();
-  const search = searchParams.get('search');
   const { themeMode, kb_id } = useKBDetail()
 
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
@@ -150,10 +147,15 @@ const Chat = () => {
   }, [answer, isUserScrolling]);
 
   useEffect(() => {
-    if (search) {
-      onSearch(search, true);
+    // 从sessionStorage读取搜索内容
+    const searchQuery = sessionStorage.getItem('chat_search_query');
+    if (searchQuery) {
+      // 清理sessionStorage
+      sessionStorage.removeItem('chat_search_query');
+      // 执行搜索
+      onSearch(searchQuery, true);
     }
-  }, [search]);
+  }, []);
 
   useEffect(() => {
     if (kb_id) {

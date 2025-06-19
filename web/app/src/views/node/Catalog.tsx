@@ -32,7 +32,6 @@ const Catalog = ({ nodes, activeId, onChange }: { nodes: NodeListItem[], activeI
       fontWeight: 'bold',
     }}>目录</Box>
     <Box sx={{
-      pl: 2,
       height: 'calc(100vh - 78px)',
       overflowY: 'auto',
       overflowX: 'hidden',
