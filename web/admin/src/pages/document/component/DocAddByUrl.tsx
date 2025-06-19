@@ -132,8 +132,8 @@ const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddB
       const urls = url.split('\n')
       for (const url of urls) {
         newQueue.push(async () => {
-          const res = await scrapeCrawler({ url })
-          setItems(prev => [...prev, { ...res, url, success: -1, id: '' }])
+          const { title = url, content } = await scrapeCrawler({ url })
+          setItems(prev => [...prev, { title, content, url, success: -1, id: '' }])
         })
       }
     }
