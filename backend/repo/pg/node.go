@@ -216,6 +216,7 @@ func (r *NodeRepository) GetNodeReleasesByDocIDs(ctx context.Context, ids []stri
 	var nodeReleases []*domain.NodeRelease
 	if err := r.db.WithContext(ctx).
 		Model(&domain.NodeRelease{}).
+		Where("visibility = ?", domain.NodeVisibilityPublic).
 		Where("doc_id IN ?", ids).
 		Find(&nodeReleases).Error; err != nil {
 		return nil, err
@@ -389,6 +390,7 @@ func (r *NodeRepository) UpdateNodeReleaseSummary(ctx context.Context, kbID, nod
 func (r *NodeRepository) TraverseNodesByCursor(ctx context.Context, callback func(*domain.NodeRelease) error) error {
 	rows, err := r.db.WithContext(ctx).
 		Model(&domain.NodeRelease{}).
+		Where("visibility = ?", domain.NodeVisibilityPublic).
 		Select("DISTINCT ON (node_id) id, node_id, kb_id").
 		Order("node_id, updated_at DESC").
 		Rows()
@@ -472,6 +474,7 @@ func (r *NodeRepository) GetOldNodeDocIDsByNodeID(ctx context.Context, nodeRelea
 		if err := tx.Model(&domain.NodeRelease{}).
 			Where("node_id = ?", nodeID).
 			Where("id != ?", nodeReleaseID).
+			Where("doc_id != ''").
 			Select("doc_id").
 			Find(&docIDs).Error; err != nil {
 			return err

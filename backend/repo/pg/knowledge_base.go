@@ -372,6 +372,13 @@ func (r *KnowledgeBaseRepository) GetKnowledgeBaseList(ctx context.Context) ([]*
 	return kbs, nil
 }
 
+func (r *KnowledgeBaseRepository) UpdateDatasetID(ctx context.Context, kbID, datasetID string) error {
+	return r.db.WithContext(ctx).
+		Model(&domain.KnowledgeBase{}).
+		Where("id = ?", kbID).
+		Update("dataset_id", datasetID).Error
+}
+
 func (r *KnowledgeBaseRepository) UpdateKnowledgeBase(ctx context.Context, req *domain.UpdateKnowledgeBaseReq) error {
 	updateMap := map[string]any{}
 	if req.Name != nil {
@@ -439,6 +446,7 @@ func (r *KnowledgeBaseRepository) CreateKBRelease(ctx context.Context, release *
 		// create release node for all released nodes
 		var nodeReleases []*domain.NodeRelease
 		if err := tx.Where("kb_id = ?", release.KBID).
+			Where("visibility = ?", domain.NodeVisibilityPublic).
 			Select("DISTINCT ON (node_id) id, node_id").
 			Order("node_id, updated_at DESC").
 			Find(&nodeReleases).Error; err != nil {

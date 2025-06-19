@@ -93,7 +93,7 @@ func createApp() (*App, error) {
 	}
 	ipAddressRepo := ipdb2.NewIPAddressRepo(ipdbIPDB, logger)
 	conversationUsecase := usecase.NewConversationUsecase(conversationRepository, nodeRepository, logger, ipAddressRepo)
-	modelUsecase := usecase.NewModelUsecase(modelRepository, nodeRepository, ragRepository, ragService, logger, configConfig)
+	modelUsecase := usecase.NewModelUsecase(modelRepository, nodeRepository, ragRepository, ragService, logger, configConfig, knowledgeBaseRepository)
 	chatUsecase := usecase.NewChatUsecase(llmUsecase, conversationUsecase, modelUsecase, appRepository, logger)
 	appUsecase := usecase.NewAppUsecase(appRepository, nodeUsecase, logger, configConfig, chatUsecase)
 	appHandler := v1.NewAppHandler(echo, baseHandler, logger, authMiddleware, appUsecase, modelUsecase, conversationUsecase, configConfig)
