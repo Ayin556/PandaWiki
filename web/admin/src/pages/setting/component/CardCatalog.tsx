@@ -59,8 +59,8 @@ const CardCatalog = ({ id, data, refresh }: CardCatalogProps) => {
           field.onChange(+e.target.value as 1 | 2)
           setIsEdit(true)
         }}>
-          <FormControlLabel value={1} control={<Radio size='small' />} label={<Box sx={{ width: 120 }}>默认展开</Box>} />
-          <FormControlLabel value={2} control={<Radio size='small' />} label={<Box sx={{ width: 120 }}>默认折叠</Box>} />
+          <FormControlLabel value={1} control={<Radio size='small' />} label={<Box sx={{ width: 100 }}>默认展开</Box>} />
+          <FormControlLabel value={2} control={<Radio size='small' />} label={<Box sx={{ width: 100 }}>默认折叠</Box>} />
         </RadioGroup>}
       />
     </Stack>

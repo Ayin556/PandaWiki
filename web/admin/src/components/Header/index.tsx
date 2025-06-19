@@ -49,7 +49,7 @@ const Header = () => {
   >
     <Bread />
     <Stack direction={'row'} alignItems={'center'} gap={2}>
-      <Button size='small' onClick={() => {
+      <Button size='small' variant='contained' onClick={() => {
         if (wikiUrl) {
           window.open(wikiUrl, '_blank')
         }

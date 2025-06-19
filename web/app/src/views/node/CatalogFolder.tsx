@@ -18,12 +18,12 @@ const CatalogFolder = ({ item, activeId, onChange, depth = 1 }: { item: ITreeIte
       fontWeight: activeId === item.id ? 'bold' : 'normal',
       bgcolor: activeId === item.id ? 'background.paper' : 'transparent',
       '&:hover': {
-        bgcolor: 'background.paper'
+        color: 'primary.main',
       }
     }} onClick={() => {
       setIsExpanded(!isExpanded)
     }}>
-      {item.type === 1 && <Box sx={{ position: 'absolute', left: -2 + (depth - 2) * 16, top: 4 }}>
+      {item.type === 1 && <Box sx={{ position: 'absolute', left: -2 + (depth - 2) * 16, top: 4, color: 'text.disabled' }}>
         <IconArrowDown sx={{ fontSize: 16, transform: isExpanded ? 'none' : 'rotate(-90deg)', transition: 'transform 0.2s' }} />
       </Box>}
       <Stack direction="row" alignItems="center" gap={0.5}>

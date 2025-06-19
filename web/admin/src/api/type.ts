@@ -45,6 +45,7 @@ export type UpdateKnowledgeBaseData = {
     private_key?: string,
     public_key?: string,
     base_url?: string,
+    simple_auth?: AuthSetting | null
   }
 }
 
@@ -66,6 +67,7 @@ export type KnowledgeBaseAccessSettings = {
   public_key: string,
   base_url: string,
   ssl_ports: number[] | null
+  simple_auth?: AuthSetting | null
 }
 
 export type KnowledgeBaseStats = {
@@ -97,6 +99,11 @@ export type ReleaseListItem = {
   kb_id: string,
   message: string,
   tag: string
+}
+
+export type AuthSetting = {
+  enabled?: boolean,
+  password?: string
 }
 
 // =============================================》node

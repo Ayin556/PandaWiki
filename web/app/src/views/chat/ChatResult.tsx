@@ -48,17 +48,18 @@ const ChatResult = ({ conversation, answer, loading, thinking, onSearch, handleS
   }, [answer, conversation])
 
   return <Box className='conversation-container' sx={{
-    height: mobile ? 'calc(100vh - 313px)' : 'calc(100vh - 266px)',
+    height: mobile ? 'calc(100vh - 314px)' : 'calc(100vh - 266px)',
     overflow: 'auto',
     '&::-webkit-scrollbar': {
       display: 'none'
     },
+    mb: mobile ? '130px' : 0,
     scrollbarWidth: 'none',
     msOverflowStyle: 'none',
   }}>
     <Stack direction='column' gap={2} >
       {conversation.map((item, index) => (
-        <Accordion key={index} defaultExpanded={index === conversation.length - 1} sx={{
+        <Accordion key={index} defaultExpanded={true} sx={{
           bgcolor: 'background.default',
         }}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -77,20 +78,20 @@ const ChatResult = ({ conversation, answer, loading, thinking, onSearch, handleS
       position: 'absolute',
       left: 0,
       right: 0,
-      bottom: 0,
+      bottom: mobile ? "40px" : 0,
       borderRadius: '10px',
       border: '1px solid',
       borderColor: 'divider',
+      ...(mobile && {
+        m: 3,
+        p: 0,
+      }),
     }}>
       <Box sx={{
         bgcolor: themeMode === 'dark' ? 'background.paper' : 'background.default',
         px: 3,
         py: 2,
         borderRadius: '10px',
-        ...(mobile && {
-          mx: 2,
-          mb: 1,
-        }),
       }}>
         <TextField
           fullWidth

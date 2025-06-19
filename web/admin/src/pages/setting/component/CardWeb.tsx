@@ -2,6 +2,7 @@ import { getAppDetail, KnowledgeBaseListItem } from "@/api"
 import Card from "@/components/Card"
 import { Box, Divider } from "@mui/material"
 import { useEffect, useState } from "react"
+import CardAuth from "./CardAuth"
 import CardCatalog from "./CardCatalog"
 import CardStyle from "./CardStyle"
 import CardVisit from "./CardVisit"
@@ -32,6 +33,8 @@ const CardWeb = ({ kb, refresh }: CardWebProps) => {
   return <Card>
     <Box sx={{ fontWeight: 'bold', px: 2, py: 1.5, bgcolor: 'background.paper2' }}>门户网站</Box>
     <CardVisit kb={kb} refresh={refresh} />
+    <Divider sx={{ my: 2 }} />
+    <CardAuth kb={kb} refresh={refresh} />
     <Divider sx={{ my: 2 }} />
     <CardStyle
       id={info.id}

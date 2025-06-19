@@ -1,8 +1,8 @@
-import { NodeDetail } from "@/assets/type";
+import { apiClient } from "@/api";
 import { formatMeta } from "@/utils";
 import Doc from "@/views/node";
 import { ResolvingMetadata } from "next";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 
 export interface PageProps {
   params: Promise<{ id: string }>
@@ -15,41 +15,35 @@ export async function generateMetadata(
   const { id } = await params;
   const headersList = await headers();
   const kb_id = headersList.get('x-kb-id') || process.env.DEV_KB_ID || '';
-  const node = await getNodeDetail(id, kb_id);
+  const cookieStore = await cookies()
+  const authToken = cookieStore.get(`auth_${kb_id}`)?.value || '';
+  const node = await getNodeDetail(id, kb_id, authToken);
   return await formatMeta(
-    {
-      title: node?.name,
-    },
+    { title: node?.name },
     parent
   );
 }
 
-async function getNodeDetail(id: string, kb_id: string) {
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/share/v1/node/detail?id=${id}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-kb-id': kb_id,
-      }
-    });
-    const result = await res.json()
-    return result.data as NodeDetail
-  } catch (error) {
-    console.error('Error fetching document content:', error);
-    return undefined
+async function getNodeDetail(id: string, kb_id: string, authToken: string) {
+  const result = await apiClient.serverGetNodeDetail(id, kb_id, authToken);
+  if (result.error) {
+    console.error('ss Error fetching document content:', result.error);
+    return undefined;
   }
+  return result.data;
 }
 
 const DocPage = async ({ params }: PageProps) => {
   const { id = '' } = await params
 
   const headersList = await headers()
+  const cookieStore = await cookies()
   const kb_id = headersList.get('x-kb-id') || process.env.DEV_KB_ID || ''
+  const authToken = cookieStore.get(`auth_${kb_id}`)?.value || '';
 
-  const node = await getNodeDetail(id, kb_id)
+  const node = await getNodeDetail(id, kb_id, authToken)
 
-  return <Doc node={node} />
+  return <Doc node={node} token={authToken} />
 };
 
 export default DocPage;

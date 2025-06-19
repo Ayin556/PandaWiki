@@ -43,6 +43,7 @@ const CatalogH5 = ({
     right: 0,
     width: '100%',
     zIndex: 2,
+    bgcolor: 'background.paper'
   }}>
     {/* <Box sx={{
       position: 'absolute',
@@ -92,7 +93,7 @@ const CatalogH5 = ({
       px: 3,
       height: open ? 'calc(100vh - 137px)' : '0px',
       transition: 'height 0.3s ease-in-out',
-      bgcolor: 'background.default',
+      bgcolor: 'background.paper',
       overflowY: 'auto',
       overflowX: 'hidden',
       '&::-webkit-scrollbar': {

@@ -8,6 +8,11 @@ export interface NavBtn {
   target: '_blank' | '_self'
 }
 
+export interface AuthSetting {
+  enabled: boolean
+  password?: string
+}
+
 export interface KBDetail {
   name: string,
   settings: {
@@ -27,6 +32,7 @@ export interface KBDetail {
     default_display_mode: 1 | 2, // 1 是智能问答，2 是知识库
     mode_switch_visible: 1 | 2,
     theme_mode?: 'light' | 'dark',
+    simple_auth?: AuthSetting | null,
   },
   recommend_nodes: RecommendNode[]
 }
