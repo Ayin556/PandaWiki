@@ -28,9 +28,10 @@ type ModelUsecase struct {
 	nodeRepo  *pg.NodeRepository
 	ragRepo   *mq.RAGRepository
 	ragStore  rag.RAGService
+	kbRepo    *pg.KnowledgeBaseRepository
 }
 
-func NewModelUsecase(modelRepo *pg.ModelRepository, nodeRepo *pg.NodeRepository, ragRepo *mq.RAGRepository, ragStore rag.RAGService, logger *log.Logger, config *config.Config) *ModelUsecase {
+func NewModelUsecase(modelRepo *pg.ModelRepository, nodeRepo *pg.NodeRepository, ragRepo *mq.RAGRepository, ragStore rag.RAGService, logger *log.Logger, config *config.Config, kbRepo *pg.KnowledgeBaseRepository) *ModelUsecase {
 	u := &ModelUsecase{
 		modelRepo: modelRepo,
 		logger:    logger.WithModule("usecase.model"),
@@ -38,6 +39,7 @@ func NewModelUsecase(modelRepo *pg.ModelRepository, nodeRepo *pg.NodeRepository,
 		nodeRepo:  nodeRepo,
 		ragRepo:   ragRepo,
 		ragStore:  ragStore,
+		kbRepo:    kbRepo,
 	}
 	if err := u.initEmbeddingAndRerankModel(context.Background()); err != nil {
 		logger.Error("init embedding & rerank model failed", log.Any("error", err))
@@ -132,8 +134,25 @@ func (u *ModelUsecase) GetList(ctx context.Context) ([]*domain.ModelListItem, er
 
 // trigger upsert records after embedding model is updated or created
 func (u *ModelUsecase) TriggerUpsertRecords(ctx context.Context) error {
+	// update to new dataset
+	kbList, err := u.kbRepo.GetKnowledgeBaseList(ctx)
+	if err != nil {
+		return fmt.Errorf("get knowledge base list failed: %w", err)
+	}
+	for _, kb := range kbList {
+		newDatasetID, err := u.ragStore.CreateKnowledgeBase(ctx)
+		if err != nil {
+			return fmt.Errorf("create new dataset failed: %w", err)
+		}
+		if err := u.ragStore.DeleteKnowledgeBase(ctx, kb.DatasetID); err != nil {
+			return fmt.Errorf("delete old dataset failed: %w", err)
+		}
+		if err := u.kbRepo.UpdateDatasetID(ctx, kb.ID, newDatasetID); err != nil {
+			return fmt.Errorf("update knowledge base dataset id failed: %w", err)
+		}
+	}
 	// traverse all nodes
-	err := u.nodeRepo.TraverseNodesByCursor(ctx, func(nodeRelease *domain.NodeRelease) error {
+	err = u.nodeRepo.TraverseNodesByCursor(ctx, func(nodeRelease *domain.NodeRelease) error {
 		// async upsert vector content via mq
 		nodeContentVectorRequests := []*domain.NodeReleaseVectorRequest{
 			{
