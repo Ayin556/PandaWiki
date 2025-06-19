@@ -82,7 +82,8 @@ type CreateNodeReq struct {
 	Name    string `json:"name" validate:"required"`
 	Content string `json:"content"`
 
-	Emoji string `json:"emoji"`
+	Emoji      string          `json:"emoji"`
+	Visibility *NodeVisibility `json:"visibility"`
 }
 
 type GetNodeListReq struct {

@@ -2439,6 +2439,9 @@ const docTemplate = `{
                             "$ref": "#/definitions/domain.NodeType"
                         }
                     ]
+                },
+                "visibility": {
+                    "$ref": "#/definitions/domain.NodeVisibility"
                 }
             }
         },

@@ -409,6 +409,8 @@ definitions:
         enum:
         - 1
         - 2
+      visibility:
+        $ref: '#/definitions/domain.NodeVisibility'
     required:
     - kb_id
     - name
