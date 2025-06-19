@@ -12,6 +12,7 @@ interface DocAnchorProps {
   title: string
   headings: Heading[]
   activeHeading: Heading | null
+  onScrollToElement?: (elementId: string, offset?: number) => void
 }
 
 const HeadingSx = [
@@ -20,23 +21,28 @@ const HeadingSx = [
   { fontWeight: 400, color: 'text.disabled' },
 ]
 
-const DocAnchor = ({ title, headings, activeHeading }: DocAnchorProps) => {
+const DocAnchor = ({ title, headings, activeHeading, onScrollToElement }: DocAnchorProps) => {
   const levels = Array.from(new Set(headings.map(it => it.heading).sort((a, b) => a - b))).slice(0, 3)
-
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>, heading: { id: string, title: string, heading: number }) => {
     e.preventDefault();
-    const element = document.getElementById(heading.id);
-    if (element) {
-      const offset = 80;
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - offset;
+    if (onScrollToElement) {
+      onScrollToElement(heading.id, 80);
+    } else {
+      // 降级处理，如果没有传递滚动方法
+      const element = document.getElementById(heading.id);
+      if (element) {
+        const offset = 80;
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - offset;
 
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
-      location.hash = encodeURIComponent(heading.title)
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+        // 降级模式下也要更新hash
+        location.hash = encodeURIComponent(heading.title);
+      }
     }
   };
 
