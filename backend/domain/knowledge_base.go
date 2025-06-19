@@ -29,6 +29,13 @@ type AccessSettings struct {
 	PrivateKey string   `json:"private_key"`
 	Hosts      []string `json:"hosts"`
 	BaseURL    string   `json:"base_url"`
+
+	SimpleAuth SimpleAuth `json:"simple_auth"`
+}
+
+type SimpleAuth struct {
+	Enabled  bool   `json:"enabled"`
+	Password string `json:"password"`
 }
 
 func (s *AccessSettings) Scan(value any) error {

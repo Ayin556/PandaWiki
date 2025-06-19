@@ -14,10 +14,12 @@ import (
 	"github.com/chaitin/panda-wiki/log"
 	"github.com/chaitin/panda-wiki/middleware"
 	"github.com/chaitin/panda-wiki/mq"
+	cache2 "github.com/chaitin/panda-wiki/repo/cache"
 	ipdb2 "github.com/chaitin/panda-wiki/repo/ipdb"
 	mq2 "github.com/chaitin/panda-wiki/repo/mq"
 	pg2 "github.com/chaitin/panda-wiki/repo/pg"
 	"github.com/chaitin/panda-wiki/server/http"
+	"github.com/chaitin/panda-wiki/store/cache"
 	"github.com/chaitin/panda-wiki/store/ipdb"
 	"github.com/chaitin/panda-wiki/store/pg"
 	"github.com/chaitin/panda-wiki/store/rag"
@@ -37,22 +39,10 @@ func createApp() (*App, error) {
 	httpServer := &http.HTTPServer{
 		Echo: echo,
 	}
-	baseHandler := handler.NewBaseHandler(echo, logger, configConfig)
 	db, err := pg.NewDB(configConfig)
 	if err != nil {
 		return nil, err
 	}
-	userRepository := pg2.NewUserRepository(db, logger)
-	userUsecase, err := usecase.NewUserUsecase(userRepository, logger, configConfig)
-	if err != nil {
-		return nil, err
-	}
-	userAccessRepository := pg2.NewUserAccessRepository(db, logger)
-	authMiddleware, err := middleware.NewAuthMiddleware(configConfig, logger, userAccessRepository)
-	if err != nil {
-		return nil, err
-	}
-	userHandler := v1.NewUserHandler(echo, baseHandler, logger, userUsecase, authMiddleware, configConfig)
 	ragService, err := rag.NewRAGService(configConfig, logger)
 	if err != nil {
 		return nil, err
@@ -64,10 +54,28 @@ func createApp() (*App, error) {
 		return nil, err
 	}
 	ragRepository := mq2.NewRAGRepository(mqProducer)
-	knowledgeBaseUsecase, err := usecase.NewKnowledgeBaseUsecase(knowledgeBaseRepository, nodeRepository, ragRepository, ragService, logger, configConfig)
+	cacheCache, err := cache.NewCache(configConfig)
 	if err != nil {
 		return nil, err
 	}
+	kbRepo := cache2.NewKBRepo(cacheCache)
+	knowledgeBaseUsecase, err := usecase.NewKnowledgeBaseUsecase(knowledgeBaseRepository, nodeRepository, ragRepository, ragService, kbRepo, logger, configConfig)
+	if err != nil {
+		return nil, err
+	}
+	shareAuthMiddleware := middleware.NewShareAuthMiddleware(logger, knowledgeBaseUsecase)
+	baseHandler := handler.NewBaseHandler(echo, logger, configConfig, shareAuthMiddleware)
+	userRepository := pg2.NewUserRepository(db, logger)
+	userUsecase, err := usecase.NewUserUsecase(userRepository, logger, configConfig)
+	if err != nil {
+		return nil, err
+	}
+	userAccessRepository := pg2.NewUserAccessRepository(db, logger)
+	authMiddleware, err := middleware.NewAuthMiddleware(configConfig, logger, userAccessRepository)
+	if err != nil {
+		return nil, err
+	}
+	userHandler := v1.NewUserHandler(echo, baseHandler, logger, userUsecase, authMiddleware, configConfig)
 	conversationRepository := pg2.NewConversationRepository(db)
 	modelRepository := pg2.NewModelRepository(db, logger)
 	llmUsecase := usecase.NewLLMUsecase(configConfig, ragService, conversationRepository, knowledgeBaseRepository, nodeRepository, modelRepository, logger)

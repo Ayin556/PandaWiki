@@ -28,17 +28,18 @@ func NewShareAppHandler(
 		usecase:     usecase,
 	}
 
-	share := e.Group("share/v1/app", func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) error {
-			c.Response().Header().Set("Access-Control-Allow-Origin", "*")
-			c.Response().Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-			c.Response().Header().Set("Access-Control-Allow-Headers", "Content-Type, Origin, Accept")
-			if c.Request().Method == "OPTIONS" {
-				return c.NoContent(http.StatusOK)
+	share := e.Group("share/v1/app",
+		func(next echo.HandlerFunc) echo.HandlerFunc {
+			return func(c echo.Context) error {
+				c.Response().Header().Set("Access-Control-Allow-Origin", "*")
+				c.Response().Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+				c.Response().Header().Set("Access-Control-Allow-Headers", "Content-Type, Origin, Accept")
+				if c.Request().Method == "OPTIONS" {
+					return c.NoContent(http.StatusOK)
+				}
+				return next(c)
 			}
-			return next(c)
-		}
-	})
+		})
 	share.GET("/web/info", h.GetWebAppInfo)
 	return h
 }
