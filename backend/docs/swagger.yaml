@@ -758,8 +758,12 @@ definitions:
     type: object
   domain.ScrapeReq:
     properties:
+      kb_id:
+        type: string
       url:
         type: string
+    required:
+    - kb_id
     type: object
   domain.ScrapeResp:
     properties:

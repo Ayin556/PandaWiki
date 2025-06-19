@@ -13,8 +13,9 @@ import (
 	"strings"
 	"sync"
 
-	htmltomarkdown "github.com/JohannesKaufmann/html-to-markdown/v2"
 	"github.com/JohannesKaufmann/html-to-markdown/v2/converter"
+	"github.com/JohannesKaufmann/html-to-markdown/v2/plugin/base"
+	"github.com/JohannesKaufmann/html-to-markdown/v2/plugin/commonmark"
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/log"
 	"github.com/chaitin/panda-wiki/store/s3"
@@ -27,11 +28,11 @@ type EpubConverter struct {
 	logger      *log.Logger
 	mu          sync.Mutex
 	minioClient *s3.MinioClient
-	//relative path -> oss path
+	// relative path -> oss path
 	resources map[string]string
-	//id -> relative path
+	// id -> relative path
 	resourcesIdMap map[string]Item
-	//relative path -> id
+	// relative path -> id
 	relavitePath map[string]string
 }
 
@@ -54,7 +55,7 @@ func (e *EpubConverter) Convert(ctx context.Context, kbID string, data []byte) (
 		return "", nil, err
 	}
 
-	//read ./path/to/content.opf
+	// read ./path/to/content.opf
 	var p *Package
 	if p, err = getOpf(zipReader); err != nil {
 		return "", nil, err
@@ -65,13 +66,19 @@ func (e *EpubConverter) Convert(ctx context.Context, kbID string, data []byte) (
 		e.relavitePath[item.Href] = item.ID
 	}
 
-	//reslove resource file
+	// reslove resource file
 	if err := e.uploadFile(ctx, kbID, zipReader); err != nil {
 		return "", nil, err
 	}
 
-	conv := converter.NewConverter()
-
+	conv := converter.NewConverter(
+		converter.WithPlugins(
+			base.NewBasePlugin(),
+			commonmark.NewCommonmarkPlugin(
+				commonmark.WithStrongDelimiter("__"),
+			),
+		),
+	)
 	conv.Register.TagType("a", converter.TagTypeRemove, converter.PriorityStandard)
 
 	res := make(map[string]*bytes.Buffer)
@@ -101,18 +108,23 @@ func (e *EpubConverter) Convert(ctx context.Context, kbID string, data []byte) (
 		if err != nil {
 			return "", nil, err
 		}
-		mdStr, err := htmltomarkdown.ConvertString((string(htmlStr)))
+		mdStr, err := conv.ConvertString((string(htmlStr)))
 		if err != nil {
 			return "", nil, err
 		}
-		res[filepath.Base(zipfile.Name)] = bytes.NewBufferString(mdStr)
+		res[clearFileName(filepath.Base(zipfile.Name))] = bytes.NewBufferString(mdStr)
 	}
-	//page sequence
-	result := &bytes.Buffer{}
-	//写目录
+	// page sequence
+	result := bytes.NewBuffer(nil)
+	for _, href := range p.Guide.References {
+		r := res[clearFileName(href.Href)]
+		io.Copy(result, r)
+		result.WriteString("\n\n")
+	}
+	// 写目录
 	result.WriteString("# 目录\n\n")
 	for _, v := range toc {
-		result.WriteString(fmt.Sprintf("- [%s](#%s)\n", v["title"], v["playOrder"]))
+		fmt.Fprintf(result, "- [%s](#%s)\n", v["title"], v["playOrder"])
 	}
 	temp := make(map[string]string)
 	for _, v := range toc {
@@ -127,6 +139,11 @@ func (e *EpubConverter) Convert(ctx context.Context, kbID string, data []byte) (
 	}
 	str, err := e.exchangeUrl(result.String())
 	return p.Metadata.Title, str, err
+}
+
+func clearFileName(str string) string {
+	// 去除字符串#后面的内容
+	return strings.Split(str, "#")[0]
 }
 
 func (e *EpubConverter) uploadFile(ctx context.Context, kbID string, zipReader *zip.Reader) error {
@@ -199,16 +216,16 @@ func isSkippableFile(name string) bool {
 }
 
 func (e *EpubConverter) exchangeUrl(content string) ([]byte, error) {
-	re := regexp.MustCompile(`!\[\]\((.*?)\)`)
+	re := regexp.MustCompile(`!\[(.*?)\]\((.*?)\)`)
 	// 替换匹配到的内容，保留捕获的 URL
 	newContent := re.ReplaceAllStringFunc(content, func(match string) string {
 		// 提取捕获的 URL
-		url := re.ReplaceAllString(match, `$1`)
-		// 返回替换后的字符串，保留原来的 URL
+		title := re.ReplaceAllString(match, `$1`)
+		url := re.ReplaceAllString(match, `$2`)
 		if e.resources[url] != "" {
-			return fmt.Sprintf(`![](%s)`, e.resources[url])
+			return fmt.Sprintf(`![%s](%s)`, title, e.resources[url])
 		}
-		return fmt.Sprintf(`![](%s)`, url)
+		return fmt.Sprintf(`![%s](%s)`, title, url)
 	})
 	return []byte(newContent), nil
 }
@@ -233,7 +250,7 @@ func getFullPath(zipReader *zip.Reader) (string, error) {
 
 	for _, f := range zipReader.File {
 		if f.Name == "META-INF/container.xml" {
-			//parse container.xml
+			// parse container.xml
 			r, err := f.Open()
 			if err != nil {
 				return "", err
@@ -250,6 +267,7 @@ func getFullPath(zipReader *zip.Reader) (string, error) {
 	}
 	return "", errors.New("container.xml not found")
 }
+
 func valid(zipReader *zip.Reader) error {
 	for _, f := range zipReader.File {
 		if f.Name == "mimetype" {
@@ -272,7 +290,7 @@ func valid(zipReader *zip.Reader) error {
 type Package struct {
 	XMLName  xml.Name `xml:"package"`
 	Spine    Spine    `xml:"spine"` // 内容
-	Guide    Guide    `xml:"guide"` //封面
+	Guide    Guide    `xml:"guide"` // 封面
 	Manifest struct { // 资源清单
 		Items []Item `xml:"item"` // 资源
 	} `xml:"manifest"`
@@ -312,12 +330,12 @@ type Item struct {
 }
 
 func getOpf(zipReader *zip.Reader) (*Package, error) {
-	//read ./META_INF/container.xml
+	// read ./META_INF/container.xml
 	opfPath, err := getFullPath(zipReader)
 	if err != nil {
 		return nil, err
 	}
-	//read ./OEBPS/content.opf
+	// read ./OEBPS/content.opf
 	for _, f := range zipReader.File {
 		if f.Name == opfPath {
 			r, err := f.Open()
