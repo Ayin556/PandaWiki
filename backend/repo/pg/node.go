@@ -51,7 +51,11 @@ func (r *NodeRepository) Create(ctx context.Context, req *domain.CreateNodeReq) 
 		newPos := maxPos + (domain.MaxPosition-maxPos)/2.0
 
 		now := time.Now()
+
 		visibility := domain.NodeVisibilityPrivate
+		if req.Visibility != nil {
+			visibility = *req.Visibility
+		}
 		if req.Type == domain.NodeTypeFolder {
 			visibility = domain.NodeVisibilityPublic
 		}
@@ -111,8 +115,8 @@ func (r *NodeRepository) UpdateNodeContent(ctx context.Context, req *domain.Upda
 		updateStatus = true
 	}
 	if req.Visibility != nil {
-		updateStatus = true
 		updateMap["visibility"] = *req.Visibility
+		updateStatus = true
 	}
 	if updateStatus {
 		updateMap["status"] = domain.NodeStatusDraft
