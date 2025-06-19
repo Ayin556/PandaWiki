@@ -50,54 +50,58 @@ const Home = () => {
 
   return <Box sx={{
     pt: mobile ? 13 : 18,
-    minHeight: 'calc(100vh - 40px)',
+    minHeight: '100vh',
     bgcolor: themeMode === 'dark' ? 'background.default' : 'background.paper',
   }}>
     <Box sx={{
       margin: '0 auto',
       maxWidth: '1200px',
     }}>
-      <StyledWelcomeStr mobile={mobile} sx={{ color: 'text.primary' }}>
-        {kbDetail?.settings?.welcome_str}
-      </StyledWelcomeStr>
-      <StyledSearch mobile={mobile}>
-        <TextField
-          fullWidth
-          sx={{
-            width: '100%',
-            borderRadius: '10px',
-            overflow: 'hidden',
-            '& .MuiInputBase-input': {
-              p: 2,
-              lineHeight: '24px',
-              height: '24px',
-              fontFamily: 'Mono',
-            },
-            '& .MuiOutlinedInput-root': {
-              pr: '18px',
-              bgcolor: themeMode === 'dark' ? 'background.paper' : 'background.default',
-              '& fieldset': {
-                borderRadius: '10px',
-                borderColor: 'divider',
-                px: 2,
+      <Box sx={{
+        minHeight: 'calc(100vh - 184px)',
+      }}>
+        <StyledWelcomeStr mobile={mobile} sx={{ color: 'text.primary' }}>
+          {kbDetail?.settings?.welcome_str}
+        </StyledWelcomeStr>
+        <StyledSearch mobile={mobile}>
+          <TextField
+            fullWidth
+            sx={{
+              width: '100%',
+              borderRadius: '10px',
+              overflow: 'hidden',
+              '& .MuiInputBase-input': {
+                p: 2,
+                lineHeight: '24px',
+                height: '24px',
+                fontFamily: 'Mono',
               },
-            }
-          }}
-          placeholder={kbDetail?.settings?.search_placeholder || "开始搜索"}
-          autoComplete="off"
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-          onKeyDown={handleKeyDown}
-          InputProps={{
-            endAdornment: <IconSearch
-              sx={{ cursor: 'pointer', color: 'text.tertiary' }}
-              onClick={handleSearch}
-            />
-          }}
-        />
-      </StyledSearch>
-      {!mobile && <QuestionList />}
-      <NodeList />
+              '& .MuiOutlinedInput-root': {
+                pr: '18px',
+                bgcolor: themeMode === 'dark' ? 'background.paper' : 'background.default',
+                '& fieldset': {
+                  borderRadius: '10px',
+                  borderColor: 'divider',
+                  px: 2,
+                },
+              }
+            }}
+            placeholder={kbDetail?.settings?.search_placeholder || "开始搜索"}
+            autoComplete="off"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            onKeyDown={handleKeyDown}
+            InputProps={{
+              endAdornment: <IconSearch
+                sx={{ cursor: 'pointer', color: 'text.tertiary' }}
+                onClick={handleSearch}
+              />
+            }}
+          />
+        </StyledSearch>
+        {!mobile && <QuestionList />}
+        <NodeList />
+      </Box>
       <Footer />
     </Box>
   </Box>;

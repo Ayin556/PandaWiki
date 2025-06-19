@@ -35,7 +35,7 @@ const Doc = ({ node: defaultNode }: { node?: NodeDetail }) => {
     editable: false,
   })
 
-  const { activeHeading } = useScroll(headings)
+  const { activeHeading, scrollToElement } = useScroll(headings)
 
   const [showScrollTop, setShowScrollTop] = useState(false);
 
@@ -126,7 +126,7 @@ const Doc = ({ node: defaultNode }: { node?: NodeDetail }) => {
       <DocSearch />
       <DocContent info={node} editorRef={editorRef} />
     </Box>
-    <DocAnchor title={node?.name || ''} headings={headings} activeHeading={activeHeading} />
+    <DocAnchor title={node?.name || ''} headings={headings} activeHeading={activeHeading} onScrollToElement={scrollToElement} />
     <Footer />
     <Zoom in={showScrollTop}>
       <Fab

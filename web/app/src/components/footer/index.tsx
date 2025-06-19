@@ -14,7 +14,7 @@ const Footer = () => {
     height: 40,
     lineHeight: '40px',
     zIndex: 1,
-    bgcolor: 'background.default',
+    bgcolor: themeMode === 'dark' ? 'background.default' : 'background.paper',
   }}>
     <Stack direction={'row'} alignItems={'center'} justifyContent={'center'} gap={0.5}>
       本网站由
