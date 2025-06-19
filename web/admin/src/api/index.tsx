@@ -103,7 +103,7 @@ export const getNodeRecommend = (params: GetNodeRecommendData): Promise<Recommen
 
 // =============================================》crawler
 
-export const scrapeCrawler = (data: { url: string }, config?: { signal: AbortSignal }): Promise<{ content: string, title: string }> =>
+export const scrapeCrawler = (data: { url: string, kb_id: string }, config?: { signal: AbortSignal }): Promise<{ content: string, title: string }> =>
   request({ url: 'api/v1/crawler/scrape', method: 'post', data, ...config })
 
 export const scrapeRSS = (data: { url: string }): Promise<{ items: ScrapeRSSItem[] }> =>
