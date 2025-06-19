@@ -784,6 +784,84 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/knowledge_base/release": {
+            "post": {
+                "description": "CreateKBRelease",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "knowledge_base"
+                ],
+                "summary": "CreateKBRelease",
+                "parameters": [
+                    {
+                        "description": "CreateKBRelease Request",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.CreateKBReleaseReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/knowledge_base/release/list": {
+            "get": {
+                "description": "GetKBReleaseList",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "knowledge_base"
+                ],
+                "summary": "GetKBReleaseList",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Knowledge Base ID",
+                        "name": "kb_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/domain.GetKBReleaseListResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/model": {
             "put": {
                 "description": "update model",
@@ -1818,6 +1896,14 @@ const docTemplate = `{
                     "type": "array",
                     "items": {}
                 },
+                "catalog_expanded": {
+                    "description": "web app nav settings",
+                    "type": "integer"
+                },
+                "default_display_mode": {
+                    "description": "1: QA mode, 2: doc mode",
+                    "type": "integer"
+                },
                 "desc": {
                     "description": "seo",
                     "type": "string"
@@ -1849,6 +1935,9 @@ const docTemplate = `{
                 "keyword": {
                     "type": "string"
                 },
+                "mode_switch_visible": {
+                    "type": "integer"
+                },
                 "recommend_node_ids": {
                     "type": "array",
                     "items": {
@@ -1862,6 +1951,9 @@ const docTemplate = `{
                     }
                 },
                 "search_placeholder": {
+                    "type": "string"
+                },
+                "theme_mode": {
                     "type": "string"
                 },
                 "title": {
@@ -1887,6 +1979,14 @@ const docTemplate = `{
                     "type": "array",
                     "items": {}
                 },
+                "catalog_expanded": {
+                    "description": "web nav settings",
+                    "type": "integer"
+                },
+                "default_display_mode": {
+                    "description": "1: QA mode, 2: doc mode",
+                    "type": "integer"
+                },
                 "desc": {
                     "description": "seo",
                     "type": "string"
@@ -1918,6 +2018,9 @@ const docTemplate = `{
                 "keyword": {
                     "type": "string"
                 },
+                "mode_switch_visible": {
+                    "type": "integer"
+                },
                 "recommend_node_ids": {
                     "type": "array",
                     "items": {
@@ -1931,6 +2034,9 @@ const docTemplate = `{
                     }
                 },
                 "search_placeholder": {
+                    "type": "string"
+                },
+                "theme_mode": {
                     "type": "string"
                 },
                 "title": {
@@ -2180,6 +2286,35 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.CreateKBReleaseReq": {
+            "type": "object",
+            "required": [
+                "kb_id",
+                "message",
+                "tag"
+            ],
+            "properties": {
+                "auto_summary": {
+                    "type": "boolean"
+                },
+                "kb_id": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "node_ids": {
+                    "description": "create release after these nodes published",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "tag": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.CreateKnowledgeBaseReq": {
             "type": "object",
             "required": [
@@ -2304,6 +2439,9 @@ const docTemplate = `{
                             "$ref": "#/definitions/domain.NodeType"
                         }
                     ]
+                },
+                "visibility": {
+                    "$ref": "#/definitions/domain.NodeVisibility"
                 }
             }
         },
@@ -2365,6 +2503,20 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.GetKBReleaseListResp": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.KBReleaseListItemResp"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
         "domain.GetProviderModelListResp": {
             "type": "object",
             "properties": {
@@ -2389,6 +2541,26 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "province": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.KBReleaseListItemResp": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "kb_id": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "tag": {
                     "type": "string"
                 }
             }
@@ -2648,11 +2820,17 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "status": {
+                    "$ref": "#/definitions/domain.NodeStatus"
+                },
                 "type": {
                     "$ref": "#/definitions/domain.NodeType"
                 },
                 "updated_at": {
                     "type": "string"
+                },
+                "visibility": {
+                    "$ref": "#/definitions/domain.NodeVisibility"
                 }
             }
         },
@@ -2677,6 +2855,9 @@ const docTemplate = `{
                 "position": {
                     "type": "number"
                 },
+                "status": {
+                    "$ref": "#/definitions/domain.NodeStatus"
+                },
                 "summary": {
                     "type": "string"
                 },
@@ -2685,6 +2866,9 @@ const docTemplate = `{
                 },
                 "updated_at": {
                     "type": "string"
+                },
+                "visibility": {
+                    "$ref": "#/definitions/domain.NodeVisibility"
                 }
             }
         },
@@ -2698,6 +2882,17 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "domain.NodeStatus": {
+            "type": "integer",
+            "enum": [
+                1,
+                2
+            ],
+            "x-enum-varnames": [
+                "NodeStatusDraft",
+                "NodeStatusReleased"
+            ]
         },
         "domain.NodeSummaryReq": {
             "type": "object",
@@ -2723,6 +2918,17 @@ const docTemplate = `{
             "x-enum-varnames": [
                 "NodeTypeFolder",
                 "NodeTypeDocument"
+            ]
+        },
+        "domain.NodeVisibility": {
+            "type": "integer",
+            "enum": [
+                1,
+                2
+            ],
+            "x-enum-varnames": [
+                "NodeVisibilityPrivate",
+                "NodeVisibilityPublic"
             ]
         },
         "domain.NotnionGetListReq": {
@@ -3028,6 +3234,9 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "visibility": {
+                    "$ref": "#/definitions/domain.NodeVisibility"
                 }
             }
         },

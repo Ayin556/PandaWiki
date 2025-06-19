@@ -1,9 +1,6 @@
 'use client'
 
-import { StyledAnchor } from "@/components/StyledHTML";
 import { Box } from "@mui/material";
-import { Ellipsis } from "ct-mui";
-import { useEffect, useState } from "react";
 
 interface Heading {
   id: string
@@ -14,47 +11,65 @@ interface Heading {
 interface DocAnchorProps {
   title: string
   headings: Heading[]
-  maxH: number
   activeHeading: Heading | null
+  onScrollToElement?: (elementId: string, offset?: number) => void
 }
 
 const HeadingSx = [
-  { fontSize: 14, fontWeight: 400, color: 'text.secondary' },
-  { fontSize: 14, fontWeight: 400, color: 'text.tertiary' },
-  { fontSize: 14, fontWeight: 400, color: 'text.disabled' },
+  { fontWeight: 400, color: 'text.secondary' },
+  { fontWeight: 400, color: 'text.tertiary' },
+  { fontWeight: 400, color: 'text.disabled' },
 ]
 
-const DocAnchor = ({ title, headings, maxH, activeHeading }: DocAnchorProps) => {
+const DocAnchor = ({ title, headings, activeHeading, onScrollToElement }: DocAnchorProps) => {
   const levels = Array.from(new Set(headings.map(it => it.heading).sort((a, b) => a - b))).slice(0, 3)
-
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>, heading: { id: string, title: string, heading: number }) => {
     e.preventDefault();
-    const element = document.getElementById(heading.id);
-    if (element) {
-      const offset = 80;
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - offset;
+    if (onScrollToElement) {
+      onScrollToElement(heading.id, 80);
+    } else {
+      // 降级处理，如果没有传递滚动方法
+      const element = document.getElementById(heading.id);
+      if (element) {
+        const offset = 80;
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - offset;
 
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
-      location.hash = heading.title
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+        // 降级模式下也要更新hash
+        location.hash = encodeURIComponent(heading.title);
+      }
     }
   };
 
-  return <StyledAnchor>
-    {title && <Ellipsis arrow sx={{
+  return <Box sx={{
+    gap: '8px',
+    fontSize: 12,
+    position: 'fixed',
+    zIndex: 5,
+    top: 96,
+    right: 16,
+    width: 200,
+    bgcolor: 'background.paper',
+    borderRadius: '10px',
+    border: '1px solid',
+    borderColor: 'divider',
+    padding: '16px',
+  }}>
+    {title && <Box sx={{
       fontWeight: 'bold',
       cursor: 'pointer',
       mb: 1,
       color: 'text.secondary',
     }}>
-      {title}
-    </Ellipsis>}
+      内容大纲
+    </Box>}
     <Box sx={{
-      height: 'calc(100vh - 174px)',
+      maxHeight: 'calc(100vh - 174px)',
       overflowY: 'auto',
       overflowX: 'hidden',
       lineHeight: '32px',
@@ -66,20 +81,23 @@ const DocAnchor = ({ title, headings, maxH, activeHeading }: DocAnchorProps) => 
     }}>
       {headings.filter(it => levels.includes(it.heading)).map((heading) => {
         const idx = levels.indexOf(heading.heading)
-        return <Ellipsis key={heading.id} arrow sx={{
+        return <Box key={heading.id} sx={{
           cursor: 'pointer',
-          pl: (idx + 1) * 2,
+          pl: idx * 2,
           ...HeadingSx[idx],
           color: activeHeading?.id === heading.id ? 'primary.main' : HeadingSx[idx].color,
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
           ':hover': {
             color: 'primary.main'
           }
         }} onClick={(e) => handleClick(e, heading)}>
           {heading.title}
-        </Ellipsis>
+        </Box>
       })}
     </Box>
-  </StyledAnchor>
+  </Box>
 }
 
 export default DocAnchor;

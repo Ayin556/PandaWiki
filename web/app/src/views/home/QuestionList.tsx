@@ -3,7 +3,7 @@ import { Box, Stack } from "@mui/material";
 import Link from "next/link";
 
 const QuestionList = () => {
-  const { kbDetail } = useKBDetail()
+  const { kbDetail, themeMode } = useKBDetail()
 
   if (!kbDetail?.settings?.recommend_questions) return null
 
@@ -20,6 +20,7 @@ const QuestionList = () => {
           borderColor: 'divider',
           px: 2,
           cursor: 'pointer',
+          bgcolor: themeMode === 'dark' ? 'background.paper' : 'background.default',
           '&:hover': {
             borderColor: 'primary.main',
             color: 'primary.main',

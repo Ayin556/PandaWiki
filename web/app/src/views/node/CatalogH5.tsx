@@ -1,9 +1,7 @@
 'use client'
 
-import docHeaderBgi from '@/assets/images/doc-header-bg.png'
 import { NodeListItem } from "@/assets/type"
 import { IconArrowDown, IconNav } from "@/components/icons"
-import { StyledHeaderBgi } from "@/components/StyledHTML"
 import { convertToTree } from '@/utils/drag'
 import { Box, Stack } from "@mui/material"
 import { useEffect, useState } from "react"
@@ -44,10 +42,11 @@ const CatalogH5 = ({
     left: 0,
     right: 0,
     width: '100%',
-    zIndex: 1,
+    zIndex: 2,
   }}>
-    <Box sx={{
+    {/* <Box sx={{
       position: 'absolute',
+      zIndex: 1,
       top: 0,
       left: 0,
       right: 0,
@@ -63,14 +62,13 @@ const CatalogH5 = ({
           mt: '-60px',
         }}
       />
-    </Box>
+    </Box> */}
     <Stack direction='row' alignItems='center' justifyContent='space-between'
       sx={{
         py: 3,
-        mx: 3,
+        px: 3,
         position: 'relative',
         zIndex: 2,
-        boxSizing: 'border-box',
         borderBottom: '1px solid',
         borderColor: 'divider',
       }}

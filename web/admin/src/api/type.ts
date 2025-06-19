@@ -91,6 +91,14 @@ export interface CardWebHeaderBtn {
   target: '_blank' | '_self'
 }
 
+export type ReleaseListItem = {
+  created_at: string,
+  id: string,
+  kb_id: string,
+  message: string,
+  tag: string
+}
+
 // =============================================》node
 export type NodeListItem = {
   id: string,
@@ -102,6 +110,8 @@ export type NodeListItem = {
   summary: string,
   created_at: string,
   updated_at: string,
+  status: 1 | 2 // 1 草稿 2 发布
+  visibility: 1 | 2 // 1 私有 2 公开
 }
 
 export type GetNodeRecommendData = {
@@ -115,16 +125,16 @@ export type CreateNodeSummaryData = {
 }
 
 export type NodeDetail = {
+  id: string,
+  name: string,
   type: 1 | 2,
   content: string,
-  created_at: string,
-  id: string,
   kb_id: string,
   meta: {
     emoji?: string,
     summary?: string
   },
-  name: string,
+  created_at: string,
   updated_at: string
 }
 
@@ -151,12 +161,32 @@ export type UpdateNodeActionData = {
 }
 
 export type UpdateNodeData = {
-  id: string,
   kb_id: string,
-  name?: string,
   content?: string,
-  emoji?: string
+  id: string,
+  name?: string,
+  emoji?: string,
+  status?: 1 | 2
+  visibility?: 1 | 2
 }
+
+export interface ITreeItem {
+  id: string;
+  name: string;
+  level: number;
+  order?: number;
+  emoji?: string
+  parentId?: string | null;
+  summary?: string
+  children?: ITreeItem[];
+  type: 1 | 2;
+  isEditting?: boolean;
+  canHaveChildren?: boolean;
+  updated_at?: string;
+  status?: 1 | 2
+  visibility?: 1 | 2
+}
+
 
 // =============================================》crawler
 
@@ -236,7 +266,17 @@ export type CustomCodeSetting = {
   body_code: string
 }
 
-export type AppSetting = HeaderSetting & WelcomeSetting & SEOSetting & CustomCodeSetting & DingBotSetting & WecomBotSetting & FeishuBotSetting & {
+export type StyleSetting = {
+  default_display_mode: 1 | 2,
+  mode_switch_visible: 1 | 2,
+  theme_mode: 'light' | 'dark'
+}
+
+export type CatalogSetting = {
+  catalog_expanded: 1 | 2,
+}
+
+export type AppSetting = HeaderSetting & WelcomeSetting & SEOSetting & CustomCodeSetting & DingBotSetting & WecomBotSetting & FeishuBotSetting & StyleSetting & CatalogSetting & {
   base_url: string
 }
 
@@ -364,19 +404,4 @@ export type ConversationDetail = {
 export type ChatConversationItem = {
   role: 'assistant' | 'user',
   content: string,
-}
-
-export interface ITreeItem {
-  id: string;
-  name: string;
-  level: number;
-  order?: number;
-  emoji?: string
-  parentId?: string | null;
-  summary?: string
-  children?: ITreeItem[];
-  type: 1 | 2;
-  isEditting?: boolean;
-  canHaveChildren?: boolean;
-  updated_at?: string;
 }

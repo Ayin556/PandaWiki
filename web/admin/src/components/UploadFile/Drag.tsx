@@ -92,7 +92,6 @@ const Upload = ({
               variant='text'
               size='small'
               sx={{ minWidth: 'auto', p: 0, ml: 1 }}
-              onClick={() => fileInputRef.current?.click()}
             >
               点击浏览文件
             </Button>

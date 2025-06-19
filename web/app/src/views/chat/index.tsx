@@ -1,13 +1,13 @@
 'use client';
 
-import IconAnswer from '@/assets/images/answer.png';
 import { ChunkResultItem } from '@/assets/type';
+import Footer from '@/components/footer';
+import { useKBDetail } from '@/provider/kb-provider';
 import { useMobile } from '@/provider/mobile-provider';
 import { isInIframe } from '@/utils';
 import SSEClient from '@/utils/fetch';
 import { Box, Stack } from '@mui/material';
 import { message } from 'ct-mui';
-import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import ChatResult from './ChatResult';
@@ -20,6 +20,7 @@ const Chat = () => {
   const { mobile = false } = useMobile()
   const searchParams = useSearchParams();
   const search = searchParams.get('search');
+  const { themeMode } = useKBDetail()
 
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
   const sseClientRef = useRef<SSEClient<{
@@ -28,7 +29,7 @@ const Chat = () => {
     chunk_result: ChunkResultItem[];
   }> | null>(null);
 
-  const [conversation, setConversation] = useState<any[]>([]);
+  const [conversation, setConversation] = useState<{ q: string, a: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const [thinking, setThinking] = useState<keyof typeof AnswerStatus>(4);
   const [nonce, setNonce] = useState('');
@@ -105,13 +106,14 @@ const Chat = () => {
 
   const onSearch = (q: string, reset: boolean = false) => {
     if (loading || !q.trim()) return;
-    const newConversation = reset ? [] : [...conversation];
+    const newConversation = reset ? [] : [...conversation.slice(0, -1)];
     if (answer) {
-      newConversation.push({ role: 'assistant', content: answer });
+      newConversation.push({ q: conversation[conversation.length - 1].q, a: answer });
     }
-    newConversation.push({ role: 'user', content: q });
+    newConversation.push({ q, a: '' });
     setConversation(newConversation);
     setAnswer('');
+    setChunkResult([]);
     setTimeout(() => {
       chatAnswer(q);
     }, 0);
@@ -176,45 +178,55 @@ const Chat = () => {
           handleSearchAbort={handleSearchAbort}
         /> : <SearchResult list={chunkResult} loading={chunkLoading} />}
       </Box>
+      <Footer />
     </Box>
   }
 
   return (
-    <Box sx={{ pt: 12, minHeight: 'calc(100vh - 40px)' }}>
-      <Stack alignItems="stretch" direction="row" gap={3}>
-        <Box sx={{ position: 'relative', width: 'calc((100% - 24px) * 0.6)' }}>
-          <Stack direction='row' gap={1} alignItems='center' sx={{
-            fontSize: '20px',
-            fontWeight: '700',
-            lineHeight: '28px',
-            mb: 2,
-            height: '28px',
-          }}>
-            <Box>
-              <Image src={IconAnswer.src} alt='智能回答' width={24} height={24} />
-            </Box>
-            智能回答
-          </Stack>
-          <ChatResult
-            conversation={conversation}
-            answer={answer}
-            loading={loading}
-            thinking={thinking}
-            setThinking={setThinking}
-            onSearch={onSearch}
-            handleSearchAbort={handleSearchAbort}
-          />
-        </Box>
-        <Box sx={{ width: 'calc((100% - 24px) * 0.4)' }}>
+    <Box sx={{
+      pt: 12,
+      minHeight: '100vh',
+      bgcolor: themeMode === 'dark' ? 'background.default' : 'background.paper'
+    }}>
+      <Box sx={{
+        margin: '0 auto',
+        maxWidth: '1200px',
+      }}>
+        <Stack alignItems="stretch" direction="row" gap={3} sx={{
+          height: 'calc(100vh - 160px)',
+          mb: 3,
+        }}>
+          <Box sx={{ position: 'relative', flex: 1 }}>
+            <ChatResult
+              conversation={conversation}
+              answer={answer}
+              loading={loading}
+              thinking={thinking}
+              setThinking={setThinking}
+              onSearch={onSearch}
+              handleSearchAbort={handleSearchAbort}
+            />
+          </Box>
           <Box sx={{
-            fontSize: '20px',
-            fontWeight: '700',
-            lineHeight: '28px',
-            mb: 2,
-          }}>搜索结果</Box>
-          <SearchResult list={chunkResult} loading={chunkLoading} />
-        </Box>
-      </Stack>
+            flexShrink: 0,
+            width: 388,
+            border: '1px solid',
+            borderColor: 'divider',
+            borderRadius: '10px',
+            p: 3,
+            bgcolor: themeMode === 'dark' ? 'background.paper' : 'background.default',
+          }}>
+            <Box sx={{
+              fontSize: '20px',
+              fontWeight: '700',
+              lineHeight: '28px',
+              mb: 2,
+            }}>搜索结果</Box>
+            <SearchResult list={chunkResult} loading={chunkLoading} />
+          </Box>
+        </Stack>
+        <Footer />
+      </Box>
     </Box>
   );
 };

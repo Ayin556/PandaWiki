@@ -8,6 +8,7 @@ import (
 	"gorm.io/gorm/clause"
 
 	"github.com/google/uuid"
+	"github.com/samber/lo"
 
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/log"
@@ -50,17 +51,27 @@ func (r *NodeRepository) Create(ctx context.Context, req *domain.CreateNodeReq) 
 		newPos := maxPos + (domain.MaxPosition-maxPos)/2.0
 
 		now := time.Now()
+
+		visibility := domain.NodeVisibilityPrivate
+		if req.Visibility != nil {
+			visibility = *req.Visibility
+		}
+		if req.Type == domain.NodeTypeFolder {
+			visibility = domain.NodeVisibilityPublic
+		}
 		node := &domain.Node{
-			ID:        nodeIDStr,
-			KBID:      req.KBID,
-			Name:      req.Name,
-			Content:   req.Content,
-			Meta:      domain.NodeMeta{Emoji: req.Emoji},
-			Type:      req.Type,
-			ParentID:  req.ParentID,
-			Position:  newPos,
-			CreatedAt: now,
-			UpdatedAt: now,
+			ID:         nodeIDStr,
+			KBID:       req.KBID,
+			Name:       req.Name,
+			Content:    req.Content,
+			Meta:       domain.NodeMeta{Emoji: req.Emoji},
+			Type:       req.Type,
+			ParentID:   req.ParentID,
+			Position:   newPos,
+			Status:     domain.NodeStatusDraft,
+			Visibility: visibility,
+			CreatedAt:  now,
+			UpdatedAt:  now,
 		}
 
 		return tx.Create(node).Error
@@ -77,7 +88,7 @@ func (r *NodeRepository) GetList(ctx context.Context, req *domain.GetNodeListReq
 	query := r.db.WithContext(ctx).
 		Model(&domain.Node{}).
 		Where("nodes.kb_id = ?", req.KBID).
-		Select("nodes.id, nodes.type, nodes.name, nodes.parent_id, nodes.position, nodes.created_at, nodes.updated_at, nodes.meta->>'summary' as summary, nodes.meta->>'emoji' as emoji")
+		Select("nodes.id, nodes.type, nodes.status, nodes.visibility, nodes.name, nodes.parent_id, nodes.position, nodes.created_at, nodes.updated_at, nodes.meta->>'summary' as summary, nodes.meta->>'emoji' as emoji")
 	if req.Search != "" {
 		searchPattern := "%" + req.Search + "%"
 		query = query.Where("name LIKE ? OR content LIKE ?", searchPattern, searchPattern)
@@ -90,14 +101,25 @@ func (r *NodeRepository) GetList(ctx context.Context, req *domain.GetNodeListReq
 
 func (r *NodeRepository) UpdateNodeContent(ctx context.Context, req *domain.UpdateNodeReq) error {
 	updateMap := map[string]any{}
+	updateStatus := false
 	if req.Name != nil {
 		updateMap["name"] = *req.Name
+		updateStatus = true
 	}
 	if req.Content != nil {
 		updateMap["content"] = *req.Content
+		updateStatus = true
 	}
 	if req.Emoji != nil {
 		updateMap["meta"] = gorm.Expr("jsonb_set(meta, '{emoji}', to_jsonb(?::text))", *req.Emoji)
+		updateStatus = true
+	}
+	if req.Visibility != nil {
+		updateMap["visibility"] = *req.Visibility
+		updateStatus = true
+	}
+	if updateStatus {
+		updateMap["status"] = domain.NodeStatusDraft
 	}
 	if len(updateMap) > 0 {
 		return r.db.WithContext(ctx).
@@ -121,21 +143,39 @@ func (r *NodeRepository) GetByID(ctx context.Context, id string) (*domain.NodeDe
 }
 
 func (r *NodeRepository) Delete(ctx context.Context, kbID string, ids []string) ([]string, error) {
-	var nodes []*domain.Node
-	if err := r.db.WithContext(ctx).
-		Model(&domain.Node{}).
-		Where("id IN ?", ids).
-		Where("kb_id = ?", kbID).
-		Where("doc_id IS NOT NULL AND doc_id != ''").
-		Clauses(clause.Returning{Columns: []clause.Column{{Name: "doc_id"}}}).
-		Delete(&nodes).Error; err != nil {
+	docIDs := make([]string, 0)
+	if err := r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		var nodes []*domain.Node
+		if err := tx.Model(&domain.Node{}).
+			Where("id IN ?", ids).
+			Where("kb_id = ?", kbID).
+			Clauses(clause.Returning{Columns: []clause.Column{{Name: "doc_id"}}}).
+			Delete(&nodes).Error; err != nil {
+			return err
+		}
+		// delete node release
+		var nodeReleases []*domain.NodeRelease
+		if err := tx.Model(&domain.NodeRelease{}).
+			Where("node_id IN ?", ids).
+			Clauses(clause.Returning{Columns: []clause.Column{{Name: "doc_id"}}}).
+			Delete(&nodeReleases).Error; err != nil {
+			return err
+		}
+		for _, node := range nodes {
+			if node.DocID != "" {
+				docIDs = append(docIDs, node.DocID)
+			}
+		}
+		for _, nodeRelease := range nodeReleases {
+			if nodeRelease.DocID != "" {
+				docIDs = append(docIDs, nodeRelease.DocID)
+			}
+		}
+		return nil
+	}); err != nil {
 		return nil, err
 	}
-	docIDs := make([]string, 0, len(nodes))
-	for _, node := range nodes {
-		docIDs = append(docIDs, node.DocID)
-	}
-	return docIDs, nil
+	return lo.Uniq(docIDs), nil
 }
 
 func (r *NodeRepository) GetNodeByID(ctx context.Context, id string) (*domain.Node, error) {
@@ -149,42 +189,72 @@ func (r *NodeRepository) GetNodeByID(ctx context.Context, id string) (*domain.No
 	return node, nil
 }
 
-func (r *NodeRepository) GetNodesByDocIDs(ctx context.Context, ids []string) (map[string]*domain.Node, error) {
-	var nodes []*domain.Node
+func (r *NodeRepository) GetNodeReleaseByID(ctx context.Context, id string) (*domain.NodeRelease, error) {
+	var nodeRelease *domain.NodeRelease
 	if err := r.db.WithContext(ctx).
-		Model(&domain.Node{}).
-		Where("doc_id IN ?", ids).
-		Find(&nodes).Error; err != nil {
+		Model(&domain.NodeRelease{}).
+		Where("id = ?", id).
+		First(&nodeRelease).Error; err != nil {
 		return nil, err
 	}
-	nodesMap := make(map[string]*domain.Node)
-	for _, node := range nodes {
-		nodesMap[node.DocID] = node
+	return nodeRelease, nil
+}
+
+func (r *NodeRepository) GetLatestNodeReleaseByNodeID(ctx context.Context, nodeID string) (*domain.NodeRelease, error) {
+	var nodeRelease *domain.NodeRelease
+	if err := r.db.WithContext(ctx).
+		Model(&domain.NodeRelease{}).
+		Where("node_id = ?", nodeID).
+		Order("updated_at DESC").
+		First(&nodeRelease).Error; err != nil {
+		return nil, err
+	}
+	return nodeRelease, nil
+}
+
+func (r *NodeRepository) GetNodeReleasesByDocIDs(ctx context.Context, ids []string) (map[string]*domain.NodeRelease, error) {
+	var nodeReleases []*domain.NodeRelease
+	if err := r.db.WithContext(ctx).
+		Model(&domain.NodeRelease{}).
+		Where("doc_id IN ?", ids).
+		Find(&nodeReleases).Error; err != nil {
+		return nil, err
+	}
+	nodesMap := make(map[string]*domain.NodeRelease)
+	for _, nodeRelease := range nodeReleases {
+		nodesMap[nodeRelease.DocID] = nodeRelease
 	}
 	return nodesMap, nil
 }
 
 // GetRecommendNodeListByIDs get node list by ids
-func (r *NodeRepository) GetRecommendNodeListByIDs(ctx context.Context, kbID string, ids []string) ([]*domain.RecommendNodeListResp, error) {
+func (r *NodeRepository) GetRecommendNodeListByIDs(ctx context.Context, kbID string, releaseID string, ids []string) ([]*domain.RecommendNodeListResp, error) {
 	var nodes []*domain.RecommendNodeListResp
 	if err := r.db.WithContext(ctx).
-		Model(&domain.Node{}).
-		Where("kb_id = ?", kbID).
-		Where("id IN ?", ids).
-		Select("id, name, type, meta->>'summary' as summary, meta->>'emoji' as emoji, parent_id, position").
+		Model(&domain.KBReleaseNodeRelease{}).
+		Joins("LEFT JOIN node_releases ON node_releases.id = kb_release_node_releases.node_release_id").
+		Where("node_releases.kb_id = ?", kbID).
+		Where("kb_release_node_releases.release_id = ?", releaseID).
+		Where("node_releases.node_id IN ?", ids).
+		Where("node_releases.visibility = ?", domain.NodeVisibilityPublic).
+		Select("node_releases.node_id as id, node_releases.name, node_releases.type, node_releases.meta->>'summary' as summary, node_releases.meta->>'emoji' as emoji, node_releases.parent_id, node_releases.position").
 		Find(&nodes).Error; err != nil {
 		return nil, err
 	}
 	return nodes, nil
 }
 
-func (r *NodeRepository) GetRecommendNodeListByParentIDs(ctx context.Context, kbID string, parentIDs []string) (map[string][]*domain.RecommendNodeListResp, error) {
+func (r *NodeRepository) GetRecommendNodeListByParentIDs(ctx context.Context, kbID string, releaseID string, parentIDs []string) (map[string][]*domain.RecommendNodeListResp, error) {
 	var nodes []*domain.RecommendNodeListResp
 	if err := r.db.WithContext(ctx).
-		Model(&domain.Node{}).
-		Where("kb_id = ? AND parent_id IN ?", kbID, parentIDs).
-		Where("type != ?", domain.NodeTypeFolder).
-		Select("id, name, type, meta->>'summary' as summary, meta->>'emoji' as emoji, parent_id, position").
+		Model(&domain.KBReleaseNodeRelease{}).
+		Joins("LEFT JOIN node_releases ON node_releases.id = kb_release_node_releases.node_release_id").
+		Where("node_releases.kb_id = ?", kbID).
+		Where("kb_release_node_releases.release_id = ?", releaseID).
+		Where("node_releases.parent_id IN ?", parentIDs).
+		Where("node_releases.type != ?", domain.NodeTypeFolder).
+		Where("node_releases.visibility = ?", domain.NodeVisibilityPublic).
+		Select("node_releases.node_id as id, node_releases.name, node_releases.type, node_releases.meta->>'summary' as summary, node_releases.meta->>'emoji' as emoji, node_releases.parent_id, node_releases.position").
 		Find(&nodes).Error; err != nil {
 		return nil, err
 	}
@@ -198,24 +268,50 @@ func (r *NodeRepository) GetRecommendNodeListByParentIDs(ctx context.Context, kb
 	return nodesMap, nil
 }
 
-// GetNodeListByKBID get node list by kb id
-func (r *NodeRepository) GetNodeListByKBID(ctx context.Context, kbID string) ([]*domain.ShareNodeListItemResp, error) {
+// GetNodeReleaseListByKBID get node list by kb id
+func (r *NodeRepository) GetNodeReleaseListByKBID(ctx context.Context, kbID string) ([]*domain.ShareNodeListItemResp, error) {
+	// get kb release
+	var kbRelease *domain.KBRelease
+	if err := r.db.WithContext(ctx).
+		Model(&domain.KBRelease{}).
+		Where("kb_id = ?", kbID).
+		Order("created_at DESC").
+		First(&kbRelease).Error; err != nil {
+		return nil, err
+	}
+
 	var nodes []*domain.ShareNodeListItemResp
 	if err := r.db.WithContext(ctx).
-		Model(&domain.Node{}).
-		Where("kb_id = ?", kbID).
-		Select("id, name, type, parent_id, position, meta->>'emoji' as emoji").
+		Model(&domain.KBReleaseNodeRelease{}).
+		Joins("LEFT JOIN node_releases ON node_releases.id = kb_release_node_releases.node_release_id").
+		Where("kb_release_node_releases.kb_id = ?", kbID).
+		Where("kb_release_node_releases.release_id = ?", kbRelease.ID).
+		Where("node_releases.visibility = ?", domain.NodeVisibilityPublic).
+		Select("node_releases.node_id as id, node_releases.name, node_releases.type, node_releases.parent_id, node_releases.position, node_releases.meta->>'emoji' as emoji").
 		Find(&nodes).Error; err != nil {
 		return nil, err
 	}
 	return nodes, nil
 }
 
-func (r *NodeRepository) GetNodeDetailByKBIDAndID(ctx context.Context, kbID, id string) (*domain.NodeDetailResp, error) {
+func (r *NodeRepository) GetNodeReleaseDetailByKBIDAndID(ctx context.Context, kbID, id string) (*domain.NodeDetailResp, error) {
+	// get kb release
+	var kbRelease *domain.KBRelease
+	if err := r.db.WithContext(ctx).
+		Model(&domain.KBRelease{}).
+		Where("kb_id = ?", kbID).
+		Order("created_at DESC").
+		First(&kbRelease).Error; err != nil {
+		return nil, err
+	}
 	var node *domain.NodeDetailResp
 	if err := r.db.WithContext(ctx).
-		Model(&domain.Node{}).
-		Where("kb_id = ? AND id = ?", kbID, id).
+		Model(&domain.KBReleaseNodeRelease{}).
+		Joins("LEFT JOIN node_releases ON node_releases.id = kb_release_node_releases.node_release_id").
+		Where("kb_release_node_releases.release_id = ?", kbRelease.ID).
+		Where("node_releases.node_id = ?", id).
+		Where("node_releases.kb_id = ?", kbID).
+		Select("node_releases.*").
 		First(&node).Error; err != nil {
 		return nil, err
 	}
@@ -254,10 +350,12 @@ func (r *NodeRepository) MoveNodeBetween(ctx context.Context, id string, parentI
 			Where("id = ?", id).
 			Update("position", newPos).
 			Update("parent_id", parentID).
+			Update("status", domain.NodeStatusDraft).
 			Error
 	})
 }
 
+// UpdateNodeDocID update node doc id
 func (r *NodeRepository) UpdateNodeDocID(ctx context.Context, id, docID string) error {
 	return r.db.WithContext(ctx).
 		Model(&domain.Node{}).
@@ -268,19 +366,31 @@ func (r *NodeRepository) UpdateNodeDocID(ctx context.Context, id, docID string) 
 		}).Error
 }
 
-func (r *NodeRepository) UpdateNodeSummary(ctx context.Context, kbID, id, summary string) error {
+// UpdateNodeReleaseDocID update node release doc id
+func (r *NodeRepository) UpdateNodeReleaseDocID(ctx context.Context, id, docID string) error {
 	return r.db.WithContext(ctx).
-		Model(&domain.Node{}).
-		Where("kb_id = ? AND id = ?", kbID, id).
+		Model(&domain.NodeRelease{}).
+		Omit("updated_at").
+		Where("id = ?", id).
+		Updates(map[string]any{
+			"doc_id": docID,
+		}).Error
+}
+
+func (r *NodeRepository) UpdateNodeReleaseSummary(ctx context.Context, kbID, nodeReleaseID, summary string) error {
+	return r.db.WithContext(ctx).
+		Model(&domain.NodeRelease{}).
+		Omit("updated_at").
+		Where("kb_id = ? AND id = ?", kbID, nodeReleaseID).
 		Update("meta", gorm.Expr("jsonb_set(meta, '{summary}', to_jsonb(?::text))", summary)).Error
 }
 
 // traverse all nodes by pg cursor
-func (r *NodeRepository) TraverseNodesByCursor(ctx context.Context, callback func(*domain.Node) error) error {
+func (r *NodeRepository) TraverseNodesByCursor(ctx context.Context, callback func(*domain.NodeRelease) error) error {
 	rows, err := r.db.WithContext(ctx).
-		Model(&domain.Node{}).
-		Select("id, kb_id").
-		Order("id ASC").
+		Model(&domain.NodeRelease{}).
+		Select("DISTINCT ON (node_id) id, node_id, kb_id").
+		Order("node_id, updated_at DESC").
 		Rows()
 	if err != nil {
 		return err
@@ -288,11 +398,11 @@ func (r *NodeRepository) TraverseNodesByCursor(ctx context.Context, callback fun
 	defer rows.Close()
 
 	for rows.Next() {
-		var node domain.Node
-		if err := r.db.ScanRows(rows, &node); err != nil {
+		var nodeRelease domain.NodeRelease
+		if err := r.db.ScanRows(rows, &nodeRelease); err != nil {
 			return err
 		}
-		if err := callback(&node); err != nil {
+		if err := callback(&nodeRelease); err != nil {
 			return err
 		}
 	}
@@ -302,4 +412,81 @@ func (r *NodeRepository) TraverseNodesByCursor(ctx context.Context, callback fun
 	}
 
 	return nil
+}
+
+// CreateNodeReleases create node releases
+func (r *NodeRepository) CreateNodeReleases(ctx context.Context, kbID string, nodeIDs []string) ([]string, error) {
+	releaseIDs := make([]string, 0)
+	if err := r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		// update node status to published and return node ids
+		var updatedNodes []*domain.Node
+		if err := tx.Model(&domain.Node{}).
+			Where("kb_id = ?", kbID).
+			Where("id IN ?", nodeIDs).
+			Update("status", domain.NodeStatusReleased).
+			Find(&updatedNodes).Error; err != nil {
+			return err
+		}
+		if len(updatedNodes) == 0 {
+			return nil
+		}
+		nodeReleases := make([]*domain.NodeRelease, len(updatedNodes))
+		for i, updatedNode := range updatedNodes {
+			// create node release
+			nodeRelease := &domain.NodeRelease{
+				ID:         uuid.New().String(),
+				KBID:       kbID,
+				NodeID:     updatedNode.ID,
+				Type:       updatedNode.Type,
+				Visibility: updatedNode.Visibility,
+				Name:       updatedNode.Name,
+				Meta:       updatedNode.Meta,
+				Content:    updatedNode.Content,
+				ParentID:   updatedNode.ParentID,
+				Position:   updatedNode.Position,
+				CreatedAt:  updatedNode.CreatedAt,
+				UpdatedAt:  time.Now(),
+			}
+			nodeReleases[i] = nodeRelease
+		}
+		for _, nodeRelease := range nodeReleases {
+			// return public node release ids
+			if nodeRelease.Visibility == domain.NodeVisibilityPublic {
+				releaseIDs = append(releaseIDs, nodeRelease.ID)
+			}
+		}
+		if err := tx.CreateInBatches(&nodeReleases, 100).Error; err != nil {
+			return err
+		}
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+	return releaseIDs, nil
+}
+
+func (r *NodeRepository) GetOldNodeDocIDsByNodeID(ctx context.Context, nodeReleaseID, nodeID string) ([]string, error) {
+	var docIDs []string
+	if err := r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		// get old doc_ids by node_id
+		if err := tx.Model(&domain.NodeRelease{}).
+			Where("node_id = ?", nodeID).
+			Where("id != ?", nodeReleaseID).
+			Select("doc_id").
+			Find(&docIDs).Error; err != nil {
+			return err
+		}
+		// update node_release.doc_id to ""
+		if err := tx.Model(&domain.NodeRelease{}).
+			Where("node_id = ?", nodeID).
+			Where("id != ?", nodeReleaseID).
+			Omit("updated_at").
+			Update("doc_id", "").Error; err != nil {
+			return err
+		}
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+	return docIDs, nil
 }

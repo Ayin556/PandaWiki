@@ -52,7 +52,7 @@ const EditorDocNav = ({ title, headers, maxH }: EditorDocNavProps) => {
       fontWeight: 'bold',
       borderBottom: '2px solid',
       borderColor: 'divider',
-    }}>大纲</Box>
+    }}>内容大纲</Box>
     <Stack gap={1} sx={{
       py: 2,
       px: 3,

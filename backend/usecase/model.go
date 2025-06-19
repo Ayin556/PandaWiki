@@ -133,16 +133,16 @@ func (u *ModelUsecase) GetList(ctx context.Context) ([]*domain.ModelListItem, er
 // trigger upsert records after embedding model is updated or created
 func (u *ModelUsecase) TriggerUpsertRecords(ctx context.Context) error {
 	// traverse all nodes
-	err := u.nodeRepo.TraverseNodesByCursor(ctx, func(node *domain.Node) error {
+	err := u.nodeRepo.TraverseNodesByCursor(ctx, func(nodeRelease *domain.NodeRelease) error {
 		// async upsert vector content via mq
-		nodeContentVectorRequests := []*domain.NodeContentVectorRequest{
+		nodeContentVectorRequests := []*domain.NodeReleaseVectorRequest{
 			{
-				KBID:   node.KBID,
-				ID:     node.ID,
-				Action: "upsert",
+				KBID:          nodeRelease.KBID,
+				NodeReleaseID: nodeRelease.ID,
+				Action:        "upsert",
 			},
 		}
-		if err := u.ragRepo.UpdateRecords(ctx, nodeContentVectorRequests); err != nil {
+		if err := u.ragRepo.AsyncUpdateNodeReleaseVector(ctx, nodeContentVectorRequests); err != nil {
 			return err
 		}
 		return nil

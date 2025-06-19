@@ -19,6 +19,20 @@ const (
 	NodeTypeDocument NodeType = 2
 )
 
+type NodeStatus uint16
+
+const (
+	NodeStatusDraft    NodeStatus = 1
+	NodeStatusReleased NodeStatus = 2
+)
+
+type NodeVisibility uint16
+
+const (
+	NodeVisibilityPrivate NodeVisibility = 1
+	NodeVisibilityPublic  NodeVisibility = 2
+)
+
 // table: nodes
 type Node struct {
 	ID string `json:"id" gorm:"primaryKey"`
@@ -27,6 +41,9 @@ type Node struct {
 
 	Type NodeType `json:"type"`
 
+	Status     NodeStatus     `json:"status"`
+	Visibility NodeVisibility `json:"visibility"`
+
 	Name    string   `json:"name"`
 	Content string   `json:"content"`
 	Meta    NodeMeta `json:"meta" gorm:"type:jsonb"` // summary
@@ -34,7 +51,7 @@ type Node struct {
 	ParentID string  `json:"parent_id"`
 	Position float64 `json:"position"`
 
-	DocID string `json:"doc_id"` // for rag service
+	DocID string `json:"doc_id"` // DEPRECATED: for rag service
 
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
@@ -65,7 +82,8 @@ type CreateNodeReq struct {
 	Name    string `json:"name" validate:"required"`
 	Content string `json:"content"`
 
-	Emoji string `json:"emoji"`
+	Emoji      string          `json:"emoji"`
+	Visibility *NodeVisibility `json:"visibility"`
 }
 
 type GetNodeListReq struct {
@@ -74,25 +92,29 @@ type GetNodeListReq struct {
 }
 
 type NodeListItemResp struct {
-	ID        string    `json:"id"`
-	Type      NodeType  `json:"type"`
-	Name      string    `json:"name"`
-	Summary   string    `json:"summary"`
-	Emoji     string    `json:"emoji"`
-	Position  float64   `json:"position"`
-	ParentID  string    `json:"parent_id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID         string         `json:"id"`
+	Type       NodeType       `json:"type"`
+	Status     NodeStatus     `json:"status"`
+	Visibility NodeVisibility `json:"visibility"`
+	Name       string         `json:"name"`
+	Summary    string         `json:"summary"`
+	Emoji      string         `json:"emoji"`
+	Position   float64        `json:"position"`
+	ParentID   string         `json:"parent_id"`
+	CreatedAt  time.Time      `json:"created_at"`
+	UpdatedAt  time.Time      `json:"updated_at"`
 }
 
 type NodeDetailResp struct {
 	ID   string `json:"id"`
 	KBID string `json:"kb_id"`
 
-	Type    NodeType `json:"type"`
-	Name    string   `json:"name"`
-	Content string   `json:"content"`
-	Meta    NodeMeta `json:"meta"`
+	Type       NodeType       `json:"type"`
+	Status     NodeStatus     `json:"status"`
+	Visibility NodeVisibility `json:"visibility"`
+	Name       string         `json:"name"`
+	Content    string         `json:"content"`
+	Meta       NodeMeta       `json:"meta"`
 
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
@@ -150,11 +172,12 @@ type NodeActionReq struct {
 }
 
 type UpdateNodeReq struct {
-	ID      string  `json:"id" validate:"required"`
-	KBID    string  `json:"kb_id" validate:"required"`
-	Name    *string `json:"name"`
-	Content *string `json:"content"`
-	Emoji   *string `json:"emoji"`
+	ID         string          `json:"id" validate:"required"`
+	KBID       string          `json:"kb_id" validate:"required"`
+	Name       *string         `json:"name"`
+	Content    *string         `json:"content"`
+	Emoji      *string         `json:"emoji"`
+	Visibility *NodeVisibility `json:"visibility"`
 }
 
 type ShareNodeListItemResp struct {
@@ -181,4 +204,25 @@ type NodeSummaryReq struct {
 type GetRecommendNodeListReq struct {
 	KBID    string   `json:"kb_id" validate:"required" query:"kb_id"`
 	NodeIDs []string `json:"node_ids" validate:"required" query:"node_ids[]"`
+}
+
+// table: node_releases
+type NodeRelease struct {
+	ID     string `json:"id" gorm:"primaryKey"`
+	KBID   string `json:"kb_id" gorm:"index"`
+	NodeID string `json:"node_id" gorm:"index"`
+	DocID  string `json:"doc_id" gorm:"index"` // for rag service
+
+	Type       NodeType       `json:"type"`
+	Visibility NodeVisibility `json:"visibility"`
+
+	Name    string   `json:"name"`
+	Meta    NodeMeta `json:"meta" gorm:"type:jsonb"`
+	Content string   `json:"content"`
+
+	Position float64 `json:"position"`
+	ParentID string  `json:"parent_id"`
+
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }

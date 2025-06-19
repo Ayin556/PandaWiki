@@ -1,3 +1,4 @@
+import { useKBDetail } from '@/provider/kb-provider';
 import { addOpacityToColor, copyText } from '@/utils';
 import { Box, IconButton, useTheme } from '@mui/material';
 import { Icon } from 'ct-mui';
@@ -17,6 +18,7 @@ interface MarkDownProps {
 
 const MarkDown = ({ loading = false, content }: MarkDownProps) => {
   const theme = useTheme();
+  const { themeMode } = useKBDetail();
   const [showThink, setShowThink] = useState(false)
 
   let answer = content
@@ -30,7 +32,7 @@ const MarkDown = ({ loading = false, content }: MarkDownProps) => {
   if (content.length === 0) return null
 
   return <Box
-    className='markdown-body'
+    className={`markdown-body ${themeMode === 'dark' ? 'md-dark' : ''}`}
     sx={{
       fontSize: '14px',
       background: 'transparent',
@@ -147,7 +149,7 @@ const MarkDown = ({ loading = false, content }: MarkDownProps) => {
               {children}
             </code>
           );
-        },
+        }
       }}
     >
       {answer}

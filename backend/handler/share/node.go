@@ -49,7 +49,7 @@ func (h *ShareNodeHandler) GetNodeList(c echo.Context) error {
 		return h.NewResponseWithError(c, "kb_id is required", nil)
 	}
 
-	nodes, err := h.usecase.GetNodeListByKBID(c.Request().Context(), kbID)
+	nodes, err := h.usecase.GetNodeReleaseListByKBID(c.Request().Context(), kbID)
 	if err != nil {
 		return h.NewResponseWithError(c, "failed to get node list", err)
 	}
@@ -78,7 +78,7 @@ func (h *ShareNodeHandler) GetNodeDetail(c echo.Context) error {
 		return h.NewResponseWithError(c, "id is required", nil)
 	}
 
-	node, err := h.usecase.GetNodeDetailByKBIDAndID(c.Request().Context(), kbID, id)
+	node, err := h.usecase.GetNodeReleaseDetailByKBIDAndID(c.Request().Context(), kbID, id)
 	if err != nil {
 		return h.NewResponseWithError(c, "failed to get node detail", err)
 	}

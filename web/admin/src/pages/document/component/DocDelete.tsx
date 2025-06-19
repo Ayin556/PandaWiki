@@ -1,21 +1,23 @@
-import { updateNodeAction } from "@/api";
+import { NodeListItem, updateNodeAction } from "@/api";
 import Card from "@/components/Card";
+import DragTree from "@/components/Drag/DragTree";
+import { convertToTree } from "@/constant/drag";
 import { useAppSelector } from "@/store";
 import ErrorIcon from '@mui/icons-material/Error';
-import { Box, Stack, useTheme } from "@mui/material";
-import { Ellipsis, Icon, Message, Modal } from "ct-mui";
+import { Stack } from "@mui/material";
+import { Message, Modal } from "ct-mui";
 
 interface DocDeleteProps {
   open: boolean
   onClose: () => void
-  data: { id: string, name: string, type: number }[]
+  data: NodeListItem[]
   refresh?: () => void
 }
 
 const DocDelete = ({ open, onClose, data, refresh }: DocDeleteProps) => {
-  const theme = useTheme();
   const { kb_id } = useAppSelector(state => state.config)
   if (!data) return null
+
 
   const submit = () => {
     updateNodeAction({ ids: data.map(item => item.id), kb_id, action: 'delete' }).then(() => {
@@ -25,10 +27,11 @@ const DocDelete = ({ open, onClose, data, refresh }: DocDeleteProps) => {
     })
   }
 
+  const tree = convertToTree(data)
   return <Modal
     title={<Stack direction='row' alignItems='center' gap={1}>
       <ErrorIcon sx={{ color: 'warning.main' }} />
-      确认删除以下内容？
+      确认删除以下文档/文件夹？
     </Stack>}
     open={open}
     width={600}
@@ -38,20 +41,17 @@ const DocDelete = ({ open, onClose, data, refresh }: DocDeleteProps) => {
     onOk={submit}
   >
     <Card sx={{
-      fontSize: 14, p: 1, px: 2, maxHeight: 'calc(100vh - 250px)', overflowY: 'auto', overflowX: 'hidden',
+      py: 1,
       bgcolor: 'background.paper2',
+      '& .dndkit-drag-handle': {
+        top: '-2px !important'
+      }
     }}>
-      {data.map(item => <Stack key={item.id} direction='row' alignItems={'center'} gap={2} sx={{
-        borderBottom: '1px solid',
-        borderColor: theme.palette.divider,
-        py: 1,
-      }}>
-        {item.type === 1 ? <Icon sx={{ flexShrink: 0 }} type={'icon-wenjianjia'} />
-          : <Icon sx={{ flexShrink: 0 }} type='icon-wenjian' />}
-        <Box sx={{ width: '100%' }}>
-          <Ellipsis sx={{ width: 'calc(100% - 40px)' }}>{item.name || '-'}</Ellipsis>
-        </Box>
-      </Stack>)}
+      <DragTree
+        data={tree}
+        readOnly={true}
+        supportSelect={false}
+      />
     </Card>
   </Modal>
 }

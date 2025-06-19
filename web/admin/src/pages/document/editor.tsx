@@ -14,6 +14,7 @@ const DocEditor = () => {
   const timer = useRef<NodeJS.Timeout | null>(null)
   const { id = '' } = useParams()
   const dispatch = useAppDispatch()
+  const [edited, setEdited] = useState(false)
   const [detail, setDetail] = useState<NodeDetail | null>(null)
   const [headings, setHeadings] = useState<{ id: string, title: string, heading: number }[]>([])
   const [maxH, setMaxH] = useState(0)
@@ -40,6 +41,7 @@ const DocEditor = () => {
       await updateNode({ id, content, kb_id: detail.kb_id })
       if (auto === true) Message.success('自动保存成功')
       else if (auto === undefined) Message.success('保存成功')
+      setEdited(false)
       getDetail()
       updateNav()
     } catch (error) {
@@ -68,6 +70,7 @@ const DocEditor = () => {
     onSave: () => handleSave(),
     aiUrl: '/api/v1/creation/text',
     onUpload: handleUpload,
+    onUpdate: () => setEdited(true),
     onError: (error: Error) => {
       Message.error(error.message)
     }
@@ -104,7 +107,7 @@ const DocEditor = () => {
     }
   }, [id])
 
-  if (!editorRef) return null
+  if (!editorRef) return <></>
 
   return <Box sx={{ color: 'text.primary', pb: 2 }}>
     <Box sx={{
@@ -121,7 +124,7 @@ const DocEditor = () => {
         borderColor: 'divider',
         py: 1,
       }}>
-        <EditorHeader editorRef={editorRef} detail={detail} onSave={handleSave} refresh={async () => {
+        <EditorHeader editorRef={editorRef} detail={detail} onSave={() => handleSave()} refresh={async () => {
           await handleSave(false)
           getDetail()
         }} />
@@ -148,7 +151,7 @@ const DocEditor = () => {
         position: 'relative',
         zIndex: 1,
         '.editor-container': {
-          p: 8,
+          p: 4,
           borderRadius: '6px',
           bgcolor: '#fff',
           minHeight: 'calc(100vh - 121px)',
