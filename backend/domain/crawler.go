@@ -16,7 +16,8 @@ type ParseURLItem struct {
 }
 
 type ScrapeReq struct {
-	URL string `json:"url"`
+	URL  string `json:"url"`
+	KbID string `json:"kb_id" validate:"required"`
 }
 
 type ScrapeResp struct {
@@ -34,7 +35,8 @@ type ScrapeResponse struct {
 }
 
 type ScrapeRequest struct {
-	URL string `json:"url"`
+	URL  string `json:"url"`
+	KbID string `json:"kb_id"`
 }
 
 type ParseNotionReq struct {

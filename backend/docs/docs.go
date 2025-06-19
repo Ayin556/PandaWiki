@@ -3090,7 +3090,13 @@ const docTemplate = `{
         },
         "domain.ScrapeReq": {
             "type": "object",
+            "required": [
+                "kb_id"
+            ],
             "properties": {
+                "kb_id": {
+                    "type": "string"
+                },
                 "url": {
                     "type": "string"
                 }
