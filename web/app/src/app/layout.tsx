@@ -1,4 +1,4 @@
-import { KBDetail, NodeListItem } from "@/assets/type";
+import { apiClient } from "@/api";
 import KBProvider from "@/provider/kb-provider";
 import MobileProvider from "@/provider/mobile-provider";
 import NodeListProvider from "@/provider/nodelist-provider";
@@ -8,7 +8,7 @@ import { ThemeProvider } from "ct-mui";
 import parse, { DOMNode, domToReact } from 'html-react-parser';
 import type { Metadata, Viewport } from "next";
 import localFont from 'next/font/local';
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import Script from 'next/script';
 import { cache } from "react";
 import { getSelectorsByUserAgent } from "react-device-detect";
@@ -47,40 +47,19 @@ const puhuiti = localFont({
 });
 
 const getKBDetailCached = cache(async (kb_id: string) => {
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/share/v1/app/web/info`, {
-      cache: 'no-store',
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-kb-id': kb_id,
-      },
-    });
-    const result = await res.json()
-    return result.data as KBDetail | undefined
-  } catch (error) {
-    console.error(error)
-    return undefined
+  const result = await apiClient.serverGetKBInfo(kb_id);
+  if (result.error) {
+    return undefined;
   }
+  return result.data;
 })
 
-
-
-const getNodeListCached = cache(async (kb_id: string) => {
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/share/v1/node/list`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-kb-id': kb_id,
-      }
-    });
-    const result = await res.json()
-    return result.data as NodeListItem[]
-  } catch (error) {
-    console.error('Error fetching document content:', error);
-    return undefined
+const getNodeListCached = cache(async (kb_id: string, authToken: string) => {
+  const result = await apiClient.serverGetNodeList(kb_id, authToken);
+  if (result.error) {
+    return undefined;
   }
+  return result.data;
 })
 
 export const viewport: Viewport = {
@@ -93,24 +72,18 @@ export const viewport: Viewport = {
 export async function generateMetadata(): Promise<Metadata> {
   const headersList = await headers()
   const kb_id = headersList.get('x-kb-id') || process.env.DEV_KB_ID || ''
-
   const kbDetail = await getKBDetailCached(kb_id)
-  if (!kbDetail) {
-    return {
-      title: '默认标题',
-      description: '默认描述',
-      keywords: '默认关键词',
-      icons: {
-        icon: '/favicon.ico',
-      },
-    }
-  }
+
   return {
-    title: kbDetail?.settings?.title || '默认标题',
-    description: kbDetail?.settings?.desc || '默认描述',
-    keywords: kbDetail?.settings?.keyword || '默认关键词',
+    title: kbDetail?.settings?.title || 'Panda-Wiki',
+    description: kbDetail?.settings?.desc || '',
     icons: {
-      icon: kbDetail?.settings?.icon || '/favicon.ico',
+      icon: kbDetail?.settings?.icon || '/favicon.png',
+    },
+    openGraph: {
+      title: kbDetail?.settings?.title || 'Panda-Wiki',
+      description: kbDetail?.settings?.desc || '',
+      images: kbDetail?.settings?.icon ? [kbDetail.settings.icon] : [],
     },
   }
 }
@@ -121,11 +94,14 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const headersList = await headers()
+  const cookieStore = await cookies()
   const userAgent = headersList.get('user-agent');
 
   const kb_id = headersList.get('x-kb-id') || process.env.DEV_KB_ID || ''
-  const nodeList = await getNodeListCached(kb_id)
+  const authToken = cookieStore.get(`auth_${kb_id}`)?.value || '';
+
   const kbDetail = await getKBDetailCached(kb_id)
+  const nodeList = await getNodeListCached(kb_id, authToken)
 
   const themeMode = kbDetail?.settings?.theme_mode || 'light'
 

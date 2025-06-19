@@ -27,7 +27,8 @@ const DocContent = ({ info, editorRef }: { info?: NodeDetail, editorRef: UseTipt
     ...(mobile && {
       width: '100%',
       marginLeft: 0,
-      marginTop: '160px',
+      marginTop: '77px',
+      px: 3,
       table: {
         minWidth: 'auto !important',
       },

@@ -18,7 +18,8 @@ const PageChange = () => {
   const [firstNodeId, setFirstNodeId] = useState('')
 
   useEffect(() => {
-    setValue(pathname.split('/')[1] || 'welcome');
+    const path = pathname.split('/')[1]
+    setValue(['welcome', 'node'].includes(path) ? path : 'welcome');
   }, [pathname])
 
   useEffect(() => {
@@ -67,13 +68,16 @@ const PageChange = () => {
         router.push(`/node/${firstNodeId}`)
       }
     }}
-    list={[{
-      label: '问答模式',
-      value: 'welcome',
-    }, {
-      label: '文档模式',
-      value: 'node',
-    }]} />
+    list={[
+      {
+        label: '问答模式',
+        value: 'welcome',
+      }, {
+        label: '文档模式',
+        value: 'node',
+      }
+    ]}
+  />
 }
 
 export default PageChange;

@@ -58,7 +58,7 @@ const Home = () => {
       maxWidth: '1200px',
     }}>
       <Box sx={{
-        minHeight: 'calc(100vh - 184px)',
+        minHeight: mobile ? 'calc(100vh - 144px)' : 'calc(100vh - 184px)',
       }}>
         <StyledWelcomeStr mobile={mobile} sx={{ color: 'text.primary' }}>
           {kbDetail?.settings?.welcome_str}

@@ -9,13 +9,20 @@ const SearchResult = ({ list, loading }: { list: ChunkResultItem[], loading: boo
   const { mobile = false } = useMobile()
 
   return <Box sx={{
-    height: mobile ? 'calc(100vh - 181px)' : 'calc(100vh - 254px)',
+    height: 'calc(100vh - 254px)',
     overflow: 'auto',
     '&::-webkit-scrollbar': {
       display: 'none',
     },
     msOverflowStyle: 'none',
     scrollbarWidth: 'none',
+    ...(mobile && {
+      height: 'calc(100vh - 181px)',
+      border: '1px solid',
+      borderColor: 'divider',
+      borderRadius: '10px',
+      px: 3,
+    })
   }}>
     {list.map(item => (
       <Box key={item.node_id} sx={{

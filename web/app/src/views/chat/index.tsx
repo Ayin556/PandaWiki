@@ -20,7 +20,7 @@ const Chat = () => {
   const { mobile = false } = useMobile()
   const searchParams = useSearchParams();
   const search = searchParams.get('search');
-  const { themeMode } = useKBDetail()
+  const { themeMode, kb_id } = useKBDetail()
 
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
   const sseClientRef = useRef<SSEClient<{
@@ -156,12 +156,20 @@ const Chat = () => {
   }, [search]);
 
   useEffect(() => {
-    sseClientRef.current = new SSEClient({
-      url: `/share/v1/chat/message`,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    if (kb_id) {
+      const cookies = document.cookie.split(';');
+      const authCookie = cookies.find(cookie =>
+        cookie.trim().startsWith(`auth_${kb_id}=`)
+      );
+      const authToken = authCookie ? authCookie.split('=')[1] : '';
+      sseClientRef.current = new SSEClient({
+        url: `/share/v1/chat/message`,
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Simple-Auth-Password': authToken,
+        },
+      });
+    }
   }, []);
 
   if (mobile) {

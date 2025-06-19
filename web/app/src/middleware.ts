@@ -1,52 +1,24 @@
 import type { NextRequest } from 'next/server';
-import { NextResponse } from 'next/server';
-import { KBDetail, NodeListItem } from './assets/type';
-import { convertToTree, findFirstType2Node } from './utils/drag';
+import { middleware as authMiddleware } from './middleware/auth';
+import { middleware as homeMiddleware } from './middleware/home';
 
 export async function middleware(request: NextRequest) {
-  const url = request.nextUrl.clone()
+  const url = request.nextUrl.clone();
+  const pathname = url.pathname;
 
-  try {
-    const kb_id = request.headers.get('x-kb-id') || process.env.DEV_KB_ID || ''
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/share/v1/app/web/info`, {
-      cache: 'no-store',
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-kb-id': kb_id,
-      },
-    });
-    const result = await res.json()
-    const kbDetail = result.data as KBDetail | undefined
+  const kb_id = request.headers.get('x-kb-id') || process.env.DEV_KB_ID || '';
+  const authToken = request.cookies.get(`auth_${kb_id}`)?.value || '';
 
-    if (url.pathname === '/') {
-      if (kbDetail?.settings?.default_display_mode === 2) {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/share/v1/node/list`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-kb-id': kb_id,
-          },
-        });
-        const result = await res.json()
-        const nodeList = result.data as NodeListItem[]
-        const id = findFirstType2Node(convertToTree(nodeList || []))
-        if (id) {
-          return NextResponse.redirect(new URL(`/node/${id}`, request.url))
-        }
-      } else {
-        return NextResponse.redirect(new URL('/welcome', request.url))
-      }
-    }
-
-    return NextResponse.next()
-  } catch (error) {
-    console.log(error)
+  if (pathname.startsWith('/share/v1/')) {
+    return authMiddleware(request, kb_id, authToken);
   }
 
-  return NextResponse.next()
+  return homeMiddleware(request, kb_id, authToken);
 }
 
 export const config = {
-  matcher: '/',
-}
+  matcher: [
+    '/((?!api|_next/static|_next/image|favicon.ico|static-file).*)',
+    '/share/v1/:path*'
+  ],
+} 

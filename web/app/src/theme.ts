@@ -206,6 +206,7 @@ const darkTheme = createTheme(
       MuiInputBase: {
         styleOverrides: {
           root: {
+            borderRadius: '10px !important',
             backgroundColor: 'var(--mui-palette-background-default)',
             fontFamily: 'var(--font-gilory), var(--font-puhuiti)',
             '.MuiOutlinedInput-notchedOutline': {

@@ -1,5 +1,6 @@
 'use client'
 
+import { apiClient } from "@/api";
 import { NodeDetail } from "@/assets/type";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
@@ -19,9 +20,10 @@ import DocHeader from "./DocHeader";
 import DocSearch from "./DocSearch";
 import useScroll from "./useScroll";
 
-const Doc = ({ node: defaultNode }: { node?: NodeDetail }) => {
+const Doc = ({ node: defaultNode, token }: { node?: NodeDetail, token?: string }) => {
   const { id: defaultId } = useParams()
 
+  const [firstRequest, setFirstRequest] = useState(true)
   const { nodeList } = useNodeList()
   const { kb_id } = useKBDetail()
   const { mobile } = useMobile()
@@ -58,17 +60,10 @@ const Doc = ({ node: defaultNode }: { node?: NodeDetail }) => {
 
   const getData = async (id: string) => {
     try {
-      const res = await fetch(`/share/v1/node/detail?id=${id}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-kb-id': kb_id || '',
-        }
-      });
-      const result = await res.json()
-      setNode(result.data as NodeDetail)
+      const result = await apiClient.serverGetNodeDetail(id, kb_id || '', token, window?.location.origin);
+      setNode(result.data);
     } catch (error) {
-      console.error('Error fetching document content:', error);
+      console.error('page Error fetching document content:', error);
     }
   }
 
@@ -83,16 +78,20 @@ const Doc = ({ node: defaultNode }: { node?: NodeDetail }) => {
   }, [node])
 
   useEffect(() => {
-    getData(id)
+    if (!firstRequest) getData(id)
+    setFirstRequest(false)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [id])
 
   if (mobile) {
-    return <Box sx={{ mt: '60px', position: 'relative', zIndex: 1, minHeight: 'calc(100vh - 42px)' }}>
-      <Header />
-      {nodeList && <CatalogH5 activeId={id} nodes={nodeList} onChange={setId} />}
-      <Box sx={{ height: 24 }} />
-      {node && <DocContent info={node} editorRef={editorRef} />}
+    return <Box sx={{ mt: '60px', position: 'relative', zIndex: 1 }}>
+      <Box sx={{ minHeight: 'calc(100vh - 100px)' }}>
+        <Header />
+        {nodeList && <CatalogH5 activeId={id} nodes={nodeList} onChange={setId} />}
+        <Box sx={{ height: 24 }} />
+        {node && <DocContent info={node} editorRef={editorRef} />}
+      </Box>
+      <Footer />
       <Zoom in={showScrollTop}>
         <Fab
           size="small"
