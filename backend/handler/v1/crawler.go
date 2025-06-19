@@ -79,8 +79,8 @@ func (h *CrawlerHandler) NotionGetList(c echo.Context) error {
 		return h.NewResponseWithError(c, "validate request body failed", err)
 	}
 	resp, err := h.notnion_usecase.GetList(c.Request().Context(), req.Intregration, req.CationTitle)
-	//notnion := usecase.NewNotionClient(req.Intregration, h.logger)
-	//resp, err := notnion.GetList(c.Request().Context(), req.CationTitle)
+	// notnion := usecase.NewNotionClient(req.Intregration, h.logger)
+	// resp, err := notnion.GetList(c.Request().Context(), req.CationTitle)
 	if err != nil {
 		return h.NewResponseWithError(c, "parse notion failed", err)
 	}
@@ -106,7 +106,6 @@ curl -X POST \
 //	@Success		200		{object}	domain.Response{data=[]domain.Page}
 //	@Router			/api/v1/crawler/notion/get_doc [post]
 func (h *CrawlerHandler) GetDocs(c echo.Context) error {
-
 	var req domain.GetDocsReq
 	if err := c.Bind(&req); err != nil {
 		return h.NewResponseWithError(c, "request body failed", err)
@@ -115,7 +114,7 @@ func (h *CrawlerHandler) GetDocs(c echo.Context) error {
 		return h.NewResponseWithError(c, "validate request body failed", err)
 	}
 	resp, err := h.notnion_usecase.GetDocs(c.Request().Context(), req)
-	//resp, err := usecase.NewNotionClient(req.Integration, h.logger).GetPagesContent(req.PageIDs)
+	// resp, err := usecase.NewNotionClient(req.Integration, h.logger).GetPagesContent(req.PageIDs)
 	if err != nil {
 		return h.NewResponseWithError(c, "get Docs failed", err)
 	}
@@ -211,7 +210,7 @@ func (h *CrawlerHandler) Scrape(c echo.Context) error {
 	if err := c.Validate(req); err != nil {
 		return h.NewResponseWithError(c, "validate request body failed", err)
 	}
-	resp, err := h.usecase.ScrapeURL(c.Request().Context(), req.URL)
+	resp, err := h.usecase.ScrapeURL(c.Request().Context(), req.URL, req.KbID)
 	if err != nil {
 		return h.NewResponseWithError(c, "scrape url failed", err)
 	}
@@ -230,7 +229,7 @@ func (h *CrawlerHandler) Scrape(c echo.Context) error {
 //	@Success		200		{object}	domain.Response{data=domain.EpubResp}
 //	@Router			/api/v1/crawler/epub/convert [post]
 func (h *CrawlerHandler) QpubConvert(c echo.Context) error {
-	//uplad a file
+	// uplad a file
 	var req domain.EpubReq
 	req.KbID = c.FormValue("kb_id")
 	if err := c.Validate(req); err != nil {

@@ -15,6 +15,8 @@ definitions:
         type: string
       public_key:
         type: string
+      simple_auth:
+        $ref: '#/definitions/domain.SimpleAuth'
       ssl_ports:
         items:
           type: integer
@@ -846,14 +848,25 @@ definitions:
     type: object
   domain.ScrapeReq:
     properties:
+      kb_id:
+        type: string
       url:
         type: string
+    required:
+    - kb_id
     type: object
   domain.ScrapeResp:
     properties:
       content:
         type: string
       title:
+        type: string
+    type: object
+  domain.SimpleAuth:
+    properties:
+      enabled:
+        type: boolean
+      password:
         type: string
     type: object
   domain.TextReq:

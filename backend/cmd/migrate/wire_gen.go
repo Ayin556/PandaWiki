@@ -12,8 +12,10 @@ import (
 	"github.com/chaitin/panda-wiki/migration"
 	"github.com/chaitin/panda-wiki/migration/fns"
 	"github.com/chaitin/panda-wiki/mq"
+	cache2 "github.com/chaitin/panda-wiki/repo/cache"
 	mq2 "github.com/chaitin/panda-wiki/repo/mq"
 	pg2 "github.com/chaitin/panda-wiki/repo/pg"
+	"github.com/chaitin/panda-wiki/store/cache"
 	"github.com/chaitin/panda-wiki/store/pg"
 	"github.com/chaitin/panda-wiki/store/rag"
 	"github.com/chaitin/panda-wiki/store/s3"
@@ -51,7 +53,12 @@ func createApp() (*App, error) {
 		return nil, err
 	}
 	nodeUsecase := usecase.NewNodeUsecase(nodeRepository, ragRepository, knowledgeBaseRepository, llmUsecase, logger, minioClient)
-	knowledgeBaseUsecase, err := usecase.NewKnowledgeBaseUsecase(knowledgeBaseRepository, nodeRepository, ragRepository, ragService, logger, configConfig)
+	cacheCache, err := cache.NewCache(configConfig)
+	if err != nil {
+		return nil, err
+	}
+	kbRepo := cache2.NewKBRepo(cacheCache)
+	knowledgeBaseUsecase, err := usecase.NewKnowledgeBaseUsecase(knowledgeBaseRepository, nodeRepository, ragRepository, ragService, kbRepo, logger, configConfig)
 	if err != nil {
 		return nil, err
 	}

@@ -1849,6 +1849,9 @@ const docTemplate = `{
                 "public_key": {
                     "type": "string"
                 },
+                "simple_auth": {
+                    "$ref": "#/definitions/domain.SimpleAuth"
+                },
                 "ssl_ports": {
                     "type": "array",
                     "items": {
@@ -3087,7 +3090,13 @@ const docTemplate = `{
         },
         "domain.ScrapeReq": {
             "type": "object",
+            "required": [
+                "kb_id"
+            ],
             "properties": {
+                "kb_id": {
+                    "type": "string"
+                },
                 "url": {
                     "type": "string"
                 }
@@ -3100,6 +3109,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.SimpleAuth": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "password": {
                     "type": "string"
                 }
             }

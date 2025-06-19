@@ -13,19 +13,22 @@ import (
 	"github.com/chaitin/panda-wiki/config"
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/log"
+	"github.com/chaitin/panda-wiki/middleware"
 )
 
 type BaseHandler struct {
-	Router     *echo.Echo
-	baseLogger *log.Logger
-	config     *config.Config
+	Router              *echo.Echo
+	baseLogger          *log.Logger
+	config              *config.Config
+	ShareAuthMiddleware *middleware.ShareAuthMiddleware
 }
 
-func NewBaseHandler(echo *echo.Echo, logger *log.Logger, config *config.Config) *BaseHandler {
+func NewBaseHandler(echo *echo.Echo, logger *log.Logger, config *config.Config, shareAuthMiddleware *middleware.ShareAuthMiddleware) *BaseHandler {
 	return &BaseHandler{
-		Router:     echo,
-		baseLogger: logger.WithModule("http_base_handler"),
-		config:     config,
+		Router:              echo,
+		baseLogger:          logger.WithModule("http_base_handler"),
+		config:              config,
+		ShareAuthMiddleware: shareAuthMiddleware,
 	}
 }
 

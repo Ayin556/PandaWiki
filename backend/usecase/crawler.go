@@ -33,7 +33,7 @@ func NewCrawlerUsecase(logger *log.Logger) (*CrawlerUsecase, error) {
 	}, nil
 }
 
-func (u *CrawlerUsecase) ScrapeURL(ctx context.Context, targetURL string) (*domain.ScrapeResp, error) {
+func (u *CrawlerUsecase) ScrapeURL(ctx context.Context, targetURL string, kbID string) (*domain.ScrapeResp, error) {
 	crawleServiceURL := "http://panda-wiki-crawler:8080/api/v1/scrape"
 
 	// for uploaded file key
@@ -42,7 +42,8 @@ func (u *CrawlerUsecase) ScrapeURL(ctx context.Context, targetURL string) (*doma
 	}
 
 	reqBody := domain.ScrapeRequest{
-		URL: targetURL,
+		URL:  targetURL,
+		KbID: kbID,
 	}
 	body, err := json.Marshal(reqBody)
 	if err != nil {

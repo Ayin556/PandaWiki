@@ -10,6 +10,7 @@ import (
 	"github.com/chaitin/panda-wiki/config"
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/log"
+	"github.com/chaitin/panda-wiki/repo/cache"
 	"github.com/chaitin/panda-wiki/repo/mq"
 	"github.com/chaitin/panda-wiki/repo/pg"
 	"github.com/chaitin/panda-wiki/store/rag"
@@ -20,11 +21,12 @@ type KnowledgeBaseUsecase struct {
 	nodeRepo *pg.NodeRepository
 	ragRepo  *mq.RAGRepository
 	rag      rag.RAGService
+	kbCache  *cache.KBRepo
 	logger   *log.Logger
 	config   *config.Config
 }
 
-func NewKnowledgeBaseUsecase(repo *pg.KnowledgeBaseRepository, nodeRepo *pg.NodeRepository, ragRepo *mq.RAGRepository, rag rag.RAGService, logger *log.Logger, config *config.Config) (*KnowledgeBaseUsecase, error) {
+func NewKnowledgeBaseUsecase(repo *pg.KnowledgeBaseRepository, nodeRepo *pg.NodeRepository, ragRepo *mq.RAGRepository, rag rag.RAGService, kbCache *cache.KBRepo, logger *log.Logger, config *config.Config) (*KnowledgeBaseUsecase, error) {
 	u := &KnowledgeBaseUsecase{
 		repo:     repo,
 		nodeRepo: nodeRepo,
@@ -32,6 +34,7 @@ func NewKnowledgeBaseUsecase(repo *pg.KnowledgeBaseRepository, nodeRepo *pg.Node
 		rag:      rag,
 		logger:   logger.WithModule("usecase.knowledge_base"),
 		config:   config,
+		kbCache:  kbCache,
 	}
 	return u, nil
 }
@@ -73,11 +76,30 @@ func (u *KnowledgeBaseUsecase) UpdateKnowledgeBase(ctx context.Context, req *dom
 	if err := u.repo.UpdateKnowledgeBase(ctx, req); err != nil {
 		return err
 	}
+	if req.AccessSettings != nil {
+		if err := u.kbCache.DeleteKB(ctx, req.ID); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
 func (u *KnowledgeBaseUsecase) GetKnowledgeBase(ctx context.Context, kbID string) (*domain.KnowledgeBase, error) {
-	return u.repo.GetKnowledgeBaseByID(ctx, kbID)
+	kb, err := u.kbCache.GetKB(ctx, kbID)
+	if err != nil {
+		return nil, err
+	}
+	if kb != nil {
+		return kb, nil
+	}
+	kb, err = u.repo.GetKnowledgeBaseByID(ctx, kbID)
+	if err != nil {
+		return nil, err
+	}
+	if err := u.kbCache.SetKB(ctx, kbID, kb); err != nil {
+		return nil, err
+	}
+	return kb, nil
 }
 
 func (u *KnowledgeBaseUsecase) DeleteKnowledgeBase(ctx context.Context, kbID string) error {
@@ -86,6 +108,9 @@ func (u *KnowledgeBaseUsecase) DeleteKnowledgeBase(ctx context.Context, kbID str
 	}
 	// delete vector store
 	if err := u.rag.DeleteKnowledgeBase(ctx, kbID); err != nil {
+		return err
+	}
+	if err := u.kbCache.DeleteKB(ctx, kbID); err != nil {
 		return err
 	}
 	return nil
