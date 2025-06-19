@@ -13,7 +13,8 @@ const DocSearch = () => {
 
   const handleSearch = () => {
     if (searchText.trim()) {
-      router.push(`/chat?search=${encodeURIComponent(searchText.trim())}`);
+      sessionStorage.setItem('chat_search_query', searchText.trim());
+      router.push('/chat');
     }
   };
 
