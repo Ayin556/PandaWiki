@@ -165,7 +165,7 @@ func (u *LLMUsecase) FormatConversationMessages(
 			}
 			u.logger.Info("ranked nodes", log.Int("rankedNodesCount", len(rankedNodes)))
 			documents := domain.FormatNodeChunks(rankedNodes, kb.AccessSettings.BaseURL)
-			u.logger.Debug("documents", log.String("documents", documents))
+			u.logger.Info("documents", log.String("documents", documents))
 
 			formattedMessages, err := template.Format(ctx, map[string]any{
 				"CurrentDate": time.Now().Format("2006-01-02"),
