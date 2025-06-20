@@ -52,7 +52,7 @@ func (r *NodeRepository) Create(ctx context.Context, req *domain.CreateNodeReq) 
 
 		now := time.Now()
 
-		visibility := domain.NodeVisibilityPrivate
+		visibility := domain.NodeVisibilityPublic
 		if req.Visibility != nil {
 			visibility = *req.Visibility
 		}
