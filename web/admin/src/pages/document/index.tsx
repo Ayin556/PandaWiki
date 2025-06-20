@@ -1,7 +1,6 @@
 import { getNodeList, ITreeItem, NodeListFilterData, NodeListItem } from "@/api"
 import Card from "@/components/Card"
 import DragTree from "@/components/Drag/DragTree"
-import Summary from "@/components/Drag/DragTree/Summary"
 import { TreeMenuItem, TreeMenuOptions } from "@/components/Drag/DragTree/TreeMenu"
 import { convertToTree } from "@/constant/drag"
 import { useURLSearchParams } from "@/hooks"
@@ -16,6 +15,8 @@ import DocAddByUrl from "./component/DocAddByUrl"
 import DocDelete from "./component/DocDelete"
 import DocSearch from "./component/DocSearch"
 import DocStatus from "./component/DocStatus"
+import DocSummary from "./component/DocSummary"
+import Summary from "./component/Summary"
 
 const Content = () => {
   const { kb_id } = useAppSelector(state => state.config)
@@ -36,6 +37,7 @@ const Content = () => {
   const [statusOpen, setStatusOpen] = useState<'private' | 'public' | null>(null)
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [summaryOpen, setSummaryOpen] = useState(false)
+  const [moreSummaryOpen, setMoreSummaryOpen] = useState(false)
   const [urlOpen, setUrlOpen] = useState(false)
   const [publishIds, setPublishIds] = useState<string[]>([])
   const [publishOpen, setPublishOpen] = useState(false)
@@ -192,12 +194,6 @@ const Content = () => {
             已选中 {selected.length} 项
           </Box>
           <Stack direction={'row'} alignItems={'center'} gap={1}>
-            <Button size="small" sx={{ minWidth: 0, p: 0 }} onClick={() => {
-              setDeleteOpen(true)
-              setOpraData(list.filter(item => selected.includes(item.id)))
-            }}>
-              批量删除
-            </Button>
             {/* <Button size="small" sx={{ minWidth: 0, p: 0 }} onClick={() => {
               setStatusOpen('public')
               setOpraData(list.filter(item => selected.includes(item.id)))
@@ -210,6 +206,18 @@ const Content = () => {
             }}>
               设为私有
             </Button> */}
+            <Button size="small" sx={{ minWidth: 0, p: 0 }} onClick={() => {
+              setMoreSummaryOpen(true)
+              setOpraData(list.filter(item => selected.includes(item.id)))
+            }}>
+              生成摘要
+            </Button>
+            <Button size="small" sx={{ minWidth: 0, p: 0 }} onClick={() => {
+              setDeleteOpen(true)
+              setOpraData(list.filter(item => selected.includes(item.id)))
+            }}>
+              批量删除
+            </Button>
           </Stack>
         </> : <Box sx={{ fontSize: 14, color: 'text.secondary' }} >
           全选
@@ -262,6 +270,16 @@ const Content = () => {
       refresh={getData}
       onClose={() => {
         setSummaryOpen(false)
+        setOpraData([])
+      }}
+    />
+    <DocSummary
+      data={opraData}
+      kb_id={kb_id}
+      open={moreSummaryOpen}
+      refresh={getData}
+      onClose={() => {
+        setMoreSummaryOpen(false)
         setOpraData([])
       }}
     />

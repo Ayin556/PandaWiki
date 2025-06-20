@@ -1,11 +1,13 @@
 import { ITreeItem } from "@/assets/type"
 import { IconArrowDown, IconFile, IconFolder } from "@/components/icons"
+import { useKBDetail } from "@/provider/kb-provider"
 import { Box, Stack } from "@mui/material"
 import { Ellipsis } from "ct-mui"
 import { useState } from "react"
 
 const CatalogFolder = ({ item, activeId, onChange, depth = 1 }: { item: ITreeItem, activeId: string, onChange: (id: string) => void, depth?: number }) => {
   const [isExpanded, setIsExpanded] = useState(item.defaultExpand ?? true)
+  const { themeMode } = useKBDetail()
 
   return <Box key={item.id}>
     <Box sx={{
@@ -15,9 +17,8 @@ const CatalogFolder = ({ item, activeId, onChange, depth = 1 }: { item: ITreeIte
       borderRadius: '10px',
       color: activeId === item.id ? 'primary.main' : 'inherit',
       fontWeight: activeId === item.id ? 'bold' : 'normal',
-      bgcolor: activeId === item.id ? 'background.default' : 'transparent',
       '&:hover': {
-        bgcolor: 'background.default'
+        bgcolor: themeMode === 'dark' ? '#394052' : 'background.default'
       }
     }} onClick={() => {
       setIsExpanded(!isExpanded)

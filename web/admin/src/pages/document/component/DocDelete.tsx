@@ -28,6 +28,7 @@ const DocDelete = ({ open, onClose, data, refresh }: DocDeleteProps) => {
   }
 
   const tree = convertToTree(data)
+
   return <Modal
     title={<Stack direction='row' alignItems='center' gap={1}>
       <ErrorIcon sx={{ color: 'warning.main' }} />

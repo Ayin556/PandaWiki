@@ -128,7 +128,7 @@ export type GetNodeRecommendData = {
 
 export type CreateNodeSummaryData = {
   kb_id: string
-  id: string
+  ids: string[]
 }
 
 export type NodeDetail = {
@@ -175,6 +175,7 @@ export type UpdateNodeData = {
   emoji?: string,
   status?: 1 | 2
   visibility?: 1 | 2
+  summary?: string
 }
 
 export interface ITreeItem {

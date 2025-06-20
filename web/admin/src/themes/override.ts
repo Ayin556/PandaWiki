@@ -426,7 +426,7 @@ const componentStyleOverrides = (theme: ThemeColor) => {
             height: '19px',
             '&.Mui-disabled': {
               color: `${theme.text.secondary} !important`,
-              '-webkit-text-fill-color': `${theme.text.secondary} !important`,
+              WebkitTextFillColor: `${theme.text.secondary} !important`,
             }
           }
         },
