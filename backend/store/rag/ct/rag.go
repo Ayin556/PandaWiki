@@ -45,10 +45,10 @@ func (s *CTRAG) CreateKnowledgeBase(ctx context.Context) (string, error) {
 
 func (s *CTRAG) QueryRecords(ctx context.Context, datasetIDs []string, query string) ([]*domain.NodeContentChunk, error) {
 	chunks, _, err := s.client.RetrieveChunks(ctx, rag.RetrievalRequest{
-		DatasetIDs:          datasetIDs,
-		Question:            query,
-		TopK:                10,
-		SimilarityThreshold: 0.2,
+		DatasetIDs: datasetIDs,
+		Question:   query,
+		TopK:       10,
+		// SimilarityThreshold: 0.2,
 	})
 	if err != nil {
 		return nil, err
