@@ -52,7 +52,7 @@ func (r *NodeRepository) Create(ctx context.Context, req *domain.CreateNodeReq) 
 
 		now := time.Now()
 
-		visibility := domain.NodeVisibilityPrivate
+		visibility := domain.NodeVisibilityPublic
 		if req.Visibility != nil {
 			visibility = *req.Visibility
 		}
@@ -110,10 +110,29 @@ func (r *NodeRepository) UpdateNodeContent(ctx context.Context, req *domain.Upda
 		updateMap["content"] = *req.Content
 		updateStatus = true
 	}
-	if req.Emoji != nil {
-		updateMap["meta"] = gorm.Expr("jsonb_set(meta, '{emoji}', to_jsonb(?::text))", *req.Emoji)
-		updateStatus = true
+
+	// Handle multiple meta field updates
+	if req.Emoji != nil || req.Summary != nil {
+		metaExpr := "meta"
+		var args []interface{}
+
+		if req.Emoji != nil {
+			// First jsonb_set: jsonb_set(meta, '{emoji}', to_jsonb(?::text))
+			metaExpr = "jsonb_set(" + metaExpr + ", '{emoji}', to_jsonb(?::text))"
+			args = append(args, *req.Emoji) // First parameter for emoji
+			updateStatus = true
+		}
+
+		if req.Summary != nil {
+			// Second jsonb_set: jsonb_set(previous_expr, '{summary}', to_jsonb(?::text))
+			metaExpr = "jsonb_set(" + metaExpr + ", '{summary}', to_jsonb(?::text))"
+			args = append(args, *req.Summary) // Second parameter for summary
+			updateStatus = true
+		}
+
+		updateMap["meta"] = gorm.Expr(metaExpr, args...)
 	}
+
 	if req.Visibility != nil {
 		updateMap["visibility"] = *req.Visibility
 		updateStatus = true
@@ -378,12 +397,14 @@ func (r *NodeRepository) UpdateNodeReleaseDocID(ctx context.Context, id, docID s
 		}).Error
 }
 
-func (r *NodeRepository) UpdateNodeReleaseSummary(ctx context.Context, kbID, nodeReleaseID, summary string) error {
+func (r *NodeRepository) UpdateNodeSummary(ctx context.Context, kbID, nodeID, summary string) error {
 	return r.db.WithContext(ctx).
-		Model(&domain.NodeRelease{}).
-		Omit("updated_at").
-		Where("kb_id = ? AND id = ?", kbID, nodeReleaseID).
-		Update("meta", gorm.Expr("jsonb_set(meta, '{summary}', to_jsonb(?::text))", summary)).Error
+		Model(&domain.Node{}).
+		Where("kb_id = ? AND id = ?", kbID, nodeID).
+		Updates(map[string]any{
+			"meta":   gorm.Expr("jsonb_set(meta, '{summary}', to_jsonb(?::text))", summary),
+			"status": domain.NodeStatusDraft,
+		}).Error
 }
 
 // traverse all nodes by pg cursor

@@ -19,17 +19,19 @@ type NodeUsecase struct {
 	nodeRepo   *pg.NodeRepository
 	ragRepo    *mq.RAGRepository
 	kbRepo     *pg.KnowledgeBaseRepository
+	modelRepo  *pg.ModelRepository
 	llmUsecase *LLMUsecase
 	logger     *log.Logger
 	s3Client   *s3.MinioClient
 }
 
-func NewNodeUsecase(nodeRepo *pg.NodeRepository, ragRepo *mq.RAGRepository, kbRepo *pg.KnowledgeBaseRepository, llmUsecase *LLMUsecase, logger *log.Logger, s3Client *s3.MinioClient) *NodeUsecase {
+func NewNodeUsecase(nodeRepo *pg.NodeRepository, ragRepo *mq.RAGRepository, kbRepo *pg.KnowledgeBaseRepository, llmUsecase *LLMUsecase, logger *log.Logger, s3Client *s3.MinioClient, modelRepo *pg.ModelRepository) *NodeUsecase {
 	return &NodeUsecase{
 		nodeRepo:   nodeRepo,
 		ragRepo:    ragRepo,
 		kbRepo:     kbRepo,
 		llmUsecase: llmUsecase,
+		modelRepo:  modelRepo,
 		logger:     logger.WithModule("usecase.node"),
 		s3Client:   s3Client,
 	}
@@ -116,18 +118,38 @@ func (u *NodeUsecase) MoveNode(ctx context.Context, req *domain.MoveNodeReq) err
 }
 
 func (u *NodeUsecase) SummaryNode(ctx context.Context, req *domain.NodeSummaryReq) (string, error) {
-	nodeRelease, err := u.nodeRepo.GetLatestNodeReleaseByNodeID(ctx, req.ID)
+	model, err := u.modelRepo.GetChatModel(ctx)
 	if err != nil {
-		return "", fmt.Errorf("get latest node release failed: %w", err)
+		if err == gorm.ErrRecordNotFound {
+			return "", domain.ErrModelNotConfigured
+		}
+		return "", err
 	}
-	summary, err := u.llmUsecase.SummaryNode(ctx, nodeRelease)
-	if err != nil {
-		return "", fmt.Errorf("summary node failed: %w", err)
+	if len(req.IDs) == 1 {
+		node, err := u.nodeRepo.GetNodeByID(ctx, req.IDs[0])
+		if err != nil {
+			return "", fmt.Errorf("get latest node release failed: %w", err)
+		}
+		summary, err := u.llmUsecase.SummaryNode(ctx, model, node.Name, node.Content)
+		if err != nil {
+			return "", fmt.Errorf("summary node failed: %w", err)
+		}
+		return summary, nil
+	} else {
+		// async create node summary
+		nodeVectorContentRequests := make([]*domain.NodeReleaseVectorRequest, 0)
+		for _, id := range req.IDs {
+			nodeVectorContentRequests = append(nodeVectorContentRequests, &domain.NodeReleaseVectorRequest{
+				KBID:   req.KBID,
+				NodeID: id,
+				Action: "summary",
+			})
+		}
+		if err := u.ragRepo.AsyncUpdateNodeReleaseVector(ctx, nodeVectorContentRequests); err != nil {
+			return "", err
+		}
 	}
-	if err := u.nodeRepo.UpdateNodeReleaseSummary(ctx, req.KBID, nodeRelease.ID, summary); err != nil {
-		return "", fmt.Errorf("update node release summary failed: %w", err)
-	}
-	return summary, nil
+	return "", nil
 }
 
 func (u *NodeUsecase) GetRecommendNodeList(ctx context.Context, req *domain.GetRecommendNodeListReq) ([]*domain.RecommendNodeListResp, error) {

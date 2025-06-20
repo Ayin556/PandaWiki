@@ -136,20 +136,6 @@ func (u *KnowledgeBaseUsecase) CreateKBRelease(ctx context.Context, req *domain.
 			if err := u.ragRepo.AsyncUpdateNodeReleaseVector(ctx, nodeContentVectorRequests); err != nil {
 				return "", err
 			}
-			// create summary
-			if req.AutoSummary != nil && *req.AutoSummary {
-				summaryRequests := make([]*domain.NodeReleaseVectorRequest, 0)
-				for _, releaseID := range releaseIDs {
-					summaryRequests = append(summaryRequests, &domain.NodeReleaseVectorRequest{
-						KBID:          req.KBID,
-						NodeReleaseID: releaseID,
-						Action:        "summary",
-					})
-				}
-				if err := u.ragRepo.AsyncUpdateNodeReleaseVector(ctx, summaryRequests); err != nil {
-					return "", err
-				}
-			}
 		}
 	}
 

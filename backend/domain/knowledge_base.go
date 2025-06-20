@@ -110,11 +110,10 @@ type KBReleaseNodeRelease struct {
 }
 
 type CreateKBReleaseReq struct {
-	KBID        string   `json:"kb_id" validate:"required"`
-	Message     string   `json:"message" validate:"required"`
-	Tag         string   `json:"tag" validate:"required"`
-	NodeIDs     []string `json:"node_ids"` // create release after these nodes published
-	AutoSummary *bool    `json:"auto_summary"`
+	KBID    string   `json:"kb_id" validate:"required"`
+	Message string   `json:"message" validate:"required"`
+	Tag     string   `json:"tag" validate:"required"`
+	NodeIDs []string `json:"node_ids"` // create release after these nodes published
 }
 
 type KBReleaseListItemResp struct {

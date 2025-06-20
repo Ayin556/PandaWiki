@@ -100,18 +100,27 @@ func (h *RAGMQHandler) HandleNodeContentVectorRequest(ctx context.Context, msg t
 		h.logger.Info("delete node content vector success", log.Any("deleted_id", request.NodeReleaseID), log.Any("deleted_doc_id", request.DocID))
 	case "summary":
 		h.logger.Info("summary node content vector request", log.Any("request", request))
-		nodeRelease, err := h.nodeRepo.GetNodeReleaseByID(ctx, request.NodeReleaseID)
+		node, err := h.nodeRepo.GetNodeByID(ctx, request.NodeID)
 		if err != nil {
-			h.logger.Error("get node release by id failed", log.Error(err))
+			h.logger.Error("get node by id failed", log.Error(err))
 			return err
 		}
-		summary, err := h.llmUsecase.SummaryNode(ctx, nodeRelease)
+		if node.Type == domain.NodeTypeFolder {
+			h.logger.Info("node is folder, skip summary", log.Any("node_id", request.NodeID))
+			return nil
+		}
+		model, err := h.modelRepo.GetChatModel(ctx)
+		if err != nil {
+			h.logger.Error("get chat model failed", log.Error(err))
+			return err
+		}
+		summary, err := h.llmUsecase.SummaryNode(ctx, model, node.Name, node.Content)
 		if err != nil {
 			h.logger.Error("summary node content failed", log.Error(err))
 			return err
 		}
-		if err := h.nodeRepo.UpdateNodeReleaseSummary(ctx, request.KBID, request.NodeReleaseID, summary); err != nil {
-			h.logger.Error("update node release summary failed", log.Error(err))
+		if err := h.nodeRepo.UpdateNodeSummary(ctx, request.KBID, request.NodeID, summary); err != nil {
+			h.logger.Error("update node summary failed", log.Error(err))
 			return err
 		}
 		h.logger.Info("summary node content vector success", log.Any("summary_id", request.NodeReleaseID), log.Any("summary", summary))
