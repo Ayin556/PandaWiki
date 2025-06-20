@@ -9,6 +9,7 @@ import { useParams } from "react-router-dom";
 import EditorDocNav from "./component/EditorDocNav";
 import EditorFolder from "./component/EditorFolder";
 import EditorHeader from "./component/EditorHeader";
+import EditorSummary from "./component/EditorSummary";
 
 const DocEditor = () => {
   const timer = useRef<NodeJS.Timeout | null>(null)
@@ -34,7 +35,7 @@ const DocEditor = () => {
   }
 
   const handleSave = async (auto?: boolean) => {
-    if (!editorRef || !detail) return
+    if (!editorRef || !detail || !edited) return
     const { editor } = editorRef
     const content = editor.getHTML()
     try {
@@ -166,7 +167,15 @@ const DocEditor = () => {
         position: 'fixed',
         width: 1400,
       }}>
-        <EditorDocNav title={detail?.name} headers={headings} maxH={maxH} />
+        <Stack gap={1}>
+          <EditorSummary
+            kb_id={detail?.kb_id || ''}
+            id={detail?.id || ''}
+            name={detail?.name || ''}
+            summary={detail?.meta.summary || ''}
+          />
+          <EditorDocNav title={detail?.name} headers={headings} maxH={maxH} />
+        </Stack>
       </Stack>
     </Stack>
   </Box>

@@ -41,7 +41,8 @@ const DragTree = ({
   }}>
     <DndContext>
       <SortableTree
-        items={items}
+        disableSorting={readOnly}
+        items={items.map(it => ({ ...it }))}
         onItemsChanged={(items: TreeItems<ITreeItem>, reason: ItemChangedReason<ITreeItem>) => {
           if (reason.type === 'dropped') {
             const { draggedItem } = reason;

@@ -3,7 +3,7 @@ import Card from "@/components/Card";
 import DragTree from "@/components/Drag/DragTree";
 import { convertToTree } from "@/constant/drag";
 import { useAppSelector } from "@/store";
-import { filterEmptyFolders, getFlattenIds } from "@/utils/tree";
+import { filterEmptyFolders } from "@/utils/tree";
 import { Box, Checkbox, Stack, TextField } from "@mui/material";
 import { Message, Modal } from "ct-mui";
 import dayjs from "dayjs";
@@ -22,7 +22,7 @@ const VersionPublish = ({ open, defaultSelected = [], onClose, refresh }: Versio
 
   const [selected, setSelected] = useState<string[]>([])
   const [folderIds, setFolderIds] = useState<string[]>([])
-  const [allIds, setAllIds] = useState<string[]>([])
+  // const [allIds, setAllIds] = useState<string[]>([])
   const [treeList, setTreeList] = useState<ITreeItem[]>([])
   const [total, setTotal] = useState(0)
   const [list, setList] = useState<NodeListItem[]>([])
@@ -31,7 +31,6 @@ const VersionPublish = ({ open, defaultSelected = [], onClose, refresh }: Versio
     defaultValues: {
       tag: '',
       message: '',
-      auto_summary: false,
     }
   })
 
@@ -44,7 +43,7 @@ const VersionPublish = ({ open, defaultSelected = [], onClose, refresh }: Versio
       const treeData = convertToTree(unPublishedData || [])
       const showTreeData = filterEmptyFolders(treeData)
       setTreeList(showTreeData)
-      setAllIds(getFlattenIds(showTreeData))
+      // setAllIds(getFlattenIds(showTreeData))
       setFolderIds(res.filter(item => item.type === 1).map(item => item.id))
     })
   }
@@ -152,19 +151,6 @@ const VersionPublish = ({ open, defaultSelected = [], onClose, refresh }: Versio
           />
         </Stack>
       </Card>
-      <Stack direction='row' alignItems={'center'} gap={1} sx={{ fontSize: 14, lineHeight: '32px', mt: 1 }}>
-        <Controller
-          control={control}
-          name='auto_summary'
-          render={({ field }) => <Checkbox
-            size='small'
-            sx={{ p: 0 }}
-            checked={field.value}
-            onChange={field.onChange}
-          />}
-        />
-        <Box>为当前选中文档自动生成摘要</Box>
-      </Stack>
     </>
   </Modal>
 }

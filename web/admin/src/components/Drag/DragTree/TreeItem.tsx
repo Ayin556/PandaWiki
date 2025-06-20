@@ -127,8 +127,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
           {...props}
           ref={ref}
           indentationWidth={23}
-          disableCollapseOnItemClick
-          manualDrag={readOnly}
+          disableCollapseOnItemClick={!readOnly}
           showDragHandle={false}
         >
           <Stack

@@ -3,6 +3,7 @@ import { NodeListItem, UpdateNodeData } from '@/api/type';
 import Card from '@/components/Card';
 import DragTree from '@/components/Drag/DragTree';
 import { convertToTree } from '@/constant/drag';
+import { filterEmptyFolders } from '@/utils/tree';
 import ErrorIcon from '@mui/icons-material/Error';
 import { Stack, Typography } from "@mui/material";
 import { Message, Modal } from "ct-mui";
@@ -18,18 +19,19 @@ interface DocStatusProps {
 
 const textMap = {
   public: {
-    title: '确认将以下文档设为公开？',
-    text: '公开后，文档将在前台可以访问。',
-    btn: '公开'
+    title: '确认设置文档为公开状态？',
+    text: '设为公开后，所有用户都可以在前台访问这些文档。',
+    btn: '设为公开'
   },
   private: {
-    title: '确认将以下文档设为私有？',
-    text: '私有后，文档将在前台无法访问。',
-    btn: '私有'
+    title: '确认设置文档为私有状态？',
+    text: '设为私有后，这些文档将不会在前台展示。',
+    btn: '设为私有'
   },
 }
 
 const DocStatus = ({ open, status, kb_id, onClose, data, refresh }: DocStatusProps) => {
+
   const submit = () => {
     const temp: UpdateNodeData = { id: data[0].id, kb_id }
     if (status === 'public') {
@@ -45,22 +47,26 @@ const DocStatus = ({ open, status, kb_id, onClose, data, refresh }: DocStatusPro
   }
   if (!open) return <></>
 
-  const tree = convertToTree(data)
+  const tree = filterEmptyFolders(convertToTree(data.filter(it => (it.visibility === (status === 'public' ? 1 : 2) || it.type === 1))))
+
   return <Modal
-    title={<Stack direction='row' alignItems='center' gap={1}>
+    title={tree.length > 0 ? <Stack direction='row' alignItems='center' gap={1}>
       <ErrorIcon sx={{ color: 'warning.main' }} />
       {textMap[status as keyof typeof textMap].title}
-    </Stack>}
+    </Stack> : '设为公开'}
     open={open}
     width={600}
     okText={textMap[status as keyof typeof textMap].btn}
     onCancel={onClose}
     onOk={submit}
+    okButtonProps={{
+      disabled: tree.length === 0
+    }}
   >
     <Typography variant='body1' color='text.secondary'>
       {textMap[status as keyof typeof textMap].text}
     </Typography>
-    <Card sx={{
+    {tree.length > 0 ? <Card sx={{
       mt: 2,
       py: 1,
       bgcolor: 'background.paper2',
@@ -73,7 +79,10 @@ const DocStatus = ({ open, status, kb_id, onClose, data, refresh }: DocStatusPro
         readOnly={true}
         supportSelect={false}
       />
-    </Card>
+    </Card> : <Stack direction='row' alignItems='center' gap={0.25} sx={{ color: 'success.main', mt: 1, fontSize: 12 }}>
+      <ErrorIcon sx={{ fontSize: 16 }} />
+      选中文档都已{textMap[status as keyof typeof textMap].btn}
+    </Stack>}
   </Modal>
 }
 

@@ -14,7 +14,7 @@ const HeadingSx = [
   { fontSize: 14, fontWeight: 400, color: 'text.disabled' },
 ]
 
-const EditorDocNav = ({ title, headers, maxH }: EditorDocNavProps) => {
+const EditorDocNav = ({ title, headers }: EditorDocNavProps) => {
   const levels = Array.from(new Set(headers.map(it => it.heading).sort((a, b) => a - b))).slice(0, 3)
   const [activeId, setActiveId] = useState<string>('')
 
@@ -56,7 +56,7 @@ const EditorDocNav = ({ title, headers, maxH }: EditorDocNavProps) => {
     <Stack gap={1} sx={{
       py: 2,
       px: 3,
-      maxHeight: 'calc(100vh - 178px)',
+      maxHeight: 'calc(100vh - 478px)',
       overflowY: 'auto',
       overflowX: 'hidden',
       '&::-webkit-scrollbar': {

@@ -41,7 +41,7 @@ export const updateAllParentStatus = (value: ITreeItem[], selectedIds: Set<strin
   // 递归检查每个节点
   const checkNode = (nodes: ITreeItem[]) => {
     for (const node of nodes) {
-      if (node.type === 1 && node.children) { // 只处理文件夹
+      if (node.type === 1 && node.children && node.children.length > 0) { // 只处理文件夹
         // 先递归处理子节点
         checkNode(node.children);
 
