@@ -52,7 +52,7 @@ func createApp() (*App, error) {
 	if err != nil {
 		return nil, err
 	}
-	nodeUsecase := usecase.NewNodeUsecase(nodeRepository, ragRepository, knowledgeBaseRepository, llmUsecase, logger, minioClient)
+	nodeUsecase := usecase.NewNodeUsecase(nodeRepository, ragRepository, knowledgeBaseRepository, llmUsecase, logger, minioClient, modelRepository)
 	cacheCache, err := cache.NewCache(configConfig)
 	if err != nil {
 		return nil, err

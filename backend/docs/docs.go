@@ -2297,9 +2297,6 @@ const docTemplate = `{
                 "tag"
             ],
             "properties": {
-                "auto_summary": {
-                    "type": "boolean"
-                },
                 "kb_id": {
                     "type": "string"
                 },
@@ -2900,12 +2897,15 @@ const docTemplate = `{
         "domain.NodeSummaryReq": {
             "type": "object",
             "required": [
-                "id",
+                "ids",
                 "kb_id"
             ],
             "properties": {
-                "id": {
-                    "type": "string"
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "kb_id": {
                     "type": "string"
@@ -3247,6 +3247,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name": {
+                    "type": "string"
+                },
+                "summary": {
                     "type": "string"
                 },
                 "visibility": {

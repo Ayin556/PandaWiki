@@ -49,11 +49,10 @@ func (m *MigrationNodeVersion) Execute(tx *gorm.DB) error {
 			return node.ID
 		})
 		releaseID, err := m.kbUsecase.CreateKBRelease(ctx, &domain.CreateKBReleaseReq{
-			KBID:        kb.ID,
-			Message:     "release all old nodes",
-			Tag:         "init",
-			NodeIDs:     nodeIDs,
-			AutoSummary: lo.ToPtr(true),
+			KBID:    kb.ID,
+			Message: "release all old nodes",
+			Tag:     "init",
+			NodeIDs: nodeIDs,
 		})
 		if err != nil {
 			return fmt.Errorf("create kb release failed: %w", err)

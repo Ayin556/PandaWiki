@@ -16,7 +16,6 @@ import (
 	"github.com/cloudwego/eino/components/prompt"
 	"github.com/cloudwego/eino/schema"
 	"github.com/samber/lo"
-	"gorm.io/gorm"
 
 	"github.com/chaitin/panda-wiki/config"
 	"github.com/chaitin/panda-wiki/domain"
@@ -367,14 +366,7 @@ func getHttpClientWithAPIHeaderMap(header string) *http.Client {
 	return nil
 }
 
-func (u *LLMUsecase) SummaryNode(ctx context.Context, nodeRelease *domain.NodeRelease) (string, error) {
-	model, err := u.modelRepo.GetChatModel(ctx)
-	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return "", domain.ErrModelNotConfigured
-		}
-		return "", err
-	}
+func (u *LLMUsecase) SummaryNode(ctx context.Context, model *domain.Model, name, content string) (string, error) {
 	chatModel, err := u.GetChatModel(ctx, model)
 	if err != nil {
 		return "", err
@@ -386,7 +378,7 @@ func (u *LLMUsecase) SummaryNode(ctx context.Context, nodeRelease *domain.NodeRe
 		},
 		{
 			Role:    "user",
-			Content: fmt.Sprintf("文档名称：%s\n文档内容：%s", nodeRelease.Name, nodeRelease.Content),
+			Content: fmt.Sprintf("文档名称：%s\n文档内容：%s", name, content),
 		},
 	})
 	if err != nil {

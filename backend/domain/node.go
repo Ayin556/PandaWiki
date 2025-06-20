@@ -178,6 +178,7 @@ type UpdateNodeReq struct {
 	Content    *string         `json:"content"`
 	Emoji      *string         `json:"emoji"`
 	Visibility *NodeVisibility `json:"visibility"`
+	Summary    *string         `json:"summary"`
 }
 
 type ShareNodeListItemResp struct {
@@ -197,8 +198,8 @@ type MoveNodeReq struct {
 }
 
 type NodeSummaryReq struct {
-	ID   string `json:"id" validate:"required"`
-	KBID string `json:"kb_id" validate:"required"`
+	IDs  []string `json:"ids" validate:"required"`
+	KBID string   `json:"kb_id" validate:"required"`
 }
 
 type GetRecommendNodeListReq struct {

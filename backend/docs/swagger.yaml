@@ -314,8 +314,6 @@ definitions:
     type: object
   domain.CreateKBReleaseReq:
     properties:
-      auto_summary:
-        type: boolean
       kb_id:
         type: string
       message:
@@ -722,12 +720,14 @@ definitions:
     - NodeStatusReleased
   domain.NodeSummaryReq:
     properties:
-      id:
-        type: string
+      ids:
+        items:
+          type: string
+        type: array
       kb_id:
         type: string
     required:
-    - id
+    - ids
     - kb_id
     type: object
   domain.NodeType:
@@ -949,6 +949,8 @@ definitions:
       kb_id:
         type: string
       name:
+        type: string
+      summary:
         type: string
       visibility:
         $ref: '#/definitions/domain.NodeVisibility'
