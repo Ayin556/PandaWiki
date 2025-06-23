@@ -38,6 +38,7 @@ const VersionPublish = ({ open, defaultSelected = [], onClose, refresh }: Versio
     getNodeList({ kb_id }).then(res => {
       const unPublishedData = res?.filter(item => (item.status === 1 || item.type === 1)) || []
       setList(unPublishedData)
+      setSelected(defaultSelected.length > 0 ? defaultSelected : unPublishedData.map(it => it.id))
       setTotal(unPublishedData.filter(item => item.type === 2).length)
       // const unPublishedData = res?.filter(item => (item.status === 1 || item.type === 1)) || []
       const treeData = convertToTree(unPublishedData || [])
@@ -64,7 +65,6 @@ const VersionPublish = ({ open, defaultSelected = [], onClose, refresh }: Versio
 
   useEffect(() => {
     if (open) {
-      setSelected(defaultSelected);
       getData();
       setValue('tag', `${dayjs().format('YYYYMMDD')}-${Math.random().toString(36).substring(2, 8)}`)
       setValue('message', `${dayjs().format('YYYY 年 MM 月 DD 日 HH 时 mm 分 ss 秒')}发布`)

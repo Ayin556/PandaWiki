@@ -92,6 +92,12 @@ const lightTheme = createTheme(
               boxShadow: 'none',
             },
           },
+          outlined: {
+            borderColor: 'var(--mui-palette-primary-main)',
+            '&:hover': {
+              borderColor: 'var(--mui-palette-primary-main)',
+            },
+          },
         },
       },
       MuiLink: {
@@ -250,6 +256,12 @@ const darkTheme = createTheme(
             borderRadius: '6px',
             '&:hover': {
               boxShadow: 'none',
+            },
+          },
+          outlined: {
+            borderColor: 'var(--mui-palette-primary-main)',
+            '&:hover': {
+              borderColor: 'var(--mui-palette-primary-main)',
             },
           },
         },

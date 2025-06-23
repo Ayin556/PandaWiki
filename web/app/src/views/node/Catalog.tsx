@@ -15,7 +15,7 @@ const Catalog = ({ nodes, activeId, onChange }: { nodes: NodeListItem[], activeI
     width: 261,
     px: 2,
     py: 3,
-    fontSize: 12,
+    fontSize: 14,
     position: 'fixed',
     zIndex: 5,
     borderRight: '1px solid',
@@ -28,7 +28,6 @@ const Catalog = ({ nodes, activeId, onChange }: { nodes: NodeListItem[], activeI
       px: 2,
       pb: 1,
       lineHeight: '22px',
-      fontSize: 14,
       fontWeight: 'bold',
     }}>目录</Box>
     <Box sx={{

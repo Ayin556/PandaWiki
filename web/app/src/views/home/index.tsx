@@ -4,30 +4,11 @@ import Footer from "@/components/footer";
 import { IconSearch } from "@/components/icons";
 import { useKBDetail } from "@/provider/kb-provider";
 import { useMobile } from "@/provider/mobile-provider";
-import { Box, styled, TextField } from "@mui/material";
+import { Box, TextField } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import NodeList from "./NodeList";
 import QuestionList from "./QuestionList";
-
-const StyledWelcomeStr = styled(Box)(({ mobile }: { mobile: boolean }) => ({
-  fontSize: '40px',
-  textAlign: 'center',
-  fontWeight: '700',
-  lineHeight: '44px',
-  ...(mobile && {
-    fontSize: '32px',
-    lineHeight: '40px',
-  }),
-}))
-
-const StyledSearch = styled(Box)(({ mobile }: { mobile: boolean }) => ({
-  width: '656px',
-  margin: '40px auto 0',
-  ...(mobile && {
-    width: 'calc(100% - 48px)',
-  }),
-}))
 
 const Home = () => {
   const { mobile = false } = useMobile()
@@ -61,10 +42,26 @@ const Home = () => {
       <Box sx={{
         minHeight: mobile ? 'calc(100vh - 144px)' : 'calc(100vh - 184px)',
       }}>
-        <StyledWelcomeStr mobile={mobile} sx={{ color: 'text.primary' }}>
+        <Box sx={{
+          color: 'text.primary',
+          fontSize: '40px',
+          textAlign: 'center',
+          fontWeight: '700',
+          lineHeight: '44px',
+          ...(mobile && {
+            fontSize: '32px',
+            lineHeight: '40px',
+          }),
+        }}>
           {kbDetail?.settings?.welcome_str}
-        </StyledWelcomeStr>
-        <StyledSearch mobile={mobile}>
+        </Box>
+        <Box sx={{
+          width: '656px',
+          margin: '40px auto 0',
+          ...(mobile && {
+            width: 'calc(100% - 48px)',
+          }),
+        }}>
           <TextField
             fullWidth
             sx={{
@@ -99,7 +96,7 @@ const Home = () => {
               />
             }}
           />
-        </StyledSearch>
+        </Box>
         {!mobile && <QuestionList />}
         <NodeList />
       </Box>
