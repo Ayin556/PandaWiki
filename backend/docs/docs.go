@@ -1090,7 +1090,10 @@ const docTemplate = `{
                             "DeepSeek",
                             "Moonshot",
                             "AzureOpenAI",
-                            "BaiZhiCloud"
+                            "BaiZhiCloud",
+                            "Hunyuan",
+                            "BaiLian",
+                            "Volcengine"
                         ],
                         "type": "string",
                         "name": "provider",
@@ -1928,6 +1931,14 @@ const docTemplate = `{
                 "feishu_bot_app_secret": {
                     "type": "string"
                 },
+                "footer_settings": {
+                    "description": "footer settings",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.FooterSettings"
+                        }
+                    ]
+                },
                 "head_code": {
                     "description": "inject code",
                     "type": "string"
@@ -2011,6 +2022,14 @@ const docTemplate = `{
                 "feishu_bot_app_secret": {
                     "type": "string"
                 },
+                "footer_settings": {
+                    "description": "footer settings",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.FooterSettings"
+                        }
+                    ]
+                },
                 "head_code": {
                     "description": "inject code",
                     "type": "string"
@@ -2066,6 +2085,20 @@ const docTemplate = `{
                 "AppTypeDingTalkBot",
                 "AppTypeFeishuBot"
             ]
+        },
+        "domain.BrandGroup": {
+            "type": "object",
+            "properties": {
+                "links": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Link"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
         },
         "domain.ChatRequest": {
             "type": "object",
@@ -2131,7 +2164,10 @@ const docTemplate = `{
                         "Moonshot",
                         "Other",
                         "AzureOpenAI",
-                        "BaiZhiCloud"
+                        "BaiZhiCloud",
+                        "Hunyuan",
+                        "BaiLian",
+                        "Volcengine"
                     ],
                     "allOf": [
                         {
@@ -2384,7 +2420,10 @@ const docTemplate = `{
                         "Moonshot",
                         "Other",
                         "AzureOpenAI",
-                        "BaiZhiCloud"
+                        "BaiZhiCloud",
+                        "Hunyuan",
+                        "BaiLian",
+                        "Volcengine"
                     ],
                     "allOf": [
                         {
@@ -2479,6 +2518,32 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.FooterSettings": {
+            "type": "object",
+            "properties": {
+                "brand_groups": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.BrandGroup"
+                    }
+                },
+                "brand_logo": {
+                    "type": "string"
+                },
+                "brand_name": {
+                    "type": "string"
+                },
+                "corp_name": {
+                    "type": "string"
+                },
+                "footer_style": {
+                    "type": "string"
+                },
+                "icp": {
                     "type": "string"
                 }
             }
@@ -2611,6 +2676,17 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.Link": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.LoginReq": {
             "type": "object",
             "required": [
@@ -2728,6 +2804,9 @@ const docTemplate = `{
                 "SiliconFlow",
                 "AzureOpenAI",
                 "BaiZhiCloud",
+                "Hunyuan",
+                "BaiLian",
+                "Volcengine",
                 "Other"
             ],
             "x-enum-varnames": [
@@ -2738,6 +2817,9 @@ const docTemplate = `{
                 "ModelProviderBrandSiliconFlow",
                 "ModelProviderBrandAzureOpenAI",
                 "ModelProviderBrandBaiZhiCloud",
+                "ModelProviderBrandHunyuan",
+                "ModelProviderBrandBaiLian",
+                "ModelProviderBrandVolcengine",
                 "ModelProviderBrandOther"
             ]
         },
@@ -3205,7 +3287,10 @@ const docTemplate = `{
                         "Moonshot",
                         "Other",
                         "AzureOpenAI",
-                        "BaiZhiCloud"
+                        "BaiZhiCloud",
+                        "Hunyuan",
+                        "BaiLian",
+                        "Volcengine"
                     ],
                     "allOf": [
                         {

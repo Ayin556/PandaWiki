@@ -1079,7 +1079,10 @@
                             "DeepSeek",
                             "Moonshot",
                             "AzureOpenAI",
-                            "BaiZhiCloud"
+                            "BaiZhiCloud",
+                            "Hunyuan",
+                            "BaiLian",
+                            "Volcengine"
                         ],
                         "type": "string",
                         "name": "provider",
@@ -1917,6 +1920,14 @@
                 "feishu_bot_app_secret": {
                     "type": "string"
                 },
+                "footer_settings": {
+                    "description": "footer settings",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.FooterSettings"
+                        }
+                    ]
+                },
                 "head_code": {
                     "description": "inject code",
                     "type": "string"
@@ -2000,6 +2011,14 @@
                 "feishu_bot_app_secret": {
                     "type": "string"
                 },
+                "footer_settings": {
+                    "description": "footer settings",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.FooterSettings"
+                        }
+                    ]
+                },
                 "head_code": {
                     "description": "inject code",
                     "type": "string"
@@ -2055,6 +2074,20 @@
                 "AppTypeDingTalkBot",
                 "AppTypeFeishuBot"
             ]
+        },
+        "domain.BrandGroup": {
+            "type": "object",
+            "properties": {
+                "links": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Link"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
         },
         "domain.ChatRequest": {
             "type": "object",
@@ -2120,7 +2153,10 @@
                         "Moonshot",
                         "Other",
                         "AzureOpenAI",
-                        "BaiZhiCloud"
+                        "BaiZhiCloud",
+                        "Hunyuan",
+                        "BaiLian",
+                        "Volcengine"
                     ],
                     "allOf": [
                         {
@@ -2373,7 +2409,10 @@
                         "Moonshot",
                         "Other",
                         "AzureOpenAI",
-                        "BaiZhiCloud"
+                        "BaiZhiCloud",
+                        "Hunyuan",
+                        "BaiLian",
+                        "Volcengine"
                     ],
                     "allOf": [
                         {
@@ -2468,6 +2507,32 @@
                     "type": "string"
                 },
                 "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.FooterSettings": {
+            "type": "object",
+            "properties": {
+                "brand_groups": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.BrandGroup"
+                    }
+                },
+                "brand_logo": {
+                    "type": "string"
+                },
+                "brand_name": {
+                    "type": "string"
+                },
+                "corp_name": {
+                    "type": "string"
+                },
+                "footer_style": {
+                    "type": "string"
+                },
+                "icp": {
                     "type": "string"
                 }
             }
@@ -2600,6 +2665,17 @@
                 }
             }
         },
+        "domain.Link": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.LoginReq": {
             "type": "object",
             "required": [
@@ -2717,6 +2793,9 @@
                 "SiliconFlow",
                 "AzureOpenAI",
                 "BaiZhiCloud",
+                "Hunyuan",
+                "BaiLian",
+                "Volcengine",
                 "Other"
             ],
             "x-enum-varnames": [
@@ -2727,6 +2806,9 @@
                 "ModelProviderBrandSiliconFlow",
                 "ModelProviderBrandAzureOpenAI",
                 "ModelProviderBrandBaiZhiCloud",
+                "ModelProviderBrandHunyuan",
+                "ModelProviderBrandBaiLian",
+                "ModelProviderBrandVolcengine",
                 "ModelProviderBrandOther"
             ]
         },
@@ -3194,7 +3276,10 @@
                         "Moonshot",
                         "Other",
                         "AzureOpenAI",
-                        "BaiZhiCloud"
+                        "BaiZhiCloud",
+                        "Hunyuan",
+                        "BaiLian",
+                        "Volcengine"
                     ],
                     "allOf": [
                         {

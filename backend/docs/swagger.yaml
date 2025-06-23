@@ -69,6 +69,10 @@ definitions:
         type: string
       feishu_bot_app_secret:
         type: string
+      footer_settings:
+        allOf:
+        - $ref: '#/definitions/domain.FooterSettings'
+        description: footer settings
       head_code:
         description: inject code
         type: string
@@ -127,6 +131,10 @@ definitions:
         type: string
       feishu_bot_app_secret:
         type: string
+      footer_settings:
+        allOf:
+        - $ref: '#/definitions/domain.FooterSettings'
+        description: footer settings
       head_code:
         description: inject code
         type: string
@@ -167,6 +175,15 @@ definitions:
     - AppTypeWidget
     - AppTypeDingTalkBot
     - AppTypeFeishuBot
+  domain.BrandGroup:
+    properties:
+      links:
+        items:
+          $ref: '#/definitions/domain.Link'
+        type: array
+      name:
+        type: string
+    type: object
   domain.ChatRequest:
     properties:
       app_type:
@@ -211,6 +228,9 @@ definitions:
         - Other
         - AzureOpenAI
         - BaiZhiCloud
+        - Hunyuan
+        - BaiLian
+        - Volcengine
       type:
         allOf:
         - $ref: '#/definitions/domain.ModelType'
@@ -378,6 +398,9 @@ definitions:
         - Other
         - AzureOpenAI
         - BaiZhiCloud
+        - Hunyuan
+        - BaiLian
+        - Volcengine
       type:
         allOf:
         - $ref: '#/definitions/domain.ModelType'
@@ -439,6 +462,23 @@ definitions:
       content:
         type: string
       title:
+        type: string
+    type: object
+  domain.FooterSettings:
+    properties:
+      brand_groups:
+        items:
+          $ref: '#/definitions/domain.BrandGroup'
+        type: array
+      brand_logo:
+        type: string
+      brand_name:
+        type: string
+      corp_name:
+        type: string
+      footer_style:
+        type: string
+      icp:
         type: string
     type: object
   domain.GetDocsReq:
@@ -524,6 +564,13 @@ definitions:
       updated_at:
         type: string
     type: object
+  domain.Link:
+    properties:
+      name:
+        type: string
+      url:
+        type: string
+    type: object
   domain.LoginReq:
     properties:
       account:
@@ -604,6 +651,9 @@ definitions:
     - SiliconFlow
     - AzureOpenAI
     - BaiZhiCloud
+    - Hunyuan
+    - BaiLian
+    - Volcengine
     - Other
     type: string
     x-enum-varnames:
@@ -614,6 +664,9 @@ definitions:
     - ModelProviderBrandSiliconFlow
     - ModelProviderBrandAzureOpenAI
     - ModelProviderBrandBaiZhiCloud
+    - ModelProviderBrandHunyuan
+    - ModelProviderBrandBaiLian
+    - ModelProviderBrandVolcengine
     - ModelProviderBrandOther
   domain.ModelType:
     enum:
@@ -924,6 +977,9 @@ definitions:
         - Other
         - AzureOpenAI
         - BaiZhiCloud
+        - Hunyuan
+        - BaiLian
+        - Volcengine
       type:
         allOf:
         - $ref: '#/definitions/domain.ModelType'
@@ -1661,6 +1717,9 @@ paths:
         - Moonshot
         - AzureOpenAI
         - BaiZhiCloud
+        - Hunyuan
+        - BaiLian
+        - Volcengine
         in: query
         name: provider
         required: true
