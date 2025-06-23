@@ -17,7 +17,7 @@ import { AnswerStatus } from './constant';
 const Chat = () => {
   const inIframe = isInIframe();
   const { mobile = false } = useMobile()
-  const { themeMode, kb_id } = useKBDetail()
+  const { themeMode, kb_id, kbDetail } = useKBDetail()
 
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
   const sseClientRef = useRef<SSEClient<{
@@ -25,6 +25,8 @@ const Chat = () => {
     content: string;
     chunk_result: ChunkResultItem[];
   }> | null>(null);
+
+  const footerSetting = kbDetail?.settings?.footer_settings
 
   const [conversation, setConversation] = useState<{ q: string, a: string }[]>([]);
   const [loading, setLoading] = useState(false);
@@ -175,7 +177,7 @@ const Chat = () => {
   }, []);
 
   if (mobile) {
-    return <Box sx={{ pt: 12, minHeight: 'calc(100vh - 40px)' }}>
+    return <Box sx={{ pt: 12, minHeight: '100vh', position: 'relative' }}>
       <ChatTab showType={showType} setShowType={setShowType} />
       <Box sx={{ mx: 3 }}>
         {showType === 'chat' ? <ChatResult
@@ -188,7 +190,15 @@ const Chat = () => {
           handleSearchAbort={handleSearchAbort}
         /> : <SearchResult list={chunkResult} loading={chunkLoading} />}
       </Box>
-      <Footer />
+      <Box sx={{
+        mt: 5,
+        ...(footerSetting?.footer_style === 'complex' && {
+          borderTop: '1px solid',
+          borderColor: 'divider',
+        }),
+      }}>
+        <Footer />
+      </Box>
     </Box>
   }
 
@@ -203,7 +213,7 @@ const Chat = () => {
         maxWidth: '1200px',
       }}>
         <Stack alignItems="stretch" direction="row" gap={3} sx={{
-          height: 'calc(100vh - 160px)',
+          height: 'calc(100vh - 120px)',
           mb: 3,
         }}>
           <Box sx={{ position: 'relative', flex: 1 }}>
@@ -235,7 +245,19 @@ const Chat = () => {
             <SearchResult list={chunkResult} loading={chunkLoading} />
           </Box>
         </Stack>
-        <Footer />
+      </Box>
+      <Box sx={{
+        ...(footerSetting?.footer_style === 'complex' && {
+          borderTop: '1px solid',
+          borderColor: 'divider',
+        }),
+      }}>
+        <Box sx={{
+          margin: '0 auto',
+          maxWidth: '1200px',
+        }}>
+          <Footer />
+        </Box>
       </Box>
     </Box>
   );

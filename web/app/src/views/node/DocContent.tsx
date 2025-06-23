@@ -47,10 +47,24 @@ const DocContent = ({ info, editorRef }: { info?: NodeDetail, editorRef: UseTipt
             : <IconFile sx={{ flexShrink: 0, mt: 0.5 }} />}
         {info?.name}
       </Stack>
-      <Box sx={{ fontSize: 12, textAlign: 'right', width: 100, color: 'text.tertiary', flexShrink: 0 }}>
+      <Stack
+        direction={mobile ? 'row' : 'column'}
+        alignItems={'center'}
+        gap={1}
+        sx={{
+          fontSize: 12,
+          textAlign: 'right',
+          width: 100,
+          color: 'text.tertiary',
+          flexShrink: 0,
+          ...(mobile && {
+            width: 'auto',
+            mt: 1,
+          }),
+        }}>
         <Box>{dayjs(info?.created_at).fromNow()}创建</Box>
         {info?.updated_at && info.updated_at.slice(0, 1) !== '0' && <Box>{dayjs(info.updated_at).fromNow()}更新</Box>}
-      </Box>
+      </Stack>
     </Stack>
     <Box sx={{
       mt: 3,

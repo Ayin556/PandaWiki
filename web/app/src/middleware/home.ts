@@ -5,6 +5,7 @@ import { convertToTree, findFirstType2Node } from '../utils/drag';
 
 export async function middleware(request: NextRequest, kb_id: string, authToken: string) {
   const url = request.nextUrl.clone()
+  console.log('🍐 pathname >>>', url.pathname)
 
   try {
     const result = await apiClient.serverGetKBInfo(kb_id, authToken);

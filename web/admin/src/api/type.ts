@@ -284,9 +284,34 @@ export type CatalogSetting = {
   catalog_expanded: 1 | 2,
 }
 
-export type AppSetting = HeaderSetting & WelcomeSetting & SEOSetting & CustomCodeSetting & DingBotSetting & WecomBotSetting & FeishuBotSetting & StyleSetting & CatalogSetting & {
-  base_url: string
+export type FooterSetting = {
+  footer_style: 'simple' | 'complex',
+  corp_name: string,
+  icp: string,
+  brand_name: string,
+  brand_desc: string,
+  brand_logo: string,
+  brand_groups: {
+    name: string,
+    links: {
+      name: string,
+      url: string,
+    }[]
+  }[]
 }
+
+export type AppSetting = HeaderSetting &
+  WelcomeSetting &
+  SEOSetting &
+  CustomCodeSetting &
+  DingBotSetting &
+  WecomBotSetting &
+  FeishuBotSetting &
+  StyleSetting &
+  CatalogSetting & {
+    footer_settings: FooterSetting,
+    base_url: string
+  }
 
 export type RecommendNode = {
   id: string,
