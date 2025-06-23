@@ -65,6 +65,27 @@ type AppSettings struct {
 	DefaultDisplayMode int    `json:"default_display_mode,omitempty"` // 1: QA mode, 2: doc mode
 	ModeSwitchVisible  int    `json:"mode_switch_visible,omitempty"`
 	ThemeMode          string `json:"theme_mode,omitempty"`
+	// footer settings
+	FooterSettings FooterSettings `json:"footer_settings"`
+}
+
+type FooterSettings struct {
+	FooterStyle string       `json:"footer_style,omitempty"`
+	CorpName    string       `json:"corp_name,omitempty"`
+	ICP         string       `json:"icp,omitempty"`
+	BrandName   string       `json:"brand_name,omitempty"`
+	BrandLogo   string       `json:"brand_logo,omitempty"`
+	BrandGroups []BrandGroup `json:"brand_groups,omitempty"`
+}
+
+type BrandGroup struct {
+	Name  string `json:"name,omitempty"`
+	Links []Link `json:"links,omitempty"`
+}
+
+type Link struct {
+	Name string `json:"name,omitempty"`
+	URL  string `json:"url,omitempty"`
 }
 
 func (s *AppSettings) Scan(value any) error {
@@ -120,6 +141,8 @@ type AppSettingsResp struct {
 	DefaultDisplayMode int    `json:"default_display_mode,omitempty"` // 1: QA mode, 2: doc mode
 	ModeSwitchVisible  int    `json:"mode_switch_visible,omitempty"`
 	ThemeMode          string `json:"theme_mode,omitempty"`
+	// footer settings
+	FooterSettings FooterSettings `json:"footer_settings"`
 }
 
 func (s *AppSettingsResp) Scan(value any) error {

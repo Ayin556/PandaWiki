@@ -1931,6 +1931,14 @@ const docTemplate = `{
                 "feishu_bot_app_secret": {
                     "type": "string"
                 },
+                "footer_settings": {
+                    "description": "footer settings",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.FooterSettings"
+                        }
+                    ]
+                },
                 "head_code": {
                     "description": "inject code",
                     "type": "string"
@@ -2014,6 +2022,14 @@ const docTemplate = `{
                 "feishu_bot_app_secret": {
                     "type": "string"
                 },
+                "footer_settings": {
+                    "description": "footer settings",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.FooterSettings"
+                        }
+                    ]
+                },
                 "head_code": {
                     "description": "inject code",
                     "type": "string"
@@ -2069,6 +2085,20 @@ const docTemplate = `{
                 "AppTypeDingTalkBot",
                 "AppTypeFeishuBot"
             ]
+        },
+        "domain.BrandGroup": {
+            "type": "object",
+            "properties": {
+                "links": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Link"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
         },
         "domain.ChatRequest": {
             "type": "object",
@@ -2492,6 +2522,32 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.FooterSettings": {
+            "type": "object",
+            "properties": {
+                "brand_groups": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.BrandGroup"
+                    }
+                },
+                "brand_logo": {
+                    "type": "string"
+                },
+                "brand_name": {
+                    "type": "string"
+                },
+                "corp_name": {
+                    "type": "string"
+                },
+                "footer_style": {
+                    "type": "string"
+                },
+                "icp": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.GetDocsReq": {
             "type": "object",
             "required": [
@@ -2616,6 +2672,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.Link": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "url": {
                     "type": "string"
                 }
             }
