@@ -76,10 +76,8 @@ func (u *KnowledgeBaseUsecase) UpdateKnowledgeBase(ctx context.Context, req *dom
 	if err := u.repo.UpdateKnowledgeBase(ctx, req); err != nil {
 		return err
 	}
-	if req.AccessSettings != nil {
-		if err := u.kbCache.DeleteKB(ctx, req.ID); err != nil {
-			return err
-		}
+	if err := u.kbCache.DeleteKB(ctx, req.ID); err != nil {
+		return err
 	}
 	return nil
 }
