@@ -1090,7 +1090,10 @@ const docTemplate = `{
                             "DeepSeek",
                             "Moonshot",
                             "AzureOpenAI",
-                            "BaiZhiCloud"
+                            "BaiZhiCloud",
+                            "Hunyuan",
+                            "BaiLian",
+                            "Volcengine"
                         ],
                         "type": "string",
                         "name": "provider",
@@ -2131,7 +2134,10 @@ const docTemplate = `{
                         "Moonshot",
                         "Other",
                         "AzureOpenAI",
-                        "BaiZhiCloud"
+                        "BaiZhiCloud",
+                        "Hunyuan",
+                        "BaiLian",
+                        "Volcengine"
                     ],
                     "allOf": [
                         {
@@ -2384,7 +2390,10 @@ const docTemplate = `{
                         "Moonshot",
                         "Other",
                         "AzureOpenAI",
-                        "BaiZhiCloud"
+                        "BaiZhiCloud",
+                        "Hunyuan",
+                        "BaiLian",
+                        "Volcengine"
                     ],
                     "allOf": [
                         {
@@ -2728,6 +2737,9 @@ const docTemplate = `{
                 "SiliconFlow",
                 "AzureOpenAI",
                 "BaiZhiCloud",
+                "Hunyuan",
+                "BaiLian",
+                "Volcengine",
                 "Other"
             ],
             "x-enum-varnames": [
@@ -2738,6 +2750,9 @@ const docTemplate = `{
                 "ModelProviderBrandSiliconFlow",
                 "ModelProviderBrandAzureOpenAI",
                 "ModelProviderBrandBaiZhiCloud",
+                "ModelProviderBrandHunyuan",
+                "ModelProviderBrandBaiLian",
+                "ModelProviderBrandVolcengine",
                 "ModelProviderBrandOther"
             ]
         },
@@ -3205,7 +3220,10 @@ const docTemplate = `{
                         "Moonshot",
                         "Other",
                         "AzureOpenAI",
-                        "BaiZhiCloud"
+                        "BaiZhiCloud",
+                        "Hunyuan",
+                        "BaiLian",
+                        "Volcengine"
                     ],
                     "allOf": [
                         {

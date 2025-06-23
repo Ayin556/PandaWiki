@@ -211,6 +211,9 @@ definitions:
         - Other
         - AzureOpenAI
         - BaiZhiCloud
+        - Hunyuan
+        - BaiLian
+        - Volcengine
       type:
         allOf:
         - $ref: '#/definitions/domain.ModelType'
@@ -378,6 +381,9 @@ definitions:
         - Other
         - AzureOpenAI
         - BaiZhiCloud
+        - Hunyuan
+        - BaiLian
+        - Volcengine
       type:
         allOf:
         - $ref: '#/definitions/domain.ModelType'
@@ -604,6 +610,9 @@ definitions:
     - SiliconFlow
     - AzureOpenAI
     - BaiZhiCloud
+    - Hunyuan
+    - BaiLian
+    - Volcengine
     - Other
     type: string
     x-enum-varnames:
@@ -614,6 +623,9 @@ definitions:
     - ModelProviderBrandSiliconFlow
     - ModelProviderBrandAzureOpenAI
     - ModelProviderBrandBaiZhiCloud
+    - ModelProviderBrandHunyuan
+    - ModelProviderBrandBaiLian
+    - ModelProviderBrandVolcengine
     - ModelProviderBrandOther
   domain.ModelType:
     enum:
@@ -924,6 +936,9 @@ definitions:
         - Other
         - AzureOpenAI
         - BaiZhiCloud
+        - Hunyuan
+        - BaiLian
+        - Volcengine
       type:
         allOf:
         - $ref: '#/definitions/domain.ModelType'
@@ -1661,6 +1676,9 @@ paths:
         - Moonshot
         - AzureOpenAI
         - BaiZhiCloud
+        - Hunyuan
+        - BaiLian
+        - Volcengine
         in: query
         name: provider
         required: true

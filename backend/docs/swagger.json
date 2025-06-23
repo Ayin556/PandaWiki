@@ -1079,7 +1079,10 @@
                             "DeepSeek",
                             "Moonshot",
                             "AzureOpenAI",
-                            "BaiZhiCloud"
+                            "BaiZhiCloud",
+                            "Hunyuan",
+                            "BaiLian",
+                            "Volcengine"
                         ],
                         "type": "string",
                         "name": "provider",
@@ -2120,7 +2123,10 @@
                         "Moonshot",
                         "Other",
                         "AzureOpenAI",
-                        "BaiZhiCloud"
+                        "BaiZhiCloud",
+                        "Hunyuan",
+                        "BaiLian",
+                        "Volcengine"
                     ],
                     "allOf": [
                         {
@@ -2373,7 +2379,10 @@
                         "Moonshot",
                         "Other",
                         "AzureOpenAI",
-                        "BaiZhiCloud"
+                        "BaiZhiCloud",
+                        "Hunyuan",
+                        "BaiLian",
+                        "Volcengine"
                     ],
                     "allOf": [
                         {
@@ -2717,6 +2726,9 @@
                 "SiliconFlow",
                 "AzureOpenAI",
                 "BaiZhiCloud",
+                "Hunyuan",
+                "BaiLian",
+                "Volcengine",
                 "Other"
             ],
             "x-enum-varnames": [
@@ -2727,6 +2739,9 @@
                 "ModelProviderBrandSiliconFlow",
                 "ModelProviderBrandAzureOpenAI",
                 "ModelProviderBrandBaiZhiCloud",
+                "ModelProviderBrandHunyuan",
+                "ModelProviderBrandBaiLian",
+                "ModelProviderBrandVolcengine",
                 "ModelProviderBrandOther"
             ]
         },
@@ -3194,7 +3209,10 @@
                         "Moonshot",
                         "Other",
                         "AzureOpenAI",
-                        "BaiZhiCloud"
+                        "BaiZhiCloud",
+                        "Hunyuan",
+                        "BaiLian",
+                        "Volcengine"
                     ],
                     "allOf": [
                         {
