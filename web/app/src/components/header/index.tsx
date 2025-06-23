@@ -131,7 +131,7 @@ const Header = () => {
                   startIcon={item.showIcon && item.icon ? <img src={item.icon} alt='logo' width={24} height={24} /> : null}
                   sx={{ textTransform: 'none' }}
                 >
-                  {item.text}
+                  <Box sx={{ lineHeight: '24px' }}>{item.text}</Box>
                 </Button>
               </Link>
             ))}

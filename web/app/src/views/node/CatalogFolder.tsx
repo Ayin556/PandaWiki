@@ -30,7 +30,9 @@ const CatalogFolder = ({ item, activeId, onChange, depth = 1 }: { item: ITreeIte
         pl: (depth + 0.5) * 2,
       }}>
         <Stack direction="row" alignItems="center" gap={0.5}>
-          {item.emoji ? <Box sx={{ flexShrink: 0, fontSize: 12 }}>{item.emoji}</Box> : item.type === 1 ? <IconFolder sx={{ flexShrink: 0 }} /> : <IconFile sx={{ flexShrink: 0 }} />}
+          {item.emoji ? <Box sx={{ flexShrink: 0, fontSize: 12 }}>{item.emoji}</Box>
+            : item.type === 1 ? <IconFolder sx={{ flexShrink: 0, fontSize: 12 }} />
+              : <IconFile sx={{ flexShrink: 0, fontSize: 12 }} />}
           {item.type === 2 ? <Box sx={{ flex: 1, width: 0 }}>
             <Ellipsis onClick={(event) => {
               event.stopPropagation()

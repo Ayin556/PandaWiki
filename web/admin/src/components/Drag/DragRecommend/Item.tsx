@@ -37,7 +37,7 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(({
 
   const handleCreateSummary = () => {
     setLoading(true)
-    createNodeSummary({ id: item.id, kb_id }).then(() => {
+    createNodeSummary({ ids: [item.id], kb_id }).then(() => {
       Message.success('生成摘要成功')
       refresh?.()
     }).finally(() => {

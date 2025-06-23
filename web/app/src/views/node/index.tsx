@@ -17,10 +17,9 @@ import CatalogH5 from "./CatalogH5";
 import DocAnchor from "./DocAnchor";
 import DocContent from "./DocContent";
 import DocHeader from "./DocHeader";
-import DocSearch from "./DocSearch";
-import useScroll from "./useScroll";
 
 const Doc = ({ node: defaultNode, token }: { node?: NodeDetail, token?: string }) => {
+
   const { id: defaultId } = useParams()
 
   const [firstRequest, setFirstRequest] = useState(true)
@@ -30,23 +29,17 @@ const Doc = ({ node: defaultNode, token }: { node?: NodeDetail, token?: string }
 
   const [id, setId] = useState(defaultId as string || '')
   const [node, setNode] = useState<NodeDetail | undefined>(defaultNode)
-  const [headings, setHeadings] = useState<{ id: string, title: string, heading: number }[]>([])
 
   const editorRef = useTiptapEditor({
     content: node?.content || '',
     editable: false,
   })
 
-  const { activeHeading, scrollToElement } = useScroll(headings)
 
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   const handleScroll = () => {
-    if (window.scrollY > 300) {
-      setShowScrollTop(true);
-    } else {
-      setShowScrollTop(false);
-    }
+    setShowScrollTop(window.scrollY > 300);
   };
 
   useEffect(() => {
@@ -68,12 +61,8 @@ const Doc = ({ node: defaultNode, token }: { node?: NodeDetail, token?: string }
   }
 
   useEffect(() => {
-    if (node) {
-      if (editorRef && editorRef.editor) {
-        editorRef.setContent(node?.content || '').then((headings) => {
-          setHeadings(headings)
-        })
-      }
+    if (node && editorRef && editorRef.editor) {
+      editorRef.setContent(node?.content || '')
     }
   }, [node])
 
@@ -122,10 +111,14 @@ const Doc = ({ node: defaultNode, token }: { node?: NodeDetail, token?: string }
       pb: 10,
       bgcolor: 'background.default',
     }}>
-      <DocSearch />
+      {/* <DocSearch /> */}
       <DocContent info={node} editorRef={editorRef} />
     </Box>
-    <DocAnchor title={node?.name || ''} headings={headings} activeHeading={activeHeading} onScrollToElement={scrollToElement} />
+    <DocAnchor
+      editorRef={editorRef}
+      node={node}
+      summary={node?.meta?.summary || ''}
+    />
     <Footer />
     <Zoom in={showScrollTop}>
       <Fab
