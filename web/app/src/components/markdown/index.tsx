@@ -128,14 +128,14 @@ const MarkDown = ({ loading = false, content }: MarkDownProps) => {
             />
           );
         },
-        code({ children, className, ...rest }: React.HTMLAttributes<HTMLElement>) {
+        code({ children, className, style, ...rest }: React.HTMLAttributes<HTMLElement>) {
           const match = /language-(\w+)/.exec(className || '');
           return match ? (
             <SyntaxHighlighter
               showLineNumbers
               {...rest}
               language={match[1] || 'bash'}
-              style={anOldHope}
+              style={{ ...anOldHope, 'hljs': {} }}
               onClick={() => {
                 copyText(String(children).replace(/\n$/, ''))
               }}

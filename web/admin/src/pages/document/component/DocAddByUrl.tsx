@@ -193,7 +193,7 @@ const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddB
       for (const item of rssData) {
         newQueue.push(async () => {
           const res = await scrapeCrawler({ url: item.url, kb_id })
-          setItems(prev => [{ ...item, ...res, title: res.title || item.title }, ...prev])
+          setItems(prev => [{ ...item, ...res, title: res.title || item.title, success: -1, id: '' }, ...prev])
         })
       }
     }
@@ -202,7 +202,7 @@ const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddB
       for (const item of notionData) {
         newQueue.push(async () => {
           const res = await getNotionIntegrationDetail({ pages: [{ id: item.url, title: item.title }], integration: url, kb_id })
-          setItems(prev => [{ ...item, ...res[0] }, ...prev])
+          setItems(prev => [{ ...item, ...res[0], success: -1, id: '' }, ...prev])
         })
       }
     }

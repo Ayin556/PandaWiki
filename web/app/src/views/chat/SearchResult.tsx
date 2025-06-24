@@ -50,9 +50,11 @@ const SearchResult = ({ list, loading }: { list: ChunkResultItem[], loading: boo
       </Box>
     ))}
     {loading && <Box sx={{ mt: 1 }}>
-      <Stack gap={1} sx={{
+      <Stack sx={{
+        bgcolor: 'background.paper',
         borderRadius: '10px',
         px: 2,
+        py: 1,
       }}>
         <Skeleton variant="text" sx={{ width: '40%', height: '24px' }} />
         <Skeleton variant="text" sx={{ width: '100%', height: '20px' }} />
