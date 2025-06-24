@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"slices"
+	"strings"
 	"time"
 
 	"github.com/cloudwego/eino-ext/components/model/deepseek"
@@ -383,6 +384,13 @@ func (u *LLMUsecase) SummaryNode(ctx context.Context, model *domain.Model, name,
 	})
 	if err != nil {
 		return "", err
+	}
+	if strings.HasPrefix(summary, "<think>") {
+		// remove <think> body </think>
+		endIndex := strings.Index(summary, "</think>")
+		if endIndex != -1 {
+			summary = strings.TrimSpace(summary[endIndex+8:]) // 8 is length of "</think>"
+		}
 	}
 	return summary, nil
 }
