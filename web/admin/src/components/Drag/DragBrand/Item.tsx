@@ -86,6 +86,7 @@ const LinkItem = forwardRef<HTMLDivElement, LinkItemProps>(({
             <TextField
               {...field}
               sx={{ width: 300 }}
+              label="链接文字"
               placeholder="链接文字"
               onChange={(e) => {
                 field.onChange(e.target.value);
@@ -104,6 +105,7 @@ const LinkItem = forwardRef<HTMLDivElement, LinkItemProps>(({
             <TextField
               {...field}
               fullWidth
+              label="链接地址"
               placeholder="链接地址"
               onChange={(e) => {
                 field.onChange(e.target.value);
@@ -235,6 +237,7 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(({
                 {...field}
                 fullWidth
                 placeholder="输入链接组名称"
+                label="链接组名称"
                 onChange={(e) => {
                   field.onChange(e.target.value);
                   setIsEdit(true);
