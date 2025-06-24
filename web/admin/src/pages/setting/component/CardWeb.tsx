@@ -4,6 +4,7 @@ import { Box, Divider } from "@mui/material"
 import { useEffect, useState } from "react"
 import CardAuth from "./CardAuth"
 import CardCatalog from "./CardCatalog"
+import CardFooter from "./CardFooter"
 import CardStyle from "./CardStyle"
 import CardVisit from "./CardVisit"
 import CardWebCustomCode from "./CardWebCustomCode"
@@ -73,6 +74,23 @@ const CardWeb = ({ kb, refresh }: CardWebProps) => {
           settings: {
             ...info.settings,
             ...value,
+          }
+        })
+      }}
+    />
+    <Divider sx={{ my: 2 }} />
+    <CardFooter
+      id={info.id}
+      data={info}
+      refresh={(value) => {
+        setInfo({
+          ...info,
+          settings: {
+            ...info.settings,
+            footer_settings: {
+              ...info.settings?.footer_settings,
+              ...value,
+            },
           }
         })
       }}

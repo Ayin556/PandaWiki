@@ -3,6 +3,7 @@ import { IconArrowDown, IconFile, IconFolder } from "@/components/icons"
 import { useKBDetail } from "@/provider/kb-provider"
 import { Box, Stack } from "@mui/material"
 import { Ellipsis } from "ct-mui"
+import Link from "next/link"
 import { useState } from "react"
 
 const CatalogFolder = ({ item, activeId, onChange, depth = 1 }: { item: ITreeItem, activeId: string, onChange: (id: string) => void, depth?: number }) => {
@@ -34,12 +35,10 @@ const CatalogFolder = ({ item, activeId, onChange, depth = 1 }: { item: ITreeIte
             : item.type === 1 ? <IconFolder sx={{ flexShrink: 0, fontSize: 12 }} />
               : <IconFile sx={{ flexShrink: 0, fontSize: 12 }} />}
           {item.type === 2 ? <Box sx={{ flex: 1, width: 0 }}>
-            <Ellipsis onClick={(event) => {
-              event.stopPropagation()
-              onChange(item.id)
-              window.history.pushState(null, '', `/node/${item.id}`)
-            }}>
-              {item.name}
+            <Ellipsis>
+              <Link href={`/node/${item.id}`}>
+                {item.name}
+              </Link>
             </Ellipsis>
           </Box> : <Box sx={{ flex: 1, width: 0 }}>
             <Ellipsis>

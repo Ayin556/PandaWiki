@@ -51,6 +51,10 @@ const useScroll = (headings: Heading[]) => {
 
   // 找到当前可视窗口的第一个标题
   const findActiveHeading = useCallback(() => {
+    const hash = decodeURIComponent(location.hash).slice(1)
+    if (!hash) {
+      return null
+    }
     const levels = Array.from(new Set(headings.map(it => it.heading).sort((a, b) => a - b))).slice(0, 3)
     const visibleHeadings = headings.filter(header => levels.includes(header.heading))
 
@@ -80,22 +84,6 @@ const useScroll = (headings: Heading[]) => {
     return activeHeader
   }, [headings])
 
-  // 滚动事件处理（带防抖）
-  const debouncedScrollHandler = useCallback(
-    debounce(() => {
-      // 如果是手动滚动过程中，不更新活跃标题和hash
-      if (isManualScroll.current) return
-
-      const activeHeader = findActiveHeading()
-      if (activeHeader && activeHeader.id !== activeHeading?.id) {
-        setActiveHeading(activeHeader)
-        // 更新URL hash
-        location.hash = encodeURIComponent(activeHeader.title)
-      }
-    }, 100),
-    [findActiveHeading, activeHeading]
-  )
-
   // 处理首次加载时的hash滚动
   useEffect(() => {
     if (isFirstLoad.current && headings.length > 0) {
@@ -124,31 +112,15 @@ const useScroll = (headings: Heading[]) => {
         }
       } else {
         // 没有hash时，设置第一个标题为活跃状态并设置hash
-        const activeHeader = findActiveHeading()
-        if (activeHeader) {
-          setActiveHeading(activeHeader)
-          location.hash = encodeURIComponent(activeHeader.title)
-        }
+        // const activeHeader = findActiveHeading()
+        // if (activeHeader) {
+        //   setActiveHeading(activeHeader)
+        //   location.hash = encodeURIComponent(activeHeader.title)
+        // }
       }
       isFirstLoad.current = false
     }
   }, [headings, findActiveHeading])
-
-  // 监听滚动事件
-  useEffect(() => {
-    if (headings.length > 0) {
-      window.addEventListener('scroll', debouncedScrollHandler)
-      // 初始检查
-      debouncedScrollHandler()
-    }
-
-    return () => {
-      window.removeEventListener('scroll', debouncedScrollHandler)
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current)
-      }
-    }
-  }, [headings, debouncedScrollHandler])
 
   return {
     activeHeading,

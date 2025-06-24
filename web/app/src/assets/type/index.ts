@@ -8,6 +8,24 @@ export interface NavBtn {
   target: '_blank' | '_self'
 }
 
+export interface FooterSetting {
+  footer_style: 'simple' | 'complex',
+  corp_name: string,
+  icp: string,
+  brand_name: string,
+  brand_desc: string,
+  brand_logo: string,
+  brand_groups: BrandGroup[],
+}
+
+export interface BrandGroup {
+  name: string,
+  links: {
+    name: string,
+    url: string,
+  }[],
+}
+
 export interface AuthSetting {
   enabled: boolean
   password?: string
@@ -33,6 +51,7 @@ export interface KBDetail {
     mode_switch_visible: 1 | 2,
     theme_mode?: 'light' | 'dark',
     simple_auth?: AuthSetting | null,
+    footer_settings?: FooterSetting | null,
   },
   recommend_nodes: RecommendNode[]
 }

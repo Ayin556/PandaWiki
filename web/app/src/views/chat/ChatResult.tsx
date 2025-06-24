@@ -47,17 +47,27 @@ const ChatResult = ({ conversation, answer, loading, thinking, onSearch, handleS
     scrollToBottom()
   }, [answer, conversation])
 
-  return <Box className='conversation-container' sx={{
-    height: mobile ? 'calc(100vh - 314px)' : 'calc(100vh - 266px)',
+  return <Box className={!mobile ? 'conversation-container' : ''} sx={{
+    height: 'calc(100vh - 266px)',
     overflow: 'auto',
     '&::-webkit-scrollbar': {
       display: 'none'
     },
-    mb: mobile ? '130px' : 0,
+    mb: 0,
     scrollbarWidth: 'none',
     msOverflowStyle: 'none',
+    ...(mobile && {
+      position: 'relative',
+      overflow: 'hidden',
+      height: 'calc(100vh - 180px)',
+    }),
   }}>
-    <Stack direction='column' gap={2} >
+    <Stack direction='column' gap={2} className={mobile ? 'conversation-container' : ''} sx={{
+      ...(mobile && {
+        overflow: 'auto',
+        height: 'calc(100vh - 280px)',
+      }),
+    }}>
       {conversation.map((item, index) => (
         <Accordion key={index} defaultExpanded={true} sx={{
           bgcolor: 'background.default',
@@ -78,12 +88,11 @@ const ChatResult = ({ conversation, answer, loading, thinking, onSearch, handleS
       position: 'absolute',
       left: 0,
       right: 0,
-      bottom: mobile ? "40px" : 0,
+      bottom: 0,
       borderRadius: '10px',
       border: '1px solid',
       borderColor: 'divider',
       ...(mobile && {
-        m: 3,
         p: 0,
       }),
     }}>
