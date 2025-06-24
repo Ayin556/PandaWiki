@@ -74,29 +74,29 @@ const Footer = ({ showBrand = true }: { showBrand?: boolean }) => {
     fontSize: '12px',
     fontWeight: 'normal',
     zIndex: 1,
+    color: 'text.secondary',
   }}>
     {footerSetting?.footer_style === 'complex' && showBrand && <Box sx={{ py: 6 }}>
       <Stack direction={'row'} justifyContent={'space-between'} gap={10}>
         <Box sx={{ width: '30%', minWidth: 200 }}>
           {footerSetting?.brand_name && <Stack direction={'row'} alignItems={'center'} gap={1} sx={{ mb: 2 }}>
             {footerSetting?.brand_logo && <img src={footerSetting.brand_logo} alt="PandaWiki" width={24} height={24} />}
-            <Box sx={{ fontWeight: 'bold', lineHeight: '32px', fontSize: 24 }}>{footerSetting?.brand_name}</Box>
+            <Box sx={{ fontWeight: 'bold', lineHeight: '32px', fontSize: 20, color: 'text.primary' }}>{footerSetting?.brand_name}</Box>
           </Stack>}
-          {footerSetting?.brand_desc && <Box sx={{ fontSize: 12, color: 'text.secondary', lineHeight: '26px' }}>
+          {footerSetting?.brand_desc && <Box sx={{ fontSize: 12, lineHeight: '26px' }}>
             {footerSetting.brand_desc}
           </Box>}
         </Box>
-        <Stack direction={'row'} justifyContent={'flex-end'}>
+        <Stack direction={'row'} justifyContent={'flex-end'} gap={15}>
           {footerSetting?.brand_groups?.map((group) => (
-            <Stack gap={2} key={group.name} sx={{
-              fontSize: 14,
+            <Stack gap={1.5} key={group.name} sx={{
+              fontSize: 12,
               lineHeight: '22px',
-              width: 240,
               '& a:hover': {
                 color: 'primary.main',
               }
             }}>
-              <Box sx={{ fontWeight: 'bold', fontSize: 18, lineHeight: '24px', mb: 1 }}>{group.name}</Box>
+              <Box sx={{ fontSize: 14, lineHeight: '24px', mb: 1, color: 'text.primary' }}>{group.name}</Box>
               {group.links?.map((link) => (
                 <Link href={link.url} target='_blank' key={link.name}>{link.name}</Link>
               ))}
@@ -116,7 +116,7 @@ const Footer = ({ showBrand = true }: { showBrand?: boolean }) => {
           {!!footerSetting?.corp_name && !!footerSetting?.icp && !mobile && <Divider orientation='vertical' sx={{ mx: 0.5, height: 16 }} />}
           {!!footerSetting?.icp && <Link href={`https://beian.miit.gov.cn/`} target='_blank'>{footerSetting?.icp}</Link>}
         </Stack>
-        <Stack direction={'row'} alignItems={'center'} gap={0.5}>
+        <Stack direction={'row'} alignItems={'center'} gap={0.5} sx={{ color: 'text.secondary' }}>
           本网站由
           <Link href={'https://pandawiki.docs.baizhi.cloud/'} target='_blank'>
             <Stack direction={'row'} alignItems={'center'} gap={0.5} sx={{

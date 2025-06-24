@@ -43,10 +43,10 @@ export function isInIframe(): boolean {
 }
 
 export const copyText = (text: string, callback?: () => void) => {
-  const isOriginIP = /^https?:\/\/(\d{1,3}\.){3}\d{1,3}(:\d+)?$/.test(window.location.origin);
+  const isOriginIP = /^http:\/\/(\d{1,3}\.){3}\d{1,3}(:\d+)?$/.test(window.location.origin);
 
   if (isOriginIP) {
-    message.error('复制失败，不允许复制IP地址');
+    message.error('http 协议下不支持复制，请使用 https 协议');
     return;
   }
 
@@ -120,7 +120,7 @@ export const formatMeta = async (
     description,
     keywords,
   }: { title?: string; description?: string; keywords?: string | string[] },
-  parent: ResolvingMetadata 
+  parent: ResolvingMetadata
 ) => {
   const keywordsIsEmpty =
     !keywords || (Array.isArray(keywords) && !keywords.length);
