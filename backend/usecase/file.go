@@ -8,8 +8,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/samber/lo"
-
 	"github.com/chaitin/panda-wiki/config"
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/log"
@@ -40,12 +38,6 @@ func (u *FileUsecase) UploadFile(ctx context.Context, kbID string, file *multipa
 	defer src.Close()
 
 	ext := strings.ToLower(filepath.Ext(file.Filename))
-	if ext == "" {
-		return "", fmt.Errorf("file (%s) ext (%s) not supported", file.Filename, ext)
-	}
-	if !lo.Contains([]string{".html", ".htm", ".md", ".txt", ".pdf", ".xlsx", ".xls", ".docx", ".png", ".jpg", ".jpeg", ".gif", ".webp", ".mp4", ".avi", ".mkv", ".mov", ".wmv", ".flv", ".webm", ".mpg", ".mpeg", ".3gp", ".ts", ".m2ts", ".vob", ".rm", ".rmvb"}, ext) {
-		return "", fmt.Errorf("file (%s) ext (%s) not supported", file.Filename, ext)
-	}
 	filename := fmt.Sprintf("%s/%s%s", kbID, uuid.New().String(), ext)
 
 	maxSize := u.config.S3.MaxFileSize
