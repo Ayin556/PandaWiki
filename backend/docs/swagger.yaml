@@ -466,6 +466,8 @@ definitions:
     type: object
   domain.FooterSettings:
     properties:
+      brand_desc:
+        type: string
       brand_groups:
         items:
           $ref: '#/definitions/domain.BrandGroup'
