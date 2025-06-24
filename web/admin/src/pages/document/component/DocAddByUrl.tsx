@@ -1,4 +1,4 @@
-import { createNode, getNotionIntegration, getNotionIntegrationDetail, scrapeCrawler, scrapeRSS, scrapeSitemap, uploadFile } from "@/api"
+import { convertEpub, createNode, getNotionIntegration, getNotionIntegrationDetail, scrapeCrawler, scrapeRSS, scrapeSitemap, uploadFile } from "@/api"
 import Upload from "@/components/UploadFile/Drag"
 import { useAppSelector } from "@/store"
 import { formatByte } from "@/utils"
@@ -9,7 +9,7 @@ import { useEffect, useState } from "react"
 import { FileRejection } from "react-dropzone"
 
 type DocAddByUrlProps = {
-  type: 'OfflineFile' | 'URL' | 'RSS' | 'Sitemap' | 'Notion'
+  type: 'OfflineFile' | 'URL' | 'RSS' | 'Sitemap' | 'Notion' | 'Epub'
   parentId?: string | null
   open: boolean
   refresh?: () => void
@@ -99,31 +99,48 @@ const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddB
     return '/static-file/' + response.key
   }
 
-  const handleOfflineFile = async () => {
+  const handleFile = async () => {
     if (isUploading === 1) return
     setIsUploading(1)
     setCurrentFileIndex(0)
     const urls: { url: string, title: string }[] = []
     const errorIdx: number[] = []
     try {
-      for (let i = 0; i < acceptedFiles.length; i++) {
-        setCurrentFileIndex(i)
-        setUploadProgress(0)
-        try {
-          const url = await getUrlByUploadFile(acceptedFiles[i], (progress) => {
-            setUploadProgress(progress)
-          })
-          urls.push({ url, title: acceptedFiles[i].name.split('.')[0] })
-        } catch (error) {
-          errorIdx.push(i)
-          console.error(`文件 ${acceptedFiles[i].name} 上传失败:`, error)
+      if (type === 'Epub') {
+        for (let i = 0; i < acceptedFiles.length; i++) {
+          try {
+            const formData = new FormData()
+            formData.append("file", acceptedFiles[i])
+            formData.append("kb_id", kb_id)
+            const { content } = await convertEpub(formData)
+            const title = acceptedFiles[i].name.split('.')[0]
+            setItems(prev => [{ title, content, url: title + i, success: -1, id: '' }, ...prev])
+          } catch (error) {
+            errorIdx.push(i)
+            console.error(`文件 ${acceptedFiles[i].name} 转换失败:`, error)
+          }
+        }
+      }
+      if (type === 'OfflineFile') {
+        for (let i = 0; i < acceptedFiles.length; i++) {
+          setCurrentFileIndex(i)
+          setUploadProgress(0)
+          try {
+            const url = await getUrlByUploadFile(acceptedFiles[i], (progress) => {
+              setUploadProgress(progress)
+            })
+            urls.push({ url, title: acceptedFiles[i].name.split('.')[0] })
+          } catch (error) {
+            errorIdx.push(i)
+            console.error(`文件 ${acceptedFiles[i].name} 上传失败:`, error)
+          }
+        }
+        for (const { url, title } of urls) {
+          const res = await scrapeCrawler({ url, kb_id })
+          setItems(prev => [{ ...res, url, title: title || res.title, success: -1, id: '' }, ...prev])
         }
       }
       setStep('import')
-      for (const { url, title } of urls) {
-        const res = await scrapeCrawler({ url, kb_id })
-        setItems(prev => [{ ...res, url, title: title || res.title, success: -1, id: '' }, ...prev])
-      }
       setLoading(false)
     } catch (error) {
       console.error(error)
@@ -200,7 +217,7 @@ const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddB
     } else if (step === 'pull') {
       setLoading(true)
       setIsCancelled(false)
-      if (type === 'OfflineFile') handleOfflineFile()
+      if (['OfflineFile', 'Epub'].includes(type)) handleFile()
       else handleURL()
     } else if (step === 'pull-done') {
       setLoading(true)
@@ -303,13 +320,13 @@ const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddB
     showCancel={StepText[step].showCancel}
     okButtonProps={{ loading }}
   >
-    {step === 'pull' && (type === 'OfflineFile' ? <Box>
+    {step === 'pull' && (['OfflineFile', 'Epub'].includes(type) ? <Box>
       <Upload
         file={acceptedFiles}
         onChange={(accept, reject) => onChangeFile(accept, reject)}
         type='drag'
         multiple
-        accept='.txt, .md, .xls, .xlsx, .docx, .pdf, .html'
+        accept={type === 'Epub' ? '.epub' : '.txt, .md, .xls, .xlsx, .docx, .pdf, .html, .epub'}
         size={size}
       />
       {isUploading === 1 && <Box sx={{ mt: 2 }}>

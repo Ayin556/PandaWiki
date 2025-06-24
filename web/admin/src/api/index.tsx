@@ -118,6 +118,9 @@ export const getNotionIntegration = (data: { integration: string }): Promise<{ i
 export const getNotionIntegrationDetail = (data: { pages: { id: string, title: string }[], integration: string, kb_id: string }): Promise<{ content: string, title: string }[]> =>
   request({ url: 'api/v1/crawler/notion/get_doc', method: 'post', data })
 
+export const convertEpub = (data: FormData): Promise<{ content: string, title: string }> =>
+  request({ url: 'api/v1/crawler/epub/convert', method: 'post', data })
+
 // =============================================》file
 
 export const uploadFile = (

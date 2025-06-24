@@ -13,7 +13,7 @@ const DocAdd = ({ refresh }: InputContentProps) => {
   const theme = useTheme()
   const [customDocOpen, setCustomDocOpen] = useState(false)
   const [urlOpen, setUrlOpen] = useState(false)
-  const [key, setKey] = useState<'OfflineFile' | 'URL' | 'RSS' | 'Sitemap' | 'Notion'>('URL')
+  const [key, setKey] = useState<'OfflineFile' | 'URL' | 'RSS' | 'Sitemap' | 'Notion' | 'Epub'>('URL')
   const [docFileKey, setDocFileKey] = useState<1 | 2>(1)
 
   const ImportContentWays = {
@@ -64,6 +64,13 @@ const DocAdd = ({ refresh }: InputContentProps) => {
       onClick: () => {
         setUrlOpen(true)
         setKey('Notion')
+      }
+    },
+    Epub: {
+      label: '通过 Epub 导入',
+      onClick: () => {
+        setUrlOpen(true)
+        setKey('Epub')
       }
     }
   }
