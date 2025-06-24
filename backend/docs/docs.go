@@ -2525,6 +2525,9 @@ const docTemplate = `{
         "domain.FooterSettings": {
             "type": "object",
             "properties": {
+                "brand_desc": {
+                    "type": "string"
+                },
                 "brand_groups": {
                     "type": "array",
                     "items": {

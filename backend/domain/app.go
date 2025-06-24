@@ -74,6 +74,7 @@ type FooterSettings struct {
 	CorpName    string       `json:"corp_name,omitempty"`
 	ICP         string       `json:"icp,omitempty"`
 	BrandName   string       `json:"brand_name,omitempty"`
+	BrandDesc   string       `json:"brand_desc,omitempty"`
 	BrandLogo   string       `json:"brand_logo,omitempty"`
 	BrandGroups []BrandGroup `json:"brand_groups,omitempty"`
 }
