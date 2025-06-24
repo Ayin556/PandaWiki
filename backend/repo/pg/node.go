@@ -331,6 +331,7 @@ func (r *NodeRepository) GetNodeReleaseDetailByKBIDAndID(ctx context.Context, kb
 		Where("kb_release_node_releases.release_id = ?", kbRelease.ID).
 		Where("node_releases.node_id = ?", id).
 		Where("node_releases.kb_id = ?", kbID).
+		Where("node_releases.visibility = ?", domain.NodeVisibilityPublic).
 		Select("node_releases.*").
 		First(&node).Error; err != nil {
 		return nil, err
