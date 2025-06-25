@@ -8,13 +8,9 @@ import { useEffect, useState } from "react"
 import CatalogFolder from './CatalogFolder'
 
 const CatalogH5 = ({
-  activeId,
   nodes,
-  onChange,
 }: {
-  activeId: string
   nodes: NodeListItem[]
-  onChange: (id: string) => void
 }) => {
   const [open, setOpen] = useState(false)
   const tree = convertToTree(nodes)
@@ -30,11 +26,6 @@ const CatalogH5 = ({
     }
   }, [open])
 
-  const onCatalogClick = (id: string) => {
-    onChange(id)
-    setOpen(false)
-  }
-
 
   return <Box sx={{
     position: 'fixed',
@@ -45,25 +36,6 @@ const CatalogH5 = ({
     zIndex: 2,
     bgcolor: 'background.paper'
   }}>
-    {/* <Box sx={{
-      position: 'absolute',
-      zIndex: 1,
-      top: 0,
-      left: 0,
-      right: 0,
-      height: '76px',
-      overflow: 'hidden',
-    }}>
-      <StyledHeaderBgi
-        bgi={docHeaderBgi.src}
-        sx={{
-          position: 'absolute',
-          backgroundSize: 'cover',
-          zIndex: 1,
-          mt: '-60px',
-        }}
-      />
-    </Box> */}
     <Stack direction='row' alignItems='center' justifyContent='space-between'
       sx={{
         py: 3,
@@ -103,7 +75,7 @@ const CatalogH5 = ({
       scrollbarWidth: 'none',
     }}>
       <Box sx={{ py: 3 }}>
-        {tree.map((item) => <CatalogFolder key={item.id} item={item} activeId={activeId} onChange={onCatalogClick} />)}
+        {tree.map((item) => <CatalogFolder key={item.id} item={item} />)}
       </Box>
     </Box>
   </Box>
