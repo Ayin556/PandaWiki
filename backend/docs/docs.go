@@ -2883,7 +2883,9 @@ const docTemplate = `{
                 "action": {
                     "type": "string",
                     "enum": [
-                        "delete"
+                        "delete",
+                        "private",
+                        "public"
                     ]
                 },
                 "ids": {
@@ -2916,6 +2918,9 @@ const docTemplate = `{
                     "$ref": "#/definitions/domain.NodeMeta"
                 },
                 "name": {
+                    "type": "string"
+                },
+                "parent_id": {
                     "type": "string"
                 },
                 "status": {
