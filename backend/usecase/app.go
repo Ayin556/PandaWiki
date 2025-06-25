@@ -41,7 +41,7 @@ func NewAppUsecase(
 		feishuBots:   make(map[string]*feishu.FeishuClient),
 	}
 
-	// Initialize all valid DingTalkBot instances
+	// Initialize all valid DingTalkBot and FeishuBot instances
 	apps, err := u.repo.GetAppsByTypes(context.Background(), []domain.AppType{domain.AppTypeDingTalkBot, domain.AppTypeFeishuBot})
 	if err != nil {
 		u.logger.Error("failed to get dingtalk bot apps", log.Error(err))

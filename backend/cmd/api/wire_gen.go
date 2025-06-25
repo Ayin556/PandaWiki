@@ -107,7 +107,8 @@ func createApp() (*App, error) {
 	}
 	notionUseCase := usecase.NewNotionUsecase(logger, minioClient)
 	epubUsecase := usecase.NewEpubUsecase(logger, minioClient)
-	crawlerHandler := v1.NewCrawlerHandler(echo, baseHandler, authMiddleware, logger, configConfig, crawlerUsecase, notionUseCase, epubUsecase)
+	wikiJSUsecase := usecase.NewWikiJSUsecase()
+	crawlerHandler := v1.NewCrawlerHandler(echo, baseHandler, authMiddleware, logger, configConfig, crawlerUsecase, notionUseCase, epubUsecase, wikiJSUsecase)
 	creationUsecase := usecase.NewCreationUsecase(logger, llmUsecase, modelUsecase)
 	creationHandler := v1.NewCreationHandler(echo, baseHandler, logger, creationUsecase)
 	apiHandlers := &v1.APIHandlers{
