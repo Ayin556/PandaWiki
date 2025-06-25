@@ -29,35 +29,27 @@ const CatalogFolder = ({ item, depth = 1 }: { item: ITreeItem, depth?: number })
       {item.type === 1 && <Box sx={{ position: 'absolute', left: (2 * depth - 1) * 8, top: 4, color: 'text.disabled' }}>
         <IconArrowDown sx={{ fontSize: 16, transform: isExpanded ? 'none' : 'rotate(-90deg)', transition: 'transform 0.2s' }} />
       </Box>}
-      <Box sx={{
-        pl: (depth + 0.5) * 2,
-      }}>
-        <Stack direction="row" alignItems="center" gap={0.5}>
-          {item.emoji ? <Box sx={{ flexShrink: 0, fontSize: 12 }}>{item.emoji}</Box>
-            : item.type === 1 ? <IconFolder sx={{ flexShrink: 0, fontSize: 12 }} />
-              : <IconFile sx={{ flexShrink: 0, fontSize: 12 }} />}
-          {item.type === 2 ? <Box sx={{ flex: 1, width: 0 }}>
-            <Ellipsis>
-              <Link href={`/node/${item.id}`}>
-                {item.name}
-              </Link>
-            </Ellipsis>
-          </Box> : <Box sx={{ flex: 1, width: 0 }}>
-            <Ellipsis>
+      <Link href={item.type === 2 ? `/node/${item.id}` : ''}>
+        <Box sx={{
+          pl: (depth + 0.5) * 2,
+        }}>
+          <Stack direction="row" alignItems="center" gap={0.5}>
+            {item.emoji ? <Box sx={{ flexShrink: 0, fontSize: 12 }}>{item.emoji}</Box>
+              : item.type === 1 ? <IconFolder sx={{ flexShrink: 0, fontSize: 12 }} />
+                : <IconFile sx={{ flexShrink: 0, fontSize: 12 }} />}
+            <Ellipsis sx={{ flex: 1, width: 0, pr: 1 }}>
               {item.name}
             </Ellipsis>
-          </Box>}
-        </Stack>
-      </Box>
+          </Stack>
+        </Box>
+      </Link>
     </Box>
-    {item.children && item.children.length > 0 && isExpanded && (
-      <>
-        {item.children.map((child) =>
-          <CatalogFolder key={child.id} depth={depth + 1} item={child} />
-        )}
-      </>
-    )}
-  </Box>
+    {item.children && item.children.length > 0 && isExpanded && (<>
+      {item.children.map((child) =>
+        <CatalogFolder key={child.id} depth={depth + 1} item={child} />
+      )}
+    </>)}
+  </Box >
 }
 
 export default CatalogFolder
