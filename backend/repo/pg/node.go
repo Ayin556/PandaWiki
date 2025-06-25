@@ -99,6 +99,31 @@ func (r *NodeRepository) GetList(ctx context.Context, req *domain.GetNodeListReq
 	return nodes, nil
 }
 
+func (r *NodeRepository) UpdateNodesVisibility(ctx context.Context, kbID string, ids []string, visibility domain.NodeVisibility) error {
+	return r.db.WithContext(ctx).
+		Model(&domain.Node{}).
+		Where("id IN ?", ids).
+		Where("kb_id = ?", kbID).
+		Updates(map[string]any{
+			"visibility": visibility,
+			"status":     domain.NodeStatusDraft,
+		}).Error
+}
+
+func (r *NodeRepository) GetLatestNodeReleaseByNodeIDs(ctx context.Context, kbID string, ids []string) ([]*domain.NodeRelease, error) {
+	var nodeReleases []*domain.NodeRelease
+	if err := r.db.WithContext(ctx).
+		Model(&domain.NodeRelease{}).
+		Where("node_id IN ?", ids).
+		Where("kb_id = ?", kbID).
+		Select("DISTINCT ON (node_id) id, node_id, kb_id, doc_id").
+		Order("node_id, updated_at DESC").
+		Find(&nodeReleases).Error; err != nil {
+		return nil, err
+	}
+	return nodeReleases, nil
+}
+
 func (r *NodeRepository) UpdateNodeContent(ctx context.Context, req *domain.UpdateNodeReq) error {
 	updateMap := map[string]any{}
 	updateStatus := false

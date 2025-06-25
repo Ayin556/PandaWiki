@@ -116,6 +116,8 @@ type NodeDetailResp struct {
 	Content    string         `json:"content"`
 	Meta       NodeMeta       `json:"meta"`
 
+	ParentID string `json:"parent_id"`
+
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
@@ -168,7 +170,7 @@ type RecommendNodeListResp struct {
 type NodeActionReq struct {
 	IDs    []string `json:"ids" validate:"required"`
 	KBID   string   `json:"kb_id" validate:"required"`
-	Action string   `json:"action" validate:"required,oneof=delete"`
+	Action string   `json:"action" validate:"required,oneof=delete private public"`
 }
 
 type UpdateNodeReq struct {

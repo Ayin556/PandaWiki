@@ -75,6 +75,40 @@ func (u *NodeUsecase) NodeAction(ctx context.Context, req *domain.NodeActionReq)
 		if err := u.ragRepo.AsyncUpdateNodeReleaseVector(ctx, nodeVectorContentRequests); err != nil {
 			return err
 		}
+	case "private":
+		// update node visibility to private
+		if err := u.nodeRepo.UpdateNodesVisibility(ctx, req.KBID, req.IDs, domain.NodeVisibilityPrivate); err != nil {
+			return err
+		}
+		// get latest node release and delete in vector
+		nodeReleases, err := u.nodeRepo.GetLatestNodeReleaseByNodeIDs(ctx, req.KBID, req.IDs)
+		if err != nil {
+			return fmt.Errorf("get latest node release failed: %w", err)
+		}
+		if len(nodeReleases) > 0 {
+			nodeVectorContentRequests := make([]*domain.NodeReleaseVectorRequest, 0)
+			for _, nodeRelease := range nodeReleases {
+				if nodeRelease.DocID == "" {
+					continue
+				}
+				nodeVectorContentRequests = append(nodeVectorContentRequests, &domain.NodeReleaseVectorRequest{
+					KBID:   req.KBID,
+					DocID:  nodeRelease.DocID,
+					Action: "delete",
+				})
+			}
+			if len(nodeVectorContentRequests) == 0 {
+				return nil
+			}
+			if err := u.ragRepo.AsyncUpdateNodeReleaseVector(ctx, nodeVectorContentRequests); err != nil {
+				return err
+			}
+		}
+	case "public":
+		// update node visibility to public
+		if err := u.nodeRepo.UpdateNodesVisibility(ctx, req.KBID, req.IDs, domain.NodeVisibilityPublic); err != nil {
+			return err
+		}
 	}
 	return nil
 }

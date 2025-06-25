@@ -704,6 +704,8 @@ definitions:
       action:
         enum:
         - delete
+        - private
+        - public
         type: string
       ids:
         items:
@@ -729,6 +731,8 @@ definitions:
       meta:
         $ref: '#/definitions/domain.NodeMeta'
       name:
+        type: string
+      parent_id:
         type: string
       status:
         $ref: '#/definitions/domain.NodeStatus'
