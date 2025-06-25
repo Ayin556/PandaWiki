@@ -51,7 +51,7 @@ const DocContent = ({ info, editorRef }: { info?: NodeDetail, editorRef: UseTipt
       </Stack>
       <Stack
         direction={mobile ? 'row' : 'column'}
-        alignItems={'center'}
+        alignItems={mobile ? 'center' : 'flex-end'}
         gap={1}
         sx={{
           fontSize: 12,
