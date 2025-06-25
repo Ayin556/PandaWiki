@@ -21,15 +21,24 @@ const Footer = ({ showBrand = true, fullWidth = false }: { showBrand?: boolean, 
       borderColor: 'divider',
     }),
   }}>
-    {footerSetting?.footer_style === 'complex' && showBrand && <Box sx={{ py: 5 }}>
-      <Stack direction={'row'} flexWrap={'wrap'} gap={2} sx={{ mb: 5 }}>
+    {footerSetting?.footer_style === 'complex' && showBrand && <Box sx={{ pt: 5, pb: 2 }}>
+      <Box sx={{ mb: 3 }}>
+        <Stack direction={'row'} alignItems={'center'} gap={1}>
+          {footerSetting?.brand_logo && <img src={footerSetting.brand_logo} alt="PandaWiki" width={24} height={24} />}
+          <Box sx={{ fontWeight: 'bold', lineHeight: '32px', fontSize: 24, color: 'text.primary' }}>{footerSetting?.brand_name}</Box>
+        </Stack>
+        {footerSetting?.brand_desc && <Box sx={{ fontSize: 12, color: 'text.secondary', lineHeight: '26px', ml: footerSetting?.brand_logo ? 4 : 0, mt: 2 }}>
+          {footerSetting.brand_desc}
+        </Box>}
+      </Box>
+      <Stack direction={'row'} flexWrap={'wrap'} gap={2}>
         {footerSetting?.brand_groups?.map((group, idx) => (
           <Stack gap={1} key={group.name} sx={{
             fontSize: 14,
             lineHeight: '22px',
             width: 'calc(50% - 8px)',
             ...(idx > 1 && {
-              mt: 3,
+              mt: 1,
             }),
             '& a:hover': {
               color: 'primary.main',
@@ -42,13 +51,6 @@ const Footer = ({ showBrand = true, fullWidth = false }: { showBrand?: boolean, 
           </Stack>
         ))}
       </Stack>
-      <Stack direction={'row'} alignItems={'center'} gap={1}>
-        {footerSetting?.brand_logo && <img src={footerSetting.brand_logo} alt="PandaWiki" width={24} height={24} />}
-        <Box sx={{ fontWeight: 'bold', lineHeight: '32px', fontSize: 24, color: 'text.primary' }}>{footerSetting?.brand_name}</Box>
-      </Stack>
-      {footerSetting?.brand_desc && <Box sx={{ fontSize: 12, color: 'text.secondary', lineHeight: '26px', ml: footerSetting?.brand_logo ? 4 : 0, mt: 2 }}>
-        {footerSetting.brand_desc}
-      </Box>}
     </Box>}
     {!!footerSetting?.corp_name && <Box sx={{ height: 40, lineHeight: '40px', color: 'text.tertiary' }}>
       © 2025 {footerSetting?.corp_name} 版权所有

@@ -5,11 +5,12 @@ import { useStore } from "@/provider";
 import { Box, TextField } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import CatalogH5 from "../node/CatalogH5";
 import NodeList from "./NodeList";
 import QuestionList from "./QuestionList";
 
 const Home = () => {
-  const { mobile = false, kbDetail, themeMode = 'light', catalogShow } = useStore()
+  const { mobile = false, kbDetail, themeMode = 'light', catalogShow, nodeList } = useStore()
 
   const catalogSetting = kbDetail?.settings?.catalog_settings
   const footerSetting = kbDetail?.settings?.footer_settings
@@ -67,13 +68,14 @@ const Home = () => {
     minHeight: `calc(100vh - ${footerHeight + 1}px)`,
     ...(mobile && {
       ml: 0,
-      pt: 13,
+      pt: nodeList ? 22 : 13,
     }),
   }}>
     <Box sx={{
       maxWidth: '1200px',
       mx: 'auto',
     }}>
+      {nodeList && mobile && <CatalogH5 nodes={nodeList} />}
       <Box sx={{
         color: 'text.primary',
         fontSize: '40px',

@@ -39,18 +39,18 @@ const EditorHeader = ({ editorRef, detail, onSave, refresh }: EditorHeaderProps)
       URL.revokeObjectURL(url)
       Message.success('导出成功')
     }
-    if (type === 'md') {
-      const markdown = editor.storage.markdown.getMarkdown()
-      if (!markdown) return
-      const blob = new Blob([markdown], { type: 'text/markdown' })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `${detail?.name}.md`
-      a.click()
-      URL.revokeObjectURL(url)
-      Message.success('导出成功')
-    }
+    // if (type === 'md') {
+    //   const markdown = editor.storage.markdown.getMarkdown()
+    //   if (!markdown) return
+    //   const blob = new Blob([markdown], { type: 'text/markdown' })
+    //   const url = URL.createObjectURL(blob)
+    //   const a = document.createElement('a')
+    //   a.href = url
+    //   a.download = `${detail?.name}.md`
+    //   a.click()
+    //   URL.revokeObjectURL(url)
+    //   Message.success('导出成功')
+    // }
   }
 
   if (!detail) return null
@@ -173,22 +173,22 @@ const EditorHeader = ({ editorRef, detail, onSave, refresh }: EditorHeaderProps)
             </Stack>,
             onClick: () => handleExport('html')
           },
-          {
-            key: 'md',
-            label: <Stack
-              direction={'row'}
-              alignItems={'center'}
-              gap={1}
-              sx={{
-                fontSize: 14, px: 2, lineHeight: '40px', height: 40, width: 140,
-                borderRadius: '5px',
-                cursor: 'pointer', ':hover': { bgcolor: addOpacityToColor(theme.palette.primary.main, 0.1) }
-              }}
-            >
-              导出 Markdown
-            </Stack>,
-            onClick: () => handleExport('md')
-          }
+          // {
+          //   key: 'md',
+          //   label: <Stack
+          //     direction={'row'}
+          //     alignItems={'center'}
+          //     gap={1}
+          //     sx={{
+          //       fontSize: 14, px: 2, lineHeight: '40px', height: 40, width: 140,
+          //       borderRadius: '5px',
+          //       cursor: 'pointer', ':hover': { bgcolor: addOpacityToColor(theme.palette.primary.main, 0.1) }
+          //     }}
+          //   >
+          //     导出 Markdown
+          //   </Stack>,
+          //   onClick: () => handleExport('md')
+          // }
         ]} context={<Button size="small" variant="outlined"
           startIcon={<Icon type='icon-daochu' />}>导出</Button>} />
         <Tooltip title={<Box>

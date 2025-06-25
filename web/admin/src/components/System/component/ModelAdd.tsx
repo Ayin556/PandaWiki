@@ -94,7 +94,7 @@ const ModelAdd = ({ open, onClose, refresh, data, type = 'chat' }: AddModelProps
       provider: value.provider,
       api_header: header,
     }).then(res => {
-      setModelUserList(res.models || [])
+      setModelUserList((res.models || []).sort((a, b) => a.model.localeCompare(b.model)))
       if (data && (res.models || []).find(it => it.model === data.model)) {
         setValue('model', data.model)
       } else {
