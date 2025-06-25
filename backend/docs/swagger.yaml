@@ -1046,6 +1046,21 @@ definitions:
       last_access:
         type: string
     type: object
+  domain.WikiJSPage:
+    properties:
+      content:
+        type: string
+      contentType:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      render:
+        type: string
+      title:
+        type: string
+    type: object
   handler_v1.ConversationListItems:
     properties:
       data:
@@ -1384,6 +1399,34 @@ paths:
                   $ref: '#/definitions/domain.ScrapeResp'
               type: object
       summary: Scrape
+      tags:
+      - crawler
+  /api/v1/crawler/wikijs/analysis_export_file:
+    post:
+      consumes:
+      - multipart/form-data
+      description: AnalysisExportFile
+      parameters:
+      - description: file
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.WikiJSPage'
+                  type: array
+              type: object
+      summary: AnalysisExportFile
       tags:
       - crawler
   /api/v1/creation/text:

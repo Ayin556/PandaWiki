@@ -21,6 +21,7 @@ type CrawlerHandler struct {
 	notnion_usecase *usecase.NotionUseCase
 	epub_usecase    *usecase.EpubUsecase
 	config          *config.Config
+	wikijs_usecase  *usecase.WikiJSUsecase
 }
 
 func NewCrawlerHandler(echo *echo.Echo,
@@ -31,6 +32,7 @@ func NewCrawlerHandler(echo *echo.Echo,
 	usecase *usecase.CrawlerUsecase,
 	notnion_usecase *usecase.NotionUseCase,
 	epub_usecase *usecase.EpubUsecase,
+	wikijs_usecase *usecase.WikiJSUsecase,
 ) *CrawlerHandler {
 	h := &CrawlerHandler{
 		BaseHandler:     baseHandler,
@@ -49,6 +51,8 @@ func NewCrawlerHandler(echo *echo.Echo,
 	group.POST("/notion/get_doc", h.GetDocs)
 	//  epub
 	group.POST("/epub/convert", h.QpubConvert)
+	// wikijs
+	group.POST("/wikijs/analysis_export_file", h.AnalysisExportFile)
 	return h
 }
 
@@ -254,4 +258,31 @@ func (h *CrawlerHandler) QpubConvert(c echo.Context) error {
 		return h.NewResponseWithError(c, "convert failed", err)
 	}
 	return h.NewResponseWithData(c, resq)
+}
+
+// AnalysisExportFile
+//
+//	@Summary		AnalysisExportFile
+//	@Description	AnalysisExportFile
+//	@Tags			crawler
+//	@Accept			multipart/form-data
+//	@Produce		json
+//	@Param			file	formData	file	true	"file"
+//	@Success		200		{object}	domain.Response{data=[]domain.WikiJSPage}
+//	@Router			/api/v1/crawler/wikijs/analysis_export_file [post]
+func (h *CrawlerHandler) AnalysisExportFile(c echo.Context) error {
+	f, err := c.FormFile("file")
+	if err != nil {
+		return h.NewResponseWithError(c, "get file failed", err)
+	}
+	file, err := f.Open()
+	if err != nil {
+		return h.NewResponseWithError(c, "open file failed", err)
+	}
+	defer file.Close()
+	res, err := h.wikijs_usecase.AnalysisExportFile(file)
+	if err != nil {
+		return h.NewResponseWithError(c, "analysis export file failed", err)
+	}
+	return h.NewResponseWithData(c, res)
 }
