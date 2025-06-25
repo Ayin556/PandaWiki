@@ -3,7 +3,7 @@ import { Box, Stack } from "@mui/material";
 import { useRouter } from "next/navigation";
 
 const QuestionList = () => {
-  const { kbDetail, themeMode = 'light' } = useStore()
+  const { kbDetail, themeMode = 'light', mobile = false } = useStore()
   const router = useRouter();
 
   if (!kbDetail?.settings?.recommend_questions) return null
@@ -13,7 +13,21 @@ const QuestionList = () => {
     router.push('/chat');
   };
 
-  return <Stack direction="row" alignItems={'center'} justifyContent={'center'} flexWrap="wrap" gap={2} sx={{ mt: 3, mb: 10 }}>
+  return <Stack
+    direction="row"
+    alignItems={'center'}
+    justifyContent={'center'}
+    flexWrap="wrap"
+    gap={2}
+    sx={{
+      mt: 3,
+      mb: 10,
+      px: 10,
+      ...(mobile && {
+        px: 0,
+      }),
+    }}
+  >
     {kbDetail?.settings?.recommend_questions?.map((item) => (
       <Box
         key={item}
