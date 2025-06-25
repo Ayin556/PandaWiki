@@ -41,8 +41,9 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
           name: "",
           level: 2,
           type,
+          emoji: '',
           status: 1,
-          visibility: type === 2 ? 1 : 2,
+          visibility: 2,
           isEditting: true,
           parentId: item.id,
         }

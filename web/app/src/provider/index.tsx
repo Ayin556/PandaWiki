@@ -43,7 +43,7 @@ export default function StoreProvider({
   const catalogSettings = kbDetail?.settings?.catalog_settings
   const [nodeList, setNodeList] = useState<NodeListItem[] | undefined>(initialNodeList);
   const [loading, setLoading] = useState(false);
-  const [catalogShow, setCatalogShow] = useState(catalogSettings?.catalog_visible === undefined ? true : catalogSettings?.catalog_visible === 1);
+  const [catalogShow, setCatalogShow] = useState(catalogSettings?.catalog_visible !== 2);
   const theme = useTheme();
 
   const isMobile = useMediaQuery(theme.breakpoints.down('md'), {
@@ -92,7 +92,7 @@ export default function StoreProvider({
   };
 
   useEffect(() => {
-    setCatalogShow(kbDetail?.settings?.catalog_settings?.catalog_visible === 1);
+    setCatalogShow(catalogSettings?.catalog_visible !== 2);
   }, [kbDetail]);
 
   useEffect(() => {
