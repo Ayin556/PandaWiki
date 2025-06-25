@@ -1,14 +1,16 @@
 import { ITreeItem } from "@/assets/type"
 import { IconArrowDown, IconFile, IconFolder } from "@/components/icons"
-import { useKBDetail } from "@/provider/kb-provider"
+import { useStore } from "@/provider"
 import { Box, Stack } from "@mui/material"
 import { Ellipsis } from "ct-mui"
 import Link from "next/link"
+import { useParams } from "next/navigation"
 import { useState } from "react"
 
-const CatalogFolder = ({ item, activeId, onChange, depth = 1 }: { item: ITreeItem, activeId: string, onChange: (id: string) => void, depth?: number }) => {
+const CatalogFolder = ({ item, depth = 1 }: { item: ITreeItem, depth?: number }) => {
+  const { id: activeId }: { id: string } = useParams()
   const [isExpanded, setIsExpanded] = useState(item.defaultExpand ?? true)
-  const { themeMode } = useKBDetail()
+  const { themeMode = 'light' } = useStore()
 
   return <Box key={item.id}>
     <Box sx={{
@@ -51,7 +53,7 @@ const CatalogFolder = ({ item, activeId, onChange, depth = 1 }: { item: ITreeIte
     {item.children && item.children.length > 0 && isExpanded && (
       <>
         {item.children.map((child) =>
-          <CatalogFolder key={child.id} depth={depth + 1} item={child} activeId={activeId} onChange={onChange} />
+          <CatalogFolder key={child.id} depth={depth + 1} item={child} />
         )}
       </>
     )}

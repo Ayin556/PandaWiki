@@ -1,43 +1,39 @@
 'use client'
 
 import { apiClient } from "@/api";
+import NotData from '@/assets/images/nodata.png';
 import { NodeDetail } from "@/assets/type";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
-import { useKBDetail } from "@/provider/kb-provider";
-import { useMobile } from "@/provider/mobile-provider";
-import { useNodeList } from "@/provider/nodelist-provider";
+import { useStore } from "@/provider";
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { Box, Fab, Zoom } from "@mui/material";
+import { Box, Fab, Stack, Zoom } from "@mui/material";
 import { useTiptapEditor } from "ct-tiptap-editor";
+import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Catalog from "./Catalog";
 import CatalogH5 from "./CatalogH5";
 import DocAnchor from "./DocAnchor";
 import DocContent from "./DocContent";
-import DocHeader from "./DocHeader";
 
 const Doc = ({ node: defaultNode, token }: { node?: NodeDetail, token?: string }) => {
 
-  const { id: defaultId } = useParams()
+  const { id = '' }: { id: string } = useParams()
 
   const [firstRequest, setFirstRequest] = useState(true)
-  const { nodeList } = useNodeList()
-  const { kb_id, kbDetail } = useKBDetail()
-  const { mobile } = useMobile()
+  const { nodeList = [], kb_id, kbDetail, mobile = false, catalogShow } = useStore()
 
+  const catalogSetting = kbDetail?.settings?.catalog_settings
   const footerSetting = kbDetail?.settings?.footer_settings
   const [footerHeight, setFooterHeight] = useState(0);
 
-  const [id, setId] = useState(defaultId as string || '')
   const [node, setNode] = useState<NodeDetail | undefined>(defaultNode)
 
   const editorRef = useTiptapEditor({
     content: node?.content || '',
     editable: false,
   })
-
 
   const [showScrollTop, setShowScrollTop] = useState(false);
 
@@ -100,7 +96,7 @@ const Doc = ({ node: defaultNode, token }: { node?: NodeDetail, token?: string }
   }, [node])
 
   useEffect(() => {
-    if (!firstRequest) getData(id)
+    if (!firstRequest) getData(id || '')
     setFirstRequest(false)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [id])
@@ -109,9 +105,21 @@ const Doc = ({ node: defaultNode, token }: { node?: NodeDetail, token?: string }
     return <Box sx={{ mt: '60px', position: 'relative', zIndex: 1 }}>
       <Box sx={{ minHeight: `calc(100vh - ${footerHeight + 1}px - 100px)` }}>
         <Header />
-        {nodeList && <CatalogH5 activeId={id} nodes={nodeList} onChange={setId} />}
+        {nodeList && <CatalogH5 nodes={nodeList} />}
         <Box sx={{ height: 24 }} />
-        {node && <DocContent info={node} editorRef={editorRef} />}
+        {node ? <DocContent info={node} editorRef={editorRef} /> : <Stack direction='column' alignItems='center' justifyContent='center' sx={{
+          height: 600,
+        }}>
+          <Image src={NotData.src} alt='not data' width={423} height={232} />
+          <Box sx={{
+            fontSize: 14,
+            color: 'text.secondary',
+            textAlign: 'center',
+            mt: 2,
+          }}>
+            文档不存在
+          </Box>
+        </Stack>}
       </Box>
       <Box sx={{
         mt: 5,
@@ -142,37 +150,46 @@ const Doc = ({ node: defaultNode, token }: { node?: NodeDetail, token?: string }
     </Box>
   }
 
-  return <Box>
-    <Catalog activeId={id} nodes={nodeList || []} onChange={setId} />
-    <DocHeader />
-    <Box sx={{
-      pt: '96px',
+  return <Box sx={{
+    position: 'relative',
+    bgcolor: 'background.default',
+  }}>
+    <Catalog />
+    <Header />
+    {node ? <>
+      <Box sx={{
+        pt: '96px',
+        position: 'relative',
+        zIndex: 1,
+        minHeight: `calc(100vh - ${footerHeight + 1}px)`,
+        pb: 10,
+        bgcolor: 'background.default',
+      }}>
+        <DocContent info={node} editorRef={editorRef} />
+      </Box>
+      <DocAnchor
+        editorRef={editorRef}
+        node={node}
+        summary={node?.meta?.summary || ''}
+      />
+    </> : <Stack direction='column' alignItems='center' justifyContent='center' sx={{
       position: 'relative',
-      zIndex: 1,
-      minHeight: `calc(100vh - ${footerHeight + 1}px)`,
-      pb: 10,
-      bgcolor: 'background.default',
+      height: `calc(100vh - ${footerHeight + 1}px)`,
+      ml: catalogShow ? `${catalogSetting?.catalog_width ?? 260}px` : '16px',
     }}>
-      {/* <DocSearch /> */}
-      <DocContent info={node} editorRef={editorRef} />
-    </Box>
-    <DocAnchor
-      editorRef={editorRef}
-      node={node}
-      summary={node?.meta?.summary || ''}
-    />
-    <Box sx={{
-      width: 'calc(100% - 261px)',
-      px: 10,
-      marginLeft: '261px',
-      bgcolor: 'background.default',
-      ...(footerSetting?.footer_style === 'complex' && {
-        borderTop: '1px solid',
-        borderColor: 'divider',
-      }),
-    }}>
-      <Footer />
-    </Box>
+      {footerHeight > 0 && <>
+        <Image src={NotData.src} alt='not data' width={423} height={232} />
+        <Box sx={{
+          fontSize: 14,
+          color: 'text.secondary',
+          textAlign: 'center',
+          mt: 2,
+        }}>
+          文档不存在
+        </Box>
+      </>}
+    </Stack>}
+    <Footer />
     <Zoom in={showScrollTop}>
       <Fab
         size="small"
