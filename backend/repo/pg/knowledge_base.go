@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"maps"
@@ -58,7 +59,7 @@ func (r *KnowledgeBaseRepository) SyncKBAccessSettingsToCaddy(ctx context.Contex
 	if len(firstKB.AccessSettings.Hosts) > 0 {
 		firstHost = firstKB.AccessSettings.Hosts[0]
 	}
-	pems := make([]map[string]any, 0)
+	certs := make([]map[string]any, 0)
 	portHostKBMap := make(map[string]map[string]*domain.KnowledgeBaseListItem)
 	httpPorts := make(map[string]struct{})
 	for _, kb := range kbList {
@@ -80,7 +81,7 @@ func (r *KnowledgeBaseRepository) SyncKBAccessSettingsToCaddy(ctx context.Contex
 			}
 		}
 		if len(kb.AccessSettings.PublicKey) > 0 && len(kb.AccessSettings.PrivateKey) > 0 {
-			pems = append(pems, map[string]any{
+			certs = append(certs, map[string]any{
 				"certificate": kb.AccessSettings.PublicKey,
 				"key":         kb.AccessSettings.PrivateKey,
 				"tags":        []string{kb.ID},
@@ -120,6 +121,7 @@ func (r *KnowledgeBaseRepository) SyncKBAccessSettingsToCaddy(ctx context.Contex
 			}
 		}
 		routes := make([]map[string]any, 0)
+		var defaultRoute map[string]any
 		for host, kb := range hostKBMap {
 			route := map[string]any{
 				"handle": []map[string]any{
@@ -224,8 +226,7 @@ func (r *KnowledgeBaseRepository) SyncKBAccessSettingsToCaddy(ctx context.Contex
 			if host == firstHost {
 				// first host as default host
 				// copy route without the host match
-				routeCopy := maps.Clone(route)
-				routes = append(routes, routeCopy)
+				defaultRoute = maps.Clone(route)
 			}
 			if host != "*" {
 				route["match"] = []map[string]any{
@@ -236,6 +237,10 @@ func (r *KnowledgeBaseRepository) SyncKBAccessSettingsToCaddy(ctx context.Contex
 			}
 			routes = append(routes, route)
 		}
+		// add default route if exists
+		if defaultRoute != nil {
+			routes = append(routes, defaultRoute)
+		}
 		server["routes"] = routes
 		servers[port] = server
 	}
@@ -244,10 +249,10 @@ func (r *KnowledgeBaseRepository) SyncKBAccessSettingsToCaddy(ctx context.Contex
 			"servers": servers,
 		},
 	}
-	if len(pems) > 0 {
+	if len(certs) > 0 {
 		apps["tls"] = map[string]any{
 			"certificates": map[string]any{
-				"load_pem": pems,
+				"load_pem": certs,
 			},
 		}
 	}
@@ -293,8 +298,8 @@ func (r *KnowledgeBaseRepository) CreateKnowledgeBase(ctx context.Context, kb *d
 			Find(&kbs).Error; err != nil {
 			return err
 		}
-		if len(kbs) >= 10 {
-			return fmt.Errorf("kb count is too many, max is 10")
+		if len(kbs) > 1 {
+			return errors.New("kb is too many")
 		}
 
 		if err := r.checkUniquePortHost(kbs); err != nil {
