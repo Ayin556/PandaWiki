@@ -537,6 +537,53 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/crawler/wikijs/analysis_export_file": {
+            "post": {
+                "description": "AnalysisExportFile",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "crawler"
+                ],
+                "summary": "AnalysisExportFile",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "file",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/domain.WikiJSPage"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/creation/text": {
             "post": {
                 "description": "Text creation",
@@ -3390,6 +3437,29 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "last_access": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.WikiJSPage": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "contentType": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "render": {
+                    "type": "string"
+                },
+                "title": {
                     "type": "string"
                 }
             }
