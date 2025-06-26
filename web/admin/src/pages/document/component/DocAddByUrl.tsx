@@ -19,7 +19,7 @@ type DocAddByUrlProps = {
 const AcceptTypes = {
   OfflineFile: '.txt, .md, .xls, .xlsx, .docx, .pdf, .html, .epub',
   Epub: '.epub',
-  'Wiki.js': '.gz',
+  'Wiki.js': '.zip',
 }
 
 const StepText = {
@@ -133,6 +133,7 @@ const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddB
         for (let i = 0; i < acceptedFiles.length; i++) {
           const formData = new FormData()
           formData.append("file", acceptedFiles[i])
+          formData.append("kb_id", kb_id)
           const pages = await parseWikijs(formData)
           for (const page of pages) {
             setItems(prev => [{ url: page.id, title: page.title, content: page.content, success: -1, id: '' }, ...prev])
