@@ -16,12 +16,12 @@ import (
 
 type CrawlerHandler struct {
 	*handler.BaseHandler
-	logger          *log.Logger
-	usecase         *usecase.CrawlerUsecase
-	notnion_usecase *usecase.NotionUseCase
-	epub_usecase    *usecase.EpubUsecase
-	config          *config.Config
-	wikijs_usecase  *usecase.WikiJSUsecase
+	logger         *log.Logger
+	usecase        *usecase.CrawlerUsecase
+	notnionUsecase *usecase.NotionUseCase
+	epubUsecase    *usecase.EpubUsecase
+	config         *config.Config
+	wikijsUsecase  *usecase.WikiJSUsecase
 }
 
 func NewCrawlerHandler(echo *echo.Echo,
@@ -30,17 +30,18 @@ func NewCrawlerHandler(echo *echo.Echo,
 	logger *log.Logger,
 	config *config.Config,
 	usecase *usecase.CrawlerUsecase,
-	notnion_usecase *usecase.NotionUseCase,
-	epub_usecase *usecase.EpubUsecase,
-	wikijs_usecase *usecase.WikiJSUsecase,
+	notnionUsecase *usecase.NotionUseCase,
+	epubUsecase *usecase.EpubUsecase,
+	wikijsUsecase *usecase.WikiJSUsecase,
 ) *CrawlerHandler {
 	h := &CrawlerHandler{
-		BaseHandler:     baseHandler,
-		logger:          logger.WithModule("handler.v1.crawler"),
-		config:          config,
-		usecase:         usecase,
-		notnion_usecase: notnion_usecase,
-		epub_usecase:    epub_usecase,
+		BaseHandler:    baseHandler,
+		logger:         logger.WithModule("handler.v1.crawler"),
+		config:         config,
+		usecase:        usecase,
+		notnionUsecase: notnionUsecase,
+		epubUsecase:    epubUsecase,
+		wikijsUsecase:  wikijsUsecase,
 	}
 	group := echo.Group("/api/v1/crawler", auth.Authorize)
 	group.POST("/parse_rss", h.ParseRSS)
@@ -82,7 +83,7 @@ func (h *CrawlerHandler) NotionGetList(c echo.Context) error {
 	if err := c.Validate(req); err != nil {
 		return h.NewResponseWithError(c, "validate request body failed", err)
 	}
-	resp, err := h.notnion_usecase.GetList(c.Request().Context(), req.Intregration, req.CationTitle)
+	resp, err := h.notnionUsecase.GetList(c.Request().Context(), req.Intregration, req.CationTitle)
 	// notnion := usecase.NewNotionClient(req.Intregration, h.logger)
 	// resp, err := notnion.GetList(c.Request().Context(), req.CationTitle)
 	if err != nil {
@@ -117,7 +118,7 @@ func (h *CrawlerHandler) GetDocs(c echo.Context) error {
 	if err := c.Validate(req); err != nil {
 		return h.NewResponseWithError(c, "validate request body failed", err)
 	}
-	resp, err := h.notnion_usecase.GetDocs(c.Request().Context(), req)
+	resp, err := h.notnionUsecase.GetDocs(c.Request().Context(), req)
 	// resp, err := usecase.NewNotionClient(req.Integration, h.logger).GetPagesContent(req.PageIDs)
 	if err != nil {
 		return h.NewResponseWithError(c, "get Docs failed", err)
@@ -253,7 +254,7 @@ func (h *CrawlerHandler) QpubConvert(c echo.Context) error {
 	if err != nil {
 		return h.NewResponseWithError(c, "read file failed", err)
 	}
-	resq, err := h.epub_usecase.Convert(c.Request().Context(), req.KbID, data)
+	resq, err := h.epubUsecase.Convert(c.Request().Context(), req.KbID, data)
 	if err != nil {
 		return h.NewResponseWithError(c, "convert failed", err)
 	}
@@ -268,6 +269,7 @@ func (h *CrawlerHandler) QpubConvert(c echo.Context) error {
 //	@Accept			multipart/form-data
 //	@Produce		json
 //	@Param			file	formData	file	true	"file"
+//	@Param			kb_id	formData	string	true	"kb_id"
 //	@Success		200		{object}	domain.Response{data=[]domain.WikiJSPage}
 //	@Router			/api/v1/crawler/wikijs/analysis_export_file [post]
 func (h *CrawlerHandler) AnalysisExportFile(c echo.Context) error {
@@ -275,12 +277,24 @@ func (h *CrawlerHandler) AnalysisExportFile(c echo.Context) error {
 	if err != nil {
 		return h.NewResponseWithError(c, "get file failed", err)
 	}
+	var req domain.WikiJSReq
+	req.KBID = c.FormValue("kb_id")
+	if err != nil {
+		return h.NewResponseWithError(c, "bind failed", err)
+	}
+	if err := c.Validate(req); err != nil {
+		return h.NewResponseWithError(c, "validate failed", err)
+	}
 	file, err := f.Open()
 	if err != nil {
 		return h.NewResponseWithError(c, "open file failed", err)
 	}
 	defer file.Close()
-	res, err := h.wikijs_usecase.AnalysisExportFile(file)
+	data, err := io.ReadAll(file)
+	if err != nil {
+		return h.NewResponseWithError(c, "read file failed", err)
+	}
+	res, err := h.wikijsUsecase.AnalysisExportFile(c.Request().Context(), data, req.KBID)
 	if err != nil {
 		return h.NewResponseWithError(c, "analysis export file failed", err)
 	}

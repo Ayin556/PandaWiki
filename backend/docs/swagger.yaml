@@ -1412,6 +1412,11 @@ paths:
         name: file
         required: true
         type: file
+      - description: kb_id
+        in: formData
+        name: kb_id
+        required: true
+        type: string
       produces:
       - application/json
       responses:

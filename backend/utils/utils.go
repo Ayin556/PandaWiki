@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"path"
+	"path/filepath"
 	"strings"
 	"time"
 )
@@ -89,4 +90,29 @@ func GetHeaderMap(header string) map[string]string {
 		}
 	}
 	return headerMap
+}
+
+func UrlEncode(s string) string {
+	var encoded strings.Builder
+	for _, r := range s {
+		if r == '/' {
+			encoded.WriteRune(r)
+		} else if r < 128 {
+			encoded.WriteRune(r)
+		} else {
+			encoded.WriteString(url.QueryEscape(string(r)))
+		}
+	}
+	return encoded.String()
+}
+
+func RemoveFirstDir(path string) string {
+	// 分割路径为组成部分
+	parts := strings.Split(filepath.ToSlash(path), "/")
+
+	// 确保路径有多个部分
+	if len(parts) > 1 {
+		return filepath.Join(parts[1:]...)
+	}
+	return path
 }
