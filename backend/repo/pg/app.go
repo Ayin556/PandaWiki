@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/google/uuid"
+	"github.com/samber/lo"
 	"gorm.io/gorm"
 
 	"github.com/chaitin/panda-wiki/domain"
@@ -84,4 +85,17 @@ func (r *AppRepository) GetAppsByTypes(ctx context.Context, appTypes []domain.Ap
 		return nil, err
 	}
 	return apps, nil
+}
+
+func (r *AppRepository) GetAppList(ctx context.Context, kbID string) (map[string]*domain.App, error) {
+	var apps []*domain.App
+	if err := r.db.WithContext(ctx).
+		Model(&domain.App{}).
+		Where("kb_id = ?", kbID).
+		Find(&apps).Error; err != nil {
+		return nil, err
+	}
+	return lo.SliceToMap(apps, func(app *domain.App) (string, *domain.App) {
+		return app.ID, app
+	}), nil
 }

@@ -2,34 +2,39 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 	"regexp"
 
 	"github.com/samber/lo"
 
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/log"
+	"github.com/chaitin/panda-wiki/repo/cache"
 	"github.com/chaitin/panda-wiki/repo/ipdb"
 	"github.com/chaitin/panda-wiki/repo/pg"
 )
 
 type ConversationUsecase struct {
-	repo     *pg.ConversationRepository
-	nodeRepo *pg.NodeRepository
-	logger   *log.Logger
-	ipRepo   *ipdb.IPAddressRepo
+	repo         *pg.ConversationRepository
+	nodeRepo     *pg.NodeRepository
+	geoCacheRepo *cache.GeoRepo
+	logger       *log.Logger
+	ipRepo       *ipdb.IPAddressRepo
 }
 
 func NewConversationUsecase(
 	repo *pg.ConversationRepository,
 	nodeRepo *pg.NodeRepository,
+	geoCacheRepo *cache.GeoRepo,
 	logger *log.Logger,
 	ipRepo *ipdb.IPAddressRepo,
 ) *ConversationUsecase {
 	return &ConversationUsecase{
-		repo:     repo,
-		nodeRepo: nodeRepo,
-		ipRepo:   ipRepo,
-		logger:   logger.WithModule("usecase.conversation"),
+		repo:         repo,
+		nodeRepo:     nodeRepo,
+		geoCacheRepo: geoCacheRepo,
+		ipRepo:       ipRepo,
+		logger:       logger.WithModule("usecase.conversation"),
 	}
 }
 
@@ -128,5 +133,18 @@ func (u *ConversationUsecase) ValidateConversationNonce(ctx context.Context, con
 }
 
 func (u *ConversationUsecase) CreateConversation(ctx context.Context, conversation *domain.Conversation) error {
-	return u.repo.CreateConversation(ctx, conversation)
+	if err := u.repo.CreateConversation(ctx, conversation); err != nil {
+		return err
+	}
+	remoteIP := conversation.RemoteIP
+	ipAddress, err := u.ipRepo.GetIPAddress(ctx, remoteIP)
+	if err != nil {
+		u.logger.Warn("get ip address failed", log.Error(err), log.String("ip", remoteIP), log.String("conversation_id", conversation.ID))
+	} else {
+		location := fmt.Sprintf("%s|%s|%s", ipAddress.Country, ipAddress.Province, ipAddress.City)
+		if err := u.geoCacheRepo.SetGeo(ctx, conversation.KBID, location); err != nil {
+			u.logger.Warn("set geo cache failed", log.Error(err), log.String("conversation_id", conversation.ID), log.String("ip", remoteIP))
+		}
+	}
+	return nil
 }

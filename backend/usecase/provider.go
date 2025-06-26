@@ -33,4 +33,5 @@ var ProviderSet = wire.NewSet(
 	NewWikiJSUsecase,
 	NewSitemapUsecase,
 	NewFeishuUseCase,
+	NewStatUseCase,
 )

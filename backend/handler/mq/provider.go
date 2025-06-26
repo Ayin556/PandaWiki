@@ -10,7 +10,8 @@ import (
 )
 
 type MQHandlers struct {
-	RAGMQHandler *RAGMQHandler
+	RAGMQHandler    *RAGMQHandler
+	StatCronHandler *StatCronHandler
 }
 
 var ProviderSet = wire.NewSet(
@@ -20,6 +21,7 @@ var ProviderSet = wire.NewSet(
 	usecase.NewLLMUsecase,
 
 	NewRAGMQHandler,
+	NewStatCronHandler,
 
 	wire.Struct(new(MQHandlers), "*"),
 )

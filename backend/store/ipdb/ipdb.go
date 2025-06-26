@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/lionsoul2014/ip2region/binding/golang/xdb"
+
 	"github.com/chaitin/panda-wiki/config"
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/log"
-	"github.com/lionsoul2014/ip2region/binding/golang/xdb"
 )
 
 //go:embed ip2region.xdb

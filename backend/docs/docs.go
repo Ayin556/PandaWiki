@@ -1738,6 +1738,262 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/stat/browsers": {
+            "get": {
+                "description": "GetBrowsers",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stat"
+                ],
+                "summary": "GetBrowsers",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "kb_id",
+                        "name": "kb_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/stat/conversation_distribution": {
+            "get": {
+                "description": "GetConversationDistribution",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stat"
+                ],
+                "summary": "GetConversationDistribution",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "kb_id",
+                        "name": "kb_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/stat/count": {
+            "get": {
+                "description": "GetCount",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stat"
+                ],
+                "summary": "GetCount",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "kb_id",
+                        "name": "kb_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/stat/geo_count": {
+            "get": {
+                "description": "GetGeoCount",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stat"
+                ],
+                "summary": "GetGeoCount",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "kb_id",
+                        "name": "kb_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/stat/hot_pages": {
+            "get": {
+                "description": "GetHotPages",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stat"
+                ],
+                "summary": "GetHotPages",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "kb_id",
+                        "name": "kb_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/stat/instant_count": {
+            "get": {
+                "description": "GetInstantCount",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stat"
+                ],
+                "summary": "GetInstantCount",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "kb_id",
+                        "name": "kb_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/stat/instant_pages": {
+            "get": {
+                "description": "GetInstantPages",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stat"
+                ],
+                "summary": "GetInstantPages",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "kb_id",
+                        "name": "kb_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/stat/referer_hosts": {
+            "get": {
+                "description": "GetRefererHosts",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stat"
+                ],
+                "summary": "GetRefererHosts",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "kb_id",
+                        "name": "kb_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/user": {
             "get": {
                 "description": "GetUser",
@@ -2064,6 +2320,40 @@ const docTemplate = `{
                         "name": "X-KB-ID",
                         "in": "header",
                         "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/share/v1/stat/page": {
+            "post": {
+                "description": "RecordPage",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "share_stat"
+                ],
+                "summary": "RecordPage",
+                "parameters": [
+                    {
+                        "description": "request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.StatPageReq"
+                        }
                     }
                 ],
                 "responses": {
@@ -3678,6 +3968,45 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "domain.StatPageReq": {
+            "type": "object",
+            "required": [
+                "scene"
+            ],
+            "properties": {
+                "node_id": {
+                    "type": "string"
+                },
+                "scene": {
+                    "enum": [
+                        1,
+                        2,
+                        3,
+                        4
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.StatPageScene"
+                        }
+                    ]
+                }
+            }
+        },
+        "domain.StatPageScene": {
+            "type": "integer",
+            "enum": [
+                1,
+                2,
+                3,
+                4
+            ],
+            "x-enum-varnames": [
+                "StatPageSceneWelcome",
+                "StatPageSceneNodeDetail",
+                "StatPageSceneChat",
+                "StatPageSceneLogin"
+            ]
         },
         "domain.TextReq": {
             "type": "object",

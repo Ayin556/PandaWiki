@@ -39,3 +39,15 @@ func (r *IPAddressRepo) GetIPAddress(ctx context.Context, ip string) (*domain.IP
 	}
 	return info, nil
 }
+
+func (r *IPAddressRepo) GetIPAddresses(ctx context.Context, ips []string) (map[string]*domain.IPAddress, error) {
+	ipAddresses := make(map[string]*domain.IPAddress, len(ips))
+	for _, ip := range ips {
+		info, err := r.GetIPAddress(ctx, ip)
+		if err != nil {
+			return nil, err
+		}
+		ipAddresses[ip] = info
+	}
+	return ipAddresses, nil
+}

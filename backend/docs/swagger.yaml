@@ -1070,6 +1070,33 @@ definitions:
       password:
         type: string
     type: object
+  domain.StatPageReq:
+    properties:
+      node_id:
+        type: string
+      scene:
+        allOf:
+        - $ref: '#/definitions/domain.StatPageScene'
+        enum:
+        - 1
+        - 2
+        - 3
+        - 4
+    required:
+    - scene
+    type: object
+  domain.StatPageScene:
+    enum:
+    - 1
+    - 2
+    - 3
+    - 4
+    type: integer
+    x-enum-varnames:
+    - StatPageSceneWelcome
+    - StatPageSceneNodeDetail
+    - StatPageSceneChat
+    - StatPageSceneLogin
   domain.TextReq:
     properties:
       action:
@@ -2275,6 +2302,174 @@ paths:
       summary: Summary Node
       tags:
       - node
+  /api/v1/stat/browsers:
+    get:
+      consumes:
+      - application/json
+      description: GetBrowsers
+      parameters:
+      - description: kb_id
+        in: query
+        name: kb_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Response'
+      summary: GetBrowsers
+      tags:
+      - stat
+  /api/v1/stat/conversation_distribution:
+    get:
+      consumes:
+      - application/json
+      description: GetConversationDistribution
+      parameters:
+      - description: kb_id
+        in: query
+        name: kb_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Response'
+      summary: GetConversationDistribution
+      tags:
+      - stat
+  /api/v1/stat/count:
+    get:
+      consumes:
+      - application/json
+      description: GetCount
+      parameters:
+      - description: kb_id
+        in: query
+        name: kb_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Response'
+      summary: GetCount
+      tags:
+      - stat
+  /api/v1/stat/geo_count:
+    get:
+      consumes:
+      - application/json
+      description: GetGeoCount
+      parameters:
+      - description: kb_id
+        in: query
+        name: kb_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Response'
+      summary: GetGeoCount
+      tags:
+      - stat
+  /api/v1/stat/hot_pages:
+    get:
+      consumes:
+      - application/json
+      description: GetHotPages
+      parameters:
+      - description: kb_id
+        in: query
+        name: kb_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Response'
+      summary: GetHotPages
+      tags:
+      - stat
+  /api/v1/stat/instant_count:
+    get:
+      consumes:
+      - application/json
+      description: GetInstantCount
+      parameters:
+      - description: kb_id
+        in: query
+        name: kb_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Response'
+      summary: GetInstantCount
+      tags:
+      - stat
+  /api/v1/stat/instant_pages:
+    get:
+      consumes:
+      - application/json
+      description: GetInstantPages
+      parameters:
+      - description: kb_id
+        in: query
+        name: kb_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Response'
+      summary: GetInstantPages
+      tags:
+      - stat
+  /api/v1/stat/referer_hosts:
+    get:
+      consumes:
+      - application/json
+      description: GetRefererHosts
+      parameters:
+      - description: kb_id
+        in: query
+        name: kb_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Response'
+      summary: GetRefererHosts
+      tags:
+      - stat
   /api/v1/user:
     get:
       consumes:
@@ -2493,4 +2688,26 @@ paths:
       summary: GetNodeList
       tags:
       - share_node
+  /share/v1/stat/page:
+    post:
+      consumes:
+      - application/json
+      description: RecordPage
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.StatPageReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Response'
+      summary: RecordPage
+      tags:
+      - share_stat
 swagger: "2.0"
