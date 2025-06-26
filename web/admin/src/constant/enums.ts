@@ -167,7 +167,7 @@ export const ModelProvider = {
     secretRequired: false,
     customHeader: true,
     modelDocumentUrl: '',
-    defaultBaseUrl: 'http://127.0.0.1:11434/v1',
+    defaultBaseUrl: 'http://127.0.0.1:11434',
   },
   SiliconFlow: {
     label: 'SiliconFlow',

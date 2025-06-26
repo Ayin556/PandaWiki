@@ -12,10 +12,12 @@ import (
 	"time"
 
 	"github.com/cloudwego/eino-ext/components/model/deepseek"
+	"github.com/cloudwego/eino-ext/components/model/ollama"
 	"github.com/cloudwego/eino-ext/components/model/openai"
 	"github.com/cloudwego/eino/components/model"
 	"github.com/cloudwego/eino/components/prompt"
 	"github.com/cloudwego/eino/schema"
+	"github.com/ollama/ollama/api"
 	"github.com/samber/lo"
 
 	"github.com/chaitin/panda-wiki/config"
@@ -79,6 +81,19 @@ func (u *LLMUsecase) GetChatModel(ctx context.Context, model *domain.Model) (mod
 			Temperature: temprature,
 		}
 		chatModel, err := deepseek.NewChatModel(ctx, config)
+		if err != nil {
+			return nil, fmt.Errorf("create chat model failed: %w", err)
+		}
+		return chatModel, nil
+	case domain.ModelProviderBrandOllama:
+		chatModel, err := ollama.NewChatModel(ctx, &ollama.ChatModelConfig{
+			BaseURL: config.BaseURL,
+			Timeout: config.Timeout,
+			Model:   config.Model,
+			Options: &api.Options{
+				Temperature: temprature,
+			},
+		})
 		if err != nil {
 			return nil, fmt.Errorf("create chat model failed: %w", err)
 		}
@@ -297,26 +312,17 @@ func (u *LLMUsecase) CheckModel(ctx context.Context, req *domain.CheckModelReq) 
 		}
 		return checkResp, nil
 	}
-	config := &openai.ChatModelConfig{
-		APIKey:  req.APIKey,
-		BaseURL: req.BaseURL,
-		Model:   string(req.Model),
-	}
-	// for azure openai
-	if req.Provider == domain.ModelProviderBrandAzureOpenAI {
-		config.ByAzure = true
-		config.APIVersion = req.APIVersion
-		if config.APIVersion == "" {
-			config.APIVersion = "2024-10-21"
-		}
-	}
-	if req.APIHeader != "" {
-		client := getHttpClientWithAPIHeaderMap(req.APIHeader)
-		if client != nil {
-			config.HTTPClient = client
-		}
-	}
-	chatModel, err := openai.NewChatModel(ctx, config)
+
+	chatModel, err := u.GetChatModel(ctx, &domain.Model{
+		Provider:   req.Provider,
+		Model:      req.Model,
+		APIKey:     req.APIKey,
+		APIHeader:  req.APIHeader,
+		BaseURL:    req.BaseURL,
+		APIVersion: req.APIVersion,
+		Type:       req.Type,
+	})
+
 	if err != nil {
 		checkResp.Error = err.Error()
 		return checkResp, nil
