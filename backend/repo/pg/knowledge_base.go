@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"maps"
@@ -297,8 +298,8 @@ func (r *KnowledgeBaseRepository) CreateKnowledgeBase(ctx context.Context, kb *d
 			Find(&kbs).Error; err != nil {
 			return err
 		}
-		if len(kbs) >= 10 {
-			return fmt.Errorf("kb count is too many, max is 10")
+		if len(kbs) > 1 {
+			return errors.New("kb is too many")
 		}
 
 		if err := r.checkUniquePortHost(kbs); err != nil {
