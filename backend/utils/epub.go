@@ -96,9 +96,6 @@ func (e *EpubConverter) Convert(ctx context.Context, kbID string, data []byte) (
 				return "", nil, err
 			}
 		}
-		if ext != ".html" && ext != ".hml" && ext != ".xhtml" {
-			continue
-		}
 		file, err := zipfile.Open()
 		if err != nil {
 			return "", nil, err
@@ -112,14 +109,16 @@ func (e *EpubConverter) Convert(ctx context.Context, kbID string, data []byte) (
 		if err != nil {
 			return "", nil, err
 		}
-		res[clearFileName(filepath.Base(zipfile.Name))] = bytes.NewBufferString(mdStr)
+		e.logger.Info("convert File", "file name", clearFileName(zipfile.Name))
+		res[clearFileName(zipfile.Name)] = bytes.NewBufferString(mdStr)
 	}
 	// page sequence
 	result := bytes.NewBuffer(nil)
 	for _, href := range p.Guide.References {
-		r := res[clearFileName(href.Href)]
-		io.Copy(result, r)
-		result.WriteString("\n\n")
+		if r, ok := res[clearFileName(href.Href)]; ok {
+			io.Copy(result, r)
+			result.WriteString("\n\n")
+		}
 	}
 	// 写目录
 	result.WriteString("# 目录\n\n")
@@ -132,17 +131,19 @@ func (e *EpubConverter) Convert(ctx context.Context, kbID string, data []byte) (
 	}
 	for _, itemRef := range p.Spine.ItemRefs {
 		title := temp[e.resourcesIdMap[itemRef.IDRef].Href]
-		result.WriteString("<span id=" + title + "></span>\n\n")
-		//
-		io.Copy(result, res[e.resourcesIdMap[itemRef.IDRef].Href])
-		result.WriteString("\n\n")
+		e.logger.Debug("add File", "file name", clearFileName(e.resourcesIdMap[itemRef.IDRef].Href))
+		if r, ok := res[clearFileName(e.resourcesIdMap[itemRef.IDRef].Href)]; ok {
+			result.WriteString("<span id=" + title + "></span>\n\n")
+			io.Copy(result, r)
+			result.WriteString("\n\n")
+		}
 	}
 	str, err := e.exchangeUrl(result.String())
 	return p.Metadata.Title, str, err
 }
 
 func clearFileName(str string) string {
-	// 去除字符串#后面的内容
+	str = filepath.Base(str)
 	return strings.Split(str, "#")[0]
 }
 
