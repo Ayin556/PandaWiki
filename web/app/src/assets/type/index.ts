@@ -8,6 +8,12 @@ export interface NavBtn {
   target: '_blank' | '_self'
 }
 
+export interface Heading {
+  id: string
+  title: string
+  heading: number
+}
+
 export interface FooterSetting {
   footer_style: 'simple' | 'complex',
   corp_name: string,

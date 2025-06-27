@@ -167,11 +167,12 @@ const Doc = ({ node: defaultNode, token }: { node?: NodeDetail, token?: string }
       }}>
         <DocContent info={node} editorRef={editorRef} />
       </Box>
-      <DocAnchor
+      {!!editorRef && <DocAnchor
         editorRef={editorRef}
         node={node}
+        footerHeight={footerHeight}
         summary={node?.meta?.summary || ''}
-      />
+      />}
     </> : <Stack direction='column' alignItems='center' justifyContent='center' sx={{
       position: 'relative',
       height: `calc(100vh - ${footerHeight + 1}px)`,
