@@ -1,23 +1,18 @@
 import { KnowledgeBaseListItem } from '@/api'
 import PluginLogo from '@/assets/images/plugin.png'
-import WecomLogo from '@/assets/images/wecom.png'
 import Card from "@/components/Card"
 import { Box, Divider, Stack, Switch } from "@mui/material"
 import { Message } from 'ct-mui'
 import CardRebotApi from './CardRebotApi'
 import CardRebotDing from './CardRebotDing'
 import CardRebotFeishu from './CardRebotFeishu'
+import CardRebotWecom from './CardRebotWecom'
 
-const CardRebot = ({ kb }: { kb: KnowledgeBaseListItem }) => {
+const CardRebot = ({ kb, url }: { kb: KnowledgeBaseListItem, url: string }) => {
   const AppList = {
     2: {
       name: '网页挂件机器人',
       icon: PluginLogo,
-      configDisabled: true,
-    },
-    4: {
-      name: '企业微信机器人',
-      icon: WecomLogo,
       configDisabled: true,
     },
   }
@@ -29,8 +24,8 @@ const CardRebot = ({ kb }: { kb: KnowledgeBaseListItem }) => {
     <Divider sx={{ my: 2 }} />
     <CardRebotFeishu kb={kb} />
     <Divider sx={{ my: 2 }} />
-    {/* <CardRebotWecom kb={kb} />
-    <Divider sx={{ my: 2 }} /> */}
+    <CardRebotWecom kb={kb} url={url} />
+    <Divider sx={{ my: 2 }} />
     {Object.values(AppList).map((value, index) => <Box key={index}>
       <Stack direction='row' alignItems={'center'} justifyContent={'space-between'} sx={{ m: 2 }}>
         <Box sx={{ fontWeight: 'bold' }}>{value.name}</Box>

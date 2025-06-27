@@ -120,6 +120,7 @@ const Sidebar = () => {
         pl: 1.5,
         gap: 0.5,
         justifyContent: 'flex-start',
+        textTransform: 'none',
         border: `1px solid ${theme.palette.divider}`,
         '.MuiButton-startIcon': {
           mr: '3px',
@@ -127,7 +128,7 @@ const Sidebar = () => {
         '&:hover': {
           color: 'primary.main',
         }
-      }} startIcon={<Icon type='icon-a-Webyingyong' />}
+      }} startIcon={<Icon type='icon-GitHub' />}
         onClick={() => window.open('https://github.com/chaitin/PandaWiki', '_blank')}
       >Github</Button>
       <Button variant='outlined' sx={{

@@ -1,22 +1,17 @@
 'use client'
 
-import { NodeDetail } from "@/assets/type";
+import { Heading, NodeDetail } from "@/assets/type";
 import { IconArrowDown } from "@/components/icons";
 import useScroll from "@/utils/useScroll";
 import { Box, IconButton, Stack } from "@mui/material";
 import { UseTiptapEditorReturn } from "ct-tiptap-editor";
 import { useEffect, useState } from "react";
 
-interface Heading {
-  id: string
-  title: string
-  heading: number
-}
-
 interface DocAnchorProps {
   summary: string
   node?: NodeDetail
   editorRef: UseTiptapEditorReturn
+  footerHeight: number
 }
 
 const HeadingSx = [
@@ -25,11 +20,18 @@ const HeadingSx = [
   { fontWeight: 400, color: 'text.disabled' },
 ]
 
-const DocAnchor = ({ summary, node, editorRef }: DocAnchorProps) => {
+const DocAnchor = ({ summary, node, editorRef, footerHeight }: DocAnchorProps) => {
   const [headings, setHeadings] = useState<Heading[]>([])
   const { activeHeading, scrollToElement } = useScroll(headings)
-
   const [expand, setExpand] = useState(true)
+
+  useEffect(() => {
+    if (node && editorRef && editorRef.editor) {
+      editorRef.getNavs().then((navs: Heading[]) => {
+        setHeadings(navs || [])
+      })
+    }
+  }, [node])
 
   const levels = Array.from(new Set(headings.map(it => it.heading).sort((a, b) => a - b))).slice(0, 3)
 
@@ -48,18 +50,13 @@ const DocAnchor = ({ summary, node, editorRef }: DocAnchorProps) => {
           top: offsetPosition,
           behavior: 'smooth'
         });
-        location.hash = encodeURIComponent(heading.title);
+        // 使用 setTimeout 来避免在事件处理过程中同步修改 location
+        setTimeout(() => {
+          location.hash = encodeURIComponent(heading.title);
+        }, 0);
       }
     }
   };
-
-  useEffect(() => {
-    if (node && editorRef && editorRef.editor) {
-      editorRef.getNavs().then((navs) => {
-        setHeadings(navs || [])
-      })
-    }
-  }, [node, editorRef])
 
   return <Box sx={{
     fontSize: 12,
@@ -120,7 +117,7 @@ const DocAnchor = ({ summary, node, editorRef }: DocAnchorProps) => {
         内容大纲
       </Box>
       <Box sx={{
-        maxHeight: 'calc(100vh - 359px)',
+        maxHeight: `calc(100vh - 359px - ${footerHeight}px)`,
         overflowY: 'auto',
         overflowX: 'hidden',
         lineHeight: '32px',

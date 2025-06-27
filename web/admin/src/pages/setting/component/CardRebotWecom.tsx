@@ -1,21 +1,21 @@
 import { AppDetail, getAppDetail, KnowledgeBaseListItem, updateAppDetail, WecomBotSetting } from "@/api"
+import ShowText from "@/components/ShowText"
 import { Box, Button, Stack, TextField } from "@mui/material"
 import { Message } from "ct-mui"
 import { useEffect, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 
-const CardRebotWecom = ({ kb }: { kb: KnowledgeBaseListItem }) => {
+const CardRebotWecom = ({ kb, url }: { kb: KnowledgeBaseListItem, url: string }) => {
   const [isEdit, setIsEdit] = useState(false)
   const [detail, setDetail] = useState<AppDetail | null>(null)
 
   const { control, handleSubmit, formState: { errors }, reset } = useForm<WecomBotSetting>({
     defaultValues: {
-      wecom_bot_agent_id: undefined,
-      wecom_bot_corp_secret: '',
-      wecom_bot_suite_token: '',
-      wecom_bot_suite_encoding_aes_key: '',
-      wecom_bot_corp_id: '',
-      wecom_bot_welcome_str: '',
+      wechat_app_agent_id: undefined,
+      wechat_app_secret: '',
+      wechat_app_token: '',
+      wechat_app_encodingaeskey: '',
+      wechat_app_corpid: '',
     }
   })
 
@@ -23,12 +23,11 @@ const CardRebotWecom = ({ kb }: { kb: KnowledgeBaseListItem }) => {
     getAppDetail({ kb_id: kb.id, type: 5 }).then(res => {
       setDetail(res)
       reset({
-        wecom_bot_agent_id: res.settings.wecom_bot_agent_id,
-        wecom_bot_corp_secret: res.settings.wecom_bot_corp_secret,
-        wecom_bot_suite_token: res.settings.wecom_bot_suite_token,
-        wecom_bot_suite_encoding_aes_key: res.settings.wecom_bot_suite_encoding_aes_key,
-        wecom_bot_corp_id: res.settings.wecom_bot_corp_id,
-        wecom_bot_welcome_str: res.settings.wecom_bot_welcome_str,
+        wechat_app_agent_id: res.settings.wechat_app_agent_id,
+        wechat_app_secret: res.settings.wechat_app_secret,
+        wechat_app_token: res.settings.wechat_app_token,
+        wechat_app_encodingaeskey: res.settings.wechat_app_encodingaeskey,
+        wechat_app_corpid: res.settings.wechat_app_corpid,
       })
     })
   }
@@ -37,12 +36,11 @@ const CardRebotWecom = ({ kb }: { kb: KnowledgeBaseListItem }) => {
     if (!detail) return
     updateAppDetail({ id: detail.id }, {
       settings: {
-        wecom_bot_agent_id: data.wecom_bot_agent_id,
-        wecom_bot_corp_secret: data.wecom_bot_corp_secret,
-        wecom_bot_suite_token: data.wecom_bot_suite_token,
-        wecom_bot_suite_encoding_aes_key: data.wecom_bot_suite_encoding_aes_key,
-        wecom_bot_corp_id: data.wecom_bot_corp_id,
-        wecom_bot_welcome_str: data.wecom_bot_welcome_str,
+        wechat_app_agent_id: data.wechat_app_agent_id,
+        wechat_app_secret: data.wechat_app_secret,
+        wechat_app_token: data.wechat_app_token,
+        wechat_app_encodingaeskey: data.wechat_app_encodingaeskey,
+        wechat_app_corpid: data.wechat_app_corpid,
       }
     }).then(() => {
       Message.success('保存成功')
@@ -76,152 +74,123 @@ const CardRebotWecom = ({ kb }: { kb: KnowledgeBaseListItem }) => {
       {isEdit && <Button variant="contained" size="small" onClick={handleSubmit(onSubmit)}>保存</Button>}
     </Stack>
     <Box sx={{ m: 2 }}>
+      <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
+        回调地址
+      </Box>
+      <ShowText text={`${url}/share/v1/app/wechat/app`} />
       <Stack direction='row' alignItems={'center'} justifyContent={'space-between'} sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
         <Box sx={{ fontSize: 14, lineHeight: '32px' }}>
           Agent ID
           <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
         </Box>
-        <Button size="small" component='a' href='https://pandawiki.docs.baizhi.cloud/node/01971b5f-4520-7c4b-8b4e-683ec5235adc' target="_blank">使用方法</Button>
+        <Button size="small" component='a' href='https://pandawiki.docs.baizhi.cloud/node/01971b5f-67e1-73c8-8582-82ccac49cc96' target="_blank">使用方法</Button>
       </Stack>
       <Controller
         control={control}
-        name="wecom_bot_agent_id"
+        name="wechat_app_agent_id"
         rules={{
           required: 'Agent ID',
         }}
         render={({ field }) => <TextField
           {...field}
           fullWidth
-          placeholder="> 企业微信后台 > 应用设置 > AgentId"
+          placeholder=""
           onChange={(e) => {
             field.onChange(e.target.value)
             setIsEdit(true)
           }}
-          error={!!errors.wecom_bot_agent_id}
-          helperText={errors.wecom_bot_agent_id?.message}
+          error={!!errors.wechat_app_agent_id}
+          helperText={errors.wechat_app_agent_id?.message}
         />}
       />
-      <Stack direction='row' alignItems={'center'} justifyContent={'space-between'} sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
-        <Box sx={{ fontSize: 14, lineHeight: '32px' }}>
-          Corp ID
-          <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
-        </Box>
-        {/* <Button size="small" component='a' href='https://pandawiki.docs.baizhi.cloud/node/01971b5f-4520-7c4b-8b4e-683ec5235adc' target="_blank">使用方法</Button> */}
-      </Stack>
+      <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
+        Corp ID
+        <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
+      </Box>
       <Controller
         control={control}
-        name="wecom_bot_corp_id"
+        name="wechat_app_corpid"
         rules={{
           required: 'Corp ID',
         }}
         render={({ field }) => <TextField
           {...field}
           fullWidth
-          placeholder="> 企业微信后台 > 我的企业 > 企业 ID"
+          placeholder=""
           onChange={(e) => {
             field.onChange(e.target.value)
             setIsEdit(true)
           }}
-          error={!!errors.wecom_bot_corp_id}
-          helperText={errors.wecom_bot_corp_id?.message}
+          error={!!errors.wechat_app_corpid}
+          helperText={errors.wechat_app_corpid?.message}
         />}
       />
-      <Stack direction='row' alignItems={'center'} justifyContent={'space-between'} sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
-        <Box sx={{ fontSize: 14, lineHeight: '32px' }}>
-          Corp Secret
-          <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
-        </Box>
-        {/* <Button size="small" component='a' href='https://pandawiki.docs.baizhi.cloud/node/01971b5f-4520-7c4b-8b4e-683ec5235adc' target="_blank">使用方法</Button> */}
-      </Stack>
+      <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
+        Corp Secret
+        <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
+      </Box>
       <Controller
         control={control}
-        name="wecom_bot_corp_secret"
+        name="wechat_app_secret"
         rules={{
           required: 'Corp Secret',
         }}
         render={({ field }) => <TextField
           {...field}
           fullWidth
-          placeholder="> 企业微信后台 > 应用设置 > Secret"
+          placeholder=""
           onChange={(e) => {
             field.onChange(e.target.value)
             setIsEdit(true)
           }}
-          error={!!errors.wecom_bot_corp_secret}
-          helperText={errors.wecom_bot_corp_secret?.message}
+          error={!!errors.wechat_app_secret}
+          helperText={errors.wechat_app_secret?.message}
         />}
       />
-      <Stack direction='row' alignItems={'center'} justifyContent={'space-between'} sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
-        <Box sx={{ fontSize: 14, lineHeight: '32px' }}>
-          Suite Token
-          <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
-        </Box>
-        {/* <Button size="small" component='a' href='https://pandawiki.docs.baizhi.cloud/node/01971b5f-4520-7c4b-8b4e-683ec5235adc' target="_blank">使用方法</Button> */}
-      </Stack>
+      <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
+        Token
+        <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
+      </Box>
       <Controller
         control={control}
-        name="wecom_bot_suite_token"
+        name="wechat_app_token"
         rules={{
           required: 'Suite Token',
         }}
         render={({ field }) => <TextField
           {...field}
           fullWidth
-          placeholder="> 企业微信后台 > 应用设置 > 接收消息 > API 设置 > SuiteToken"
+          placeholder=""
           onChange={(e) => {
             field.onChange(e.target.value)
             setIsEdit(true)
           }}
-          error={!!errors.wecom_bot_suite_token}
-          helperText={errors.wecom_bot_suite_token?.message}
+          error={!!errors.wechat_app_token}
+          helperText={errors.wechat_app_token?.message}
         />}
       />
-      <Stack direction='row' alignItems={'center'} justifyContent={'space-between'} sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
-        <Box sx={{ fontSize: 14, lineHeight: '32px' }}>
-          Suite Encoding Aes Key
-          <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
-        </Box>
-        {/* <Button size="small" component='a' href='https://pandawiki.docs.baizhi.cloud/node/01971b5f-4520-7c4b-8b4e-683ec5235adc' target="_blank">使用方法</Button> */}
-      </Stack>
+      <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
+        Encoding Aes Key
+        <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
+      </Box>
       <Controller
         control={control}
-        name="wecom_bot_suite_encoding_aes_key"
+        name="wechat_app_encodingaeskey"
         rules={{
           required: 'Suite Encoding Aes Key',
         }}
         render={({ field }) => <TextField
           {...field}
           fullWidth
-          placeholder="> 企业微信后台 > 应用设置 > 接收消息 > API 设置 > SuiteEncodingAesKey"
+          placeholder=""
           onChange={(e) => {
             field.onChange(e.target.value)
             setIsEdit(true)
           }}
-          error={!!errors.wecom_bot_suite_encoding_aes_key}
-          helperText={errors.wecom_bot_suite_encoding_aes_key?.message}
+          error={!!errors.wechat_app_encodingaeskey}
+          helperText={errors.wechat_app_encodingaeskey?.message}
         />}
       />
-      {/* <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
-        用户欢迎语
-      </Box>
-      <Controller
-        control={control}
-        name="wecom_bot_welcome_str"
-        render={({ field }) => <TextField
-          {...field}
-          multiline
-          rows={4}
-          fullWidth
-          size="small"
-          placeholder={`欢迎使用网站监测 AI 助手，我将回答您关于网站监测的问题，如:\n 1. 网站监测的监控节点 IP 是什么 \n 2. 网站监测大模型落地案例`}
-          onChange={(e) => {
-            field.onChange(e.target.value)
-            setIsEdit(true)
-          }}
-          error={!!errors.wecom_bot_welcome_str}
-          helperText={errors.wecom_bot_welcome_str?.message}
-        />}
-      /> */}
     </Box >
   </>
 }

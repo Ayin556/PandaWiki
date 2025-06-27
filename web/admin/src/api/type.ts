@@ -237,13 +237,11 @@ export type DingBotSetting = {
 }
 
 export type WecomBotSetting = {
-  wecom_bot_agent_id: number
-  wecom_bot_corp_secret: string
-  wecom_bot_suite_token: string
-  wecom_bot_suite_id: string
-  wecom_bot_suite_encoding_aes_key: string
-  wecom_bot_corp_id: string
-  wecom_bot_welcome_str: string
+  wechat_app_agent_id: number
+  wechat_app_secret: string
+  wechat_app_token: string
+  wechat_app_encodingaeskey: string
+  wechat_app_corpid: string
 }
 
 export type FeishuBotSetting = {

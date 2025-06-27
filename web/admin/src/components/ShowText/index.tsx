@@ -10,27 +10,30 @@ interface ShowTextProps {
   onClick?: () => void
 }
 
-const ShowText = ({ text, copyable = true, showIcon = true, icon = 'icon-a-lianjie5', onClick }: ShowTextProps) => {
-  return <Stack direction={'row'} alignItems={'center'} gap={2} sx={{
+const ShowText = ({ text, copyable = true, showIcon = true, icon = 'icon-fuzhi', onClick }: ShowTextProps) => {
+  return <Stack direction={'row'} alignItems={'center'} gap={1} sx={{
     width: '100%',
     fontSize: 14,
-    px: 3,
+    px: 2,
     lineHeight: '52px',
     fontFamily: 'monospace',
     bgcolor: 'background.paper2',
     borderRadius: '10px',
-    cursor: 'pointer',
+    cursor: copyable ? 'pointer' : 'default',
     '&:hover': {
       color: 'primary.main',
+      svg: {
+        color: 'primary.main',
+      }
     }
   }} onClick={copyable ? () => {
     copyText(text)
     onClick?.()
   } : onClick}>
-    {showIcon && <Icon type={icon} sx={{ fontSize: 16, color: 'text.auxiliary' }} />}
     <Ellipsis sx={{ width: '100%' }}>
       {text}
     </Ellipsis>
+    {showIcon && <Icon type={icon} sx={{ fontSize: 16, color: 'text.disabled' }} />}
   </Stack>
 }
 

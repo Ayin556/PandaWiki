@@ -69,14 +69,14 @@ const EditorHeader = ({ edited, editorRef, detail, onSave, refresh }: EditorHead
       width: 800,
       margin: 'auto',
     }}>
-      <Stack direction={'row'} alignItems={'center'} gap={1} flexShrink={0}>
-        <Emoji type={detail?.type} value={detail?.meta?.emoji} onChange={(value) => {
+      <Stack direction={'row'} alignItems={'center'} gap={1} flex={1}>
+        <Emoji sx={{ flexShrink: 0 }} type={detail?.type} value={detail?.meta?.emoji} onChange={(value) => {
           updateNode({ id: detail.id, kb_id: kb_id, emoji: value }).then(() => {
             Message.success('修改成功')
             refresh?.()
           })
         }} />
-        <Ellipsis sx={{ fontSize: 18, fontWeight: 'bold' }}>{detail?.name}</Ellipsis>
+        <Ellipsis sx={{ fontSize: 18, fontWeight: 'bold', width: 0, flex: 1 }}>{detail?.name}</Ellipsis>
       </Stack>
       <Stack direction={'row'} alignItems={'center'} gap={2} flexShrink={0}>
         <Stack direction={'row'} alignItems={'center'} gap={0.5} sx={{ fontSize: 12, color: 'text.auxiliary' }}>

@@ -348,6 +348,13 @@ const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddB
         accept={AcceptTypes[type as keyof typeof AcceptTypes] || '*'}
         size={size}
       />
+      {type === 'Wiki.js' && <Stack>
+        <Box component='a'
+          href='https://pandawiki.docs.baizhi.cloud/node/01976929-0e76-77a9-aed9-842e60933464#%E4%BB%8E%20Wiki.js%20%E5%AF%BC%E5%85%A5' target='_blank'
+          sx={{ fontSize: 12, color: 'primary.main', display: 'block', mt: 1 }}>
+          使用方法
+        </Box>
+      </Stack>}
       {isUploading === 1 && <Box sx={{ mt: 2 }}>
         <Box sx={{ fontSize: 14, mb: 1 }}>
           正在上传文件 {currentFileIndex + 1} / {acceptedFiles.length}
