@@ -184,12 +184,17 @@ type UpdateNodeReq struct {
 }
 
 type ShareNodeListItemResp struct {
-	ID       string   `json:"id"`
-	Name     string   `json:"name"`
-	Type     NodeType `json:"type"`
-	ParentID string   `json:"parent_id"`
-	Position float64  `json:"position"`
-	Emoji    string   `json:"emoji"`
+	ID        string    `json:"id"`
+	Name      string    `json:"name"`
+	Type      NodeType  `json:"type"`
+	ParentID  string    `json:"parent_id"`
+	Position  float64   `json:"position"`
+	Emoji     string    `json:"emoji"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
+func (n *ShareNodeListItemResp) GetURL(baseURL string) string {
+	return fmt.Sprintf("%s/node/%s", baseURL, n.ID)
 }
 
 type MoveNodeReq struct {

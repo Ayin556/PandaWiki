@@ -125,10 +125,13 @@ func createApp() (*App, error) {
 	shareNodeHandler := share.NewShareNodeHandler(baseHandler, echo, nodeUsecase, logger)
 	shareAppHandler := share.NewShareAppHandler(echo, baseHandler, logger, appUsecase)
 	shareChatHandler := share.NewShareChatHandler(echo, baseHandler, logger, appUsecase, chatUsecase, conversationUsecase, modelUsecase)
+	sitemapUsecase := usecase.NewSitemapUsecase(nodeRepository, knowledgeBaseRepository, logger)
+	shareSitemapHandler := share.NewShareSitemapHandler(echo, baseHandler, sitemapUsecase, appUsecase, logger)
 	shareHandler := &share.ShareHandler{
-		ShareNodeHandler: shareNodeHandler,
-		ShareAppHandler:  shareAppHandler,
-		ShareChatHandler: shareChatHandler,
+		ShareNodeHandler:    shareNodeHandler,
+		ShareAppHandler:     shareAppHandler,
+		ShareChatHandler:    shareChatHandler,
+		ShareSitemapHandler: shareSitemapHandler,
 	}
 	app := &App{
 		HTTPServer:    httpServer,

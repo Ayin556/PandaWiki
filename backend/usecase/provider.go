@@ -31,4 +31,5 @@ var ProviderSet = wire.NewSet(
 	NewEpubUsecase,
 	NewFileUsecase,
 	NewWikiJSUsecase,
+	NewSitemapUsecase,
 )
