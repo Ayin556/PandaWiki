@@ -279,9 +279,6 @@ func (h *CrawlerHandler) AnalysisExportFile(c echo.Context) error {
 	}
 	var req domain.WikiJSReq
 	req.KBID = c.FormValue("kb_id")
-	if err != nil {
-		return h.NewResponseWithError(c, "bind failed", err)
-	}
 	if err := c.Validate(req); err != nil {
 		return h.NewResponseWithError(c, "validate failed", err)
 	}
