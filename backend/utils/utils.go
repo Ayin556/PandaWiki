@@ -74,6 +74,20 @@ func URLNormalize(urlStr string) string {
 	return u.String()
 }
 
+func URLRemovePath(rawURL string) (string, error) {
+	parsedURL, err := url.Parse(rawURL)
+	if err != nil {
+		return "", err
+	}
+
+	parsedURL.Path = ""
+	parsedURL.RawPath = ""
+	parsedURL.RawQuery = ""
+	parsedURL.Fragment = ""
+
+	return parsedURL.String(), nil
+}
+
 // decode decode bytes with specified encoding
 func decode(data []byte, encoding string) (string, error) {
 	// need to implement encoding conversion based on actual needs
