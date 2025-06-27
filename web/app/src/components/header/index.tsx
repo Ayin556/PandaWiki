@@ -49,7 +49,7 @@ const Header = () => {
       pr: 1,
     }),
   }}>
-    <Link href={'/'}>
+    <Link href={'/'} prefetch={false}>
       <Stack direction='row' alignItems='center' gap={1.5} sx={{ py: '20px', cursor: 'pointer', color: 'text.primary', '&:hover': { color: 'primary.main' } }} >
         {kbDetail?.settings?.icon ? <img src={kbDetail?.settings?.icon} alt='logo' width={32} height={32} />
           : <Image src={Logo.src} width={32} height={32} alt='logo' />}
@@ -100,7 +100,7 @@ const Header = () => {
           }}
         />)}
       {!mobile && kbDetail?.settings?.btns?.map((item, index) => (
-        <Link key={index} href={item.url} target={item.target}>
+        <Link key={index} href={item.url} target={item.target} prefetch={false}>
           <Button
             variant={item.variant}
             startIcon={item.showIcon && item.icon ? <img src={item.icon} alt='logo' width={24} height={24} /> : null}

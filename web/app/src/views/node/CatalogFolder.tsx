@@ -29,7 +29,7 @@ const CatalogFolder = ({ item, depth = 1 }: { item: ITreeItem, depth?: number })
       {item.type === 1 && <Box sx={{ position: 'absolute', left: (2 * depth - 1) * 8, top: 4, color: 'text.disabled' }}>
         <IconArrowDown sx={{ fontSize: 16, transform: isExpanded ? 'none' : 'rotate(-90deg)', transition: 'transform 0.2s' }} />
       </Box>}
-      <Link href={item.type === 2 ? `/node/${item.id}` : ''}>
+      <Link href={item.type === 2 ? `/node/${item.id}` : ''} prefetch={false}>
         <Box sx={{
           pl: (depth + 0.5) * 2,
         }}>

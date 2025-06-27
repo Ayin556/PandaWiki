@@ -40,7 +40,7 @@ const NavBtns = ({ detail }: { detail?: KBDetail }) => {
         transform: 'translateX(0) translateY(0)',
       }),
     }}>
-      <Link href={'/'}>
+      <Link href={'/'} prefetch={false}>
         <Stack direction='row' alignItems='center' gap={1.5} sx={{ py: '14px', cursor: 'pointer', ml: 3 }} >
           {detail?.settings?.icon && <img src={detail?.settings?.icon} alt='logo' width={32} height={32} />}
           <Box sx={{ fontSize: 18 }}>{detail?.settings?.title}</Box>
@@ -48,7 +48,7 @@ const NavBtns = ({ detail }: { detail?: KBDetail }) => {
       </Link>
       <Stack gap={4} sx={{ px: 3, mt: 4 }}>
         {detail?.settings?.btns?.map((item, index) => (
-          <Link key={index} href={item.url} target={item.target}>
+          <Link key={index} href={item.url} target={item.target} prefetch={false}>
             <Button
               fullWidth
               variant={item.variant}

@@ -18,7 +18,7 @@ const NodeFolder = ({ node }: { node: RecommendNode }) => {
           key={it.id}
           sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' } }}
         >
-          <Link href={`/node/${it.id}`}>
+          <Link href={`/node/${it.id}`} prefetch={false}>
             <Stack direction="row" alignItems={'center'} gap={1} sx={{ fontSize: 14, lineHeight: '21px' }}>
               {it.emoji ? <Box sx={{ flexShrink: 0, color: 'text.primary', fontSize: 12 }}>{it.emoji}</Box> : <IconFile sx={{ mt: '-2px' }} />}
               <Ellipsis>{it.name}</Ellipsis>
@@ -27,7 +27,7 @@ const NodeFolder = ({ node }: { node: RecommendNode }) => {
         </Box>)}
     </Box>
     <Stack direction="row" gap={2} justifyContent="flex-end" sx={{ mt: 2, flexShrink: 0 }}>
-      <Link href={`/node/${children[0]?.id || node.id}`}>
+      <Link href={`/node/${children[0]?.id || node.id}`} prefetch={false}>
         <Box sx={{
           color: 'primary.main', fontSize: 14, ':hover': {
             fontWeight: 'bold'
@@ -41,7 +41,7 @@ const NodeFolder = ({ node }: { node: RecommendNode }) => {
 }
 
 const NodeFile = ({ node }: { node: RecommendNode }) => {
-  return <Link href={`/node/${node.id}`}>
+  return <Link href={`/node/${node.id}`} prefetch={false}>
     <Stack direction="column" justifyContent="space-between" sx={{ cursor: 'pointer', height: '100%' }}>
       <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2, flexShrink: 0 }}>
         {node.emoji ? <Box sx={{ flexShrink: 0, fontSize: 14 }}>{node.emoji}</Box> : <IconFile sx={{ flexShrink: 0 }} />}
