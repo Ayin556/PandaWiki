@@ -2026,11 +2026,7 @@ const docTemplate = `{
                     "description": "nav",
                     "type": "string"
                 },
-                "wechat_app_againt_id": {
-                    "type": "string"
-                },
-                "wechat_app_bot_token": {
-                    "description": "WechatAppBot",
+                "wechat_app_agent_id": {
                     "type": "string"
                 },
                 "wechat_app_corpid": {
@@ -2040,6 +2036,10 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "wechat_app_secret": {
+                    "type": "string"
+                },
+                "wechat_app_token": {
+                    "description": "WechatAppBot",
                     "type": "string"
                 },
                 "welcome_str": {
@@ -2131,11 +2131,7 @@ const docTemplate = `{
                     "description": "nav",
                     "type": "string"
                 },
-                "wechat_app_againt_id": {
-                    "type": "string"
-                },
-                "wechat_app_bot_token": {
-                    "description": "WechatAppBot",
+                "wechat_app_agent_id": {
                     "type": "string"
                 },
                 "wechat_app_corpid": {
@@ -2145,6 +2141,10 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "wechat_app_secret": {
+                    "type": "string"
+                },
+                "wechat_app_token": {
+                    "description": "WechatAppBot",
                     "type": "string"
                 },
                 "welcome_str": {

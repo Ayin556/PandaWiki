@@ -94,16 +94,16 @@ definitions:
       title:
         description: nav
         type: string
-      wechat_app_againt_id:
-        type: string
-      wechat_app_bot_token:
-        description: WechatAppBot
+      wechat_app_agent_id:
         type: string
       wechat_app_corpid:
         type: string
       wechat_app_encodingaeskey:
         type: string
       wechat_app_secret:
+        type: string
+      wechat_app_token:
+        description: WechatAppBot
         type: string
       welcome_str:
         description: welcome
@@ -164,16 +164,16 @@ definitions:
       title:
         description: nav
         type: string
-      wechat_app_againt_id:
-        type: string
-      wechat_app_bot_token:
-        description: WechatAppBot
+      wechat_app_agent_id:
         type: string
       wechat_app_corpid:
         type: string
       wechat_app_encodingaeskey:
         type: string
       wechat_app_secret:
+        type: string
+      wechat_app_token:
+        description: WechatAppBot
         type: string
       welcome_str:
         description: welcome

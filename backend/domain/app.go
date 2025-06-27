@@ -63,11 +63,11 @@ type AppSettings struct {
 	FeishuBotAppID     string `json:"feishu_bot_app_id,omitempty"`
 	FeishuBotAppSecret string `json:"feishu_bot_app_secret,omitempty"`
 	// WechatAppBot
-	WeChatAppToken          string `json:"wechat_app_bot_token,omitempty"`
+	WeChatAppToken          string `json:"wechat_app_token,omitempty"`
 	WeChatAppEncodingAESKey string `json:"wechat_app_encodingaeskey,omitempty"`
 	WeChatAppCorpID         string `json:"wechat_app_corpid,omitempty"`
 	WeChatAppSecret         string `json:"wechat_app_secret,omitempty"`
-	WeChatAppAgantID        string `json:"wechat_app_againt_id,omitempty"`
+	WeChatAppAgentID        string `json:"wechat_app_agent_id,omitempty"`
 
 	// theme
 	ThemeMode string `json:"theme_mode,omitempty"`
@@ -153,11 +153,11 @@ type AppSettingsResp struct {
 	FeishuBotAppSecret string `json:"feishu_bot_app_secret,omitempty"`
 
 	// WechatAppBot
-	WeChatAppToken          string `json:"wechat_app_bot_token,omitempty"`
+	WeChatAppToken          string `json:"wechat_app_token,omitempty"`
 	WeChatAppEncodingAESKey string `json:"wechat_app_encodingaeskey,omitempty"`
 	WeChatAppCorpID         string `json:"wechat_app_corpid,omitempty"`
 	WeChatAppSecret         string `json:"wechat_app_secret,omitempty"`
-	WeChatAppAgantID        string `json:"wechat_app_againt_id,omitempty"`
+	WeChatAppAgentID        string `json:"wechat_app_agent_id,omitempty"`
 
 	// theme
 	ThemeMode string `json:"theme_mode,omitempty"`
