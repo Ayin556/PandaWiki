@@ -1046,18 +1046,12 @@ definitions:
       last_access:
         type: string
     type: object
-  domain.WikiJSPage:
+  domain.WikiJSResp:
     properties:
       content:
         type: string
-      contentType:
-        type: string
-      description:
-        type: string
       id:
         type: integer
-      render:
-        type: string
       title:
         type: string
     type: object
@@ -1428,7 +1422,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/domain.WikiJSPage'
+                    $ref: '#/definitions/domain.WikiJSResp'
                   type: array
               type: object
       summary: AnalysisExportFile

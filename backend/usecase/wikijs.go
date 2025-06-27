@@ -34,7 +34,7 @@ func NewWikiJSUsecase(logger *log.Logger, minioClient *s3.MinioClient) *WikiJSUs
 	}
 }
 
-func (u *WikiJSUsecase) AnalysisExportFile(ctx context.Context, data []byte, kbID string) (*[]domain.WikiJSPage, error) {
+func (u *WikiJSUsecase) AnalysisExportFile(ctx context.Context, data []byte, kbID string) (*[]domain.WikiJSResp, error) {
 	zipReader, err := zip.NewReader(bytes.NewReader(data), int64(len(data)))
 	if err != nil {
 		return nil, err
@@ -59,7 +59,7 @@ func (u *WikiJSUsecase) AnalysisExportFile(ctx context.Context, data []byte, kbI
 			continue
 		}
 
-		u.logger.Debug("upload file", log.String("name", name))
+		u.logger.Info("upload file", log.String("name", name))
 		ext := filepath.Ext(name)
 		imgName := fmt.Sprintf("%s/%s%s", kbID, uuid.New().String(), ext)
 		osspath := fmt.Sprintf("%s/%s", domain.Bucket, imgName)
@@ -119,8 +119,15 @@ func (u *WikiJSUsecase) AnalysisExportFile(ctx context.Context, data []byte, kbI
 		}
 	default:
 	}
-
-	return pages, nil
+	var res []domain.WikiJSResp
+	for _, page := range *pages {
+		res = append(res, domain.WikiJSResp{
+			Id:      page.Id,
+			Title:   page.Title,
+			Content: page.Render,
+		})
+	}
+	return &res, nil
 }
 
 // 正则表达式匹配 <a href=""> 和 <img src="">

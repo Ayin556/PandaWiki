@@ -270,7 +270,7 @@ func (h *CrawlerHandler) QpubConvert(c echo.Context) error {
 //	@Produce		json
 //	@Param			file	formData	file	true	"file"
 //	@Param			kb_id	formData	string	true	"kb_id"
-//	@Success		200		{object}	domain.Response{data=[]domain.WikiJSPage}
+//	@Success		200		{object}	domain.Response{data=[]domain.WikiJSResp}
 //	@Router			/api/v1/crawler/wikijs/analysis_export_file [post]
 func (h *CrawlerHandler) AnalysisExportFile(c echo.Context) error {
 	f, err := c.FormFile("file")
