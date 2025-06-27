@@ -30,20 +30,6 @@ const gilory = localFont({
   ],
 });
 
-const puhuiti = localFont({
-  variable: '--font-puhuiti',
-  src: [
-    {
-      path: '../assets/fonts/AlibabaPuHuiTi-Bold.ttf',
-      weight: '700',
-    },
-    {
-      path: '../assets/fonts/AlibabaPuHuiTi-Regular.ttf',
-      weight: '400',
-    },
-  ],
-});
-
 const getKBDetailCached = cache(async (kb_id: string) => {
   const result = await apiClient.serverGetKBInfo(kb_id);
   if (result.error) {
@@ -121,7 +107,7 @@ export default async function RootLayout({
           <>{parse(kbDetail.settings.head_code, options)}</>
         )}
       </head>
-      <body className={`${gilory.variable} ${puhuiti.variable}`}>
+      <body className={`${gilory.variable}`}>
         <ThemeProvider theme={themeMode === 'dark' ? darkTheme : lightTheme}>
           <AppRouterCacheProvider>
             <StoreProvider

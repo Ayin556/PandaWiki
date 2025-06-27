@@ -48,7 +48,7 @@ const lightTheme = createTheme(
           root: {
             borderRadius: '10px !important',
             // backgroundColor: 'var(--mui-palette-background-default)',
-            fontFamily: 'var(--font-gilory), var(--font-puhuiti)',
+            fontFamily: 'var(--font-gilory)',
             '.MuiOutlinedInput-notchedOutline': {
               borderColor: 'transparent',
             },
@@ -69,21 +69,21 @@ const lightTheme = createTheme(
       MuiButtonBase: {
         styleOverrides: {
           root: {
-            fontFamily: 'var(--font-gilory), var(--font-puhuiti)',
+            fontFamily: 'var(--font-gilory)',
           },
         },
       },
       MuiMenuItem: {
         styleOverrides: {
           root: {
-            fontFamily: 'var(--font-gilory), var(--font-puhuiti)',
+            fontFamily: 'var(--font-gilory)',
           },
         },
       },
       MuiButton: {
         styleOverrides: {
           root: {
-            fontFamily: 'var(--font-gilory), var(--font-puhuiti)',
+            fontFamily: 'var(--font-gilory)',
             boxShadow: 'none',
             textTransform: 'none',
             fontWeight: 700,
@@ -214,7 +214,7 @@ const darkTheme = createTheme(
           root: {
             borderRadius: '10px !important',
             backgroundColor: 'var(--mui-palette-background-default)',
-            fontFamily: 'var(--font-gilory), var(--font-puhuiti)',
+            fontFamily: 'var(--font-gilory)',
             '.MuiOutlinedInput-notchedOutline': {
               borderColor: 'transparent',
             },
@@ -235,21 +235,21 @@ const darkTheme = createTheme(
       MuiButtonBase: {
         styleOverrides: {
           root: {
-            fontFamily: 'var(--font-gilory), var(--font-puhuiti)',
+            fontFamily: 'var(--font-gilory)',
           },
         },
       },
       MuiMenuItem: {
         styleOverrides: {
           root: {
-            fontFamily: 'var(--font-gilory), var(--font-puhuiti)',
+            fontFamily: 'var(--font-gilory)',
           },
         },
       },
       MuiButton: {
         styleOverrides: {
           root: {
-            fontFamily: 'var(--font-gilory), var(--font-puhuiti)',
+            fontFamily: 'var(--font-gilory)',
             boxShadow: 'none',
             textTransform: 'none',
             fontWeight: 700,
