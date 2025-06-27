@@ -30,7 +30,7 @@ const SearchResult = ({ list, loading }: { list: ChunkResultItem[], loading: boo
         borderBottom: '1px dashed',
         borderColor: 'divider',
       }}>
-        <Link href={`/node/${item.node_id}`} target="_blank">
+        <Link href={`/node/${item.node_id}`} target="_blank" prefetch={false}>
           <Stack direction='row' alignItems='center' gap={3} justifyContent='space-between' sx={(theme) => ({
             borderRadius: '10px',
             py: '14px',
