@@ -28,7 +28,7 @@ func (u *AppUsecase) VerifiyUrl(ctx context.Context, signature, timestamp, nonce
 		appres.Settings.WeChatAppEncodingAESKey,
 		KbId,
 		appres.Settings.WeChatAppSecret,
-		appres.Settings.WeChatAppAgantID,
+		appres.Settings.WeChatAppAgentID,
 	)
 
 	if err != nil {
@@ -60,7 +60,7 @@ func (u *AppUsecase) Wechat(ctx context.Context, signature, timestamp, nonce str
 		appres.Settings.WeChatAppEncodingAESKey,
 		KbId,
 		appres.Settings.WeChatAppSecret,
-		appres.Settings.WeChatAppAgantID,
+		appres.Settings.WeChatAppAgentID,
 	)
 
 	if err != nil {
@@ -95,7 +95,7 @@ func (u *AppUsecase) SendImmediateResponse(ctx context.Context, signature, times
 		appres.Settings.WeChatAppEncodingAESKey,
 		kbID,
 		appres.Settings.WeChatAppSecret,
-		appres.Settings.WeChatAppAgantID,
+		appres.Settings.WeChatAppAgentID,
 	)
 
 	u.logger.Debug("wechat app info", log.Any("app", appres))
@@ -108,7 +108,7 @@ func (u *AppUsecase) SendImmediateResponse(ctx context.Context, signature, times
 	decryptMsg, errCode := wxcpt.DecryptMsg(signature, timestamp, nonce, body)
 
 	if errCode != nil {
-		return nil, fmt.Errorf("Decryp Msg failed: %v", errCode)
+		return nil, fmt.Errorf("DecrypMsg failed: %v", errCode)
 	}
 
 	var msg wechat.ReceivedMessage

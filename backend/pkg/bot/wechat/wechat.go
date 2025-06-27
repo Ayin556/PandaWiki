@@ -99,7 +99,7 @@ func (cfg *WechatConfig) Wechat(signature, timestamp, nonce string, body []byte,
 	var decryptMsg []byte
 	decryptMsg, errCode := wxcpt.DecryptMsg(signature, timestamp, nonce, body)
 	if errCode != nil {
-		return errors.New("Decrypt Message failed")
+		return errors.New("failed to Decrypt Message")
 	}
 
 	var msg ReceivedMessage
@@ -236,7 +236,7 @@ func (cfg *WechatConfig) GetAccessToken() (string, error) {
 	}
 
 	if tokenResp.Errcode != 0 {
-		return "", errors.New("get wechat accesstoken failed!")
+		return "", errors.New("get wechat access token failed")
 	}
 
 	// succcess
