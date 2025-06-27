@@ -12,7 +12,7 @@ import {
   SimpleTreeItemWrapper,
   TreeItemComponentProps
 } from "dnd-kit-sortable-tree";
-import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import TreeMenu from "./TreeMenu";
 
 const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeItem>>((props, ref) => {
@@ -23,7 +23,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
 
   if (!context) throw new Error("TreeItem 必须在 AppContext.Provider 内部使用");
 
-  const { items, setItems, ui = 'move', selected = [], onSelectChange, readOnly, supportSelect = false, menu, relativeSelect = true } = context;
+  const { items, setItems, ui = 'move', selected = [], onSelectChange, readOnly, supportSelect = false, menu, relativeSelect = true, refresh } = context;
 
   const [value, setValue] = useState(item.name)
   const [emoji, setEmoji] = useState(item.emoji)
@@ -113,6 +113,13 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
     }
   }, [isEditting]);
 
+  const menuList = useMemo(() => {
+    if (menu) {
+      return menu({ item, createItem, renameItem, isEditting, removeItem }) || []
+    }
+    return []
+  }, [item, isEditting, createItem, renameItem, removeItem])
+
   return <Box sx={treeSx(supportSelect, ui)}>
     <Stack direction="row" alignItems={'center'} gap={2} onClick={(e) => e.stopPropagation()}>
       {supportSelect && <Checkbox
@@ -188,15 +195,20 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
                   createNode({ name: value, content: '', kb_id: id, parent_id: item.parentId, type: item.type, emoji }).then((res) => {
                     Message.success('创建成功')
                     const temp = [...items];
-                    updateTree(temp, item.id, {
+                    const newItem = {
                       ...item,
                       id: res.id,
                       name: value,
                       emoji,
                       isEditting: false,
                       updated_at: dayjs().toString(),
-                    });
+                    }
+                    if (item.type === 1) {
+                      newItem.children = []
+                    }
+                    updateTree(temp, item.id, newItem);
                     setItems(temp);
+                    refresh?.()
                   })
                 }
               }}>保存</Button>
@@ -253,7 +265,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
                 </Stack>}
                 <Box sx={{ fontSize: 12, fontFamily: 'monospace', color: 'text.disabled', width: 60, textAlign: 'right' }}>{dayjs(item.updated_at).fromNow()}</Box>
                 <Box onClick={(e) => e.stopPropagation()}>
-                  <TreeMenu menu={menu({ item, createItem, renameItem, isEditting, removeItem })} />
+                  <TreeMenu menu={menuList} />
                 </Box>
               </Stack>
             </>}
