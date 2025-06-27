@@ -86,8 +86,13 @@ func (u *LLMUsecase) GetChatModel(ctx context.Context, model *domain.Model) (mod
 		}
 		return chatModel, nil
 	case domain.ModelProviderBrandOllama:
+		baseUrl, err := utils.URLRemovePath(config.BaseURL)
+		if err != nil {
+			return nil, fmt.Errorf("ollama url parse failed: %w", err)
+		}
+
 		chatModel, err := ollama.NewChatModel(ctx, &ollama.ChatModelConfig{
-			BaseURL: config.BaseURL,
+			BaseURL: baseUrl,
 			Timeout: config.Timeout,
 			Model:   config.Model,
 			Options: &api.Options{
