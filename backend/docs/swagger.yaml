@@ -94,6 +94,17 @@ definitions:
       title:
         description: nav
         type: string
+      wechat_app_againt_id:
+        type: string
+      wechat_app_bot_token:
+        description: WechatAppBot
+        type: string
+      wechat_app_corpid:
+        type: string
+      wechat_app_encodingaeskey:
+        type: string
+      wechat_app_secret:
+        type: string
       welcome_str:
         description: welcome
         type: string
@@ -153,6 +164,17 @@ definitions:
       title:
         description: nav
         type: string
+      wechat_app_againt_id:
+        type: string
+      wechat_app_bot_token:
+        description: WechatAppBot
+        type: string
+      wechat_app_corpid:
+        type: string
+      wechat_app_encodingaeskey:
+        type: string
+      wechat_app_secret:
+        type: string
       welcome_str:
         description: welcome
         type: string
@@ -163,12 +185,14 @@ definitions:
     - 2
     - 3
     - 4
+    - 5
     type: integer
     x-enum-varnames:
     - AppTypeWeb
     - AppTypeWidget
     - AppTypeDingTalkBot
     - AppTypeFeishuBot
+    - AppTypeWechatBot
   domain.BrandGroup:
     properties:
       links:

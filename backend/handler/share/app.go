@@ -1,6 +1,8 @@
 package share
 
 import (
+	"context"
+	"io"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -41,6 +43,10 @@ func NewShareAppHandler(
 			}
 		})
 	share.GET("/web/info", h.GetWebAppInfo)
+
+	share.GET("/wechat/app", h.VerifiyUrl)
+	share.POST("/wechat/app", h.WechatHandler)
+
 	return h
 }
 
@@ -64,4 +70,73 @@ func (h *ShareAppHandler) GetWebAppInfo(c echo.Context) error {
 		return h.NewResponseWithError(c, err.Error(), err)
 	}
 	return h.NewResponseWithData(c, appInfo)
+}
+
+func (h *ShareAppHandler) VerifiyUrl(c echo.Context) error {
+	signature := c.QueryParam("msg_signature")
+	timestamp := c.QueryParam("timestamp")
+	nonce := c.QueryParam("nonce")
+	echostr := c.QueryParam("echostr")
+
+	kbID := c.Request().Header.Get("X-KB-ID")
+
+	if kbID == "" {
+		return h.NewResponseWithError(c, "kb_id is required", nil)
+	}
+
+	if signature == "" || timestamp == "" || nonce == "" || echostr == "" {
+		return h.NewResponseWithError(
+			c, "Verifiy Wechat failed", nil,
+		)
+	}
+
+	ctx := c.Request().Context()
+
+	req, err := h.usecase.VerifiyUrl(ctx, signature, timestamp, nonce, echostr, kbID)
+	if err != nil {
+		return h.NewResponseWithError(c, "VerifyURL failed", err)
+	}
+
+	// success
+	return c.String(http.StatusOK, string(req))
+}
+
+func (h *ShareAppHandler) WechatHandler(c echo.Context) error {
+
+	signature := c.QueryParam("msg_signature")
+	timestamp := c.QueryParam("timestamp")
+	nonce := c.QueryParam("nonce")
+
+	kbID := c.Request().Header.Get("X-KB-ID")
+
+	if kbID == "" {
+		return h.NewResponseWithError(c, "kb_id is required", nil)
+	}
+
+	RemoteIP := ""
+
+	body, err := io.ReadAll(c.Request().Body)
+	if err != nil {
+		h.logger.Error("get request failed", log.Error(err))
+		return h.NewResponseWithError(c, "Internal Server Error", err)
+	}
+	defer c.Request().Body.Close()
+
+	ctx := c.Request().Context()
+
+	immediateResponse, err := h.usecase.SendImmediateResponse(ctx, signature, timestamp, nonce, body, kbID)
+	if err != nil {
+		h.logger.Error("send response failed", log.Error(err))
+		return h.NewResponseWithError(c, "Failed to send immediate response", err)
+	}
+
+	go func(signature, timestamp, nonce string, body []byte, KbId string, remoteip string) {
+		ctx := context.Background()
+		err := h.usecase.Wechat(ctx, signature, timestamp, nonce, body, KbId, remoteip)
+		if err != nil {
+			h.logger.Error("wechat async failed")
+		}
+	}(signature, timestamp, nonce, body, kbID, RemoteIP)
+
+	return c.XMLBlob(http.StatusOK, []byte(immediateResponse))
 }

@@ -15,6 +15,7 @@ const (
 	AppTypeWidget
 	AppTypeDingTalkBot
 	AppTypeFeishuBot
+	AppTypeWechatBot
 )
 
 var AppTypes = []AppType{
@@ -22,6 +23,7 @@ var AppTypes = []AppType{
 	AppTypeWidget,
 	AppTypeDingTalkBot,
 	AppTypeFeishuBot,
+	AppTypeWechatBot,
 }
 
 type App struct {
@@ -60,6 +62,13 @@ type AppSettings struct {
 	// FeishuBot
 	FeishuBotAppID     string `json:"feishu_bot_app_id,omitempty"`
 	FeishuBotAppSecret string `json:"feishu_bot_app_secret,omitempty"`
+	// WechatAppBot
+	WeChatAppToken          string `json:"wechat_app_bot_token,omitempty"`
+	WeChatAppEncodingAESKey string `json:"wechat_app_encodingaeskey,omitempty"`
+	WeChatAppCorpID         string `json:"wechat_app_corpid,omitempty"`
+	WeChatAppSecret         string `json:"wechat_app_secret,omitempty"`
+	WeChatAppAgantID        string `json:"wechat_app_againt_id,omitempty"`
+
 	// theme
 	ThemeMode string `json:"theme_mode,omitempty"`
 	// catalog settings
@@ -142,6 +151,14 @@ type AppSettingsResp struct {
 	// FeishuBot
 	FeishuBotAppID     string `json:"feishu_bot_app_id,omitempty"`
 	FeishuBotAppSecret string `json:"feishu_bot_app_secret,omitempty"`
+
+	// WechatAppBot
+	WeChatAppToken          string `json:"wechat_app_bot_token,omitempty"`
+	WeChatAppEncodingAESKey string `json:"wechat_app_encodingaeskey,omitempty"`
+	WeChatAppCorpID         string `json:"wechat_app_corpid,omitempty"`
+	WeChatAppSecret         string `json:"wechat_app_secret,omitempty"`
+	WeChatAppAgantID        string `json:"wechat_app_againt_id,omitempty"`
+
 	// theme
 	ThemeMode string `json:"theme_mode,omitempty"`
 	// catalog settings
@@ -169,7 +186,7 @@ type UpdateAppReq struct {
 
 type CreateAppReq struct {
 	Name string  `json:"name"`
-	Type AppType `json:"type" validate:"required,oneof=1 2 3 4"`
+	Type AppType `json:"type" validate:"required,oneof=1 2 3 4 5"`
 	Icon string  `json:"icon"`
 	KBID string  `json:"kb_id" validate:"required"`
 }
