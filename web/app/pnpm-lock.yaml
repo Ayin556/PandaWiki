@@ -36,8 +36,8 @@ importers:
         specifier: 2.0.0
         version: 2.0.0(d0c6686b4a5b9df7ba3a87507f759a53)
       ct-tiptap-editor:
-        specifier: 0.5.16
-        version: 0.5.16(@types/react@19.1.4)(prosemirror-view@1.39.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: 0.6.5
+        version: 0.6.5(@types/react@19.1.4)(prosemirror-view@1.39.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
@@ -1282,8 +1282,8 @@ packages:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
 
-  ct-tiptap-editor@0.5.16:
-    resolution: {integrity: sha512-FgR56vx1APU1L2N2yiIrjoKAntrYxk98bs+5dsXq9YQ8+ujeahimZYhYRGyfpYNPXP0FWJastxk8w/G+/l12Aw==}
+  ct-tiptap-editor@0.6.5:
+    resolution: {integrity: sha512-hNv/QCUUjyX/RXVvDcbSJuAna2nOE184S7iHIYvRB2JIPBGggPQqktuYnwsdxR9yiaYo6+Krj/83t+i0fMX5dQ==}
     peerDependencies:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
@@ -4087,7 +4087,7 @@ snapshots:
       react-dom: 19.1.0(react@19.1.0)
       react-virtuoso: 4.12.7(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
 
-  ct-tiptap-editor@0.5.16(@types/react@19.1.4)(prosemirror-view@1.39.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+  ct-tiptap-editor@0.6.5(@types/react@19.1.4)(prosemirror-view@1.39.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       '@emotion/react': 11.14.0(@types/react@19.1.4)(react@19.1.0)
       '@emotion/styled': 11.14.0(@emotion/react@11.14.0(@types/react@19.1.4)(react@19.1.0))(@types/react@19.1.4)(react@19.1.0)
