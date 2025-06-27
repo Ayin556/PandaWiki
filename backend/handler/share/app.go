@@ -44,8 +44,8 @@ func NewShareAppHandler(
 		})
 	share.GET("/web/info", h.GetWebAppInfo)
 
-	share.GET("/wechatApp", h.VerifiyUrl)
-	share.POST("/wechatApp", h.WechatHandler)
+	share.GET("/wechat/app", h.VerifiyUrl)
+	share.POST("/wechat/app", h.WechatHandler)
 
 	return h
 }
@@ -113,7 +113,7 @@ func (h *ShareAppHandler) WechatHandler(c echo.Context) error {
 		return h.NewResponseWithError(c, "kb_id is required", nil)
 	}
 
-	RemoteIP := c.RealIP()
+	RemoteIP := ""
 
 	body, err := io.ReadAll(c.Request().Body)
 	if err != nil {

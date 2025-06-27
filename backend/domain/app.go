@@ -66,8 +66,8 @@ type AppSettings struct {
 	WeChatAppToken          string `json:"wechat_app_bot_token,omitempty"`
 	WeChatAppEncodingAESKey string `json:"wechat_app_encodingaeskey,omitempty"`
 	WeChatAppCorpID         string `json:"wechat_app_corpid,omitempty"`
-	WeChatAppSecret         string `json:"we_app_secret,omitempty"`
-	WeChatAppAgantID        string `json:"we_app_againt_id,omitempty"`
+	WeChatAppSecret         string `json:"wechat_app_secret,omitempty"`
+	WeChatAppAgantID        string `json:"wechat_app_againt_id,omitempty"`
 
 	// theme
 	ThemeMode string `json:"theme_mode,omitempty"`
@@ -156,8 +156,8 @@ type AppSettingsResp struct {
 	WeChatAppToken          string `json:"wechat_app_bot_token,omitempty"`
 	WeChatAppEncodingAESKey string `json:"wechat_app_encodingaeskey,omitempty"`
 	WeChatAppCorpID         string `json:"wechat_app_corpid,omitempty"`
-	WeChatAppSecret         string `json:"we_app_secret,omitempty"`
-	WeChatAppAgantID        string `json:"we_app_againt_id,omitempty"`
+	WeChatAppSecret         string `json:"wechat_app_secret,omitempty"`
+	WeChatAppAgantID        string `json:"wechat_app_againt_id,omitempty"`
 
 	// theme
 	ThemeMode string `json:"theme_mode,omitempty"`

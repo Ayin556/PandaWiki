@@ -19,7 +19,7 @@ func (u *AppUsecase) VerifiyUrl(ctx context.Context, signature, timestamp, nonce
 		u.logger.Error("find Appdetail failed")
 	}
 
-	u.logger.Info("拿到了map中的第一个企业微信机器人的消息", appres)
+	u.logger.Debug("wechat app info", log.Any("info", appres))
 
 	wc, err := wechat.NewWechatConfig(
 		ctx,
@@ -67,7 +67,7 @@ func (u *AppUsecase) Wechat(ctx context.Context, signature, timestamp, nonce str
 		u.logger.Error("failed to create WechatConfig", log.Error(err))
 		return err
 	}
-	u.logger.Info("remote ip :", remoteip)
+	u.logger.Info("remote ip", log.String("ip", remoteip))
 
 	// use ai
 	getQA := u.wechatQAFunc(KbId, appres.Type, remoteip)
@@ -98,7 +98,7 @@ func (u *AppUsecase) SendImmediateResponse(ctx context.Context, signature, times
 		appres.Settings.WeChatAppAgantID,
 	)
 
-	u.logger.Info("sendimi wechat-bot:", appres)
+	u.logger.Debug("wechat app info", log.Any("app", appres))
 
 	if err != nil {
 		return nil, err
