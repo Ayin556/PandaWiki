@@ -580,7 +580,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/domain.WikiJSPage"
+                                                "$ref": "#/definitions/domain.WikiJSResp"
                                             }
                                         }
                                     }
@@ -3448,23 +3448,14 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.WikiJSPage": {
+        "domain.WikiJSResp": {
             "type": "object",
             "properties": {
                 "content": {
                     "type": "string"
                 },
-                "contentType": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "integer"
-                },
-                "render": {
-                    "type": "string"
                 },
                 "title": {
                     "type": "string"
