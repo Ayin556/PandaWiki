@@ -1,6 +1,6 @@
 import { useStore } from '@/provider';
 import { addOpacityToColor, copyText } from '@/utils';
-import { Box, IconButton, useTheme } from '@mui/material';
+import { Box, Dialog, IconButton, useTheme } from '@mui/material';
 import { Icon } from 'ct-mui';
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
@@ -20,6 +20,8 @@ const MarkDown = ({ loading = false, content }: MarkDownProps) => {
   const theme = useTheme();
   const { themeMode = 'light' } = useStore();
   const [showThink, setShowThink] = useState(false)
+  const [previewOpen, setPreviewOpen] = useState(false)
+  const [previewImgSrc, setPreviewImgSrc] = useState('')
 
   let answer = content
   if (!answer.includes('\n\n</think>')) {
@@ -91,7 +93,7 @@ const MarkDown = ({ loading = false, content }: MarkDownProps) => {
           </div>
         },
         error: (props: React.HTMLAttributes<HTMLElement>) => {
-          return <div className='chat-error' {...props}></div>
+          return <span className='chat-error' {...props}></span>
         },
         h1: (props: React.HTMLAttributes<HTMLHeadingElement>) => <h2 {...props} />,
         a: ({ children, style, ...rest }: React.HTMLAttributes<HTMLAnchorElement>) => (
@@ -110,6 +112,10 @@ const MarkDown = ({ loading = false, content }: MarkDownProps) => {
         ),
         img: (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
           const { style, alt, src, width, height, ...rest } = props;
+          const handleClick = () => {
+            setPreviewImgSrc(src as string)
+            setPreviewOpen(true)
+          }
           return (
             <img
               alt={alt || 'markdown-img'}
@@ -124,6 +130,7 @@ const MarkDown = ({ loading = false, content }: MarkDownProps) => {
                 boxShadow: '0px 0px 3px 1px rgba(0,0,5,0.15)',
                 cursor: 'pointer',
               }}
+              onClick={handleClick}
               referrerPolicy='no-referrer'
             />
           );
@@ -154,6 +161,18 @@ const MarkDown = ({ loading = false, content }: MarkDownProps) => {
     >
       {answer}
     </ReactMarkdown>
+    <Dialog sx={{
+      '.MuiDialog-paper': {
+        maxWidth: '95vw',
+        maxHeight: '95vh',
+      }
+    }} open={previewOpen} onClose={() => {
+      setPreviewOpen(false)
+    }}>
+      <img onClick={() => {
+        setPreviewOpen(false)
+      }} src={previewImgSrc} alt="preview" style={{ width: '100%', height: '100%' }} />
+    </Dialog>
   </Box>
 }
 
