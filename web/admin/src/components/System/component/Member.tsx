@@ -46,7 +46,7 @@ const Member = () => {
       render: (_: string, record: UserInfo) => <Stack direction={'row'} gap={2}>
         {record.account === 'admin' ? <Tooltip arrow title={<Box>
           <Stack direction={'row'} alignItems={'center'} gap={1} sx={{ mb: 1 }}>
-            请修改安装目录下
+            修改安装目录下
             <Box sx={{ fontFamily: 'Gbold', bgcolor: 'background.paper', px: 1.5, py: 0.25, borderRadius: '4px', color: 'text.primary' }}>
               .env
             </Box>
@@ -54,13 +54,14 @@ const Member = () => {
             <Box sx={{ fontFamily: 'Gbold', bgcolor: 'background.paper', px: 1.5, py: 0.25, borderRadius: '4px', color: 'text.primary' }}>
               ADMIN_PASSWORD
             </Box>
+            后，
           </Stack>
           <Stack direction={'row'} alignItems={'center'} gap={1}>
-            并重启
+            执行
             <Box sx={{ fontFamily: 'Gbold', bgcolor: 'background.paper', px: 1.5, py: 0.25, borderRadius: '4px', color: 'text.primary' }}>
-              panda-wiki-api
+              docker compose up -d
             </Box>
-            容器使更改生效。
+            即可生效。
           </Stack>
         </Box>}>
           <Button size='small' sx={{ color: 'text.auxiliary', cursor: 'not-allowed', p: 0, minWidth: 'auto' }}>修改密码</Button>
