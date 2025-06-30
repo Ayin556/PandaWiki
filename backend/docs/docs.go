@@ -2018,6 +2018,9 @@ const docTemplate = `{
                 "search_placeholder": {
                     "type": "string"
                 },
+                "theme_and_style": {
+                    "$ref": "#/definitions/domain.ThemeAndStyle"
+                },
                 "theme_mode": {
                     "description": "theme",
                     "type": "string"
@@ -2122,6 +2125,9 @@ const docTemplate = `{
                 },
                 "search_placeholder": {
                     "type": "string"
+                },
+                "theme_and_style": {
+                    "$ref": "#/definitions/domain.ThemeAndStyle"
                 },
                 "theme_mode": {
                     "description": "theme",
@@ -3326,6 +3332,14 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "text": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.ThemeAndStyle": {
+            "type": "object",
+            "properties": {
+                "bg_image": {
                     "type": "string"
                 }
             }

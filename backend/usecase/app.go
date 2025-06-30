@@ -264,7 +264,8 @@ func (u *AppUsecase) GetAppDetailByKBIDAndAppType(ctx context.Context, kbID stri
 		WeChatAppAgentID:        app.Settings.WeChatAppAgentID,
 
 		// theme
-		ThemeMode: app.Settings.ThemeMode,
+		ThemeMode:     app.Settings.ThemeMode,
+		ThemeAndStyle: app.Settings.ThemeAndStyle,
 		// catalog settings
 		CatalogSettings: app.Settings.CatalogSettings,
 		// footer settings
@@ -304,7 +305,8 @@ func (u *AppUsecase) GetWebAppInfo(ctx context.Context, kbID string) (*domain.Ap
 			HeadCode:           app.Settings.HeadCode,
 			BodyCode:           app.Settings.BodyCode,
 			// theme
-			ThemeMode: app.Settings.ThemeMode,
+			ThemeMode:     app.Settings.ThemeMode,
+			ThemeAndStyle: app.Settings.ThemeAndStyle,
 			// catalog settings
 			CatalogSettings: app.Settings.CatalogSettings,
 			// footer settings
