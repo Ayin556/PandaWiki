@@ -43,6 +43,10 @@ export interface CatalogSetting {
   catalog_width: number,
 }
 
+export interface ThemeAndStyleSetting {
+  bg_image: string
+}
+
 export interface KBDetail {
   name: string,
   settings: {
@@ -62,6 +66,7 @@ export interface KBDetail {
     simple_auth?: AuthSetting | null,
     footer_settings?: FooterSetting | null,
     catalog_settings?: CatalogSetting | null,
+    theme_and_style?: ThemeAndStyleSetting | null,
   },
   recommend_nodes: RecommendNode[]
 }

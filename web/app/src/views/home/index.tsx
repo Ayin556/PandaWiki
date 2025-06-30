@@ -1,5 +1,7 @@
 "use client";
 
+import DarkBG from "@/assets/images/dark-bgi.png";
+import LightBG from "@/assets/images/light-bgi.png";
 import { IconSearch } from "@/components/icons";
 import { useStore } from "@/provider";
 import { Box, TextField } from "@mui/material";
@@ -9,11 +11,13 @@ import CatalogH5 from "../node/CatalogH5";
 import NodeList from "./NodeList";
 import QuestionList from "./QuestionList";
 
+
 const Home = () => {
   const { mobile = false, kbDetail, themeMode = 'light', catalogShow, nodeList } = useStore()
 
   const catalogSetting = kbDetail?.settings?.catalog_settings
   const footerSetting = kbDetail?.settings?.footer_settings
+  const themeAndStyleSetting = kbDetail?.settings?.theme_and_style
   const [footerHeight, setFooterHeight] = useState(0);
 
   const [searchText, setSearchText] = useState("");
@@ -63,20 +67,26 @@ const Home = () => {
   };
 
   return <Box sx={{
-    pt: 18,
+    pt: 8,
     ml: catalogShow ? `${catalogSetting?.catalog_width ?? 260}px` : '16px',
     minHeight: `calc(100vh - ${footerHeight + 1}px)`,
     ...(mobile && {
       ml: 0,
-      pt: nodeList ? 22 : 13,
+      pt: nodeList ? 14 : 5,
     }),
   }}>
     <Box sx={{
-      maxWidth: '1200px',
-      mx: 'auto',
+      pt: 10,
+      pb: 5,
+      backgroundImage: `url(${themeAndStyleSetting?.bg_image || (themeMode === 'dark' ? DarkBG.src : LightBG.src)})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
     }}>
       {nodeList && mobile && <CatalogH5 nodes={nodeList} />}
       <Box sx={{
+        maxWidth: '1200px',
+        mx: 'auto',
         color: 'text.primary',
         fontSize: '40px',
         textAlign: 'center',
@@ -132,8 +142,8 @@ const Home = () => {
         />
       </Box>
       {!mobile && <QuestionList />}
-      <NodeList />
     </Box>
+    <NodeList />
   </Box>
 };
 
