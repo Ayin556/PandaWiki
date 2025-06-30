@@ -70,11 +70,16 @@ type AppSettings struct {
 	WeChatAppAgentID        string `json:"wechat_app_agent_id,omitempty"`
 
 	// theme
-	ThemeMode string `json:"theme_mode,omitempty"`
+	ThemeMode     string        `json:"theme_mode,omitempty"`
+	ThemeAndStyle ThemeAndStyle `json:"theme_and_style"`
 	// catalog settings
 	CatalogSettings CatalogSettings `json:"catalog_settings"`
 	// footer settings
 	FooterSettings FooterSettings `json:"footer_settings"`
+}
+
+type ThemeAndStyle struct {
+	BGImage string `json:"bg_image,omitempty"`
 }
 
 type CatalogSettings struct {
@@ -160,7 +165,8 @@ type AppSettingsResp struct {
 	WeChatAppAgentID        string `json:"wechat_app_agent_id,omitempty"`
 
 	// theme
-	ThemeMode string `json:"theme_mode,omitempty"`
+	ThemeMode     string        `json:"theme_mode,omitempty"`
+	ThemeAndStyle ThemeAndStyle `json:"theme_and_style"`
 	// catalog settings
 	CatalogSettings CatalogSettings `json:"catalog_settings"`
 	// footer settings

@@ -88,6 +88,8 @@ definitions:
         type: array
       search_placeholder:
         type: string
+      theme_and_style:
+        $ref: '#/definitions/domain.ThemeAndStyle'
       theme_mode:
         description: theme
         type: string
@@ -158,6 +160,8 @@ definitions:
         type: array
       search_placeholder:
         type: string
+      theme_and_style:
+        $ref: '#/definitions/domain.ThemeAndStyle'
       theme_mode:
         description: theme
         type: string
@@ -967,6 +971,11 @@ definitions:
         type: string
     required:
     - text
+    type: object
+  domain.ThemeAndStyle:
+    properties:
+      bg_image:
+        type: string
     type: object
   domain.UpdateAppReq:
     properties:
