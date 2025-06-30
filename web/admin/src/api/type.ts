@@ -274,7 +274,11 @@ export type CustomCodeSetting = {
   body_code: string
 }
 
-export type StyleSetting = {
+export type ThemeAndStyleSetting = {
+  bg_image: string
+}
+
+export type ThemeMode = {
   theme_mode: 'light' | 'dark'
 }
 
@@ -307,7 +311,9 @@ export type AppSetting = HeaderSetting &
   DingBotSetting &
   WecomBotSetting &
   FeishuBotSetting &
-  StyleSetting & {
+  ThemeMode & {
+    theme_and_style: ThemeAndStyleSetting
+  } & {
     footer_settings: FooterSetting,
     catalog_settings: CatalogSetting,
     base_url: string

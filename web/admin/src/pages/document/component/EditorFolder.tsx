@@ -3,11 +3,15 @@ import { convertToTree } from "@/constant/drag"
 import { useAppSelector } from "@/store"
 import { Box, Stack } from "@mui/material"
 import { Ellipsis, Icon } from "ct-mui"
-import { UseTiptapEditorReturn } from "ct-tiptap-editor"
 import { useCallback, useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 
-const EditorFolder = ({ editorRef, content, save }: { editorRef: UseTiptapEditorReturn, content: string, save: (auto?: boolean) => void }) => {
+interface EditorFolderProps {
+  edited: boolean
+  save: (auto?: boolean) => void
+}
+
+const EditorFolder = ({ edited, save }: EditorFolderProps) => {
   const { id } = useParams()
   const navigate = useNavigate()
   const { kb_id } = useAppSelector(state => state.config)
@@ -64,12 +68,7 @@ const EditorFolder = ({ editorRef, content, save }: { editorRef: UseTiptapEditor
             if (item.type === 1) {
               toggleFolder(item.id)
             } else {
-              if (editorRef) {
-                const html = editorRef.editor.getHTML() || ''
-                if (html !== content) {
-                  await save(true)
-                }
-              }
+              if (edited) await save(true)
               navigate(`/doc/editor/${item.id}`)
             }
           }}

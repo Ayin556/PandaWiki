@@ -96,10 +96,10 @@ export default function StoreProvider({
   }, [kbDetail]);
 
   useEffect(() => {
-    if (!initialNodeList && kb_id && getAuthStatus(kb_id)) {
+    if (!initialNodeList && !nodeList && kb_id && getAuthStatus(kb_id)) {
       fetchNodeList();
     }
-  }, [kb_id, initialNodeList]);
+  }, [kb_id]);
 
   return <StoreContext.Provider
     value={{

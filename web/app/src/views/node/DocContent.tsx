@@ -70,16 +70,6 @@ const DocContent = ({ info, editorRef }: { info?: NodeDetail, editorRef: UseTipt
     </Stack>
     <Box sx={{
       mt: 3,
-      // .tiptap.ProseMirror {
-      //   --blockquote-bg-color: var(--tt-gray-light-900);
-      //   --link-text-color: var(--tt-brand-color-500);
-      //   --separator-color: var(--tt-gray-light-a-200);
-      //   --thread-text: var(--tt-gray-light-900);
-      //   --placeholder-color: var(--tt-gray-light-a-400);
-      //   --tiptap-mathematics-bg-color: var(--tt-gray-light-a-200);
-      //   --tiptap-mathematics-border-color: var(--tt-brand-color-500);
-      // }
-
       '.tiptap.ProseMirror': {
         color: 'text.primary',
       }

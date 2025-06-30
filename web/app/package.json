@@ -18,7 +18,7 @@
     "@mui/material-nextjs": "^7.1.0",
     "axios": "^1.9.0",
     "ct-mui": "2.0.0",
-    "ct-tiptap-editor": "0.6.12",
+    "ct-tiptap-editor": "0.6.17",
     "dayjs": "^1.11.13",
     "html-react-parser": "^5.2.5",
     "next": "15.3.2",

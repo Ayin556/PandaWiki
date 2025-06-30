@@ -1,5 +1,6 @@
 import { updateAppDetail } from "@/api"
-import { AppDetail, StyleSetting } from "@/api/type"
+import { AppDetail, ThemeAndStyleSetting, ThemeMode } from "@/api/type"
+import UploadFile from "@/components/UploadFile"
 import { Box, Button, MenuItem, Select, Stack } from "@mui/material"
 import { Message } from "ct-mui"
 import { useEffect, useState } from "react"
@@ -8,22 +9,27 @@ import { Controller, useForm } from "react-hook-form"
 interface CardStyleProps {
   id: string
   data: AppDetail
-  refresh: (value: StyleSetting) => void
+  refresh: (value: ThemeMode & ThemeAndStyleSetting) => void
 }
 
 const CardStyle = ({ id, data, refresh }: CardStyleProps) => {
   const [isEdit, setIsEdit] = useState(false)
-  const { control, handleSubmit, setValue } = useForm<StyleSetting>({
+  const { control, handleSubmit, setValue } = useForm<ThemeMode & ThemeAndStyleSetting>({
     defaultValues: {
       theme_mode: 'light',
+      bg_image: '',
     }
   })
 
-  const onSubmit = (value: StyleSetting) => {
+  const onSubmit = (value: ThemeMode & ThemeAndStyleSetting) => {
     updateAppDetail({ id }, {
       settings: {
         ...data.settings,
-        ...value
+        theme_mode: value.theme_mode,
+        theme_and_style: {
+          ...data.settings?.theme_and_style,
+          bg_image: value.bg_image
+        },
       }
     }).then(() => {
       refresh(value)
@@ -34,6 +40,7 @@ const CardStyle = ({ id, data, refresh }: CardStyleProps) => {
 
   useEffect(() => {
     setValue('theme_mode', data.settings?.theme_mode)
+    setValue('bg_image', data.settings?.theme_and_style?.bg_image)
   }, [data])
 
   return <>
@@ -55,22 +62,42 @@ const CardStyle = ({ id, data, refresh }: CardStyleProps) => {
       }}>样式与风格</Box>
       {isEdit && <Button variant="contained" size="small" onClick={handleSubmit(onSubmit)}>保存</Button>}
     </Stack>
-    <Box sx={{ fontSize: 14, lineHeight: '32px', mx: 2, mb: 1 }}>配色方案</Box>
-    <Controller
-      control={control}
-      name="theme_mode"
-      render={({ field }) => <Select
-        {...field}
-        sx={{ mx: 2, width: 'calc(100% - 32px)', height: 52 }}
-        onChange={(e) => {
-          field.onChange(e.target.value as 'light' | 'dark')
-          setIsEdit(true)
-        }}
-      >
-        <MenuItem value='light'>浅色模式</MenuItem>
-        <MenuItem value='dark'>深色模式</MenuItem>
-      </Select>}
-    />
+    <Box sx={{ mx: 2 }}>
+      <Box sx={{ fontSize: 14, lineHeight: '32px', mb: 1 }}>配色方案</Box>
+      <Controller
+        control={control}
+        name="theme_mode"
+        render={({ field }) => <Select
+          {...field}
+          sx={{ width: '100%', height: 52 }}
+          onChange={(e) => {
+            field.onChange(e.target.value as 'light' | 'dark')
+            setIsEdit(true)
+          }}
+        >
+          <MenuItem value='light'>浅色模式</MenuItem>
+          <MenuItem value='dark'>深色模式</MenuItem>
+        </Select>}
+      />
+      <Box sx={{ my: 1, fontSize: 14, lineHeight: '32px' }}>
+        背景图片
+      </Box>
+      <Controller
+        control={control}
+        name="bg_image"
+        render={({ field }) => <UploadFile
+          {...field}
+          id="bg_image"
+          type="url"
+          accept="image/*"
+          width={80}
+          onChange={(url) => {
+            field.onChange(url)
+            setIsEdit(true)
+          }}
+        />}
+      />
+    </Box>
   </>
 }
 

@@ -33,6 +33,7 @@ const Doc = ({ node: defaultNode, token }: { node?: NodeDetail, token?: string }
   const editorRef = useTiptapEditor({
     content: node?.content || '',
     editable: false,
+    immediatelyRender: false,
   })
 
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -54,9 +55,7 @@ const Doc = ({ node: defaultNode, token }: { node?: NodeDetail, token?: string }
 
   useEffect(() => {
     // 延迟获取高度，确保 DOM 已渲染
-    const timer = setTimeout(() => {
-      getFooterHeight();
-    }, 100);
+    const timer = setTimeout(getFooterHeight, 100);
 
     // 监听窗口大小变化，重新计算高度
     const handleResize = () => {
@@ -96,10 +95,12 @@ const Doc = ({ node: defaultNode, token }: { node?: NodeDetail, token?: string }
   }, [node])
 
   useEffect(() => {
-    if (!firstRequest) getData(id || '')
+    if (!firstRequest && !defaultNode) {
+      getData(id || '')
+    }
     setFirstRequest(false)
     window.scrollTo({ top: 0, behavior: 'smooth' })
-  }, [id])
+  }, [id, defaultNode])
 
   if (mobile) {
     return <Box sx={{ mt: '60px', position: 'relative', zIndex: 1 }}>
@@ -107,19 +108,20 @@ const Doc = ({ node: defaultNode, token }: { node?: NodeDetail, token?: string }
         <Header />
         {nodeList && <CatalogH5 nodes={nodeList} />}
         <Box sx={{ height: 24 }} />
-        {node ? <DocContent info={node} editorRef={editorRef} /> : <Stack direction='column' alignItems='center' justifyContent='center' sx={{
-          height: 600,
-        }}>
-          <Image src={NotData.src} alt='not data' width={423} height={232} />
-          <Box sx={{
-            fontSize: 14,
-            color: 'text.secondary',
-            textAlign: 'center',
-            mt: 2,
+        {node ? <DocContent info={node} editorRef={editorRef} />
+          : <Stack direction='column' alignItems='center' justifyContent='center' sx={{
+            height: 600,
           }}>
-            文档不存在
-          </Box>
-        </Stack>}
+            <Image src={NotData.src} alt='not data' width={423} height={232} />
+            <Box sx={{
+              fontSize: 14,
+              color: 'text.secondary',
+              textAlign: 'center',
+              mt: 2,
+            }}>
+              文档不存在
+            </Box>
+          </Stack>}
       </Box>
       <Box sx={{
         mt: 5,

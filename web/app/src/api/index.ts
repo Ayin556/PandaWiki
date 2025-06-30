@@ -39,7 +39,9 @@ class ApiClient {
       ...headers,
     };
     const fullUrl = url.startsWith('http') ? url : `${this.baseURL}${url}`;
-    console.log('🍎 request url >>>', fullUrl)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🍎 request url >>>', fullUrl)
+    }
     try {
       const response = await fetch(fullUrl, {
         ...options,
