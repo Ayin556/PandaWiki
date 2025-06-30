@@ -21,7 +21,6 @@ const QuestionList = () => {
     gap={2}
     sx={{
       mt: 3,
-      mb: 10,
       px: 10,
       ...(mobile && {
         px: 0,

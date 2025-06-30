@@ -45,7 +45,11 @@ const CardWeb = ({ kb, refresh }: CardWebProps) => {
           ...info,
           settings: {
             ...info.settings,
-            ...value,
+            theme_mode: value.theme_mode,
+            theme_and_style: {
+              ...info.settings?.theme_and_style,
+              bg_image: value.bg_image
+            },
           }
         })
       }}

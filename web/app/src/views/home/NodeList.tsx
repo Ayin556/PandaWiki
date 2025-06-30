@@ -12,13 +12,12 @@ const NodeList = () => {
     alignItems={mobile ? "center" : "stretch"}
     gap={2}
     sx={{
-      mt: '60px',
+      mt: 5,
       pb: 10,
       px: 10,
       ...(mobile && {
         gap: 2,
         px: 0,
-        mt: 5,
       }),
     }}
   >

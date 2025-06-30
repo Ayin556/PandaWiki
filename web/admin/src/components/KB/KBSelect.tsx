@@ -89,7 +89,7 @@ const KBSelect = () => {
         '&:hover': {
           bgcolor: custom.selectedMenuItemBgColor,
         }
-      }} fullWidth onClick={(event) => {
+      }} fullWidth disabled={kbList.length > 0} onClick={(event) => {
         event.stopPropagation()
         dispatch(setKbC(true))
       }}

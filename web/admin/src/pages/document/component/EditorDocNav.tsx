@@ -65,13 +65,6 @@ const EditorDocNav = ({ title, headers }: EditorDocNavProps) => {
       msOverflowStyle: 'none',
       scrollbarWidth: 'none',
     }}>
-      {!!title && <Ellipsis arrow sx={{
-        fontSize: 14,
-        fontWeight: 'bold',
-        color: 'text.secondary',
-      }}>
-        {title}
-      </Ellipsis>}
       {headers.filter(header => levels.includes(header.heading)).map(header => {
         const idx = levels.indexOf(header.heading)
         return <Stack key={header.id} direction={'row'} alignItems={'center'} gap={1} sx={{
@@ -79,7 +72,7 @@ const EditorDocNav = ({ title, headers }: EditorDocNavProps) => {
           ':hover': {
             color: 'primary.main',
           },
-          ml: (idx + 1) * 2,
+          ml: idx * 2,
           ...HeadingSx[idx],
           color: activeId === header.id ? 'primary.main' : HeadingSx[idx]?.color ?? 'inherit'
         }} onClick={() => {

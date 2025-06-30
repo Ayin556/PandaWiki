@@ -38,8 +38,7 @@ const DocEditor = () => {
 
   const handleSave = async (auto?: boolean, publish?: boolean) => {
     if (!editorRef || !detail) return
-    const { editor } = editorRef
-    const content = editor.getHTML()
+    const content = editorRef.getHtml()
     try {
       await updateNode({ id, content, kb_id: detail.kb_id })
       if (auto === true) Message.success('自动保存成功')
@@ -71,9 +70,10 @@ const DocEditor = () => {
 
   const editorRef = useTiptapEditor({
     content: '',
-    onSave: () => handleSave(),
+    immediatelyRender: true,
     aiUrl: '/api/v1/creation/text',
     onUpload: handleUpload,
+    onSave: () => handleSave(),
     onUpdate: () => setEdited(true),
     onError: (error: Error) => {
       Message.error(error.message)
@@ -83,8 +83,6 @@ const DocEditor = () => {
   useEffect(() => {
     if (timer.current) clearTimeout(timer.current)
     if (detail && editorRef) {
-      const content = editorRef.editor.getHTML()
-      if (content === detail.content) return
       editorRef.setContent(detail.content || '').then((headings) => {
         setHeadings(headings)
         setMaxH(Math.min(...headings.map(h => h.heading)))
@@ -101,7 +99,7 @@ const DocEditor = () => {
   useEffect(() => {
     if (id) getDetail()
     const handleVisibilityChange = () => {
-      if (document.hidden) {
+      if (document.hidden && edited) {
         handleSave(true)
       }
     }
@@ -128,10 +126,15 @@ const DocEditor = () => {
         borderColor: 'divider',
         py: 1,
       }}>
-        <EditorHeader edited={edited} editorRef={editorRef} detail={detail} onSave={(auto, publish) => handleSave(auto, publish)} refresh={async () => {
-          await handleSave(false)
-          getDetail()
-        }} />
+        <EditorHeader
+          edited={edited}
+          detail={detail}
+          editorRef={editorRef}
+          onSave={(auto, publish) => handleSave(auto, publish)}
+          refresh={async () => {
+            await handleSave(false)
+            getDetail()
+          }} />
       </Box>
       <TiptapToolbar editorRef={editorRef} />
     </Box>
@@ -147,7 +150,10 @@ const DocEditor = () => {
         zIndex: 1,
         mr: 1,
       }}>
-        <EditorFolder editorRef={editorRef} content={detail?.content || ''} save={handleSave} />
+        <EditorFolder
+          edited={edited}
+          save={handleSave}
+        />
       </Box>
       <Box className='editor-content' sx={{
         width: 800,
@@ -177,11 +183,20 @@ const DocEditor = () => {
             name={detail?.name || ''}
             summary={detail?.meta.summary || ''}
           />
-          <EditorDocNav title={detail?.name} headers={headings} maxH={maxH} />
+          <EditorDocNav
+            title={detail?.name}
+            headers={headings}
+            maxH={maxH}
+          />
         </Stack>
       </Stack>
     </Stack>
-    <VersionPublish open={publishOpen} defaultSelected={[id]} onClose={() => setPublishOpen(false)} refresh={() => getDetail()} />
+    <VersionPublish
+      open={publishOpen}
+      defaultSelected={[id]}
+      onClose={() => setPublishOpen(false)}
+      refresh={() => getDetail()}
+    />
   </Box>
 }
 
