@@ -68,7 +68,7 @@ const DocContent = ({ info, editorRef }: { info?: NodeDetail, editorRef: UseTipt
         {info?.updated_at && info.updated_at.slice(0, 1) !== '0' && <Box>{dayjs(info.updated_at).fromNow()}更新</Box>}
       </Stack>
     </Stack>
-    <Box sx={{
+    <Box className="editor-container" sx={{
       mt: 3,
       '.tiptap.ProseMirror': {
         color: 'text.primary',
