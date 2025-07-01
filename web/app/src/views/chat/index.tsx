@@ -221,7 +221,7 @@ const Chat = () => {
           borderColor: 'divider',
           borderRadius: '10px',
           p: 3,
-          bgcolor: themeMode === 'dark' ? 'background.paper' : 'background.default',
+          bgcolor: 'background.paper',
         }}>
           <Box sx={{
             fontSize: '20px',

@@ -42,7 +42,6 @@ const Catalog = () => {
     {!catalogShow ? <Box sx={{
       width: 16,
       height: '100vh',
-      bgcolor: 'background.paper',
       borderRight: '1px solid',
       borderColor: 'divider',
       position: 'fixed',
@@ -58,7 +57,6 @@ const Catalog = () => {
       borderColor: 'divider',
       lineHeight: '22px',
       color: 'text.primary',
-      bgcolor: 'background.paper',
     }}>
       <Box sx={{
         px: 2,

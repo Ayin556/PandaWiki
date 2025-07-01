@@ -9,7 +9,7 @@ const lightTheme = createTheme(
     palette: {
       mode: 'light',
       primary: {
-        main: '#6E73FE',
+        main: '#3248F2',
       },
       error: {
         main: '#F64E54',
@@ -47,7 +47,6 @@ const lightTheme = createTheme(
         styleOverrides: {
           root: {
             borderRadius: '10px !important',
-            // backgroundColor: 'var(--mui-palette-background-default)',
             fontFamily: 'var(--font-gilory)',
             '.MuiOutlinedInput-notchedOutline': {
               borderColor: 'transparent',
@@ -82,22 +81,49 @@ const lightTheme = createTheme(
       },
       MuiButton: {
         styleOverrides: {
-          root: {
-            fontFamily: 'var(--font-gilory)',
-            boxShadow: 'none',
-            textTransform: 'none',
-            fontWeight: 700,
-            borderRadius: '6px',
-            '&:hover': {
-              boxShadow: 'none',
-            },
+          root: ({ ownerState }: { ownerState: any }) => {
+            return {
+              height: '36px',
+              fontSize: 14,
+              lineHeight: '36px',
+              paddingLeft: '16px',
+              paddingRight: '16px',
+              boxShadow: "none",
+              transition: 'all 0.2s ease-in-out',
+              borderRadius: '10px',
+              fontWeight: '400',
+              ...(ownerState.variant === 'contained' && {
+                color: 'var(--mui-palette-primary-contrastText)',
+                backgroundColor: 'var(--mui-palette-text-primary)',
+              }),
+              ...(ownerState.variant === 'text' && {
+              }),
+              ...(ownerState.variant === 'outlined' && {
+                color: 'var(--mui-palette-text-primary)',
+                border: `1px solid var(--mui-palette-text-primary)`,
+              }),
+              ...(ownerState.disabled === true && {
+                cursor: 'not-allowed !important',
+              }),
+              ...(ownerState.size === 'small' && {
+                height: '32px',
+                lineHeight: '32px',
+              }),
+              "&:hover": {
+                boxShadow: 'none',
+                ...(ownerState.variant === 'text' && {
+                  backgroundColor: 'var(--mui-palette-background-paper2)',
+                }),
+              },
+            };
           },
-          outlined: {
-            borderColor: 'var(--mui-palette-primary-main)',
-            '&:hover': {
-              borderColor: 'var(--mui-palette-primary-main)',
-            },
-          },
+          startIcon: {
+            marginLeft: 0,
+            marginRight: 8,
+            '>*:nth-of-type(1)': {
+              fontSize: 14,
+            }
+          }
         },
       },
       MuiLink: {
@@ -127,10 +153,11 @@ const lightTheme = createTheme(
           root: {
             margin: 0,
             padding: 0,
-            paddingBottom: '8px',
             minHeight: '0 !important',
+            transition: 'all 0.3s',
             '&.Mui-expanded': {
               minHeight: 0,
+              paddingBottom: '8px',
             },
             '&:before': {
               display: 'none',
@@ -168,7 +195,7 @@ const darkTheme = createTheme(
     palette: {
       mode: 'dark',
       primary: {
-        main: '#6E73FE',
+        main: '#3248F2',
       },
       error: {
         main: '#F64E54',

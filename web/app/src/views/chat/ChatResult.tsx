@@ -68,9 +68,11 @@ const ChatResult = ({ conversation, answer, loading, thinking, onSearch, handleS
     }}>
       {conversation.map((item, index) => (
         <Accordion key={index} defaultExpanded={true} sx={{
-          bgcolor: 'background.default',
+          bgcolor: themeMode === 'dark' ? 'background.default' : 'background.paper',
         }}>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ fontSize: 24 }} />} sx={{
+            userSelect: 'text',
+          }}>
             <Box sx={{ fontWeight: '700', lineHeight: '24px' }}>
               {item.q}
             </Box>

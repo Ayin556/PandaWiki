@@ -15,6 +15,8 @@ const NodeList = () => {
       mt: 5,
       pb: 10,
       px: 10,
+      maxWidth: '1200px',
+      mx: 'auto',
       ...(mobile && {
         gap: 2,
         px: 0,

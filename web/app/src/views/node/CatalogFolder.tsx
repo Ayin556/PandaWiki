@@ -19,9 +19,8 @@ const CatalogFolder = ({ item, depth = 1 }: { item: ITreeItem, depth?: number })
       cursor: 'pointer',
       borderRadius: '10px',
       color: activeId === item.id ? 'primary.main' : 'inherit',
-      fontWeight: activeId === item.id ? 'bold' : 'normal',
       '&:hover': {
-        bgcolor: themeMode === 'dark' ? '#394052' : 'background.default'
+        bgcolor: themeMode === 'dark' ? '#394052' : 'background.paper'
       }
     }} onClick={() => {
       setIsExpanded(!isExpanded)
