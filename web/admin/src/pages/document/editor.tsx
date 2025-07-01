@@ -25,6 +25,7 @@ const DocEditor = () => {
   const getDetail = () => {
     getNodeDetail({ id }).then(res => {
       setDetail(res)
+      setEdited(false)
       dispatch(setKbId(res.kb_id))
     })
   }
