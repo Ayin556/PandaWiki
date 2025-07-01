@@ -2241,6 +2241,19 @@ const docTemplate = `{
                     "description": "WechatAppBot",
                     "type": "string"
                 },
+                "wechat_service_corpid": {
+                    "type": "string"
+                },
+                "wechat_service_encodingaeskey": {
+                    "type": "string"
+                },
+                "wechat_service_secret": {
+                    "type": "string"
+                },
+                "wechat_service_token": {
+                    "description": "WechatServiceBot",
+                    "type": "string"
+                },
                 "welcome_str": {
                     "description": "welcome",
                     "type": "string"
@@ -2349,6 +2362,19 @@ const docTemplate = `{
                     "description": "WechatAppBot",
                     "type": "string"
                 },
+                "wechat_service_corpid": {
+                    "type": "string"
+                },
+                "wechat_service_encodingaeskey": {
+                    "type": "string"
+                },
+                "wechat_service_secret": {
+                    "type": "string"
+                },
+                "wechat_service_token": {
+                    "description": "WechatServiceBot",
+                    "type": "string"
+                },
                 "welcome_str": {
                     "description": "welcome",
                     "type": "string"
@@ -2362,14 +2388,16 @@ const docTemplate = `{
                 2,
                 3,
                 4,
-                5
+                5,
+                6
             ],
             "x-enum-varnames": [
                 "AppTypeWeb",
                 "AppTypeWidget",
                 "AppTypeDingTalkBot",
                 "AppTypeFeishuBot",
-                "AppTypeWechatBot"
+                "AppTypeWechatBot",
+                "AppTypeWechatServiceBot"
             ]
         },
         "domain.BrandGroup": {

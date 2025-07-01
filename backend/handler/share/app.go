@@ -6,9 +6,12 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/sbzhu/weworkapi_golang/wxbizmsgcrypt"
 
+	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/handler"
 	"github.com/chaitin/panda-wiki/log"
+	"github.com/chaitin/panda-wiki/pkg/bot/wechatservice"
 	"github.com/chaitin/panda-wiki/usecase"
 )
 
@@ -44,8 +47,12 @@ func NewShareAppHandler(
 		})
 	share.GET("/web/info", h.GetWebAppInfo)
 
-	share.GET("/wechat/app", h.VerifiyUrl)
-	share.POST("/wechat/app", h.WechatHandler)
+	share.GET("/wechat/app", h.VerifyUrlWechatApp)
+	share.POST("/wechat/app", h.WechatHandlerApp)
+
+	// 微信客服
+	share.GET("/wechat/service", h.VerifyUrlWechatService)
+	share.POST("/wechat/service", h.WechatHandlerService)
 
 	return h
 }
@@ -72,7 +79,7 @@ func (h *ShareAppHandler) GetWebAppInfo(c echo.Context) error {
 	return h.NewResponseWithData(c, appInfo)
 }
 
-func (h *ShareAppHandler) VerifiyUrl(c echo.Context) error {
+func (h *ShareAppHandler) VerifyUrlWechatApp(c echo.Context) error {
 	signature := c.QueryParam("msg_signature")
 	timestamp := c.QueryParam("timestamp")
 	nonce := c.QueryParam("nonce")
@@ -92,7 +99,7 @@ func (h *ShareAppHandler) VerifiyUrl(c echo.Context) error {
 
 	ctx := c.Request().Context()
 
-	req, err := h.usecase.VerifiyUrl(ctx, signature, timestamp, nonce, echostr, kbID)
+	req, err := h.usecase.VerifyUrlWechatAPP(ctx, signature, timestamp, nonce, echostr, kbID)
 	if err != nil {
 		return h.NewResponseWithError(c, "VerifyURL failed", err)
 	}
@@ -101,7 +108,7 @@ func (h *ShareAppHandler) VerifiyUrl(c echo.Context) error {
 	return c.String(http.StatusOK, string(req))
 }
 
-func (h *ShareAppHandler) WechatHandler(c echo.Context) error {
+func (h *ShareAppHandler) WechatHandlerApp(c echo.Context) error {
 
 	signature := c.QueryParam("msg_signature")
 	timestamp := c.QueryParam("timestamp")
@@ -139,4 +146,107 @@ func (h *ShareAppHandler) WechatHandler(c echo.Context) error {
 	}(signature, timestamp, nonce, body, kbID, RemoteIP)
 
 	return c.XMLBlob(http.StatusOK, []byte(immediateResponse))
+}
+
+// 验证微信客服消息
+func (h *ShareAppHandler) VerifyUrlWechatService(c echo.Context) error {
+
+	signature := c.QueryParam("msg_signature")
+	timestamp := c.QueryParam("timestamp")
+	nonce := c.QueryParam("nonce")
+	echostr := c.QueryParam("echostr")
+
+	kbID := c.Request().Header.Get("X-KB-ID")
+
+	if kbID == "" {
+		return h.NewResponseWithError(c, "kb_id is required", nil)
+	}
+
+	if signature == "" || timestamp == "" || nonce == "" || echostr == "" {
+		return h.NewResponseWithError(
+			c, "Verifiy Wechat_Service failed", nil,
+		)
+	}
+
+	ctx := c.Request().Context()
+
+	req, err := h.usecase.VerifyUrlWechatService(ctx, signature, timestamp, nonce, echostr, kbID)
+	if err != nil {
+		return h.NewResponseWithError(c, "VerifyURL_Service failed", err)
+	}
+
+	// success
+	return c.String(http.StatusOK, string(req))
+}
+
+// 处理用户的请求，客服回复消息
+func (h *ShareAppHandler) WechatHandlerService(c echo.Context) error {
+
+	signature := c.QueryParam("msg_signature")
+	timestamp := c.QueryParam("timestamp")
+	nonce := c.QueryParam("nonce")
+
+	kbID := c.Request().Header.Get("X-KB-ID")
+
+	if kbID == "" {
+		return h.NewResponseWithError(c, "kb_id is required", nil)
+	}
+
+	body, err := io.ReadAll(c.Request().Body)
+	if err != nil {
+		h.logger.Error("get request failed", log.Error(err))
+		return h.NewResponseWithError(c, "Internal Server Error", err)
+	}
+	defer c.Request().Body.Close()
+
+	ctx := c.Request().Context()
+
+	// 查找数据库，找到对应的app配置
+	appres, err := h.usecase.GetAppDetailByKBIDAndAppType(ctx, kbID, domain.AppTypeWechatServiceBot)
+
+	if err != nil {
+		h.logger.Error("GetAppDetailByKBIDAndAppType failed", log.Error(err))
+		return h.NewResponseWithError(c, "GetAppDetailByKBIDAndAppType failed", err)
+	}
+
+	// 创建一个wechatservice对象
+	WechatServiceConf, err := h.usecase.NewWechatServiceConfig(context.Background(), appres, kbID)
+
+	h.logger.Info("wechat service config", log.Any("wechatservice config", WechatServiceConf))
+
+	if err != nil {
+		return h.NewResponseWithError(c, "New WechatServiceConfig failed", err)
+	}
+
+	// 解密消息
+	wxcpt := wxbizmsgcrypt.NewWXBizMsgCrypt(WechatServiceConf.Token, WechatServiceConf.EncodingAESKey, WechatServiceConf.CorpID, wxbizmsgcrypt.XmlType)
+	decryptMsg, errCode := wxcpt.DecryptMsg(signature, timestamp, nonce, body)
+	if errCode != nil {
+		h.logger.Error("DecrypMsg failed", log.Any("decrypMsg err", errCode))
+		return h.NewResponseWithError(c, "DecrypMsg failed", nil)
+	}
+	// 解密成功了
+	h.logger.Info("收到了用户发送或者事件的原始消息（解密之后）", log.Any("decrypMsg", decryptMsg))
+
+	// 反序列化
+	msg, err := WechatServiceConf.UnmarshalMsg(decryptMsg)
+	if err != nil {
+		h.logger.Error("UnamrshalMsg failed", log.Error(err))
+		return h.NewResponseWithError(c, "UnamrshalMsg failed", err)
+	}
+
+	// 这个是用户发送的消息
+	h.logger.Info("收到用户消息（提问的问题）用户,事件类型", msg.ToUserName, msg.Event)
+
+	// 没有问题则开启异步拉去用户发给微信客服的消息，并且处理用户的消息
+	go func(WechatServiceConf *wechatservice.WechatServiceConfig, msg *wechatservice.WeixinUserAskMsg, kbID string) {
+		ctx := context.Background()
+		err := h.usecase.Wechat_Service(ctx, msg, kbID, WechatServiceConf)
+		if err != nil {
+			h.logger.Error("wechat async failed", log.Any("Wechat_Service", err))
+		}
+	}(WechatServiceConf, msg, kbID)
+
+	// 先响应
+	return c.JSON(http.StatusOK, "success") // 不会发送给用户，会被微信服务器忽略
 }

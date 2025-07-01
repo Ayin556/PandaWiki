@@ -107,6 +107,15 @@ definitions:
       wechat_app_token:
         description: WechatAppBot
         type: string
+      wechat_service_corpid:
+        type: string
+      wechat_service_encodingaeskey:
+        type: string
+      wechat_service_secret:
+        type: string
+      wechat_service_token:
+        description: WechatServiceBot
+        type: string
       welcome_str:
         description: welcome
         type: string
@@ -179,6 +188,15 @@ definitions:
       wechat_app_token:
         description: WechatAppBot
         type: string
+      wechat_service_corpid:
+        type: string
+      wechat_service_encodingaeskey:
+        type: string
+      wechat_service_secret:
+        type: string
+      wechat_service_token:
+        description: WechatServiceBot
+        type: string
       welcome_str:
         description: welcome
         type: string
@@ -190,6 +208,7 @@ definitions:
     - 3
     - 4
     - 5
+    - 6
     type: integer
     x-enum-varnames:
     - AppTypeWeb
@@ -197,6 +216,7 @@ definitions:
     - AppTypeDingTalkBot
     - AppTypeFeishuBot
     - AppTypeWechatBot
+    - AppTypeWechatServiceBot
   domain.BrandGroup:
     properties:
       links:

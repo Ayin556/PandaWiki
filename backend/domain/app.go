@@ -16,6 +16,7 @@ const (
 	AppTypeDingTalkBot
 	AppTypeFeishuBot
 	AppTypeWechatBot
+	AppTypeWechatServiceBot
 )
 
 var AppTypes = []AppType{
@@ -24,6 +25,7 @@ var AppTypes = []AppType{
 	AppTypeDingTalkBot,
 	AppTypeFeishuBot,
 	AppTypeWechatBot,
+	AppTypeWechatServiceBot,
 }
 
 type App struct {
@@ -68,6 +70,11 @@ type AppSettings struct {
 	WeChatAppCorpID         string `json:"wechat_app_corpid,omitempty"`
 	WeChatAppSecret         string `json:"wechat_app_secret,omitempty"`
 	WeChatAppAgentID        string `json:"wechat_app_agent_id,omitempty"`
+	// WechatServiceBot
+	WeChatServiceToken          string `json:"wechat_service_token,omitempty"`
+	WeChatServiceEncodingAESKey string `json:"wechat_service_encodingaeskey,omitempty"`
+	WeChatServiceCorpID         string `json:"wechat_service_corpid,omitempty"`
+	WeChatServiceSecret         string `json:"wechat_service_secret,omitempty"`
 
 	// theme
 	ThemeMode     string        `json:"theme_mode,omitempty"`
@@ -163,6 +170,12 @@ type AppSettingsResp struct {
 	WeChatAppCorpID         string `json:"wechat_app_corpid,omitempty"`
 	WeChatAppSecret         string `json:"wechat_app_secret,omitempty"`
 	WeChatAppAgentID        string `json:"wechat_app_agent_id,omitempty"`
+
+	// WechatServiceBot
+	WeChatServiceToken          string `json:"wechat_service_token,omitempty"`
+	WeChatServiceEncodingAESKey string `json:"wechat_service_encodingaeskey,omitempty"`
+	WeChatServiceCorpID         string `json:"wechat_service_corpid,omitempty"`
+	WeChatServiceSecret         string `json:"wechat_service_secret,omitempty"`
 
 	// theme
 	ThemeMode     string        `json:"theme_mode,omitempty"`
