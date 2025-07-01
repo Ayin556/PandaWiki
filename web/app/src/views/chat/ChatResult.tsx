@@ -70,7 +70,9 @@ const ChatResult = ({ conversation, answer, loading, thinking, onSearch, handleS
         <Accordion key={index} defaultExpanded={true} sx={{
           bgcolor: 'background.default',
         }}>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{
+            userSelect: 'text',
+          }}>
             <Box sx={{ fontWeight: '700', lineHeight: '24px' }}>
               {item.q}
             </Box>
