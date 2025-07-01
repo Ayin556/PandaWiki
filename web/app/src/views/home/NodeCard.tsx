@@ -19,7 +19,7 @@ const NodeFolder = ({ node }: { node: RecommendNode }) => {
           sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' } }}
         >
           <Link href={`/node/${it.id}`} prefetch={false}>
-            <Stack direction="row" alignItems={'center'} gap={1} sx={{ fontSize: 14, lineHeight: '21px' }}>
+            <Stack direction="row" alignItems={'center'} gap={1} sx={{ fontSize: 14, lineHeight: '24px' }}>
               {it.emoji ? <Box sx={{ flexShrink: 0, color: 'text.primary', fontSize: 12 }}>{it.emoji}</Box> : <IconFile sx={{ mt: '-2px' }} />}
               <Ellipsis>{it.name}</Ellipsis>
             </Stack>
@@ -48,7 +48,7 @@ const NodeFile = ({ node }: { node: RecommendNode }) => {
         <Ellipsis sx={{ fontSize: '18px', lineHeight: '26px' }}>{node.name}</Ellipsis>
       </Stack>
       <Box sx={{ flex: 1 }}>
-        {node.summary ? <Box className="ellipsis-4" sx={{ color: 'text.secondary', fontSize: 14 }}>{node.summary}</Box>
+        {node.summary ? <Box className="ellipsis-4" sx={{ color: 'text.secondary', fontSize: 14, lineHeight: '24px' }}>{node.summary}</Box>
           : <Box sx={{ color: 'text.disabled', fontSize: 14 }}>暂无摘要</Box>}
       </Box>
       <Stack direction="row" gap={2} justifyContent="flex-end" sx={{ mt: 2, flexShrink: 0 }}>
