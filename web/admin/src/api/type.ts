@@ -444,3 +444,8 @@ export type ChatConversationItem = {
   role: 'assistant' | 'user',
   content: string,
 }
+
+export type ChatConversationPair = {
+  user: string,
+  assistant: string
+}
