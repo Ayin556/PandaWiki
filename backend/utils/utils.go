@@ -1,14 +1,22 @@
 package utils
 
 import (
+	"bytes"
+	"context"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
+	"os"
 	"path"
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/chaitin/panda-wiki/domain"
+	"github.com/chaitin/panda-wiki/store/s3"
+	"github.com/google/uuid"
+	"github.com/minio/minio-go/v7"
 )
 
 // HTTPGet send http get request
@@ -129,4 +137,85 @@ func RemoveFirstDir(path string) string {
 		return filepath.Join(parts[1:]...)
 	}
 	return path
+}
+
+func UploadImage(ctx context.Context, minioClient *s3.MinioClient, imageURL string, kbID string) (string, error) {
+	if minioClient == nil {
+		return "", fmt.Errorf("minio client is nil")
+	}
+	var data []byte
+	var contentType string
+	if strings.HasPrefix(imageURL, "http://") || strings.HasPrefix(imageURL, "https://") {
+		resp, err := http.Get(imageURL)
+		if err != nil {
+			return "", fmt.Errorf("failed to fetch image: %v", err)
+		}
+		defer resp.Body.Close()
+
+		// 检查状态码
+		if resp.StatusCode != http.StatusOK {
+			return "", fmt.Errorf("HTTP request failed with status: %s", resp.Status)
+		}
+
+		// 读取图片数据
+		data, err = io.ReadAll(resp.Body)
+		if err != nil {
+			return "", fmt.Errorf("failed to read image data: %v", err)
+		}
+
+		// 获取 Content-Type
+		contentType = resp.Header.Get("Content-Type")
+	} else {
+		// 从本地文件系统读取图片
+		var err error
+		data, err = os.ReadFile(imageURL)
+		if err != nil {
+			return "", fmt.Errorf("failed to read image file: %v", err)
+		}
+	}
+
+	// 获取图片名称（从 URL 路径中提取）
+	parsedURL, err := url.Parse(imageURL)
+	if err != nil {
+		return "", fmt.Errorf("failed to parse URL: %v", err)
+	}
+	_, filename := filepath.Split(parsedURL.Path)
+	// 解码可能的 URL 编码（如中文文件名）
+	decodedName, err := url.PathUnescape(filename)
+	if err != nil {
+		decodedName = filename // 如果解码失败，使用原始名称
+	}
+
+	ext := strings.ToLower(filepath.Ext(decodedName))
+	if contentType == "" {
+		// 如果未提供 Content-Type，尝试从文件名推断
+		switch ext {
+		case ".png":
+			contentType = "image/png"
+		case ".jpg", ".jpeg":
+			contentType = "image/jpeg"
+		case ".gif":
+			contentType = "image/gif"
+		case ".webp":
+			contentType = "image/webp"
+		default:
+			contentType = "application/octet-stream" // 未知类型
+		}
+	}
+	imgName := fmt.Sprintf("%s/%s%s", kbID, uuid.New().String(), ext)
+
+	minioClient.PutObject(
+		ctx,
+		domain.Bucket,
+		imgName,
+		bytes.NewReader(data),
+		int64(len(data)),
+		minio.PutObjectOptions{
+			ContentType: contentType,
+			UserMetadata: map[string]string{
+				"originalname": decodedName,
+			},
+		},
+	)
+	return fmt.Sprintf("/%s/%s", domain.Bucket, imgName), nil
 }

@@ -530,6 +530,30 @@ definitions:
     required:
     - kb_id
     type: object
+  domain.GetDocxReq:
+    properties:
+      app_id:
+        type: string
+      app_secret:
+        type: string
+      kb_id:
+        type: string
+      urls:
+        items:
+          type: string
+        type: array
+      user_access_token:
+        type: string
+    required:
+    - kb_id
+    type: object
+  domain.GetDocxResp:
+    properties:
+      content:
+        type: string
+      title:
+        type: string
+    type: object
   domain.GetKBReleaseListResp:
     properties:
       data:
@@ -545,6 +569,22 @@ definitions:
         items:
           $ref: '#/definitions/domain.ProviderModelListItem'
         type: array
+    type: object
+  domain.GetSpaceListReq:
+    properties:
+      app_id:
+        type: string
+      app_secret:
+        type: string
+      user_access_token:
+        type: string
+    type: object
+  domain.GetSpaceListResp:
+    properties:
+      name:
+        type: string
+      space_id:
+        type: string
     type: object
   domain.IPAddress:
     properties:
@@ -955,6 +995,44 @@ definitions:
       title:
         type: string
     type: object
+  domain.SearchDocxReq:
+    properties:
+      app_id:
+        type: string
+      app_secret:
+        type: string
+      user_access_token:
+        type: string
+    type: object
+  domain.SearchDocxResp:
+    properties:
+      name:
+        type: string
+      url:
+        type: string
+    type: object
+  domain.SearchWikiReq:
+    properties:
+      app_id:
+        type: string
+      app_secret:
+        type: string
+      query:
+        type: string
+      space_id:
+        type: string
+      user_access_token:
+        type: string
+    type: object
+  domain.SearchWikiResp:
+    properties:
+      space_id:
+        type: string
+      title:
+        type: string
+      url:
+        type: string
+    type: object
   domain.SimpleAuth:
     properties:
       enabled:
@@ -1287,6 +1365,122 @@ paths:
                   $ref: '#/definitions/domain.EpubResp'
               type: object
       summary: QpubConvert
+      tags:
+      - crawler
+  /api/v1/crawler/feishu/get_doc:
+    post:
+      consumes:
+      - application/json
+      description: Get Docx in Feishu Spaces
+      parameters:
+      - description: Get Docx
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/domain.GetDocxReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.GetDocxResp'
+                  type: array
+              type: object
+      summary: FeishuGetDocx
+      tags:
+      - crawler
+  /api/v1/crawler/feishu/list_doc:
+    post:
+      consumes:
+      - application/json
+      description: List Docx in Feishu Spaces
+      parameters:
+      - description: Search Docx
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/domain.SearchDocxReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.SearchDocxResp'
+                  type: array
+              type: object
+      summary: FeishuListDoc
+      tags:
+      - crawler
+  /api/v1/crawler/feishu/list_spaces:
+    post:
+      consumes:
+      - application/json
+      description: List All Feishu Spaces
+      parameters:
+      - description: List Spaces
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/domain.GetSpaceListReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.GetSpaceListResp'
+                  type: array
+              type: object
+      summary: FeishuListSpaces
+      tags:
+      - crawler
+  /api/v1/crawler/feishu/search_wiki:
+    post:
+      consumes:
+      - application/json
+      description: Search Wiki in Feishu Spaces
+      parameters:
+      - description: Search Wiki
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/domain.SearchWikiReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.SearchWikiResp'
+                  type: array
+              type: object
+      summary: FeishuSearchWiki
       tags:
       - crawler
   /api/v1/crawler/notion/get_doc:
