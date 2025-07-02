@@ -95,6 +95,7 @@ const Header = () => {
           }}
           InputProps={{
             endAdornment: <IconSearch
+              onClick={handleSearch}
               sx={{ cursor: 'pointer', color: 'text.tertiary' }}
             />
           }}
