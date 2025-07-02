@@ -1,4 +1,4 @@
-import { getNodeList, ITreeItem, NodeListFilterData, NodeListItem } from "@/api"
+import { getNodeList, ImportDocType, ITreeItem, NodeListFilterData, NodeListItem } from "@/api"
 import Card from "@/components/Card"
 import DragTree from "@/components/Drag/DragTree"
 import { TreeMenuItem, TreeMenuOptions } from "@/components/Drag/DragTree/TreeMenu"
@@ -11,11 +11,11 @@ import { Icon, MenuSelect } from "ct-mui"
 import { useCallback, useEffect, useState } from "react"
 import VersionPublish from "../release/components/VersionPublish"
 import DocAdd from "./component/DocAdd"
-import DocAddByUrl from "./component/DocAddByUrl"
 import DocDelete from "./component/DocDelete"
 import DocSearch from "./component/DocSearch"
 import DocStatus from "./component/DocStatus"
 import DocSummary from "./component/DocSummary"
+import ImportDoc from "./component/ImportDoc"
 import Summary from "./component/Summary"
 
 const Content = () => {
@@ -41,9 +41,9 @@ const Content = () => {
   const [urlOpen, setUrlOpen] = useState(false)
   const [publishIds, setPublishIds] = useState<string[]>([])
   const [publishOpen, setPublishOpen] = useState(false)
-  const [key, setKey] = useState<'URL' | 'RSS' | 'Sitemap' | 'OfflineFile' | 'Notion' | 'Epub' | 'Wiki.js'>('URL')
+  const [key, setKey] = useState<ImportDocType>('URL')
 
-  const handleUrl = (item: ITreeItem, key: 'URL' | 'RSS' | 'Sitemap' | 'OfflineFile' | 'Notion' | 'Epub' | 'Wiki.js') => {
+  const handleUrl = (item: ITreeItem, key: ImportDocType) => {
     setKey(key)
     setUrlOpen(true)
     setOpraData(list.filter(it => it.id === item.id))
@@ -83,7 +83,8 @@ const Content = () => {
             { label: '通过离线文件导入', key: 'OfflineFile', onClick: () => handleUrl(item, 'OfflineFile') },
             { label: '通过 Notion 导入', key: 'Notion', onClick: () => handleUrl(item, 'Notion') },
             { label: '通过 Epub 导入', key: 'Epub', onClick: () => handleUrl(item, 'Epub') },
-            { label: '通过 Wiki.js 导入', key: 'Wiki.js', onClick: () => handleUrl(item, 'Wiki.js') }
+            { label: '通过 Wiki.js 导入', key: 'Wiki.js', onClick: () => handleUrl(item, 'Wiki.js') },
+            { label: '通过飞书文档导入', key: 'Feishu', onClick: () => handleUrl(item, 'Feishu') }
           ]
         }
       ] : []),
@@ -255,7 +256,7 @@ const Content = () => {
       setSelected([])
       setBatchOpen(false)
     }} data={opraData} refresh={getData} />
-    <DocAddByUrl
+    <ImportDoc
       type={key}
       open={urlOpen}
       onCancel={() => {

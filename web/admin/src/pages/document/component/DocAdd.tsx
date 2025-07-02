@@ -1,9 +1,10 @@
+import { ImportDocType } from "@/api"
 import { addOpacityToColor } from "@/utils"
 import { Box, Button, Stack, useTheme } from "@mui/material"
 import { MenuSelect } from "ct-mui"
 import { useState } from "react"
 import DocAddByCustomText from "./DocAddByCustomText"
-import DocAddByUrl from "./DocAddByUrl"
+import ImportDoc from "./ImportDoc"
 
 interface InputContentProps {
   refresh: () => void
@@ -13,7 +14,7 @@ const DocAdd = ({ refresh }: InputContentProps) => {
   const theme = useTheme()
   const [customDocOpen, setCustomDocOpen] = useState(false)
   const [urlOpen, setUrlOpen] = useState(false)
-  const [key, setKey] = useState<'OfflineFile' | 'URL' | 'RSS' | 'Sitemap' | 'Notion' | 'Epub' | 'Wiki.js'>('URL')
+  const [key, setKey] = useState<ImportDocType>('URL')
   const [docFileKey, setDocFileKey] = useState<1 | 2>(1)
 
   const ImportContentWays = {
@@ -79,6 +80,13 @@ const DocAdd = ({ refresh }: InputContentProps) => {
         setUrlOpen(true)
         setKey('Wiki.js')
       }
+    },
+    Feishu: {
+      label: '通过飞书文档导入',
+      onClick: () => {
+        setUrlOpen(true)
+        setKey('Feishu')
+      }
     }
   }
 
@@ -109,7 +117,7 @@ const DocAdd = ({ refresh }: InputContentProps) => {
     }))} context={<Button variant='contained'>
       创建文档
     </Button>} />
-    <DocAddByUrl type={key} open={urlOpen} refresh={refresh} onCancel={close} />
+    <ImportDoc type={key} open={urlOpen} refresh={refresh} onCancel={close} />
     <DocAddByCustomText type={docFileKey} open={customDocOpen} refresh={refresh} onClose={() => setCustomDocOpen(false)} />
   </Box>
 }

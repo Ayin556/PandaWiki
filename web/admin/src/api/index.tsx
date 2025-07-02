@@ -10,6 +10,7 @@ import {
   GetConversationListData,
   GetModelNameData,
   GetNodeRecommendData,
+  ImportDocByFeishuFormData,
   KnowledgeBaseListItem,
   ModelListItem,
   NodeDetail,
@@ -123,6 +124,18 @@ export const convertEpub = (data: FormData): Promise<{ content: string, title: s
 
 export const parseWikijs = (data: FormData): Promise<{ id: string, content: string, title: string }[]> =>
   request({ url: 'api/v1/crawler/wikijs/analysis_export_file', method: 'post', data })
+
+export const getFeishuKnowledgeBase = (data: ImportDocByFeishuFormData): Promise<{ space_id: string, name: string }[]> =>
+  request({ url: 'api/v1/crawler/feishu/list_spaces', method: 'post', data })
+
+export const getFeishuCloudDocs = (data: ImportDocByFeishuFormData): Promise<{ url: string, name: string }[]> =>
+  request({ url: 'api/v1/crawler/feishu/list_doc', method: 'post', data })
+
+export const getFeishuKBDocById = (data: ImportDocByFeishuFormData & { space_id: string }): Promise<{ space_id: string, title: string, url: string }[]> =>
+  request({ url: 'api/v1/crawler/feishu/search_wiki', method: 'post', data })
+
+export const getFeishuDocDetail = (data: ImportDocByFeishuFormData & { kb_id: string, urls: string[] }): Promise<{ content: string, title: string }[]> =>
+  request({ url: 'api/v1/crawler/feishu/get_doc', method: 'post', data })
 
 // =============================================》file
 

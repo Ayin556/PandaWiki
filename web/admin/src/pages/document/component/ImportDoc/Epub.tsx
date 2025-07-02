@@ -1,26 +1,12 @@
-import { convertEpub, createNode, getNotionIntegration, getNotionIntegrationDetail, parseWikijs, scrapeCrawler, scrapeRSS, scrapeSitemap, uploadFile } from "@/api"
+import { convertEpub, createNode, ImportDocListItem, ImportDocProps } from "@/api"
 import Upload from "@/components/UploadFile/Drag"
 import { useAppSelector } from "@/store"
 import { formatByte } from "@/utils"
 import { Close } from "@mui/icons-material"
-import { Box, Button, Checkbox, CircularProgress, IconButton, LinearProgress, List, ListItem, ListItemText, Skeleton, Stack, TextField, Typography } from "@mui/material"
+import { Box, Button, Checkbox, CircularProgress, IconButton, LinearProgress, List, ListItem, ListItemText, Skeleton, Stack, Typography } from "@mui/material"
 import { Ellipsis, Icon, Message, Modal } from "ct-mui"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { FileRejection } from "react-dropzone"
-
-type DocAddByUrlProps = {
-  type: 'OfflineFile' | 'URL' | 'RSS' | 'Sitemap' | 'Notion' | 'Epub' | 'Wiki.js'
-  parentId?: string | null
-  open: boolean
-  refresh?: () => void
-  onCancel: () => void
-}
-
-const AcceptTypes = {
-  OfflineFile: '.txt, .md, .xls, .xlsx, .docx, .pdf, .html, .epub',
-  Epub: '.epub',
-  'Wiki.js': '.zip',
-}
 
 const StepText = {
   'pull': {
@@ -41,24 +27,12 @@ const StepText = {
   }
 }
 
-type Item = {
-  content: string
-  title: string
-  url: string
-  success: -1 | 0 | 1
-  id: string
-}
-
-const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddByUrlProps) => {
-
+const EpubImport = ({ open, refresh, onCancel, parentId = null }: ImportDocProps) => {
   const { kb_id } = useAppSelector(state => state.config)
   const [step, setStep] = useState<keyof typeof StepText>('pull')
   const [loading, setLoading] = useState(false)
-  const [url, setUrl] = useState('')
-  const [items, setItems] = useState<Item[]>([])
+  const [items, setItems] = useState<ImportDocListItem[]>([])
   const [selectIds, setSelectIds] = useState<string[]>([])
-  const [requestQueue, setRequestQueue] = useState<(() => Promise<any>)[]>([])
-  const [isCancelled, setIsCancelled] = useState(false)
 
   const [acceptedFiles, setAcceptedFiles] = useState<File[]>([])
   const [rejectedFiles, setRejectedFiles] = useState<FileRejection[]>([])
@@ -79,10 +53,7 @@ const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddB
   }
 
   const handleCancel = () => {
-    setIsCancelled(true)
-    setRequestQueue([])
     setStep('pull')
-    setUrl('')
     setItems([])
     setSelectIds([])
     setAcceptedFiles([])
@@ -95,68 +66,25 @@ const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddB
     refresh?.()
   }
 
-  const getUrlByUploadFile = async (file: File, onProgress: (progress: number) => void) => {
-    const formData = new FormData()
-    formData.append("file", file)
-    formData.append("kb_id", kb_id)
-    const response = await uploadFile(formData, {
-      onUploadProgress: (event) => onProgress(event.progress)
-    })
-    return '/static-file/' + response.key
-  }
-
   const handleFile = async () => {
     if (isUploading === 1) return
     setIsUploading(1)
     setCurrentFileIndex(0)
-    const urls: { url: string, title: string }[] = []
     const errorIdx: number[] = []
     try {
-      if (type === 'Epub') {
-        for (let i = 0; i < acceptedFiles.length; i++) {
-          setCurrentFileIndex(i)
-          setUploadProgress(0)
-          try {
-            const formData = new FormData()
-            formData.append("file", acceptedFiles[i])
-            formData.append("kb_id", kb_id)
-            const { content } = await convertEpub(formData)
-            const title = acceptedFiles[i].name.split('.')[0]
-            setItems(prev => [{ title, content, url: title + i, success: -1, id: '' }, ...prev])
-          } catch (error) {
-            errorIdx.push(i)
-            console.error(`文件 ${acceptedFiles[i].name} 转换失败:`, error)
-          }
-        }
-      }
-      if (type === 'Wiki.js') {
-        for (let i = 0; i < acceptedFiles.length; i++) {
+      for (let i = 0; i < acceptedFiles.length; i++) {
+        setCurrentFileIndex(i)
+        setUploadProgress(0)
+        try {
           const formData = new FormData()
           formData.append("file", acceptedFiles[i])
           formData.append("kb_id", kb_id)
-          const pages = await parseWikijs(formData)
-          for (const page of pages) {
-            setItems(prev => [{ url: page.id, title: page.title, content: page.content, success: -1, id: '' }, ...prev])
-          }
-        }
-      }
-      if (type === 'OfflineFile') {
-        for (let i = 0; i < acceptedFiles.length; i++) {
-          setCurrentFileIndex(i)
-          setUploadProgress(0)
-          try {
-            const url = await getUrlByUploadFile(acceptedFiles[i], (progress) => {
-              setUploadProgress(progress)
-            })
-            urls.push({ url, title: acceptedFiles[i].name.split('.')[0] })
-          } catch (error) {
-            errorIdx.push(i)
-            console.error(`文件 ${acceptedFiles[i].name} 上传失败:`, error)
-          }
-        }
-        for (const { url, title } of urls) {
-          const res = await scrapeCrawler({ url, kb_id })
-          setItems(prev => [{ ...res, url, title: title || res.title, success: -1, id: '' }, ...prev])
+          const { content } = await convertEpub(formData)
+          const title = acceptedFiles[i].name.split('.')[0]
+          setItems(prev => [{ title, content, url: title + i, success: -1, id: '' }, ...prev])
+        } catch (error) {
+          errorIdx.push(i)
+          console.error(`文件 ${acceptedFiles[i].name} 转换失败:`, error)
         }
       }
       setStep('import')
@@ -166,83 +94,13 @@ const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddB
     }
   }
 
-  const handleURL = async () => {
-    const newQueue: (() => Promise<any>)[] = []
-    if (type === 'URL') {
-      const urls = url.split('\n')
-      for (const url of urls) {
-        newQueue.push(async () => {
-          const { title, content } = await scrapeCrawler({ url, kb_id })
-          setItems(prev => [{ title: title || url, content, url, success: -1, id: '' }, ...prev])
-        })
-      }
-      setStep('import')
-      setRequestQueue(newQueue)
-    }
-    if (type === 'Sitemap') {
-      const res = await scrapeSitemap({ url })
-      const urls = res.items.map(item => item.url)
-      for (const url of urls) {
-        newQueue.push(async () => {
-          const res = await scrapeCrawler({ url, kb_id })
-          setItems(prev => [{ ...res, url, success: -1, id: '' }, ...prev])
-        })
-      }
-      setStep('import')
-      setRequestQueue(newQueue)
-    }
-    if (type === 'RSS') {
-      const { items = [] } = await scrapeRSS({ url })
-      setItems(items.map(item => ({ title: item.title, content: item.desc, url: item.url, success: -1, id: '' })))
-      setStep('pull-done')
-      setLoading(false)
-    }
-    if (type === 'Notion') {
-      const data = await getNotionIntegration({ integration: url })
-      setItems(data.map(item => ({ title: item.title, content: '', url: item.id, success: -1, id: '' })))
-      setStep('pull-done')
-      setLoading(false)
-    }
-  }
-
-  const handleSelectedExportedData = async () => {
-    const newQueue: (() => Promise<any>)[] = []
-    if (type === 'RSS') {
-      const rssData = items.filter(item => selectIds.includes(item.url))
-      for (const item of rssData) {
-        newQueue.push(async () => {
-          const res = await scrapeCrawler({ url: item.url, kb_id })
-          setItems(prev => [{ ...item, ...res, title: res.title || item.title, success: -1, id: '' }, ...prev])
-        })
-      }
-    }
-    if (type === 'Notion') {
-      const notionData = items.filter(item => selectIds.includes(item.url))
-      for (const item of notionData) {
-        newQueue.push(async () => {
-          const res = await getNotionIntegrationDetail({ pages: [{ id: item.url, title: item.title }], integration: url, kb_id })
-          setItems(prev => [{ ...item, ...res[0], success: -1, id: '' }, ...prev])
-        })
-      }
-    }
-    setStep('import')
-    setRequestQueue(newQueue)
-  }
-
   const handleOk = async () => {
     if (step === 'done') {
       handleCancel()
       refresh?.()
     } else if (step === 'pull') {
       setLoading(true)
-      setIsCancelled(false)
-      if (['OfflineFile', 'Epub', 'Wiki.js'].includes(type)) handleFile()
-      else handleURL()
-    } else if (step === 'pull-done') {
-      setLoading(true)
-      setItems([])
-      setIsCancelled(false)
-      handleSelectedExportedData()
+      handleFile()
     } else if (step === 'import') {
       if (selectIds.length === 0) {
         Message.error('请选择要导入的文档')
@@ -292,45 +150,8 @@ const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddB
     }
   }
 
-  const processUrl = async () => {
-    if (isCancelled) {
-      setItems([])
-    }
-    if (requestQueue.length === 0 || isCancelled) {
-      setLoading(false)
-      setRequestQueue([])
-      return
-    }
-
-    setLoading(true)
-    const newQueue = [...requestQueue]
-    const requests = newQueue.splice(0, 2)
-
-    try {
-      await Promise.all(requests.map(request => request()))
-      if (newQueue.length > 0 && !isCancelled) {
-        setRequestQueue(newQueue)
-      } else {
-        setLoading(false)
-        setRequestQueue([])
-      }
-    } catch (error) {
-      console.error('请求执行出错:', error)
-      if (newQueue.length > 0 && !isCancelled) {
-        setRequestQueue(newQueue)
-      } else {
-        setLoading(false)
-        setRequestQueue([])
-      }
-    }
-  }
-
-  useEffect(() => {
-    processUrl()
-  }, [requestQueue.length, isCancelled])
-
   return <Modal
-    title={`通过 ${type === 'OfflineFile' ? '离线文件' : type} 导入`}
+    title={`通过 Epub 导入`}
     open={open}
     onCancel={handleCancel}
     onOk={handleOk}
@@ -339,22 +160,15 @@ const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddB
     showCancel={StepText[step].showCancel}
     okButtonProps={{ loading }}
   >
-    {step === 'pull' && (['OfflineFile', 'Epub', 'Wiki.js'].includes(type) ? <Box>
+    {step === 'pull' && <Box>
       <Upload
         file={acceptedFiles}
         onChange={(accept, reject) => onChangeFile(accept, reject)}
         type='drag'
-        multiple={type !== 'Wiki.js'}
-        accept={AcceptTypes[type as keyof typeof AcceptTypes] || '*'}
+        multiple={true}
+        accept={'.epub'}
         size={size}
       />
-      {type === 'Wiki.js' && <Stack>
-        <Box component='a'
-          href='https://pandawiki.docs.baizhi.cloud/node/01976929-0e76-77a9-aed9-842e60933464#%E4%BB%8E%20Wiki.js%20%E5%AF%BC%E5%85%A5' target='_blank'
-          sx={{ fontSize: 12, color: 'primary.main', display: 'block', mt: 1 }}>
-          使用方法
-        </Box>
-      </Stack>}
       {isUploading === 1 && <Box sx={{ mt: 2 }}>
         <Box sx={{ fontSize: 14, mb: 1 }}>
           正在上传文件 {currentFileIndex + 1} / {acceptedFiles.length}
@@ -414,29 +228,7 @@ const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddB
           </List>
         </Box>
       )}
-    </Box> : <>
-      <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'} sx={{
-        fontSize: 14,
-        lineHeight: '32px',
-        mb: 1,
-      }}>
-        {type === 'Notion' ? 'Integration Secret' : `${type} 地址`}
-        {type === 'Notion' && <Box component='a'
-          href='https://pandawiki.docs.baizhi.cloud/node/01976929-0e76-77a9-aed9-842e60933464#%E9%80%9A%E8%BF%87%20Notion%20%E5%AF%BC%E5%85%A5' target='_blank'
-          sx={{ fontSize: 12, color: 'primary.main' }}>
-          使用方法
-        </Box>}
-      </Stack>
-      <TextField
-        fullWidth
-        multiline={type === 'URL'}
-        rows={type === 'URL' ? 4 : 1}
-        value={url}
-        placeholder={type === 'URL' ? '每行一个 URL' : type === 'Notion' ? 'Integration Secret' : `${type} 地址`}
-        autoFocus
-        onChange={(e) => setUrl(e.target.value)}
-      />
-    </>)}
+    </Box>}
     {step !== 'pull' && <Box sx={{
       borderRadius: '10px',
       border: '1px solid',
@@ -534,4 +326,4 @@ const DocAddByUrl = ({ type, open, refresh, onCancel, parentId = null }: DocAddB
   </Modal>
 }
 
-export default DocAddByUrl
+export default EpubImport 

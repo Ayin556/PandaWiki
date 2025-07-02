@@ -449,3 +449,27 @@ export type ChatConversationPair = {
   user: string,
   assistant: string
 }
+
+export type ImportDocType = 'URL' | 'RSS' | 'Sitemap' | 'OfflineFile' | 'Notion' | 'Epub' | 'Wiki.js' | 'Feishu'
+
+
+export type ImportDocProps = {
+  parentId?: string | null
+  open: boolean
+  refresh?: () => void
+  onCancel: () => void
+}
+
+export type ImportDocListItem = {
+  content: string
+  title: string
+  url: string
+  success: -1 | 0 | 1
+  id: string
+}
+
+export type ImportDocByFeishuFormData = {
+  app_id: string
+  app_secret: string
+  user_access_token: string
+}
