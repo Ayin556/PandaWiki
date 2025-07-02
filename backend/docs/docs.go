@@ -2348,6 +2348,9 @@ const docTemplate = `{
                 "app_name": {
                     "type": "string"
                 },
+                "app_type": {
+                    "$ref": "#/definitions/domain.AppType"
+                },
                 "created_at": {
                     "type": "string"
                 },
