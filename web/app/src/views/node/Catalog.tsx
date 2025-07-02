@@ -4,12 +4,10 @@ import { IconFold, IconUnfold } from "@/components/icons";
 import { useStore } from "@/provider";
 import { addExpandState, convertToTree, filterEmptyFolders } from "@/utils/drag";
 import { Box, IconButton } from "@mui/material";
-import { useParams } from "next/navigation";
 import CatalogFolder from "./CatalogFolder";
 
-const Catalog = () => {
+const Catalog = ({ id, setId }: { id?: string, setId?: (id: string) => void }) => {
   const { kbDetail, nodeList = [], mobile = false, catalogShow, setCatalogShow } = useStore()
-  const { id = '' }: { id: string } = useParams()
   if (mobile) return null
   const catalogSetting = kbDetail?.settings?.catalog_settings
   const catalogFolderExpand = catalogSetting?.catalog_folder !== 2
@@ -74,7 +72,7 @@ const Catalog = () => {
         msOverflowStyle: 'none',
         scrollbarWidth: 'none',
       }}>
-        {tree.map((item) => <CatalogFolder key={item.id} item={item} />)}
+        {tree.map((item) => <CatalogFolder id={id} key={item.id} item={item} setId={setId} />)}
       </Box>
     </Box>}
   </>

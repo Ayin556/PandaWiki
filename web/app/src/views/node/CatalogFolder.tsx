@@ -4,11 +4,16 @@ import { useStore } from "@/provider"
 import { Box, Stack } from "@mui/material"
 import { Ellipsis } from "ct-mui"
 import Link from "next/link"
-import { useParams } from "next/navigation"
 import { useState } from "react"
 
-const CatalogFolder = ({ item, depth = 1 }: { item: ITreeItem, depth?: number }) => {
-  const { id: activeId }: { id: string } = useParams()
+interface CatalogFolderProps {
+  id?: string
+  item: ITreeItem
+  depth?: number
+  setId?: (id: string) => void
+}
+
+const CatalogFolder = ({ id: activeId, item, depth = 1, setId }: CatalogFolderProps) => {
   const [isExpanded, setIsExpanded] = useState(item.defaultExpand ?? true)
   const { themeMode = 'light' } = useStore()
 
@@ -23,15 +28,21 @@ const CatalogFolder = ({ item, depth = 1 }: { item: ITreeItem, depth?: number })
         bgcolor: themeMode === 'dark' ? '#394052' : 'background.paper'
       }
     }} onClick={() => {
+      if (item.type === 2 && setId) {
+        setId(item.id)
+        window.history.pushState(null, '', `/node/${item.id}`)
+        return
+      }
       setIsExpanded(!isExpanded)
     }}>
       {item.type === 1 && <Box sx={{ position: 'absolute', left: (2 * depth - 1) * 8, top: 4, color: 'text.disabled' }}>
         <IconArrowDown sx={{ fontSize: 16, transform: isExpanded ? 'none' : 'rotate(-90deg)', transition: 'transform 0.2s' }} />
       </Box>}
-      <Link href={item.type === 2 ? `/node/${item.id}` : ''} prefetch={false}>
-        <Box sx={{
-          pl: (depth + 0.5) * 2,
-        }}>
+      {item.type === 2 && setId && <Link href={`/node/${item.id}`} prefetch={false} style={{ display: 'none' }}>
+        {item.name}
+      </Link>}
+      {!setId ? <Link href={`/node/${item.id}`} prefetch={false}>
+        <Box sx={{ pl: (depth + 0.5) * 2 }}>
           <Stack direction="row" alignItems="center" gap={0.5}>
             {item.emoji ? <Box sx={{ flexShrink: 0, fontSize: 12 }}>{item.emoji}</Box>
               : item.type === 1 ? <IconFolder sx={{ flexShrink: 0, fontSize: 12 }} />
@@ -41,11 +52,20 @@ const CatalogFolder = ({ item, depth = 1 }: { item: ITreeItem, depth?: number })
             </Ellipsis>
           </Stack>
         </Box>
-      </Link>
+      </Link> : <Box sx={{ pl: (depth + 0.5) * 2 }}>
+        <Stack direction="row" alignItems="center" gap={0.5}>
+          {item.emoji ? <Box sx={{ flexShrink: 0, fontSize: 12 }}>{item.emoji}</Box>
+            : item.type === 1 ? <IconFolder sx={{ flexShrink: 0, fontSize: 12 }} />
+              : <IconFile sx={{ flexShrink: 0, fontSize: 12 }} />}
+          <Ellipsis sx={{ flex: 1, width: 0, pr: 1 }}>
+            {item.name}
+          </Ellipsis>
+        </Stack>
+      </Box>}
     </Box>
     {item.children && item.children.length > 0 && isExpanded && (<>
       {item.children.map((child) =>
-        <CatalogFolder key={child.id} depth={depth + 1} item={child} />
+        <CatalogFolder id={activeId} key={child.id} depth={depth + 1} item={child} setId={setId} />
       )}
     </>)}
   </Box >
