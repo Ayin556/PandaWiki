@@ -6,7 +6,8 @@ import CardAuth from "./CardAuth"
 import CardCatalog from "./CardCatalog"
 import CardFooter from "./CardFooter"
 import CardStyle from "./CardStyle"
-import CardVisit from "./CardVisit"
+import CardBasicInfo from "./CardBasicInfo"
+import CardListen from "./CardListen"
 import CardWebCustomCode from "./CardWebCustomCode"
 import CardWebHeader from "./CardWebHeader"
 import CardWebSEO from "./CardWebSEO"
@@ -33,7 +34,9 @@ const CardWeb = ({ kb, refresh }: CardWebProps) => {
 
   return <Card>
     <Box sx={{ fontWeight: 'bold', px: 2, py: 1.5, bgcolor: 'background.paper2' }}>门户网站</Box>
-    <CardVisit kb={kb} refresh={refresh} />
+    <CardListen kb={kb} refresh={refresh} />
+    <Divider sx={{ my: 2 }} />
+    <CardBasicInfo kb={kb} refresh={refresh} />
     <Divider sx={{ my: 2 }} />
     <CardAuth kb={kb} refresh={refresh} />
     <Divider sx={{ my: 2 }} />

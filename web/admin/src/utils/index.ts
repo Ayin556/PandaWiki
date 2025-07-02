@@ -128,7 +128,7 @@ export const copyText = (text: string, callback?: () => void) => {
 
 export const validateUrl = (url: string): boolean => {
   try {
-    const pattern = /^(https?|ftp):\/\/(([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}|(\d{1,3}\.){3}\d{1,3}|\[[a-fA-F0-9:]+\])(:\d+)?(\/.*)?$/;
+    const pattern = /^(https?):\/\/(([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}|(\d{1,3}\.){3}\d{1,3}|\[[a-fA-F0-9:]+\])(:\d+)?$/;
     if (!pattern.test(url)) return false
 
     const parsed = new URL(url);

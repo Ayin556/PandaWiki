@@ -196,8 +196,11 @@ const KBCreate = () => {
           />}
         />
       </Box>
-      <Divider textAlign="left" sx={{ my: 2, fontSize: 14, lineHeight: '32px', color: 'text.auxiliary' }}>门户网站访问方式</Divider>
-      <Box>
+      <Divider textAlign="left" sx={{ my: 2, fontSize: 14, lineHeight: '32px', color: 'text.auxiliary' }}>服务监听方式</Divider>
+      <Stack direction={'row'} gap={2} alignItems={'center'} sx={{ mt: 2.5 }}>
+        <Box component={'label'}  sx={{ width: 136, flexShrink: 0, cursor: 'pointer', fontSize: 14}}>
+          域名
+        </Box>
         <Controller
           control={control}
           name='domain'
@@ -210,7 +213,7 @@ const KBCreate = () => {
             helperText={errors.domain?.message}
           />}
         />
-      </Box>
+      </Stack>
       <Stack direction={'row'} gap={2} alignItems={'center'} sx={{ mt: 2.5 }}>
         <Controller
           control={control}
@@ -226,7 +229,7 @@ const KBCreate = () => {
         <Box component={'label'} htmlFor='http' sx={{ width: 100, flexShrink: 0, cursor: 'pointer', fontSize: 14, color: http ? 'text.primary' : 'text.auxiliary' }}>
           启用 HTTP
         </Box>
-        {http && <Controller
+        {<Controller
           control={control}
           name='port'
           rules={VALIDATION_RULES.port}
@@ -234,8 +237,9 @@ const KBCreate = () => {
             {...field}
             label='端口'
             fullWidth
+            disabled={!http}
             type='number'
-            value={+field.value || 80}
+            value={http ? (+field.value || 80) : ''}
             error={!!errors.port}
             helperText={errors.port?.message}
           />}
@@ -256,7 +260,7 @@ const KBCreate = () => {
         <Box component={'label'} htmlFor='https' sx={{ width: 100, flexShrink: 0, cursor: 'pointer', fontSize: 14, color: https ? 'text.primary' : 'text.auxiliary' }}>
           启用 HTTPS
         </Box>
-        {https && <Controller
+        {<Controller
           control={control}
           name='ssl_port'
           rules={VALIDATION_RULES.port}
@@ -264,8 +268,9 @@ const KBCreate = () => {
             {...field}
             label='端口'
             fullWidth
+            disabled={!https}
             type='number'
-            value={+field.value || 443}
+            value={https ? (+field.value || 443) : ''}
             error={!!errors.ssl_port}
             helperText={errors.ssl_port?.message}
           />}
@@ -277,7 +282,7 @@ const KBCreate = () => {
           name='httpsCert'
           render={({ field }) => <FileText
             {...field}
-            tip={'SSL 证书文件'}
+            tip={'证书文件'}
           />}
         />
         <Controller
@@ -285,7 +290,7 @@ const KBCreate = () => {
           name='httpsKey'
           render={({ field }) => <FileText
             {...field}
-            tip={'SSL 私钥文件'}
+            tip={'私钥文件'}
           />}
         />
       </Stack>}

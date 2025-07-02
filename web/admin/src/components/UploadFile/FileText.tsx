@@ -15,6 +15,7 @@ interface FileTextProps {
   accept?: string
   tip?: string
   size?: number
+  disabled?: boolean
 }
 
 const FileText = ({
@@ -23,6 +24,7 @@ const FileText = ({
   accept,
   tip,
   size,
+  disabled,
 }: FileTextProps) => {
   const theme = useTheme()
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -82,12 +84,14 @@ const FileText = ({
         }}
         onClick={() => fileInputRef.current?.click()}
       >
-        <input {...getInputProps()} />
-        {dropFiles.length > 0 ? <CheckCircle sx={{ color: 'success.main', fontSize: 40, mb: 1 }} />
-          : <Icon type='icon-shangchuan' sx={{ fontSize: 40, mb: 1, color: 'text.disabled' }} />}
-        <Typography variant='body1' sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          {dropFiles.length > 0 ? `${tip}已添加` : tip || '点击或拖拽文件到区域内'}
-        </Typography>
+        <Stack direction={'row'} gap={2} >
+          <input {...getInputProps()} disabled={disabled} />
+          {dropFiles.length > 0 ? <CheckCircle sx={{ color: 'success.main', fontSize: 20 }} />
+            : <Icon type='icon-shangchuan' sx={{ fontSize: 20, color: 'text.disabled' }} />}
+          <Typography variant='body1' sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: disabled ? 'text.disabled' : 'text.primary' }}>
+            {dropFiles.length > 0 ? tip : tip || '点击或拖拽文件到区域内'}
+          </Typography>
+        </Stack>
       </Stack>
       <input
         type='file'
@@ -95,6 +99,7 @@ const FileText = ({
         hidden
         accept={accept}
         multiple={false}
+        disabled={disabled}
         onChange={e => {
           if (e.target.files) {
             onDrop(Array.from(e.target.files))
