@@ -54,7 +54,7 @@ func (r *ConversationRepository) GetConversationList(ctx context.Context, reques
 	}
 	if err := query.
 		Joins("left join apps on conversations.app_id = apps.id").
-		Select("conversations.*, apps.name as app_name").
+		Select("conversations.*, apps.name as app_name, apps.type as app_type").
 		Offset(request.Offset()).
 		Limit(request.Limit()).
 		Order("conversations.created_at DESC").
