@@ -7,18 +7,19 @@ import { addOpacityToColor, getShortcutKeyText } from "@/utils"
 import { Box, Button, IconButton, Stack, Tooltip, useTheme } from "@mui/material"
 import { Ellipsis, Icon, MenuSelect, Message } from "ct-mui"
 import { UseTiptapEditorReturn } from "ct-tiptap-editor"
-import dayjs from "dayjs"
+import { Dayjs } from "dayjs"
 import { useState } from "react"
 
 interface EditorHeaderProps {
   edited: boolean
   editorRef: UseTiptapEditorReturn
   detail: NodeDetail | null
+  updateAt: Dayjs | null
   onSave: (auto?: boolean, publish?: boolean) => void
   refresh?: () => void
 }
 
-const EditorHeader = ({ edited, editorRef, detail, onSave, refresh }: EditorHeaderProps) => {
+const EditorHeader = ({ edited, editorRef, detail, updateAt, onSave, refresh }: EditorHeaderProps) => {
   const editor = editorRef?.editor || null
   const theme = useTheme()
   const { kb_id } = useAppSelector(state => state.config)
@@ -81,7 +82,7 @@ const EditorHeader = ({ edited, editorRef, detail, onSave, refresh }: EditorHead
       <Stack direction={'row'} alignItems={'center'} gap={2} flexShrink={0}>
         <Stack direction={'row'} alignItems={'center'} gap={0.5} sx={{ fontSize: 12, color: 'text.auxiliary' }}>
           <Icon type='icon-baocun' />
-          {dayjs(detail.updated_at).format('YYYY-MM-DD HH:mm:ss')}
+          {updateAt?.format('YYYY-MM-DD HH:mm:ss')}
         </Stack>
         <MenuSelect list={[
           {
