@@ -3,12 +3,10 @@ import { validateUrl } from "@/utils"
 import { Box, Button, Stack, TextField, Tooltip } from "@mui/material"
 import { Icon, Message } from "ct-mui"
 import { useEffect, useState } from "react"
-import UpdateKbUrl from "./UpdateKbUrl"
 
-const CardVisit = ({ kb, refresh }: { kb: KnowledgeBaseListItem, refresh: () => void }) => {
+const CardBasicInfo = ({ kb, refresh }: { kb: KnowledgeBaseListItem, refresh: () => void }) => {
 
   const [url, setUrl] = useState<string>('')
-  const [open, setOpen] = useState<boolean>(false)
   const [isEdit, setIsEdit] = useState<boolean>(false)
 
 
@@ -64,19 +62,18 @@ const CardVisit = ({ kb, refresh }: { kb: KnowledgeBaseListItem, refresh: () => 
           mr: 1,
         },
       }}>
-        访问方式
+        网站基本信息
       </Box>
-      <Button variant="outlined" size="small" onClick={() => setOpen(true)}>设置</Button>
+      {isEdit && <Button variant="contained" size="small" onClick={handleSave}>保存</Button>}
     </Stack>
     <Stack direction={'row'} alignItems={'center'} gap={0.5} sx={{ fontSize: 14, lineHeight: '32px', my: 1, mx: 2 }}>
-      Wiki 网站地址
-      <Tooltip arrow placement='top' title='请输入 Wiki 网站的根路径，用于生成访问链接，例如 https://wiki.panda.com'>
-        <Icon type='icon-a-wenhao8' sx={{ fontSize: 16, color: 'text.disabled', cursor: 'pointer', '&:hover': { color: 'text.auxiliary' } }} />
-      </Tooltip>
-    </Stack>
-    <Box sx={{ mx: 2 }}>
+      <Box component={'label'}  sx={{ width: 148, flexShrink: 0, fontSize: 14, lineHeight: '32px', mb: 1 }}>
+        网址绝对路径前缀
+      </Box>
+      
       <TextField
         fullWidth
+        label='网址绝对路径前缀'
         value={url}
         onChange={(e) => {
           setUrl(e.target.value)
@@ -88,18 +85,9 @@ const CardVisit = ({ kb, refresh }: { kb: KnowledgeBaseListItem, refresh: () => 
           }
         }}
         placeholder='请输入 Wiki 网站的根路径，用于生成访问链接，例如 https://wiki.panda.com'
-        InputProps={{
-          endAdornment: isEdit && <Button variant="contained" size="small" sx={{ ml: 1.5 }} onClick={handleSave}>保存</Button>
-        }}
       />
-    </Box>
-    <UpdateKbUrl
-      open={open}
-      data={kb}
-      onCancel={() => setOpen(false)}
-      refresh={refresh}
-    />
+    </Stack>
   </>
 }
 
-export default CardVisit
+export default CardBasicInfo
