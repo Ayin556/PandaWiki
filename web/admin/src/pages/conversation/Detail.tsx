@@ -113,17 +113,6 @@ const Detail = ({ id, open, onClose }: { id: string, open: boolean, onClose: () 
           ))}
         </Card>
       </>}
-      <Stack direction={'row'} alignItems={'center'} gap={1} sx={{
-        fontWeight: 'bold', mt: 2, mb: 1,
-        '&::before': {
-          content: '""',
-          display: 'inline-block',
-          width: '4px',
-          height: '12px',
-          borderRadius: '2px',
-          backgroundColor: theme.palette.primary.main,
-        }
-      }}>分析</Stack>
       <Card sx={{
         borderColor: 'divider',
         border: '1px solid',
