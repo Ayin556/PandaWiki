@@ -17,6 +17,7 @@ const (
 	AppTypeFeishuBot
 	AppTypeWechatBot
 	AppTypeWechatServiceBot
+	AppTypeDisCordBot
 )
 
 var AppTypes = []AppType{
@@ -26,6 +27,7 @@ var AppTypes = []AppType{
 	AppTypeFeishuBot,
 	AppTypeWechatBot,
 	AppTypeWechatServiceBot,
+	AppTypeDisCordBot,
 }
 
 type App struct {
@@ -76,6 +78,8 @@ type AppSettings struct {
 	WeChatServiceCorpID         string `json:"wechat_service_corpid,omitempty"`
 	WeChatServiceSecret         string `json:"wechat_service_secret,omitempty"`
 
+	// DisCordBot
+	DisCordBotToken string `json:"discord_bot_token,omitempty"`
 	// theme
 	ThemeMode     string        `json:"theme_mode,omitempty"`
 	ThemeAndStyle ThemeAndStyle `json:"theme_and_style"`
