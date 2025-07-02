@@ -4,6 +4,7 @@ import { setKbId } from "@/store/slices/config";
 import { Box, Stack } from "@mui/material";
 import { Message } from "ct-mui";
 import { TiptapEditor, TiptapToolbar, useTiptapEditor } from 'ct-tiptap-editor';
+import dayjs, { Dayjs } from "dayjs";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import VersionPublish from "../release/components/VersionPublish";
@@ -18,6 +19,7 @@ const DocEditor = () => {
   const dispatch = useAppDispatch()
   const [edited, setEdited] = useState(false)
   const [detail, setDetail] = useState<NodeDetail | null>(null)
+  const [updateAt, setUpdateAt] = useState<Dayjs | null>(null)
   const [headings, setHeadings] = useState<{ id: string, title: string, heading: number }[]>([])
   const [maxH, setMaxH] = useState(0)
   const [publishOpen, setPublishOpen] = useState(false)
@@ -27,6 +29,7 @@ const DocEditor = () => {
       setDetail(res)
       setEdited(false)
       dispatch(setKbId(res.kb_id))
+      setUpdateAt(dayjs(res.updated_at))
     })
   }
 
@@ -46,7 +49,7 @@ const DocEditor = () => {
       else if (auto === undefined) Message.success('保存成功')
       setEdited(false)
       if (publish) setPublishOpen(true)
-      getDetail()
+      setUpdateAt(dayjs())
       updateNav()
     } catch (error) {
       Message.error('保存失败')
@@ -131,6 +134,7 @@ const DocEditor = () => {
           edited={edited}
           detail={detail}
           editorRef={editorRef}
+          updateAt={updateAt}
           onSave={(auto, publish) => handleSave(auto, publish)}
           refresh={async () => {
             await handleSave(false)
