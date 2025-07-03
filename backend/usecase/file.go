@@ -42,7 +42,7 @@ func (u *FileUsecase) UploadFile(ctx context.Context, kbID string, file *multipa
 
 	maxSize := u.config.S3.MaxFileSize
 	size := file.Size
-	if size > int64(maxSize) { // 20MB
+	if size > int64(maxSize) { // 100MB
 		return "", fmt.Errorf("file size too large")
 	}
 
