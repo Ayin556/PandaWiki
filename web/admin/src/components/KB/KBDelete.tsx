@@ -2,7 +2,7 @@ import { deleteKnowledgeBase, KnowledgeBaseListItem } from '@/api'
 import { useAppDispatch, useAppSelector } from '@/store'
 import { setKbC, setKbId, setKbList } from '@/store/slices/config'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
-import ErrorIcon from '@mui/icons-material/Error'
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
 import { Box, Stack, useTheme } from "@mui/material"
 import { Message, Modal } from "ct-mui"
 
@@ -40,7 +40,7 @@ const KBDelete = ({ open, onClose, data }: KBDeleteProps) => {
     onOk={handleOk}
     okButtonProps={{ sx: { bgcolor: 'error.main' } }}
     title={<Stack direction='row' alignItems='center' gap={1}>
-      <ErrorIcon sx={{ color: 'warning.main' }} />
+      <ErrorOutlineIcon sx={{ color: 'warning.main' }} />
       确定要删除该知识库吗？
     </Stack>}
   >
