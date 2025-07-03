@@ -3,7 +3,7 @@ import Card from "@/components/Card";
 import DragTree from "@/components/Drag/DragTree";
 import { convertToTree } from "@/constant/drag";
 import { useAppSelector } from "@/store";
-import ErrorIcon from '@mui/icons-material/Error';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { Stack } from "@mui/material";
 import { Message, Modal } from "ct-mui";
 
@@ -31,7 +31,7 @@ const DocDelete = ({ open, onClose, data, refresh }: DocDeleteProps) => {
 
   return <Modal
     title={<Stack direction='row' alignItems='center' gap={1}>
-      <ErrorIcon sx={{ color: 'warning.main' }} />
+      <ErrorOutlineIcon sx={{ color: 'warning.main' }} />
       确认删除以下文档/文件夹？
     </Stack>}
     open={open}
