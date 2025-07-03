@@ -92,13 +92,10 @@ const CardRebotFeishu = ({ kb }: { kb: KnowledgeBaseListItem }) => {
           helperText={errors.feishu_bot_app_id?.message}
         />}
       />
-      <Stack direction='row' alignItems={'center'} justifyContent={'space-between'} sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
-        <Box sx={{ fontSize: 14, lineHeight: '32px' }}>
-          App Secret
-          <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
-        </Box>
-        {/* <Button size="small" component='a' href='https://pandawiki.docs.baizhi.cloud/node/01971b5f-4520-7c4b-8b4e-683ec5235adc' target="_blank">使用方法</Button> */}
-      </Stack>
+      <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
+        App Secret
+        <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
+      </Box>
       <Controller
         control={control}
         name="feishu_bot_app_secret"

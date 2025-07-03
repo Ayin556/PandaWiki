@@ -244,6 +244,13 @@ export type WecomBotSetting = {
   wechat_app_corpid: string
 }
 
+export type WecomBotServiceSetting = {
+  wechat_service_secret: string
+  wechat_service_token: string
+  wechat_service_encodingaeskey: string
+  wechat_service_corpid: string
+}
+
 export type FeishuBotSetting = {
   feishu_bot_app_id: string
   feishu_bot_app_secret: string
@@ -310,6 +317,7 @@ export type AppSetting = HeaderSetting &
   CustomCodeSetting &
   DingBotSetting &
   WecomBotSetting &
+  WecomBotServiceSetting &
   FeishuBotSetting &
   ThemeMode & {
     theme_and_style: ThemeAndStyleSetting
@@ -448,4 +456,28 @@ export type ChatConversationItem = {
 export type ChatConversationPair = {
   user: string,
   assistant: string
+}
+
+export type ImportDocType = 'URL' | 'RSS' | 'Sitemap' | 'OfflineFile' | 'Notion' | 'Epub' | 'Wiki.js' | 'Feishu'
+
+
+export type ImportDocProps = {
+  parentId?: string | null
+  open: boolean
+  refresh?: () => void
+  onCancel: () => void
+}
+
+export type ImportDocListItem = {
+  content: string
+  title: string
+  url: string
+  success: -1 | 0 | 1
+  id: string
+}
+
+export type ImportDocByFeishuFormData = {
+  app_id: string
+  app_secret: string
+  user_access_token: string
 }

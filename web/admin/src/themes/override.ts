@@ -167,6 +167,16 @@ const componentStyleOverrides = (theme: ThemeColor) => {
         },
       },
     },
+    MuiCheckbox: {
+      styleOverrides: {
+        root: {
+          padding: 0,
+          svg: {
+            fontSize: '18px',
+          },
+        },
+      },
+    },
     MuiTableCell: {
       styleOverrides: {
         root: {

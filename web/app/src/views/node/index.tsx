@@ -21,6 +21,7 @@ const Doc = ({ node: defaultNode, token }: { node?: NodeDetail, token?: string }
 
   const { id = '' }: { id: string } = useParams()
 
+  const [docId, setDocId] = useState(id)
   const [firstRequest, setFirstRequest] = useState(true)
   const { nodeList = [], kb_id, kbDetail, mobile = false, catalogShow } = useStore()
 
@@ -95,12 +96,13 @@ const Doc = ({ node: defaultNode, token }: { node?: NodeDetail, token?: string }
   }, [node])
 
   useEffect(() => {
-    if (!firstRequest && !defaultNode) {
-      getData(id || '')
+    console.log(docId, id, firstRequest)
+    if (!firstRequest) {
+      getData(docId || '')
     }
     setFirstRequest(false)
     window.scrollTo({ top: 0, behavior: 'smooth' })
-  }, [id, defaultNode])
+  }, [docId])
 
   if (mobile) {
     return <Box sx={{ mt: '60px', position: 'relative', zIndex: 1 }}>
@@ -156,7 +158,7 @@ const Doc = ({ node: defaultNode, token }: { node?: NodeDetail, token?: string }
     position: 'relative',
     bgcolor: 'background.default',
   }}>
-    <Catalog />
+    <Catalog id={docId} setId={setDocId} />
     <Header />
     {node ? <>
       <Box sx={{

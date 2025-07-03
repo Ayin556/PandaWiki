@@ -25,6 +25,8 @@ const CardRebot = ({ kb, url }: { kb: KnowledgeBaseListItem, url: string }) => {
     <CardRebotFeishu kb={kb} />
     <Divider sx={{ my: 2 }} />
     <CardRebotWecom kb={kb} url={url} />
+    {/* <Divider sx={{ my: 2 }} />
+    <CardRebotWecomService kb={kb} url={url} /> */}
     <Divider sx={{ my: 2 }} />
     {Object.values(AppList).map((value, index) => <Box key={index}>
       <Stack direction='row' alignItems={'center'} justifyContent={'space-between'} sx={{ m: 2 }}>
