@@ -37,7 +37,6 @@ const MemberDelete = ({ open, onClose, user, refresh }: MemberDeleteProps) => {
             "确定要删除该用户吗？"   </Stack>
           }
     >
-  >
     <Card sx={{
       fontSize: 14,
       p: 1,
