@@ -186,7 +186,7 @@ const OfflineFileImport = ({ open, refresh, onCancel, parentId = null }: ImportD
         onChange={(accept, reject) => onChangeFile(accept, reject)}
         type='drag'
         multiple={true}
-        accept={'.txt, .md, .xls, .xlsx, .docx, .pdf, .html, .epub'}
+        accept={'.txt, .md, .xls, .xlsx, .docx, .pdf, .html, .epub, .pptx'}
         size={size}
       />
       {isUploading === 1 && <Box sx={{ mt: 2 }}>
@@ -198,7 +198,7 @@ const OfflineFileImport = ({ open, refresh, onCancel, parentId = null }: ImportD
             {acceptedFiles[currentFileIndex]?.name}
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
-            <CircularProgress size={20} sx={{ mr: 1.5 }} />
+            <CircularProgress size={100} sx={{ mr: 1.5 }} />
             <Typography variant="body2">{uploadProgress}%</Typography>
           </Box>
         </Stack>
