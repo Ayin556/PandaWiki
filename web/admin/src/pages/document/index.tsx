@@ -77,10 +77,10 @@ const Content = () => {
         { label: '创建文档', key: 'doc', onClick: () => createItem(2) },
         {
           label: '导入文档', key: 'third', children: [
+            { label: '通过离线文件导入', key: 'OfflineFile', onClick: () => handleUrl(item, 'OfflineFile') },
             { label: '通过 URL 导入', key: 'URL', onClick: () => handleUrl(item, 'URL') },
             { label: '通过 RSS 导入', key: 'RSS', onClick: () => handleUrl(item, 'RSS') },
             { label: '通过 Sitemap 导入', key: 'Sitemap', onClick: () => handleUrl(item, 'Sitemap') },
-            { label: '通过离线文件导入', key: 'OfflineFile', onClick: () => handleUrl(item, 'OfflineFile') },
             { label: '通过 Notion 导入', key: 'Notion', onClick: () => handleUrl(item, 'Notion') },
             { label: '通过 Epub 导入', key: 'Epub', onClick: () => handleUrl(item, 'Epub') },
             { label: '通过 Wiki.js 导入', key: 'Wiki.js', onClick: () => handleUrl(item, 'Wiki.js') },

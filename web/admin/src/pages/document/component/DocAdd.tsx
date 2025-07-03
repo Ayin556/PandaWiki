@@ -32,6 +32,13 @@ const DocAdd = ({ refresh }: InputContentProps) => {
         setCustomDocOpen(true)
       }
     },
+    OfflineFile: {
+      label: '通过离线文件导入',
+      onClick: () => {
+        setUrlOpen(true)
+        setKey('OfflineFile')
+      }
+    },
     URL: {
       label: '通过 URL 导入',
       onClick: () => {
@@ -51,13 +58,6 @@ const DocAdd = ({ refresh }: InputContentProps) => {
       onClick: () => {
         setUrlOpen(true)
         setKey('Sitemap')
-      }
-    },
-    OfflineFile: {
-      label: '通过离线文件导入',
-      onClick: () => {
-        setUrlOpen(true)
-        setKey('OfflineFile')
       }
     },
     Notion: {
