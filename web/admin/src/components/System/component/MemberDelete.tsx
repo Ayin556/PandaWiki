@@ -3,6 +3,7 @@ import Card from "@/components/Card";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { Box, Stack } from "@mui/material";
 import { Ellipsis, Message, Modal } from "ct-mui";
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
 
 interface MemberDeleteProps {
   open: boolean
@@ -30,7 +31,12 @@ const MemberDelete = ({ open, onClose, user, refresh }: MemberDeleteProps) => {
     okButtonProps={{ sx: { bgcolor: 'error.main' } }}
     onCancel={onClose}
     onOk={submit}
-    title="确定要删除该用户吗？"
+    title={
+      <Stack direction='row' alignItems='center' gap={1}>
+      <ErrorOutlineIcon sx={{  color: 'warning.main' }} />
+            "确定要删除该用户吗？"   </Stack>
+          }
+    >
   >
     <Card sx={{
       fontSize: 14,
