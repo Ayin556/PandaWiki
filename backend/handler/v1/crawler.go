@@ -22,6 +22,7 @@ type CrawlerHandler struct {
 	epubUsecase    *usecase.EpubUsecase
 	config         *config.Config
 	wikijsUsecase  *usecase.WikiJSUsecase
+	feishuUseCase  *usecase.FeishuUseCase
 }
 
 func NewCrawlerHandler(echo *echo.Echo,
@@ -33,6 +34,7 @@ func NewCrawlerHandler(echo *echo.Echo,
 	notnionUsecase *usecase.NotionUseCase,
 	epubUsecase *usecase.EpubUsecase,
 	wikijsUsecase *usecase.WikiJSUsecase,
+	feishuUseCase *usecase.FeishuUseCase,
 ) *CrawlerHandler {
 	h := &CrawlerHandler{
 		BaseHandler:    baseHandler,
@@ -42,6 +44,7 @@ func NewCrawlerHandler(echo *echo.Echo,
 		notnionUsecase: notnionUsecase,
 		epubUsecase:    epubUsecase,
 		wikijsUsecase:  wikijsUsecase,
+		feishuUseCase:  feishuUseCase,
 	}
 	group := echo.Group("/api/v1/crawler", auth.Authorize)
 	group.POST("/parse_rss", h.ParseRSS)
@@ -54,6 +57,11 @@ func NewCrawlerHandler(echo *echo.Echo,
 	group.POST("/epub/convert", h.QpubConvert)
 	// wikijs
 	group.POST("/wikijs/analysis_export_file", h.AnalysisExportFile)
+	// feishu
+	group.POST("/feishu/list_spaces", h.FeishuListSpaces)
+	group.POST("/feishu/list_doc", h.FeishuListDoc)
+	group.POST("/feishu/search_wiki", h.FeishuSearchWiki)
+	group.POST("/feishu/get_doc", h.FeishuGetDoc)
 	return h
 }
 
@@ -279,9 +287,6 @@ func (h *CrawlerHandler) AnalysisExportFile(c echo.Context) error {
 	}
 	var req domain.WikiJSReq
 	req.KBID = c.FormValue("kb_id")
-	if err != nil {
-		return h.NewResponseWithError(c, "bind failed", err)
-	}
 	if err := c.Validate(req); err != nil {
 		return h.NewResponseWithError(c, "validate failed", err)
 	}
@@ -299,4 +304,101 @@ func (h *CrawlerHandler) AnalysisExportFile(c echo.Context) error {
 		return h.NewResponseWithError(c, "analysis export file failed", err)
 	}
 	return h.NewResponseWithData(c, res)
+}
+
+// FeishuListSpaces
+//
+//	@Summary		FeishuListSpaces
+//	@Description	List All Feishu Spaces
+//	@Tags			crawler
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body		domain.GetSpaceListReq	true	"List Spaces"
+//	@Success		200		{object}	domain.Response{data=[]domain.GetSpaceListResp}
+//	@Router			/api/v1/crawler/feishu/list_spaces [post]
+func (h *CrawlerHandler) FeishuListSpaces(c echo.Context) error {
+	var req *domain.GetSpaceListReq
+	if err := c.Bind(&req); err != nil {
+		return h.NewResponseWithError(c, "request body is invalid", err)
+	}
+	if err := c.Validate(req); err != nil {
+		return h.NewResponseWithError(c, "validate request body failed", err)
+	}
+	resp, err := h.feishuUseCase.GetSpacelist(c.Request().Context(), req)
+	if err != nil {
+		return h.NewResponseWithError(c, "list spaces failed", err)
+	}
+	return h.NewResponseWithData(c, resp)
+}
+
+// FeishuListDoc godoc
+//
+//	@Summary		FeishuListDoc
+//	@Description	List Docx in Feishu Spaces
+//	@Tags			crawler
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body		domain.SearchDocxReq	true	"Search Docx"
+//	@Success		200		{object}	domain.Response{data=[]domain.SearchDocxResp}
+//	@Router			/api/v1/crawler/feishu/list_doc [post]
+func (h *CrawlerHandler) FeishuListDoc(c echo.Context) error {
+	var req *domain.SearchDocxReq
+	if err := c.Bind(&req); err != nil {
+		return h.NewResponseWithError(c, "request body is invalid", err)
+	}
+	if err := c.Validate(req); err != nil {
+		return h.NewResponseWithError(c, "validate request body failed", err)
+	}
+	resp, err := h.feishuUseCase.ListDocx(c.Request().Context(), req)
+	if err != nil {
+		return h.NewResponseWithError(c, "search docx failed", err)
+	}
+	return h.NewResponseWithData(c, resp)
+}
+
+// FeishuSearchWiki
+//
+//	@Summary		FeishuSearchWiki
+//	@Description	Search Wiki in Feishu Spaces
+//	@Tags			crawler
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body		domain.SearchWikiReq	true	"Search Wiki"
+//	@Success		200		{object}	domain.Response{data=[]domain.SearchWikiResp}
+//	@Router			/api/v1/crawler/feishu/search_wiki [post]
+func (h *CrawlerHandler) FeishuSearchWiki(c echo.Context) error {
+	var req *domain.SearchWikiReq
+	if err := c.Bind(&req); err != nil {
+		return h.NewResponseWithError(c, "request body is invalid", err)
+	}
+	resp, err := h.feishuUseCase.SearchWiki(c.Request().Context(), req)
+	if err != nil {
+		return h.NewResponseWithError(c, "search wiki failed", err)
+	}
+	return h.NewResponseWithData(c, resp)
+}
+
+// FeishuGetDocx
+//
+//	@Summary		FeishuGetDocx
+//	@Description	Get Docx in Feishu Spaces
+//	@Tags			crawler
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body		domain.GetDocxReq	true	"Get Docx"
+//	@Success		200		{object}	domain.Response{data=[]domain.GetDocxResp}
+//	@Router			/api/v1/crawler/feishu/get_doc [post]
+func (h *CrawlerHandler) FeishuGetDoc(c echo.Context) error {
+	var req *domain.GetDocxReq
+	if err := c.Bind(&req); err != nil {
+		return h.NewResponseWithError(c, "request body is invalid", err)
+	}
+	if err := c.Validate(req); err != nil {
+		return h.NewResponseWithError(c, "validate request body failed", err)
+	}
+	resp, err := h.feishuUseCase.GetDoc(c.Request().Context(), req)
+	if err != nil {
+		return h.NewResponseWithError(c, "get docx failed", err)
+	}
+	return h.NewResponseWithData(c, resp)
 }
