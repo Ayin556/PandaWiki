@@ -8,9 +8,10 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"time"
+
+	"github.com/chaitin/panda-wiki/log"
 
 	"github.com/sbzhu/weworkapi_golang/wxbizmsgcrypt"
 )
@@ -25,6 +26,7 @@ type WechatConfig struct {
 	AccessToken    string
 	TokenExpire    time.Time
 	AgentID        string
+	logger         *log.Logger
 }
 
 type ReceivedMessage struct {
@@ -62,7 +64,7 @@ type BackendResponse struct {
 	} `json:"data"`
 }
 
-func NewWechatConfig(ctx context.Context, CorpID, Token, EncodingAESKey string, kbid string, secret string, againtid string) (*WechatConfig, error) {
+func NewWechatConfig(ctx context.Context, CorpID, Token, EncodingAESKey string, kbid string, secret string, againtid string, logger *log.Logger) (*WechatConfig, error) {
 	return &WechatConfig{
 		Ctx:            ctx,
 		CorpID:         CorpID,
@@ -71,10 +73,11 @@ func NewWechatConfig(ctx context.Context, CorpID, Token, EncodingAESKey string, 
 		kbID:           kbid,
 		Secret:         secret,
 		AgentID:        againtid,
+		logger:         logger,
 	}, nil
 }
 
-func (cfg *WechatConfig) VerifiyUrl(signature, timestamp, nonce, echostr string) ([]byte, error) {
+func (cfg *WechatConfig) VerifyUrlWechatAPP(signature, timestamp, nonce, echostr string) ([]byte, error) {
 	wxcpt := wxbizmsgcrypt.NewWXBizMsgCrypt(
 		cfg.Token,
 		cfg.EncodingAESKey,
@@ -107,6 +110,7 @@ func (cfg *WechatConfig) Wechat(signature, timestamp, nonce string, body []byte,
 	if err != nil {
 		return err
 	}
+	cfg.logger.Info("Received Msg: %+v", log.Any("msg", msg))
 
 	token, err := cfg.GetAccessToken()
 	if err != nil {
@@ -115,7 +119,7 @@ func (cfg *WechatConfig) Wechat(signature, timestamp, nonce string, body []byte,
 
 	err = cfg.Processmessage(msg, getQA, token)
 	if err != nil {
-		log.Printf("send to ai failed! : %v", err)
+		cfg.logger.Error("send to ai failed!", log.Error(err))
 		return err
 	}
 
@@ -190,7 +194,7 @@ func (cfg *WechatConfig) SendResponse(msg ReceivedMessage, content string) ([]by
 	// XML
 	responseXML, err := xml.Marshal(responseMsg)
 	if err != nil {
-		log.Printf("xml Marshal failed: %v", err)
+		cfg.logger.Error("marshal response failed", log.Error(err))
 		return nil, err
 	}
 

@@ -11,7 +11,7 @@ import (
 	"github.com/sbzhu/weworkapi_golang/wxbizmsgcrypt"
 )
 
-func (u *AppUsecase) VerifiyUrl(ctx context.Context, signature, timestamp, nonce, echostr, KbId string) ([]byte, error) {
+func (u *AppUsecase) VerifyUrlWechatAPP(ctx context.Context, signature, timestamp, nonce, echostr, KbId string) ([]byte, error) {
 
 	// find wechat-bot
 	appres, err := u.GetAppDetailByKBIDAndAppType(ctx, KbId, domain.AppTypeWechatBot)
@@ -29,6 +29,7 @@ func (u *AppUsecase) VerifiyUrl(ctx context.Context, signature, timestamp, nonce
 		KbId,
 		appres.Settings.WeChatAppSecret,
 		appres.Settings.WeChatAppAgentID,
+		u.logger,
 	)
 
 	if err != nil {
@@ -36,7 +37,7 @@ func (u *AppUsecase) VerifiyUrl(ctx context.Context, signature, timestamp, nonce
 		return nil, err
 	}
 
-	body, err := wc.VerifiyUrl(signature, timestamp, nonce, echostr)
+	body, err := wc.VerifyUrlWechatAPP(signature, timestamp, nonce, echostr)
 	if err != nil {
 		u.logger.Error("wc verifiyUrl failed", log.Error(err))
 		return nil, err
@@ -61,6 +62,7 @@ func (u *AppUsecase) Wechat(ctx context.Context, signature, timestamp, nonce str
 		KbId,
 		appres.Settings.WeChatAppSecret,
 		appres.Settings.WeChatAppAgentID,
+		u.logger,
 	)
 
 	if err != nil {
@@ -96,6 +98,7 @@ func (u *AppUsecase) SendImmediateResponse(ctx context.Context, signature, times
 		kbID,
 		appres.Settings.WeChatAppSecret,
 		appres.Settings.WeChatAppAgentID,
+		u.logger,
 	)
 
 	u.logger.Debug("wechat app info", log.Any("app", appres))
