@@ -11,5 +11,34 @@ type ChatRequest struct {
 
 	ModelInfo *Model `json:"-"`
 
-	RemoteIP string `json:"-"`
+	RemoteIP string           `json:"-"`
+	Info     ConversationInfo `json:"-"`
+}
+
+type ConversationInfo struct {
+	UserInfo UserInfo `json:"user_info"`
+}
+type UserInfo struct {
+	UserID   string      `json:"user_id"`
+	NickName string      `json:"name"`
+	From     MessageFrom `json:"from"`
+	RealName string      `json:"real_name"`
+	Email    string      `json:"email"`
+}
+type MessageFrom int
+
+const (
+	MessageFromGroup MessageFrom = iota
+	MessageFromPrivate
+)
+
+func (m MessageFrom) String() string {
+	switch m {
+	case MessageFromGroup:
+		return "group"
+	case MessageFromPrivate:
+		return "private"
+	default:
+		return "unknown"
+	}
 }
