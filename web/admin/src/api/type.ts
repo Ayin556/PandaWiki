@@ -244,6 +244,13 @@ export type WecomBotSetting = {
   wechat_app_corpid: string
 }
 
+export type WecomBotServiceSetting = {
+  wechat_service_secret: string
+  wechat_service_token: string
+  wechat_service_encodingaeskey: string
+  wechat_service_corpid: string
+}
+
 export type FeishuBotSetting = {
   feishu_bot_app_id: string
   feishu_bot_app_secret: string
@@ -310,6 +317,7 @@ export type AppSetting = HeaderSetting &
   CustomCodeSetting &
   DingBotSetting &
   WecomBotSetting &
+  WecomBotServiceSetting &
   FeishuBotSetting &
   ThemeMode & {
     theme_and_style: ThemeAndStyleSetting

@@ -24,9 +24,9 @@ const FeishuImport = ({ open, refresh, onCancel, parentId = null }: ImportDocPro
 
   const { control, getValues, handleSubmit, formState: { errors } } = useForm<ImportDocByFeishuFormData>({
     defaultValues: {
-      app_id: "cli_a8e92b599328d01c",
-      app_secret: "Ce4Dei3uAQOACMKXwP8Oqd7xMAwvxVvS",
-      user_access_token: "u-cdy6rpncx01pKIOaBULx0vg10X_ggk8VhgG0lhQwGysM"
+      app_id: "",
+      app_secret: "",
+      user_access_token: ""
     }
   })
 
