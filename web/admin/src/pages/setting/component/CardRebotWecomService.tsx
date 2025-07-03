@@ -19,7 +19,7 @@ const CardRebotWecomService = ({ kb, url }: { kb: KnowledgeBaseListItem, url: st
   })
 
   const getDetail = () => {
-    getAppDetail({ kb_id: kb.id, type: 5 }).then(res => {
+    getAppDetail({ kb_id: kb.id, type: 6 }).then(res => {
       setDetail(res)
       reset({
         wechat_service_secret: res.settings.wechat_service_secret,
