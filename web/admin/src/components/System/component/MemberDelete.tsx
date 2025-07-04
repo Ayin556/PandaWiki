@@ -34,7 +34,7 @@ const MemberDelete = ({ open, onClose, user, refresh }: MemberDeleteProps) => {
     title={
       <Stack direction='row' alignItems='center' gap={1}>
       <ErrorOutlineIcon sx={{  color: 'warning.main' }} />
-            "确定要删除该用户吗？"   </Stack>
+            确定要删除该用户吗？   </Stack>
           }
     >
     <Card sx={{
