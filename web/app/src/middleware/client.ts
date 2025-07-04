@@ -2,11 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function middleware(request: NextRequest, kb_id: string, authToken: string) {
   const url = request.nextUrl.clone();
+  console.log('🍎 client api >>>', url.pathname)
+  const pathname = url.pathname.replace(/client/, 'share')
 
   try {
     // 构建代理请求到后端API
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-    const targetUrl = `${apiBaseUrl}${url.pathname}${url.search}`;
+    const targetUrl = `${apiBaseUrl}${pathname}${url.search}`;
 
     // 复制请求头，添加认证信息
     const proxyHeaders = new Headers();
@@ -51,6 +53,10 @@ export async function middleware(request: NextRequest, kb_id: string, authToken:
       return NextResponse.redirect(loginUrl);
     }
 
+    // 检测是否为 SSE 请求
+    const isSSE = request.headers.get('accept')?.includes('text/event-stream') ||
+      response.headers.get('content-type')?.includes('text/event-stream');
+
     // 复制响应头
     const responseHeaders = new Headers();
     response.headers.forEach((value, key) => {
@@ -60,7 +66,18 @@ export async function middleware(request: NextRequest, kb_id: string, authToken:
       }
     });
 
-    // 获取响应体
+    // 如果是 SSE 请求，直接流式转发
+    if (isSSE && response.body) {
+      console.log('🍆 SSE 流式代理转发');
+
+      return new NextResponse(response.body, {
+        status: response.status,
+        statusText: response.statusText,
+        headers: responseHeaders,
+      });
+    }
+
+    // 非 SSE 请求，使用原有逻辑
     const responseBody = await response.text();
 
     // 返回代理响应

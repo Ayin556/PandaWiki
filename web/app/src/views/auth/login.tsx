@@ -1,5 +1,6 @@
 'use client';
 
+import { apiClient } from '@/api';
 import Logo from '@/assets/images/logo.png';
 import Footer from '@/components/footer';
 import { IconLock } from '@/components/icons';
@@ -9,7 +10,7 @@ import { Box, Button, InputAdornment, Stack, TextField } from '@mui/material';
 import { message } from 'ct-mui';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Login() {
   const [password, setPassword] = useState('');
@@ -47,6 +48,10 @@ export default function Login() {
       handleLogin();
     }
   };
+
+  useEffect(() => {
+    apiClient.clientStatPage({ scene: 4, node_id: '', kb_id: kb_id || '', authToken: '' });
+  }, [])
 
   return (
     <>

@@ -198,3 +198,26 @@ export const getConversationList = (params: GetConversationListData): Promise<Re
 
 export const getConversationDetail = (params: { id: string }): Promise<ConversationDetail> =>
   request({ url: 'api/v1/conversation/detail', method: 'get', params })
+
+// =============================================》stat
+
+export const statInstantPage = (params: { kb_id: string }): Promise<void> =>
+  request({ url: 'api/v1/stat/instant_pages', method: 'get', params })
+
+export const statInstantCount = (params: { kb_id: string }): Promise<void> =>
+  request({ url: 'api/v1/stat/instant_count', method: 'get', params })
+
+export const statGeoCount = (params: { kb_id: string }): Promise<void> =>
+  request({ url: 'api/v1/stat/geo_count', method: 'get', params })
+
+export const statCount = (params: { kb_id: string }): Promise<void> =>
+  request({ url: 'api/v1/stat/count', method: 'get', params })
+
+export const statBrowsers = (params: { kb_id: string }): Promise<void> =>
+  request({ url: 'api/v1/stat/browsers', method: 'get', params })
+
+export const statHotOS = (params: { kb_id: string }): Promise<void> =>
+  request({ url: 'api/v1/stat/hot_pages', method: 'get', params })
+
+export const statRefererHosts = (params: { kb_id: string }): Promise<void> =>
+  request({ url: 'api/v1/stat/referer_hosts', method: 'get', params })

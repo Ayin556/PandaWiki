@@ -1,4 +1,4 @@
-import { ConversationListItem, getConversationList } from "@/api"
+import { ConversationListItem, getConversationList, statInstantPage } from "@/api"
 import NoData from '@/assets/images/nodata.png'
 import Card from "@/components/Card"
 import { tableSx } from "@/constant/styles"
@@ -83,6 +83,19 @@ const Conversation = () => {
 
   useEffect(() => {
     if (kb_id) getData()
+    let timer: NodeJS.Timeout
+    if (kb_id) {
+      timer = setInterval(() => {
+        statInstantPage({ kb_id }).then(res => {
+          if (res[0]) {
+            console.log(dayjs(res[0].created_at).format('YYYY-MM-DD HH:mm:ss'))
+          }
+        })
+      }, 3000)
+    }
+    return () => {
+      clearInterval(timer)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, pageSize, subject, remoteIp, kb_id])
 

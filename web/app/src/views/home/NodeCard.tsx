@@ -61,7 +61,7 @@ const NodeFile = ({ node }: { node: RecommendNode }) => {
 }
 
 const DocCard = ({ node }: { node: RecommendNode }) => {
-  const { themeMode = 'light', mobile = false } = useStore()
+  const { mobile = false } = useStore()
   return <Box sx={{
     border: `1px solid`,
     borderColor: 'divider',
@@ -73,7 +73,6 @@ const DocCard = ({ node }: { node: RecommendNode }) => {
     bgcolor: 'background.paper',
     ':hover': {
       borderColor: 'text.primary',
-      // boxShadow: '0px 0px 10px 0px rgba(0, 0, 0, 0.1)',
     },
   }}>
     {node.type === 2 ? <NodeFile node={node} /> : <NodeFolder node={node} />}

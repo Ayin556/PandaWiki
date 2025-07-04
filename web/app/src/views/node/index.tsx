@@ -2,9 +2,10 @@
 
 import { apiClient } from "@/api";
 import NotData from '@/assets/images/nodata.png';
-import { NodeDetail } from "@/assets/type";
+import { Heading, NodeDetail } from "@/assets/type";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
+import { VisitSceneNode } from "@/constant";
 import { useStore } from "@/provider";
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { Box, Fab, Stack, Zoom } from "@mui/material";
@@ -28,6 +29,7 @@ const Doc = ({ node: defaultNode, token }: { node?: NodeDetail, token?: string }
   const catalogSetting = kbDetail?.settings?.catalog_settings
   const footerSetting = kbDetail?.settings?.footer_settings
   const [footerHeight, setFooterHeight] = useState(0);
+  const [headings, setHeadings] = useState<Heading[]>([])
 
   const [node, setNode] = useState<NodeDetail | undefined>(defaultNode)
 
@@ -82,7 +84,7 @@ const Doc = ({ node: defaultNode, token }: { node?: NodeDetail, token?: string }
 
   const getData = async (id: string) => {
     try {
-      const result = await apiClient.serverGetNodeDetail(id, kb_id || '', token, window?.location.origin);
+      const result = await apiClient.clientGetNodeDetail(id, kb_id || '', token);
       setNode(result.data);
     } catch (error) {
       console.error('page Error fetching document content:', error);
@@ -91,16 +93,18 @@ const Doc = ({ node: defaultNode, token }: { node?: NodeDetail, token?: string }
 
   useEffect(() => {
     if (node && editorRef && editorRef.editor) {
-      editorRef.setContent(node?.content || '')
+      editorRef.setContent(node?.content || '').then((navs: Heading[]) => {
+        setHeadings(navs || [])
+      })
     }
-  }, [node])
+  }, [node, firstRequest])
 
   useEffect(() => {
-    console.log(docId, id, firstRequest)
     if (!firstRequest) {
       getData(docId || '')
     }
     setFirstRequest(false)
+    apiClient.clientStatPage({ scene: VisitSceneNode, node_id: docId || '', kb_id: kb_id || '', authToken: token });
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [docId])
 
@@ -172,8 +176,7 @@ const Doc = ({ node: defaultNode, token }: { node?: NodeDetail, token?: string }
         <DocContent info={node} editorRef={editorRef} />
       </Box>
       {!!editorRef && <DocAnchor
-        editorRef={editorRef}
-        node={node}
+        headings={headings}
         footerHeight={footerHeight}
         summary={node?.meta?.summary || ''}
       />}

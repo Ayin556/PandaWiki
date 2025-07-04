@@ -1,5 +1,6 @@
 'use client';
 
+import { apiClient } from '@/api';
 import { ChunkResultItem } from '@/assets/type';
 import { useStore } from '@/provider';
 import { isInIframe } from '@/utils';
@@ -14,7 +15,7 @@ import { AnswerStatus } from './constant';
 
 const Chat = () => {
   const inIframe = isInIframe();
-  const { mobile = false, themeMode = 'light', kb_id, kbDetail, catalogShow } = useStore()
+  const { mobile = false, kb_id, token, kbDetail, catalogShow } = useStore()
 
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
   const sseClientRef = useRef<SSEClient<{
@@ -158,18 +159,14 @@ const Chat = () => {
 
   useEffect(() => {
     if (kb_id) {
-      const cookies = document.cookie.split(';');
-      const authCookie = cookies.find(cookie =>
-        cookie.trim().startsWith(`auth_${kb_id}=`)
-      );
-      const authToken = authCookie ? authCookie.split('=')[1] : '';
       sseClientRef.current = new SSEClient({
-        url: `/share/v1/chat/message`,
+        url: `/client/v1/chat/message`,
         headers: {
           'Content-Type': 'application/json',
-          'X-Simple-Auth-Password': authToken,
+          'x-simple-auth-password': token || '',
         },
       });
+      apiClient.clientStatPage({ scene: 3, node_id: '', kb_id: kb_id || '', authToken: token || '' });
     }
   }, []);
 

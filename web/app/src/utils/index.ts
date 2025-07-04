@@ -136,3 +136,15 @@ export const formatMeta = async (
     keywords: keywordsIsEmpty ? parentKeywords : keywords,
   };
 };
+
+export const parsePathname = (pathname: string): { page: string; id: string; hash: string, search: string } => {
+  const [filterSearch, search] = pathname.split('?')
+  const [path, hash] = filterSearch.split('#');
+  const [page, id] = path.split('/').filter(Boolean);
+  return {
+    page,
+    id,
+    hash,
+    search
+  };
+};

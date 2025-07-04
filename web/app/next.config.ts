@@ -16,11 +16,6 @@ const nextConfig: NextConfig = {
       rewritesPath.push(
         ...[
           {
-            source: '/share/:path*',
-            destination: `${process.env.NEXT_PUBLIC_API_URL}/share/:path*`,
-            basePath: false as const,
-          },
-          {
             source: '/static-file/:path*',
             destination: `${process.env.NEXT_PUBLIC_API_URL}/static-file/:path*`,
             basePath: false as const,

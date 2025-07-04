@@ -1,17 +1,15 @@
 'use client'
 
-import { Heading, NodeDetail } from "@/assets/type";
+import { Heading } from "@/assets/type";
 import { IconArrowDown } from "@/components/icons";
 import useScroll from "@/utils/useScroll";
 import { Box, IconButton, Stack } from "@mui/material";
-import { UseTiptapEditorReturn } from "ct-tiptap-editor";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface DocAnchorProps {
   summary: string
-  node?: NodeDetail
-  editorRef: UseTiptapEditorReturn
   footerHeight: number
+  headings: Heading[]
 }
 
 const HeadingSx = [
@@ -20,18 +18,9 @@ const HeadingSx = [
   { fontWeight: 400, color: 'text.disabled' },
 ]
 
-const DocAnchor = ({ summary, node, editorRef, footerHeight }: DocAnchorProps) => {
-  const [headings, setHeadings] = useState<Heading[]>([])
+const DocAnchor = ({ summary, headings, footerHeight }: DocAnchorProps) => {
   const { activeHeading, scrollToElement } = useScroll(headings)
   const [expand, setExpand] = useState(true)
-
-  useEffect(() => {
-    if (node && editorRef && editorRef.editor) {
-      editorRef.getNavs().then((navs: Heading[]) => {
-        setHeadings(navs || [])
-      })
-    }
-  }, [node])
 
   const levels = Array.from(new Set(headings.map(it => it.heading).sort((a, b) => a - b))).slice(0, 3)
 
