@@ -9,7 +9,7 @@ import { Ellipsis } from "ct-mui";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 
-const RTVisitor = () => {
+const RTVisitor = ({ isWideScreen }: { isWideScreen: boolean }) => {
   const { kb_id = '' } = useAppSelector(state => state.config)
   const [count, setCount] = useState<TrendData[]>([]);
   const [pages, setPages] = useState<StatInstantPageItme[]>([]);
@@ -53,13 +53,13 @@ const RTVisitor = () => {
         {pages.length > 0 ? <Box sx={{ height: 140, overflowY: 'auto', pr: 2 }}>
           {pages.map((it, idx) => <Stack
             key={idx}
-            direction={'row'}
-            alignItems={'center'}
-            justifyContent={'space-between'}
-            gap={6}
+            direction={isWideScreen ? 'row' : 'column'}
+            alignItems={isWideScreen ? 'center' : 'flex-start'}
+            justifyContent='space-between'
+            gap={isWideScreen ? 6 : 0}
             sx={{
               position: 'relative',
-              mb: idx === pages.length - 1 ? '0' : '20px',
+              mb: idx === pages.length - 1 || !isWideScreen ? '0' : '20px',
             }}
           >
             {idx !== pages.length - 1 && <Box sx={{
@@ -71,14 +71,14 @@ const RTVisitor = () => {
               left: 5.5,
               top: 20,
             }}></Box>}
-            <Stack direction={'row'} alignItems={'center'} gap={6}>
+            <Stack direction={'row'} alignItems={'center'} gap={isWideScreen ? 6 : 1}>
               <Stack direction={'row'} alignItems={'center'} gap={1} sx={{ width: 80, flexShrink: 0 }}>
                 <Box component={'img'} src={ClockIcon} width={12} />
                 <Box sx={{ color: 'text.auxiliary', fontSize: '12px' }}>{dayjs(it.created_at).fromNow()}</Box>
               </Stack>
               <Ellipsis sx={{ fontSize: '12px', flexShrink: 0 }}>{it.node_name || '-'}</Ellipsis>
             </Stack>
-            <Box sx={{ color: 'text.auxiliary', fontSize: '12px' }}>
+            <Box sx={{ color: 'text.auxiliary', fontSize: '12px', ...(!isWideScreen && { ml: '20px', fontSize: 10 }) }}>
               {it.ip_address.province} - {it.ip_address.city}
             </Box>
           </Stack>)}

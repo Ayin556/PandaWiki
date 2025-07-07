@@ -1,4 +1,4 @@
-import { Box, Stack } from "@mui/material";
+import { Box, Stack, useMediaQuery } from "@mui/material";
 import { CusTabs } from "ct-mui";
 import { useState } from "react";
 import AreaMap from "./AreaMap";
@@ -20,9 +20,10 @@ export type ActiveTab = typeof TimeList[number]['value']
 
 const Statistic = () => {
   const [tab, setTab] = useState<ActiveTab>('day')
+  const isWideScreen = useMediaQuery('(min-width:1190px)')
 
   return <Box sx={{ p: 2 }}>
-    <RTVisitor />
+    <RTVisitor isWideScreen={isWideScreen} />
     <Box sx={{ py: 2 }}>
       <CusTabs
         list={TimeList}
@@ -31,14 +32,22 @@ const Statistic = () => {
       />
     </Box>
     <TypeCount tab={tab} />
-    <Stack direction={'row'} gap={2} alignItems={'stretch'} sx={{ my: 2 }}>
+    <Stack direction={isWideScreen ? 'row' : 'column'} gap={2} alignItems={'stretch'} sx={{ my: 2 }}>
       <AreaMap tab={tab} />
-      <QAReferer tab={tab} />
+      <Box sx={{ width: isWideScreen ? 400 : '100%' }}>
+        <QAReferer tab={tab} />
+      </Box>
     </Stack>
-    <Stack direction={'row'} gap={2} alignItems={'stretch'}>
-      <HostReferer tab={tab} />
-      <HotDocs tab={tab} />
-      <ClientStat tab={tab} />
+    <Stack direction={isWideScreen ? 'row' : 'column'} gap={2} alignItems={'stretch'}>
+      <Box sx={{ width: isWideScreen ? 340 : '100%', flexShrink: 0 }}>
+        <HostReferer tab={tab} />
+      </Box>
+      <Box sx={{ width: isWideScreen ? 340 : '100%', flexShrink: 0 }}>
+        <HotDocs tab={tab} />
+      </Box>
+      <Box sx={{ width: isWideScreen ? 340 : '100%', flex: 1 }}>
+        <ClientStat tab={tab} />
+      </Box>
     </Stack>
   </Box>
 }

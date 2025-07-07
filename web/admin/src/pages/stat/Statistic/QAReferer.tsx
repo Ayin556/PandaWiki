@@ -20,7 +20,7 @@ const QAReferer = ({ tab }: { tab: ActiveTab }) => {
     })
   }, [tab, kb_id])
 
-  return <Card sx={{ p: 2, width: 400, height: 292, boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)', flexShrink: 0 }}>
+  return <Card sx={{ p: 2, height: 292, boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)', flexShrink: 0 }}>
     <Box sx={{ fontSize: 16, fontWeight: 'bold', mb: 2 }}>问答来源</Box>
     {list.length > 0 ? <Stack direction={'row'} alignItems={'strict'} justifyContent={'space-between'} gap={2} sx={{ height: 220 }}>
       <Stack direction={'row'} alignItems='center' sx={{ flex: 1, height: '100%' }}>
