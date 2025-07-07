@@ -23,14 +23,28 @@ func (r *StatRepository) GetHotPages(ctx context.Context, kbID string) ([]*domai
 	var hotPages []*domain.HotPageResp
 	if err := r.db.WithContext(ctx).Model(&domain.StatPage{}).
 		Where("kb_id = ?", kbID).
-		Group("node_id").
-		Select("node_id, COUNT(*) as count").
+		Group("scene, node_id").
+		Select("scene, node_id, COUNT(*) as count").
 		Order("count DESC").
 		Limit(10).
 		Find(&hotPages).Error; err != nil {
 		return nil, err
 	}
 	return hotPages, nil
+}
+
+func (r *StatRepository) GetHotScene(ctx context.Context, kbID string) (map[domain.StatPageScene]int64, error) {
+	var scenes map[domain.StatPageScene]int64
+	if err := r.db.WithContext(ctx).Model(&domain.StatPage{}).
+		Where("kb_id = ?", kbID).
+		Group("scene").
+		Select("scene, COUNT(*) as count").
+		Order("count DESC").
+		Limit(10).
+		Find(&scenes).Error; err != nil {
+		return nil, err
+	}
+	return scenes, nil
 }
 
 func (r *StatRepository) GetHotRefererHosts(ctx context.Context, kbID string) ([]*domain.HotRefererHostResp, error) {

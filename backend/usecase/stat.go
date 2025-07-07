@@ -46,15 +46,24 @@ func (u *StatUseCase) GetHotPages(ctx context.Context, kbID string) ([]*domain.H
 	if err != nil {
 		return nil, err
 	}
-	nodeIDs := lo.Map(hotPages, func(page *domain.HotPageResp, _ int) string {
+	nodeIDs := lo.Uniq(lo.Map(hotPages, func(page *domain.HotPageResp, _ int) string {
 		return page.NodeID
-	})
+	}))
 	docNames, err := u.nodeRepo.GetNodeNameByNodeIDs(ctx, nodeIDs)
 	if err != nil {
 		return nil, err
 	}
 	for _, page := range hotPages {
-		page.NodeName = docNames[page.NodeID]
+		switch page.Scene {
+		case domain.StatPageSceneNodeDetail:
+			page.NodeName = docNames[page.NodeID]
+		case domain.StatPageSceneWelcome:
+			page.NodeName = "欢迎页"
+		case domain.StatPageSceneChat:
+			page.NodeName = "问答页"
+		case domain.StatPageSceneLogin:
+			page.NodeName = "登录页"
+		}
 	}
 	return hotPages, nil
 }

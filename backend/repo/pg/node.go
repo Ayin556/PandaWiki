@@ -256,17 +256,19 @@ func (r *NodeRepository) GetNodeByID(ctx context.Context, id string) (*domain.No
 }
 
 func (r *NodeRepository) GetNodeNameByNodeIDs(ctx context.Context, ids []string) (map[string]string, error) {
-	nodes := make([]*domain.Node, 0)
-	if err := r.db.WithContext(ctx).
-		Model(&domain.Node{}).
-		Where("id IN ?", ids).
-		Select("id, name").
-		Find(&nodes).Error; err != nil {
-		return nil, err
-	}
 	nodesMap := make(map[string]string)
-	for _, node := range nodes {
-		nodesMap[node.ID] = node.Name
+	for _, chunk := range lo.Chunk(ids, 1000) {
+		var nodes []*domain.Node
+		if err := r.db.WithContext(ctx).
+			Model(&domain.Node{}).
+			Where("id IN ?", chunk).
+			Select("id, name").
+			Find(&nodes).Error; err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			nodesMap[node.ID] = node.Name
+		}
 	}
 	return nodesMap, nil
 }
