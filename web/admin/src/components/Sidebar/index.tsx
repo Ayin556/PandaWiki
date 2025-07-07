@@ -16,10 +16,17 @@ const menus = [
     show: true,
   },
   {
-    label: '分析',
+    label: '记录',
     value: '/stat',
     pathname: 'stat',
-    icon: 'icon-fenxi',
+    icon: 'icon-tongjifenxi1',
+    show: true,
+  },
+  {
+    label: '对话',
+    value: '/conversation',
+    pathname: 'conversation',
+    icon: 'icon-duihualishi1',
     show: true,
   },
   {
