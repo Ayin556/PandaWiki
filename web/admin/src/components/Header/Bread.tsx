@@ -8,7 +8,7 @@ import KBSelect from "../KB/KBSelect"
 const HomeBread = { title: '文档', to: '/' }
 const OtherBread = {
   'document': { title: '文档', to: '/' },
-  'conversation': { title: '分析', to: '/conversation' },
+  'stat': { title: '分析', to: '/stat' },
   'application': { title: '设置', to: '/setting' },
   'release': { title: '发布', to: '/release' },
 }

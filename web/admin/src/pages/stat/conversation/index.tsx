@@ -1,4 +1,4 @@
-import { ConversationListItem, getConversationList, statInstantPage } from "@/api"
+import { ConversationListItem, getConversationList } from "@/api"
 import NoData from '@/assets/images/nodata.png'
 import Card from "@/components/Card"
 import { tableSx } from "@/constant/styles"
@@ -83,37 +83,24 @@ const Conversation = () => {
 
   useEffect(() => {
     if (kb_id) getData()
-    let timer: NodeJS.Timeout
-    if (kb_id) {
-      timer = setInterval(() => {
-        statInstantPage({ kb_id }).then(res => {
-          if (res[0]) {
-            console.log(dayjs(res[0].created_at).format('YYYY-MM-DD HH:mm:ss'))
-          }
-        })
-      }, 3000)
-    }
-    return () => {
-      clearInterval(timer)
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, pageSize, subject, remoteIp, kb_id])
 
   return <Card>
-    <Stack direction='row' alignItems={'center'} justifyContent={'space-between'} sx={{ mb: 2, p: 2, pb: 0 }}>
+    <Stack direction='row' alignItems={'center'} justifyContent={'space-between'} sx={{ p: 2 }}>
       <Search />
     </Stack>
     <Table
       columns={columns}
       dataSource={data}
       rowKey="id"
-      height="calc(100vh - 148px)"
+      height="calc(100vh - 148px - 52px)"
       size='small'
       sx={{
         overflow: 'hidden',
         ...tableSx,
         '.MuiTableContainer-root': {
-          height: 'calc(100vh - 148px - 70px)',
+          height: 'calc(100vh - 148px - 70px - 52px)',
         }
       }}
       pagination={{

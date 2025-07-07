@@ -130,7 +130,7 @@ const DocEditor = () => {
 
   if (!editorRef) return <></>
 
-  return <Box sx={{ color: 'text.primary', pb: 2, height: '100vh' }}>
+  return <Box sx={{ color: 'text.primary', pb: 2 }}>
     {/* 固定头部 */}
     <Box sx={{
       position: 'fixed',
@@ -166,8 +166,7 @@ const DocEditor = () => {
 
     {/* 三栏布局容器 */}
     <Box sx={{
-      mt: '105px',
-      // height: 'calc(100vh - 105px)',
+      pt: '105px',
       display: 'flex',
       justifyContent: 'center',
       gap: isWideScreen ? 1 : 0, // 8px间隔
@@ -193,18 +192,16 @@ const DocEditor = () => {
       {/* 中间内容区域 */}
       <Box className='editor-content' sx={{
         width: 800,
-        height: '100%',
         overflowY: 'auto',
         position: 'relative',
         zIndex: 1,
-        m: '0 auto', // 居中显示
+        m: '0 auto',
         '.editor-container': {
           p: 4,
           borderRadius: '6px',
           bgcolor: '#fff',
-          minHeight: '100%',
           '.tiptap': {
-            minHeight: '100%',
+            minHeight: 'calc(100vh - 185px)',
           }
         }
       }}>
