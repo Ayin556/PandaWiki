@@ -33,9 +33,10 @@ type StatPageReq struct {
 }
 
 type HotPageResp struct {
-	NodeID   string `json:"node_id"`
-	NodeName string `json:"node_name" gorm:"-"`
-	Count    int    `json:"count"`
+	Scene    StatPageScene `json:"scene"`
+	NodeID   string        `json:"node_id"`
+	NodeName string        `json:"node_name" gorm:"-"`
+	Count    int           `json:"count"`
 }
 
 type HotRefererHostResp struct {
