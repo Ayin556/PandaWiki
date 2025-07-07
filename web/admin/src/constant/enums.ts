@@ -209,4 +209,4 @@ export const MAC_SYMBOLS = {
   shift: "⇧",
 }
 
-export const chartColor = ['#3082FF', '#3248F2', '#9E68FC', '#FFD268', '#63CFC3', '#FF5576']
+export const chartColor = ['#3082FF', '#FFD268', '#9E68FC', '#3248F2', '#63CFC3', '#FF5576']
