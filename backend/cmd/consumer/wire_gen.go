@@ -46,13 +46,17 @@ func createApp() (*App, error) {
 	if err != nil {
 		return nil, err
 	}
+	statRepository := pg2.NewStatRepository(db)
+	statCronHandler := mq2.NewStatCronHandler(logger, statRepository)
 	mqHandlers := &mq2.MQHandlers{
-		RAGMQHandler: ragmqHandler,
+		RAGMQHandler:    ragmqHandler,
+		StatCronHandler: statCronHandler,
 	}
 	app := &App{
-		MQConsumer: mqConsumer,
-		Config:     configConfig,
-		MQHandlers: mqHandlers,
+		MQConsumer:      mqConsumer,
+		Config:          configConfig,
+		MQHandlers:      mqHandlers,
+		StatCronHandler: statCronHandler,
 	}
 	return app, nil
 }
@@ -60,7 +64,8 @@ func createApp() (*App, error) {
 // wire.go:
 
 type App struct {
-	MQConsumer mq.MQConsumer
-	Config     *config.Config
-	MQHandlers *mq2.MQHandlers
+	MQConsumer      mq.MQConsumer
+	Config          *config.Config
+	MQHandlers      *mq2.MQHandlers
+	StatCronHandler *mq2.StatCronHandler
 }

@@ -8,12 +8,13 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/google/uuid"
+	"github.com/minio/minio-go/v7"
+
 	"github.com/chaitin/panda-wiki/config"
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/log"
 	"github.com/chaitin/panda-wiki/store/s3"
-	"github.com/google/uuid"
-	"github.com/minio/minio-go/v7"
 )
 
 type FileUsecase struct {

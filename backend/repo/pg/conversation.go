@@ -109,3 +109,29 @@ func (r *ConversationRepository) ValidateConversationNonce(ctx context.Context, 
 	}
 	return nil
 }
+
+func (r *ConversationRepository) GetConversationDistribution(ctx context.Context, kbID string) ([]*domain.ConversationDistributionResp, error) {
+	var distribution []*domain.ConversationDistributionResp
+	if err := r.db.WithContext(ctx).
+		Model(&domain.Conversation{}).
+		Select("app_id", "COUNT(*) AS count").
+		Where("kb_id = ?", kbID).
+		Where("created_at > now() - interval '24h'").
+		Group("app_id").
+		Find(&distribution).Error; err != nil {
+		return nil, err
+	}
+	return distribution, nil
+}
+
+func (r *ConversationRepository) GetConversationCount(ctx context.Context, kbID string) (int64, error) {
+	var count int64
+	if err := r.db.WithContext(ctx).
+		Model(&domain.Conversation{}).
+		Where("kb_id = ?", kbID).
+		Where("created_at > now() - interval '24h'").
+		Count(&count).Error; err != nil {
+		return 0, err
+	}
+	return count, nil
+}

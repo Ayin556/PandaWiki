@@ -26,11 +26,13 @@ require (
 	github.com/labstack/echo/v4 v4.13.3
 	github.com/larksuite/oapi-sdk-go/v3 v3.4.20
 	github.com/lionsoul2014/ip2region/binding/golang v0.0.0-20250508043914-ed57fa5c5274
+	github.com/mileusna/useragent v1.3.5
 	github.com/minio/minio-go/v7 v7.0.91
 	github.com/nats-io/nats.go v1.42.0
 	github.com/ollama/ollama v0.5.12
 	github.com/open-dingtalk/dingtalk-stream-sdk-go v0.9.1
 	github.com/redis/go-redis/v9 v9.8.0
+	github.com/robfig/cron/v3 v3.0.1
 	github.com/russross/blackfriday/v2 v2.1.0
 	github.com/samber/lo v1.50.0
 	github.com/sbzhu/weworkapi_golang v0.0.0-20210525081115-1799804a7c8d

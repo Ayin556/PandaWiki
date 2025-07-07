@@ -87,12 +87,13 @@ func createApp() (*App, error) {
 	nodeUsecase := usecase.NewNodeUsecase(nodeRepository, ragRepository, knowledgeBaseRepository, llmUsecase, logger, minioClient, modelRepository)
 	nodeHandler := v1.NewNodeHandler(baseHandler, echo, nodeUsecase, authMiddleware, logger)
 	appRepository := pg2.NewAppRepository(db, logger)
+	geoRepo := cache2.NewGeoCache(cacheCache, logger)
 	ipdbIPDB, err := ipdb.NewIPDB(configConfig, logger)
 	if err != nil {
 		return nil, err
 	}
 	ipAddressRepo := ipdb2.NewIPAddressRepo(ipdbIPDB, logger)
-	conversationUsecase := usecase.NewConversationUsecase(conversationRepository, nodeRepository, logger, ipAddressRepo)
+	conversationUsecase := usecase.NewConversationUsecase(conversationRepository, nodeRepository, geoRepo, logger, ipAddressRepo)
 	modelUsecase := usecase.NewModelUsecase(modelRepository, nodeRepository, ragRepository, ragService, logger, configConfig, knowledgeBaseRepository)
 	chatUsecase := usecase.NewChatUsecase(llmUsecase, conversationUsecase, modelUsecase, appRepository, logger)
 	appUsecase := usecase.NewAppUsecase(appRepository, nodeUsecase, logger, configConfig, chatUsecase)
@@ -112,6 +113,9 @@ func createApp() (*App, error) {
 	crawlerHandler := v1.NewCrawlerHandler(echo, baseHandler, authMiddleware, logger, configConfig, crawlerUsecase, notionUseCase, epubUsecase, wikiJSUsecase, feishuUseCase)
 	creationUsecase := usecase.NewCreationUsecase(logger, llmUsecase, modelUsecase)
 	creationHandler := v1.NewCreationHandler(echo, baseHandler, logger, creationUsecase)
+	statRepository := pg2.NewStatRepository(db)
+	statUseCase := usecase.NewStatUseCase(statRepository, nodeRepository, conversationRepository, appRepository, ipAddressRepo, geoRepo, logger)
+	statHandler := v1.NewStatHandler(baseHandler, echo, statUseCase, logger)
 	apiHandlers := &v1.APIHandlers{
 		UserHandler:          userHandler,
 		KnowledgeBaseHandler: knowledgeBaseHandler,
@@ -122,17 +126,20 @@ func createApp() (*App, error) {
 		ConversationHandler:  conversationHandler,
 		CrawlerHandler:       crawlerHandler,
 		CreationHandler:      creationHandler,
+		StatHandler:          statHandler,
 	}
 	shareNodeHandler := share.NewShareNodeHandler(baseHandler, echo, nodeUsecase, logger)
 	shareAppHandler := share.NewShareAppHandler(echo, baseHandler, logger, appUsecase)
 	shareChatHandler := share.NewShareChatHandler(echo, baseHandler, logger, appUsecase, chatUsecase, conversationUsecase, modelUsecase)
 	sitemapUsecase := usecase.NewSitemapUsecase(nodeRepository, knowledgeBaseRepository, logger)
 	shareSitemapHandler := share.NewShareSitemapHandler(echo, baseHandler, sitemapUsecase, appUsecase, logger)
+	shareStatHandler := share.NewShareStatHandler(baseHandler, echo, statUseCase)
 	shareHandler := &share.ShareHandler{
 		ShareNodeHandler:    shareNodeHandler,
 		ShareAppHandler:     shareAppHandler,
 		ShareChatHandler:    shareChatHandler,
 		ShareSitemapHandler: shareSitemapHandler,
+		ShareStatHandler:    shareStatHandler,
 	}
 	app := &App{
 		HTTPServer:    httpServer,

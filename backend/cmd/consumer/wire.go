@@ -25,7 +25,8 @@ func createApp() (*App, error) {
 }
 
 type App struct {
-	MQConsumer mq.MQConsumer
-	Config     *config.Config
-	MQHandlers *handler.MQHandlers
+	MQConsumer      mq.MQConsumer
+	Config          *config.Config
+	MQHandlers      *handler.MQHandlers
+	StatCronHandler *handler.StatCronHandler
 }

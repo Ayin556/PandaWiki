@@ -42,6 +42,7 @@ func NewClient(logger *log.Logger) *Client {
 		},
 		firstReport: true,
 		stopChan:    make(chan struct{}),
+		logger:      logger,
 	}
 
 	// get or create machine ID
