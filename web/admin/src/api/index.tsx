@@ -134,13 +134,17 @@ export const parseWikijs = (data: FormData): Promise<{ id: string, content: stri
 export const getFeishuKnowledgeBase = (data: ImportDocByFeishuFormData): Promise<{ space_id: string, name: string }[]> =>
   request({ url: 'api/v1/crawler/feishu/list_spaces', method: 'post', data })
 
-export const getFeishuCloudDocs = (data: ImportDocByFeishuFormData): Promise<{ url: string, name: string }[]> =>
+export const getFeishuCloudDocs = (data: ImportDocByFeishuFormData): Promise<{ url: string, name: string, obj_token: string, obj_type: number }[]> =>
   request({ url: 'api/v1/crawler/feishu/list_doc', method: 'post', data })
 
-export const getFeishuKBDocById = (data: ImportDocByFeishuFormData & { space_id: string }): Promise<{ space_id: string, title: string, url: string }[]> =>
+export const getFeishuKBDocById = (data: ImportDocByFeishuFormData & { space_id: string }): Promise<{ space_id: string, title: string, url: string, obj_token: string, obj_type: number }[]> =>
   request({ url: 'api/v1/crawler/feishu/search_wiki', method: 'post', data })
 
-export const getFeishuDocDetail = (data: ImportDocByFeishuFormData & { kb_id: string, urls: string[] }): Promise<{ content: string, title: string }[]> =>
+export const getFeishuDocDetail = (data: ImportDocByFeishuFormData & {
+  kb_id: string, sources: {
+    url: string, obj_token: string, obj_type: number
+  }[]
+}): Promise<{ content: string, title: string }[]> =>
   request({ url: 'api/v1/crawler/feishu/get_doc', method: 'post', data })
 
 // =============================================》file

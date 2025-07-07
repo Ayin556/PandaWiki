@@ -33,9 +33,7 @@ const HotDocs = ({ tab }: { tab: ActiveTab }) => {
       {list.map(it => <Box key={it.node_id} sx={{ fontSize: 12 }}>
         <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'} gap={2}>
           <Ellipsis sx={{ flex: 1, width: 0 }}>{it.node_name || '-'}</Ellipsis>
-          <Box sx={{ color: 'text.auxiliary', flexShrink: 0 }}>
-            <Box component={'span'} sx={{ fontFamily: 'Gbold', color: 'text.primary' }}>{it.count}</Box> 次提问
-          </Box>
+          <Box sx={{ fontFamily: 'Gbold' }}>{it.count}</Box>
         </Stack>
         <Box sx={{
           height: 6,

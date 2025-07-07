@@ -1,6 +1,5 @@
 'use client';
 
-import { apiClient } from '@/api';
 import { ChunkResultItem } from '@/assets/type';
 import { useStore } from '@/provider';
 import { isInIframe } from '@/utils';
@@ -147,12 +146,9 @@ const Chat = () => {
   }, [answer, isUserScrolling]);
 
   useEffect(() => {
-    // 从sessionStorage读取搜索内容
     const searchQuery = sessionStorage.getItem('chat_search_query');
     if (searchQuery) {
-      // 清理sessionStorage
       sessionStorage.removeItem('chat_search_query');
-      // 执行搜索
       onSearch(searchQuery, true);
     }
   }, []);
@@ -166,7 +162,6 @@ const Chat = () => {
           'x-simple-auth-password': token || '',
         },
       });
-      apiClient.clientStatPage({ scene: 3, node_id: '', kb_id: kb_id || '', authToken: token || '' });
     }
   }, []);
 

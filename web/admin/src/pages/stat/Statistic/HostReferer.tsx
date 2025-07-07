@@ -32,7 +32,7 @@ const HostReferer = ({ tab }: { tab: ActiveTab }) => {
       {list.map(it => <Box key={it.referer_host} sx={{ fontSize: 12 }}>
         <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
           <Box>{it.referer_host || '-'}</Box>
-          <Box sx={{ color: 'text.auxiliary' }}><Box component={'span'} sx={{ fontFamily: 'Gbold', color: 'text.primary' }}>{it.count}</Box> 次提问</Box>
+          <Box sx={{ fontFamily: 'Gbold' }}>{it.count}</Box>
         </Stack>
         <Box sx={{
           height: 6,
