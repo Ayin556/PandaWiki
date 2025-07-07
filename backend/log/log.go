@@ -32,6 +32,10 @@ func Int(key string, value int) slog.Attr {
 	return slog.Int(key, value)
 }
 
+func Int64(key string, value int64) slog.Attr {
+	return slog.Int64(key, value)
+}
+
 func Error(err error) slog.Attr {
 	return slog.Any("error", err)
 }

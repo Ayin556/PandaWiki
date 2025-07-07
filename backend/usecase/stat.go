@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/samber/lo"
 
@@ -37,6 +38,16 @@ func NewStatUseCase(repo *pg.StatRepository, nodeRepo *pg.NodeRepository, conver
 func (u *StatUseCase) RecordPage(ctx context.Context, stat *domain.StatPage) error {
 	if err := u.repo.CreateStatPage(ctx, stat); err != nil {
 		return err
+	}
+	remoteIP := stat.IP
+	ipAddress, err := u.ipRepo.GetIPAddress(ctx, remoteIP)
+	if err != nil {
+		u.logger.Warn("get ip address failed", log.Error(err), log.String("ip", remoteIP), log.Int64("stat_id", stat.ID))
+	} else {
+		location := fmt.Sprintf("%s|%s|%s", ipAddress.Country, ipAddress.Province, ipAddress.City)
+		if err := u.geoCacheRepo.SetGeo(ctx, stat.KBID, location); err != nil {
+			u.logger.Warn("set geo cache failed", log.Error(err), log.Int64("stat_id", stat.ID), log.String("ip", remoteIP))
+		}
 	}
 	return nil
 }

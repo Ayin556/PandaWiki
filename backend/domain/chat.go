@@ -1,5 +1,12 @@
 package domain
 
+import (
+	"database/sql/driver"
+	"encoding/json"
+	"errors"
+	"fmt"
+)
+
 type ChatRequest struct {
 	ConversationID string  `json:"conversation_id"`
 	Message        string  `json:"message" validate:"required"`
@@ -18,6 +25,7 @@ type ChatRequest struct {
 type ConversationInfo struct {
 	UserInfo UserInfo `json:"user_info"`
 }
+
 type UserInfo struct {
 	UserID   string      `json:"user_id"`
 	NickName string      `json:"name"`
@@ -25,6 +33,19 @@ type UserInfo struct {
 	RealName string      `json:"real_name"`
 	Email    string      `json:"email"`
 }
+
+func (s *ConversationInfo) Scan(value any) error {
+	bytes, ok := value.([]byte)
+	if !ok {
+		return errors.New(fmt.Sprint("invalid access settings value type:", value))
+	}
+	return json.Unmarshal(bytes, s)
+}
+
+func (s ConversationInfo) Value() (driver.Value, error) {
+	return json.Marshal(s)
+}
+
 type MessageFrom int
 
 const (
