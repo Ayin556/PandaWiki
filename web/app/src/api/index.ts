@@ -6,6 +6,12 @@ interface ApiClientConfig {
   cache?: RequestCache;
 }
 
+interface Response<T> {
+  data?: T;
+  status: number;
+  error?: string;
+}
+
 class ApiClient {
   private baseURL: string;
 
@@ -13,35 +19,21 @@ class ApiClient {
     this.baseURL = process.env.NEXT_PUBLIC_API_URL || '';
   }
 
-  // 创建SSE客户端（用于聊天）
-  createSSEClient(kb_id: string) {
-    return {
-      url: `${this.baseURL}/share/v1/chat/message`,
-      headers: {
-        'Content-Type': 'application/json',
-        'x-kb-id': kb_id,
-      },
-    };
-  }
-
   // 服务端专用方法 - 带cookie的请求
   async serverRequest<T>(
     url: string,
     options: RequestInit = {},
     config: ApiClientConfig & { authToken?: string } = {}
-  ): Promise<{ data?: T; status: number; error?: string }> {
+  ): Promise<Response<T>> {
     const { kb_id = '', headers = {}, cache, authToken } = config;
 
     const requestHeaders: Record<string, string> = {
       'Content-Type': 'application/json',
       'x-kb-id': kb_id,
-      'X-Simple-Auth-Password': authToken || '',
+      'x-simple-auth-password': authToken || '',
       ...headers,
     };
     const fullUrl = url.startsWith('http') ? url : `${this.baseURL}${url}`;
-    if (process.env.NODE_ENV === 'development') {
-      console.log('🍎 request url >>>', fullUrl)
-    }
     try {
       const response = await fetch(fullUrl, {
         ...options,
@@ -59,7 +51,7 @@ class ApiClient {
   }
 
   // 服务端获取知识库信息
-  async serverGetKBInfo(kb_id: string, authToken?: string): Promise<{ data?: KBDetail; status: number; error?: string }> {
+  async serverGetKBInfo(kb_id: string, authToken?: string): Promise<Response<KBDetail>> {
     return this.serverRequest(`/share/v1/app/web/info`, {
       method: 'GET',
     }, {
@@ -74,7 +66,7 @@ class ApiClient {
     kb_id: string,
     authToken?: string,
     origin: string = ''
-  ): Promise<{ data?: NodeListItem[]; status: number; error?: string }> {
+  ): Promise<Response<NodeListItem[]>> {
     return this.serverRequest(origin + `/share/v1/node/list`, {
       method: 'GET',
     }, {
@@ -84,12 +76,50 @@ class ApiClient {
   }
 
   // 服务端获取节点详情
-  async serverGetNodeDetail(id: string, kb_id: string, authToken?: string, origin: string = ''): Promise<{ data?: NodeDetail; status: number; error?: string }> {
-    return this.serverRequest(origin + `/share/v1/node/detail?id=${id}`, {
+  async serverGetNodeDetail(id: string, kb_id: string, authToken?: string): Promise<Response<NodeDetail>> {
+    return this.serverRequest(`/share/v1/node/detail?id=${id}`, {
       method: 'GET',
     }, {
       kb_id,
       authToken,
+    });
+  }
+
+  // 客服端请求
+  async clientGetNodeDetail(id: string, kb_id: string, authToken?: string): Promise<Response<NodeDetail>> {
+    return this.serverRequest(window?.location.origin + `/client/v1/node/detail?id=${id}`, {
+      method: 'GET',
+    }, {
+      kb_id,
+      authToken,
+    });
+  }
+
+  // 服务端页面埋点
+  // async serviceStatPage(data: { node_id: string, scene: number, kb_id: string, authToken?: string }): Promise<Response<void>> {
+  //   return this.serverRequest('/share/v1/stat/page', {
+  //     method: 'POST',
+  //     body: JSON.stringify({
+  //       node_id: data.node_id,
+  //       scene: data.scene
+  //     }),
+  //   }, {
+  //     kb_id: data.kb_id,
+  //     authToken: data.authToken,
+  //   });
+  // }
+
+  // 客服端页面埋点
+  async clientStatPage(data: { node_id: string, scene: number, kb_id: string, authToken?: string }): Promise<Response<void>> {
+    return this.serverRequest(window?.location.origin + '/client/v1/stat/page', {
+      method: 'POST',
+      body: JSON.stringify({
+        node_id: data.node_id,
+        scene: data.scene
+      }),
+    }, {
+      kb_id: data.kb_id,
+      authToken: data.authToken,
     });
   }
 }

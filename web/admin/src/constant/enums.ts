@@ -1,8 +1,4 @@
 
-import ChatLogo from '@/assets/images/chat-logo.png'
-import DingLogo from '@/assets/images/ding.png'
-import FeishuLogo from '@/assets/images/feishu.png'
-import WecomLogo from '@/assets/images/wecom.png'
 
 export const PageStatus = {
   1: {
@@ -36,29 +32,25 @@ export const IconMap = {
 export const AppType = {
   1: {
     label: '网页应用',
-    bgcolor: '#21222D',
-    logo: ChatLogo,
   },
   2: {
     label: '网页挂件',
-    bgcolor: '#3248F2',
-    logo: ChatLogo,
   },
   3: {
     label: '钉钉机器人',
-    bgcolor: '#0089FF',
-    logo: DingLogo,
   },
   4: {
     label: '企业微信机器人',
-    bgcolor: '#368ae9',
-    logo: WecomLogo,
   },
   5: {
     label: '飞书机器人',
-    bgcolor: '#3d73f6',
-    logo: FeishuLogo,
-  }
+  },
+  6: {
+    label: '企业微信客服',
+  },
+  // 7: {
+  //   label: ''
+  // }
 }
 
 export const AnswerStatus = {
@@ -216,3 +208,5 @@ export const MAC_SYMBOLS = {
   alt: "⌥",
   shift: "⇧",
 }
+
+export const chartColor = ['#3082FF', '#3248F2', '#9E68FC', '#FFD268', '#63CFC3', '#FF5576']

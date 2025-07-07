@@ -17,8 +17,8 @@ const menus = [
   },
   {
     label: '分析',
-    value: '/conversation',
-    pathname: 'conversation-history',
+    value: '/stat',
+    pathname: 'stat',
     icon: 'icon-fenxi',
     show: true,
   },

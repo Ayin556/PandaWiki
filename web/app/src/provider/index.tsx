@@ -13,6 +13,7 @@ interface StoreContextType {
   themeMode?: 'light' | 'dark'
   mobile?: boolean
   nodeList?: NodeListItem[]
+  token?: string
   loading?: boolean;
   setCatalogShow?: (value: boolean) => void
   refreshNodeList?: () => Promise<void>;
@@ -25,6 +26,7 @@ export const StoreContext = createContext<StoreContextType>({
   themeMode: 'light',
   mobile: false,
   nodeList: undefined,
+  token: undefined,
   loading: false,
   setCatalogShow: () => { },
   refreshNodeList: async () => { },
@@ -39,6 +41,7 @@ export default function StoreProvider({
   themeMode,
   nodeList: initialNodeList,
   mobile,
+  token,
 }: StoreContextType & { children: React.ReactNode }) {
   const catalogSettings = kbDetail?.settings?.catalog_settings
   const [nodeList, setNodeList] = useState<NodeListItem[] | undefined>(initialNodeList);
@@ -112,6 +115,7 @@ export default function StoreProvider({
       mobile: isMobile,
       loading,
       refreshNodeList,
+      token,
     }}
   >{children}</StoreContext.Provider>
 }

@@ -14,7 +14,7 @@ export interface BaseItem {
   id: string
 }
 
-export type TrendData = { count: number, date: string }
+export type TrendData = { count: number, name: string, color?: string }
 
 // =============================================》user
 export type UserForm = {
@@ -485,4 +485,41 @@ export type ImportDocByFeishuFormData = {
   app_id: string
   app_secret: string
   user_access_token: string
+}
+
+// ============================================》stat
+export type StatInstantPageItme = {
+  ip: string
+  created_at: string
+  ip_address: {
+    ip: string
+    city: string
+    country: string
+    province: string
+  }
+  node_id: string
+  node_name: string
+}
+
+export type RefererHostItem = {
+  referer_host: string
+  count: number
+}
+
+export type HotDocsItem = {
+  node_id: string
+  count: number
+  node_name: string
+}
+
+export type StatTypeItem = {
+  ip_count: number
+  page_visit_count: number
+  session_count: number
+}
+
+export type ConversationDistributionItem = {
+  app_id: string
+  app_type: keyof typeof AppType
+  count: number
 }

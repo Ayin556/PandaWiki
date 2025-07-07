@@ -1,31 +1,28 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TrendData } from '@/api'
-import { useThemeMode } from 'ct-mui'
 import * as echarts from 'echarts'
 import { useEffect, useRef, useState } from 'react'
 
 type ECharts = ReturnType<typeof echarts.init>
 export interface PropsData {
-  chartData: TrendData[]
   height: number
-  size?: 'small' | 'large'
+  text: string
+  chartData: TrendData[]
 }
-
-const LineTrend = ({ chartData = [], height, size = 'large' }: PropsData) => {
-  const { mode } = useThemeMode()
+const BarTrend = ({ chartData, height, text }: PropsData) => {
   const domWrapRef = useRef<HTMLDivElement>(null!)
   const echartRef = useRef<ECharts>(null!)
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState<TrendData[]>([])
 
   useEffect(() => {
-    if (domWrapRef.current) {
+    if (domWrapRef.current && !echartRef.current && chartData.length > 0) {
       echartRef.current = echarts.init(domWrapRef.current, null, {
         renderer: 'svg',
       })
     }
     setData(chartData)
   }, [chartData])
+
 
   useEffect(() => {
     const option = {
@@ -37,16 +34,16 @@ const LineTrend = ({ chartData = [], height, size = 'large' }: PropsData) => {
       },
       tooltip: {
         trigger: 'axis',
-        position: function (point: number[], _params: any, _dom: any, _rect: any, size: any) {
-          return [point[0] - size.contentSize[0], point[1] + 20];
-        },
         axisPointer: {
           type: 'shadow',
         },
-        formatter: (params: { name: string, seriesName: string, value: number }[]) => {
+        formatter: (params: { seriesName: string, name: string, value: number }[]) => {
           if (params[0]) {
             const { name, seriesName, value } = params[0]
-            return `<div style="font-family: G;">${name}<div>${seriesName} ${value}</div></div>`
+            return `<div style="font-family: G;min-width: 80px">
+              ${name || '-'}
+              <div>${seriesName} <span style='font-family: Gbold'>${value || 0}</span></div>
+            </div>`
           }
           return ''
         }
@@ -79,7 +76,7 @@ const LineTrend = ({ chartData = [], height, size = 'large' }: PropsData) => {
         axisLabel: {
           show: false
         },
-        splitLine: size === 'small' ? false : {
+        splitLine: {
           lineStyle: {
             type: 'dashed',
             color: '#F2F3F5',
@@ -87,57 +84,46 @@ const LineTrend = ({ chartData = [], height, size = 'large' }: PropsData) => {
         }
       },
       series: {
-        name: '对话次数',
-        symbol: 'none',
-        type: 'line',
-        smooth: true,
-        data: data.map(it => it.count),
-        lineStyle: {
-          color: {
-            type: 'linear',
-            x: 0,   // 起点 x 坐标（0: 左侧）
-            y: 0,   // 起点 y 坐标（0: 顶部）
-            x2: 1,  // 终点 x 坐标（1: 右侧）
-            y2: 1,  // 终点 y 坐标（0: 保持顶部，形成水平渐变）
-            colorStops: [
-              { offset: 0, color: '#9E68FC' }, // 起始颜色
-              { offset: 1, color: '#3248F2' }  // 结束颜色
-            ]
+        name: text,
+        type: 'bar',
+        barGap: 0,
+        barMinHeight: 4,
+        data: data.map(it => ({
+          value: it.count,
+          itemStyle: {
+            color: {
+              type: 'linear',
+              x: 0,
+              y: 0,
+              x2: 0,
+              y2: 1,
+              colorStops: [
+                { offset: 0, color: '#3248F2' },
+                { offset: 1, color: '#9E68FC' }
+              ]
+            },
+            borderRadius: [4, 4, 0, 0],
           }
-        },
-        areaStyle: {
-          color: {
-            type: 'linear',
-            x: 0,
-            y: 0,
-            x2: 0,
-            y2: 1,
-            colorStops: [
-              { offset: 0, color: 'rgba(158,104,252,0.1)' },
-              { offset: 1, color: 'rgba(50,72,242,0)' }
-            ],
-            global: false
-          }
-        }
-      }
+        })),
+      },
     }
-    if (domWrapRef.current && echartRef.current) {
+    if (domWrapRef.current && echartRef.current && data.length > 0) {
       echartRef.current.setOption(option)
       setLoading(false)
     }
-
     const resize = () => {
       if (echartRef.current) {
         echartRef.current.resize()
       }
     }
     window.addEventListener('resize', resize)
-    return () => window.removeEventListener('resize', resize)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, mode])
+    return () => {
+      window.removeEventListener('resize', resize)
+    }
+  }, [data])
 
   if (data.length === 0 && !loading) return <div style={{ width: '100%', height }} />
   return <div ref={domWrapRef} style={{ width: '100%', height }} />
 }
 
-export default LineTrend
+export default BarTrend

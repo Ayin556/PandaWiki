@@ -116,6 +116,7 @@ export default async function RootLayout({
               themeMode={themeMode || 'light'}
               nodeList={nodeList || []}
               mobile={isMobile}
+              token={authToken}
             >
               {children}
             </StoreProvider>

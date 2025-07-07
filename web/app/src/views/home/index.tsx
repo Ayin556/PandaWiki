@@ -1,5 +1,6 @@
 "use client";
 
+import { apiClient } from "@/api";
 import DarkBG from "@/assets/images/dark-bgi.png";
 import LightBG from "@/assets/images/light-bgi.png";
 import { IconSearch } from "@/components/icons";
@@ -13,7 +14,7 @@ import QuestionList from "./QuestionList";
 
 
 const Home = () => {
-  const { mobile = false, kbDetail, themeMode = 'light', catalogShow, nodeList } = useStore()
+  const { mobile = false, kbDetail, kb_id, themeMode = 'light', catalogShow, nodeList, token } = useStore()
 
   const catalogSetting = kbDetail?.settings?.catalog_settings
   const footerSetting = kbDetail?.settings?.footer_settings
@@ -65,6 +66,10 @@ const Home = () => {
       handleSearch();
     }
   };
+
+  useEffect(() => {
+    apiClient.clientStatPage({ scene: 1, node_id: '', kb_id: kb_id || '', authToken: token });
+  }, [])
 
   return <Box sx={{
     pt: 8,
