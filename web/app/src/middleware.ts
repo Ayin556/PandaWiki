@@ -30,9 +30,7 @@ export async function middleware(request: NextRequest) {
   // 如果需要设置 sessionId，则在 response 中设置 cookie
   if (needSetSessionId) {
     response.cookies.set('x-pw-session-id', sessionId, {
-      httpOnly: false,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      httpOnly: true,
       maxAge: 60 * 60 * 24 * 365 // 1 年
     });
   }
