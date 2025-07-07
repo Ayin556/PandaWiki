@@ -50,6 +50,10 @@ const router = [
     path: '/stat',
     element: createElement(LazyLoadable(lazy(() => import('./pages/stat')))),
   },
+  {
+    path: '/conversation',
+    element: createElement(LazyLoadable(lazy(() => import('./pages/conversation')))),
+  },
 ]
 
 export default router

@@ -94,13 +94,13 @@ const Conversation = () => {
       columns={columns}
       dataSource={data}
       rowKey="id"
-      height="calc(100vh - 148px - 52px)"
+      height="calc(100vh - 148px)"
       size='small'
       sx={{
         overflow: 'hidden',
         ...tableSx,
         '.MuiTableContainer-root': {
-          height: 'calc(100vh - 148px - 70px - 52px)',
+          height: 'calc(100vh - 148px - 70px)',
         }
       }}
       pagination={{

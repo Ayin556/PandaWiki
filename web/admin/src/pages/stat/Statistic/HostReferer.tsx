@@ -21,8 +21,7 @@ const HostReferer = ({ tab }: { tab: ActiveTab }) => {
 
   return <Card sx={{
     p: 2,
-    width: 340,
-    flexShrink: 0,
+    height: '100%',
     boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)'
   }}>
     <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'} sx={{ mb: 2 }}>

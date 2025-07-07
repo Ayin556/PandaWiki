@@ -33,7 +33,7 @@ const TypeCount = ({ tab }: { tab: ActiveTab }) => {
       flex: 1,
       position: 'relative'
     }}>
-      <Box sx={{ fontSize: 20, fontFamily: 'Gbold', lineHeight: '28px' }}>{data ? data[it.value as keyof typeof data] : ''}</Box>
+      <Box sx={{ fontSize: 20, fontFamily: 'Gbold', lineHeight: '28px', height: 28 }}>{data ? data[it.value as keyof typeof data] : ''}</Box>
       <Box sx={{ fontSize: 12, lineHeight: '20px', color: addOpacityToColor(it.color, 0.5) }}>{it.label}</Box>
       <Box
         sx={{
