@@ -71,10 +71,35 @@ func (u *AppUsecase) Wechat(ctx context.Context, signature, timestamp, nonce str
 	}
 	u.logger.Info("remote ip", log.String("ip", remoteip))
 
-	// use ai
-	getQA := u.wechatQAFunc(KbId, appres.Type, remoteip)
+	// 先解密消息
+	wxcpt := wxbizmsgcrypt.NewWXBizMsgCrypt(wc.Token, wc.EncodingAESKey, wc.CorpID, wxbizmsgcrypt.XmlType)
+	decryptMsg, errCode := wxcpt.DecryptMsg(signature, timestamp, nonce, body)
+	if errCode != nil {
+		u.logger.Error("DecryptMsg failed", log.Error(err))
+		return fmt.Errorf("DecryptMsg failed: %v", errCode)
+	}
+	// u.logger.Info("decryptMsg", log.Any("msg:", decryptMsg))
 
-	err = wc.Wechat(signature, timestamp, nonce, body, getQA)
+	var msg wechat.ReceivedMessage
+	err = xml.Unmarshal([]byte(decryptMsg), &msg)
+	if err != nil {
+		return err
+	}
+	u.logger.Debug("received message", log.Any("message", msg)) // debug level
+
+	// 调用接口，获取到用户的详细消息
+	userinfo, err := wc.GetUserInfo(msg.FromUserName)
+	if err != nil {
+		u.logger.Error("GetUserInfo failed", log.Error(err))
+		return err
+	}
+	u.logger.Info("getuserinfo success", log.Any("userinfo", userinfo))
+
+	// use ai--> 并且传递用户消息
+	getQA := u.wechatQAFunc(KbId, appres.Type, remoteip, userinfo)
+
+	// 发送消息给用户
+	err = wc.Wechat(msg, getQA)
 
 	if err != nil {
 		u.logger.Error("wc wechat failed", log.Error(err))

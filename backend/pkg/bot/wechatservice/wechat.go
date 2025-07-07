@@ -101,6 +101,27 @@ type TokenCahe struct {
 
 var TokenCache *TokenCahe = &TokenCahe{}
 
+// 获取用户消息应该得到的响应
+type WechatCustomerResponse struct {
+	ErrCode                int        `json:"errcode"`
+	ErrMsg                 string     `json:"errmsg"`
+	CustomerList           []Customer `json:"customer_list"`
+	InvalidExternalUserIDs []string   `json:"invalid_external_userid"`
+}
+
+type Customer struct {
+	ExternalUserID string `json:"external_userid"`
+	Nickname       string `json:"nickname"`
+	Avatar         string `json:"avatar"`
+	Gender         int    `json:"gender"`
+	UnionID        string `json:"unionid"`
+}
+
+type UerInfoRequest struct {
+	UserID         []string `json:"external_userid_list"`
+	SessionContext int      `json:"need_enter_session_context"`
+}
+
 // 存储ai知识库获取的cursor值以客服为标准，方便拉取用户的消息
 var KfCursors = &sync.Map{}
 
@@ -214,15 +235,29 @@ func (cfg *WechatServiceConfig) Processmessage(msgRet *MsgRet, Kfmsg *WeixinUser
 	// 	}
 	// }
 
+	// 获取用户的详细信息
+	customer, err := GetUserInfo(userId, token)
+	if err != nil {
+		cfg.logger.Error("get user info failed", log.Error(err))
+	}
+	cfg.logger.Info("customer info", log.Any("customer", customer))
+
 	// 获取问题答案
-	wccontent, err := GetQA(cfg.Ctx, content, domain.ConversationInfo{}, "")
+	wccontent, err := GetQA(cfg.Ctx, content, domain.ConversationInfo{UserInfo: domain.UserInfo{
+		UserID:   customer.ExternalUserID, // 用户对话的id
+		NickName: customer.Nickname,       //用户微信的昵称
+		Avatar:   customer.Avatar,         // 用户微信的头像
+	}}, "")
+
 	if err != nil {
 		return err
 	}
+
 	var response string
 	for v := range wccontent {
 		response += v
 	}
+
 	response = MardowntoText(response)
 	// 将问题答案发给用户
 	reply := ReplyMsg{
@@ -307,7 +342,7 @@ func (cfg *WechatServiceConfig) GetAccessToken() (string, error) {
 	}
 
 	// succcess
-	cfg.logger.Info("wechatapp get accesstoken success", log.Any("info", tokenResp.AccessToken))
+	cfg.logger.Info("wechatservice get accesstoken success", log.Any("info", tokenResp.AccessToken))
 
 	TokenCache.AccessToken = tokenResp.AccessToken
 	TokenCache.TokenExpire = time.Now().Add(time.Duration(tokenResp.ExpiresIn-300) * time.Second)
@@ -434,6 +469,43 @@ func ChangeState(token, extrenaluserid, kfId string) error {
 		return fmt.Errorf("改变用户状态失败: %s", response.ErrMsg)
 	}
 	return nil
+}
+
+func GetUserInfo(userid string, accessToken string) (*Customer, error) {
+	var uerinforequest UerInfoRequest = UerInfoRequest{
+		UserID:         []string{userid},
+		SessionContext: 0,
+	}
+	// 请求获取用户信息的url
+	url := fmt.Sprintf("https://qyapi.weixin.qq.com/cgi-bin/kf/customer/batchget?access_token=%s", accessToken)
+
+	jsonBody, err := json.Marshal(uerinforequest)
+	if err != nil {
+		return nil, err
+	}
+	// post获取用户的消息信息
+	resp, err := http.Post(url, "application/json", bytes.NewBuffer(jsonBody))
+
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	var userInfo WechatCustomerResponse
+	if err := json.Unmarshal(body, &userInfo); err != nil {
+		return nil, err
+	}
+
+	if userInfo.ErrCode != 0 {
+		return nil, fmt.Errorf("获取用户信息失败: %d, %s", userInfo.ErrCode, userInfo.ErrMsg)
+	}
+
+	return &userInfo.CustomerList[0], nil
 }
 
 // markdowntotext
