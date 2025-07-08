@@ -12,6 +12,7 @@ import CardWebCustomCode from "./CardWebCustomCode"
 import CardWebHeader from "./CardWebHeader"
 import CardWebSEO from "./CardWebSEO"
 import CardWebWelcome from "./CardWebWelcome"
+import CardProxy from "./CardProxy"
 
 interface CardWebProps {
   kb: KnowledgeBaseListItem
@@ -35,6 +36,8 @@ const CardWeb = ({ kb, refresh }: CardWebProps) => {
   return <Card>
     <Box sx={{ fontWeight: 'bold', px: 2, py: 1.5, bgcolor: 'background.paper2' }}>门户网站</Box>
     <CardListen kb={kb} refresh={refresh} />
+    <Divider sx={{ my: 2 }} />
+    <CardProxy kb={kb} refresh={refresh} />
     <Divider sx={{ my: 2 }} />
     <CardBasicInfo kb={kb} refresh={refresh} />
     <Divider sx={{ my: 2 }} />

@@ -89,55 +89,63 @@ const CardWebWelcome = ({ id, data, refresh }: CardWebWelcomeProps) => {
       }}>欢迎页面</Box>
       {isEdit && <Button variant="contained" size="small" onClick={handleSubmit(onSubmit)}>保存</Button>}
     </Stack>
-    <Box sx={{ m: 2 }}>
-      <Box sx={{ fontSize: 14, lineHeight: '32px', mb: 1 }}>欢迎标语</Box>
-      <Controller
-        control={control}
-        name="welcome_str"
-        render={({ field }) => <TextField
-          fullWidth
-          {...field}
-          placeholder="输入欢迎标语"
-          error={!!errors.welcome_str}
-          helperText={errors.welcome_str?.message}
-          onChange={(event) => {
-            setIsEdit(true)
-            field.onChange(event)
-          }}
-        />}
-      />
-      <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>搜索框提示文字</Box>
-      <Controller
-        control={control}
-        name="search_placeholder"
-        render={({ field }) => <TextField
-          fullWidth
-          {...field}
-          placeholder="输入搜索框提示文字"
-          error={!!errors.search_placeholder}
-          helperText={errors.search_placeholder?.message}
-          onChange={(event) => {
-            setIsEdit(true)
-            field.onChange(event)
-          }}
-        />}
-      />
-      <Box sx={{ my: 1, fontSize: 14, lineHeight: '32px' }}>推荐问题</Box>
-      <FreeSoloAutocomplete
-        placeholder='回车确认，填写下一个推荐问题'
-        {...recommendQuestionsField}
-      />
-      <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>推荐内容</Box>
-      <Box sx={{ mb: 1 }}>
-        <DragRecommend
+    <Stack gap={2} sx={{ m: 2 }}>
+      <Stack direction={'row'} gap={2} alignItems={'center'}>
+        <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0 }}>欢迎标语</Box>
+        <Controller
+          control={control}
+          name="welcome_str"
+          render={({ field }) => <TextField
+            fullWidth
+            {...field}
+            placeholder="输入欢迎标语"
+            error={!!errors.welcome_str}
+            helperText={errors.welcome_str?.message}
+            onChange={(event) => {
+              setIsEdit(true)
+              field.onChange(event)
+            }}
+          />}
+        />
+      </Stack>
+      <Stack direction={'row'} gap={2} alignItems={'center'}>
+        <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0 }}>搜索框提示文字</Box>
+        <Controller
+          control={control}
+          name="search_placeholder"
+          render={({ field }) => <TextField
+            fullWidth
+            {...field}
+            placeholder="输入搜索框提示文字"
+            error={!!errors.search_placeholder}
+            helperText={errors.search_placeholder?.message}
+            onChange={(event) => {
+              setIsEdit(true)
+              field.onChange(event)
+            }}
+          />}
+        />
+      </Stack>
+      <Stack direction={'row'} gap={2} alignItems={'center'}>
+        <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0 }}>推荐问题</Box>
+        <FreeSoloAutocomplete
+          placeholder='回车确认，填写下一个推荐问题'
+          {...recommendQuestionsField}
+        />
+      </Stack>
+      <Stack direction={'row'} gap={2} alignItems={'center'}>
+        <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0 }}>推荐内容</Box>
+        <Box sx={{ mb: 1 }}>
+          <DragRecommend
           data={sorted || []}
           refresh={nodeRec}
           onChange={(value) => {
             setIsEdit(true)
             setValue('recommend_node_ids', value.map(item => item.id))
-          }}
-        />
-      </Box>
+            }}
+          />
+        </Box>
+      </Stack>
       <Button
         size="small"
         onClick={() => setOpen(true)}
@@ -154,7 +162,7 @@ const CardWebWelcome = ({ id, data, refresh }: CardWebWelcomeProps) => {
         }}
         onClose={() => setOpen(false)}
       />
-    </Box>
+    </Stack>
   </>
 }
 export default CardWebWelcome

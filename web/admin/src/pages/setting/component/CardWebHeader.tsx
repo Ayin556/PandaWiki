@@ -78,41 +78,45 @@ const CardWebHeader = ({ id, data, refresh }: CardWebHeaderProps) => {
       }}>顶部导航</Box>
       {isEdit && <Button variant="contained" size="small" onClick={handleSubmit(onSubmit)}>保存</Button>}
     </Stack>
-    <Box sx={{ m: 2 }}>
-      <Box sx={{ fontSize: 14, lineHeight: '32px', mb: 1 }}>网站标题</Box>
-      <Controller
-        control={control}
-        name="title"
-        render={({ field }) => <TextField
-          fullWidth
-          {...field}
-          placeholder="输入网站标题"
-          error={!!errors.title}
-          helperText={errors.title?.message}
-          onChange={(e) => {
-            field.onChange(e.target.value)
-            setIsEdit(true)
-          }}
-        />}
-      />
-      <Box sx={{ my: 1, fontSize: 14, lineHeight: '32px' }}>
-        网站 Logo
-      </Box>
-      <Controller
-        control={control}
-        name="icon"
-        render={({ field }) => <UploadFile
-          {...field}
-          id="website_logo"
-          type="url"
-          accept="image/*"
-          width={80}
-          onChange={(url) => {
-            field.onChange(url)
-            setIsEdit(true)
-          }}
-        />}
-      />
+    <Stack gap={2} sx={{ m: 2 }}>
+      <Stack direction={'row'} gap={2} alignItems={'center'}>
+        <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0 }}>网站标题</Box>
+        <Controller
+          control={control}
+          name="title"
+          render={({ field }) => <TextField
+            fullWidth
+            {...field}
+            placeholder="输入网站标题"
+            error={!!errors.title}
+            helperText={errors.title?.message}
+            onChange={(e) => {
+              field.onChange(e.target.value)
+              setIsEdit(true)
+            }}
+          />}
+        />
+      </Stack>
+      <Stack direction={'row'} gap={2} alignItems={'center'}>
+        <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0 }}>
+          网站 Logo
+        </Box>
+        <Controller
+          control={control}
+          name="icon"
+          render={({ field }) => <UploadFile
+            {...field}
+            id="website_logo"
+            type="url"
+            accept="image/*"
+            width={80}
+            onChange={(url) => {
+              field.onChange(url)
+              setIsEdit(true)
+            }}
+          />}
+        />
+      </Stack>
       <Box sx={{ my: 1, fontSize: 14, lineHeight: '32px' }}>
         导航右侧按钮
       </Box>
@@ -257,7 +261,7 @@ const CardWebHeader = ({ id, data, refresh }: CardWebHeaderProps) => {
       >
         添加按钮
       </Button>
-    </Box>
+    </Stack>
   </>
 }
 export default CardWebHeader

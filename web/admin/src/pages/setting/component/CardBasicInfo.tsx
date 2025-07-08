@@ -66,8 +66,8 @@ const CardBasicInfo = ({ kb, refresh }: { kb: KnowledgeBaseListItem, refresh: ()
       </Box>
       {isEdit && <Button variant="contained" size="small" onClick={handleSave}>保存</Button>}
     </Stack>
-    <Stack direction={'row'} alignItems={'center'} gap={0.5} sx={{ fontSize: 14, lineHeight: '32px', my: 1, mx: 2 }}>
-      <Box component={'label'}  sx={{ width: 148, flexShrink: 0, fontSize: 14, lineHeight: '32px', mb: 1 }}>
+    <Stack direction={'row'} gap={2} alignItems={'center'}  sx={{ fontSize: 14, lineHeight: '32px', my: 1, mx: 2 }}>
+      <Box component={'label'}  sx={{ width: 156, flexShrink: 0, fontSize: 14, lineHeight: '32px' }}>
         网址绝对路径前缀
       </Box>
       
