@@ -81,4 +81,4 @@ export function setLocalStorage<T>(key: string, value: T): void {
   } catch (error) {
     console.error('localStorage write error:', error);
   }
-} 
+}

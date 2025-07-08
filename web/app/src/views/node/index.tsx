@@ -102,9 +102,9 @@ const Doc = ({ node: defaultNode, token }: { node?: NodeDetail, token?: string }
   useEffect(() => {
     if (!firstRequest) {
       getData(docId || '')
+      apiClient.clientStatPage({ scene: VisitSceneNode, node_id: docId || '', kb_id: kb_id || '', authToken: token });
     }
     setFirstRequest(false)
-    apiClient.clientStatPage({ scene: VisitSceneNode, node_id: docId || '', kb_id: kb_id || '', authToken: token });
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [docId])
 

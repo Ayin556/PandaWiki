@@ -1,14 +1,17 @@
 import { addOpacityToColor, copyText } from '@/utils';
 import { Box, IconButton, useTheme } from '@mui/material';
 import { Icon } from 'ct-mui';
+import 'katex/dist/katex.min.css';
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { anOldHope } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import rehypeKatex from 'rehype-katex';
 import rehypeRaw from 'rehype-raw';
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
 
 interface MarkDownProps {
   loading?: boolean
@@ -52,11 +55,28 @@ const MarkDown = ({ loading = false, content }: MarkDownProps) => {
           overflow: 'hidden',
           height: showThink ? 'auto' : '60px',
         },
-      }
+      },
+      // LaTeX公式样式
+      '.katex': {
+        display: 'inline-block',
+        fontSize: '24px',
+        py: 2,
+        color: 'text.primary',
+      },
+      '.katex-display': {
+        textAlign: 'center',
+        margin: '1em 0',
+        '& > .katex': {
+          display: 'inline-block',
+          fontSize: '20px',
+          py: 2,
+          color: 'text.primary',
+        },
+      },
     }}
   >
     <ReactMarkdown
-      remarkPlugins={[remarkGfm, remarkBreaks]}
+      remarkPlugins={[remarkGfm, remarkBreaks, remarkMath]}
       rehypePlugins={[
         rehypeRaw,
         [
@@ -69,6 +89,7 @@ const MarkDown = ({ loading = false, content }: MarkDownProps) => {
             ]
           },
         ],
+        rehypeKatex,
       ]}
       components={{
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
