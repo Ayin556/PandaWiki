@@ -8,8 +8,10 @@ export async function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
   const pathname = url.pathname;
 
-  const kb_id = request.headers.get('x-kb-id') || process.env.DEV_KB_ID || '';
-  const authToken = request.cookies.get(`auth_${kb_id}`)?.value || '';
+  const headers: Record<string, string> = {};
+  for (const [key, value] of request.headers.entries()) {
+    headers[key] = value;
+  }
 
   let sessionId = request.cookies.get('x-pw-session-id')?.value || '';
   let needSetSessionId = false;
@@ -22,12 +24,11 @@ export async function middleware(request: NextRequest) {
   let response: NextResponse;
 
   if (pathname.startsWith('/client/')) {
-    response = await clientMiddleware(request, kb_id, authToken);
+    response = await clientMiddleware(request);
   } else {
-    response = await homeMiddleware(request, kb_id, authToken);
+    response = await homeMiddleware(request, headers, sessionId);
   }
 
-  // 如果需要设置 sessionId，则在 response 中设置 cookie
   if (needSetSessionId) {
     response.cookies.set('x-pw-session-id', sessionId, {
       httpOnly: true,

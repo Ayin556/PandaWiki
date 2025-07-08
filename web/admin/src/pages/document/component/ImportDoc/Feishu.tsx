@@ -17,7 +17,7 @@ const FeishuImport = ({ open, refresh, onCancel, parentId = null }: ImportDocPro
   const [step, setStep] = useState<keyof typeof StepText>('pull')
   const [loading, setLoading] = useState(false)
   const [list, setList] = useState<{ space_id: string, name: string, done: boolean, loading: boolean }[]>([])
-  const [items, setItems] = useState<(ImportDocListItem & { space_id: string })[]>([])
+  const [items, setItems] = useState<(ImportDocListItem & { space_id: string, obj_token: string, obj_type: number })[]>([])
   const [selectIds, setSelectIds] = useState<string[]>([])
   const [requestQueue, setRequestQueue] = useState<(() => Promise<any>)[]>([])
   const [isCancelled, setIsCancelled] = useState(false)
@@ -61,7 +61,13 @@ const FeishuImport = ({ open, refresh, onCancel, parentId = null }: ImportDocPro
       for (const item of feishuItems) {
         newQueue.push(async () => {
           try {
-            const res = await getFeishuDocDetail({ urls: [item.url], kb_id, ...getValues() })
+            const res = await getFeishuDocDetail({
+              sources: [{
+                url: item.url,
+                obj_token: item.obj_token,
+                obj_type: item.obj_type,
+              }], kb_id, ...getValues()
+            })
             const nodeRes = await createNode({
               name: res[0].title || '',
               content: res[0].content || '',
@@ -108,6 +114,8 @@ const FeishuImport = ({ open, refresh, onCancel, parentId = null }: ImportDocPro
           success: -1,
           id: '',
           space_id: '',
+          obj_token: item.obj_token,
+          obj_type: item.obj_type,
         })))
       }
       setStep('import')
@@ -393,6 +401,8 @@ const FeishuImport = ({ open, refresh, onCancel, parentId = null }: ImportDocPro
                   success: -1 as const,
                   id: '',
                   space_id: item.space_id,
+                  obj_token: it.obj_token,
+                  obj_type: it.obj_type,
                 }))])
                 if ((res || []).length > 0) setStep('import')
                 setList(prev => prev.map(it => it.space_id === item.space_id ? { ...it, loading: false, done: true } : it))

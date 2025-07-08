@@ -1,6 +1,5 @@
 "use client";
 
-import { apiClient } from "@/api";
 import DarkBG from "@/assets/images/dark-bgi.png";
 import LightBG from "@/assets/images/light-bgi.png";
 import { IconSearch } from "@/components/icons";
@@ -66,10 +65,6 @@ const Home = () => {
       handleSearch();
     }
   };
-
-  useEffect(() => {
-    apiClient.clientStatPage({ scene: 1, node_id: '', kb_id: kb_id || '', authToken: token });
-  }, [])
 
   return <Box sx={{
     pt: 8,

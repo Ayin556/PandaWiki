@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export async function middleware(request: NextRequest, kb_id: string, authToken: string) {
+export async function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
-  console.log('🍎 client api >>>', url.pathname)
+  const kb_id = request.headers.get('x-kb-id') || process.env.DEV_KB_ID || '';
+  const authToken = request.cookies.get(`auth_${kb_id}`)?.value || '';
+  console.log('🍎 client api >>>', url.pathname, ' >>> ', kb_id)
+
   const pathname = url.pathname.replace(/client/, 'share')
 
   try {

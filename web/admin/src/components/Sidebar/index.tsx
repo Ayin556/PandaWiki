@@ -16,7 +16,7 @@ const menus = [
     show: true,
   },
   {
-    label: '记录',
+    label: '统计',
     value: '/stat',
     pathname: 'stat',
     icon: 'icon-tongjifenxi1',
