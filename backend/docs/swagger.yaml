@@ -229,6 +229,20 @@ definitions:
     - AppTypeWechatBot
     - AppTypeWechatServiceBot
     - AppTypeDisCordBot
+  domain.BatchMoveReq:
+    properties:
+      ids:
+        items:
+          type: string
+        type: array
+      kb_id:
+        type: string
+      parent_id:
+        type: string
+    required:
+    - ids
+    - kb_id
+    type: object
   domain.BrandGroup:
     properties:
       links:
@@ -2167,6 +2181,28 @@ paths:
                   type: object
               type: object
       summary: Node Action
+      tags:
+      - node
+  /api/v1/node/batch_move:
+    post:
+      consumes:
+      - application/json
+      description: Batch Move Node
+      parameters:
+      - description: Batch Move Node
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/domain.BatchMoveReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Response'
+      summary: Batch Move Node
       tags:
       - node
   /api/v1/node/detail:

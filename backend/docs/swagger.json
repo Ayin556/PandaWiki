@@ -1476,6 +1476,40 @@
                 }
             }
         },
+        "/api/v1/node/batch_move": {
+            "post": {
+                "description": "Batch Move Node",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "node"
+                ],
+                "summary": "Batch Move Node",
+                "parameters": [
+                    {
+                        "description": "Batch Move Node",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.BatchMoveReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/node/detail": {
             "get": {
                 "description": "Get Node Detail",
@@ -2694,6 +2728,27 @@
                 "AppTypeWechatServiceBot",
                 "AppTypeDisCordBot"
             ]
+        },
+        "domain.BatchMoveReq": {
+            "type": "object",
+            "required": [
+                "ids",
+                "kb_id"
+            ],
+            "properties": {
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "kb_id": {
+                    "type": "string"
+                },
+                "parent_id": {
+                    "type": "string"
+                }
+            }
         },
         "domain.BrandGroup": {
             "type": "object",

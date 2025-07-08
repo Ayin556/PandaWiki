@@ -40,6 +40,7 @@ func NewNodeHandler(
 
 	group.POST("/action", h.NodeAction)
 	group.POST("/move", h.MoveNode)
+	group.POST("/batch_move", h.BatchMoveNode)
 
 	group.GET("/recommend_nodes", h.RecommendNodes)
 
@@ -254,4 +255,29 @@ func (h *NodeHandler) RecommendNodes(c echo.Context) error {
 		return h.NewResponseWithError(c, "get recommend nodes failed", err)
 	}
 	return h.NewResponseWithData(c, nodes)
+}
+
+// Batch Move Node
+//
+//	@Summary		Batch Move Node
+//	@Description	Batch Move Node
+//	@Tags			node
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body		domain.BatchMoveReq	true	"Batch Move Node"
+//	@Success		200		{object}	domain.Response
+//	@Router			/api/v1/node/batch_move [post]
+func (h *NodeHandler) BatchMoveNode(c echo.Context) error {
+	req := &domain.BatchMoveReq{}
+	if err := c.Bind(req); err != nil {
+		return h.NewResponseWithError(c, "request body is invalid", err)
+	}
+	if err := c.Validate(req); err != nil {
+		return h.NewResponseWithError(c, "validate request body failed", err)
+	}
+	ctx := c.Request().Context()
+	if err := h.usecase.BatchMoveNode(ctx, req); err != nil {
+		return h.NewResponseWithError(c, "batch move node failed", err)
+	}
+	return h.NewResponseWithData(c, nil)
 }
