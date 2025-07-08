@@ -3208,7 +3208,8 @@ const docTemplate = `{
         "domain.GetDocxReq": {
             "type": "object",
             "required": [
-                "kb_id"
+                "kb_id",
+                "sources"
             ],
             "properties": {
                 "app_id": {
@@ -3220,10 +3221,10 @@ const docTemplate = `{
                 "kb_id": {
                     "type": "string"
                 },
-                "urls": {
+                "sources": {
                     "type": "array",
                     "items": {
-                        "type": "string"
+                        "$ref": "#/definitions/domain.Source"
                     }
                 },
                 "user_access_token": {
@@ -3919,6 +3920,12 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "obj_token": {
+                    "type": "string"
+                },
+                "obj_type": {
+                    "type": "integer"
+                },
                 "url": {
                     "type": "string"
                 }
@@ -3947,6 +3954,12 @@ const docTemplate = `{
         "domain.SearchWikiResp": {
             "type": "object",
             "properties": {
+                "obj_token": {
+                    "type": "string"
+                },
+                "obj_type": {
+                    "type": "integer"
+                },
                 "space_id": {
                     "type": "string"
                 },
@@ -3965,6 +3978,20 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.Source": {
+            "type": "object",
+            "properties": {
+                "obj_token": {
+                    "type": "string"
+                },
+                "obj_type": {
+                    "type": "integer"
+                },
+                "url": {
                     "type": "string"
                 }
             }

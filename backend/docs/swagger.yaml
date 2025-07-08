@@ -568,14 +568,15 @@ definitions:
         type: string
       kb_id:
         type: string
-      urls:
+      sources:
         items:
-          type: string
+          $ref: '#/definitions/domain.Source'
         type: array
       user_access_token:
         type: string
     required:
     - kb_id
+    - sources
     type: object
   domain.GetDocxResp:
     properties:
@@ -1038,6 +1039,10 @@ definitions:
     properties:
       name:
         type: string
+      obj_token:
+        type: string
+      obj_type:
+        type: integer
       url:
         type: string
     type: object
@@ -1056,6 +1061,10 @@ definitions:
     type: object
   domain.SearchWikiResp:
     properties:
+      obj_token:
+        type: string
+      obj_type:
+        type: integer
       space_id:
         type: string
       title:
@@ -1068,6 +1077,15 @@ definitions:
       enabled:
         type: boolean
       password:
+        type: string
+    type: object
+  domain.Source:
+    properties:
+      obj_token:
+        type: string
+      obj_type:
+        type: integer
+      url:
         type: string
     type: object
   domain.StatPageReq:
