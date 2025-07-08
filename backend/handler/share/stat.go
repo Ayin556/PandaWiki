@@ -9,18 +9,21 @@ import (
 
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/handler"
+	"github.com/chaitin/panda-wiki/log"
 	"github.com/chaitin/panda-wiki/usecase"
 )
 
 type ShareStatHandler struct {
 	*handler.BaseHandler
 	useCase *usecase.StatUseCase
+	logger  *log.Logger
 }
 
-func NewShareStatHandler(baseHandler *handler.BaseHandler, echo *echo.Echo, useCase *usecase.StatUseCase) *ShareStatHandler {
+func NewShareStatHandler(baseHandler *handler.BaseHandler, echo *echo.Echo, useCase *usecase.StatUseCase, logger *log.Logger) *ShareStatHandler {
 	h := &ShareStatHandler{
 		BaseHandler: baseHandler,
 		useCase:     useCase,
+		logger:      logger.WithModule("handler.share.stat"),
 	}
 
 	group := echo.Group("/share/v1/stat")
@@ -61,11 +64,16 @@ func (h *ShareStatHandler) RecordPage(c echo.Context) error {
 			refererHost = refererURL.Host
 		}
 	}
+	sessionID := ""
 	sessionIDCookie, err := c.Request().Cookie("x-pw-session-id")
 	if err != nil {
-		return h.NewResponseWithError(c, "get session id failed", err)
+		sessionID = c.Request().Header.Get("x-pw-session-id")
+	} else {
+		sessionID = sessionIDCookie.Value
 	}
-	sessionID := sessionIDCookie.Value
+	if sessionID == "" {
+		return h.NewResponseWithError(c, "session id not found", err)
+	}
 	ip := c.RealIP()
 	stat := &domain.StatPage{
 		KBID:        kbID,

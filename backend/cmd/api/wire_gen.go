@@ -133,7 +133,7 @@ func createApp() (*App, error) {
 	shareChatHandler := share.NewShareChatHandler(echo, baseHandler, logger, appUsecase, chatUsecase, conversationUsecase, modelUsecase)
 	sitemapUsecase := usecase.NewSitemapUsecase(nodeRepository, knowledgeBaseRepository, logger)
 	shareSitemapHandler := share.NewShareSitemapHandler(echo, baseHandler, sitemapUsecase, appUsecase, logger)
-	shareStatHandler := share.NewShareStatHandler(baseHandler, echo, statUseCase)
+	shareStatHandler := share.NewShareStatHandler(baseHandler, echo, statUseCase, logger)
 	shareHandler := &share.ShareHandler{
 		ShareNodeHandler:    shareNodeHandler,
 		ShareAppHandler:     shareAppHandler,
