@@ -130,6 +130,7 @@ func (u *AppUsecase) wechatQAFunc(kbID string, appType domain.AppType, remoteip 
 				UserInfo: domain.UserInfo{
 					UserID:   userinfo.UserID,
 					NickName: userinfo.Name,
+					From:     domain.MessageFromPrivate,
 				},
 			},
 		})

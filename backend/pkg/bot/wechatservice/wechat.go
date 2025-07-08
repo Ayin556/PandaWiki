@@ -247,6 +247,7 @@ func (cfg *WechatServiceConfig) Processmessage(msgRet *MsgRet, Kfmsg *WeixinUser
 		UserID:   customer.ExternalUserID, // 用户对话的id
 		NickName: customer.Nickname,       //用户微信的昵称
 		Avatar:   customer.Avatar,         // 用户微信的头像
+		From:     domain.MessageFromPrivate,
 	}}, "")
 
 	if err != nil {

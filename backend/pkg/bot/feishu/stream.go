@@ -11,6 +11,7 @@ import (
 	lark "github.com/larksuite/oapi-sdk-go/v3"
 	"github.com/larksuite/oapi-sdk-go/v3/event/dispatcher"
 	larkcardkit "github.com/larksuite/oapi-sdk-go/v3/service/cardkit/v1"
+	larkcontact "github.com/larksuite/oapi-sdk-go/v3/service/contact/v3"
 	larkim "github.com/larksuite/oapi-sdk-go/v3/service/im/v1"
 	larkws "github.com/larksuite/oapi-sdk-go/v3/ws"
 
@@ -130,10 +131,58 @@ func (c *FeishuClient) sendQACard(ctx context.Context, receiveIdType string, rec
 		c.logger.Error("failed to create message", log.Int("code", res.Code), log.String("msg", res.Msg), log.String("request_id", res.RequestId()))
 		return
 	}
+	// 打印日志
+	c.logger.Info("send QA card to user or group", log.String("receive_id_type", receiveIdType), log.String("receive_id", receiveId), log.String("question", question))
 
-	answerCh, err := c.getQA(ctx, question, domain.ConversationInfo{}, "")
+	// start processing QA
+	convInfo := domain.ConversationInfo{
+		UserInfo: domain.UserInfo{
+			UserID:   "unknown",
+			NickName: "匿名用户",
+			Avatar:   "",
+			From:     domain.MessageFromPrivate, // 默认是私聊
+		},
+	}
+	if receiveIdType == "open_id" {
+		// 获取用户的信息，只需要获取p2p的对话的类型的用户信息 - p2p对话
+		userinfo, err := c.GetUserInfo(receiveId)
+		if err != nil {
+			c.logger.Error("get user info failed", log.Error(err))
+		} else {
+			if userinfo.UserId != nil {
+				convInfo.UserInfo.UserID = *userinfo.UserId
+			}
+			if userinfo.Name != nil {
+				convInfo.UserInfo.NickName = *userinfo.Name
+			}
+			if userinfo.Avatar != nil && userinfo.Avatar.AvatarOrigin != nil {
+				convInfo.UserInfo.Avatar = *userinfo.Avatar.AvatarOrigin
+			}
+			convInfo.UserInfo.From = domain.MessageFromPrivate
+		}
+	} else { // chat_id
+		// 获取群聊的消息，用户如果是在群聊中@机器人，那么就获取的是群聊的消息
+		chatinfo, err := c.GetChatInfo(receiveId)
+		if err != nil {
+			c.logger.Error("get chat info failed", log.Error(err))
+			return
+		} else {
+			if chatinfo.OwnerId != nil {
+				convInfo.UserInfo.UserID = *chatinfo.OwnerId
+			}
+			if chatinfo.Name != nil {
+				convInfo.UserInfo.NickName = *chatinfo.Name
+			}
+			if chatinfo.Avatar != nil {
+				convInfo.UserInfo.Avatar = *chatinfo.Avatar
+			}
+			convInfo.UserInfo.From = domain.MessageFromGroup // 群聊
+		}
+	}
+
+	answerCh, err := c.getQA(ctx, question, convInfo, "")
 	if err != nil {
-		c.logger.Error("feishu client failed to get answer", log.Error(err))
+		c.logger.Error("get QA failed", log.Error(err))
 		return
 	}
 
@@ -214,6 +263,49 @@ func (c *FeishuClient) Start() error {
 		return fmt.Errorf("failed to start feishu client: %w", err)
 	}
 	return nil
+}
+
+// 下面功能都是需要开启飞书对应的权限才可以获取到用户信息
+
+// 飞书机器人获取用户信息，只是适用于单个用户
+func (c *FeishuClient) GetUserInfo(UserOpenId string) (*larkcontact.User, error) {
+	// 获取用户信息，根据用户的id
+	req := larkcontact.NewGetUserReqBuilder().UserId(UserOpenId).
+		UserIdType(`open_id`).DepartmentIdType(`open_department_id`).Build()
+	// 发起请求，获取用户消息
+	resp, err := c.client.Contact.V3.User.Get(context.Background(), req)
+	if err != nil {
+		c.logger.Error("failed to get user info", log.Error(err))
+		return nil, err
+	}
+
+	// 失败
+	if !resp.Success() {
+		c.logger.Error("failed to get user info, response status not success", log.Any("errcode:", resp.Code))
+		return nil, fmt.Errorf("failed to get user info, response data not success")
+	}
+
+	return resp.Data.User, err
+}
+
+// 获取群聊的消息
+func (c *FeishuClient) GetChatInfo(ChatId string) (*larkim.GetChatRespData, error) {
+	// 创建请求对象
+	req := larkim.NewGetChatReqBuilder().
+		ChatId(ChatId).
+		UserIdType(`open_id`).
+		Build()
+	resp, err := c.client.Im.V1.Chat.Get(context.Background(), req)
+	if err != nil {
+		c.logger.Error("failed to get chat info", log.Error(err))
+		return nil, err
+	}
+	// 失败
+	if !resp.Success() {
+		c.logger.Error("failed to get chat info, response status not success", log.Any("errcode:", resp.Code))
+		return nil, fmt.Errorf("failed to get chat info, response data not success")
+	}
+	return resp.Data, err
 }
 
 func (c *FeishuClient) Stop() {
