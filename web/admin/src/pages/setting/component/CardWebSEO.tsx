@@ -53,11 +53,12 @@ const CardWebSEO = ({ data, id, refresh }: CardWebSEOProps) => {
       }}>SEO</Box>
       {isEdit && <Button variant="contained" size="small" onClick={handleSubmit(onSubmit)}>保存</Button>}
     </Stack>
-    <Box sx={{ m: 2 }}>
-      <Box sx={{ fontSize: 14, lineHeight: '32px', mb: 1 }}>网站描述</Box>
-      <Controller
-        control={control}
-        name="desc"
+    <Stack gap={2} sx={{ m: 2 }}>
+      <Stack direction={'row'} gap={2} alignItems={'center'}>
+        <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0 }}>网站描述</Box>
+        <Controller
+          control={control}
+          name="desc"
         render={({ field }) => <TextField
           fullWidth
           {...field}
@@ -70,9 +71,11 @@ const CardWebSEO = ({ data, id, refresh }: CardWebSEOProps) => {
           }}
         />}
       />
-      <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>关键词</Box>
-      <Controller
-        control={control}
+      </Stack>
+      <Stack direction={'row'} gap={2} alignItems={'center'}>
+        <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0 }}>关键词</Box>
+        <Controller
+          control={control}
         name="keyword"
         render={({ field }) => <TextField
           fullWidth
@@ -86,6 +89,7 @@ const CardWebSEO = ({ data, id, refresh }: CardWebSEOProps) => {
           }}
         />}
       />
+      </Stack>
       <Controller
         control={control}
         name="auto_sitemap"
@@ -103,7 +107,7 @@ const CardWebSEO = ({ data, id, refresh }: CardWebSEOProps) => {
           <Box sx={{ fontSize: 14, lineHeight: '32px' }}>自动生成 Sitemap</Box>
         </Stack>}
       />
-    </Box>
+    </Stack>
   </>
 }
 export default CardWebSEO

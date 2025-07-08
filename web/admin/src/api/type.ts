@@ -45,7 +45,8 @@ export type UpdateKnowledgeBaseData = {
     private_key?: string,
     public_key?: string,
     base_url?: string,
-    simple_auth?: AuthSetting | null
+    simple_auth?: AuthSetting | null,
+    trusted_proxies?: string[] | null
   }
 }
 
@@ -67,6 +68,7 @@ export type KnowledgeBaseAccessSettings = {
   public_key: string,
   base_url: string,
   ssl_ports: number[] | null
+  trusted_proxies: string[] | null
   simple_auth?: AuthSetting | null
 }
 

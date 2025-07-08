@@ -62,42 +62,46 @@ const CardStyle = ({ id, data, refresh }: CardStyleProps) => {
       }}>样式与风格</Box>
       {isEdit && <Button variant="contained" size="small" onClick={handleSubmit(onSubmit)}>保存</Button>}
     </Stack>
-    <Box sx={{ mx: 2 }}>
-      <Box sx={{ fontSize: 14, lineHeight: '32px', mb: 1 }}>配色方案</Box>
-      <Controller
-        control={control}
-        name="theme_mode"
-        render={({ field }) => <Select
-          {...field}
-          sx={{ width: '100%', height: 52 }}
-          onChange={(e) => {
-            field.onChange(e.target.value as 'light' | 'dark')
-            setIsEdit(true)
-          }}
-        >
-          <MenuItem value='light'>浅色模式</MenuItem>
-          <MenuItem value='dark'>深色模式</MenuItem>
-        </Select>}
-      />
-      <Box sx={{ my: 1, fontSize: 14, lineHeight: '32px' }}>
-        背景图片
-      </Box>
-      <Controller
-        control={control}
-        name="bg_image"
-        render={({ field }) => <UploadFile
-          {...field}
-          id="bg_image"
-          type="url"
-          accept="image/*"
-          width={80}
-          onChange={(url) => {
-            field.onChange(url)
-            setIsEdit(true)
-          }}
-        />}
-      />
-    </Box>
+    <Stack gap={2} sx={{ mx: 2 }}>
+      <Stack direction={'row'} gap={2} alignItems={'center'}>
+        <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0 }}>配色方案</Box>
+        <Controller
+          control={control}
+          name="theme_mode"
+          render={({ field }) => <Select
+            {...field}
+            sx={{ width: '100%', height: 52 }}
+            onChange={(e) => {
+              field.onChange(e.target.value as 'light' | 'dark')
+              setIsEdit(true)
+            }}
+          >
+            <MenuItem value='light'>浅色模式</MenuItem>
+            <MenuItem value='dark'>深色模式</MenuItem>
+          </Select>}
+        />
+      </Stack>
+      <Stack direction={'row'} gap={2} alignItems={'center'}>
+        <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0 }}>
+          背景图片
+        </Box>
+        <Controller
+          control={control}
+          name="bg_image"
+          render={({ field }) => <UploadFile
+            {...field}
+            id="bg_image"
+            type="url"
+            accept="image/*"
+            width={80}
+            onChange={(url) => {
+              field.onChange(url)
+              setIsEdit(true)
+            }}
+          />}
+        />
+      </Stack>
+    </Stack>
   </>
 }
 

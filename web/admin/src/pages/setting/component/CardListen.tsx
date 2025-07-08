@@ -116,9 +116,9 @@ const CardListen = ({ kb, refresh }: { kb: KnowledgeBaseListItem, refresh: () =>
 
 
     <Box sx={{ mx: 2 }}>
-      <Stack direction={'row'} gap={2} alignItems={'center'} sx={{ mt: 2.5 }}>
+      <Stack direction={'row'} gap={2} alignItems={'center'}>
 
-        <Box component={'label'}  sx={{ width: 136, flexShrink: 0, fontSize: 14, lineHeight: '32px', mb: 1 }}>域名</Box>
+        <Box component={'label'}  sx={{ width: 156, flexShrink: 0, fontSize: 14, lineHeight: '32px'}}>域名</Box>
         <Controller
           control={control}
           name='domain'
@@ -152,7 +152,7 @@ const CardListen = ({ kb, refresh }: { kb: KnowledgeBaseListItem, refresh: () =>
             sx={{ p: 0 }}
           />}
         />
-        <Box component={'label'} htmlFor='http' sx={{ width: 100, flexShrink: 0, cursor: 'pointer', fontSize: 14, color: http ? 'text.primary' : 'text.auxiliary' }}>启用 HTTP</Box>
+        <Box component={'label'} htmlFor='http' sx={{ width: 120, flexShrink: 0, cursor: 'pointer', fontSize: 14, color: http ? 'text.primary' : 'text.auxiliary' }}>启用 HTTP</Box>
         {<Controller
           control={control}
           name='port'
@@ -190,7 +190,7 @@ const CardListen = ({ kb, refresh }: { kb: KnowledgeBaseListItem, refresh: () =>
             sx={{ p: 0 }}
           />}
         />
-        <Box component={'label'} htmlFor='https' sx={{ width: 100, flexShrink: 0, cursor: 'pointer', fontSize: 14, color: https ? 'text.primary' : 'text.auxiliary' }}>启用 HTTPS</Box>
+        <Box component={'label'} htmlFor='https' sx={{ width: 120, flexShrink: 0, cursor: 'pointer', fontSize: 14, color: https ? 'text.primary' : 'text.auxiliary' }}>启用 HTTPS</Box>
         {<Controller
           control={control}
           name='ssl_port'
