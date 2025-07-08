@@ -23,12 +23,13 @@ type KnowledgeBase struct {
 }
 
 type AccessSettings struct {
-	Ports      []int    `json:"ports"`
-	SSLPorts   []int    `json:"ssl_ports"`
-	PublicKey  string   `json:"public_key"`
-	PrivateKey string   `json:"private_key"`
-	Hosts      []string `json:"hosts"`
-	BaseURL    string   `json:"base_url"`
+	Ports          []int    `json:"ports"`
+	SSLPorts       []int    `json:"ssl_ports"`
+	PublicKey      string   `json:"public_key"`
+	PrivateKey     string   `json:"private_key"`
+	Hosts          []string `json:"hosts"`
+	BaseURL        string   `json:"base_url"`
+	TrustedProxies []string `json:"trusted_proxies"`
 
 	SimpleAuth SimpleAuth `json:"simple_auth"`
 }

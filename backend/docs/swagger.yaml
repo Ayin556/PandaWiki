@@ -21,6 +21,10 @@ definitions:
         items:
           type: integer
         type: array
+      trusted_proxies:
+        items:
+          type: string
+        type: array
     type: object
   domain.AppDetailResp:
     properties:

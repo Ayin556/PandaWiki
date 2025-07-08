@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/samber/lo"
 	"gorm.io/gorm"
 
 	"github.com/chaitin/panda-wiki/config"
@@ -100,15 +101,20 @@ func (r *KnowledgeBaseRepository) SyncKBAccessSettingsToCaddy(ctx context.Contex
 	staticFile := fmt.Sprintf("%s.12:9000", subnetPrefix) // minio
 	servers := make(map[string]any, 0)
 	for port, hostKBMap := range portHostKBMap {
+		trustProxies := make([]string, 0)
+		for _, kb := range hostKBMap {
+			trustProxies = append(trustProxies, kb.AccessSettings.TrustedProxies...)
+		}
 		server := map[string]any{
 			"listen": []string{port},
 			"routes": []map[string]any{},
-			"trusted_proxies": map[string]any{
+		}
+		if len(trustProxies) != 0 {
+			trustProxies = lo.Uniq(trustProxies)
+			server["trusted_proxies"] = map[string]any{
 				"source": "static",
-				"ranges": []string{
-					"192.168.0.0/16",
-				},
-			},
+				"ranges": trustProxies,
+			}
 		}
 		if _, ok := httpPorts[port]; ok {
 			server["automatic_https"] = map[string]any{
