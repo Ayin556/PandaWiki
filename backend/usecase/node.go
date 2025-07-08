@@ -231,3 +231,7 @@ func (u *NodeUsecase) GetRecommendNodeList(ctx context.Context, req *domain.GetR
 	}
 	return nil, nil
 }
+
+func (u *NodeUsecase) BatchMoveNode(ctx context.Context, req *domain.BatchMoveReq) error {
+	return u.nodeRepo.BatchMove(ctx, req)
+}

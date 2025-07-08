@@ -234,3 +234,9 @@ type NodeRelease struct {
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
+
+type BatchMoveReq struct {
+	IDs      []string `json:"ids" validate:"required"`
+	KBID     string   `json:"kb_id" validate:"required"`
+	ParentID string   `json:"parent_id"`
+}

@@ -580,3 +580,17 @@ func (r *NodeRepository) GetOldNodeDocIDsByNodeID(ctx context.Context, nodeRelea
 	}
 	return docIDs, nil
 }
+
+func (r *NodeRepository) BatchMove(ctx context.Context, req *domain.BatchMoveReq) error {
+	return r.db.Transaction(func(tx *gorm.DB) error {
+		// update node parent_id
+		if err := tx.Model(&domain.Node{}).
+			Where("kb_id = ?", req.KBID).
+			Where("id IN ?", req.IDs).
+			Update("parent_id", req.ParentID).
+			Error; err != nil {
+			return err
+		}
+		return nil
+	})
+}
