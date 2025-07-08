@@ -93,6 +93,9 @@ export const getNodeDetail = (params: { id: string }): Promise<NodeDetail> =>
 export const moveNode = (data: { id: string, parent_id: string | null, next_id: string | null, prev_id: string | null }): Promise<void> =>
   request({ url: 'api/v1/node/move', method: 'post', data })
 
+export const batchMoveNode = (data: { ids: string[], parent_id: string, kb_id: string }): Promise<void> =>
+  request({ url: 'api/v1/node/batch_move', method: 'post', data })
+
 export const updateNodeAction = (data: UpdateNodeActionData): Promise<void> =>
   request({ url: 'api/v1/node/action', method: 'post', data })
 

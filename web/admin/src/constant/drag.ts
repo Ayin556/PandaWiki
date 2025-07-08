@@ -13,7 +13,7 @@ export interface DragTreeProps {
   ui?: 'select' | 'move'
   selected?: string[]
   supportSelect?: boolean
-  onSelectChange?: (value: string[]) => void
+  onSelectChange?: (value: string[], id?: string) => void
   relativeSelect?: boolean
   traverseFolder?: boolean
 }
