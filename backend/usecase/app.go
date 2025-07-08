@@ -11,6 +11,7 @@ import (
 	"github.com/chaitin/panda-wiki/pkg/bot/dingtalk"
 	"github.com/chaitin/panda-wiki/pkg/bot/discord"
 	"github.com/chaitin/panda-wiki/pkg/bot/feishu"
+	"github.com/chaitin/panda-wiki/pkg/bot/wechat"
 	"github.com/chaitin/panda-wiki/repo/pg"
 )
 
@@ -118,13 +119,20 @@ func (u *AppUsecase) getQAFunc(kbID string, appType domain.AppType) bot.GetQAFun
 	}
 }
 
-func (u *AppUsecase) wechatQAFunc(kbID string, appType domain.AppType, remoteip string) func(ctx context.Context, msg string) (chan string, error) {
+func (u *AppUsecase) wechatQAFunc(kbID string, appType domain.AppType, remoteip string, userinfo *wechat.UserInfo) func(ctx context.Context, msg string) (chan string, error) {
 	return func(ctx context.Context, msg string) (chan string, error) {
 		eventCh, err := u.chatUsecase.Chat(ctx, &domain.ChatRequest{
 			Message:  msg,
 			KBID:     kbID,
 			AppType:  appType,
 			RemoteIP: remoteip,
+			Info: domain.ConversationInfo{
+				UserInfo: domain.UserInfo{
+					UserID:   userinfo.UserID,
+					NickName: userinfo.Name,
+					From:     domain.MessageFromPrivate,
+				},
+			},
 		})
 		if err != nil {
 			return nil, err

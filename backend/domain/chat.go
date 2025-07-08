@@ -32,6 +32,7 @@ type UserInfo struct {
 	From     MessageFrom `json:"from"`
 	RealName string      `json:"real_name"`
 	Email    string      `json:"email"`
+	Avatar   string      `json:"avatar"` // avatar
 }
 
 func (s *ConversationInfo) Scan(value any) error {

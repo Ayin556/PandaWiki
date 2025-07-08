@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/chaitin/panda-wiki/log"
@@ -64,6 +65,34 @@ type BackendResponse struct {
 	} `json:"data"`
 }
 
+// UserInfo 用于存储获取到的用户信息
+type UserInfo struct {
+	Errcode    int    `json:"errcode"`
+	Errmsg     string `json:"errmsg"`
+	UserID     string `json:"userid"`
+	Name       string `json:"name"`
+	Department []int  `json:"department"`
+	Mobile     string `json:"mobile"`
+	Email      string `json:"email"`
+	Status     int    `json:"status"`
+}
+
+// 获取token的回应的消息
+type AccessToken struct {
+	Errcode     int    `json:"errcode"`
+	Errmsg      string `json:"errmsg"`
+	AccessToken string `json:"access_token"`
+	ExpiresIn   int    `json:"expires_in"`
+}
+
+type TokenCahe struct {
+	AccessToken string
+	TokenExpire time.Time
+	Mutex       sync.Mutex
+}
+
+var TokenCache *TokenCahe = &TokenCahe{}
+
 func NewWechatConfig(ctx context.Context, CorpID, Token, EncodingAESKey string, kbid string, secret string, againtid string, logger *log.Logger) (*WechatConfig, error) {
 	return &WechatConfig{
 		Ctx:            ctx,
@@ -94,23 +123,7 @@ func (cfg *WechatConfig) VerifyUrlWechatAPP(signature, timestamp, nonce, echostr
 	return decryptEchoStr, nil
 }
 
-func (cfg *WechatConfig) Wechat(signature, timestamp, nonce string, body []byte, getQA func(ctx context.Context, msg string) (chan string, error)) error {
-
-	wxcpt := wxbizmsgcrypt.NewWXBizMsgCrypt(cfg.Token, cfg.EncodingAESKey, cfg.CorpID, wxbizmsgcrypt.XmlType)
-
-	// 解密消息
-	var decryptMsg []byte
-	decryptMsg, errCode := wxcpt.DecryptMsg(signature, timestamp, nonce, body)
-	if errCode != nil {
-		return errors.New("failed to Decrypt Message")
-	}
-
-	var msg ReceivedMessage
-	err := xml.Unmarshal([]byte(decryptMsg), &msg)
-	if err != nil {
-		return err
-	}
-	cfg.logger.Info("Received Msg: %+v", log.Any("msg", msg))
+func (cfg *WechatConfig) Wechat(msg ReceivedMessage, getQA func(ctx context.Context, msg string) (chan string, error)) error {
 
 	token, err := cfg.GetAccessToken()
 	if err != nil {
@@ -211,29 +224,28 @@ func (cfg *WechatConfig) SendResponse(msg ReceivedMessage, content string) ([]by
 }
 
 func (cfg *WechatConfig) GetAccessToken() (string, error) {
+	TokenCache.Mutex.Lock()
+	defer TokenCache.Mutex.Unlock()
 
-	if cfg.AccessToken != "" && time.Now().Before(cfg.TokenExpire) {
-		return cfg.AccessToken, nil
+	if TokenCache.AccessToken != "" && time.Now().Before(TokenCache.TokenExpire) {
+		cfg.logger.Info("access token has existed and is valid")
+		return TokenCache.AccessToken, nil
 	}
 
-	if cfg.Secret == "" {
-		return "", errors.New("secret is not right")
+	if cfg.Secret == "" || cfg.CorpID == "" {
+		return "", errors.New("secret or corpid is not right")
 	}
 
-	// get AccessToken
+	// get AccessToken--请求微信客服token
 	url := fmt.Sprintf("https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=%s&corpsecret=%s", cfg.CorpID, cfg.Secret)
 
 	resp, err := http.Get(url)
 	if err != nil {
-		return "", errors.New("get wechat accesstoken failed")
+		return "", errors.New("get wechatapp accesstoken failed")
 	}
+	defer resp.Body.Close()
 
-	var tokenResp struct {
-		Errcode     int    `json:"errcode"`
-		Errmsg      string `json:"errmsg"`
-		AccessToken string `json:"access_token"`
-		ExpiresIn   int    `json:"expires_in"`
-	}
+	var tokenResp AccessToken // 获取到token消息
 
 	if err := json.NewDecoder(resp.Body).Decode(&tokenResp); err != nil {
 		return "", errors.New("json decode wechat resp failed")
@@ -244,9 +256,44 @@ func (cfg *WechatConfig) GetAccessToken() (string, error) {
 	}
 
 	// succcess
+	cfg.logger.Info("wechatapp get accesstoken success", log.Any("info", tokenResp.AccessToken))
 
-	cfg.AccessToken = tokenResp.AccessToken
-	cfg.TokenExpire = time.Now().Add(time.Duration(tokenResp.ExpiresIn-300) * time.Second)
+	TokenCache.AccessToken = tokenResp.AccessToken
+	TokenCache.TokenExpire = time.Now().Add(time.Duration(tokenResp.ExpiresIn-300) * time.Second)
 
-	return cfg.AccessToken, nil
+	return TokenCache.AccessToken, nil
+}
+
+func (cfg *WechatConfig) GetUserInfo(username string) (*UserInfo, error) {
+
+	accessToken, err := cfg.GetAccessToken()
+	if err != nil {
+		return nil, err
+	}
+	// 请求获取用户的内容
+	resp, err := http.Get(fmt.Sprintf(
+		"https://qyapi.weixin.qq.com/cgi-bin/user/get?access_token=%s&userid=%s",
+		accessToken, username))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	// cfg.logger.Info("获取用户信息成功", log.Any("body", body))
+
+	var userInfo UserInfo
+	if err := json.Unmarshal(body, &userInfo); err != nil {
+		return nil, err
+	}
+
+	if userInfo.Errcode != 0 {
+		return nil, fmt.Errorf("获取用户信息失败: %d, %s", userInfo.Errcode, userInfo.Errmsg)
+	}
+
+	return &userInfo, nil
 }
