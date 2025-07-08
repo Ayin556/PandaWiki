@@ -16,6 +16,7 @@ import DocSearch from "./component/DocSearch"
 import DocStatus from "./component/DocStatus"
 import DocSummary from "./component/DocSummary"
 import ImportDoc from "./component/ImportDoc"
+import MoveDocs from "./component/MoveDocs"
 import Summary from "./component/Summary"
 
 const Content = () => {
@@ -38,6 +39,7 @@ const Content = () => {
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [summaryOpen, setSummaryOpen] = useState(false)
   const [moreSummaryOpen, setMoreSummaryOpen] = useState(false)
+  const [moveOpen, setMoveOpen] = useState(false)
   const [urlOpen, setUrlOpen] = useState(false)
   const [publishIds, setPublishIds] = useState<string[]>([])
   const [publishOpen, setPublishOpen] = useState(false)
@@ -216,6 +218,12 @@ const Content = () => {
               生成摘要
             </Button>
             <Button size="small" sx={{ minWidth: 0, p: 0 }} onClick={() => {
+              setMoveOpen(true)
+              setOpraData(list.filter(item => selected.includes(item.id)))
+            }}>
+              批量移动
+            </Button>
+            <Button size="small" sx={{ minWidth: 0, p: 0 }} onClick={() => {
               setDeleteOpen(true)
               setOpraData(list.filter(item => selected.includes(item.id)))
             }}>
@@ -305,6 +313,16 @@ const Content = () => {
         setPublishIds([])
       }}
       refresh={getData}
+    />
+    <MoveDocs
+      open={moveOpen}
+      data={list}
+      selected={opraData}
+      refresh={getData}
+      onClose={() => {
+        setMoveOpen(false)
+        setOpraData([])
+      }}
     />
   </>
 }

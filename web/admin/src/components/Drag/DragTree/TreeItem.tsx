@@ -79,13 +79,13 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
   const handleSelectChange = useCallback((id: string) => {
     if (relativeSelect) {
       const newSelected = handleMultiSelect(items, id, selected)
-      onSelectChange?.(newSelected || [])
+      onSelectChange?.(newSelected || [], id)
     } else {
       const temp = [...selected];
       if (temp.includes(id)) {
-        onSelectChange?.(temp.filter(item => item !== id));
+        onSelectChange?.(temp.filter(item => item !== id), id);
       } else {
-        onSelectChange?.([...temp, id]);
+        onSelectChange?.([...temp, id], id);
       }
     }
   }, [onSelectChange, selected, items, relativeSelect]);

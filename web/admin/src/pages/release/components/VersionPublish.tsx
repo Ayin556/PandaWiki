@@ -147,7 +147,7 @@ const VersionPublish = ({ open, defaultSelected = [], onClose, refresh }: Versio
             selected={selected}
             data={treeList}
             refresh={getData}
-            onSelectChange={setSelected}
+            onSelectChange={(ids) => setSelected(ids)}
           />
         </Stack>
       </Card>
