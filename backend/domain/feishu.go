@@ -20,15 +20,22 @@ type SearchWikiReq struct {
 }
 
 type SearchWikiResp struct {
-	Title   string `json:"title"`
-	Url     string `json:"url"`
-	SpaceId string `json:"space_id"`
+	Title    string `json:"title"`
+	Url      string `json:"url"`
+	SpaceId  string `json:"space_id"`
+	ObjToken string `json:"obj_token"`
+	ObjType  int    `json:"obj_type"`
 }
 
 type GetDocxReq struct {
 	FeishuBaseReq
-	KBID string   `json:"kb_id" validate:"required"`
-	Urls []string `json:"urls"`
+	KBID    string   `json:"kb_id" validate:"required"`
+	Sources []Source `json:"sources" validate:"required"`
+}
+type Source struct {
+	Url      string `json:"url"`
+	ObjToken string `json:"obj_token"`
+	ObjType  int    `json:"obj_type"`
 }
 type GetDocxResp struct {
 	Title   string `json:"title"`
@@ -40,6 +47,8 @@ type SearchDocxReq struct {
 }
 
 type SearchDocxResp struct {
-	Name string `json:"name"`
-	Url  string `json:"url"`
+	Name     string `json:"name"`
+	Url      string `json:"url"`
+	ObjToken string `json:"obj_token"`
+	ObjType  int    `json:"obj_type"`
 }

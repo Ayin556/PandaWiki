@@ -13,13 +13,14 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/google/uuid"
+	"github.com/minio/minio-go/v7"
+	"golang.org/x/sync/semaphore"
+
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/log"
 	"github.com/chaitin/panda-wiki/store/s3"
 	"github.com/chaitin/panda-wiki/utils"
-	"github.com/google/uuid"
-	"github.com/minio/minio-go/v7"
-	"golang.org/x/sync/semaphore"
 )
 
 type WikiJSUsecase struct {
