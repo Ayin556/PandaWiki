@@ -2400,6 +2400,12 @@ const docTemplate = `{
                     "items": {
                         "type": "integer"
                     }
+                },
+                "trusted_proxies": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
