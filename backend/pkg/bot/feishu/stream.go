@@ -265,7 +265,7 @@ func (c *FeishuClient) Start() error {
 	return nil
 }
 
-// 下面功能都是需要开启飞书对应的权限才可以获取到用户信息
+// 下面功能都是需要开启飞书对应的权限才可以获取到用户信息 -- 应用权限（否则用户没有办法使用飞书进行对话）
 
 // 飞书机器人获取用户信息，只是适用于单个用户
 func (c *FeishuClient) GetUserInfo(UserOpenId string) (*larkcontact.User, error) {
