@@ -40,10 +40,10 @@ export const AppType = {
     label: '钉钉机器人',
   },
   4: {
-    label: '企业微信机器人',
+    label: '飞书机器人',
   },
   5: {
-    label: '飞书机器人',
+    label: '企业微信机器人',
   },
   6: {
     label: '企业微信客服',

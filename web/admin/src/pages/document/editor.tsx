@@ -5,7 +5,7 @@ import { Box, Stack, useMediaQuery } from "@mui/material";
 import { Message } from "ct-mui";
 import { TiptapEditor, TiptapToolbar, useTiptapEditor } from 'ct-tiptap-editor';
 import dayjs, { Dayjs } from "dayjs";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import VersionPublish from "../release/components/VersionPublish";
 import EditorDocNav from "./component/EditorDocNav";
@@ -41,9 +41,9 @@ const DocEditor = () => {
     setMaxH(Math.min(...headings.map((h: any) => h.heading)))
   }
 
-  const handleSave = async (auto?: boolean, publish?: boolean) => {
+  const handleSave = async (auto?: boolean, publish?: boolean, html?: string) => {
     if (!editorRef || !detail) return
-    const content = editorRef.getHtml()
+    const content = html || editorRef.getHtml()
     try {
       await updateNode({ id, content, kb_id: detail.kb_id })
       if (auto === true) Message.success('自动保存成功')
@@ -78,18 +78,12 @@ const DocEditor = () => {
     immediatelyRender: true,
     aiUrl: '/api/v1/creation/text',
     onUpload: handleUpload,
-    onSave: () => handleSave(),
+    onSave: (html) => handleSave(undefined, false, html),
     onUpdate: () => setEdited(true),
     onError: (error: Error) => {
       Message.error(error.message)
     }
   })
-
-  const intervalReq = useCallback(() => {
-    if (edited) {
-      handleSave(true)
-    }
-  }, [edited])
 
   useEffect(() => {
     if (timer.current) clearInterval(timer.current)
@@ -98,12 +92,14 @@ const DocEditor = () => {
         setHeadings(headings)
         setMaxH(Math.min(...headings.map(h => h.heading)))
       })
-      timer.current = setInterval(intervalReq, 1000 * 60)
+      timer.current = setInterval(() => {
+        handleSave(true)
+      }, 1000 * 60)
     }
     return () => {
       if (timer.current) clearInterval(timer.current)
     }
-  }, [detail, intervalReq])
+  }, [detail])
 
   useEffect(() => {
     if (id) {
