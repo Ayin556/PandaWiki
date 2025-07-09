@@ -1,9 +1,9 @@
 import { createNode, ITreeItem, updateNode } from "@/api";
 import Emoji from "@/components/Emoji";
-import { AppContext, updateTree } from "@/constant/drag";
 import { treeSx } from "@/constant/styles";
 import { useAppSelector } from "@/store";
 import { addOpacityToColor } from "@/utils";
+import { AppContext, updateTree } from "@/utils/drag";
 import { handleMultiSelect, updateAllParentStatus } from "@/utils/tree";
 import { Box, Button, Checkbox, Stack, TextField, useTheme } from "@mui/material";
 import { Ellipsis, Message } from "ct-mui";
@@ -253,16 +253,31 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
             {menu && <>
               <Box sx={{ flex: 1, alignSelf: 'center', borderBottom: '1px dashed', borderColor: 'divider' }} />
               <Stack direction="row" alignItems={'center'} gap={2} sx={{ flexShrink: 0 }}>
-                {item.type === 2 && <Stack direction="row" alignItems={'center'} gap={1} sx={{ flexShrink: 0, fontSize: 12 }}>
+                <Stack direction="row" alignItems={'center'} gap={1} sx={{ flexShrink: 0, fontSize: 12 }}>
                   {item.status === 1 && <Box sx={{ color: 'error.main', border: '1px solid', borderColor: 'error.main', borderRadius: '10px', px: 1, bgcolor: addOpacityToColor(theme.palette.error.main, 0.1) }}>
                     更新未发布
                   </Box>}
-                  {item.visibility === 1 ? <Box sx={{ color: 'warning.main', border: '1px solid', borderColor: 'warning.main', borderRadius: '10px', px: 1, bgcolor: addOpacityToColor(theme.palette.warning.main, 0.1) }}>
-                    私有
-                  </Box> : <Box sx={{ color: 'success.main', border: '1px solid', borderColor: 'success.main', borderRadius: '10px', px: 1, bgcolor: addOpacityToColor(theme.palette.success.main, 0.1) }}>
-                    公开
-                  </Box>}
-                </Stack>}
+                  {item.type === 2 && (item.visibility === 1 ?
+                    <Box sx={{
+                      color: 'warning.main',
+                      border: '1px solid',
+                      borderColor: 'warning.main',
+                      borderRadius: '10px',
+                      px: 1,
+                      bgcolor: addOpacityToColor(theme.palette.warning.main, 0.1)
+                    }}>
+                      私有
+                    </Box> : <Box sx={{
+                      color: 'success.main',
+                      border: '1px solid',
+                      borderColor: 'success.main',
+                      borderRadius: '10px',
+                      px: 1,
+                      bgcolor: addOpacityToColor(theme.palette.success.main, 0.1)
+                    }}>
+                      公开
+                    </Box>)}
+                </Stack>
                 <Box sx={{ fontSize: 12, fontFamily: 'monospace', color: 'text.disabled', width: 60, textAlign: 'right' }}>{dayjs(item.updated_at).fromNow()}</Box>
                 <Box onClick={(e) => e.stopPropagation()}>
                   <TreeMenu menu={menuList} />

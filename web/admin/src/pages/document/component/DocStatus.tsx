@@ -2,7 +2,7 @@ import { updateNodeAction } from '@/api';
 import { NodeListItem } from '@/api/type';
 import Card from '@/components/Card';
 import DragTree from '@/components/Drag/DragTree';
-import { convertToTree } from '@/constant/drag';
+import { convertToTree } from '@/utils/drag';
 import { filterEmptyFolders } from '@/utils/tree';
 import ErrorIcon from '@mui/icons-material/Error';
 import { Stack, Typography } from "@mui/material";

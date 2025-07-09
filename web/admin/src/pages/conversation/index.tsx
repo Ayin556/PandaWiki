@@ -1,11 +1,13 @@
 import { ConversationListItem, getConversationList } from "@/api"
+import Logo from "@/assets/images/logo.png"
 import NoData from '@/assets/images/nodata.png'
 import Card from "@/components/Card"
+import { AppType } from "@/constant/enums"
 import { tableSx } from "@/constant/styles"
 import { useURLSearchParams } from "@/hooks"
 import { useAppSelector } from "@/store"
 import { Box, Stack } from "@mui/material"
-import { Ellipsis, Table } from "ct-mui"
+import { Ellipsis, Icon, Table } from "ct-mui"
 import dayjs from "dayjs"
 import { useEffect, useState } from "react"
 import Detail from "./Detail"
@@ -24,35 +26,53 @@ const Conversation = () => {
   const [open, setOpen] = useState(false)
   const [id, setId] = useState('')
 
+  const appTypes = Object.values(AppType).map(it => it.label)
+
   const columns = [
     {
       dataIndex: 'subject',
       title: '问题',
       render: (text: string, record: ConversationListItem) => {
-        return <Ellipsis className="primary-color" sx={{ cursor: 'pointer' }} onClick={() => {
-          setId(record.id)
-          setOpen(true)
-        }}>
-          {text}
-        </Ellipsis>
+        const isGroupChat = record.info?.user_info?.from === 1
+        return <Stack direction={'row'} alignItems={'center'} gap={0.5}>
+          <Icon type={isGroupChat ? 'icon-qunliao' : 'icon-danliao'} />
+          <Ellipsis className="primary-color" sx={{ cursor: 'pointer', flex: 1, width: 0 }} onClick={() => {
+            setId(record.id)
+            setOpen(true)
+          }}>
+            {text}
+          </Ellipsis>
+        </Stack>
       },
     },
     {
       dataIndex: 'app_type',
-      title: '来源用户',
+      title: '来源渠道',
       width: 160,
-      render: (text: number, record: ConversationListItem) => {
-        const typeName = ['', 'Wiki 网站', '网页挂件', '钉钉机器人', '飞书机器人', '企业微信机器人', '企业微信客服', 'Discord 机器人']
-        return <>
-          <Box>匿名用户</Box>
-          <Box sx={{ color: 'text.auxiliary', fontSize: 12 }}>{typeName[text] || ''}</Box>
-        </>
+      render: (text: number) => {
+        const typeName = ['', ...appTypes]
+        return typeName[text] || '-'
+      }
+    },
+    {
+      dataIndex: 'info',
+      title: '来源用户',
+      width: 200,
+      render: (text: ConversationListItem['info']) => {
+        const user = text?.user_info
+        return <Box sx={{ fontSize: 12 }}>
+          <Stack direction={'row'} alignItems={'center'} gap={0.5} sx={{ cursor: 'pointer' }}>
+            <img src={user?.avatar || Logo} width={16} />
+            <Box sx={{ fontSize: 14 }}>{user?.real_name || user?.name || '匿名用户'}</Box>
+          </Stack>
+          {user?.email && <Box sx={{ color: 'text.auxiliary' }}>{user?.email}</Box>}
+        </Box>
       }
     },
     {
       dataIndex: 'remote_ip',
       title: '来源 IP',
-      width: 160,
+      width: 200,
       render: (text: string, record: ConversationListItem) => {
         const { city = '', country = '', province = '' } = record.ip_address
         return <>

@@ -423,6 +423,16 @@ export type ConversationListItem = {
   },
   remote_ip: string,
   subject: string
+  info?: {
+    user_info?: {
+      from?: 0 | 1 // 1群聊，2私聊
+      name?: string
+      email?: string
+      avatar?: string
+      user_id?: string
+      real_name?: string
+    }
+  }
 }
 
 export type ConversationDetail = {

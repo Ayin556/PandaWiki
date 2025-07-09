@@ -1,8 +1,8 @@
 import { NodeListItem, updateNodeAction } from "@/api";
 import Card from "@/components/Card";
 import DragTree from "@/components/Drag/DragTree";
-import { convertToTree } from "@/constant/drag";
 import { useAppSelector } from "@/store";
+import { convertToTree } from "@/utils/drag";
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { Stack } from "@mui/material";
 import { Message, Modal } from "ct-mui";

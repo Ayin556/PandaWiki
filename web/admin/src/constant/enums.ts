@@ -31,7 +31,7 @@ export const IconMap = {
 
 export const AppType = {
   1: {
-    label: '网页应用',
+    label: 'Wiki 站点',
   },
   2: {
     label: '网页挂件',
@@ -48,9 +48,9 @@ export const AppType = {
   6: {
     label: '企业微信客服',
   },
-  // 7: {
-  //   label: ''
-  // }
+  7: {
+    label: 'Discord 机器人'
+  }
 }
 
 export const AnswerStatus = {

@@ -2,10 +2,10 @@ import { getNodeList, ImportDocType, ITreeItem, NodeListFilterData, NodeListItem
 import Card from "@/components/Card"
 import DragTree from "@/components/Drag/DragTree"
 import { TreeMenuItem, TreeMenuOptions } from "@/components/Drag/DragTree/TreeMenu"
-import { convertToTree } from "@/constant/drag"
 import { useURLSearchParams } from "@/hooks"
 import { useAppSelector } from "@/store"
 import { addOpacityToColor } from "@/utils"
+import { convertToTree } from "@/utils/drag"
 import { Box, Button, Checkbox, IconButton, Stack, useTheme } from "@mui/material"
 import { Icon, MenuSelect } from "ct-mui"
 import { useCallback, useEffect, useState } from "react"
@@ -106,10 +106,9 @@ const Content = () => {
     if (search) params.search = search
     getNodeList(params).then(res => {
       setList(res || [])
-      const fileData = res.filter(it => it.type === 2)
       setPublish({
-        unpublished: fileData.filter(it => it.status === 1).length,
-        published: fileData.filter(it => it.status === 2).length,
+        unpublished: res.filter(it => it.status === 1).length,
+        published: res.filter(it => it.status === 2).length,
       })
       const v = convertToTree(res || [])
       setData(v)
@@ -140,7 +139,7 @@ const Content = () => {
           <Box>目录</Box>
           {publish.unpublished > 0 && <>
             <Box sx={{ color: 'error.main', fontSize: 12, fontWeight: 'normal', ml: 2 }}>
-              {publish.unpublished} 个文档未发布，
+              {publish.unpublished} 个 文档/文件夹 未发布，
             </Box>
             <Button size="small" sx={{ minWidth: 0, p: 0, fontSize: 12 }} onClick={() => {
               setPublishOpen(true)
