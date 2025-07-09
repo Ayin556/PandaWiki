@@ -69,7 +69,7 @@ const FeishuImport = ({ open, refresh, onCancel, parentId = null }: ImportDocPro
               }], kb_id, ...getValues()
             })
             const nodeRes = await createNode({
-              name: res[0].title || '',
+              name: res[0].title || item.url.toString() || '',
               content: res[0].content || '',
               parent_id: parentId,
               type: 2,
@@ -108,7 +108,7 @@ const FeishuImport = ({ open, refresh, onCancel, parentId = null }: ImportDocPro
       }
       if (res2.length > 0) {
         setItems(res2.map(item => ({
-          title: item.name,
+          title: item.name || item.url.toString(),
           content: '',
           url: item.url,
           success: -1,

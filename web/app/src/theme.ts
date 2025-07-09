@@ -192,6 +192,15 @@ const lightTheme = createTheme(
 const darkTheme = createTheme(
   {
     cssVariables: true,
+    breakpoints: {
+      values: {
+        xs: 0,
+        sm: 600,
+        md: 960,
+        lg: 1189,
+        xl: 1300,
+      },
+    },
     palette: {
       mode: 'dark',
       primary: {

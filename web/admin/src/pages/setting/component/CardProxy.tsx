@@ -28,8 +28,9 @@ const CardProxy = ({ kb, refresh }: { kb: KnowledgeBaseListItem, refresh: () => 
 
   return <>
     <Stack direction='row' alignItems={'center'} justifyContent={'space-between'} sx={{
-      height: 32,
       m: 2,
+      height: 32,
+      fontWeight: 'bold',
     }}>
       <Box sx={{
         '&::before': {
@@ -43,21 +44,22 @@ const CardProxy = ({ kb, refresh }: { kb: KnowledgeBaseListItem, refresh: () => 
           mr: 1,
         },
       }}>前置反向代理</Box>
-      <Box sx={{ 
-        flexGrow: 1, 
-        fontSize: 12, 
+      <Box sx={{
+        flexGrow: 1,
+        fontSize: 12,
         color: 'text.auxiliary',
         ml: 1,
+        fontWeight: 'normal',
       }}>用于修正源 IP 获取错误的问题</Box>
       {isEdit && <Button variant="contained" size="small" onClick={handleSave}>保存</Button>}
     </Stack>
-    <Stack  gap={2} sx={{ mx: 2 }}>
+    <Stack gap={2} sx={{ mx: 2 }}>
       <Stack direction={'row'} gap={2} alignItems={'center'}>
         <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px' }}>
           前置反向代理
         </Box>
         <FormControl>
-          <RadioGroup 
+          <RadioGroup
             value={hasProxy}
             onChange={(e) => {
               setHasProxy(e.target.value === 'true')
@@ -66,7 +68,7 @@ const CardProxy = ({ kb, refresh }: { kb: KnowledgeBaseListItem, refresh: () => 
               }
               setIsEdit(true)
             }}
-            >
+          >
             <Stack direction={'row'}>
               <FormControlLabel value={false} control={<Radio size='small' />} label="无前置反向代理" />
               <FormControlLabel value={true} control={<Radio size='small' />} label="有前置反向代理" />
@@ -78,7 +80,7 @@ const CardProxy = ({ kb, refresh }: { kb: KnowledgeBaseListItem, refresh: () => 
         <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0 }}>
           可信代理 IP
         </Box>
-        <TextField     
+        <TextField
           fullWidth
           label="可信代理 IP"
           value={proxyIP}

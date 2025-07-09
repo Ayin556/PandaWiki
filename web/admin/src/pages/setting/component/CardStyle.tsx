@@ -81,8 +81,8 @@ const CardStyle = ({ id, data, refresh }: CardStyleProps) => {
           </Select>}
         />
       </Stack>
-      <Stack direction={'row'} gap={2} alignItems={'center'}>
-        <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0 }}>
+      <Stack direction={'row'} gap={2}>
+        <Box sx={{ width: 156, fontSize: 14, lineHeight: '52px', flexShrink: 0 }}>
           背景图片
         </Box>
         <Controller

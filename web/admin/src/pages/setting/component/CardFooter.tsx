@@ -94,18 +94,18 @@ const CardFooter = ({ id, data, refresh }: CardFooterProps) => {
         <Controller
           control={control}
           name="corp_name"
-        render={({ field }) => <TextField
-          {...field}
-          fullWidth
-          placeholder="企业名称/组织名称"
-          onChange={(e) => {
-            field.onChange(e.target.value)
-            setIsEdit(true)
-          }}
-          error={!!errors.corp_name}
-          helperText={errors.corp_name?.message}
-        />}
-      />
+          render={({ field }) => <TextField
+            {...field}
+            fullWidth
+            placeholder="企业名称/组织名称"
+            onChange={(e) => {
+              field.onChange(e.target.value)
+              setIsEdit(true)
+            }}
+            error={!!errors.corp_name}
+            helperText={errors.corp_name?.message}
+          />}
+        />
       </Stack>
       <Stack direction={'row'} gap={2} alignItems={'center'}>
         <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0 }}>ICP 备案编号</Box>
@@ -184,8 +184,8 @@ const CardFooter = ({ id, data, refresh }: CardFooterProps) => {
             />}
           />
         </Stack>
-        <Stack direction={'row'} gap={2} alignItems={'center'}>
-          <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0 }}>
+        <Box>
+          <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0, my: 1 }}>
             链接组
           </Box>
           {/* 使用 DragBrand 组件替换原有的品牌链接组 */}
@@ -194,7 +194,7 @@ const CardFooter = ({ id, data, refresh }: CardFooterProps) => {
             errors={errors}
             setIsEdit={setIsEdit}
           />
-        </Stack>
+        </Box>
       </>}
     </Stack>
   </>
