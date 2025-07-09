@@ -1,11 +1,11 @@
 import { getNodeDetail, NodeDetail, updateNode, uploadFile } from "@/api";
 import { useAppDispatch } from "@/store";
 import { setKbId } from "@/store/slices/config";
-import { Box, Stack, useMediaQuery, useTheme } from "@mui/material";
+import { Box, Stack, useMediaQuery } from "@mui/material";
 import { Message } from "ct-mui";
 import { TiptapEditor, TiptapToolbar, useTiptapEditor } from 'ct-tiptap-editor';
 import dayjs, { Dayjs } from "dayjs";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import VersionPublish from "../release/components/VersionPublish";
 import EditorDocNav from "./component/EditorDocNav";
@@ -17,7 +17,6 @@ const DocEditor = () => {
   const timer = useRef<NodeJS.Timeout | null>(null)
   const { id = '' } = useParams()
   const dispatch = useAppDispatch()
-  const theme = useTheme()
   const isWideScreen = useMediaQuery('(min-width:1400px)')
   const [edited, setEdited] = useState(false)
   const [detail, setDetail] = useState<NodeDetail | null>(null)
@@ -86,24 +85,29 @@ const DocEditor = () => {
     }
   })
 
+  const intervalReq = useCallback(() => {
+    if (edited) {
+      handleSave(true)
+    }
+  }, [edited])
+
   useEffect(() => {
-    if (timer.current) clearTimeout(timer.current)
+    if (timer.current) clearInterval(timer.current)
     if (detail && editorRef) {
       editorRef.setContent(detail.content || '').then((headings) => {
         setHeadings(headings)
         setMaxH(Math.min(...headings.map(h => h.heading)))
       })
-      timer.current = setInterval(() => {
-        handleSave(true)
-      }, 1000 * 60)
+      timer.current = setInterval(intervalReq, 1000 * 60)
     }
     return () => {
       if (timer.current) clearInterval(timer.current)
     }
-  }, [detail])
+  }, [detail, intervalReq])
 
   useEffect(() => {
     if (id) {
+      if (timer.current) clearInterval(timer.current)
       getDetail()
       setTimeout(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' })

@@ -1,8 +1,8 @@
 import { batchMoveNode, ITreeItem, NodeListItem } from "@/api";
 import Card from "@/components/Card";
 import DragTree from "@/components/Drag/DragTree";
-import { convertToTree } from "@/constant/drag";
 import { useAppSelector } from "@/store";
+import { convertToTree } from "@/utils/drag";
 import { Box, Checkbox, Stack } from "@mui/material";
 import { Icon, Message, Modal } from "ct-mui";
 import { useEffect, useState } from "react";

@@ -1,6 +1,6 @@
 import { getNodeList, ITreeItem, NodeListFilterData } from "@/api"
-import { convertToTree } from "@/constant/drag"
 import { useAppSelector } from "@/store"
+import { convertToTree } from "@/utils/drag"
 import { Box, Stack } from "@mui/material"
 import { Ellipsis, Icon } from "ct-mui"
 import { useCallback, useEffect, useState } from "react"

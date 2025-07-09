@@ -1,8 +1,8 @@
 import { getNodeList, ITreeItem, NodeListFilterData } from "@/api"
 import Nodata from '@/assets/images/nodata.png'
 import DragTree from "@/components/Drag/DragTree"
-import { convertToTree } from "@/constant/drag"
 import { useAppSelector } from "@/store"
+import { convertToTree } from "@/utils/drag"
 import { filterEmptyFolders } from "@/utils/tree"
 import { Box, Skeleton, Stack } from "@mui/material"
 import { Modal } from "ct-mui"

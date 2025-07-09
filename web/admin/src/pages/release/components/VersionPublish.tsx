@@ -1,9 +1,8 @@
 import { addRelease, getNodeList, ITreeItem, NodeListItem } from "@/api";
 import Card from "@/components/Card";
 import DragTree from "@/components/Drag/DragTree";
-import { convertToTree } from "@/constant/drag";
 import { useAppSelector } from "@/store";
-import { filterEmptyFolders } from "@/utils/tree";
+import { convertToTree } from "@/utils/drag";
 import { Box, Checkbox, Stack, TextField } from "@mui/material";
 import { Message, Modal } from "ct-mui";
 import dayjs from "dayjs";
@@ -22,7 +21,6 @@ const VersionPublish = ({ open, defaultSelected = [], onClose, refresh }: Versio
 
   const [selected, setSelected] = useState<string[]>([])
   const [folderIds, setFolderIds] = useState<string[]>([])
-  // const [allIds, setAllIds] = useState<string[]>([])
   const [treeList, setTreeList] = useState<ITreeItem[]>([])
   const [total, setTotal] = useState(0)
   const [list, setList] = useState<NodeListItem[]>([])
@@ -36,15 +34,11 @@ const VersionPublish = ({ open, defaultSelected = [], onClose, refresh }: Versio
 
   const getData = () => {
     getNodeList({ kb_id }).then(res => {
-      const unPublishedData = res?.filter(item => (item.status === 1 || item.type === 1)) || []
+      const unPublishedData = res?.filter(item => item.status === 1) || []
       setList(unPublishedData)
       setSelected(defaultSelected.length > 0 ? defaultSelected : unPublishedData.map(it => it.id))
-      setTotal(unPublishedData.filter(item => item.type === 2).length)
-      // const unPublishedData = res?.filter(item => (item.status === 1 || item.type === 1)) || []
-      const treeData = convertToTree(unPublishedData || [])
-      const showTreeData = filterEmptyFolders(treeData)
+      const showTreeData = convertToTree(unPublishedData || [])
       setTreeList(showTreeData)
-      // setAllIds(getFlattenIds(showTreeData))
       setFolderIds(res.filter(item => item.type === 1).map(item => item.id))
     })
   }
@@ -72,7 +66,7 @@ const VersionPublish = ({ open, defaultSelected = [], onClose, refresh }: Versio
   }, [open, kb_id]);
 
   const selectedTotal = useMemo(() => {
-    return list.filter(item => selected.includes(item.id) && item.type === 2).length;
+    return list.filter(item => selected.includes(item.id)).length;
   }, [selected, list]);
 
   return <Modal
@@ -127,16 +121,16 @@ const VersionPublish = ({ open, defaultSelected = [], onClose, refresh }: Versio
         mt: 1,
       }}>
         <Box>
-          未发布文档
+          未发布文档/文件夹
           <Box component='span' sx={{ color: 'text.auxiliary', fontSize: 12, pl: 1 }}>
-            共 {total} 个，已选中 {selectedTotal} 个
+            共 {list.length} 个，已选中 {selectedTotal} 个
           </Box>
         </Box>
         <Stack direction='row' alignItems={'center'}>
           <Box sx={{ color: 'text.auxiliary', fontSize: 12 }}>全选</Box>
           <Checkbox size='small' sx={{ p: 0, color: 'text.disabled', width: '35px', height: '35px' }}
-            checked={selectedTotal === total} onChange={() => {
-              setSelected(selectedTotal === total ? [] : list.map(item => item.id))
+            checked={selectedTotal === list.length} onChange={() => {
+              setSelected(selectedTotal === list.length ? [] : list.map(item => item.id))
             }} />
         </Stack>
       </Stack>

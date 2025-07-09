@@ -21,23 +21,15 @@ export function addOpacityToColor(color: string, opacity: number) {
 
   return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
 }
-
-/**
- * 判断当前页面是否在iframe中
- * @returns {boolean} 如果在iframe中返回true，否则返回false
- */
 export function isInIframe(): boolean {
-  // 检查window对象是否存在（服务器端渲染时不存在）
   if (typeof window === 'undefined') {
     return false;
   }
 
   try {
-    // 如果window.self !== window.top，则当前页面在iframe中
     return window.self !== window.top;
   } catch (e) {
     console.error(e)
-    // 如果访问window.top时出现跨域错误，也说明在iframe中
     return true;
   }
 }
@@ -84,35 +76,6 @@ export const copyText = (text: string, callback?: () => void) => {
     message.error('复制失败，请手动复制')
   }
 }
-
-export function getOrigin(req: any) {
-  if (typeof window !== 'undefined') {
-    // 客户端
-    return window.location.origin;
-  }
-
-  // 服务器端（需传入 req 对象）
-  const protocol = req?.headers['x-forwarded-proto'] || 'http';
-  const host = req?.headers['x-forwarded-host'] || req?.headers.host;
-  return `${protocol}://${host}`;
-}
-
-export const extractHeadings = (html: string) => {
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html, 'text/html');
-  const headings = doc.querySelectorAll('h1, h2, h3, h4, h5, h6');
-
-  return Array.from(headings).map(heading => {
-    const level = parseInt(heading.tagName[1]);
-    const id = heading.id || Math.random().toString(36).substring(2, 15)
-    return {
-      title: heading.textContent || '',
-      heading: level as 1 | 2 | 3 | 4 | 5 | 6,
-      id
-    };
-  });
-}
-
 
 export const formatMeta = async (
   {

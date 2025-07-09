@@ -106,6 +106,8 @@ export interface NodeListItem {
   summary: string,
   created_at: string,
   updated_at: string,
+  status: 1 | 2 // 1 草稿 2 发布
+  visibility: 1 | 2 // 1 私有 2 公开
 }
 
 export interface ChunkResultItem {
@@ -120,9 +122,15 @@ export interface ITreeItem {
   name: string;
   level: number;
   order?: number;
+  emoji?: string
+  defaultExpand?: boolean
   parentId?: string | null;
+  summary?: string
   children?: ITreeItem[];
   type: 1 | 2;
-  emoji?: string;
-  defaultExpand?: boolean;
+  isEditting?: boolean;
+  canHaveChildren?: boolean;
+  updated_at?: string;
+  status?: 1 | 2
+  visibility?: 1 | 2
 }

@@ -1,42 +1,53 @@
 import { ITreeItem, NodeListItem } from "@/assets/type";
 
 export function convertToTree(data: NodeListItem[]) {
-  const map: { [key: string]: ITreeItem } = {};
-  const tree: ITreeItem[] = [];
+  const nodeMap = new Map<string, ITreeItem>();
+  const rootNodes: ITreeItem[] = [];
 
+  // 第一次遍历：创建所有节点
   data.forEach(item => {
-    map[item.id] = {
+    const node: ITreeItem = {
       id: item.id,
+      summary: item.summary,
       name: item.name,
       level: 0,
-      emoji: item.emoji,
+      status: item.status,
+      visibility: item.visibility,
       order: item.position,
+      emoji: item.emoji,
       type: item.type,
       parentId: item.parent_id || null,
       children: [],
+      canHaveChildren: item.type === 1,
+      updated_at: item.updated_at || item.created_at,
     };
+
+    nodeMap.set(item.id, node);
   });
 
-  data.forEach(item => {
-    const node = map[item.id];
-    if (node.parentId && map[node.parentId]) {
-      node.level = (map[node.parentId].level || 0) + 1;
-      if (map[node.parentId]) {
-        if (!map[node.parentId].children) {
-          map[node.parentId].children = [];
-        }
-        map[node.parentId].children!.push(node);
-        map[node.parentId].children!.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-      }
+  // 第二次遍历：构建树结构
+  nodeMap.forEach(node => {
+    if (node.parentId && nodeMap.has(node.parentId)) {
+      const parent = nodeMap.get(node.parentId)!;
+      node.level = parent.level + 1;
+      parent.children!.push(node);
     } else {
-      node.level = 0;
-      tree.push(node);
+      rootNodes.push(node);
     }
   });
 
-  tree.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  // 对所有层级的节点进行排序
+  const sortChildren = (nodes: ITreeItem[]) => {
+    nodes.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    nodes.forEach(node => {
+      if (node.children?.length) {
+        sortChildren(node.children);
+      }
+    });
+  };
 
-  return tree;
+  sortChildren(rootNodes);
+  return rootNodes;
 }
 
 export const filterEmptyFolders = (data: ITreeItem[]): ITreeItem[] => {
@@ -55,19 +66,6 @@ export const filterEmptyFolders = (data: ITreeItem[]): ITreeItem[] => {
       return true
     })
 }
-
-export const findFirstType2Node = (nodes: ITreeItem[]): string | null => {
-  for (const node of nodes) {
-    if (node.type === 2) {
-      return node.id;
-    }
-    if (node.children && node.children.length > 0) {
-      const found = findFirstType2Node(node.children);
-      if (found) return found;
-    }
-  }
-  return null;
-};
 
 export const addExpandState = (nodes: ITreeItem[], activeId: string, defaultExpand: boolean): ITreeItem[] => {
   const findParentPath = (nodes: ITreeItem[], targetId: string, path: string[] = []): string[] | null => {
