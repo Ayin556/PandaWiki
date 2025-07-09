@@ -3,12 +3,16 @@ package main
 import (
 	"fmt"
 
+	"github.com/chaitin/panda-wiki/setup"
 	"github.com/chaitin/panda-wiki/telemetry"
 )
 
 func main() {
 	app, err := createApp()
 	if err != nil {
+		panic(err)
+	}
+	if err := setup.CheckInitCert(); err != nil {
 		panic(err)
 	}
 	client := telemetry.NewClient(app.Logger)
