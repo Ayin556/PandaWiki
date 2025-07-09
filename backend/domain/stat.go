@@ -67,11 +67,12 @@ type InstantCountResp struct {
 }
 
 type InstantPageResp struct {
-	NodeID    string    `json:"node_id"`
-	NodeName  string    `json:"node_name" gorm:"-"`
-	IP        string    `json:"ip"`
-	IPAddress IPAddress `json:"ip_address" gorm:"-"`
-	CreatedAt time.Time `json:"created_at"`
+	Scene     StatPageScene `json:"scene"`
+	NodeID    string        `json:"node_id"`
+	NodeName  string        `json:"node_name" gorm:"-"`
+	IP        string        `json:"ip"`
+	IPAddress IPAddress     `json:"ip_address" gorm:"-"`
+	CreatedAt time.Time     `json:"created_at"`
 }
 
 type ConversationDistributionResp struct {

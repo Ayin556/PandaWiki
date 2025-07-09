@@ -104,7 +104,7 @@ func (r *StatRepository) GetCount(ctx context.Context, kbID string) (*domain.Sta
 func (r *StatRepository) GetInstantCount(ctx context.Context, kbID string) ([]*domain.InstantCountResp, error) {
 	var instantCount []*domain.InstantCountResp
 	if err := r.db.WithContext(ctx).Model(&domain.StatPage{}).
-		Where("kb_id = ? AND created_at >= NOW() - INTERVAL '30 minutes'", kbID).
+		Where("kb_id = ? AND created_at >= NOW() - INTERVAL '1h'", kbID).
 		Select("date_trunc('minute', created_at) as time, COUNT(*) as count").
 		Group("time").
 		Order("time ASC").
@@ -118,7 +118,6 @@ func (r *StatRepository) GetInstantPages(ctx context.Context, kbID string) ([]*d
 	var instantPages []*domain.InstantPageResp
 	if err := r.db.WithContext(ctx).Model(&domain.StatPage{}).
 		Where("kb_id = ?", kbID).
-		Where("scene = ?", domain.StatPageSceneNodeDetail).
 		Select("node_id, ip, created_at").
 		Order("created_at DESC").
 		Limit(10).
