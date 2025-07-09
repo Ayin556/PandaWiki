@@ -588,6 +588,7 @@ func (r *NodeRepository) BatchMove(ctx context.Context, req *domain.BatchMoveReq
 			Where("kb_id = ?", req.KBID).
 			Where("id IN ?", req.IDs).
 			Update("parent_id", req.ParentID).
+			Update("status", domain.NodeStatusDraft).
 			Error; err != nil {
 			return err
 		}
