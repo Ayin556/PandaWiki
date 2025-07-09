@@ -354,6 +354,11 @@ definitions:
       subject:
         type: string
     type: object
+  domain.ConversationInfo:
+    properties:
+      user_info:
+        $ref: '#/definitions/domain.UserInfo'
+    type: object
   domain.ConversationListItem:
     properties:
       app_name:
@@ -364,6 +369,10 @@ definitions:
         type: string
       id:
         type: string
+      info:
+        allOf:
+        - $ref: '#/definitions/domain.ConversationInfo'
+        description: 用户信息
       ip_address:
         $ref: '#/definitions/domain.IPAddress'
       remote_ip:
@@ -711,6 +720,14 @@ definitions:
       token:
         type: string
     type: object
+  domain.MessageFrom:
+    enum:
+    - 1
+    - 2
+    type: integer
+    x-enum-varnames:
+    - MessageFromGroup
+    - MessageFromPrivate
   domain.ModelDetailResp:
     properties:
       api_header:
@@ -1229,6 +1246,22 @@ definitions:
     required:
     - id
     - kb_id
+    type: object
+  domain.UserInfo:
+    properties:
+      avatar:
+        description: avatar
+        type: string
+      email:
+        type: string
+      from:
+        $ref: '#/definitions/domain.MessageFrom'
+      name:
+        type: string
+      real_name:
+        type: string
+      user_id:
+        type: string
     type: object
   domain.UserInfoResp:
     properties:

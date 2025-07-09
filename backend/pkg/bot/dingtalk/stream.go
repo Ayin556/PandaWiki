@@ -206,23 +206,28 @@ func (c *DingTalkClient) OnChatBotMessageReceived(ctx context.Context, data *cha
 		c.logger.Error("UpdateInteractiveCard", log.Error(err))
 		c.UpdateAIStreamCard(trackID, "出错了，请稍后再试", true)
 	}
-
+	// 初始化 默认为空
+	convInfo := &domain.ConversationInfo{
+		UserInfo: domain.UserInfo{
+			From: domain.MessageFromPrivate, // 默认是私聊
+		},
+	}
 	// 之前创建并且发送卡片消息，获取用户基本信息
 	userinfo, err := c.GetUserInfo(data.SenderStaffId)
 	if err != nil {
-		c.logger.Error("GetUserInfo", log.Error(err))
-		return []byte(""), nil
+		c.logger.Error("GetUserInfo failed", log.Error(err))
+	} else {
+		c.logger.Info("GetUserInfo success", log.Any("userinfo", userinfo))
+		convInfo.UserInfo.UserID = userinfo.Result.Userid
+		convInfo.UserInfo.NickName = userinfo.Result.Name
+		convInfo.UserInfo.Avatar = userinfo.Result.Avatar
+		convInfo.UserInfo.Email = userinfo.Result.Email
 	}
-	var convInfo = &domain.ConversationInfo{}
 	if data.ConversationType == "2" { // 群聊
 		convInfo.UserInfo.From = domain.MessageFromGroup
 	} else { // 单聊
 		convInfo.UserInfo.From = domain.MessageFromPrivate
 	}
-	convInfo.UserInfo.UserID = userinfo.Result.Userid
-	convInfo.UserInfo.NickName = userinfo.Result.Name
-	convInfo.UserInfo.Avatar = userinfo.Result.Avatar
-	convInfo.UserInfo.Email = userinfo.Result.Email
 
 	contentCh, err := c.getQA(ctx, question, *convInfo, "")
 	if err != nil {
@@ -344,7 +349,7 @@ func (c *DingTalkClient) GetUserInfo(userID string) (*UserDetailResponse, error)
 
 	if result.ErrCode != 0 {
 		c.logger.Error("Failed to get result info", log.Any("ErrCode", result.ErrCode), log.String("ErrMsg", result.ErrMsg))
-		return nil, err
+		return nil, fmt.Errorf("result.ErrCode:%d", result.ErrCode)
 	}
 	// success
 	c.logger.Info("Get user info from dingtalk success", log.Any("userinfo:", result))

@@ -61,10 +61,11 @@ type ConversationListReq struct {
 }
 
 type ConversationListItem struct {
-	ID      string  `json:"id"`
-	AppName string  `json:"app_name"`
-	AppType AppType `json:"app_type"`
-	Subject string  `json:"subject"`
+	ID      string           `json:"id"`
+	AppName string           `json:"app_name"`
+	Info    ConversationInfo `json:"info" gorm:"info;type:jsonb"` // 用户信息
+	AppType AppType          `json:"app_type"`
+	Subject string           `json:"subject"`
 
 	RemoteIP string `json:"remote_ip"`
 
