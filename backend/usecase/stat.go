@@ -157,6 +157,8 @@ func (u *StatUseCase) GetInstantPages(ctx context.Context, kbID string) ([]*doma
 			page.NodeName = "问答页"
 		case domain.StatPageSceneLogin:
 			page.NodeName = "登录页"
+		default:
+			page.NodeName = "未知"
 		}
 	}
 	return pages, nil
