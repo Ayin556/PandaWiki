@@ -2927,6 +2927,14 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.ConversationInfo": {
+            "type": "object",
+            "properties": {
+                "user_info": {
+                    "$ref": "#/definitions/domain.UserInfo"
+                }
+            }
+        },
         "domain.ConversationListItem": {
             "type": "object",
             "properties": {
@@ -2941,6 +2949,14 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "string"
+                },
+                "info": {
+                    "description": "用户信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.ConversationInfo"
+                        }
+                    ]
                 },
                 "ip_address": {
                     "$ref": "#/definitions/domain.IPAddress"
@@ -3470,6 +3486,17 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "domain.MessageFrom": {
+            "type": "integer",
+            "enum": [
+                1,
+                2
+            ],
+            "x-enum-varnames": [
+                "MessageFromGroup",
+                "MessageFromPrivate"
+            ]
         },
         "domain.ModelDetailResp": {
             "type": "object",
@@ -4237,6 +4264,30 @@ const docTemplate = `{
                 },
                 "visibility": {
                     "$ref": "#/definitions/domain.NodeVisibility"
+                }
+            }
+        },
+        "domain.UserInfo": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "description": "avatar",
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "from": {
+                    "$ref": "#/definitions/domain.MessageFrom"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "real_name": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
                 }
             }
         },

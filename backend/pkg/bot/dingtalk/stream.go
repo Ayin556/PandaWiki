@@ -1,8 +1,12 @@
 package dingtalk
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
 	"sync"
 	"time"
 
@@ -161,14 +165,14 @@ func (c *DingTalkClient) CreateAndDeliverCard(ctx context.Context, trackID strin
 		},
 		UserIdType: tea.Int32(1),
 	}
-	if data.ConversationType == "2" {
+	if data.ConversationType == "2" { // 群聊
 		openSpaceId := fmt.Sprintf("dtv1.card//%s.%s", "IM_GROUP", data.ConversationId)
 		createAndDeliverRequest.SetOpenSpaceId(openSpaceId)
 		createAndDeliverRequest.SetImGroupOpenDeliverModel(
 			&dingtalkcard_1_0.CreateAndDeliverRequestImGroupOpenDeliverModel{
 				RobotCode: tea.String(c.clientID),
 			})
-	} else if data.ConversationType == "1" {
+	} else if data.ConversationType == "1" { // Im机器人单聊
 		openSpaceId := fmt.Sprintf("dtv1.card//%s.%s", "IM_ROBOT", data.SenderStaffId)
 		createAndDeliverRequest.SetOpenSpaceId(openSpaceId)
 		createAndDeliverRequest.SetImRobotOpenDeliverModel(&dingtalkcard_1_0.CreateAndDeliverRequestImRobotOpenDeliverModel{
@@ -188,8 +192,8 @@ func (c *DingTalkClient) CreateAndDeliverCard(ctx context.Context, trackID strin
 func (c *DingTalkClient) OnChatBotMessageReceived(ctx context.Context, data *chatbot.BotCallbackDataModel) ([]byte, error) {
 	question := data.Text.Content
 	trackID := uuid.New().String()
-
-	c.logger.Info("dingtalk client received message", log.String("question", question), log.String("track_id", trackID))
+	// conversationtype == 1 表示机器人单聊，==2 表示群聊中@机器人
+	c.logger.Info("dingtalk client received message", log.String("question", question), log.String("track_id", trackID), log.String("conversation_type", data.ConversationType))
 	// create and deliver card
 	if err := c.CreateAndDeliverCard(ctx, trackID, data); err != nil {
 		c.logger.Error("CreateAndDeliverCard", log.Error(err))
@@ -202,8 +206,30 @@ func (c *DingTalkClient) OnChatBotMessageReceived(ctx context.Context, data *cha
 		c.logger.Error("UpdateInteractiveCard", log.Error(err))
 		c.UpdateAIStreamCard(trackID, "出错了，请稍后再试", true)
 	}
+	// 初始化 默认为空
+	convInfo := &domain.ConversationInfo{
+		UserInfo: domain.UserInfo{
+			From: domain.MessageFromPrivate, // 默认是私聊
+		},
+	}
+	// 之前创建并且发送卡片消息，获取用户基本信息
+	userinfo, err := c.GetUserInfo(data.SenderStaffId)
+	if err != nil {
+		c.logger.Error("GetUserInfo failed", log.Error(err))
+	} else {
+		c.logger.Info("GetUserInfo success", log.Any("userinfo", userinfo))
+		convInfo.UserInfo.UserID = userinfo.Result.Userid
+		convInfo.UserInfo.NickName = userinfo.Result.Name
+		convInfo.UserInfo.Avatar = userinfo.Result.Avatar
+		convInfo.UserInfo.Email = userinfo.Result.Email
+	}
+	if data.ConversationType == "2" { // 群聊
+		convInfo.UserInfo.From = domain.MessageFromGroup
+	} else { // 单聊
+		convInfo.UserInfo.From = domain.MessageFromPrivate
+	}
 
-	contentCh, err := c.getQA(ctx, question, domain.ConversationInfo{}, "")
+	contentCh, err := c.getQA(ctx, question, *convInfo, "")
 	if err != nil {
 		c.logger.Error("dingtalk client failed to get answer", log.Error(err))
 		c.UpdateAIStreamCard(trackID, "出错了，请稍后再试", true)
@@ -260,4 +286,73 @@ func (c *DingTalkClient) Start() error {
 
 func (c *DingTalkClient) Stop() {
 	c.cancel()
+}
+
+// 钉钉的用户信息
+type UserDetailResponse struct {
+	ErrCode int         `json:"errcode"`
+	ErrMsg  string      `json:"errmsg"`
+	Result  UserDetails `json:"result"`
+}
+
+type UserDetails struct {
+	Unionid       string  `json:"unionid"`
+	Userid        string  `json:"userid"`
+	Name          string  `json:"name"`
+	Avatar        string  `json:"avatar"`
+	Mobile        string  `json:"mobile"`
+	Email         string  `json:"email"`
+	Title         string  `json:"title"`
+	Active        bool    `json:"active"`
+	Admin         bool    `json:"admin"`
+	Boss          bool    `json:"boss"`
+	DeptIDList    []int64 `json:"dept_id_list"`
+	JobNumber     string  `json:"job_number"`
+	HiredDate     int64   `json:"hired_date"`
+	ManagerUserid string  `json:"manager_userid"`
+}
+
+// 使用原始的http请求来获取用户的信息 - > 需要设置获取用户的权限功能：企业员工手机号信息和邮箱等个人信息、成员信息读权限
+func (c *DingTalkClient) GetUserInfo(userID string) (*UserDetailResponse, error) {
+	accessToken, err := c.GetAccessToken()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get access token while creating and delivering card: %w", err)
+	}
+	// 1. 构建URL和请求体
+	url := "https://oapi.dingtalk.com/topapi/v2/user/get"
+	payload := map[string]string{"userid": userID, "language": "zh_CN"} // 默认是中文
+	jsonPayload, _ := json.Marshal(payload)
+
+	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(jsonPayload))
+	req.Header.Set("Content-Type", "application/json")
+	query := req.URL.Query()
+	query.Add("access_token", accessToken)
+	req.URL.RawQuery = query.Encode()
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		c.logger.Error("Failed to get user info from dingtalk: %v", log.Error(err))
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, _ := io.ReadAll(resp.Body)
+
+	// 获取到用户信息
+	c.logger.Info("Get user info from dingtalk success", log.Any("resp 原始的消息：", resp))
+
+	var result UserDetailResponse
+	if err := json.Unmarshal(body, &result); err != nil {
+		c.logger.Error("Failed to unmarshal user info response: %v", log.Error(err))
+		return nil, err
+	}
+
+	if result.ErrCode != 0 {
+		c.logger.Error("Failed to get result info", log.Any("ErrCode", result.ErrCode), log.String("ErrMsg", result.ErrMsg))
+		return nil, fmt.Errorf("result.ErrCode:%d", result.ErrCode)
+	}
+	// success
+	c.logger.Info("Get user info from dingtalk success", log.Any("userinfo:", result))
+
+	return &result, nil
 }

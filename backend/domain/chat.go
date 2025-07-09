@@ -50,7 +50,7 @@ func (s ConversationInfo) Value() (driver.Value, error) {
 type MessageFrom int
 
 const (
-	MessageFromGroup MessageFrom = iota
+	MessageFromGroup MessageFrom = iota + 1
 	MessageFromPrivate
 )
 

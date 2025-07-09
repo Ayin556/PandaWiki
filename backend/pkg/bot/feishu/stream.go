@@ -137,10 +137,7 @@ func (c *FeishuClient) sendQACard(ctx context.Context, receiveIdType string, rec
 	// start processing QA
 	convInfo := domain.ConversationInfo{
 		UserInfo: domain.UserInfo{
-			UserID:   "unknown",
-			NickName: "匿名用户",
-			Avatar:   "",
-			From:     domain.MessageFromPrivate, // 默认是私聊
+			From: domain.MessageFromPrivate, // 默认是私聊
 		},
 	}
 	if receiveIdType == "open_id" {
@@ -158,14 +155,14 @@ func (c *FeishuClient) sendQACard(ctx context.Context, receiveIdType string, rec
 			if userinfo.Avatar != nil && userinfo.Avatar.AvatarOrigin != nil {
 				convInfo.UserInfo.Avatar = *userinfo.Avatar.AvatarOrigin
 			}
-			convInfo.UserInfo.From = domain.MessageFromPrivate
+			c.logger.Info("get user info success", log.Any("user_info", userinfo))
 		}
+		convInfo.UserInfo.From = domain.MessageFromPrivate // 私聊
 	} else { // chat_id
 		// 获取群聊的消息，用户如果是在群聊中@机器人，那么就获取的是群聊的消息
 		chatinfo, err := c.GetChatInfo(receiveId)
 		if err != nil {
 			c.logger.Error("get chat info failed", log.Error(err))
-			return
 		} else {
 			if chatinfo.OwnerId != nil {
 				convInfo.UserInfo.UserID = *chatinfo.OwnerId
@@ -176,8 +173,9 @@ func (c *FeishuClient) sendQACard(ctx context.Context, receiveIdType string, rec
 			if chatinfo.Avatar != nil {
 				convInfo.UserInfo.Avatar = *chatinfo.Avatar
 			}
-			convInfo.UserInfo.From = domain.MessageFromGroup // 群聊
+			c.logger.Info("get chat info success", log.Any("chat_info", chatinfo))
 		}
+		convInfo.UserInfo.From = domain.MessageFromGroup // 群聊
 	}
 
 	answerCh, err := c.getQA(ctx, question, convInfo, "")
@@ -265,7 +263,7 @@ func (c *FeishuClient) Start() error {
 	return nil
 }
 
-// 下面功能都是需要开启飞书对应的权限才可以获取到用户信息
+// 下面功能都是需要开启飞书对应的权限才可以获取到用户信息 -- 应用权限(否则获取不到对话用户的信息)
 
 // 飞书机器人获取用户信息，只是适用于单个用户
 func (c *FeishuClient) GetUserInfo(UserOpenId string) (*larkcontact.User, error) {
@@ -285,7 +283,7 @@ func (c *FeishuClient) GetUserInfo(UserOpenId string) (*larkcontact.User, error)
 		return nil, fmt.Errorf("failed to get user info, response data not success")
 	}
 
-	return resp.Data.User, err
+	return resp.Data.User, nil
 }
 
 // 获取群聊的消息
@@ -305,7 +303,7 @@ func (c *FeishuClient) GetChatInfo(ChatId string) (*larkim.GetChatRespData, erro
 		c.logger.Error("failed to get chat info, response status not success", log.Any("errcode:", resp.Code))
 		return nil, fmt.Errorf("failed to get chat info, response data not success")
 	}
-	return resp.Data, err
+	return resp.Data, nil
 }
 
 func (c *FeishuClient) Stop() {
