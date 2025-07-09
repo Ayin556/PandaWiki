@@ -97,8 +97,8 @@ const CardWebHeader = ({ id, data, refresh }: CardWebHeaderProps) => {
           />}
         />
       </Stack>
-      <Stack direction={'row'} gap={2} alignItems={'center'}>
-        <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0 }}>
+      <Stack direction={'row'} gap={2}>
+        <Box sx={{ width: 156, fontSize: 14, lineHeight: '52px', flexShrink: 0 }}>
           网站 Logo
         </Box>
         <Controller
@@ -117,150 +117,152 @@ const CardWebHeader = ({ id, data, refresh }: CardWebHeaderProps) => {
           />}
         />
       </Stack>
-      <Box sx={{ my: 1, fontSize: 14, lineHeight: '32px' }}>
-        导航右侧按钮
-      </Box>
-      <Box sx={{ mb: (selectedBtnId !== null || btns.length > 0) ? 1 : 0 }}>
-        <DragBtn
-          data={btns}
-          selectedBtnId={selectedBtnId}
-          setSelectedBtnId={setSelectedBtnId}
-          onChange={(data) => {
-            if (!data.find(btn => btn.id === selectedBtnId)) setSelectedBtnId(null)
-            setValue('btns', data)
-            setIsEdit(true)
-          }}
-        />
-      </Box>
-      {selectedBtnId !== null && <Controller
-        control={control}
-        name="btns"
-        render={({ field }) => {
-          const btn = field.value.find((btn: CardWebHeaderBtn) => btn.id === selectedBtnId)
-          if (!btn) return <></>
-          return <Box sx={{ border: '1px solid', borderColor: 'divider', p: 2, borderRadius: '10px', mb: 1 }}>
-            <Stack gap={1}>
-              <Stack direction={'row'}>
-                <Box sx={{ fontSize: 14, lineHeight: '32px', width: 80 }}>
-                  按钮样式
-                </Box>
-                <RadioGroup
-                  value={btn.variant}
-                  onChange={(e) => {
-                    const newBtns = [...field.value]
-                    const index = newBtns.findIndex((btn: CardWebHeaderBtn) => btn.id === selectedBtnId)
-                    newBtns[index] = { ...btn, variant: e.target.value as 'contained' | 'outlined' }
-                    field.onChange(newBtns)
-                    setIsEdit(true)
-                  }}
-                  row
-                >
-                  <FormControlLabel value="contained" control={<Radio size="small" />} label="实心按钮" />
-                  <FormControlLabel value="outlined" control={<Radio size="small" />} label="描边按钮" />
-                </RadioGroup>
-              </Stack>
-              <Stack direction={'row'} alignItems={'center'}>
-                <Box sx={{ fontSize: 14, lineHeight: '32px', flexShrink: 0, width: 80 }}>
-                  按钮文本
-                </Box>
-                <TextField
-                  fullWidth
-                  value={btn.text}
-                  onChange={(e) => {
-                    const newBtns = [...field.value]
-                    const index = newBtns.findIndex((btn: CardWebHeaderBtn) => btn.id === selectedBtnId)
-                    newBtns[index] = { ...btn, text: e.target.value }
-                    field.onChange(newBtns)
-                    setIsEdit(true)
-                  }}
-                />
-              </Stack>
-              <Stack direction={'row'} alignItems={'center'}>
-                <Box sx={{ fontSize: 14, lineHeight: '32px', flexShrink: 0, width: 80 }}>
-                  链接地址
-                </Box>
-                <TextField
-                  fullWidth
-                  value={btn.url}
-                  onChange={(e) => {
-                    const newBtns = [...field.value]
-                    const index = newBtns.findIndex((btn: CardWebHeaderBtn) => btn.id === selectedBtnId)
-                    newBtns[index] = { ...btn, url: e.target.value }
-                    field.onChange(newBtns)
-                    setIsEdit(true)
-                  }}
-                />
-              </Stack>
-              <Stack direction={'row'} alignItems={'center'}>
-                <Box sx={{ fontSize: 14, lineHeight: '32px', width: 80 }}>
-                  图标
-                </Box>
-                <FormControl>
-                  <Stack direction={'row'} alignItems={'center'} gap={2}>
-                    <Stack direction={'row'} alignItems={'center'} gap={1}>
-                      <Checkbox
-                        size="small"
-                        sx={{ p: 0, m: 0 }}
-                        checked={btn.showIcon}
-                        onChange={(e) => {
+      <Box>
+        <Box sx={{ my: 1, fontSize: 14, lineHeight: '32px' }}>
+          导航右侧按钮
+        </Box>
+        <Box sx={{ mb: (selectedBtnId !== null || btns.length > 0) ? 1 : 0 }}>
+          <DragBtn
+            data={btns}
+            selectedBtnId={selectedBtnId}
+            setSelectedBtnId={setSelectedBtnId}
+            onChange={(data) => {
+              if (!data.find(btn => btn.id === selectedBtnId)) setSelectedBtnId(null)
+              setValue('btns', data)
+              setIsEdit(true)
+            }}
+          />
+        </Box>
+        {selectedBtnId !== null && <Controller
+          control={control}
+          name="btns"
+          render={({ field }) => {
+            const btn = field.value.find((btn: CardWebHeaderBtn) => btn.id === selectedBtnId)
+            if (!btn) return <></>
+            return <Box sx={{ border: '1px solid', borderColor: 'divider', p: 2, borderRadius: '10px', mb: 1 }}>
+              <Stack gap={1}>
+                <Stack direction={'row'}>
+                  <Box sx={{ fontSize: 14, lineHeight: '32px', width: 80 }}>
+                    按钮样式
+                  </Box>
+                  <RadioGroup
+                    value={btn.variant}
+                    onChange={(e) => {
+                      const newBtns = [...field.value]
+                      const index = newBtns.findIndex((btn: CardWebHeaderBtn) => btn.id === selectedBtnId)
+                      newBtns[index] = { ...btn, variant: e.target.value as 'contained' | 'outlined' }
+                      field.onChange(newBtns)
+                      setIsEdit(true)
+                    }}
+                    row
+                  >
+                    <FormControlLabel value="contained" control={<Radio size="small" />} label="实心按钮" />
+                    <FormControlLabel value="outlined" control={<Radio size="small" />} label="描边按钮" />
+                  </RadioGroup>
+                </Stack>
+                <Stack direction={'row'} alignItems={'center'}>
+                  <Box sx={{ fontSize: 14, lineHeight: '32px', flexShrink: 0, width: 80 }}>
+                    按钮文本
+                  </Box>
+                  <TextField
+                    fullWidth
+                    value={btn.text}
+                    onChange={(e) => {
+                      const newBtns = [...field.value]
+                      const index = newBtns.findIndex((btn: CardWebHeaderBtn) => btn.id === selectedBtnId)
+                      newBtns[index] = { ...btn, text: e.target.value }
+                      field.onChange(newBtns)
+                      setIsEdit(true)
+                    }}
+                  />
+                </Stack>
+                <Stack direction={'row'} alignItems={'center'}>
+                  <Box sx={{ fontSize: 14, lineHeight: '32px', flexShrink: 0, width: 80 }}>
+                    链接地址
+                  </Box>
+                  <TextField
+                    fullWidth
+                    value={btn.url}
+                    onChange={(e) => {
+                      const newBtns = [...field.value]
+                      const index = newBtns.findIndex((btn: CardWebHeaderBtn) => btn.id === selectedBtnId)
+                      newBtns[index] = { ...btn, url: e.target.value }
+                      field.onChange(newBtns)
+                      setIsEdit(true)
+                    }}
+                  />
+                </Stack>
+                <Stack direction={'row'} alignItems={'center'}>
+                  <Box sx={{ fontSize: 14, lineHeight: '32px', width: 80 }}>
+                    图标
+                  </Box>
+                  <FormControl>
+                    <Stack direction={'row'} alignItems={'center'} gap={2}>
+                      <Stack direction={'row'} alignItems={'center'} gap={1}>
+                        <Checkbox
+                          size="small"
+                          sx={{ p: 0, m: 0 }}
+                          checked={btn.showIcon}
+                          onChange={(e) => {
+                            const newBtns = [...field.value]
+                            const index = newBtns.findIndex((btn: CardWebHeaderBtn) => btn.id === selectedBtnId)
+                            newBtns[index] = { ...btn, showIcon: e.target.checked }
+                            field.onChange(newBtns)
+                            setIsEdit(true)
+                          }}
+                        />
+                        <Box sx={{ fontSize: 14, lineHeight: '32px' }}>展示图标</Box>
+                      </Stack>
+                      <UploadFile
+                        name="icon"
+                        id={`${selectedBtnId}_icon`}
+                        type="url"
+                        disabled={!btn.showIcon}
+                        accept="image/*"
+                        width={60}
+                        value={btn.icon}
+                        onChange={(url) => {
                           const newBtns = [...field.value]
                           const index = newBtns.findIndex((btn: CardWebHeaderBtn) => btn.id === selectedBtnId)
-                          newBtns[index] = { ...btn, showIcon: e.target.checked }
+                          newBtns[index] = { ...btn, icon: url }
                           field.onChange(newBtns)
                           setIsEdit(true)
                         }}
                       />
-                      <Box sx={{ fontSize: 14, lineHeight: '32px' }}>展示图标</Box>
                     </Stack>
-                    <UploadFile
-                      name="icon"
-                      id={`${selectedBtnId}_icon`}
-                      type="url"
-                      disabled={!btn.showIcon}
-                      accept="image/*"
-                      width={60}
-                      value={btn.icon}
-                      onChange={(url) => {
-                        const newBtns = [...field.value]
-                        const index = newBtns.findIndex((btn: CardWebHeaderBtn) => btn.id === selectedBtnId)
-                        newBtns[index] = { ...btn, icon: url }
-                        field.onChange(newBtns)
-                        setIsEdit(true)
-                      }}
-                    />
-                  </Stack>
-                </FormControl>
+                  </FormControl>
+                </Stack>
+                <Stack direction={'row'}>
+                  <Box sx={{ fontSize: 14, lineHeight: '32px', width: 80 }}>
+                    打开方式
+                  </Box>
+                  <RadioGroup
+                    value={btn.target}
+                    onChange={(e) => {
+                      const newBtns = [...field.value]
+                      const index = newBtns.findIndex((btn: CardWebHeaderBtn) => btn.id === selectedBtnId)
+                      newBtns[index] = { ...btn, target: e.target.value as '_blank' | '_self' }
+                      field.onChange(newBtns)
+                      setIsEdit(true)
+                    }}
+                    row
+                  >
+                    <FormControlLabel value="_self" control={<Radio size="small" />} label="当前窗口" />
+                    <FormControlLabel value="_blank" control={<Radio size="small" />} label="新窗口" />
+                  </RadioGroup>
+                </Stack>
               </Stack>
-              <Stack direction={'row'}>
-                <Box sx={{ fontSize: 14, lineHeight: '32px', width: 80 }}>
-                  打开方式
-                </Box>
-                <RadioGroup
-                  value={btn.target}
-                  onChange={(e) => {
-                    const newBtns = [...field.value]
-                    const index = newBtns.findIndex((btn: CardWebHeaderBtn) => btn.id === selectedBtnId)
-                    newBtns[index] = { ...btn, target: e.target.value as '_blank' | '_self' }
-                    field.onChange(newBtns)
-                    setIsEdit(true)
-                  }}
-                  row
-                >
-                  <FormControlLabel value="_self" control={<Radio size="small" />} label="当前窗口" />
-                  <FormControlLabel value="_blank" control={<Radio size="small" />} label="新窗口" />
-                </RadioGroup>
-              </Stack>
-            </Stack>
-          </Box>
-        }}
-      />}
-      <Button
-        size="small"
-        onClick={handleAddButton}
-        startIcon={<Icon type="icon-add" sx={{ fontSize: '12px !important' }} />}
-      >
-        添加按钮
-      </Button>
+            </Box>
+          }}
+        />}
+        <Button
+          size="small"
+          onClick={handleAddButton}
+          startIcon={<Icon type="icon-add" sx={{ fontSize: '12px !important' }} />}
+        >
+          添加按钮
+        </Button>
+      </Box>
     </Stack>
   </>
 }

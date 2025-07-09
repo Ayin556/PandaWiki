@@ -45,7 +45,7 @@ export default function StoreProvider({
   const [catalogShow, setCatalogShow] = useState(catalogSettings?.catalog_visible !== 2);
   const theme = useTheme();
 
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'), {
+  const isMobile = useMediaQuery(theme.breakpoints.down('lg'), {
     defaultMatches: mobile,
   });
 

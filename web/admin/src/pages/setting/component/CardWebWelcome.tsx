@@ -133,26 +133,26 @@ const CardWebWelcome = ({ id, data, refresh }: CardWebWelcomeProps) => {
           {...recommendQuestionsField}
         />
       </Stack>
-      <Stack direction={'row'} gap={2} alignItems={'center'}>
-        <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0 }}>推荐内容</Box>
+      <Box>
+        <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0, my: 1 }}>推荐内容</Box>
         <Box sx={{ mb: 1 }}>
           <DragRecommend
-          data={sorted || []}
-          refresh={nodeRec}
-          onChange={(value) => {
-            setIsEdit(true)
-            setValue('recommend_node_ids', value.map(item => item.id))
+            data={sorted || []}
+            refresh={nodeRec}
+            onChange={(value) => {
+              setIsEdit(true)
+              setValue('recommend_node_ids', value.map(item => item.id))
             }}
           />
         </Box>
-      </Stack>
-      <Button
-        size="small"
-        onClick={() => setOpen(true)}
-        startIcon={<Icon type="icon-add" sx={{ fontSize: '12px !important' }} />}
-      >
-        添加卡片
-      </Button>
+        <Button
+          size="small"
+          onClick={() => setOpen(true)}
+          startIcon={<Icon type="icon-add" sx={{ fontSize: '12px !important' }} />}
+        >
+          添加卡片
+        </Button>
+      </Box>
       <AddRecommendContent
         open={open}
         selected={recommend_node_ids}

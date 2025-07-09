@@ -55,7 +55,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
       }}>访问认证</Box>
       {isEdit && <Button variant="contained" size="small" onClick={handleSubmit(onSubmit)}>保存</Button>}
     </Stack>
-    <Stack direction={'row'} gap={2} alignItems={'center'} sx={{ mx: 2, mb: 2 }}>
+    <Stack direction={'row'} gap={2} sx={{ mx: 2, mb: 2 }}>
       <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0 }}>可访问性</Box>
       <Controller
         control={control}
@@ -68,9 +68,9 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
             setIsEdit(true)
           }}
         >
-          <FormControlLabel value={'1'} control={<Radio size='small' />} label={<Box sx={{ width: 100 }}>允许公开访问</Box>} />
-          <FormControlLabel value={'2'} control={<Radio size='small' />} label={<Box sx={{ width: 100 }}>简单口令访问</Box>} />
-          <FormControlLabel value={'3'} control={<Radio size='small' disabled />} label={<Box sx={{ width: 100 }}>企业级身份认证</Box>} />
+          <FormControlLabel value={'1'} control={<Radio size='small' />} label={<Box sx={{ width: 65 }}>公开访问</Box>} />
+          <FormControlLabel value={'2'} control={<Radio size='small' />} label={<Box sx={{ width: 95 }}>简单口令访问</Box>} />
+          <FormControlLabel value={'3'} control={<Radio size='small' disabled />} label={<Box sx={{ width: 105 }}>企业级身份认证</Box>} />
         </RadioGroup>}
       />
     </Stack>

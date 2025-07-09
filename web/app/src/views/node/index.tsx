@@ -86,6 +86,7 @@ const Doc = ({ node: defaultNode, token }: { node?: NodeDetail, token?: string }
     try {
       const result = await apiClient.clientGetNodeDetail(id, kb_id || '', token);
       setNode(result.data);
+      if (document) document.title = kbDetail?.name + ' - ' + result.data?.name
     } catch (error) {
       console.error('page Error fetching document content:', error);
     }

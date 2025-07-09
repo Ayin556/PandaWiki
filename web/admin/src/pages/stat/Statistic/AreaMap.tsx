@@ -27,7 +27,7 @@ const AreaMap = ({ tab }: { tab: ActiveTab }) => {
           provinceMap.set(list[i].name, provinceMap.get(list[i].name)! + list[i].count)
         }
       }
-      setList(Array.from(provinceMap, ([name, count]) => ({ name, count })))
+      setList(Array.from(provinceMap, ([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count))
     })
   }, [kb_id, tab]);
 

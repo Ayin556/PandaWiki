@@ -54,8 +54,8 @@ const CardCatalog = ({ id, data, refresh }: CardCatalogProps) => {
       }}>左侧目录导航</Box>
       {isEdit && <Button variant="contained" size="small" onClick={handleSubmit(onSubmit)}>保存</Button>}
     </Stack>
-    <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'} sx={{ mx: 2 }}>
-      <Box sx={{ fontSize: 14, lineHeight: '32px' }}>左侧目录导航</Box>
+    <Stack direction={'row'} alignItems={'center'} gap={2} sx={{ mx: 2 }}>
+      <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px' }}>左侧目录导航</Box>
       <Controller
         control={control}
         name="catalog_visible"
@@ -68,8 +68,8 @@ const CardCatalog = ({ id, data, refresh }: CardCatalogProps) => {
         </RadioGroup>}
       />
     </Stack>
-    <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'} sx={{ mx: 2 }}>
-      <Box sx={{ fontSize: 14, lineHeight: '32px' }}>文件夹</Box>
+    <Stack direction={'row'} alignItems={'center'} gap={2} sx={{ mx: 2 }}>
+      <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px' }}>文件夹</Box>
       <Controller
         control={control}
         name="catalog_folder"
@@ -82,8 +82,8 @@ const CardCatalog = ({ id, data, refresh }: CardCatalogProps) => {
         </RadioGroup>}
       />
     </Stack>
-    <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'} sx={{ mx: 2 }}>
-      <Box sx={{ fontSize: 14, lineHeight: '32px', flexShrink: 0 }}>导航宽度</Box>
+    <Stack direction={'row'} alignItems={'center'} gap={2} sx={{ mx: 2 }}>
+      <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0 }}>导航宽度</Box>
       <Controller
         control={control}
         name="catalog_width"
