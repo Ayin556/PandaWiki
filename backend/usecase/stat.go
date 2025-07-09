@@ -140,15 +140,24 @@ func (u *StatUseCase) GetInstantPages(ctx context.Context, kbID string) ([]*doma
 		}
 		page.IPAddress = *ipAddress
 	}
-	nodeIDs := lo.Map(pages, func(page *domain.InstantPageResp, _ int) string {
+	nodeIDs := lo.Uniq(lo.Map(pages, func(page *domain.InstantPageResp, _ int) string {
 		return page.NodeID
-	})
+	}))
 	docNames, err := u.nodeRepo.GetNodeNameByNodeIDs(ctx, nodeIDs)
 	if err != nil {
 		return nil, err
 	}
 	for _, page := range pages {
-		page.NodeName = docNames[page.NodeID]
+		switch page.Scene {
+		case domain.StatPageSceneNodeDetail:
+			page.NodeName = docNames[page.NodeID]
+		case domain.StatPageSceneWelcome:
+			page.NodeName = "欢迎页"
+		case domain.StatPageSceneChat:
+			page.NodeName = "问答页"
+		case domain.StatPageSceneLogin:
+			page.NodeName = "登录页"
+		}
 	}
 	return pages, nil
 }
