@@ -5,7 +5,7 @@ import { Message } from "ct-mui"
 import { useEffect, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 
-const CardRebotWecom = ({ kb, url }: { kb: KnowledgeBaseListItem, url: string }) => {
+const CardRobotWecom = ({ kb, url }: { kb: KnowledgeBaseListItem, url: string }) => {
   const [isEdit, setIsEdit] = useState(false)
   const [detail, setDetail] = useState<AppDetail | null>(null)
 
@@ -74,17 +74,17 @@ const CardRebotWecom = ({ kb, url }: { kb: KnowledgeBaseListItem, url: string })
       {isEdit && <Button variant="contained" size="small" onClick={handleSubmit(onSubmit)}>保存</Button>}
     </Stack>
     <Box sx={{ m: 2 }}>
-      <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
-        回调地址
-      </Box>
-      <ShowText text={`${url}/share/v1/app/wechat/app`} />
       <Stack direction='row' alignItems={'center'} justifyContent={'space-between'} sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
         <Box sx={{ fontSize: 14, lineHeight: '32px' }}>
-          Agent ID
-          <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
+          回调地址
         </Box>
         <Button size="small" component='a' href='https://pandawiki.docs.baizhi.cloud/node/01971b5f-67e1-73c8-8582-82ccac49cc96' target="_blank">使用方法</Button>
       </Stack>
+      <ShowText text={[`${url}/share/v1/app/wechat/app`]} />
+      <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
+        Agent ID
+        <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
+      </Box>
       <Controller
         control={control}
         name="wechat_app_agent_id"
@@ -195,4 +195,4 @@ const CardRebotWecom = ({ kb, url }: { kb: KnowledgeBaseListItem, url: string })
   </>
 }
 
-export default CardRebotWecom
+export default CardRobotWecom

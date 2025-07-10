@@ -317,6 +317,21 @@ export type CatalogSetting = {
   catalog_width: number,
 }
 
+export type WebComponentSetting = {
+  is_open: boolean | 1 | 0
+  theme_mode: 'light' | 'dark'
+  btn_text: string,
+  btn_logo: string,
+}
+
+export type OtherSetting = {
+  widget_bot_settings: WebComponentSetting,
+  theme_and_style: ThemeAndStyleSetting
+  footer_settings: FooterSetting,
+  catalog_settings: CatalogSetting,
+  base_url: string
+}
+
 export type AppSetting = HeaderSetting &
   WelcomeSetting &
   SEOSetting &
@@ -326,13 +341,8 @@ export type AppSetting = HeaderSetting &
   WecomBotServiceSetting &
   FeishuBotSetting &
   DiscordBotSetting &
-  ThemeMode & {
-    theme_and_style: ThemeAndStyleSetting
-  } & {
-    footer_settings: FooterSetting,
-    catalog_settings: CatalogSetting,
-    base_url: string
-  }
+  ThemeMode &
+  OtherSetting
 
 export type RecommendNode = {
   id: string,

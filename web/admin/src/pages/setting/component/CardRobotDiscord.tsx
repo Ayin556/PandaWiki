@@ -4,7 +4,7 @@ import { Message } from "ct-mui"
 import { useEffect, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 
-const CardRebotDiscord = ({ kb }: { kb: KnowledgeBaseListItem }) => {
+const CardRobotDiscord = ({ kb }: { kb: KnowledgeBaseListItem }) => {
   const [isEdit, setIsEdit] = useState(false)
   const [detail, setDetail] = useState<AppDetail | null>(null)
 
@@ -90,4 +90,4 @@ const CardRebotDiscord = ({ kb }: { kb: KnowledgeBaseListItem }) => {
   </>
 }
 
-export default CardRebotDiscord
+export default CardRobotDiscord

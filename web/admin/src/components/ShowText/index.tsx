@@ -3,7 +3,7 @@ import { Stack } from "@mui/material"
 import { Ellipsis, Icon } from "ct-mui"
 
 interface ShowTextProps {
-  text: string
+  text: string[]
   copyable?: boolean
   showIcon?: boolean
   icon?: string
@@ -11,11 +11,12 @@ interface ShowTextProps {
 }
 
 const ShowText = ({ text, copyable = true, showIcon = true, icon = 'icon-fuzhi', onClick }: ShowTextProps) => {
-  return <Stack direction={'row'} alignItems={'center'} gap={1} sx={{
+  return <Stack direction={'row'} alignItems={'flex-start'} justifyContent={'space-between'} gap={1} sx={{
     width: '100%',
-    fontSize: 14,
+    fontSize: 12,
     px: 2,
-    lineHeight: '52px',
+    py: 2,
+    lineHeight: '20px',
     fontFamily: 'monospace',
     bgcolor: 'background.paper2',
     borderRadius: '10px',
@@ -27,13 +28,15 @@ const ShowText = ({ text, copyable = true, showIcon = true, icon = 'icon-fuzhi',
       }
     }
   }} onClick={copyable ? () => {
-    copyText(text)
+    copyText(text.join('\n'))
     onClick?.()
   } : onClick}>
-    <Ellipsis sx={{ width: '100%' }}>
-      {text}
-    </Ellipsis>
-    {showIcon && <Icon type={icon} sx={{ fontSize: 16, color: 'text.disabled' }} />}
+    <Stack sx={{ flex: 1, width: 0 }} gap={0.25}>
+      {text.map(it => <Ellipsis key={it} sx={{ height: 20 }}>
+        {it}
+      </Ellipsis>)}
+    </Stack>
+    {showIcon && <Icon type={icon} sx={{ fontSize: 16, color: 'text.disabled', flexShrink: 0 }} />}
   </Stack>
 }
 
