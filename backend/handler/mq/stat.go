@@ -14,17 +14,20 @@ type StatCronHandler struct {
 	statRepo *pg.StatRepository
 }
 
-func NewStatCronHandler(logger *log.Logger, statRepo *pg.StatRepository) *StatCronHandler {
+func NewStatCronHandler(logger *log.Logger, statRepo *pg.StatRepository) (*StatCronHandler, error) {
 	h := &StatCronHandler{
 		statRepo: statRepo,
 		logger:   logger.WithModule("handler.mq.stat"),
 	}
 	cron := cron.New()
-	cron.AddFunc("1 */1 * * *", h.RemoveOldStatData)
+	if _, err := cron.AddFunc("1 */1 * * *", h.RemoveOldStatData); err != nil {
+		h.logger.Error("failed to add cron job", log.Error(err))
+		return nil, err
+	}
 	h.logger.Info("add cron job", log.String("cron_id", "remove_old_stat_data"))
 	cron.Start()
 	h.logger.Info("start cron job")
-	return h
+	return h, nil
 }
 
 // remove stat data older than 24 hours, execute every hour

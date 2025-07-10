@@ -47,7 +47,10 @@ func createApp() (*App, error) {
 		return nil, err
 	}
 	statRepository := pg2.NewStatRepository(db)
-	statCronHandler := mq2.NewStatCronHandler(logger, statRepository)
+	statCronHandler, err := mq2.NewStatCronHandler(logger, statRepository)
+	if err != nil {
+		return nil, err
+	}
 	mqHandlers := &mq2.MQHandlers{
 		RAGMQHandler:    ragmqHandler,
 		StatCronHandler: statCronHandler,

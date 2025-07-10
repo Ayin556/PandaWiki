@@ -53,7 +53,8 @@ func NewShareChatHandler(
 				return next(c)
 			}
 		})
-	share.POST("/message", h.ChatMessage)
+	share.POST("/message", h.ChatMessage, h.BaseHandler.ShareAuthMiddleware.Authorize)
+	share.POST("/widget", h.ChatWidget)
 
 	return h
 }
@@ -79,6 +80,67 @@ func (h *ShareChatHandler) ChatMessage(c echo.Context) error {
 	if err := c.Validate(&req); err != nil {
 		h.logger.Error("validate request failed", log.Error(err))
 		return h.sendErrMsg(c, "validate request failed")
+	}
+	if req.AppType != domain.AppTypeWeb {
+		return h.sendErrMsg(c, "invalid app type")
+	}
+
+	req.RemoteIP = c.RealIP()
+
+	c.Response().Header().Set("Content-Type", "text/event-stream")
+	c.Response().Header().Set("Cache-Control", "no-cache")
+	c.Response().Header().Set("Connection", "keep-alive")
+	c.Response().Header().Set("Transfer-Encoding", "chunked")
+
+	eventCh, err := h.chatUsecase.Chat(c.Request().Context(), &req)
+	if err != nil {
+		return h.sendErrMsg(c, err.Error())
+	}
+
+	for event := range eventCh {
+		if err := h.writeSSEEvent(c, event); err != nil {
+			return err
+		}
+		if event.Type == "done" || event.Type == "error" {
+			break
+		}
+	}
+	return nil
+}
+
+// ChatWidget chat widget
+//
+//	@Summary		ChatWidget
+//	@Description	ChatWidget
+//	@Tags			share_chat
+//	@Accept			json
+//	@Produce		json
+//	@Param			app_type	query		string				true	"app type"
+//	@Param			request		body		domain.ChatRequest	true	"request"
+//	@Success		200			{object}	domain.Response
+//	@Router			/share/v1/chat/widget [post]
+func (h *ShareChatHandler) ChatWidget(c echo.Context) error {
+	var req domain.ChatRequest
+	if err := c.Bind(&req); err != nil {
+		h.logger.Error("parse request failed", log.Error(err))
+		return h.sendErrMsg(c, "parse request failed")
+	}
+	req.KBID = c.Request().Header.Get("X-KB-ID") // get from caddy header
+	if err := c.Validate(&req); err != nil {
+		h.logger.Error("validate request failed", log.Error(err))
+		return h.sendErrMsg(c, "validate request failed")
+	}
+	if req.AppType != domain.AppTypeWidget {
+		return h.sendErrMsg(c, "invalid app type")
+	}
+	// get widget app info
+	widgetAppInfo, err := h.appUsecase.GetWidgetAppInfo(c.Request().Context(), req.AppID)
+	if err != nil {
+		h.logger.Error("get widget app info failed", log.Error(err))
+		return h.sendErrMsg(c, "get app info error")
+	}
+	if !widgetAppInfo.Settings.WidgetBotSettings.IsOpen {
+		return h.sendErrMsg(c, "widget is not open")
 	}
 
 	req.RemoteIP = c.RealIP()

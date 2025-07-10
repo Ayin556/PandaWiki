@@ -77,7 +77,6 @@ type AppSettings struct {
 	WeChatServiceEncodingAESKey string `json:"wechat_service_encodingaeskey,omitempty"`
 	WeChatServiceCorpID         string `json:"wechat_service_corpid,omitempty"`
 	WeChatServiceSecret         string `json:"wechat_service_secret,omitempty"`
-
 	// DisCordBot
 	DisCordBotToken string `json:"discord_bot_token,omitempty"`
 	// theme
@@ -87,6 +86,8 @@ type AppSettings struct {
 	CatalogSettings CatalogSettings `json:"catalog_settings"`
 	// footer settings
 	FooterSettings FooterSettings `json:"footer_settings"`
+	// Widget bot settings
+	WidgetBotSettings WidgetBotSettings `json:"widget_bot_settings"`
 }
 
 type ThemeAndStyle struct {
@@ -107,6 +108,13 @@ type FooterSettings struct {
 	BrandDesc   string       `json:"brand_desc,omitempty"`
 	BrandLogo   string       `json:"brand_logo,omitempty"`
 	BrandGroups []BrandGroup `json:"brand_groups,omitempty"`
+}
+
+type WidgetBotSettings struct {
+	IsOpen    bool   `json:"is_open,omitempty"`
+	ThemeMode string `json:"theme_mode,omitempty"`
+	BtnText   string `json:"btn_text,omitempty"`
+	BtnLogo   string `json:"btn_logo,omitempty"`
 }
 
 type BrandGroup struct {
@@ -167,14 +175,12 @@ type AppSettingsResp struct {
 	// FeishuBot
 	FeishuBotAppID     string `json:"feishu_bot_app_id,omitempty"`
 	FeishuBotAppSecret string `json:"feishu_bot_app_secret,omitempty"`
-
 	// WechatAppBot
 	WeChatAppToken          string `json:"wechat_app_token,omitempty"`
 	WeChatAppEncodingAESKey string `json:"wechat_app_encodingaeskey,omitempty"`
 	WeChatAppCorpID         string `json:"wechat_app_corpid,omitempty"`
 	WeChatAppSecret         string `json:"wechat_app_secret,omitempty"`
 	WeChatAppAgentID        string `json:"wechat_app_agent_id,omitempty"`
-
 	// WechatServiceBot
 	WeChatServiceToken          string `json:"wechat_service_token,omitempty"`
 	WeChatServiceEncodingAESKey string `json:"wechat_service_encodingaeskey,omitempty"`
@@ -189,6 +195,8 @@ type AppSettingsResp struct {
 	CatalogSettings CatalogSettings `json:"catalog_settings"`
 	// footer settings
 	FooterSettings FooterSettings `json:"footer_settings"`
+	// WidgetBot
+	WidgetBotSettings WidgetBotSettings `json:"widget_bot_settings"`
 }
 
 func (s *AppSettingsResp) Scan(value any) error {
