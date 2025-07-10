@@ -5,7 +5,7 @@ import { Message } from "ct-mui"
 import { useEffect, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 
-const CardRebotWecomService = ({ kb, url }: { kb: KnowledgeBaseListItem, url: string }) => {
+const CardRobotWecomService = ({ kb, url }: { kb: KnowledgeBaseListItem, url: string }) => {
   const [isEdit, setIsEdit] = useState(false)
   const [detail, setDetail] = useState<AppDetail | null>(null)
 
@@ -74,7 +74,7 @@ const CardRebotWecomService = ({ kb, url }: { kb: KnowledgeBaseListItem, url: st
       <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
         回调地址
       </Box>
-      <ShowText text={`${url}/share/v1/app/wechat/service`} />
+      <ShowText text={[`${url}/share/v1/app/wechat/service`]} />
       <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
         Corp ID
         <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
@@ -167,4 +167,4 @@ const CardRebotWecomService = ({ kb, url }: { kb: KnowledgeBaseListItem, url: st
   </>
 }
 
-export default CardRebotWecomService
+export default CardRobotWecomService

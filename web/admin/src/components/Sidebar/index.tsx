@@ -23,7 +23,7 @@ const menus = [
     show: true,
   },
   {
-    label: '对话',
+    label: '问答',
     value: '/conversation',
     pathname: 'conversation',
     icon: 'icon-duihualishi1',

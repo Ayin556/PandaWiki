@@ -4,7 +4,7 @@ import { Message } from "ct-mui"
 import { useEffect, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 
-const CardRebotFeishu = ({ kb }: { kb: KnowledgeBaseListItem }) => {
+const CardRobotFeishu = ({ kb }: { kb: KnowledgeBaseListItem }) => {
   const [isEdit, setIsEdit] = useState(false)
   const [detail, setDetail] = useState<AppDetail | null>(null)
 
@@ -139,4 +139,4 @@ const CardRebotFeishu = ({ kb }: { kb: KnowledgeBaseListItem }) => {
   </>
 }
 
-export default CardRebotFeishu
+export default CardRobotFeishu

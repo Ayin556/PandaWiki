@@ -90,13 +90,8 @@ export default async function RootLayout({
 
   const themeMode = kbDetail?.settings?.theme_mode || 'light'
 
-  const { isMobile, isTablet, isDesktop } = getSelectorsByUserAgent(userAgent || '');
-  console.log(userAgent)
-  console.log('🔍 设备检测结果:', {
-    isMobile,
-    isTablet,
-    isDesktop,
-  });
+  const { isMobile } = getSelectorsByUserAgent(userAgent || '');
+
   const options = {
     replace(domNode: DOMNode) {
       if (domNode.type === 'script') {

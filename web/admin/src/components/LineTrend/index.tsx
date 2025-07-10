@@ -87,7 +87,7 @@ const LineTrend = ({ chartData = [], height, size = 'large' }: PropsData) => {
         }
       },
       series: {
-        name: '对话次数',
+        name: '问答次数',
         symbol: 'none',
         type: 'line',
         smooth: true,

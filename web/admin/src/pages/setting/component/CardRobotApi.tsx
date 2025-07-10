@@ -3,7 +3,7 @@ import ShowText from "@/components/ShowText"
 import { Box, Button, Stack } from "@mui/material"
 import { useEffect, useState } from "react"
 
-const CardRebotApi = ({ kb }: { kb: KnowledgeBaseListItem }) => {
+const CardRobotApi = ({ kb }: { kb: KnowledgeBaseListItem }) => {
   const [urls, setUrls] = useState<string[]>([])
 
   useEffect(() => {
@@ -47,17 +47,10 @@ const CardRebotApi = ({ kb }: { kb: KnowledgeBaseListItem }) => {
         <Button size="small" component='a' href='https://pandawiki.docs.baizhi.cloud/node/01971b60-100e-7b23-9385-e36763df5c0a' target="_blank">使用方法</Button>
       </Stack>
       <Stack gap={1}>
-        {urls.map((it, index) => <ShowText
-          key={index}
-          text={it}
-        />)}
+        <ShowText text={urls} />
       </Stack>
-      {/* <Stack direction='row' alignItems={'center'} justifyContent={'space-between'} sx={{ my: 1, fontSize: 14, lineHeight: '32px' }}>
-        <Box>API_KEY</Box>
-      </Stack>
-      <ShowText showIcon={false} text='******************************************' /> */}
     </Box>
   </>
 }
 
-export default CardRebotApi
+export default CardRobotApi

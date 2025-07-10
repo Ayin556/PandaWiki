@@ -4,7 +4,7 @@ import { Stack, useMediaQuery } from "@mui/material"
 import { useEffect, useState } from "react"
 import CardAI from "./component/CardAI"
 import CardKB from "./component/CardKB"
-import CardRebot from "./component/CardRebot"
+import CardRobot from "./component/CardRobot"
 import CardWeb from "./component/CardWeb"
 
 const Setting = () => {
@@ -56,7 +56,7 @@ const Setting = () => {
     <Stack gap={2} sx={{ width: isWideScreen ? 'calc((100% - 16px) / 2)' : '100%' }}>
       <CardKB kb={kb} />
       <CardAI kb={kb} />
-      <CardRebot kb={kb} url={url} />
+      <CardRobot kb={kb} url={url} />
     </Stack>
     <Stack gap={2} sx={{ width: isWideScreen ? 'calc((100% - 16px) / 2)' : '100%' }}>
       <CardWeb kb={kb} refresh={getKb} />

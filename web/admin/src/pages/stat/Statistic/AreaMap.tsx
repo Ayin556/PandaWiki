@@ -16,7 +16,7 @@ const AreaMap = ({ tab }: { tab: ActiveTab }) => {
     statGeoCount({ kb_id }).then(res => {
       const list = Object.entries(res).map(([key, value]) => {
         const [country, province, city] = key.split('|')
-        return { name: ChinaProvinceSortName[province] || '', count: value };
+        return { name: ChinaProvinceSortName[province] || province, count: value };
       }).filter(item => !!item.name)
 
       const provinceMap = new Map()

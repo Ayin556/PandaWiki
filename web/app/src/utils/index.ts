@@ -38,7 +38,7 @@ export const copyText = (text: string, callback?: () => void) => {
   const isOriginIP = /^http:\/\/(\d{1,3}\.){3}\d{1,3}(:\d+)?$/.test(window.location.origin);
 
   if (isOriginIP) {
-    message.error('http 协议下不支持复制，请使用 https 协议');
+    message.error('当前环境为 IP 地址访问，为安全考虑暂不支持复制功能，请使用域名访问');
     return;
   }
 

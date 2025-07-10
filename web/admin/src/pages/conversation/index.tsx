@@ -83,7 +83,7 @@ const Conversation = () => {
     },
     {
       dataIndex: 'created_at',
-      title: '对话时间',
+      title: '问答时间',
       width: 170,
       render: (text: string) => {
         return dayjs(text).fromNow()
@@ -100,6 +100,10 @@ const Conversation = () => {
       setLoading(false)
     })
   }
+
+  useEffect(() => {
+    setPage(1)
+  }, [subject, remoteIp, kb_id])
 
   useEffect(() => {
     if (kb_id) getData()

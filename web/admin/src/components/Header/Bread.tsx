@@ -9,7 +9,7 @@ const HomeBread = { title: '文档', to: '/' }
 const OtherBread = {
   'document': { title: '文档', to: '/' },
   'stat': { title: '统计', to: '/stat' },
-  'conversation': { title: '对话', to: '/conversation' },
+  'conversation': { title: '问答', to: '/conversation' },
   'application': { title: '设置', to: '/setting' },
   'release': { title: '发布', to: '/release' },
 }
