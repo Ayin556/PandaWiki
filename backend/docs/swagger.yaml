@@ -126,6 +126,10 @@ definitions:
       welcome_str:
         description: welcome
         type: string
+      widget_bot_settings:
+        allOf:
+        - $ref: '#/definitions/domain.WidgetBotSettings'
+        description: Widget bot settings
     type: object
   domain.AppSettingsResp:
     properties:
@@ -210,6 +214,10 @@ definitions:
       welcome_str:
         description: welcome
         type: string
+      widget_bot_settings:
+        allOf:
+        - $ref: '#/definitions/domain.WidgetBotSettings'
+        description: WidgetBot
     type: object
   domain.AppType:
     enum:
@@ -272,7 +280,6 @@ definitions:
         enum:
         - 1
         - 2
-        - 3
       conversation_id:
         type: string
       message:
@@ -1281,6 +1288,17 @@ definitions:
       id:
         type: string
       last_access:
+        type: string
+    type: object
+  domain.WidgetBotSettings:
+    properties:
+      btn_logo:
+        type: string
+      btn_text:
+        type: string
+      is_open:
+        type: boolean
+      theme_mode:
         type: string
     type: object
   domain.WikiJSResp:
@@ -2705,6 +2723,27 @@ paths:
       summary: GetAppInfo
       tags:
       - share_app
+  /share/v1/app/widget/info:
+    get:
+      consumes:
+      - application/json
+      description: GetWidgetAppInfo
+      parameters:
+      - description: kb id
+        in: header
+        name: X-KB-ID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Response'
+      summary: GetWidgetAppInfo
+      tags:
+      - share_app
   /share/v1/chat/message:
     post:
       consumes:
@@ -2730,6 +2769,33 @@ paths:
           schema:
             $ref: '#/definitions/domain.Response'
       summary: ChatMessage
+      tags:
+      - share_chat
+  /share/v1/chat/widget:
+    post:
+      consumes:
+      - application/json
+      description: ChatWidget
+      parameters:
+      - description: app type
+        in: query
+        name: app_type
+        required: true
+        type: string
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.ChatRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Response'
+      summary: ChatWidget
       tags:
       - share_chat
   /share/v1/node/detail:

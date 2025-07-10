@@ -2254,6 +2254,38 @@ const docTemplate = `{
                 }
             }
         },
+        "/share/v1/app/widget/info": {
+            "get": {
+                "description": "GetWidgetAppInfo",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "share_app"
+                ],
+                "summary": "GetWidgetAppInfo",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "kb id",
+                        "name": "X-KB-ID",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/share/v1/chat/message": {
             "post": {
                 "description": "ChatMessage",
@@ -2267,6 +2299,47 @@ const docTemplate = `{
                     "share_chat"
                 ],
                 "summary": "ChatMessage",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "app type",
+                        "name": "app_type",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.ChatRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/share/v1/chat/widget": {
+            "post": {
+                "description": "ChatWidget",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "share_chat"
+                ],
+                "summary": "ChatWidget",
                 "parameters": [
                     {
                         "type": "string",
@@ -2591,6 +2664,14 @@ const docTemplate = `{
                 "welcome_str": {
                     "description": "welcome",
                     "type": "string"
+                },
+                "widget_bot_settings": {
+                    "description": "Widget bot settings",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.WidgetBotSettings"
+                        }
+                    ]
                 }
             }
         },
@@ -2716,6 +2797,14 @@ const docTemplate = `{
                 "welcome_str": {
                     "description": "welcome",
                     "type": "string"
+                },
+                "widget_bot_settings": {
+                    "description": "WidgetBot",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.WidgetBotSettings"
+                        }
+                    ]
                 }
             }
         },
@@ -2802,8 +2891,7 @@ const docTemplate = `{
                 "app_type": {
                     "enum": [
                         1,
-                        2,
-                        3
+                        2
                     ],
                     "allOf": [
                         {
@@ -4318,6 +4406,23 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "last_access": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.WidgetBotSettings": {
+            "type": "object",
+            "properties": {
+                "btn_logo": {
+                    "type": "string"
+                },
+                "btn_text": {
+                    "type": "string"
+                },
+                "is_open": {
+                    "type": "boolean"
+                },
+                "theme_mode": {
                     "type": "string"
                 }
             }

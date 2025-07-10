@@ -329,6 +329,8 @@ func (u *AppUsecase) GetAppDetailByKBIDAndAppType(ctx context.Context, kbID stri
 		CatalogSettings: app.Settings.CatalogSettings,
 		// footer settings
 		FooterSettings: app.Settings.FooterSettings,
+		// widget bot settings
+		WidgetBotSettings: app.Settings.WidgetBotSettings,
 	}
 	if len(app.Settings.RecommendNodeIDs) > 0 {
 		nodes, err := u.nodeUsecase.GetRecommendNodeList(ctx, &domain.GetRecommendNodeListReq{
@@ -383,4 +385,37 @@ func (u *AppUsecase) GetWebAppInfo(ctx context.Context, kbID string) (*domain.Ap
 		appInfo.RecommendNodes = nodes
 	}
 	return appInfo, nil
+}
+
+func (u *AppUsecase) GetWidgetAppInfo(ctx context.Context, kbID string) (*domain.AppInfoResp, error) {
+	webApp, err := u.repo.GetOrCreateApplByKBIDAndType(ctx, kbID, domain.AppTypeWeb)
+	if err != nil {
+		return nil, err
+	}
+	widgetApp, err := u.repo.GetOrCreateApplByKBIDAndType(ctx, kbID, domain.AppTypeWidget)
+	if err != nil {
+		return nil, err
+	}
+	appInfo := &domain.AppInfoResp{
+		Settings: domain.AppSettingsResp{
+			Title:              webApp.Settings.Title,
+			Icon:               webApp.Settings.Icon,
+			WelcomeStr:         webApp.Settings.WelcomeStr,
+			SearchPlaceholder:  webApp.Settings.SearchPlaceholder,
+			RecommendQuestions: webApp.Settings.RecommendQuestions,
+			WidgetBotSettings:  widgetApp.Settings.WidgetBotSettings,
+		},
+	}
+	if len(webApp.Settings.RecommendNodeIDs) > 0 {
+		nodes, err := u.nodeUsecase.GetRecommendNodeList(ctx, &domain.GetRecommendNodeListReq{
+			KBID:    kbID,
+			NodeIDs: webApp.Settings.RecommendNodeIDs,
+		})
+		if err != nil {
+			return nil, err
+		}
+		appInfo.RecommendNodes = nodes
+	}
+	return appInfo, nil
+
 }

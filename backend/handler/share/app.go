@@ -46,6 +46,7 @@ func NewShareAppHandler(
 			}
 		})
 	share.GET("/web/info", h.GetWebAppInfo)
+	share.GET("/widget/info", h.GetWidgetAppInfo)
 
 	share.GET("/wechat/app", h.VerifyUrlWechatApp)
 	share.POST("/wechat/app", h.WechatHandlerApp)
@@ -73,6 +74,28 @@ func (h *ShareAppHandler) GetWebAppInfo(c echo.Context) error {
 		return h.NewResponseWithError(c, "kb_id is required", nil)
 	}
 	appInfo, err := h.usecase.GetWebAppInfo(c.Request().Context(), kbID)
+	if err != nil {
+		return h.NewResponseWithError(c, err.Error(), err)
+	}
+	return h.NewResponseWithData(c, appInfo)
+}
+
+// GetWidgetAppInfo
+//
+//	@Summary		GetWidgetAppInfo
+//	@Description	GetWidgetAppInfo
+//	@Tags			share_app
+//	@Accept			json
+//	@Produce		json
+//	@Param			X-KB-ID	header		string	true	"kb id"
+//	@Success		200		{object}	domain.Response
+//	@Router			/share/v1/app/widget/info [get]
+func (h *ShareAppHandler) GetWidgetAppInfo(c echo.Context) error {
+	kbID := c.Request().Header.Get("X-KB-ID")
+	if kbID == "" {
+		return h.NewResponseWithError(c, "kb_id is required", nil)
+	}
+	appInfo, err := h.usecase.GetWidgetAppInfo(c.Request().Context(), kbID)
 	if err != nil {
 		return h.NewResponseWithError(c, err.Error(), err)
 	}
