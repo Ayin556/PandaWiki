@@ -11,6 +11,7 @@ import (
 	v1 "github.com/chaitin/panda-wiki/handler/v1"
 	"github.com/chaitin/panda-wiki/log"
 	"github.com/chaitin/panda-wiki/server/http"
+	"github.com/chaitin/panda-wiki/telemetry"
 )
 
 func createApp() (*App, error) {
@@ -19,6 +20,7 @@ func createApp() (*App, error) {
 		wire.NewSet(
 			config.ProviderSet,
 			log.ProviderSet,
+			telemetry.ProviderSet,
 
 			http.ProviderSet,
 			v1.ProviderSet,
@@ -34,4 +36,5 @@ type App struct {
 	ShareHandlers *share.ShareHandler
 	Config        *config.Config
 	Logger        *log.Logger
+	Telemetry     *telemetry.Client
 }

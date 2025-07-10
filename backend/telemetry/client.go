@@ -2,6 +2,7 @@ package telemetry
 
 import (
 	"bytes"
+	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -15,6 +16,7 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/chaitin/panda-wiki/log"
+	"github.com/chaitin/panda-wiki/repo/pg"
 )
 
 const (
@@ -30,10 +32,11 @@ type Client struct {
 	firstReport bool
 	stopChan    chan struct{}
 	logger      *log.Logger
+	repo        *pg.KnowledgeBaseRepository
 }
 
 // NewClient creates a new telemetry client
-func NewClient(logger *log.Logger) *Client {
+func NewClient(logger *log.Logger, repo *pg.KnowledgeBaseRepository) *Client {
 	baseURL := "https://baizhi.cloud/api/public/data/report"
 	client := &Client{
 		baseURL: baseURL,
@@ -42,7 +45,8 @@ func NewClient(logger *log.Logger) *Client {
 		},
 		firstReport: true,
 		stopChan:    make(chan struct{}),
-		logger:      logger,
+		logger:      logger.WithModule("telemetry"),
+		repo:        repo,
 	}
 
 	// get or create machine ID
@@ -150,6 +154,11 @@ func (c *Client) reportInstallation() error {
 	if !c.firstReport {
 		event.Type = "heartbeat"
 	}
+	if repoList, err := c.repo.GetKnowledgeBaseList(context.Background()); err != nil {
+		c.logger.Error("get knowledge base list failed in telemetry", log.Error(err))
+	} else {
+		event.KBCount = len(repoList)
+	}
 
 	eventRaw, err := json.Marshal(event)
 	if err != nil {
@@ -200,4 +209,5 @@ type InstallationEvent struct {
 	MachineID string `json:"machine_id"`
 	Timestamp string `json:"timestamp"`
 	Type      string `json:"type"`
+	KBCount   int    `json:"kb_count"`
 }

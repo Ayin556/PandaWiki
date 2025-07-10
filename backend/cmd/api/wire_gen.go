@@ -24,6 +24,7 @@ import (
 	"github.com/chaitin/panda-wiki/store/pg"
 	"github.com/chaitin/panda-wiki/store/rag"
 	"github.com/chaitin/panda-wiki/store/s3"
+	"github.com/chaitin/panda-wiki/telemetry"
 	"github.com/chaitin/panda-wiki/usecase"
 )
 
@@ -141,12 +142,14 @@ func createApp() (*App, error) {
 		ShareSitemapHandler: shareSitemapHandler,
 		ShareStatHandler:    shareStatHandler,
 	}
+	client := telemetry.NewClient(logger, knowledgeBaseRepository)
 	app := &App{
 		HTTPServer:    httpServer,
 		Handlers:      apiHandlers,
 		ShareHandlers: shareHandler,
 		Config:        configConfig,
 		Logger:        logger,
+		Telemetry:     client,
 	}
 	return app, nil
 }
@@ -159,4 +162,5 @@ type App struct {
 	ShareHandlers *share.ShareHandler
 	Config        *config.Config
 	Logger        *log.Logger
+	Telemetry     *telemetry.Client
 }
