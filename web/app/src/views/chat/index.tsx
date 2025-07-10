@@ -2,7 +2,6 @@
 
 import { ChunkResultItem } from '@/assets/type';
 import { useStore } from '@/provider';
-import { isInIframe } from '@/utils';
 import SSEClient from '@/utils/fetch';
 import { Box, Stack } from '@mui/material';
 import { message } from 'ct-mui';
@@ -13,7 +12,6 @@ import SearchResult from './SearchResult';
 import { AnswerStatus } from './constant';
 
 const Chat = () => {
-  const inIframe = isInIframe();
   const { mobile = false, kb_id, token, kbDetail, catalogShow } = useStore()
 
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
@@ -47,7 +45,7 @@ const Chat = () => {
       message: q,
       nonce: '',
       conversation_id: '',
-      app_type: inIframe ? 2 : 1,
+      app_type: 1,
     };
     if (conversationId) reqData.conversation_id = conversationId;
     if (nonce) reqData.nonce = nonce;

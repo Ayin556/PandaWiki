@@ -205,6 +205,7 @@ const darkTheme = createTheme(
       mode: 'dark',
       primary: {
         main: '#6E73FE',
+        contrastText: '#FFFFFF',
       },
       error: {
         main: '#F64E54',
