@@ -86,7 +86,7 @@ func NewFeishuClient(ctx context.Context, cancel context.CancelFunc, clientID, c
 
 var cardDataTemplate = `{"schema":"2.0","header":{"title":{"content":"%s","tag":"plain_text"}},"config":{"streaming_mode":true,"summary":{"content":""}},"body":{"elements":[{"tag":"markdown","content":"%s","element_id":"markdown_1"}]}}`
 
-func (c *FeishuClient) sendQACard(ctx context.Context, receiveIdType string, receiveId string, question string) {
+func (c *FeishuClient) sendQACard(ctx context.Context, receiveIdType string, receiveId string, question string, additionalInfo string) {
 	// create card
 	cardData := fmt.Sprintf(cardDataTemplate, question, "稍等，让我想一想...")
 	req := larkcardkit.NewCreateCardReqBuilder().
@@ -132,7 +132,7 @@ func (c *FeishuClient) sendQACard(ctx context.Context, receiveIdType string, rec
 		return
 	}
 	// 打印日志
-	c.logger.Info("send QA card to user or group", log.String("receive_id_type", receiveIdType), log.String("receive_id", receiveId), log.String("question", question))
+	c.logger.Info("send QA card to user or group", log.String("receive_id_type", receiveIdType), log.String("receive_id", receiveId), log.String("question", question), log.String("additional_info(chat:user_openid/p2p:chat_id)", additionalInfo))
 
 	// start processing QA
 	convInfo := domain.ConversationInfo{
@@ -158,22 +158,22 @@ func (c *FeishuClient) sendQACard(ctx context.Context, receiveIdType string, rec
 			c.logger.Info("get user info success", log.Any("user_info", userinfo))
 		}
 		convInfo.UserInfo.From = domain.MessageFromPrivate // 私聊
-	} else { // chat_id
+	} else { // chat_id 中的userid
 		// 获取群聊的消息，用户如果是在群聊中@机器人，那么就获取的是群聊的消息
-		chatinfo, err := c.GetChatInfo(receiveId)
+		userinfo, err := c.GetUserInfo(additionalInfo)
 		if err != nil {
 			c.logger.Error("get chat info failed", log.Error(err))
 		} else {
-			if chatinfo.OwnerId != nil {
-				convInfo.UserInfo.UserID = *chatinfo.OwnerId
+			if userinfo.UserId != nil {
+				convInfo.UserInfo.UserID = *userinfo.UserId
 			}
-			if chatinfo.Name != nil {
-				convInfo.UserInfo.NickName = *chatinfo.Name
+			if userinfo.Name != nil {
+				convInfo.UserInfo.NickName = *userinfo.Name
 			}
-			if chatinfo.Avatar != nil {
-				convInfo.UserInfo.Avatar = *chatinfo.Avatar
+			if userinfo.Avatar != nil && userinfo.Avatar.AvatarOrigin != nil {
+				convInfo.UserInfo.Avatar = *userinfo.Avatar.AvatarOrigin
 			}
-			c.logger.Info("get chat info success", log.Any("chat_info", chatinfo))
+			c.logger.Info("get chat user info success", log.Any("user_info", userinfo))
 		}
 		convInfo.UserInfo.From = domain.MessageFromGroup // 群聊
 	}
@@ -239,14 +239,14 @@ func (c *FeishuClient) Start() error {
 					c.logger.Error("failed to unmarshal message", log.Error(err))
 					return nil
 				}
-				c.sendQACard(ctx, "chat_id", *event.Event.Message.ChatId, message.Text)
+				c.sendQACard(ctx, "chat_id", *event.Event.Message.ChatId, message.Text, *event.Event.Sender.SenderId.OpenId)
 			} else if *event.Event.Message.ChatType == "p2p" {
 				var message Message
 				if err := json.Unmarshal([]byte(*event.Event.Message.Content), &message); err != nil {
 					c.logger.Error("failed to unmarshal message", log.Error(err))
 					return nil
 				}
-				c.sendQACard(ctx, "open_id", *event.Event.Sender.SenderId.OpenId, message.Text)
+				c.sendQACard(ctx, "open_id", *event.Event.Sender.SenderId.OpenId, message.Text, *event.Event.Message.ChatId)
 			}
 			return nil
 		})
@@ -284,26 +284,6 @@ func (c *FeishuClient) GetUserInfo(UserOpenId string) (*larkcontact.User, error)
 	}
 
 	return resp.Data.User, nil
-}
-
-// 获取群聊的消息
-func (c *FeishuClient) GetChatInfo(ChatId string) (*larkim.GetChatRespData, error) {
-	// 创建请求对象
-	req := larkim.NewGetChatReqBuilder().
-		ChatId(ChatId).
-		UserIdType(`open_id`).
-		Build()
-	resp, err := c.client.Im.V1.Chat.Get(context.Background(), req)
-	if err != nil {
-		c.logger.Error("failed to get chat info", log.Error(err))
-		return nil, err
-	}
-	// 失败
-	if !resp.Success() {
-		c.logger.Error("failed to get chat info, response status not success", log.Any("errcode:", resp.Code))
-		return nil, fmt.Errorf("failed to get chat info, response data not success")
-	}
-	return resp.Data, nil
 }
 
 func (c *FeishuClient) Stop() {
