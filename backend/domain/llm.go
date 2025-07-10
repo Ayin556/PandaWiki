@@ -2,6 +2,7 @@ package domain
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 )
 
@@ -64,13 +65,61 @@ var UserQuestionFormatter = `
 </documents>
 `
 
+// processContentWithBaseURL adds baseURL prefix to static-file URLs in content
+func processContentWithBaseURL(content, baseURL string) string {
+	if baseURL == "" {
+		return content
+	}
+
+	// Remove trailing slash from baseURL if present
+	baseURL = strings.TrimSuffix(baseURL, "/")
+
+	// Regular expressions to match different image patterns
+	patterns := []*regexp.Regexp{
+		// Markdown image syntax: ![alt](url)
+		regexp.MustCompile(`!\[([^\]]*)\]\((/static-file/[^)]+)\)`),
+		// // HTML img tag: <img src="url">
+		// regexp.MustCompile(`<img[^>]+src=["'](/static-file/[^"']+)["']`),
+		// // HTML img tag with single quotes: <img src='url'>
+		// regexp.MustCompile(`<img[^>]+src=['"](/static-file/[^'"]+)['"]`),
+	}
+
+	processedContent := content
+
+	for _, pattern := range patterns {
+		processedContent = pattern.ReplaceAllStringFunc(processedContent, func(match string) string {
+			// Extract the static-file URL
+			matches := pattern.FindStringSubmatch(match)
+			if len(matches) < 2 {
+				return match
+			}
+
+			staticFileURL := matches[len(matches)-1] // Last match is the URL
+			fullURL := baseURL + staticFileURL
+
+			// Replace the URL in the original match
+			if strings.HasPrefix(match, "![") {
+				// Markdown image syntax
+				return fmt.Sprintf("![%s](%s)", matches[1], fullURL)
+			} else {
+				// HTML img tag
+				return strings.Replace(match, staticFileURL, fullURL, 1)
+			}
+		})
+	}
+
+	return processedContent
+}
+
 func FormatNodeChunks(nodeChunks []*RankedNodeChunks, baseURL string) string {
 	documents := make([]string, 0)
 	for _, result := range nodeChunks {
 		document := strings.Builder{}
 		document.WriteString(fmt.Sprintf("<document>\nID: %s\n标题: %s\nURL: %s\n内容:\n", result.NodeID, result.NodeName, result.GetURL(baseURL)))
 		for _, chunk := range result.Chunks {
-			document.WriteString(fmt.Sprintf("%s\n", chunk.Content))
+			// Process content to add baseURL prefix to static-file URLs
+			processedContent := processContentWithBaseURL(chunk.Content, baseURL)
+			document.WriteString(fmt.Sprintf("%s\n", processedContent))
 		}
 		document.WriteString("</document>")
 		documents = append(documents, document.String())
