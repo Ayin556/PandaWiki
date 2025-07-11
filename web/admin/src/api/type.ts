@@ -485,12 +485,13 @@ export type ChatConversationPair = {
   assistant: string
 }
 
-export type ImportDocType = 'URL' | 'RSS' | 'Sitemap' | 'OfflineFile' | 'Notion' | 'Epub' | 'Wiki.js' | 'Feishu'
+export type ImportDocType = 'URL' | 'RSS' | 'Sitemap' | 'OfflineFile' | 'Notion' | 'Epub' | 'Wiki.js' | 'Feishu' | 'Confluence'
 
 
 export type ImportDocProps = {
   parentId?: string | null
   open: boolean
+  size?: number
   refresh?: () => void
   onCancel: () => void
 }

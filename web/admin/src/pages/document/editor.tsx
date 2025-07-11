@@ -76,6 +76,7 @@ const DocEditor = () => {
   const editorRef = useTiptapEditor({
     content: '',
     immediatelyRender: true,
+    size: 100,
     aiUrl: '/api/v1/creation/text',
     onUpload: handleUpload,
     onSave: (html) => handleSave(undefined, false, html),

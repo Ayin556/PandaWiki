@@ -71,6 +71,23 @@ export interface KBDetail {
   recommend_nodes: RecommendNode[]
 }
 
+export type WidgetInfo = {
+  recommend_nodes: RecommendNode[]
+  settings: {
+    title: string,
+    icon: string,
+    welcome_str: string,
+    search_placeholder: string,
+    recommend_questions: string[],
+    widget_bot_settings: {
+      btn_logo: string
+      btn_text: string
+      is_open: boolean
+      theme_mode: 'light' | 'dark',
+    }
+  }
+}
+
 export type RecommendNode = {
   id: string,
   name: string,

@@ -86,7 +86,8 @@ const Content = () => {
             { label: '通过 Notion 导入', key: 'Notion', onClick: () => handleUrl(item, 'Notion') },
             { label: '通过 Epub 导入', key: 'Epub', onClick: () => handleUrl(item, 'Epub') },
             { label: '通过 Wiki.js 导入', key: 'Wiki.js', onClick: () => handleUrl(item, 'Wiki.js') },
-            { label: '通过飞书文档导入', key: 'Feishu', onClick: () => handleUrl(item, 'Feishu') }
+            { label: '通过飞书文档导入', key: 'Feishu', onClick: () => handleUrl(item, 'Feishu') },
+            { label: '通过 Confluence 导入', key: 'Confluence', onClick: () => handleUrl(item, 'Confluence') }
           ]
         }
       ] : []),

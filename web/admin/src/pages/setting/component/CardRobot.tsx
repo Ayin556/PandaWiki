@@ -1,6 +1,6 @@
 import { KnowledgeBaseListItem } from '@/api'
 import Card from "@/components/Card"
-import { Box, Divider, Stack, Switch } from "@mui/material"
+import { Box, Divider } from "@mui/material"
 import CardRobotApi from './CardRobotApi'
 import CardRobotDing from './CardRobotDing'
 import CardRobotDiscord from './CardRobotDiscord'
@@ -25,7 +25,6 @@ const CardRobot = ({ kb, url }: { kb: KnowledgeBaseListItem, url: string }) => {
     <CardRobotWecomService kb={kb} url={url} />
     <Divider sx={{ my: 2 }} />
     <CardRobotDiscord kb={kb} />
-    <Divider sx={{ my: 2 }} />
   </Card>
 }
 

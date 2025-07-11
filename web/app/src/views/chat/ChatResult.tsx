@@ -110,6 +110,7 @@ const ChatResult = ({ conversation, answer, loading, thinking, onSearch, handleS
           fullWidth
           multiline
           rows={2}
+          disabled={loading}
           sx={{
             '.MuiInputBase-root': {
               p: 0,

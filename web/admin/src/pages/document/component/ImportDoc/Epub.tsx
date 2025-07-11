@@ -27,7 +27,7 @@ const StepText = {
   }
 }
 
-const EpubImport = ({ open, refresh, onCancel, parentId = null }: ImportDocProps) => {
+const EpubImport = ({ open, refresh, onCancel, parentId = null, size: defaultSize }: ImportDocProps) => {
   const { kb_id } = useAppSelector(state => state.config)
   const [step, setStep] = useState<keyof typeof StepText>('pull')
   const [loading, setLoading] = useState(false)
@@ -39,7 +39,7 @@ const EpubImport = ({ open, refresh, onCancel, parentId = null }: ImportDocProps
   const [isUploading, setIsUploading] = useState(0)
   const [currentFileIndex, setCurrentFileIndex] = useState(0)
   const [uploadProgress, setUploadProgress] = useState(0)
-  const [size] = useState(1024 * 1024 * 20)
+  const size = 1024 * 1024 * (defaultSize || 20)
 
   const onChangeFile = (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
     setAcceptedFiles(acceptedFiles)

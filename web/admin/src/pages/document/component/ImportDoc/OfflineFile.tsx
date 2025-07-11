@@ -27,7 +27,7 @@ const StepText = {
   }
 }
 
-const OfflineFileImport = ({ open, refresh, onCancel, parentId = null }: ImportDocProps) => {
+const OfflineFileImport = ({ open, refresh, onCancel, parentId = null, size: defaultSize }: ImportDocProps) => {
 
   const { kb_id } = useAppSelector(state => state.config)
   const [step, setStep] = useState<keyof typeof StepText>('pull')
@@ -41,7 +41,7 @@ const OfflineFileImport = ({ open, refresh, onCancel, parentId = null }: ImportD
   const [isUploading, setIsUploading] = useState(0)
   const [currentFileIndex, setCurrentFileIndex] = useState(0)
   const [uploadProgress, setUploadProgress] = useState(0)
-  const [size] = useState(1024 * 1024 * 100)
+  const size = 1024 * 1024 * (defaultSize || 20)
 
   const onChangeFile = (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
     setAcceptedFiles(acceptedFiles)
@@ -186,7 +186,7 @@ const OfflineFileImport = ({ open, refresh, onCancel, parentId = null }: ImportD
         onChange={(accept, reject) => onChangeFile(accept, reject)}
         type='drag'
         multiple={true}
-        accept={'.txt, .md, .xls, .xlsx, .docx, .pdf, .html, .epub, .pptx'}
+        accept={'.txt, .md, .xls, .xlsx, .docx, .pdf, .html, .pptx'}
         size={size}
       />
       {isUploading === 1 && <Box sx={{ mt: 2 }}>

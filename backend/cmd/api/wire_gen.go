@@ -36,7 +36,8 @@ func createApp() (*App, error) {
 		return nil, err
 	}
 	logger := log.NewLogger(configConfig)
-	echo := http.NewEcho(logger, configConfig)
+	readOnlyMiddleware := middleware.NewReadonlyMiddleware(logger)
+	echo := http.NewEcho(logger, configConfig, readOnlyMiddleware)
 	httpServer := &http.HTTPServer{
 		Echo: echo,
 	}
@@ -111,7 +112,8 @@ func createApp() (*App, error) {
 	epubUsecase := usecase.NewEpubUsecase(logger, minioClient)
 	wikiJSUsecase := usecase.NewWikiJSUsecase(logger, minioClient)
 	feishuUseCase := usecase.NewFeishuUseCase(logger, minioClient, crawlerUsecase)
-	crawlerHandler := v1.NewCrawlerHandler(echo, baseHandler, authMiddleware, logger, configConfig, crawlerUsecase, notionUseCase, epubUsecase, wikiJSUsecase, feishuUseCase)
+	confluenceUsecase := usecase.NewConfluenceUsecase(logger, minioClient, crawlerUsecase, fileUsecase)
+	crawlerHandler := v1.NewCrawlerHandler(echo, baseHandler, authMiddleware, logger, configConfig, crawlerUsecase, notionUseCase, epubUsecase, wikiJSUsecase, feishuUseCase, confluenceUsecase)
 	creationUsecase := usecase.NewCreationUsecase(logger, llmUsecase, modelUsecase)
 	creationHandler := v1.NewCreationHandler(echo, baseHandler, logger, creationUsecase)
 	statRepository := pg2.NewStatRepository(db)
