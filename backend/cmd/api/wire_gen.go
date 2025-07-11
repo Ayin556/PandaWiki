@@ -36,7 +36,8 @@ func createApp() (*App, error) {
 		return nil, err
 	}
 	logger := log.NewLogger(configConfig)
-	echo := http.NewEcho(logger, configConfig)
+	readOnlyMiddleware := middleware.NewReadonlyMiddleware(logger)
+	echo := http.NewEcho(logger, configConfig, readOnlyMiddleware)
 	httpServer := &http.HTTPServer{
 		Echo: echo,
 	}
