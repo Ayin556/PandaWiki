@@ -116,7 +116,6 @@ func (f *FeishuUseCase) SearchWiki(ctx context.Context, req *domain.SearchWikiRe
 		if resp.Msg != "success" {
 			return nil, fmt.Errorf("search Wiki failed: %s", resp.Msg)
 		}
-		f.logger.Debug("resp", log.Any("resp", resp))
 		for _, v := range resp.Data.Items {
 			if *v.ObjType == 9 {
 				continue
@@ -128,6 +127,10 @@ func (f *FeishuUseCase) SearchWiki(ctx context.Context, req *domain.SearchWikiRe
 				ObjToken: *v.ObjToken,
 				ObjType:  *v.ObjType,
 			})
+			if v.Title == nil || *v.Title == "" {
+				f.logger.Info("title is empty", log.Int("obj_type", *v.ObjType))
+			}
+			f.logger.Info("found wiki", log.String("title", *v.Title), log.Int("obj_type", *v.ObjType))
 		}
 		if !*resp.Data.HasMore {
 			break
@@ -146,22 +149,23 @@ func (f *FeishuUseCase) GetDoc(ctx context.Context, req *domain.GetDocxReq) ([]*
 		)
 		switch source.ObjType {
 		case 8: // docx
+			f.logger.Info("download [type 8] docx ", log.String("url", source.Url), log.String("token", source.ObjToken))
 			title, content, err = f.downloadDocument(ctx, req.AppID, req.AppSecret, source.Url, req.KBID)
 			if err != nil {
-				f.logger.Error("download docx failed", log.Error(err))
+				f.logger.Error("download [type 8] docx failed", log.Error(err))
 				return nil // 返回 nil 表示失败
 			}
 		case 5: // file
-			f.logger.Debug("download file", log.String("url", source.Url), log.String("token", source.ObjToken))
+			f.logger.Info("download [type 5]file ", log.String("url", source.Url), log.String("token", source.ObjToken))
 			title, content, err = f.downloadFile(ctx, req.AppID, req.AppSecret, source.ObjToken, req.KBID)
 			if err != nil {
-				f.logger.Error("download file failed", log.Error(err))
+				f.logger.Error("download [type 5]file failed", log.Error(err))
 			}
 		case 2: // sheet
-			f.logger.Debug("download sheet", log.String("url", source.Url), log.String("token", source.ObjToken))
+			f.logger.Info("download [type 2] sheet", log.String("url", source.Url), log.String("token", source.ObjToken))
 			title, content, err = f.downloadSheet(ctx, req.AppID, req.AppSecret, source.ObjToken, req.UserAccessToken, req.KBID)
 			if err != nil {
-				f.logger.Error("download file failed", log.Error(err))
+				f.logger.Error("download [type 2] sheet failed", log.Error(err))
 			}
 		default: // 其他类型
 			f.logger.Error("unsupported obj type", log.Int("type", source.ObjType))
@@ -342,6 +346,9 @@ func (f *FeishuUseCase) downloadDocument(ctx context.Context, appID, secret, url
 	parser := core.NewParser(dlConfig.Output)
 
 	title := docx.Title
+	if title == "" {
+		title = "未命名文档"
+	}
 	markdown := parser.ParseDocxContent(docx, blocks)
 	type imgReplace struct {
 		token string
@@ -474,14 +481,21 @@ func (f *FeishuUseCase) downloadFile(ctx context.Context, appID, secret, fileTok
 		},
 	)
 	if err != nil {
-		return "", "", err
+		return "", "", fmt.Errorf("上传文件到OSS失败: %s", err)
 	}
 	ossPath := fmt.Sprintf("/%s/%s", domain.Bucket, imgName)
 	res, err := f.crawler.ScrapeURL(ctx, ossPath, kbID)
 	if err != nil {
 		return "", "", err
 	}
-	return resp.FileName, res.Content, nil
+	name := resp.FileName
+	if name == "" {
+		name = res.Title
+	}
+	if name == "" {
+		name = "未命名文件"
+	}
+	return name, res.Content, nil
 }
 
 func getSheetInfo(ctx context.Context, appID, secret, sheetToken, usserAccessToken string) (*larksheets.GetSpreadsheet, error) {
@@ -610,8 +624,6 @@ func (f *FeishuUseCase) downloadSheet(ctx context.Context, appID, secret, sheetT
 	if len(successResults2) < len(res) {
 		return "", "", fmt.Errorf("some downloadExportTask failed (%d/%d succeeded)", len(successResults2), len(res))
 	}
-	f.logger.Debug("TiTle", log.String("title", successResults2[0].Title), log.String("content", successResults2[0].Content))
-
 	info, err := getSheetInfo(ctx, appID, secret, sheetToken, usserAccessToken)
 	if err != nil {
 		f.logger.Error("get sheet info failed", log.Error(err))
@@ -629,6 +641,9 @@ func (f *FeishuUseCase) downloadSheet(ctx context.Context, appID, secret, sheetT
 		log.Int("success_results_count", len(successResults2)))
 
 	title = *info.Title
+	if title == "" {
+		title = "未命名表格"
+	}
 	content.WriteString(fmt.Sprintf("# %s\n\n", title))
 	// content.WriteString(successResults2[0].Content)
 	for _, successResult2 := range successResults2 {
