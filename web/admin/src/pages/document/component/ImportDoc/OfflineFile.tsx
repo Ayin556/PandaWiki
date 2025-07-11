@@ -186,7 +186,7 @@ const OfflineFileImport = ({ open, refresh, onCancel, parentId = null }: ImportD
         onChange={(accept, reject) => onChangeFile(accept, reject)}
         type='drag'
         multiple={true}
-        accept={'.txt, .md, .xls, .xlsx, .docx, .pdf, .html, .epub, .pptx'}
+        accept={'.txt, .md, .xls, .xlsx, .docx, .pdf, .html, .pptx'}
         size={size}
       />
       {isUploading === 1 && <Box sx={{ mt: 2 }}>

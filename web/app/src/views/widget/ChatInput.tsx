@@ -37,13 +37,13 @@ const ChatInput = ({
     border: '1px solid',
     borderColor: 'divider',
     bgcolor: themeMode === 'dark' ? 'background.paper' : 'background.default',
-    px: 3,
-    py: 2,
+    p: 2,
   }}>
     <TextField
       fullWidth
       multiline
       rows={2}
+      disabled={loading}
       sx={{
         '.MuiInputBase-root': {
           p: 0,

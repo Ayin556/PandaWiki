@@ -239,6 +239,8 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemComponentProps<ITreeIt
                     const temp = [...items];
                     updateTree(temp, item.id, {
                       ...item,
+                      updated_at: dayjs().toString(),
+                      status: 1,
                       emoji: value,
                     })
                     setItems(temp)
