@@ -23,7 +23,7 @@ const CardAI = ({ kb }: CardAIProps) => {
   }
 
   return <Card>
-    <Box sx={{ fontWeight: 'bold', px: 2, py: 1.5, bgcolor: 'background.paper2' }}>AI 设置</Box>
+    <Box sx={{ fontWeight: 'bold', px: 2, py: 1.5, bgcolor: 'background.paper2' }}>AI 设置（敬请期待）</Box>
     <Stack direction='row' alignItems={'center'} justifyContent={'space-between'} sx={{
       m: 2,
       height: 32,

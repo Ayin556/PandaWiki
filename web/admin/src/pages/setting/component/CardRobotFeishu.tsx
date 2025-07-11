@@ -1,5 +1,5 @@
 import { AppDetail, FeishuBotSetting, getAppDetail, KnowledgeBaseListItem, updateAppDetail } from "@/api"
-import { Box, Button, Stack, TextField } from "@mui/material"
+import { Box, Button, Link, Stack, TextField } from "@mui/material"
 import { Message } from "ct-mui"
 import { useEffect, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
@@ -64,56 +64,72 @@ const CardRobotFeishu = ({ kb }: { kb: KnowledgeBaseListItem }) => {
           mr: 1,
         },
       }}>飞书机器人</Box>
+      <Box sx={{ flexGrow: 1, ml: 1 }}>
+        <Link
+          component='a' 
+          href='https://pandawiki.docs.baizhi.cloud/node/01971b5f-4520-7c4b-8b4e-683ec5235adc' 
+          target="_blank"
+          sx={{
+            fontSize: 14,
+            textDecoration: 'none',
+            fontWeight: 'normal',
+            '&:hover': {
+              fontWeight: 'bold',
+            }
+          }}>使用方法</Link>
+      </Box>
       {isEdit && <Button variant="contained" size="small" onClick={handleSubmit(onSubmit)}>保存</Button>}
     </Stack>
-    <Box sx={{ m: 2 }}>
-      <Stack direction='row' alignItems={'center'} justifyContent={'space-between'} sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
-        <Box sx={{ fontSize: 14, lineHeight: '32px' }}>
+    <Stack gap={2} sx={{ m: 2 }}>
+      <Stack direction='row' gap={2} alignItems={'center'} justifyContent={'space-between'} >
+        <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0 }}>
           App ID
           <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
         </Box>
-        <Button size="small" component='a' href='https://pandawiki.docs.baizhi.cloud/node/01971b5f-4520-7c4b-8b4e-683ec5235adc' target="_blank">使用方法</Button>
+        <Controller
+          control={control}
+          name="feishu_bot_app_id"
+          rules={{
+            required: 'App ID',
+          }}
+          render={({ field }) => <TextField
+            {...field}
+            fullWidth
+            placeholder="> 飞书开放平台 > 凭证与基础信息 > 应用凭证 > App ID"
+            onChange={(e) => {
+              field.onChange(e.target.value)
+              setIsEdit(true)
+            }}
+            error={!!errors.feishu_bot_app_id}
+            helperText={errors.feishu_bot_app_id?.message}
+          />}
+        />
       </Stack>
-      <Controller
-        control={control}
-        name="feishu_bot_app_id"
-        rules={{
-          required: 'App ID',
-        }}
-        render={({ field }) => <TextField
-          {...field}
-          fullWidth
-          placeholder="> 飞书开放平台 > 凭证与基础信息 > 应用凭证 > App ID"
-          onChange={(e) => {
-            field.onChange(e.target.value)
-            setIsEdit(true)
+      <Stack direction='row' gap={2} alignItems={'center'} justifyContent={'space-between'} >
+
+        <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0}}>
+          App Secret
+          <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
+        </Box>
+        <Controller
+          control={control}
+          name="feishu_bot_app_secret"
+          rules={{
+            required: 'App Secret',
           }}
-          error={!!errors.feishu_bot_app_id}
-          helperText={errors.feishu_bot_app_id?.message}
-        />}
-      />
-      <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
-        App Secret
-        <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
-      </Box>
-      <Controller
-        control={control}
-        name="feishu_bot_app_secret"
-        rules={{
-          required: 'App Secret',
-        }}
-        render={({ field }) => <TextField
-          {...field}
-          fullWidth
-          placeholder="> 飞书开放平台 > 凭证与基础信息 > 应用凭证 > App Secret"
-          onChange={(e) => {
-            field.onChange(e.target.value)
-            setIsEdit(true)
-          }}
-          error={!!errors.feishu_bot_app_secret}
-          helperText={errors.feishu_bot_app_secret?.message}
-        />}
-      />
+          render={({ field }) => <TextField
+            {...field}
+            fullWidth
+            placeholder="> 飞书开放平台 > 凭证与基础信息 > 应用凭证 > App Secret"
+            onChange={(e) => {
+              field.onChange(e.target.value)
+              setIsEdit(true)
+            }}
+            error={!!errors.feishu_bot_app_secret}
+            helperText={errors.feishu_bot_app_secret?.message}
+          />}
+        />
+      </Stack>
       {/* <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
         用户欢迎语
       </Box>
@@ -135,7 +151,7 @@ const CardRobotFeishu = ({ kb }: { kb: KnowledgeBaseListItem }) => {
           helperText={errors.feishu_bot_welcome_str?.message}
         />}
       /> */}
-    </Box >
+    </Stack>
   </>
 }
 

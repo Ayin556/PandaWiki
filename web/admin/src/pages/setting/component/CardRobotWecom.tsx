@@ -1,6 +1,6 @@
 import { AppDetail, getAppDetail, KnowledgeBaseListItem, updateAppDetail, WecomBotSetting } from "@/api"
 import ShowText from "@/components/ShowText"
-import { Box, Button, Stack, TextField } from "@mui/material"
+import { Box, Button, Link, Stack, TextField } from "@mui/material"
 import { Message } from "ct-mui"
 import { useEffect, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
@@ -71,127 +71,150 @@ const CardRobotWecom = ({ kb, url }: { kb: KnowledgeBaseListItem, url: string })
           mr: 1,
         },
       }}>企业微信机器人</Box>
+      <Box sx={{ flexGrow: 1, ml: 1 }}>
+        <Link
+          component='a' 
+          href='https://pandawiki.docs.baizhi.cloud/node/01971b5f-67e1-73c8-8582-82ccac49cc96'
+          target="_blank"
+          sx={{
+            fontSize: 14,
+            textDecoration: 'none',
+            fontWeight: 'normal',
+            '&:hover': {
+              fontWeight: 'bold',
+            }
+          }}>使用方法</Link>
+      </Box>
       {isEdit && <Button variant="contained" size="small" onClick={handleSubmit(onSubmit)}>保存</Button>}
     </Stack>
-    <Box sx={{ m: 2 }}>
-      <Stack direction='row' alignItems={'center'} justifyContent={'space-between'} sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
-        <Box sx={{ fontSize: 14, lineHeight: '32px' }}>
+    <Stack gap={2} sx={{ m: 2 }}>
+      <Stack direction='row' gap={2} alignItems={'center'} justifyContent={'space-between'}>
+        <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0 }}>
           回调地址
         </Box>
-        <Button size="small" component='a' href='https://pandawiki.docs.baizhi.cloud/node/01971b5f-67e1-73c8-8582-82ccac49cc96' target="_blank">使用方法</Button>
+        <ShowText text={[`${url}/share/v1/app/wechat/app`]} />
       </Stack>
-      <ShowText text={[`${url}/share/v1/app/wechat/app`]} />
-      <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
-        Agent ID
-        <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
-      </Box>
-      <Controller
-        control={control}
-        name="wechat_app_agent_id"
-        rules={{
-          required: 'Agent ID',
-        }}
-        render={({ field }) => <TextField
-          {...field}
-          fullWidth
-          placeholder=""
-          onChange={(e) => {
-            field.onChange(e.target.value)
-            setIsEdit(true)
+      <Stack direction='row' gap={2} alignItems={'center'} justifyContent={'space-between'}>
+        <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0 }}>
+          Agent ID
+          <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
+        </Box>
+        <Controller
+          control={control}
+          name="wechat_app_agent_id"
+          rules={{
+            required: 'Agent ID',
           }}
-          error={!!errors.wechat_app_agent_id}
-          helperText={errors.wechat_app_agent_id?.message}
-        />}
-      />
-      <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
-        Corp ID
-        <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
-      </Box>
-      <Controller
-        control={control}
-        name="wechat_app_corpid"
-        rules={{
-          required: 'Corp ID',
-        }}
-        render={({ field }) => <TextField
-          {...field}
-          fullWidth
-          placeholder=""
-          onChange={(e) => {
-            field.onChange(e.target.value)
-            setIsEdit(true)
+          render={({ field }) => <TextField
+            {...field}
+            fullWidth
+            placeholder=""
+            onChange={(e) => {
+              field.onChange(e.target.value)
+              setIsEdit(true)
+            }}
+            error={!!errors.wechat_app_agent_id}
+            helperText={errors.wechat_app_agent_id?.message}
+          />}
+        />
+      </Stack>
+      <Stack direction='row' gap={2} alignItems={'center'} justifyContent={'space-between'}>
+        <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0 }}>
+          企业 ID
+          <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
+        </Box>
+        <Controller
+          control={control}
+          name="wechat_app_corpid"
+          rules={{
+            required: '企业 ID',
           }}
-          error={!!errors.wechat_app_corpid}
-          helperText={errors.wechat_app_corpid?.message}
-        />}
-      />
-      <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
-        Corp Secret
-        <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
-      </Box>
-      <Controller
-        control={control}
-        name="wechat_app_secret"
-        rules={{
-          required: 'Corp Secret',
-        }}
-        render={({ field }) => <TextField
-          {...field}
-          fullWidth
-          placeholder=""
-          onChange={(e) => {
-            field.onChange(e.target.value)
-            setIsEdit(true)
+          render={({ field }) => <TextField
+            {...field}
+            fullWidth
+            placeholder=""
+            onChange={(e) => {
+              field.onChange(e.target.value)
+              setIsEdit(true)
+            }}
+            error={!!errors.wechat_app_corpid}
+            helperText={errors.wechat_app_corpid?.message}
+          />}
+        />
+      </Stack>
+      <Stack direction='row' gap={2} alignItems={'center'} justifyContent={'space-between'}>
+        <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0 }}>
+          Secret
+          <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
+        </Box>
+        <Controller
+          control={control}
+          name="wechat_app_secret"
+          rules={{
+            required: 'Secret',
           }}
-          error={!!errors.wechat_app_secret}
-          helperText={errors.wechat_app_secret?.message}
-        />}
-      />
-      <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
-        Token
-        <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
-      </Box>
-      <Controller
-        control={control}
-        name="wechat_app_token"
-        rules={{
-          required: 'Suite Token',
-        }}
-        render={({ field }) => <TextField
-          {...field}
-          fullWidth
-          placeholder=""
-          onChange={(e) => {
-            field.onChange(e.target.value)
-            setIsEdit(true)
+          render={({ field }) => <TextField
+            {...field}
+            fullWidth
+            placeholder=""
+            onChange={(e) => {
+              field.onChange(e.target.value)
+              setIsEdit(true)
+            }}
+            error={!!errors.wechat_app_secret}
+            helperText={errors.wechat_app_secret?.message}
+          />}
+        />
+      </Stack>
+      <Stack direction='row' gap={2} alignItems={'center'} justifyContent={'space-between'}>
+        <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0 }}>
+          Token
+          <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
+        </Box>
+        <Controller
+          control={control}
+          name="wechat_app_token"
+          rules={{
+            required: 'Suite Token',
           }}
-          error={!!errors.wechat_app_token}
-          helperText={errors.wechat_app_token?.message}
-        />}
-      />
-      <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
-        Encoding Aes Key
-        <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
-      </Box>
-      <Controller
-        control={control}
-        name="wechat_app_encodingaeskey"
-        rules={{
-          required: 'Suite Encoding Aes Key',
-        }}
-        render={({ field }) => <TextField
-          {...field}
-          fullWidth
-          placeholder=""
-          onChange={(e) => {
-            field.onChange(e.target.value)
-            setIsEdit(true)
+          render={({ field }) => <TextField
+            {...field}
+            fullWidth
+            placeholder=""
+            onChange={(e) => {
+              field.onChange(e.target.value)
+              setIsEdit(true)
+            }}
+            error={!!errors.wechat_app_token}
+            helperText={errors.wechat_app_token?.message}
+          />}
+        />    
+      </Stack>
+      <Stack direction='row' gap={2} alignItems={'center'} justifyContent={'space-between'}>
+        <Box sx={{ width: 156,  fontSize: 14, lineHeight: '32px', flexShrink: 0 }}>
+          Encoding Aes Key
+          <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
+        </Box>
+        <Controller
+          control={control}
+          name="wechat_app_encodingaeskey"
+          rules={{
+            required: 'Suite Encoding Aes Key',
           }}
-          error={!!errors.wechat_app_encodingaeskey}
-          helperText={errors.wechat_app_encodingaeskey?.message}
-        />}
-      />
-    </Box >
+          render={({ field }) => <TextField
+            {...field}
+            fullWidth
+            placeholder=""
+            onChange={(e) => {
+              field.onChange(e.target.value)
+              setIsEdit(true)
+            }}
+            error={!!errors.wechat_app_encodingaeskey}
+            helperText={errors.wechat_app_encodingaeskey?.message}
+          />}
+        />
+      </Stack>
+    </Stack>
   </>
 }
 
