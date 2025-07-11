@@ -250,6 +250,60 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/crawler/confluence/analysis_export_file": {
+            "post": {
+                "description": "Analyze Confluence Export File",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "crawler"
+                ],
+                "summary": "AnalysisConfluenceExportFile",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "file",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "kb_id",
+                        "name": "kb_id",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/domain.AnalysisConfluenceResp"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/crawler/epub/convert": {
             "post": {
                 "description": "QpubConvert",
@@ -735,7 +789,7 @@ const docTemplate = `{
         },
         "/api/v1/crawler/wikijs/analysis_export_file": {
             "post": {
-                "description": "AnalysisExportFile",
+                "description": "AnalysisWikijsExportFile",
                 "consumes": [
                     "multipart/form-data"
                 ],
@@ -745,7 +799,7 @@ const docTemplate = `{
                 "tags": [
                     "crawler"
                 ],
-                "summary": "AnalysisExportFile",
+                "summary": "AnalysisWikijsExportFile",
                 "parameters": [
                     {
                         "type": "file",
@@ -2513,6 +2567,20 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "domain.AnalysisConfluenceResp": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
                 }
             }
         },

@@ -16,13 +16,14 @@ import (
 
 type CrawlerHandler struct {
 	*handler.BaseHandler
-	logger         *log.Logger
-	usecase        *usecase.CrawlerUsecase
-	notnionUsecase *usecase.NotionUseCase
-	epubUsecase    *usecase.EpubUsecase
-	config         *config.Config
-	wikijsUsecase  *usecase.WikiJSUsecase
-	feishuUseCase  *usecase.FeishuUseCase
+	logger            *log.Logger
+	usecase           *usecase.CrawlerUsecase
+	notnionUsecase    *usecase.NotionUseCase
+	epubUsecase       *usecase.EpubUsecase
+	config            *config.Config
+	wikijsUsecase     *usecase.WikiJSUsecase
+	feishuUseCase     *usecase.FeishuUseCase
+	confluenceusecase *usecase.ConfluenceUsecase
 }
 
 func NewCrawlerHandler(echo *echo.Echo,
@@ -35,16 +36,18 @@ func NewCrawlerHandler(echo *echo.Echo,
 	epubUsecase *usecase.EpubUsecase,
 	wikijsUsecase *usecase.WikiJSUsecase,
 	feishuUseCase *usecase.FeishuUseCase,
+	confluenceusecase *usecase.ConfluenceUsecase,
 ) *CrawlerHandler {
 	h := &CrawlerHandler{
-		BaseHandler:    baseHandler,
-		logger:         logger.WithModule("handler.v1.crawler"),
-		config:         config,
-		usecase:        usecase,
-		notnionUsecase: notnionUsecase,
-		epubUsecase:    epubUsecase,
-		wikijsUsecase:  wikijsUsecase,
-		feishuUseCase:  feishuUseCase,
+		BaseHandler:       baseHandler,
+		logger:            logger.WithModule("handler.v1.crawler"),
+		config:            config,
+		usecase:           usecase,
+		notnionUsecase:    notnionUsecase,
+		epubUsecase:       epubUsecase,
+		wikijsUsecase:     wikijsUsecase,
+		feishuUseCase:     feishuUseCase,
+		confluenceusecase: confluenceusecase,
 	}
 	group := echo.Group("/api/v1/crawler", auth.Authorize)
 	group.POST("/parse_rss", h.ParseRSS)
@@ -56,12 +59,14 @@ func NewCrawlerHandler(echo *echo.Echo,
 	//  epub
 	group.POST("/epub/convert", h.QpubConvert)
 	// wikijs
-	group.POST("/wikijs/analysis_export_file", h.AnalysisExportFile)
+	group.POST("/wikijs/analysis_export_file", h.AnalysisWikijsExportFile)
 	// feishu
 	group.POST("/feishu/list_spaces", h.FeishuListSpaces)
 	group.POST("/feishu/list_doc", h.FeishuListDoc)
 	group.POST("/feishu/search_wiki", h.FeishuSearchWiki)
 	group.POST("/feishu/get_doc", h.FeishuGetDoc)
+	// confluence
+	group.POST("/confluence/analysis_export_file", h.AnalysisConfluenceExportFile)
 	return h
 }
 
@@ -269,10 +274,10 @@ func (h *CrawlerHandler) QpubConvert(c echo.Context) error {
 	return h.NewResponseWithData(c, resq)
 }
 
-// AnalysisExportFile
+// AnalysisWikijsExportFile
 //
-//	@Summary		AnalysisExportFile
-//	@Description	AnalysisExportFile
+//	@Summary		AnalysisWikijsExportFile
+//	@Description	AnalysisWikijsExportFile
 //	@Tags			crawler
 //	@Accept			multipart/form-data
 //	@Produce		json
@@ -280,7 +285,7 @@ func (h *CrawlerHandler) QpubConvert(c echo.Context) error {
 //	@Param			kb_id	formData	string	true	"kb_id"
 //	@Success		200		{object}	domain.Response{data=[]domain.WikiJSResp}
 //	@Router			/api/v1/crawler/wikijs/analysis_export_file [post]
-func (h *CrawlerHandler) AnalysisExportFile(c echo.Context) error {
+func (h *CrawlerHandler) AnalysisWikijsExportFile(c echo.Context) error {
 	f, err := c.FormFile("file")
 	if err != nil {
 		return h.NewResponseWithError(c, "get file failed", err)
@@ -399,6 +404,43 @@ func (h *CrawlerHandler) FeishuGetDoc(c echo.Context) error {
 	resp, err := h.feishuUseCase.GetDoc(c.Request().Context(), req)
 	if err != nil {
 		return h.NewResponseWithError(c, "get docx failed", err)
+	}
+	return h.NewResponseWithData(c, resp)
+}
+
+// AnalysisConfluenceExportFile
+//
+//	@Summary		AnalysisConfluenceExportFile
+//	@Description	Analyze Confluence Export File
+//	@Tags			crawler
+//	@Accept			json
+//	@Produce		json
+//	@Param			file	formData	file	true	"file"
+//	@Param			kb_id	formData	string	true	"kb_id"
+//	@Success		200		{object}	domain.Response{data=[]domain.AnalysisConfluenceResp}
+//	@Router			/api/v1/crawler/confluence/analysis_export_file [post]
+func (h *CrawlerHandler) AnalysisConfluenceExportFile(c echo.Context) error {
+	f, err := c.FormFile("file")
+	if err != nil {
+		return h.NewResponseWithError(c, "get file failed", err)
+	}
+	var req domain.AnalysisConfluenceReq
+	req.KbID = c.FormValue("kb_id")
+	if err := c.Validate(req); err != nil {
+		return h.NewResponseWithError(c, "validate failed", err)
+	}
+	file, err := f.Open()
+	if err != nil {
+		return h.NewResponseWithError(c, "open file failed", err)
+	}
+	defer file.Close()
+	data, err := io.ReadAll(file)
+	if err != nil {
+		return h.NewResponseWithError(c, "read file failed", err)
+	}
+	resp, err := h.confluenceusecase.Analysis(c.Request().Context(), data, req.KbID)
+	if err != nil {
+		return h.NewResponseWithError(c, "analysis confluence export file failed", err)
 	}
 	return h.NewResponseWithData(c, resp)
 }
