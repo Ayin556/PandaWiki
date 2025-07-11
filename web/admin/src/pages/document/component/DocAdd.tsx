@@ -87,6 +87,13 @@ const DocAdd = ({ refresh }: InputContentProps) => {
         setUrlOpen(true)
         setKey('Feishu')
       }
+    },
+    Confluence: {
+      label: '通过 Confluence 导入',
+      onClick: () => {
+        setUrlOpen(true)
+        setKey('Confluence')
+      }
     }
   }
 

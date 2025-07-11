@@ -134,6 +134,9 @@ export const convertEpub = (data: FormData): Promise<{ content: string, title: s
 export const parseWikijs = (data: FormData): Promise<{ id: string, content: string, title: string }[]> =>
   request({ url: 'api/v1/crawler/wikijs/analysis_export_file', method: 'post', data })
 
+export const parseConfluence = (data: FormData): Promise<{ id: string, content: string, title: string }[]> =>
+  request({ url: 'api/v1/crawler/confluence/analysis_export_file', method: 'post', data })
+
 export const getFeishuKnowledgeBase = (data: ImportDocByFeishuFormData): Promise<{ space_id: string, name: string }[]> =>
   request({ url: 'api/v1/crawler/feishu/list_spaces', method: 'post', data })
 
