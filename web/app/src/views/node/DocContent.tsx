@@ -64,7 +64,7 @@ const DocContent = ({ info, editorRef }: { info?: NodeDetail, editorRef: UseTipt
             mt: 1,
           }),
         }}>
-        <Box>{dayjs(info?.created_at).fromNow()}创建</Box>
+        {info?.created_at && <Box>{dayjs(info?.created_at).fromNow()}创建</Box>}
         {info?.updated_at && info.updated_at.slice(0, 1) !== '0' && <Box>{dayjs(info.updated_at).fromNow()}更新</Box>}
       </Stack>
     </Stack>
