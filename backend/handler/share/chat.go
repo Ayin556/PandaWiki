@@ -134,7 +134,7 @@ func (h *ShareChatHandler) ChatWidget(c echo.Context) error {
 		return h.sendErrMsg(c, "invalid app type")
 	}
 	// get widget app info
-	widgetAppInfo, err := h.appUsecase.GetWidgetAppInfo(c.Request().Context(), req.AppID)
+	widgetAppInfo, err := h.appUsecase.GetWidgetAppInfo(c.Request().Context(), req.KBID)
 	if err != nil {
 		h.logger.Error("get widget app info failed", log.Error(err))
 		return h.sendErrMsg(c, "get app info error")

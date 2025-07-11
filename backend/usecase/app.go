@@ -277,7 +277,7 @@ func (u *AppUsecase) DeleteApp(ctx context.Context, id string) error {
 }
 
 func (u *AppUsecase) GetAppDetailByKBIDAndAppType(ctx context.Context, kbID string, appType domain.AppType) (*domain.AppDetailResp, error) {
-	app, err := u.repo.GetOrCreateApplByKBIDAndType(ctx, kbID, appType)
+	app, err := u.repo.GetOrCreateAppByKBIDAndType(ctx, kbID, appType)
 	if err != nil {
 		return nil, err
 	}
@@ -346,7 +346,7 @@ func (u *AppUsecase) GetAppDetailByKBIDAndAppType(ctx context.Context, kbID stri
 }
 
 func (u *AppUsecase) GetWebAppInfo(ctx context.Context, kbID string) (*domain.AppInfoResp, error) {
-	app, err := u.repo.GetOrCreateApplByKBIDAndType(ctx, kbID, domain.AppTypeWeb)
+	app, err := u.repo.GetOrCreateAppByKBIDAndType(ctx, kbID, domain.AppTypeWeb)
 	if err != nil {
 		return nil, err
 	}
@@ -388,11 +388,11 @@ func (u *AppUsecase) GetWebAppInfo(ctx context.Context, kbID string) (*domain.Ap
 }
 
 func (u *AppUsecase) GetWidgetAppInfo(ctx context.Context, kbID string) (*domain.AppInfoResp, error) {
-	webApp, err := u.repo.GetOrCreateApplByKBIDAndType(ctx, kbID, domain.AppTypeWeb)
+	webApp, err := u.repo.GetOrCreateAppByKBIDAndType(ctx, kbID, domain.AppTypeWeb)
 	if err != nil {
 		return nil, err
 	}
-	widgetApp, err := u.repo.GetOrCreateApplByKBIDAndType(ctx, kbID, domain.AppTypeWidget)
+	widgetApp, err := u.repo.GetOrCreateAppByKBIDAndType(ctx, kbID, domain.AppTypeWidget)
 	if err != nil {
 		return nil, err
 	}
