@@ -15,6 +15,7 @@ import (
 	"github.com/chaitin/panda-wiki/config"
 	_ "github.com/chaitin/panda-wiki/docs"
 	"github.com/chaitin/panda-wiki/log"
+	PWMiddleware "github.com/chaitin/panda-wiki/middleware"
 )
 
 type HTTPServer struct {
@@ -32,7 +33,7 @@ func (v *echoValidator) Validate(i any) error {
 	return nil
 }
 
-func NewEcho(logger *log.Logger, config *config.Config) *echo.Echo {
+func NewEcho(logger *log.Logger, config *config.Config, pwMiddleware *PWMiddleware.ReadOnlyMiddleware) *echo.Echo {
 	e := echo.New()
 	e.HideBanner = true
 	e.HidePort = true
@@ -84,6 +85,8 @@ func NewEcho(logger *log.Logger, config *config.Config) *echo.Echo {
 			return nil
 		},
 	}))
+
+	e.Use(pwMiddleware.ReadOnly)
 
 	return e
 }
