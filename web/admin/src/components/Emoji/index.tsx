@@ -3,6 +3,7 @@ import Picker from '@emoji-mart/react';
 import { IconButton, Popover, SxProps } from '@mui/material';
 import { Icon } from 'ct-mui';
 import React, { useCallback } from 'react';
+import zh from '../../../public/emoji-data/zh.json';
 
 interface EmojiPickerProps {
   type: 1 | 2
@@ -66,6 +67,7 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
           set='native'
           theme='light'
           locale='zh'
+          i18n={zh}
           onEmojiSelect={handleSelect}
           previewPosition="none"
           searchPosition="sticky"
