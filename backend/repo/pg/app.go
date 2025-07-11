@@ -51,7 +51,7 @@ func (r *AppRepository) DeleteApp(ctx context.Context, id string) error {
 	return r.db.WithContext(ctx).Delete(&domain.App{}, "id = ?", id).Error
 }
 
-func (r *AppRepository) GetOrCreateApplByKBIDAndType(ctx context.Context, kbID string, appType domain.AppType) (*domain.App, error) {
+func (r *AppRepository) GetOrCreateAppByKBIDAndType(ctx context.Context, kbID string, appType domain.AppType) (*domain.App, error) {
 	app := &domain.App{}
 	if err := r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		err := tx.Model(&domain.App{}).Where("kb_id = ? AND type = ?", kbID, appType).First(app).Error

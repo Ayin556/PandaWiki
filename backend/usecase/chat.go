@@ -37,7 +37,7 @@ func (u *ChatUsecase) Chat(ctx context.Context, req *domain.ChatRequest) (<-chan
 	go func() {
 		defer close(eventCh)
 		// 1. get app detail and validate app
-		app, err := u.appRepo.GetOrCreateApplByKBIDAndType(ctx, req.KBID, req.AppType)
+		app, err := u.appRepo.GetOrCreateAppByKBIDAndType(ctx, req.KBID, req.AppType)
 		if err != nil {
 			eventCh <- domain.SSEEvent{Type: "error", Content: "app not found"}
 			return
