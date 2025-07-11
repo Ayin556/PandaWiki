@@ -41,7 +41,6 @@ func NewShareChatHandler(
 	}
 
 	share := e.Group("share/v1/chat",
-		h.BaseHandler.ShareAuthMiddleware.Authorize,
 		func(next echo.HandlerFunc) echo.HandlerFunc {
 			return func(c echo.Context) error {
 				c.Response().Header().Set("Access-Control-Allow-Origin", "*")
