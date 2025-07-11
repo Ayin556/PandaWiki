@@ -93,7 +93,7 @@ const KBSelect = () => {
         event.stopPropagation()
         dispatch(setKbC(true))
       }}
-      >创建新知识库</Button>
+      >创建新知识库（暂不支持）</Button>
       {kbList.map(item => <MenuItem key={item.id} value={item.id} sx={{
         '&:hover .hover-del-space-icon': { display: 'block' }
       }}>

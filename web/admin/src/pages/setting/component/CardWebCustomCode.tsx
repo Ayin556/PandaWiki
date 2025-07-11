@@ -52,44 +52,51 @@ const CardWebCustomCode = ({ id, data, refresh }: CardWebCustomCodeProps) => {
       }}>自定义代码</Box>
       {isEdit && <Button variant="contained" size="small" onClick={handleSubmit(onSubmit)}>保存</Button>}
     </Stack>
-    <Box sx={{ m: 2 }}>
-      <Box sx={{ fontSize: 14, lineHeight: '32px', mb: 1 }}>注入到 Head 标签</Box>
-      <Controller
-        control={control}
-        name="head_code"
-        render={({ field }) => <TextField
-          fullWidth
-          multiline
-          rows={4}
-          {...field}
-          placeholder="输入 Head 代码"
-          error={!!errors.head_code}
-          helperText={errors.head_code?.message}
-          onChange={(event) => {
-            setIsEdit(true)
-            field.onChange(event)
-          }}
-        />}
-      />
-      <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>注入到 Body 标签</Box>
-      <Controller
-        control={control}
-        name="body_code"
-        render={({ field }) => <TextField
-          fullWidth
-          {...field}
-          multiline
-          rows={4}
-          placeholder="输入 Body 代码"
-          error={!!errors.body_code}
-          helperText={errors.body_code?.message}
-          onChange={(event) => {
-            setIsEdit(true)
-            field.onChange(event)
-          }}
-        />}
-      />
-    </Box>
+    <Stack gap={2} sx={{ m: 2 }}>
+      <Stack direction='row' gap={2} alignItems={'center'}>
+        <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0 }}>注入到 Head 标签</Box>
+        <Controller
+          control={control}
+          name="head_code"
+          render={({ field }) => <TextField
+            sx={{ fontFamily: 'monospace' }}
+            fullWidth
+            multiline
+            rows={4}
+            {...field}
+            placeholder="输入 Head 代码"
+            error={!!errors.head_code}
+            helperText={errors.head_code?.message}
+            onChange={(event) => {
+              setIsEdit(true)
+              field.onChange(event)
+            }}
+          />}
+        />
+      </Stack>
+      <Stack direction='row' gap={2} alignItems={'center'} sx={{ fontSize: 14, lineHeight: '32px' }}>
+        <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0 }}>注入到 Body 标签</Box>
+        <Controller
+          control={control}
+          name="body_code"
+          render={({ field }) => <TextField
+            sx={{ fontFamily: 'monospace' }}
+            fullWidth
+            {...field}
+            multiline
+            rows={4}
+            placeholder="输入 Body 代码"
+            error={!!errors.body_code}
+            helperText={errors.body_code?.message}
+            onChange={(event) => {
+              setIsEdit(true)
+              field.onChange(event)
+            }}
+          />}
+        />
+      </Stack>
+        
+    </Stack>
   </>
 }
 export default CardWebCustomCode

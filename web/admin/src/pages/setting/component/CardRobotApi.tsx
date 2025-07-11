@@ -1,26 +1,14 @@
 import { KnowledgeBaseListItem } from "@/api"
 import ShowText from "@/components/ShowText"
-import { Box, Button, Stack } from "@mui/material"
+import { Box, Button, FormControl, FormControlLabel, Radio, RadioGroup, Stack, TextField } from "@mui/material"
+import { set } from "lodash"
 import { useEffect, useState } from "react"
 
 const CardRobotApi = ({ kb }: { kb: KnowledgeBaseListItem }) => {
-  const [urls, setUrls] = useState<string[]>([])
+  const [isEdit, setIsEdit] = useState(false)
+  const [isEnabled, setIsEnabled] = useState(false)
 
   useEffect(() => {
-    const urls: string[] = []
-    kb.access_settings?.hosts?.forEach(host => {
-      kb.access_settings.ports?.forEach(port => {
-        if (port === 80) urls.push(`http://${host}/share/v1/chat/message`)
-        else urls.push(`http://${host}:${port}/share/v1/chat/message`)
-      })
-    })
-    kb.access_settings.ssl_ports?.forEach(port => {
-      kb.access_settings.hosts?.forEach(host => {
-        if (port === 443) urls.push(`https://${host}/share/v1/chat/message`)
-        else urls.push(`https://${host}:${port}/share/v1/chat/message`)
-      })
-    })
-    setUrls(urls)
   }, [kb])
 
   return <>
@@ -39,17 +27,53 @@ const CardRobotApi = ({ kb }: { kb: KnowledgeBaseListItem }) => {
           borderRadius: '2px',
           mr: 1,
         },
-      }}>问答机器人 API </Box>
+      }}>问答机器人 API（敬请期待） </Box>
+      {isEdit && <Button variant="contained" size="small" disabled={true}>保存</Button>}
     </Stack>
-    <Box sx={{ m: 2 }}>
-      <Stack direction='row' alignItems={'center'} justifyContent={'space-between'} sx={{ my: 1, fontSize: 14, lineHeight: '32px' }}>
-        <Box>API_URL</Box>
-        <Button size="small" component='a' href='https://pandawiki.docs.baizhi.cloud/node/01971b60-100e-7b23-9385-e36763df5c0a' target="_blank">使用方法</Button>
+    <Stack gap={2} sx={{ mx: 2}}>
+      <Stack direction={'row'} gap={2} alignItems={'center'}>
+        <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px' }}>
+          问答机器人 API
+        </Box>
+        <FormControl>
+          <RadioGroup
+            value={isEnabled}
+            onChange={(e) => {
+              setIsEnabled(e.target.value === 'true')
+              setIsEdit(e.target.value === 'true')
+            }}
+          >
+            <Stack direction={'row'}>
+              <FormControlLabel value={true} control={<Radio size='small' />} label="启用" />
+              <FormControlLabel value={false} control={<Radio size='small' />} label="禁用" />
+            </Stack>
+          </RadioGroup>
+        </FormControl>
       </Stack>
-      <Stack gap={1}>
-        <ShowText text={urls} />
-      </Stack>
-    </Box>
+      {isEnabled && <> 
+        <Stack direction={'row'} gap={2} alignItems={'center'}  sx={{ fontSize: 14, lineHeight: '32px'}}>
+          <Box component={'label'}  sx={{ width: 156, flexShrink: 0, fontSize: 14, lineHeight: '32px' }}>
+            API Token
+          </Box>
+          
+          <TextField
+            fullWidth
+            label='API Token'
+            placeholder={"API Token"}
+          />
+        </Stack>
+        <Stack direction={'row'} gap={2} alignItems={'center'}  sx={{ fontSize: 14, lineHeight: '32px'}}>
+          <Box component={'label'}  sx={{ width: 156, flexShrink: 0, fontSize: 14, lineHeight: '32px' }}>
+            API 调用地址
+          </Box>
+          <TextField
+            fullWidth
+            label='API 调用地址'
+            placeholder={"API 调用地址"}
+          />
+        </Stack>
+      </>}
+    </Stack>
   </>
 }
 

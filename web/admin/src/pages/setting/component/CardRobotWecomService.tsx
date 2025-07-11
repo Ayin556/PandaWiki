@@ -70,100 +70,110 @@ const CardRobotWecomService = ({ kb, url }: { kb: KnowledgeBaseListItem, url: st
       }}>企业微信客服</Box>
       {isEdit && <Button variant="contained" size="small" onClick={handleSubmit(onSubmit)}>保存</Button>}
     </Stack>
-    <Box sx={{ m: 2 }}>
-      <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
-        回调地址
-      </Box>
-      <ShowText text={[`${url}/share/v1/app/wechat/service`]} />
-      <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
-        Corp ID
-        <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
-      </Box>
-      <Controller
-        control={control}
-        name="wechat_service_corpid"
-        rules={{
-          required: 'Corp ID',
-        }}
-        render={({ field }) => <TextField
-          {...field}
-          fullWidth
-          placeholder=""
-          onChange={(e) => {
-            field.onChange(e.target.value)
-            setIsEdit(true)
+    <Stack gap={2} sx={{ m: 2 }}>
+      <Stack direction='row' gap={2} alignItems={'center'} justifyContent={'space-between'}>
+        <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0 }}>
+          回调地址
+        </Box>
+        <ShowText text={[`${url}/share/v1/app/wechat/service`]} />
+      </Stack>
+      <Stack direction='row' gap={2} alignItems={'center'} justifyContent={'space-between'}>
+        <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0 }}>
+          企业 ID
+          <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
+        </Box>
+        <Controller
+          control={control}
+          name="wechat_service_corpid"
+          rules={{
+            required: '企业 ID',
           }}
-          error={!!errors.wechat_service_corpid}
-          helperText={errors.wechat_service_corpid?.message}
-        />}
-      />
-      <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
-        Corp Secret
-        <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
-      </Box>
-      <Controller
-        control={control}
-        name="wechat_service_secret"
-        rules={{
-          required: 'Corp Secret',
-        }}
-        render={({ field }) => <TextField
-          {...field}
-          fullWidth
-          placeholder=""
-          onChange={(e) => {
-            field.onChange(e.target.value)
-            setIsEdit(true)
+          render={({ field }) => <TextField
+            {...field}
+            fullWidth
+            placeholder=""
+            onChange={(e) => {
+              field.onChange(e.target.value)
+              setIsEdit(true)
+            }}
+            error={!!errors.wechat_service_corpid}
+            helperText={errors.wechat_service_corpid?.message}
+          />}
+        />
+      </Stack>
+      <Stack direction='row' gap={2} alignItems={'center'} justifyContent={'space-between'}>
+        <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0 }}>
+          Corp Secret
+          <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
+        </Box>
+        <Controller
+          control={control}
+          name="wechat_service_secret"
+          rules={{
+            required: 'Corp Secret',
           }}
-          error={!!errors.wechat_service_secret}
-          helperText={errors.wechat_service_secret?.message}
-        />}
-      />
-      <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
-        Token
-        <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
-      </Box>
-      <Controller
-        control={control}
-        name="wechat_service_token"
-        rules={{
-          required: 'Suite Token',
-        }}
-        render={({ field }) => <TextField
-          {...field}
-          fullWidth
-          placeholder=""
-          onChange={(e) => {
-            field.onChange(e.target.value)
-            setIsEdit(true)
+          render={({ field }) => <TextField
+            {...field}
+            fullWidth
+            placeholder=""
+            onChange={(e) => {
+              field.onChange(e.target.value)
+              setIsEdit(true)
+            }}
+            error={!!errors.wechat_service_secret}
+            helperText={errors.wechat_service_secret?.message}
+          />}
+        />
+      </Stack>      
+      <Stack direction='row' gap={2} alignItems={'center'} justifyContent={'space-between'}>
+        <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0 }}>
+          Token
+          <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
+        </Box>
+        <Controller
+          control={control}
+          name="wechat_service_token"
+          rules={{
+            required: 'Suite Token',
           }}
-          error={!!errors.wechat_service_token}
-          helperText={errors.wechat_service_token?.message}
-        />}
-      />
-      <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
-        Encoding Aes Key
-        <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
-      </Box>
-      <Controller
-        control={control}
-        name="wechat_service_encodingaeskey"
-        rules={{
-          required: 'Suite Encoding Aes Key',
-        }}
-        render={({ field }) => <TextField
-          {...field}
-          fullWidth
-          placeholder=""
-          onChange={(e) => {
-            field.onChange(e.target.value)
-            setIsEdit(true)
+          render={({ field }) => <TextField
+            {...field}
+            fullWidth
+            placeholder=""
+            onChange={(e) => {
+              field.onChange(e.target.value)
+              setIsEdit(true)
+            }}
+            error={!!errors.wechat_service_token}
+            helperText={errors.wechat_service_token?.message}
+          />}
+        />
+      </Stack>   
+      <Stack direction='row' gap={2} alignItems={'center'} justifyContent={'space-between'}>
+        <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0 }}>
+          Encoding Aes Key
+          <Box component={'span'} sx={{ color: 'red', ml: 0.5 }}>*</Box>
+        </Box>
+        <Controller
+          control={control}
+          name="wechat_service_encodingaeskey"
+          rules={{
+            required: 'Suite Encoding Aes Key',
           }}
-          error={!!errors.wechat_service_encodingaeskey}
-          helperText={errors.wechat_service_encodingaeskey?.message}
-        />}
-      />
-    </Box>
+          render={({ field }) => <TextField
+            {...field}
+            fullWidth
+            placeholder=""
+            onChange={(e) => {
+              field.onChange(e.target.value)
+              setIsEdit(true)
+            }}
+            error={!!errors.wechat_service_encodingaeskey}
+            helperText={errors.wechat_service_encodingaeskey?.message}
+          />}
+        />
+      </Stack>   
+    </Stack>
   </>
 }
 
