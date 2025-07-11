@@ -112,7 +112,7 @@
 .widget-bot-modal-content {
   position: absolute;
   width: 600px;
-  height: 825px;
+  height: 725px;
   max-width: calc(100% - 32px);
   max-height: 80vh;
   background: #fff;
@@ -156,7 +156,7 @@
 }
 
 .widget-bot-close-btn:hover {
-  transform: scale(1.01);
+  transform: scale(1.05);
 }
 
 .widget-bot-close-btn:active {

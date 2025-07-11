@@ -1,13 +1,11 @@
 'use client'
 
-import logo from '@/assets/images/logo.png';
 import { ChunkResultItem } from '@/assets/type';
-import { IconFile, IconFolder, IconService } from "@/components/icons";
+import { IconFile, IconFolder, IconLogo } from "@/components/icons";
 import { useStore } from "@/provider";
 import SSEClient from '@/utils/fetch';
 import { Box, Stack, useMediaQuery } from "@mui/material";
 import { Ellipsis, message } from "ct-mui";
-import Image from "next/image";
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnswerStatus } from '../chat/constant';
@@ -165,24 +163,16 @@ const Widget = () => {
             setConversation([])
           }}
         >
-          <IconService />
-          <Ellipsis>{widget?.settings?.title || '在线客服'}</Ellipsis>
+          {widget?.settings?.icon ? <img src={widget?.settings?.icon} height={24} style={{ flexShrink: 0 }} />
+            : <IconLogo sx={{ fontSize: 24 }} />}
+          <Ellipsis >{widget?.settings?.title || '在线客服'}</Ellipsis>
         </Stack>
-        <Box sx={{ fontSize: 14 }}>您的智能 AI 知识库助手，随时待命备份</Box>
+        <Ellipsis sx={{ fontSize: 14, opacity: 0.7, mt: 0.5 }}>{widget?.settings?.welcome_str || '在线客服'}</Ellipsis>
       </Box>
     </Stack>
-    <Box sx={{ bgcolor: themeMode === 'light' ? 'light.main' : 'dark.light', p: 3, mt: -2, borderRadius: '12px 12px 0 0', height: 'calc(100vh - 92px - 24px)', overflow: 'auto' }}>
+    <Box sx={{ bgcolor: themeMode === 'light' ? 'light.main' : 'dark.light', p: 3, mt: -2, borderRadius: '12px 12px 0 0', height: 'calc(100vh - 96px - 24px)', overflow: 'auto' }}>
       {conversation.length === 0 ? <>
-        <Stack
-          direction={'row'}
-          alignItems={'center'}
-          gap={1}
-          sx={{ lineHeight: '32px', fontSize: 24 }}
-        >
-          <img src={widget?.settings?.icon} height={32} style={{ flexShrink: 0 }} />
-          <Ellipsis sx={{ width: 0, flex: 1 }}>{widget?.settings?.welcome_str || '在线客服'}</Ellipsis>
-        </Stack>
-        <Box sx={{ mt: 2 }}>
+        <Box>
           <ChatInput
             loading={loading}
             thinking={thinking}
@@ -277,7 +267,7 @@ const Widget = () => {
             color: 'primary.main',
           }
         }}>
-          <Image src={logo.src} alt="PandaWiki" width={16} height={16} />
+          <IconLogo sx={{ fontSize: 16 }} />
           <Box sx={{ fontWeight: 'bold' }}>PandaWiki</Box>
         </Stack>
       </Link>
