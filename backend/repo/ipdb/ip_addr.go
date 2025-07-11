@@ -2,6 +2,7 @@ package ipdb
 
 import (
 	"context"
+	"net"
 
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/log"
@@ -19,6 +20,14 @@ func NewIPAddressRepo(ipdb *ipdb.IPDB, logger *log.Logger) *IPAddressRepo {
 }
 
 func (r *IPAddressRepo) GetIPAddress(ctx context.Context, ip string) (*domain.IPAddress, error) {
+	if ip == "" || net.ParseIP(ip) == nil {
+		return &domain.IPAddress{
+			IP:       ip,
+			Country:  "无效地址",
+			Province: "无效地址",
+			City:     "无效地址",
+		}, nil
+	}
 	if utils.IsPrivateOrReservedIP(ip) {
 		return &domain.IPAddress{
 			IP:       ip,
@@ -32,9 +41,9 @@ func (r *IPAddressRepo) GetIPAddress(ctx context.Context, ip string) (*domain.IP
 		r.logger.Error("failed to lookup ip address", log.Any("error", err), log.String("ip", ip))
 		return &domain.IPAddress{
 			IP:       ip,
-			Country:  "未知",
-			Province: "未知",
-			City:     "未知",
+			Country:  "未知地址",
+			Province: "未知地址",
+			City:     "未知地址",
 		}, nil
 	}
 	return info, nil
