@@ -31,19 +31,22 @@ const CardBasicInfo = ({ kb, refresh }: { kb: KnowledgeBaseListItem, refresh: ()
       setUrl(kb.access_settings.base_url)
       return
     }
+  }, [kb])
 
-    let defaultUrl: string = ''
+  const baseUrlPlaceholder = () => {
     const host = kb.access_settings?.hosts?.[0] || ''
-    if (!host) return
-
-    if (kb.access_settings.ssl_ports && kb.access_settings.ssl_ports.length > 0) {
-      defaultUrl = kb.access_settings.ssl_ports.includes(443) ? `https://${host}` : `https://${host}:${kb.access_settings.ssl_ports[0]}`
-    } else if (kb.access_settings.ports && kb.access_settings.ports.length > 0) {
-      defaultUrl = kb.access_settings.ports.includes(80) ? `http://${host}` : `http://${host}:${kb.access_settings.ports[0]}`
+    if (!host) {
+      return
     }
 
-    setUrl(defaultUrl)
-  }, [kb])
+    if (kb.access_settings.ssl_ports && kb.access_settings.ssl_ports.length > 0) {
+      return kb.access_settings.ssl_ports.includes(443) ? `https://${host}` : `https://${host}:${kb.access_settings.ssl_ports[0]}`
+    } else if (kb.access_settings.ports && kb.access_settings.ports.length > 0) {
+      return kb.access_settings.ports.includes(80) ? `http://${host}` : `http://${host}:${kb.access_settings.ports[0]}`
+    } else {
+      return ''
+    }
+  }
 
   return <>
     <Stack direction='row' alignItems={'center'} justifyContent={'space-between'} sx={{
@@ -84,7 +87,7 @@ const CardBasicInfo = ({ kb, refresh }: { kb: KnowledgeBaseListItem, refresh: ()
             handleSave()
           }
         }}
-        placeholder='请输入 Wiki 网站的根路径，用于生成访问链接，例如 https://wiki.panda.com'
+        placeholder={baseUrlPlaceholder()}
       />
     </Stack>
   </>
