@@ -1,11 +1,12 @@
 "use client";
 
-import { KBDetail, NodeListItem } from '@/assets/type';
+import { KBDetail, NodeListItem, WidgetInfo } from '@/assets/type';
 import { useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { createContext, useContext, useEffect, useState } from 'react';
 
 interface StoreContextType {
+  widget?: WidgetInfo
   kbDetail?: KBDetail
   kb_id?: string
   catalogShow?: boolean
@@ -18,6 +19,7 @@ interface StoreContextType {
 }
 
 export const StoreContext = createContext<StoreContextType>({
+  widget: undefined,
   kbDetail: undefined,
   kb_id: undefined,
   catalogShow: undefined,
@@ -33,28 +35,34 @@ export const useStore = () => useContext(StoreContext);
 
 export default function StoreProvider({
   children,
+  widget,
   kbDetail,
   kb_id,
   themeMode,
-  nodeList: initialNodeList,
+  nodeList: initialNodeList = [],
   mobile,
   token,
 }: StoreContextType & { children: React.ReactNode }) {
   const catalogSettings = kbDetail?.settings?.catalog_settings
   const [nodeList, setNodeList] = useState<NodeListItem[] | undefined>(initialNodeList);
   const [catalogShow, setCatalogShow] = useState(catalogSettings?.catalog_visible !== 2);
+  const [isMobile, setIsMobile] = useState(mobile);
   const theme = useTheme();
-
-  const isMobile = useMediaQuery(theme.breakpoints.down('lg'), {
-    defaultMatches: mobile,
+  const mediaQueryResult = useMediaQuery(theme.breakpoints.down('lg'), {
+    noSsr: true,
   });
 
   useEffect(() => {
-    setCatalogShow(catalogSettings?.catalog_visible !== 2);
+    if (kbDetail) setCatalogShow(catalogSettings?.catalog_visible !== 2);
   }, [kbDetail]);
+
+  useEffect(() => {
+    setIsMobile(mediaQueryResult);
+  }, [mediaQueryResult]);
 
   return <StoreContext.Provider
     value={{
+      widget,
       kbDetail,
       kb_id,
       themeMode,

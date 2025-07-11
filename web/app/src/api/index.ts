@@ -1,4 +1,4 @@
-import { KBDetail, NodeDetail, NodeListItem } from '@/assets/type';
+import { KBDetail, NodeDetail, NodeListItem, WidgetInfo } from '@/assets/type';
 
 interface ApiClientConfig {
   kb_id?: string;
@@ -62,6 +62,15 @@ class ApiClient {
     }, {
       kb_id,
       authToken,
+      cache: 'no-store',
+    });
+  }
+
+  async serverGetWidgetInfo(kb_id: string): Promise<Response<WidgetInfo>> {
+    return this.request(`/share/v1/app/widget/info`, {
+      method: 'GET',
+    }, {
+      kb_id,
       cache: 'no-store',
     });
   }

@@ -219,7 +219,7 @@ const darkTheme = createTheme(
       dark: {
         dark: '#000',
         main: '#14141B',
-        light: '#20232A',
+        light: '#202531',
         contrastText: '#fff',
       },
       light: {

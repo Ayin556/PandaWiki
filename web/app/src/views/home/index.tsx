@@ -13,7 +13,7 @@ import QuestionList from "./QuestionList";
 
 
 const Home = () => {
-  const { mobile = false, kbDetail, kb_id, themeMode = 'light', catalogShow, nodeList, token } = useStore()
+  const { mobile = false, kbDetail, themeMode = 'light', catalogShow, nodeList } = useStore()
 
   const catalogSetting = kbDetail?.settings?.catalog_settings
   const footerSetting = kbDetail?.settings?.footer_settings
