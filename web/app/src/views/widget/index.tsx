@@ -163,7 +163,7 @@ const Widget = () => {
             setConversation([])
           }}
         >
-          {widget?.settings?.icon ? <img src={widget?.settings?.icon} height={24} style={{ flexShrink: 0 }} />
+          {widget?.settings?.widget_bot_settings?.btn_logo || widget?.settings?.icon ? <img src={widget?.settings?.widget_bot_settings?.btn_logo || widget?.settings?.icon} height={24} style={{ flexShrink: 0 }} />
             : <IconLogo sx={{ fontSize: 24 }} />}
           <Ellipsis >{widget?.settings?.title || '在线客服'}</Ellipsis>
         </Stack>
@@ -259,7 +259,7 @@ const Widget = () => {
         color: 'primary.main'
       }
     }}>
-      本网站由
+      本插件由
       <Link href={'https://pandawiki.docs.baizhi.cloud/'} target='_blank' prefetch={false}>
         <Stack direction={'row'} alignItems={'center'} gap={0.5} sx={{
           cursor: 'pointer',
