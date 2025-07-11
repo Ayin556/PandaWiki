@@ -1,4 +1,4 @@
-import { createNode, ImportDocListItem, ImportDocProps, parseWikijs } from "@/api"
+import { createNode, ImportDocListItem, ImportDocProps, parseConfluence } from "@/api"
 import Upload from "@/components/UploadFile/Drag"
 import { useAppSelector } from "@/store"
 import { formatByte } from "@/utils"
@@ -27,7 +27,7 @@ const StepText = {
   }
 }
 
-const WikijsImport = ({ open, refresh, onCancel, parentId = null, size: defaultSize }: ImportDocProps) => {
+const ImportDocConfluence = ({ open, refresh, onCancel, parentId = null, size: defaultSize }: ImportDocProps) => {
 
   const { kb_id } = useAppSelector(state => state.config)
   const [step, setStep] = useState<keyof typeof StepText>('pull')
@@ -76,7 +76,7 @@ const WikijsImport = ({ open, refresh, onCancel, parentId = null, size: defaultS
         const formData = new FormData()
         formData.append("file", acceptedFiles[i])
         formData.append("kb_id", kb_id)
-        const pages = await parseWikijs(formData)
+        const pages = await parseConfluence(formData)
         for (const page of pages) {
           setItems(prev => [{ url: page.id, title: page.title, content: page.content, success: -1, id: '' }, ...prev])
         }
@@ -145,7 +145,7 @@ const WikijsImport = ({ open, refresh, onCancel, parentId = null, size: defaultS
   }
 
   return <Modal
-    title={`通过 Wiki.js 导入`}
+    title={`通过 Confluence 导入`}
     open={open}
     onCancel={handleCancel}
     onOk={handleOk}
@@ -165,7 +165,7 @@ const WikijsImport = ({ open, refresh, onCancel, parentId = null, size: defaultS
       />
       <Stack>
         <Box component='a'
-          href='https://pandawiki.docs.baizhi.cloud/node/01976929-0e76-77a9-aed9-842e60933464#%E9%80%9A%E8%BF%87%20Wiki.js%20%E5%AF%BC%E5%85%A5' target='_blank'
+          href='https://pandawiki.docs.baizhi.cloud/node/01976929-0e76-77a9-aed9-842e60933464#%E9%80%9A%E8%BF%87%20Confluence%20%E5%AF%BC%E5%85%A5' target='_blank'
           sx={{ fontSize: 12, color: 'primary.main', display: 'block', mt: 1 }}>
           使用方法
         </Box>
@@ -327,4 +327,4 @@ const WikijsImport = ({ open, refresh, onCancel, parentId = null, size: defaultS
   </Modal>
 }
 
-export default WikijsImport 
+export default ImportDocConfluence 
