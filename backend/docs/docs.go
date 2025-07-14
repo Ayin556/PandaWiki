@@ -2670,25 +2670,34 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "dingtalk_bot_client_id": {
-                    "description": "DingTalkBot",
                     "type": "string"
                 },
                 "dingtalk_bot_client_secret": {
                     "type": "string"
                 },
+                "dingtalk_bot_is_enabled": {
+                    "description": "DingTalkBot",
+                    "type": "boolean"
+                },
                 "dingtalk_bot_template_id": {
                     "type": "string"
                 },
-                "discord_bot_token": {
+                "discord_bot_is_enabled": {
                     "description": "DisCordBot",
+                    "type": "boolean"
+                },
+                "discord_bot_token": {
                     "type": "string"
                 },
                 "feishu_bot_app_id": {
-                    "description": "FeishuBot",
                     "type": "string"
                 },
                 "feishu_bot_app_secret": {
                     "type": "string"
+                },
+                "feishu_bot_is_enabled": {
+                    "description": "FeishuBot",
+                    "type": "boolean"
                 },
                 "footer_settings": {
                     "description": "footer settings",
@@ -2743,11 +2752,14 @@ const docTemplate = `{
                 "wechat_app_encodingaeskey": {
                     "type": "string"
                 },
+                "wechat_app_is_enabled": {
+                    "description": "WechatAppBot",
+                    "type": "boolean"
+                },
                 "wechat_app_secret": {
                     "type": "string"
                 },
                 "wechat_app_token": {
-                    "description": "WechatAppBot",
                     "type": "string"
                 },
                 "wechat_service_corpid": {
@@ -2756,11 +2768,14 @@ const docTemplate = `{
                 "wechat_service_encodingaeskey": {
                     "type": "string"
                 },
+                "wechat_service_is_enabled": {
+                    "description": "WechatServiceBot",
+                    "type": "boolean"
+                },
                 "wechat_service_secret": {
                     "type": "string"
                 },
                 "wechat_service_token": {
-                    "description": "WechatServiceBot",
                     "type": "string"
                 },
                 "welcome_str": {
@@ -2803,25 +2818,34 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "dingtalk_bot_client_id": {
-                    "description": "DingTalkBot",
                     "type": "string"
                 },
                 "dingtalk_bot_client_secret": {
                     "type": "string"
                 },
+                "dingtalk_bot_is_enabled": {
+                    "description": "DingTalkBot",
+                    "type": "boolean"
+                },
                 "dingtalk_bot_template_id": {
                     "type": "string"
                 },
-                "discord_bot_token": {
+                "discord_bot_is_enabled": {
                     "description": "DisCordBot",
+                    "type": "boolean"
+                },
+                "discord_bot_token": {
                     "type": "string"
                 },
                 "feishu_bot_app_id": {
-                    "description": "FeishuBot",
                     "type": "string"
                 },
                 "feishu_bot_app_secret": {
                     "type": "string"
+                },
+                "feishu_bot_is_enabled": {
+                    "description": "FeishuBot",
+                    "type": "boolean"
                 },
                 "footer_settings": {
                     "description": "footer settings",
@@ -2876,11 +2900,14 @@ const docTemplate = `{
                 "wechat_app_encodingaeskey": {
                     "type": "string"
                 },
+                "wechat_app_is_enabled": {
+                    "description": "WechatAppBot",
+                    "type": "boolean"
+                },
                 "wechat_app_secret": {
                     "type": "string"
                 },
                 "wechat_app_token": {
-                    "description": "WechatAppBot",
                     "type": "string"
                 },
                 "wechat_service_corpid": {
@@ -2889,11 +2916,14 @@ const docTemplate = `{
                 "wechat_service_encodingaeskey": {
                     "type": "string"
                 },
+                "wechat_service_is_enabled": {
+                    "description": "WechatServiceBot",
+                    "type": "boolean"
+                },
                 "wechat_service_secret": {
                     "type": "string"
                 },
                 "wechat_service_token": {
-                    "description": "WechatServiceBot",
                     "type": "string"
                 },
                 "welcome_str": {
