@@ -2,11 +2,9 @@ import { ChatConversationPair, ConversationDetail, getConversationDetail } from 
 import Avatar from "@/components/Avatar"
 import Card from "@/components/Card"
 import MarkDown from "@/components/MarkDown"
-import { FeedbackType } from "@/constant/enums"
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import { Accordion, AccordionDetails, AccordionSummary, Box, Stack, Tooltip, useTheme } from "@mui/material"
+import { Accordion, AccordionDetails, AccordionSummary, Box, Stack, useTheme } from "@mui/material"
 import { Ellipsis, Icon, Modal } from "ct-mui"
-import dayjs from "dayjs"
 import { useEffect, useState } from "react"
 
 
@@ -121,18 +119,6 @@ const Detail = ({ id, open, onClose }: { id: string, open: boolean, onClose: () 
                 <MarkDown content={item.assistant || '未查询到回答内容'} />
               </AccordionDetails>
             </Accordion>
-            {item.assistant && <Stack direction={'row'} alignItems={'center'} gap={2} sx={{ fontSize: 12, color: 'text.auxiliary', mt: 1 }}>
-              本答案由 PandaWiki 生成于 {dayjs(item.created_at).fromNow()}
-              <Tooltip placement="top" title={item.info.score === 1 ? '赞' : null}>
-                <Icon type={item.info.score === 1 ? 'icon-dianzan-xuanzhong1' : 'icon-dianzan-weixuanzhong'} sx={{ cursor: 'pointer' }} />
-              </Tooltip>
-              <Tooltip placement="top" title={(item.info.feedback_content || item.info.feedback_type === 1) ? <Box>
-                {item.info.feedback_type > 0 && <Box sx={{ fontSize: 12, mb: 0.5 }}>{FeedbackType[item.info.feedback_type as keyof typeof FeedbackType]}</Box>}
-                {item.info.feedback_content && <Box sx={{ fontSize: 12 }}>{item.info.feedback_content}</Box>}
-              </Box> : item.info.score === -1 ? '踩' : null}>
-                <Icon type={item.info.score === -1 ? 'icon-a-diancai-weixuanzhong2' : 'icon-diancai-weixuanzhong'} sx={{ cursor: 'pointer' }} />
-              </Tooltip>
-            </Stack>}
           </Box>
         ))}
       </Stack>
