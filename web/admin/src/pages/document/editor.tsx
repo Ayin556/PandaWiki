@@ -3,7 +3,7 @@ import { useAppDispatch } from "@/store";
 import { setKbId } from "@/store/slices/config";
 import { Box, Stack, useMediaQuery } from "@mui/material";
 import { Message } from "ct-mui";
-import { TiptapEditor, TiptapToolbar, useTiptapEditor, UseTiptapEditorReturn } from 'ct-tiptap-editor';
+import { TiptapEditor, TiptapToolbar, useTiptapEditor } from 'ct-tiptap-editor';
 import dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -68,7 +68,7 @@ const DocEditor = () => {
     return Promise.resolve('/static-file/' + key)
   }
 
-  const editorObj = useRef<UseTiptapEditorReturn>(useTiptapEditor({
+  const editorRef = useTiptapEditor({
     content: '',
     immediatelyRender: true,
     size: 100,
@@ -79,9 +79,7 @@ const DocEditor = () => {
     onError: (error: Error) => {
       Message.error(error.message)
     }
-  }))
-
-  const editorRef = editorObj.current
+  })
 
   const getDetail = (unCover?: boolean) => {
     getNodeDetail({ id }).then(res => {
@@ -105,7 +103,7 @@ const DocEditor = () => {
 
   useEffect(() => {
     cancelTimer()
-    if (detail && editorRef) {
+    if (editorRef) {
       editorRef.setContent(docContent || '').then((headings) => {
         setHeadings(headings)
         setMaxH(Math.min(...headings.map(h => h.heading)))
@@ -116,20 +114,16 @@ const DocEditor = () => {
   }, [docContent])
 
   useEffect(() => {
-    if (id && !detail && editorRef) {
+    if (id && editorRef) {
       cancelTimer()
-      getDetail()
-    }
-  }, [id, detail, editorRef])
-
-  useEffect(() => {
-    if (id) {
       getDetail()
       setTimeout(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' })
       }, 60)
     }
+  }, [id])
 
+  useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.hidden && edited) {
         handleSave(true)
@@ -139,7 +133,7 @@ const DocEditor = () => {
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
-  }, [id])
+  }, [])
 
   if (!editorRef) return <></>
 
