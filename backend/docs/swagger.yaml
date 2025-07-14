@@ -383,6 +383,10 @@ definitions:
         $ref: '#/definitions/domain.AppType'
       created_at:
         type: string
+      feedback_info:
+        allOf:
+        - $ref: '#/definitions/domain.FeedBackInfo'
+        description: 用户反馈信息
       id:
         type: string
       info:
@@ -410,6 +414,10 @@ definitions:
         type: string
       id:
         type: string
+      info:
+        allOf:
+        - $ref: '#/definitions/domain.FeedBackInfo'
+        description: feedbackinfo
       model:
         type: string
       prompt_tokens:
@@ -571,6 +579,47 @@ definitions:
       title:
         type: string
     type: object
+  domain.FeedBackInfo:
+    properties:
+      feedback_content:
+        type: string
+      feedback_type:
+        $ref: '#/definitions/domain.FeedbackType'
+      score:
+        $ref: '#/definitions/domain.ScoreType'
+    type: object
+  domain.FeedbackRequest:
+    properties:
+      conversation_id:
+        type: string
+      feedback_content:
+        description: 限制内容长度
+        maxLength: 200
+        type: string
+      message_id:
+        type: string
+      score:
+        allOf:
+        - $ref: '#/definitions/domain.ScoreType'
+        description: -1 踩 ,0 1 赞成
+      type:
+        allOf:
+        - $ref: '#/definitions/domain.FeedbackType'
+        description: 1 内容不准确，2 没有帮助，3 其他
+    required:
+    - conversation_id
+    - message_id
+    type: object
+  domain.FeedbackType:
+    enum:
+    - 1
+    - 2
+    - 3
+    type: integer
+    x-enum-varnames:
+    - ContentErr
+    - NoHelp
+    - Other
   domain.FooterSettings:
     properties:
       brand_desc:
@@ -1061,6 +1110,14 @@ definitions:
       success:
         type: boolean
     type: object
+  domain.ScoreType:
+    enum:
+    - 1
+    - -1
+    type: integer
+    x-enum-varnames:
+    - Like
+    - DisLike
   domain.ScrapeReq:
     properties:
       kb_id:
@@ -2786,6 +2843,28 @@ paths:
       summary: GetWidgetAppInfo
       tags:
       - share_app
+  /share/v1/chat/feedback:
+    post:
+      consumes:
+      - application/json
+      description: Process user feedback for chat conversations
+      parameters:
+      - description: feedback request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.FeedbackRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Response'
+      summary: Handle chat feedback
+      tags:
+      - share_chat
   /share/v1/chat/message:
     post:
       consumes:
