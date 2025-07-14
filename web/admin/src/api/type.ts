@@ -422,9 +422,11 @@ export type GetConversationListData = {
 
 export type ConversationListItem = {
   app_name: string,
+  app_type: keyof typeof AppType,
   created_at: string,
   id: string,
   model: string,
+  feedback_info: FeedbackInfo
   ip_address: {
     city: string,
     country: string,
@@ -443,6 +445,12 @@ export type ConversationListItem = {
       real_name?: string
     }
   }
+}
+
+export type FeedbackInfo = {
+  feedback_content: string,
+  feedback_type: number,
+  score: number,
 }
 
 export type ConversationDetail = {
@@ -464,6 +472,7 @@ export type ConversationDetail = {
     remote_ip: string,
     role: 'assistant' | 'user',
     total_tokens: number
+    info: FeedbackInfo
   }[],
   references: {
     app_id: string,
@@ -482,7 +491,13 @@ export type ChatConversationItem = {
 
 export type ChatConversationPair = {
   user: string,
-  assistant: string
+  assistant: string,
+  created_at: string,
+  info: {
+    feedback_content: string,
+    feedback_type: number,
+    score: number,
+  }
 }
 
 export type ImportDocType = 'URL' | 'RSS' | 'Sitemap' | 'OfflineFile' | 'Notion' | 'Epub' | 'Wiki.js' | 'Feishu' | 'Confluence'
