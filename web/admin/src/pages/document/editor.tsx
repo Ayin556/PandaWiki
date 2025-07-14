@@ -116,8 +116,14 @@ const DocEditor = () => {
   }, [docContent])
 
   useEffect(() => {
-    if (id) {
+    if (id && !detail && editorRef) {
       cancelTimer()
+      getDetail()
+    }
+  }, [id, detail, editorRef])
+
+  useEffect(() => {
+    if (id) {
       getDetail()
       setTimeout(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' })

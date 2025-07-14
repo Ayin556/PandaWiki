@@ -31,7 +31,7 @@ export const IconMap = {
 
 export const AppType = {
   1: {
-    label: 'Wiki 站点',
+    label: 'Wiki 网站',
     icon: 'icon-a-Webyingyong',
   },
   2: {
