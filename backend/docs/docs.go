@@ -2340,6 +2340,40 @@ const docTemplate = `{
                 }
             }
         },
+        "/share/v1/chat/feedback": {
+            "post": {
+                "description": "Process user feedback for chat conversations",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "share_chat"
+                ],
+                "summary": "Handle chat feedback",
+                "parameters": [
+                    {
+                        "description": "feedback request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.FeedbackRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/share/v1/chat/message": {
             "post": {
                 "description": "ChatMessage",
@@ -3103,6 +3137,14 @@ const docTemplate = `{
                 "created_at": {
                     "type": "string"
                 },
+                "feedback_info": {
+                    "description": "用户反馈信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.FeedBackInfo"
+                        }
+                    ]
+                },
                 "id": {
                     "type": "string"
                 },
@@ -3145,6 +3187,14 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "string"
+                },
+                "info": {
+                    "description": "feedbackinfo",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.FeedBackInfo"
+                        }
+                    ]
                 },
                 "model": {
                     "type": "string"
@@ -3388,6 +3438,69 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "domain.FeedBackInfo": {
+            "type": "object",
+            "properties": {
+                "feedback_content": {
+                    "type": "string"
+                },
+                "feedback_type": {
+                    "$ref": "#/definitions/domain.FeedbackType"
+                },
+                "score": {
+                    "$ref": "#/definitions/domain.ScoreType"
+                }
+            }
+        },
+        "domain.FeedbackRequest": {
+            "type": "object",
+            "required": [
+                "conversation_id",
+                "message_id"
+            ],
+            "properties": {
+                "conversation_id": {
+                    "type": "string"
+                },
+                "feedback_content": {
+                    "description": "限制内容长度",
+                    "type": "string",
+                    "maxLength": 200
+                },
+                "message_id": {
+                    "type": "string"
+                },
+                "score": {
+                    "description": "-1 踩 ,0 1 赞成",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.ScoreType"
+                        }
+                    ]
+                },
+                "type": {
+                    "description": "1 内容不准确，2 没有帮助，3 其他",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.FeedbackType"
+                        }
+                    ]
+                }
+            }
+        },
+        "domain.FeedbackType": {
+            "type": "integer",
+            "enum": [
+                1,
+                2,
+                3
+            ],
+            "x-enum-varnames": [
+                "ContentErr",
+                "NoHelp",
+                "Other"
+            ]
         },
         "domain.FooterSettings": {
             "type": "object",
@@ -4118,6 +4231,17 @@ const docTemplate = `{
                     "type": "boolean"
                 }
             }
+        },
+        "domain.ScoreType": {
+            "type": "integer",
+            "enum": [
+                1,
+                -1
+            ],
+            "x-enum-varnames": [
+                "Like",
+                "DisLike"
+            ]
         },
         "domain.ScrapeReq": {
             "type": "object",
