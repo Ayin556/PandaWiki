@@ -1,4 +1,4 @@
-import { getNodeDetail, NodeDetail, updateNode, uploadFile } from "@/api";
+import { getNodeDetail, NodeDetail, NodeReleaseDetail, NodeReleaseItem, updateNode, uploadFile } from "@/api";
 import { useAppDispatch } from "@/store";
 import { setKbId } from "@/store/slices/config";
 import { Box, Stack, useMediaQuery } from "@mui/material";
@@ -12,6 +12,7 @@ import EditorDocNav from "./component/EditorDocNav";
 import EditorFolder from "./component/EditorFolder";
 import EditorHeader from "./component/EditorHeader";
 import EditorSummary from "./component/EditorSummary";
+import VersionList from "./component/VersionList";
 
 const DocEditor = () => {
   const timer = useRef<NodeJS.Timeout | null>(null)
@@ -24,13 +25,15 @@ const DocEditor = () => {
   const [headings, setHeadings] = useState<{ id: string, title: string, heading: number }[]>([])
   const [maxH, setMaxH] = useState(0)
   const [publishOpen, setPublishOpen] = useState(false)
+  const [showVersion, setShowVersion] = useState(false)
+  const [curVersion, setCurVersion] = useState<(NodeReleaseDetail & { release: NodeReleaseItem }) | null>(null)
 
   const handleSave = async (auto?: boolean, publish?: boolean, html?: string) => {
     if (!editorRef || !detail) return
-    cancelTimer()
     const content = html || editorRef.getHtml()
+    cancelTimer()
     try {
-      await updateNode({ id, content, kb_id: detail.kb_id })
+      await updateNode({ id, content, kb_id: detail.kb_id, emoji: detail.meta.emoji, summary: detail.meta.summary, name: detail.name })
       setDetail({
         ...detail,
         updated_at: dayjs().format('YYYY-MM-DD HH:mm:ss'),
@@ -102,6 +105,14 @@ const DocEditor = () => {
   }
 
   useEffect(() => {
+    if (showVersion) {
+      cancelTimer()
+    } else {
+      resetTimer()
+    }
+  }, [showVersion])
+
+  useEffect(() => {
     cancelTimer()
     if (editorRef) {
       editorRef.setContent(docContent || '').then((headings) => {
@@ -155,20 +166,26 @@ const DocEditor = () => {
           edited={edited}
           detail={detail}
           setDetail={setDetail}
+          setDocContent={setDocContent}
           editorRef={editorRef}
           resetTimer={resetTimer}
           cancelTimer={cancelTimer}
+          showVersion={showVersion}
+          curVersion={curVersion}
+          setShowVersion={setShowVersion}
           onSave={(auto, publish) => handleSave(auto, publish)}
         />
       </Box>
-      <Box sx={{
+      {!showVersion && <Box sx={{
         width: 900,
         margin: 'auto',
       }}>
         <TiptapToolbar editorRef={editorRef} />
-      </Box>
+      </Box>}
     </Box>
-    <Box sx={{
+    {showVersion ? <VersionList
+      changeVersion={setCurVersion}
+    /> : <Box sx={{
       pt: '105px',
       display: 'flex',
       justifyContent: 'center',
@@ -225,17 +242,17 @@ const DocEditor = () => {
               summary={detail?.meta.summary || ''}
               resetTimer={resetTimer}
               cancelTimer={cancelTimer}
-              refresh={() => getDetail(true)}
+              detail={detail}
+              setDetail={setDetail}
             />
             <EditorDocNav
-              title={detail?.name}
               headers={headings}
               maxH={maxH}
             />
           </Stack>
         </Box>
       )}
-    </Box>
+    </Box>}
     <VersionPublish
       open={publishOpen}
       defaultSelected={[id]}

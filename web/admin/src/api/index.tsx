@@ -18,6 +18,8 @@ import {
   NodeDetail,
   NodeListFilterData,
   NodeListItem,
+  NodeReleaseDetail,
+  NodeReleaseItem,
   Paging,
   RecommendNode,
   RefererHostItem,
@@ -110,6 +112,12 @@ export const createNodeSummary = (data: CreateNodeSummaryData): Promise<{ summar
 
 export const getNodeRecommend = (params: GetNodeRecommendData): Promise<RecommendNode[]> =>
   request({ url: 'api/v1/node/recommend_nodes', method: 'get', params })
+
+export const getNodeReleaseList = (params: { kb_id: string, node_id: string }): Promise<NodeReleaseItem[]> =>
+  request({ url: 'api/v1/node/release/list', method: 'get', params })
+
+export const getNodeReleaseDetail = (params: { id: string }): Promise<NodeReleaseDetail> =>
+  request({ url: 'api/v1/node/release/detail', method: 'get', params })
 
 // =============================================》crawler
 

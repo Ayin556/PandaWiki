@@ -55,10 +55,10 @@ const Conversation = () => {
           {value?.feedback_type > 0 && <Box>{FeedbackType[value?.feedback_type as keyof typeof FeedbackType]}</Box>}
           {value?.feedback_content && <Box>{value?.feedback_content}</Box>}
         </Box>}>
-          <Stack direction={'row'} alignItems={'center'} gap={0.5} sx={{ cursor: 'pointer' }}>
-            {value?.score === 1 ? <Icon type='icon-dianzan-xuanzhong1' sx={{ cursor: 'pointer', color: 'success.main', fontSize: 12 }} />
-              : value?.score === -1 ? <Icon type='icon-a-diancai-weixuanzhong2' sx={{ cursor: 'pointer', color: 'error.main', fontSize: 12 }} />
-                : <Icon type='icon-dianzan-weixuanzhong' />}
+          <Stack direction={'row'} alignItems={'center'} gap={0.5} sx={{ cursor: 'pointer', fontSize: 14 }}>
+            {value?.score === 1 ? <Icon type='icon-dianzan-xuanzhong1' sx={{ cursor: 'pointer', color: 'success.main' }} />
+              : value?.score === -1 ? <Icon type='icon-a-diancai-weixuanzhong2' sx={{ cursor: 'pointer', color: 'error.main' }} />
+                : <Icon type='icon-dianzan-weixuanzhong' sx={{ color: 'text.disabled' }} />}
           </Stack>
         </Tooltip>
       }
