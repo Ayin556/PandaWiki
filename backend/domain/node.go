@@ -240,3 +240,30 @@ type BatchMoveReq struct {
 	KBID     string   `json:"kb_id" validate:"required"`
 	ParentID string   `json:"parent_id"`
 }
+
+type NodeReleaseListItem struct {
+	ID        string    `json:"id"`
+	NodeID    string    `json:"node_id"`
+	Name      string    `json:"name"`
+	Meta      NodeMeta  `json:"meta"`
+	UpdatedAt time.Time `json:"updated_at"`
+	// release
+	ReleaseID      string `json:"release_id"`
+	ReleaseTag     string `json:"release_name" gorm:"-"`
+	ReleaseMessage string `json:"release_message" gorm:"-"`
+}
+
+type GetNodeReleaseListReq struct {
+	KBID   string `json:"kb_id" validate:"required" query:"kb_id"`
+	NodeID string `json:"node_id" validate:"required" query:"node_id"`
+}
+
+type GetNodeReleaseDetailReq struct {
+	ID string `json:"id" validate:"required" query:"id"`
+}
+
+type GetNodeReleaseDetailResp struct {
+	Name    string   `json:"name"`
+	Meta    NodeMeta `json:"meta"`
+	Content string   `json:"content"`
+}
