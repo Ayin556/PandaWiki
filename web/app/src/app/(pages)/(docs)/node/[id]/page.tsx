@@ -26,8 +26,7 @@ export async function generateMetadata(
 
 async function getNodeDetail(id: string, kb_id: string, authToken: string) {
   const result = await apiClient.serverGetNodeDetail(id, kb_id, authToken);
-  if (result.error) {
-    console.error('ss Error fetching document content:', result.error);
+  if (result.success) {
     return undefined;
   }
   return result.data;

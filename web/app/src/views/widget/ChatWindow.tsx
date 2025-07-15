@@ -63,7 +63,7 @@ const ChatWindow = ({
         return item.message_id === message_id ? { ...item, score } : item
       }))
     } else {
-      message.error(res.error || '反馈失败')
+      message.error(res.message || '反馈失败')
     }
   }
 

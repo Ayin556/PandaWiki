@@ -65,13 +65,13 @@ const ChatResult = ({ conversation, conversation_id, answer, loading, thinking, 
     if (type) data.type = type
     if (content) data.feedback_content = content
     const res = await apiClient.clientFeedback(data)
-    if (res.status === 200) {
+    if (res.success) {
       message.success('反馈成功')
       setConversation(conversation.map(item => {
         return item.message_id === message_id ? { ...item, score } : item
       }))
     } else {
-      message.error(res.error || '反馈失败')
+      message.error(res.message || '反馈失败')
     }
   }
 
