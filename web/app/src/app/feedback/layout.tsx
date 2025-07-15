@@ -1,11 +1,10 @@
-import { apiClient } from '@/api';
 import StoreProvider from '@/provider';
 import { lightTheme } from '@/theme';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import { ThemeProvider } from 'ct-mui';
 import localFont from 'next/font/local';
 import { headers } from 'next/headers';
-import React, { cache } from 'react';
+import React from 'react';
 
 const gilory = localFont({
   variable: '--font-gilory',
@@ -25,14 +24,6 @@ const gilory = localFont({
   ],
 });
 
-const getWidgetDetailCached = cache(async (kb_id: string) => {
-  const result = await apiClient.serverGetWidgetInfo(kb_id);
-  if (result.error) {
-    return undefined;
-  }
-  return result.data;
-})
-
 const Layout = async ({
   children,
 }: Readonly<{
@@ -40,7 +31,6 @@ const Layout = async ({
 }>) => {
   const headersList = await headers()
   const kb_id = headersList.get('x-kb-id') || process.env.DEV_KB_ID || ''
-  const widgetDetail = await getWidgetDetailCached(kb_id)
 
   return <html lang="en">
     <body className={`${gilory.variable}`}>
@@ -48,7 +38,6 @@ const Layout = async ({
         <AppRouterCacheProvider>
           <StoreProvider
             kb_id={kb_id}
-            widget={widgetDetail}
             themeMode={'light'}
           >
             {children}

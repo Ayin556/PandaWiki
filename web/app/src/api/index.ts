@@ -11,7 +11,8 @@ interface ApiClientConfig {
 interface Response<T> {
   data?: T;
   status: number;
-  error?: string;
+  message?: string;
+  success?: boolean;
 }
 
 class ApiClient {
@@ -46,12 +47,16 @@ class ApiClient {
         ...(cache && { cache }),
       });
       if (!response.ok) {
-        return { status: response.status, error: `HTTP error! status: ${response.status}` };
+        console.error(`HTTP error! status: ${response.status}`)
+        return { status: response.status, message: `HTTP error! status: ${response.status}` };
       }
       const result = await response.json();
-      return { data: result.data, status: response.status };
+      if (result.success === false) {
+        console.error(result.message);
+      }
+      return { ...result, status: response.status };
     } catch (error) {
-      return { status: 500, error: error instanceof Error ? error.message : 'Unknown error' };
+      return { status: 500, message: error instanceof Error ? error.message : 'Unknown error' };
     }
   }
 
@@ -159,7 +164,10 @@ class ApiClient {
     type: number,
     score: number,
     feedback_content?: string
-  }): Promise<Response<void>> {
+  }): Promise<Response<{
+    success: boolean
+    message: string
+  }>> {
     return this.request(window?.location.origin + '/client/v1/chat/feedback', {
       method: 'POST',
       body: JSON.stringify({

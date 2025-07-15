@@ -9,6 +9,7 @@ import { VisitSceneNode } from "@/constant";
 import { useStore } from "@/provider";
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { Box, Fab, Stack, Zoom } from "@mui/material";
+import { message } from "ct-mui";
 import { useTiptapEditor } from "ct-tiptap-editor";
 import Image from "next/image";
 import { useParams } from "next/navigation";
@@ -85,8 +86,12 @@ const Doc = ({ node: defaultNode, token }: { node?: NodeDetail, token?: string }
   const getData = async (id: string) => {
     try {
       const result = await apiClient.clientGetNodeDetail(id, kb_id || '', token);
-      setNode(result.data);
-      if (document) document.title = kbDetail?.name + ' - ' + result.data?.name
+      if (result.success) {
+        setNode(result.data);
+        if (document) document.title = kbDetail?.name + ' - ' + result.data?.name
+      } else {
+        message.error(result.message || 'Failed to fetch')
+      }
     } catch (error) {
       console.error('page Error fetching document content:', error);
     }

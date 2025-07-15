@@ -37,11 +37,11 @@ const Feedback = () => {
     if (type > 0) data.type = type
     if (content) data.feedback_content = content
     const res = await apiClient.clientFeedback(data)
-    if (res.status === 200) {
+    if (res.success) {
       setSuccess(true)
       message.success('反馈成功')
     } else {
-      message.error(res.error)
+      message.error(res.message || '反馈失败')
     }
   }
 
