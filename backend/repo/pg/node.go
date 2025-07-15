@@ -595,3 +595,36 @@ func (r *NodeRepository) BatchMove(ctx context.Context, req *domain.BatchMoveReq
 		return nil
 	})
 }
+
+func (r *NodeRepository) GetNodeReleaseListByKBIDNodeID(ctx context.Context, kbID, nodeID string) ([]*domain.NodeReleaseListItem, error) {
+	subQuery := r.db.
+		Model(&domain.KBReleaseNodeRelease{}).
+		Select("release_id").
+		Where("node_release_id = node_releases.id").
+		Order("created_at ASC").
+		Limit(1)
+
+	var nodeReleases []*domain.NodeReleaseListItem
+	if err := r.db.WithContext(ctx).
+		Model(&domain.NodeRelease{}).
+		Select("node_releases.id, node_releases.node_id, node_releases.meta, node_releases.name, node_releases.updated_at, (?) as release_id", subQuery).
+		Where("node_releases.kb_id = ?", kbID).
+		Where("node_releases.node_id = ?", nodeID).
+		Order("node_releases.updated_at DESC").
+		Find(&nodeReleases).Error; err != nil {
+		return nil, err
+	}
+
+	return nodeReleases, nil
+}
+
+func (r *NodeRepository) GetNodeReleaseDetailByID(ctx context.Context, id string) (*domain.GetNodeReleaseDetailResp, error) {
+	var nodeRelease domain.GetNodeReleaseDetailResp
+	if err := r.db.WithContext(ctx).
+		Model(&domain.NodeRelease{}).
+		Where("id = ?", id).
+		First(&nodeRelease).Error; err != nil {
+		return nil, err
+	}
+	return &nodeRelease, nil
+}
