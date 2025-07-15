@@ -116,7 +116,9 @@ func (e *EpubConverter) Convert(ctx context.Context, kbID string, data []byte) (
 	result := bytes.NewBuffer(nil)
 	for _, href := range p.Guide.References {
 		if r, ok := res[clearFileName(href.Href)]; ok {
-			io.Copy(result, r)
+			if _, err := io.Copy(result, r); err != nil {
+				return "", nil, err
+			}
 			result.WriteString("\n\n")
 		}
 	}
@@ -133,7 +135,9 @@ func (e *EpubConverter) Convert(ctx context.Context, kbID string, data []byte) (
 		e.logger.Debug("add File", "file name", clearFileName(e.resourcesIdMap[itemRef.IDRef].Href))
 		if r, ok := res[clearFileName(e.resourcesIdMap[itemRef.IDRef].Href)]; ok {
 			result.WriteString("<span id=" + title + "></span>\n\n")
-			io.Copy(result, r)
+			if _, err := io.Copy(result, r); err != nil {
+				return "", nil, err
+			}
 			result.WriteString("\n\n")
 		}
 	}
@@ -258,7 +262,9 @@ func getFullPath(zipReader *zip.Reader) (string, error) {
 			defer r.Close()
 			de := xml.NewDecoder(r)
 			var c Container
-			de.Decode(&c)
+			if err := de.Decode(&c); err != nil {
+				return "", fmt.Errorf("failed to decode container.xml: %w", err)
+			}
 			if c.Rootfiles.Rootfile[0].FullPath == "" {
 				return "", errors.New("full-path not found in container.xml")
 			}
@@ -277,7 +283,9 @@ func valid(zipReader *zip.Reader) error {
 			}
 			defer r.Close()
 			var buf bytes.Buffer
-			buf.ReadFrom(r)
+			if _, err := buf.ReadFrom(r); err != nil {
+				return fmt.Errorf("failed to read mimetype: %w", err)
+			}
 			if buf.String() != "application/epub+zip" {
 				return errors.New("invalid mimetype")
 			}
@@ -345,7 +353,9 @@ func getOpf(zipReader *zip.Reader) (*Package, error) {
 			defer r.Close()
 			var p Package
 			de := xml.NewDecoder(r)
-			de.Decode(&p)
+			if err := de.Decode(&p); err != nil {
+				return nil, fmt.Errorf("解码OPF文件失败: %v", err)
+			}
 			return &p, nil
 		}
 	}

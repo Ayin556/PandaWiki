@@ -61,7 +61,7 @@ func (f *FeishuUseCase) GetSpacelist(ctx context.Context, req *domain.GetSpaceLi
 
 		f.logger.Debug("token", log.String("token", req.UserAccessToken))
 		// 发起请求
-		resp, err := client.Wiki.V2.Space.List(
+		resp, err := client.Wiki.Space.List(
 			ctx,
 			r,
 			larkcore.WithUserAccessToken(req.UserAccessToken))
@@ -248,7 +248,7 @@ func searchDocx(ctx context.Context, client *lark.Client, accessToken, folderTok
 	}
 
 	// 发送请求
-	resp, err := client.Drive.V1.File.List(
+	resp, err := client.Drive.File.List(
 		ctx, // 使用传入的context
 		builder.Build(),
 		larkcore.WithUserAccessToken(accessToken),
@@ -260,7 +260,6 @@ func searchDocx(ctx context.Context, client *lark.Client, accessToken, folderTok
 		}
 	}
 	if err != nil {
-
 		select {
 		case errChan <- fmt.Errorf("search doc failed: %w", err):
 		case <-ctx.Done():
@@ -323,7 +322,9 @@ func (f *FeishuUseCase) downloadDocument(ctx context.Context, appID, secret, url
 	}
 	// 清理图像临时存储目录
 	defer func() {
-		os.RemoveAll(dlConfig.Output.ImageDir)
+		if err := os.RemoveAll(dlConfig.Output.ImageDir); err != nil {
+			f.logger.Error("清理图像临时存储目录失败", log.Error(err))
+		}
 	}()
 	docType, docToken, err := fershu2mdUtil.ValidateDocumentURL(url)
 	if err != nil {
@@ -421,7 +422,7 @@ func (f *FeishuUseCase) downloadFile(ctx context.Context, appID, secret, fileTok
 		Build()
 
 	// 发起请求
-	resp, err := client.Drive.V1.File.Download(ctx, req)
+	resp, err := client.Drive.File.Download(ctx, req)
 	// 处理错误
 	if err != nil {
 		fmt.Println(err)
@@ -431,7 +432,7 @@ func (f *FeishuUseCase) downloadFile(ctx context.Context, appID, secret, fileTok
 	// 服务端错误处理
 	if !resp.Success() {
 		fmt.Printf("logId: %s, error response: \n%s", resp.RequestId(), larkcore.Prettify(resp.CodeError))
-		return "", "", fmt.Errorf("下载文件失败: %s", resp.CodeError.Msg)
+		return "", "", fmt.Errorf("下载文件失败: %s", resp.Msg)
 	}
 
 	// 业务处理
@@ -506,7 +507,7 @@ func getSheetInfo(ctx context.Context, appID, secret, sheetToken, usserAccessTok
 		Build()
 
 	// 发起请求
-	resp, err := client.Sheets.V3.Spreadsheet.Get(ctx, req, larkcore.WithUserAccessToken(usserAccessToken))
+	resp, err := client.Sheets.Spreadsheet.Get(ctx, req, larkcore.WithUserAccessToken(usserAccessToken))
 	if err != nil {
 		return nil, err
 	}
@@ -665,12 +666,12 @@ func (f *FeishuUseCase) getExportTask(ctx context.Context, appID, secret, ticket
 		Build()
 
 	// 发起请求
-	resp, err := client.Drive.V1.ExportTask.Get(ctx, req, larkcore.WithUserAccessToken(userAccessToken))
+	resp, err := client.Drive.ExportTask.Get(ctx, req, larkcore.WithUserAccessToken(userAccessToken))
 	if err != nil {
 		return nil, fmt.Errorf("get export task failed: %v", err)
 	}
 	if !resp.Success() {
-		return nil, fmt.Errorf("get export task failed: %s", resp.CodeError.Msg)
+		return nil, fmt.Errorf("get export task failed: %s", resp.Msg)
 	}
 
 	return &getExportTaskResp{
@@ -687,7 +688,7 @@ func (f *FeishuUseCase) downloadExportTask(ctx context.Context, appID, secret, f
 		Build()
 
 	// 发起请求
-	resp, err := client.Drive.V1.ExportTask.Download(ctx, req, larkcore.WithUserAccessToken(userAccessToken))
+	resp, err := client.Drive.ExportTask.Download(ctx, req, larkcore.WithUserAccessToken(userAccessToken))
 	// 处理错误
 	if err != nil {
 		return "", nil, fmt.Errorf("下载文件失败: %v", err)
@@ -707,7 +708,7 @@ func (f *FeishuUseCase) creatExportTask(ctx context.Context, appID, secret, toke
 				Build()).
 			Build()
 
-		resp, err := client.Drive.V1.ExportTask.Create(ctx, req, larkcore.WithUserAccessToken(userAccessToken))
+		resp, err := client.Drive.ExportTask.Create(ctx, req, larkcore.WithUserAccessToken(userAccessToken))
 		if err != nil {
 			return ""
 		}
@@ -733,7 +734,7 @@ func (f *FeishuUseCase) getSheets(ctx context.Context, appID, secret, sheetToken
 		Build()
 
 	// 发起请求
-	resp, err := client.Sheets.V3.SpreadsheetSheet.Query(ctx, req, larkcore.WithUserAccessToken(userAccessToken))
+	resp, err := client.Sheets.SpreadsheetSheet.Query(ctx, req, larkcore.WithUserAccessToken(userAccessToken))
 	// 处理错误
 	if err != nil {
 		f.logger.Error("get sheets failed", log.Error(err))
@@ -743,7 +744,7 @@ func (f *FeishuUseCase) getSheets(ctx context.Context, appID, secret, sheetToken
 	// 服务端错误处理
 	if !resp.Success() {
 		f.logger.Error("get sheets failed", log.String("logId", resp.RequestId()), log.String("error", larkcore.Prettify(resp.CodeError)))
-		return nil, fmt.Errorf("get sheets failed: %s", resp.CodeError.Msg)
+		return nil, fmt.Errorf("get sheets failed: %s", resp.Msg)
 	}
 	return resp.Data.Sheets, nil
 }

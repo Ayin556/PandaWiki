@@ -48,7 +48,7 @@ type AccessToken struct {
 	ExpiresIn   int    `json:"expires_in"`
 }
 
-type Msgrequest struct {
+type MsgRequest struct {
 	Cursor      string `json:"cursor"`
 	Token       string `json:"token"`
 	Limit       int    `json:"limit"`
@@ -365,7 +365,7 @@ func getMsgs(accessToken string, msg *WeixinUserAskMsg) (*MsgRet, error) {
 	url := fmt.Sprintf("https://qyapi.weixin.qq.com/cgi-bin/kf/sync_msg?access_token=%s", accessToken)
 	cursor := getCursor(msg.OpenKfId)
 
-	var msgBody Msgrequest = Msgrequest{
+	msgBody := MsgRequest{
 		OpenKfid:    msg.OpenKfId,
 		Token:       msg.Token,
 		Limit:       1000,
@@ -386,7 +386,9 @@ func getMsgs(accessToken string, msg *WeixinUserAskMsg) (*MsgRet, error) {
 		return nil, err
 	}
 	// 反序列化之后
-	json.Unmarshal([]byte(string(body)), &msgRet)
+	if err := json.Unmarshal([]byte(string(body)), &msgRet); err != nil {
+		return nil, err
+	}
 	return &msgRet, nil
 }
 
@@ -473,14 +475,14 @@ func ChangeState(token, extrenaluserid, kfId string) error {
 }
 
 func GetUserInfo(userid string, accessToken string) (*Customer, error) {
-	var uerinforequest UerInfoRequest = UerInfoRequest{
+	userInfoRequest := UerInfoRequest{
 		UserID:         []string{userid},
 		SessionContext: 0,
 	}
 	// 请求获取用户信息的url
 	url := fmt.Sprintf("https://qyapi.weixin.qq.com/cgi-bin/kf/customer/batchget?access_token=%s", accessToken)
 
-	jsonBody, err := json.Marshal(uerinforequest)
+	jsonBody, err := json.Marshal(userInfoRequest)
 	if err != nil {
 		return nil, err
 	}
