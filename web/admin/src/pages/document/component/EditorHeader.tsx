@@ -12,7 +12,6 @@ import { useState } from "react"
 import VersionRollback from "./VersionRollback"
 
 interface EditorHeaderProps {
-  edited: boolean
   editorRef: UseTiptapEditorReturn
   detail: NodeDetail | null
   setDetail?: (data: NodeDetail) => void
@@ -25,7 +24,7 @@ interface EditorHeaderProps {
   curVersion: (NodeReleaseDetail & { release: NodeReleaseItem }) | null
 }
 
-const EditorHeader = ({ edited, editorRef, detail, onSave, resetTimer, cancelTimer, setDetail, setShowVersion, showVersion, curVersion, setDocContent }: EditorHeaderProps) => {
+const EditorHeader = ({ editorRef, detail, onSave, resetTimer, cancelTimer, setDetail, setShowVersion, showVersion, curVersion, setDocContent }: EditorHeaderProps) => {
   const editor = editorRef?.editor || null
   const theme = useTheme()
   const { kb_id } = useAppSelector(state => state.config)
@@ -41,6 +40,7 @@ const EditorHeader = ({ edited, editorRef, detail, onSave, resetTimer, cancelTim
       name: curVersion.name,
       content: curVersion.content,
       meta: curVersion.meta,
+      status: 1,
     })
     setDocContent(curVersion.content)
     setRollbackOpen(false)
@@ -49,8 +49,8 @@ const EditorHeader = ({ edited, editorRef, detail, onSave, resetTimer, cancelTim
   }
 
   const handleSave = (publish?: boolean) => {
-    if (publish && !edited && detail?.status === 2) {
-      Message.info('内容未更新，无需发版')
+    if (publish && detail?.status === 2) {
+      Message.info('当前已是最新版本！')
     } else {
       onSave(undefined, publish)
     }
@@ -123,7 +123,8 @@ const EditorHeader = ({ edited, editorRef, detail, onSave, resetTimer, cancelTim
               setDetail?.({
                 ...detail,
                 updated_at: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-                meta: { ...detail.meta, emoji: value }
+                meta: { ...detail.meta, emoji: value },
+                status: 1,
               })
             }).finally(() => {
               resetTimer?.()
