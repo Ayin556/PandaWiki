@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/cloudwego/eino-ext/components/model/deepseek"
+	"github.com/cloudwego/eino-ext/components/model/gemini"
 	"github.com/cloudwego/eino-ext/components/model/ollama"
 	"github.com/cloudwego/eino-ext/components/model/openai"
 	"github.com/cloudwego/eino/components/model"
@@ -19,6 +20,7 @@ import (
 	"github.com/cloudwego/eino/schema"
 	"github.com/ollama/ollama/api"
 	"github.com/samber/lo"
+	"google.golang.org/genai"
 
 	"github.com/chaitin/panda-wiki/config"
 	"github.com/chaitin/panda-wiki/domain"
@@ -74,13 +76,32 @@ func (u *LLMUsecase) GetChatModel(ctx context.Context, model *domain.Model) (mod
 	}
 	switch model.Provider {
 	case domain.ModelProviderBrandDeepSeek:
-		config := &deepseek.ChatModelConfig{
+		chatModel, err := deepseek.NewChatModel(ctx, &deepseek.ChatModelConfig{
 			BaseURL:     model.BaseURL,
 			APIKey:      model.APIKey,
-			Model:       string(model.Model),
+			Model:       model.Model,
 			Temperature: temprature,
+		})
+		if err != nil {
+			return nil, fmt.Errorf("create chat model failed: %w", err)
 		}
-		chatModel, err := deepseek.NewChatModel(ctx, config)
+		return chatModel, nil
+	case domain.ModelProviderBrandGemini:
+		client, err := genai.NewClient(ctx, &genai.ClientConfig{
+			APIKey: model.APIKey,
+		})
+		if err != nil {
+			return nil, fmt.Errorf("create genai client failed: %w", err)
+		}
+
+		chatModel, err := gemini.NewChatModel(ctx, &gemini.Config{
+			Client: client,
+			Model:  model.Model,
+			ThinkingConfig: &genai.ThinkingConfig{
+				IncludeThoughts: true,
+				ThinkingBudget:  nil,
+			},
+		})
 		if err != nil {
 			return nil, fmt.Errorf("create chat model failed: %w", err)
 		}

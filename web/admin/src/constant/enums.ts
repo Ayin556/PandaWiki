@@ -198,6 +198,16 @@ export const ModelProvider = {
     modelDocumentUrl: 'https://portal.azure.com/#view/Microsoft_Azure_ProjectOxford/CognitiveServicesHub/~/OpenAI',
     defaultBaseUrl: 'https://<resource_name>.openai.azure.com',
   },
+  Gemini: {
+    label: 'Gemini',
+    cn: 'Gemini',
+    icon: 'icon-gemini',
+    urlWrite: false,
+    secretRequired: true,
+    customHeader: false,
+    modelDocumentUrl: 'https://ai.google.dev/gemini-api/docs',
+    defaultBaseUrl: 'https://generativelanguage.googleapis.com',
+  },
   Other: {
     label: 'Other',
     cn: '其他',
