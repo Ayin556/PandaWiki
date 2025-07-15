@@ -199,6 +199,29 @@ export interface ITreeItem {
   visibility?: 1 | 2
 }
 
+export interface NodeReleaseItem {
+  id: string;
+  name: string
+  node_id: string
+  updated_at: string
+  release_id: string
+  release_name: string
+  release_message: string
+  meta: {
+    emoji?: string,
+    summary?: string
+  }
+}
+
+export interface NodeReleaseDetail {
+  content: string
+  name: string
+  meta: {
+    emoji?: string,
+    summary?: string
+  }
+}
+
 
 // =============================================》crawler
 
