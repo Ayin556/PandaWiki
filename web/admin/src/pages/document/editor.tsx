@@ -37,7 +37,12 @@ const DocEditor = () => {
       setDetail({
         ...detail,
         updated_at: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-        content
+        content,
+        name: detail.name,
+        meta: {
+          emoji: detail.meta.emoji || '',
+          summary: detail.meta.summary || '',
+        }
       })
       if (publish) {
         setPublishOpen(true)
@@ -78,7 +83,10 @@ const DocEditor = () => {
     aiUrl: '/api/v1/creation/text',
     onUpload: handleUpload,
     onSave: (html) => handleSave(undefined, false, html),
-    onUpdate: () => setEdited(true),
+    onUpdate: () => {
+      setEdited(true)
+      if (detail) setDetail({ ...detail, status: 1 })
+    },
     onError: (error: Error) => {
       Message.error(error.message)
     }
@@ -163,7 +171,6 @@ const DocEditor = () => {
         py: 1,
       }}>
         <EditorHeader
-          edited={edited}
           detail={detail}
           setDetail={setDetail}
           setDocContent={setDocContent}

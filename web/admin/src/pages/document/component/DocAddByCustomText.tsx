@@ -37,7 +37,7 @@ const DocAddByCustomText = ({ open, data, onClose, refresh, setDetail, type = 2 
         reset()
         handleClose()
         refresh?.()
-        setDetail?.({ ...data, name: value.name, meta: { ...data.meta, emoji: value.emoji } })
+        setDetail?.({ ...data, name: value.name, meta: { ...data.meta, emoji: value.emoji }, status: 1 })
       })
     } else {
       if (!id) return

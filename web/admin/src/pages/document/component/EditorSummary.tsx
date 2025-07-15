@@ -84,7 +84,7 @@ const EditorSummary = ({ kb_id, id, name, summary: defaultSummary, detail, setDe
       refresh={(value) => {
         setSummary(value || '')
         if (detail) {
-          setDetail?.({ ...detail, meta: { ...detail.meta, summary: value || '' } })
+          setDetail?.({ ...detail, status: 1, meta: { ...detail.meta, summary: value || '' } })
         }
       }}
     />}
