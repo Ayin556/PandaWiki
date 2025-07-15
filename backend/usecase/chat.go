@@ -116,7 +116,7 @@ func (u *ChatUsecase) Chat(ctx context.Context, req *domain.ChatRequest) (<-chan
 			return
 		}
 		for _, node := range rankedNodes {
-			chunkResult := domain.NodeCotentChunkSSE{
+			chunkResult := domain.NodeContentChunkSSE{
 				NodeID:  node.NodeID,
 				Name:    node.NodeName,
 				Summary: node.NodeSummary,

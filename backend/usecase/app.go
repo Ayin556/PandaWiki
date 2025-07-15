@@ -244,7 +244,9 @@ func (u *AppUsecase) updateDisCordBot(app *domain.App) {
 
 	if bot, exists := u.discordBots[app.ID]; exists {
 		if bot != nil {
-			bot.Stop()
+			if err := bot.Stop(); err != nil {
+				u.logger.Error("failed to stop discord bot", log.Error(err))
+			}
 			delete(u.discordBots, app.ID)
 		}
 	}

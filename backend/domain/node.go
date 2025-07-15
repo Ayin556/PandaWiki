@@ -150,7 +150,7 @@ type ChunkListItemResp struct {
 	Content string `json:"content"`
 }
 
-type NodeCotentChunkSSE struct {
+type NodeContentChunkSSE struct {
 	NodeID  string `json:"node_id"`
 	Name    string `json:"name"`
 	Summary string `json:"summary"`

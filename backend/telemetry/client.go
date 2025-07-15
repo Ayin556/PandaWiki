@@ -82,7 +82,9 @@ func (c *Client) getOrCreateMachineID() string {
 	dir := filepath.Dir(machineIDFile)
 	if err := os.MkdirAll(dir, 0o755); err == nil {
 		// write to file
-		os.WriteFile(machineIDFile, []byte(id), 0o644)
+		if err := os.WriteFile(machineIDFile, []byte(id), 0o644); err != nil {
+			c.logger.Error("write machine ID to file failed", log.Error(err))
+		}
 	}
 
 	return id

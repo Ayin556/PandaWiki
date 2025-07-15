@@ -22,7 +22,9 @@ func TestDiscord(t *testing.T) {
 		return contentCh, nil
 	}
 	c, _ := NewDiscordClient(log, token, getQA)
-	c.Start()
+	if err := c.Start(); err != nil {
+		t.Errorf("Failed to start Discord client: %v", err)
+	}
 
 	select {}
 }

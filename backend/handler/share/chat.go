@@ -52,7 +52,7 @@ func NewShareChatHandler(
 				return next(c)
 			}
 		})
-	share.POST("/message", h.ChatMessage, h.BaseHandler.ShareAuthMiddleware.Authorize)
+	share.POST("/message", h.ChatMessage, h.ShareAuthMiddleware.Authorize)
 	share.POST("/widget", h.ChatWidget)
 	share.POST("/feedback", h.FeedBack)
 	return h

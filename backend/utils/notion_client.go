@@ -52,7 +52,7 @@ type NotionClient struct {
 	minioClient *s3.MinioClient
 }
 
-func (c *NotionClient) GetTreeRes() []byte {
+func (c *NotionClient) GetTreeRes() ([]byte, error) {
 	return c.root.GetResult()
 }
 func NewNotionClient(token string, logger *log.Logger, kbID string, minioClient *s3.MinioClient) *NotionClient {
@@ -116,7 +116,10 @@ func (c *NotionClient) GetPageContent(ctx context.Context, Page domain.PageInfo)
 	if err != nil {
 		return nil, fmt.Errorf("get Page %s error: %s", Page.Id, err.Error())
 	}
-	res := c.GetTreeRes()
+	res, err := c.GetTreeRes()
+	if err != nil {
+		return nil, fmt.Errorf("get Page %s content error: %s", Page.Id, err.Error())
+	}
 	c.logger.Debug("get Page content", log.String("page_id", Page.Id), log.String("content", string(res)))
 
 	return &domain.Page{
@@ -169,7 +172,9 @@ func (c *NotionClient) getBlock(ctx context.Context, id string, prefix string, n
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			c.getBlock(ctx, Id, prefix, nowNode)
+			if err := c.getBlock(ctx, Id, prefix, nowNode); err != nil {
+				c.logger.Error("get block's children error", log.String("block_id", id), log.Error(err))
+			}
 		}()
 
 	}
@@ -369,7 +374,7 @@ func (c *NotionClient) UploadImage(ctx context.Context, imageURL string, kbID st
 	}
 	imgName := fmt.Sprintf("%s/%s%s", kbID, uuid.New().String(), ext)
 
-	c.minioClient.PutObject(
+	if _, err := c.minioClient.PutObject(
 		ctx,
 		domain.Bucket,
 		imgName,
@@ -381,6 +386,8 @@ func (c *NotionClient) UploadImage(ctx context.Context, imageURL string, kbID st
 				"originalname": decodedName,
 			},
 		},
-	)
+	); err != nil {
+		return "", fmt.Errorf("failed to upload image to MinIO: %v", err)
+	}
 	return fmt.Sprintf("/%s/%s", domain.Bucket, imgName), nil
 }
