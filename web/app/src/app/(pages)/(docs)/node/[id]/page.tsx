@@ -27,9 +27,9 @@ export async function generateMetadata(
 async function getNodeDetail(id: string, kb_id: string, authToken: string) {
   const result = await apiClient.serverGetNodeDetail(id, kb_id, authToken);
   if (result.success) {
-    return undefined;
+    return result.data;
   }
-  return result.data;
+  return undefined;
 }
 
 const DocPage = async ({ params }: PageProps) => {
