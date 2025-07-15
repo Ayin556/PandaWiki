@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 
@@ -192,6 +193,7 @@ func (c *DingTalkClient) CreateAndDeliverCard(ctx context.Context, trackID strin
 
 func (c *DingTalkClient) OnChatBotMessageReceived(ctx context.Context, data *chatbot.BotCallbackDataModel) ([]byte, error) {
 	question := data.Text.Content
+	question = strings.TrimSpace(question)
 	trackID := uuid.New().String()
 	// conversation_type == 1 表示机器人单聊，==2 表示群聊中@机器人
 	c.logger.Info("dingtalk client received message", log.String("question", question), log.String("track_id", trackID), log.String("conversation_type", data.ConversationType))
