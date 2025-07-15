@@ -179,10 +179,11 @@ const EditorHeader = ({ edited, editorRef, detail, onSave, resetTimer, cancelTim
                   cursor: 'pointer', ':hover': { bgcolor: addOpacityToColor(theme.palette.primary.main, 0.1) }
                 }}
               >
-                版本管理
+                历史版本
               </Stack>,
               onClick: () => {
-                setShowVersion(true)
+                Message.info('敬请期待')
+                // setShowVersion(true)
               }
             },
             {
