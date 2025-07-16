@@ -1,6 +1,6 @@
 'use client';
 
-import { NodeDetail } from '@/assets/type';
+import { KBDetail, NodeDetail } from '@/assets/type';
 import { IconFile, IconFolder } from '@/components/icons';
 import { useStore } from '@/provider';
 import { Box, Stack, Button, Divider, TextField } from '@mui/material';
@@ -20,18 +20,23 @@ const DocContent = ({
   info,
   editorRef,
   docId,
+  kbInfo,
+  commentList: propsCommentList,
 }: {
   info?: NodeDetail;
   editorRef: UseTiptapEditorReturn;
   docId: string;
+  kbInfo?: KBDetail;
+  commentList?: any[];
 }) => {
   const { mobile = false, kbDetail, catalogShow } = useStore();
-  const [commentList, setCommentList] = useState<any[]>([]);
-  const [appDetail, setAppDetail] = useState<any>(null);
+  const [commentList, setCommentList] = useState<any[]>(propsCommentList ?? []);
+  const [appDetail, setAppDetail] = useState<any>(kbInfo?.settings);
   const {
     control,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm({
     defaultValues: {
       content: '',
@@ -42,26 +47,11 @@ const DocContent = ({
   const getComment = async () => {
     const res = await apiClient.clientGetComment(docId, info?.kb_id ?? '');
     if (res.success) {
-      setCommentList(res.data?.Comments ?? []);
+      setCommentList(res.data?.data ?? []);
     } else {
       message.error(res.message || '获取评论失败');
     }
   };
-
-  const getAppDetail = async () => {
-    const res = await apiClient.serverGetKBInfo(info?.kb_id ?? '');
-    if (res.success) {
-      setAppDetail(res.data?.settings);
-    } else {
-      message.error(res.message || '获取应用详情失败');
-    }
-  };
-
-  useEffect(() => {
-    if (info?.kb_id) {
-      getAppDetail();
-    }
-  }, [info]);
 
   useEffect(() => {
     if (
@@ -83,6 +73,7 @@ const DocContent = ({
       });
       if (res.success) {
         getComment();
+        reset();
         message.success('评论成功');
       }
     }
