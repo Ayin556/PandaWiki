@@ -223,7 +223,7 @@ class ApiClient {
     kb_id: string;
   }): Promise<Response<void>> {
     return this.request(
-      '/share/v1/comment',
+      '/client/v1/comment',
       {
         method: 'POST',
         body: JSON.stringify(data),
@@ -237,7 +237,7 @@ class ApiClient {
 
   async clientGetComment(id: string, kb_id: string): Promise<Response<any>> {
     return this.request(
-      '/share/v1/comment/list?id=' + id,
+      '/client/v1/comment/list?id=' + id,
       {
         method: 'GET',
       },

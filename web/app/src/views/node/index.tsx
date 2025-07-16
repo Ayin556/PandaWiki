@@ -2,7 +2,7 @@
 
 import { apiClient } from '@/api';
 import NotData from '@/assets/images/nodata.png';
-import { Heading, NodeDetail } from '@/assets/type';
+import { Heading, KBDetail, NodeDetail } from '@/assets/type';
 import Footer from '@/components/footer';
 import Header from '@/components/header';
 import { VisitSceneNode } from '@/constant';
@@ -22,9 +22,13 @@ import DocContent from './DocContent';
 const Doc = ({
   node: defaultNode,
   token,
+  kbInfo,
+  commentList,
 }: {
   node?: NodeDetail;
   token?: string;
+  kbInfo?: KBDetail;
+  commentList?: any[];
 }) => {
   const { id = '' }: { id: string } = useParams();
 
@@ -143,7 +147,13 @@ const Doc = ({
           {nodeList && <CatalogH5 nodes={nodeList} />}
           <Box sx={{ height: 24 }} />
           {node ? (
-            <DocContent info={node} editorRef={editorRef} docId={docId} />
+            <DocContent
+              info={node}
+              editorRef={editorRef}
+              docId={docId}
+              kbInfo={kbInfo}
+              commentList={commentList}
+            />
           ) : (
             <Stack
               direction='column'
@@ -225,7 +235,12 @@ const Doc = ({
               bgcolor: 'background.default',
             }}
           >
-            <DocContent info={node} editorRef={editorRef} docId={docId} />
+            <DocContent
+              info={node}
+              editorRef={editorRef}
+              docId={docId}
+              kbInfo={kbInfo}
+            />
           </Box>
           {!!editorRef && (
             <DocAnchor
