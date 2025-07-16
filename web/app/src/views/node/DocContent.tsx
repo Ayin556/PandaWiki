@@ -72,6 +72,10 @@ const DocContent = ({ info, editorRef }: { info?: NodeDetail, editorRef: UseTipt
       mt: 3,
       '.tiptap.ProseMirror': {
         color: 'text.primary',
+      },
+      '.editor-table': {
+        width: 'auto',
+        maxWidth: '100%'
       }
     }}>
       <TiptapReader editorRef={editorRef} />
