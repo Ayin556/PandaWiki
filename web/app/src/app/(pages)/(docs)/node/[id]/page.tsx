@@ -47,7 +47,7 @@ const DocPage = async ({ params }: PageProps) => {
     getNodeDetail(id, kb_id, authToken),
   ]);
 
-  let commentList = [];
+  // let commentList = [];
 
   // if (kbInfo?.settings?.web_app_comment_settings?.is_enable) {
   //   const res = await apiClient.clientGetComment(id, kb_id);
