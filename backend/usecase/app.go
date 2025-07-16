@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 	"sync"
 
 	"github.com/chaitin/panda-wiki/config"
@@ -103,7 +104,15 @@ func (u *AppUsecase) getQAFunc(kbID string, appType domain.AppType) bot.GetQAFun
 		if err != nil {
 			return nil, err
 		}
+		kb, err := u.chatUsecase.llmUsecase.kbRepo.GetKnowledgeBaseByID(ctx, kbID)
+		if err != nil {
+			u.logger.Error("wechat GetKnowledgeBaseByID failed", log.Error(err))
+		}
 		contentCh := make(chan string, 10)
+		var feedback = "\n\n---  \n\n此回答结果对您有帮助吗?  \n[👍 满意](%s) | [👎 不满意](%s)"
+		var likeUrl = "%s/feedback?score=1&message_id=%s"
+		var dislikeUrl = "%s/feedback?score=-1&message_id=%s"
+		var messageId string
 		go func() {
 			defer close(contentCh)
 			for event := range eventCh {
@@ -113,7 +122,16 @@ func (u *AppUsecase) getQAFunc(kbID string, appType domain.AppType) bot.GetQAFun
 				if event.Type == "data" {
 					contentCh <- event.Content
 				}
+				if event.Type == "message_id" {
+					messageId = event.Content
+				}
 			}
+
+			// contact
+			like := fmt.Sprintf(likeUrl, kb.AccessSettings.BaseURL, messageId)
+			dislike := fmt.Sprintf(dislikeUrl, kb.AccessSettings.BaseURL, messageId)
+			feedback_data := fmt.Sprintf(feedback, like, dislike)
+			contentCh <- feedback_data
 		}()
 		return contentCh, nil
 	}
@@ -137,7 +155,15 @@ func (u *AppUsecase) wechatQAFunc(kbID string, appType domain.AppType, remoteip 
 		if err != nil {
 			return nil, err
 		}
+		kb, err := u.chatUsecase.llmUsecase.kbRepo.GetKnowledgeBaseByID(ctx, kbID)
+		if err != nil {
+			u.logger.Error("wechat GetKnowledgeBaseByID failed", log.Error(err))
+		}
 		contentCh := make(chan string, 10)
+		var feedback = "\n\n---  \n\n此回答结果对您有帮助吗?  \n[👍 满意](%s) | [👎 不满意](%s)"
+		var likeUrl = "%s/feedback?score=1&message_id=%s"
+		var dislikeUrl = "%s/feedback?score=-1&message_id=%s"
+		var messageId string
 		go func() {
 			defer close(contentCh)
 			for event := range eventCh { // get content from eventch
@@ -147,7 +173,16 @@ func (u *AppUsecase) wechatQAFunc(kbID string, appType domain.AppType, remoteip 
 				if event.Type == "data" {
 					contentCh <- event.Content
 				}
+				if event.Type == "message_id" {
+					messageId = event.Content
+				}
 			}
+
+			// contact
+			like := fmt.Sprintf(likeUrl, kb.AccessSettings.BaseURL, messageId)
+			dislike := fmt.Sprintf(dislikeUrl, kb.AccessSettings.BaseURL, messageId)
+			feedback_data := fmt.Sprintf(feedback, like, dislike)
+			contentCh <- feedback_data
 		}()
 		return contentCh, nil
 	}
