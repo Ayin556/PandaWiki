@@ -19,7 +19,6 @@ import (
 	larkcore "github.com/larksuite/oapi-sdk-go/v3/core"
 	larkdrive1 "github.com/larksuite/oapi-sdk-go/v3/service/drive/v1"
 	larksheets "github.com/larksuite/oapi-sdk-go/v3/service/sheets/v3"
-	larkwiki1 "github.com/larksuite/oapi-sdk-go/v3/service/wiki/v1"
 	larkwiki2 "github.com/larksuite/oapi-sdk-go/v3/service/wiki/v2"
 	"github.com/minio/minio-go/v7"
 	"github.com/samber/lo"
@@ -88,54 +87,115 @@ func (f *FeishuUseCase) GetSpacelist(ctx context.Context, req *domain.GetSpaceLi
 	return respData, nil
 }
 
+func (f *FeishuUseCase) dfs(ctx context.Context, c *lark.Client, parentToken, spaceId, userAccessToken string, resultChan chan<- *domain.SearchWikiTemp) error {
+	result, err := f.searchWiki(ctx, c, spaceId, parentToken, userAccessToken)
+	if err != nil {
+		return err
+	}
+	wg := sync.WaitGroup{}
+	// 启动一个协程来处理每个文档
+	for _, doc := range result {
+		wg.Add(1)
+		go func(d *domain.SearchWikiTemp) {
+			defer wg.Done() // 确保协程结束时计数减一
+			if d.HasChild {
+				// 递归调用 dfs
+				if err := f.dfs(ctx, c, d.NodeToken, spaceId, userAccessToken, resultChan); err != nil {
+					f.logger.Error("dfs failed", log.Error(err))
+				}
+			}
+			// 将结果发送到通道
+			resultChan <- d
+		}(doc)
+	}
+	wg.Wait()
+
+	return nil
+}
+
 func (f *FeishuUseCase) SearchWiki(ctx context.Context, req *domain.SearchWikiReq) ([]*domain.SearchWikiResp, error) {
 	client := lark.NewClient(req.AppID, req.AppSecret)
+	results := make([]*domain.SearchWikiResp, 0) // 初始化结果数组
+
+	// 创建一个通道来收集结果
+	resultChan := make(chan *domain.SearchWikiTemp)
+
+	// 启动一个协程来处理根节点
+	go func() {
+		if err := f.dfs(ctx, client, "", req.SpaceId, req.UserAccessToken, resultChan); err != nil {
+			f.logger.Error("dfs failed", log.Error(err))
+		}
+		close(resultChan) // 关闭通道
+	}()
+
+	// 从通道中收集结果
+	for doc := range resultChan {
+		results = append(results, &domain.SearchWikiResp{
+			Title:    doc.Title,
+			SpaceId:  doc.SpaceId,
+			ObjToken: doc.ObjToken,
+			ObjType:  doc.ObjType,
+			Url:      doc.Url,
+		})
+	}
+	return results, nil
+}
+
+func (f *FeishuUseCase) searchWiki(ctx context.Context, client *lark.Client, spaceId, parentToken, userAccessToken string) ([]*domain.SearchWikiTemp, error) {
 	var (
 		pageToken string
-		respData  []*domain.SearchWikiResp
+		respData  []*domain.SearchWikiTemp
 	)
 	for {
 		// 创建请求对象
-		r := larkwiki1.NewSearchNodeReqBuilder().
-			PageSize(20).
-			PageToken(pageToken).
-			Body(larkwiki1.NewSearchNodeReqBodyBuilder().
-				Query(req.Query).
-				SpaceId(req.SpaceId).
-				Build()).
-			Build()
 
-		f.logger.Debug("token", log.String("token", req.UserAccessToken))
-		// 发起请求
-		resp, err := client.Wiki.V1.Node.Search(ctx, r, larkcore.WithUserAccessToken(req.UserAccessToken))
-		if err != nil {
-			f.logger.Error("search Wiki failed", log.Error(err))
+		r := larkwiki2.NewListSpaceNodeReqBuilder().
+			SpaceId(spaceId).
+			ParentNodeToken(parentToken).
+			PageToken(pageToken).
+			Build()
+		if parentToken == "" {
+			r = larkwiki2.NewListSpaceNodeReqBuilder().
+				SpaceId(spaceId).
+				PageToken(pageToken).
+				Build()
+		}
+		resp, err := client.Wiki.SpaceNode.List(ctx, r, larkcore.WithUserAccessToken(userAccessToken))
+		if err != nil || resp.Msg != "success" {
 			return nil, fmt.Errorf("search Wiki failed: %v", err)
 		}
-
-		if resp.Msg != "success" {
-			return nil, fmt.Errorf("search Wiki failed: %s", resp.Msg)
-		}
 		for _, v := range resp.Data.Items {
-			if *v.ObjType == 9 {
+			var objType int
+			switch *v.ObjType {
+			case "docx":
+				objType = 8
+			case "file":
+				objType = 5
+			case "sheet":
+				objType = 2
+			case "folder":
+				objType = 9
+			default:
+				objType = 0
+			}
+			if objType == 9 {
 				continue
 			}
-			respData = append(respData, &domain.SearchWikiResp{
-				Title:    *v.Title,
-				Url:      *v.Url,
-				SpaceId:  *v.SpaceId,
-				ObjToken: *v.ObjToken,
-				ObjType:  *v.ObjType,
+			respData = append(respData, &domain.SearchWikiTemp{
+				Title:     *v.Title,
+				SpaceId:   *v.SpaceId,
+				ObjToken:  *v.ObjToken,
+				NodeToken: *v.NodeToken,
+				ObjType:   objType,
+				Url:       *v.OriginNodeToken,
+				HasChild:  *v.HasChild,
 			})
-			if v.Title == nil || *v.Title == "" {
-				f.logger.Info("title is empty", log.Int("obj_type", *v.ObjType))
-			}
-			f.logger.Info("found wiki", log.String("title", *v.Title), log.Int("obj_type", *v.ObjType))
 		}
+
+		pageToken = *resp.Data.PageToken
 		if !*resp.Data.HasMore {
 			break
 		}
-		pageToken = *resp.Data.PageToken
 	}
 	return respData, nil
 }
@@ -312,6 +372,9 @@ func (f *FeishuUseCase) downloadDocument(ctx context.Context, appID, secret, url
 	client := core.NewClient(
 		appID, secret,
 	)
+	if !strings.HasPrefix(url, "http") {
+		url = "https://.feishu.cn/wiki/" + url
+	}
 	// Validate the url to download
 	var dlConfig core.Config
 	dlConfig.Output = core.OutputConfig{
