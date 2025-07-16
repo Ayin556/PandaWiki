@@ -93,6 +93,13 @@ type AppSettings struct {
 	FooterSettings FooterSettings `json:"footer_settings"`
 	// Widget bot settings
 	WidgetBotSettings WidgetBotSettings `json:"widget_bot_settings"`
+	// webapp comment settings
+	WebAppCommentSettings WebAppCommentSettings `json:"web_app_comment_settings"`
+}
+
+type WebAppCommentSettings struct {
+	IsEnable         bool `json:"is_enable"`
+	ModerationEnable bool `json:"moderation_enable"`
 }
 
 type ThemeAndStyle struct {
@@ -207,6 +214,8 @@ type AppSettingsResp struct {
 	FooterSettings FooterSettings `json:"footer_settings"`
 	// WidgetBot
 	WidgetBotSettings WidgetBotSettings `json:"widget_bot_settings"`
+	// webapp comment settings
+	WebAppCommentSettings WebAppCommentSettings `json:"web_app_comment_settings"`
 }
 
 func (s *AppSettingsResp) Scan(value any) error {
