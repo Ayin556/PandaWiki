@@ -2552,6 +2552,96 @@ const docTemplate = `{
                 }
             }
         },
+        "/share/v1/comment": {
+            "post": {
+                "description": "CreateComment",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "share_comment"
+                ],
+                "summary": "CreateComment",
+                "parameters": [
+                    {
+                        "description": "Comment",
+                        "name": "comment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.CommentReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "CommentID",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/share/v1/comment/list": {
+            "get": {
+                "description": "GetCommentList",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "share_comment"
+                ],
+                "summary": "GetCommentList",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "nodeID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "CommentList",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/handler_share.CommentLists"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/share/v1/node/detail": {
             "get": {
                 "description": "GetNodeDetail",
@@ -2839,6 +2929,14 @@ const docTemplate = `{
                     "description": "nav",
                     "type": "string"
                 },
+                "web_app_comment_settings": {
+                    "description": "webapp comment settings",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.WebAppCommentSettings"
+                        }
+                    ]
+                },
                 "wechat_app_agent_id": {
                     "type": "string"
                 },
@@ -2986,6 +3084,14 @@ const docTemplate = `{
                 "title": {
                     "description": "nav",
                     "type": "string"
+                },
+                "web_app_comment_settings": {
+                    "description": "webapp comment settings",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.WebAppCommentSettings"
+                        }
+                    ]
                 },
                 "wechat_app_agent_id": {
                     "type": "string"
@@ -3205,6 +3311,70 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.Comment": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "info": {
+                    "$ref": "#/definitions/domain.CommentInfo"
+                },
+                "kb_id": {
+                    "type": "string"
+                },
+                "node_id": {
+                    "type": "string"
+                },
+                "parent_id": {
+                    "type": "string"
+                },
+                "root_id": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.CommentInfo": {
+            "type": "object",
+            "properties": {
+                "user_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.CommentReq": {
+            "type": "object",
+            "required": [
+                "content",
+                "node_id"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "node_id": {
+                    "type": "string"
+                },
+                "parent_id": {
+                    "type": "string"
+                },
+                "root_id": {
+                    "type": "string"
+                },
+                "user_name": {
                     "type": "string"
                 }
             }
@@ -4776,6 +4946,17 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.WebAppCommentSettings": {
+            "type": "object",
+            "properties": {
+                "is_enable": {
+                    "type": "boolean"
+                },
+                "moderation_enable": {
+                    "type": "boolean"
+                }
+            }
+        },
         "domain.WidgetBotSettings": {
             "type": "object",
             "properties": {
@@ -4804,6 +4985,20 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
+                }
+            }
+        },
+        "handler_share.CommentLists": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Comment"
+                    }
+                },
+                "total": {
+                    "type": "integer"
                 }
             }
         },

@@ -137,12 +137,16 @@ func createApp() (*App, error) {
 	sitemapUsecase := usecase.NewSitemapUsecase(nodeRepository, knowledgeBaseRepository, logger)
 	shareSitemapHandler := share.NewShareSitemapHandler(echo, baseHandler, sitemapUsecase, appUsecase, logger)
 	shareStatHandler := share.NewShareStatHandler(baseHandler, echo, statUseCase, logger)
+	commentRepository := pg2.NewCommentRepository(db, logger)
+	commentUsecase := usecase.NewCommentUsecase(commentRepository, logger, nodeRepository)
+	shareCommentHandler := share.NewShareCommentHandler(echo, baseHandler, logger, commentUsecase, appUsecase)
 	shareHandler := &share.ShareHandler{
 		ShareNodeHandler:    shareNodeHandler,
 		ShareAppHandler:     shareAppHandler,
 		ShareChatHandler:    shareChatHandler,
 		ShareSitemapHandler: shareSitemapHandler,
 		ShareStatHandler:    shareStatHandler,
+		ShareCommentHandler: shareCommentHandler,
 	}
 	client := telemetry.NewClient(logger, knowledgeBaseRepository)
 	app := &App{

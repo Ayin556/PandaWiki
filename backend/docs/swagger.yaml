@@ -118,6 +118,10 @@ definitions:
       title:
         description: nav
         type: string
+      web_app_comment_settings:
+        allOf:
+        - $ref: '#/definitions/domain.WebAppCommentSettings'
+        description: webapp comment settings
       wechat_app_agent_id:
         type: string
       wechat_app_corpid:
@@ -216,6 +220,10 @@ definitions:
       title:
         description: nav
         type: string
+      web_app_comment_settings:
+        allOf:
+        - $ref: '#/definitions/domain.WebAppCommentSettings'
+        description: webapp comment settings
       wechat_app_agent_id:
         type: string
       wechat_app_corpid:
@@ -367,6 +375,48 @@ definitions:
         type: string
       error:
         type: string
+    type: object
+  domain.Comment:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      info:
+        $ref: '#/definitions/domain.CommentInfo'
+      kb_id:
+        type: string
+      node_id:
+        type: string
+      parent_id:
+        type: string
+      root_id:
+        type: string
+      user_id:
+        type: string
+    type: object
+  domain.CommentInfo:
+    properties:
+      user_name:
+        type: string
+    type: object
+  domain.CommentReq:
+    properties:
+      content:
+        type: string
+      node_id:
+        type: string
+      parent_id:
+        type: string
+      root_id:
+        type: string
+      user_name:
+        type: string
+    required:
+    - content
+    - node_id
     type: object
   domain.ConversationDetailResp:
     properties:
@@ -1409,6 +1459,13 @@ definitions:
       last_access:
         type: string
     type: object
+  domain.WebAppCommentSettings:
+    properties:
+      is_enable:
+        type: boolean
+      moderation_enable:
+        type: boolean
+    type: object
   domain.WidgetBotSettings:
     properties:
       btn_logo:
@@ -1428,6 +1485,15 @@ definitions:
         type: integer
       title:
         type: string
+    type: object
+  handler_share.CommentLists:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/domain.Comment'
+        type: array
+      total:
+        type: integer
     type: object
   handler_v1.ConversationListItems:
     properties:
@@ -3029,6 +3095,59 @@ paths:
       summary: ChatWidget
       tags:
       - share_chat
+  /share/v1/comment:
+    post:
+      consumes:
+      - application/json
+      description: CreateComment
+      parameters:
+      - description: Comment
+        in: body
+        name: comment
+        required: true
+        schema:
+          $ref: '#/definitions/domain.CommentReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: CommentID
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: CreateComment
+      tags:
+      - share_comment
+  /share/v1/comment/list:
+    get:
+      consumes:
+      - application/json
+      description: GetCommentList
+      parameters:
+      - description: nodeID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: CommentList
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/handler_share.CommentLists'
+              type: object
+      summary: GetCommentList
+      tags:
+      - share_comment
   /share/v1/node/detail:
     get:
       consumes:
