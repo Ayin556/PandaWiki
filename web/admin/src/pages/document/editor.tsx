@@ -36,6 +36,7 @@ const DocEditor = () => {
       await updateNode({ id, content, kb_id: detail.kb_id, emoji: detail.meta.emoji, summary: detail.meta.summary, name: detail.name })
       setDetail({
         ...detail,
+        status: 1,
         updated_at: dayjs().format('YYYY-MM-DD HH:mm:ss'),
         content,
         name: detail.name,
