@@ -30,6 +30,7 @@ const VersionList = ({ changeVersion }: VersionListProps) => {
   const editorRef = useTiptapEditor({
     content: '',
     editable: false,
+    immediatelyRender: true,
     onError: (error: Error) => {
       Message.error(error.message)
     }
