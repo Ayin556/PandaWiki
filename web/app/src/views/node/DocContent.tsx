@@ -82,6 +82,18 @@ const DocContent = ({
 
   const catalogSetting = kbDetail?.settings?.catalog_settings;
 
+  const renderIp = (ip_address: any = {}) => {
+    const { city = '', country = '未知', province = '', ip } = ip_address;
+    return (
+      <>
+        <Box>{ip}</Box>
+        <Box sx={{ color: 'text.auxiliary', fontSize: 12 }}>
+          {country === '中国' ? `${province}-${city}` : `${country}`}
+        </Box>
+      </>
+    );
+  };
+
   return (
     <Box
       sx={{
@@ -271,6 +283,7 @@ const DocContent = ({
                       fontSize: 12,
                     }}
                   >
+                    {renderIp(item.ip_address)}
                     <Box>{dayjs(item.created_at).fromNow()}</Box>
                   </Stack>
                 </Stack>
