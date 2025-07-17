@@ -97,7 +97,7 @@ func (h *ShareCommentHandler) CreateComment(c echo.Context) error {
 	return h.NewResponseWithData(c, commentID)
 }
 
-type ShareCommentLists = *domain.PaginatedResult[[]*domain.Comment]
+type ShareCommentLists = *domain.PaginatedResult[[]*domain.ShareCommentListItem]
 
 // GetCommentList
 //

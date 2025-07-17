@@ -376,27 +376,6 @@ definitions:
       error:
         type: string
     type: object
-  domain.Comment:
-    properties:
-      content:
-        type: string
-      created_at:
-        type: string
-      id:
-        type: string
-      info:
-        $ref: '#/definitions/domain.CommentInfo'
-      kb_id:
-        type: string
-      node_id:
-        type: string
-      parent_id:
-        type: string
-      root_id:
-        type: string
-      user_id:
-        type: string
-    type: object
   domain.CommentInfo:
     properties:
       remote_ip:
@@ -1330,6 +1309,29 @@ definitions:
       url:
         type: string
     type: object
+  domain.ShareCommentListItem:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      info:
+        $ref: '#/definitions/domain.CommentInfo'
+      ip_address:
+        allOf:
+        - $ref: '#/definitions/domain.IPAddress'
+        description: ip地址
+      kb_id:
+        type: string
+      node_id:
+        type: string
+      parent_id:
+        type: string
+      root_id:
+        type: string
+    type: object
   domain.SimpleAuth:
     properties:
       enabled:
@@ -1538,7 +1540,7 @@ definitions:
     properties:
       data:
         items:
-          $ref: '#/definitions/domain.Comment'
+          $ref: '#/definitions/domain.ShareCommentListItem'
         type: array
       total:
         type: integer

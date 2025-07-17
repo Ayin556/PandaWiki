@@ -3383,38 +3383,6 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.Comment": {
-            "type": "object",
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "info": {
-                    "$ref": "#/definitions/domain.CommentInfo"
-                },
-                "kb_id": {
-                    "type": "string"
-                },
-                "node_id": {
-                    "type": "string"
-                },
-                "parent_id": {
-                    "type": "string"
-                },
-                "root_id": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
         "domain.CommentInfo": {
             "type": "object",
             "properties": {
@@ -4823,6 +4791,43 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.ShareCommentListItem": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "info": {
+                    "$ref": "#/definitions/domain.CommentInfo"
+                },
+                "ip_address": {
+                    "description": "ip地址",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.IPAddress"
+                        }
+                    ]
+                },
+                "kb_id": {
+                    "type": "string"
+                },
+                "node_id": {
+                    "type": "string"
+                },
+                "parent_id": {
+                    "type": "string"
+                },
+                "root_id": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.SimpleAuth": {
             "type": "object",
             "properties": {
@@ -5135,7 +5140,7 @@ const docTemplate = `{
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/domain.Comment"
+                        "$ref": "#/definitions/domain.ShareCommentListItem"
                     }
                 },
                 "total": {

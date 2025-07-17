@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -64,11 +65,33 @@ func (u *CommentUsecase) CreateComment(ctx context.Context, commentReq *domain.C
 	return CommentStr, nil
 }
 
-func (u *CommentUsecase) GetCommentListByNodeID(ctx context.Context, nodeID string) (*domain.PaginatedResult[[]*domain.Comment], error) {
+func (u *CommentUsecase) GetCommentListByNodeID(ctx context.Context, nodeID string) (*domain.PaginatedResult[[]*domain.ShareCommentListItem], error) {
 	comments, total, err := u.CommentRepo.GetCommentList(ctx, nodeID)
 	if err != nil {
 		return nil, err
 	}
+	// get ip address
+	ipAddressMap := make(map[string]*domain.IPAddress)
+	lo.Map(comments, func(comment *domain.ShareCommentListItem, _ int) *domain.ShareCommentListItem {
+		if _, ok := ipAddressMap[comment.Info.RemoteIP]; !ok {
+			ipAddress, err := u.ipRepo.GetIPAddress(ctx, comment.Info.RemoteIP)
+			if err != nil {
+				u.logger.Error("get ip address failed", log.Error(err), log.String("ip", comment.Info.RemoteIP))
+				return comment
+			}
+			ipAddressMap[comment.Info.RemoteIP] = ipAddress
+			comment.IPAddress = ipAddress
+			comment.Info.RemoteIP = maskIP(comment.Info.RemoteIP)
+		} else {
+			comment.IPAddress = ipAddressMap[comment.Info.RemoteIP]
+			comment.Info.RemoteIP = maskIP(comment.Info.RemoteIP)
+		}
+		return comment
+	})
+	// ip掩码
+	// for _, comment := range comments {
+	// 	comment.Info.RemoteIP = maskIP(comment.Info.RemoteIP)
+	// }
 	// succcess
 	return domain.NewPaginatedResult(comments, uint64(total)), nil
 }
@@ -106,4 +129,24 @@ func (u *CommentUsecase) DeleteCommentList(ctx context.Context, req *domain.Dele
 		return err
 	}
 	return nil
+}
+
+func maskIP(ip string) string {
+	if ip == "" {
+		return ""
+	}
+	// 处理 IPv4 地址 (格式: a.b.c.d)
+	if strings.Contains(ip, ".") {
+		parts := strings.Split(ip, ".")
+		if len(parts) != 4 { // 非标准IPv4格式直接返回原值
+			return ""
+		}
+		return parts[0] + ".*.*." + parts[3]
+	}
+	// 处理 IPv6 地址 (标准格式包含冒号)
+	if strings.Contains(ip, ":") {
+		return ""
+	}
+
+	return ""
 }
