@@ -487,6 +487,12 @@ export type FeedbackListItem = {
     user_name: string;
     remote_ip: string;
   };
+  ip_address: {
+    ip: string;
+    country: string;
+    province: string;
+    city: string;
+  };
   node_type: number;
 };
 

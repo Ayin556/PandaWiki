@@ -77,7 +77,22 @@ const Feedback = () => {
         return text;
       },
     },
-
+    {
+      dataIndex: 'ip_address',
+      title: '来源 IP',
+      width: 220,
+      render: (ip_address: FeedbackListItem['ip_address']) => {
+        const { city = '', country = '', province = '', ip } = ip_address;
+        return (
+          <>
+            <Box>{ip}</Box>
+            <Box sx={{ color: 'text.auxiliary', fontSize: 12 }}>
+              {country === '中国' ? `${province}-${city}` : `${country}`}
+            </Box>
+          </>
+        );
+      },
+    },
     {
       dataIndex: 'created_at',
       title: '发布时间',
