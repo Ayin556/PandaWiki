@@ -31,8 +31,15 @@ const Feedback = () => {
     Modal.confirm({
       title: '删除评论',
       content: '确定要删除该评论吗？',
+      okText: '删除',
+      okButtonProps: {
+        color: 'error',
+      },
+      cancelButtonProps: {
+        color: 'primary',
+      },
       onOk: () => {
-        deleteFeedback({ id }).then(() => {
+        deleteFeedback({ ids: [id] }).then(() => {
           if (page === 1) {
             getData();
           } else {
