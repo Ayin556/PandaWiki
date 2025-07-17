@@ -3,6 +3,7 @@ package utils
 import (
 	"bytes"
 	"context"
+	"crypto/tls"
 	"fmt"
 	"io"
 	"mime"
@@ -14,16 +15,22 @@ import (
 	"strings"
 	"time"
 
-	"github.com/chaitin/panda-wiki/domain"
-	"github.com/chaitin/panda-wiki/store/s3"
 	"github.com/google/uuid"
 	"github.com/minio/minio-go/v7"
+
+	"github.com/chaitin/panda-wiki/domain"
+	"github.com/chaitin/panda-wiki/store/s3"
 )
 
 // HTTPGet send http get request
 func HTTPGet(url string) ([]byte, error) {
 	client := &http.Client{
 		Timeout: 10 * time.Second,
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{
+				InsecureSkipVerify: true,
+			},
+		},
 	}
 
 	resp, err := client.Get(url)
