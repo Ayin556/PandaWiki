@@ -82,16 +82,12 @@ func (u *CommentUsecase) GetCommentListByNodeID(ctx context.Context, nodeID stri
 			ipAddressMap[comment.Info.RemoteIP] = ipAddress
 			comment.IPAddress = ipAddress
 			comment.Info.RemoteIP = maskIP(comment.Info.RemoteIP)
+			comment.IPAddress.IP = maskIP(comment.IPAddress.IP)
 		} else {
 			comment.IPAddress = ipAddressMap[comment.Info.RemoteIP]
-			comment.Info.RemoteIP = maskIP(comment.Info.RemoteIP)
 		}
 		return comment
 	})
-	// ip掩码
-	// for _, comment := range comments {
-	// 	comment.Info.RemoteIP = maskIP(comment.Info.RemoteIP)
-	// }
 	// succcess
 	return domain.NewPaginatedResult(comments, uint64(total)), nil
 }
