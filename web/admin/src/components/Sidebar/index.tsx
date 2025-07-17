@@ -29,13 +29,13 @@ const menus = [
     icon: 'icon-duihualishi1',
     show: true,
   },
-  // {
-  //   label: '反馈',
-  //   value: '/feedback',
-  //   pathname: 'feedback',
-  //   icon: 'icon-fankui',
-  //   show: true,
-  // },
+  {
+    label: '反馈',
+    value: '/feedback',
+    pathname: 'feedback',
+    icon: 'icon-fankui',
+    show: true,
+  },
   {
     label: '发布',
     value: '/release',

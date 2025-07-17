@@ -1,89 +1,89 @@
-import { ConversationListItem, getConversationList } from '@/api'
-import Logo from '@/assets/images/logo.png'
-import NoData from '@/assets/images/nodata.png'
-import Card from '@/components/Card'
-import { AppType, FeedbackType } from '@/constant/enums'
-import { tableSx } from '@/constant/styles'
-import { useURLSearchParams } from '@/hooks'
-import { useAppSelector } from '@/store'
-import { Box, Button, ButtonBase, Stack, Tooltip } from '@mui/material'
-import { Ellipsis, Icon, Table, CusTabs } from 'ct-mui'
-import dayjs from 'dayjs'
-import { useEffect, useState } from 'react'
-import Detail from './Detail'
+import {
+  FeedbackListItem,
+  getFeedbackList,
+  deleteFeedback,
+  getKnowledgeBaseDetail,
+} from '@/api';
+import NoData from '@/assets/images/nodata.png';
+import Card from '@/components/Card';
+import { tableSx } from '@/constant/styles';
+import { useURLSearchParams } from '@/hooks';
+import { useAppSelector } from '@/store';
+import { Box, Button, ButtonBase, Stack, Tooltip } from '@mui/material';
+import { Ellipsis, Icon, Table, Modal, CusTabs } from 'ct-mui';
+import dayjs from 'dayjs';
+import { useEffect, useState } from 'react';
 
 const Feedback = () => {
-  const { kb_id = '' } = useAppSelector((state) => state.config)
-  const [searchParams] = useURLSearchParams()
-  const subject = searchParams.get('subject') || ''
-  const remoteIp = searchParams.get('remote_ip') || ''
-  const [data, setData] = useState<ConversationListItem[]>([])
-  const [loading, setLoading] = useState(false)
-  const [page, setPage] = useState(1)
-  const [pageSize, setPageSize] = useState(20)
-  const [total, setTotal] = useState(0)
-  const [open, setOpen] = useState(false)
-  const [id, setId] = useState('')
+  const { kb_id = '' } = useAppSelector((state) => state.config);
+  const [searchParams] = useURLSearchParams();
+  const subject = searchParams.get('subject') || '';
+  const remoteIp = searchParams.get('remote_ip') || '';
+  const [data, setData] = useState<FeedbackListItem[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+  const [total, setTotal] = useState(0);
+  const [baseUrl, setBaseUrl] = useState('');
+  const [tab, setTab] = useState('feedback');
 
-  const [tab, setTab] = useState('feedback')
+  const onDeleteComment = (id: string) => {
+    Modal.confirm({
+      title: '删除评论',
+      content: '确定要删除该评论吗？',
+      onOk: () => {
+        deleteFeedback({ id }).then(() => {
+          if (page === 1) {
+            getData();
+          } else {
+            setPage(1);
+          }
+        });
+      },
+    });
+  };
 
   const columns = [
     {
-      dataIndex: 'subject',
+      dataIndex: 'node_name',
       title: '文档',
-      render: (text: string, record: ConversationListItem) => {
+      width: 300,
+      render: (text: string, record: FeedbackListItem) => {
         return (
           <Ellipsis
             className='primary-color'
-            sx={{ cursor: 'pointer', flex: 1, width: 0 }}
+            sx={{ cursor: 'pointer' }}
             onClick={() => {
-              setId(record.id)
-              setOpen(true)
+              window.open(`${baseUrl}/node/${record.node_id}`, '_blank');
             }}
           >
             {text}
           </Ellipsis>
-        )
+        );
       },
     },
     {
-      dataIndex: 'feedback_info',
+      dataIndex: 'info',
       title: '姓名',
       width: 160,
+      render: (text: FeedbackListItem['info']) => {
+        return <Box>{text?.user_name}</Box>;
+      },
     },
     {
-      dataIndex: 'info',
+      dataIndex: 'content',
       title: '评论内容',
-      width: 200,
-      render: (text: ConversationListItem['info']) => {
-        const user = text?.user_info
-        return (
-          <Box sx={{ fontSize: 12 }}>
-            <Stack
-              direction={'row'}
-              alignItems={'center'}
-              gap={0.5}
-              sx={{ cursor: 'pointer' }}
-            >
-              <img src={user?.avatar || Logo} width={16} />
-              <Box sx={{ fontSize: 14 }}>
-                {user?.real_name || user?.name || '匿名用户'}
-              </Box>
-            </Stack>
-            {user?.email && (
-              <Box sx={{ color: 'text.auxiliary' }}>{user?.email}</Box>
-            )}
-          </Box>
-        )
+      render: (text: FeedbackListItem['content']) => {
+        return text;
       },
     },
 
     {
       dataIndex: 'created_at',
       title: '发布时间',
-      width: 120,
+      width: 220,
       render: (text: string) => {
-        return dayjs(text).fromNow()
+        return dayjs(text).format('YYYY-MM-DD HH:mm:ss');
       },
     },
 
@@ -91,47 +91,56 @@ const Feedback = () => {
       dataIndex: 'opt',
       title: '操作',
       width: 120,
-      render: (text: string) => {
+      render: (text: string, record: FeedbackListItem) => {
         return (
           <ButtonBase
             disableRipple
             sx={{
               color: 'error.main',
             }}
+            onClick={() => {
+              onDeleteComment(record.id);
+            }}
           >
             删除
           </ButtonBase>
-        )
+        );
       },
     },
-  ]
+  ];
 
   const getData = () => {
-    setLoading(true)
-    getConversationList({
+    setLoading(true);
+    getFeedbackList({
       page,
       per_page: pageSize,
       kb_id,
-      subject,
-      remote_ip: remoteIp,
     })
       .then((res) => {
-        setData(res.data)
-        setTotal(res.total)
+        setData(res.data);
+        setTotal(res.total);
       })
       .finally(() => {
-        setLoading(false)
-      })
-  }
+        setLoading(false);
+      });
+  };
 
   useEffect(() => {
-    setPage(1)
-  }, [subject, remoteIp, kb_id])
+    setPage(1);
+  }, [subject, remoteIp, kb_id]);
 
   useEffect(() => {
-    if (kb_id) getData()
+    if (kb_id) getData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, pageSize, subject, remoteIp, kb_id])
+  }, [page, pageSize, subject, remoteIp, kb_id]);
+
+  useEffect(() => {
+    if (kb_id) {
+      getKnowledgeBaseDetail({ id: kb_id }).then((res) => {
+        setBaseUrl(res.access_settings.base_url);
+      });
+    }
+  }, [kb_id]);
 
   return (
     <Card>
@@ -144,7 +153,7 @@ const Feedback = () => {
         <CusTabs
           value={tab}
           onChange={(value) => {
-            setTab(value as string)
+            setTab(value as string);
           }}
           size='small'
           list={[
@@ -172,8 +181,8 @@ const Feedback = () => {
           page,
           pageSize,
           onChange: (page, pageSize) => {
-            setPage(page)
-            setPageSize(pageSize)
+            setPage(page);
+            setPageSize(pageSize);
           },
         }}
         PaginationProps={{
@@ -197,15 +206,8 @@ const Feedback = () => {
           )
         }
       />
-      <Detail
-        id={id}
-        open={open}
-        onClose={() => {
-          setOpen(false)
-        }}
-      />
     </Card>
-  )
-}
+  );
+};
 
-export default Feedback
+export default Feedback;
