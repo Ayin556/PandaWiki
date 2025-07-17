@@ -326,8 +326,8 @@ export const getFeedbackList = (
 ): Promise<ResposeList<FeedbackListItem>> =>
   request({ url: 'api/v1/comment', method: 'get', params });
 
-export const deleteFeedback = (params: { id: string }): Promise<void> =>
-  request({ url: 'api/v1/comment/detail', method: 'delete', params });
+export const deleteFeedback = (params: { ids: string[] }): Promise<void> =>
+  request({ url: 'api/v1/comment/list', method: 'delete', params });
 
 // =============================================》stat
 
