@@ -4,8 +4,10 @@ import (
 	"archive/zip"
 	"bytes"
 	"context"
+	"encoding/base64"
 	"fmt"
 	"io"
+	"mime"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -140,12 +142,19 @@ func (c *ConfluenceUsecase) Analysis(ctx context.Context, data []byte, kbid stri
 			// 提取捕获的 URL
 			title := re.ReplaceAllString(match, `$1`)
 			url := re.ReplaceAllString(match, `$2`)
+			if isBase64Url(&url) {
+				url, err = c.transferBase64Url(ctx, title, kbid, &url)
+				if err != nil {
+					c.logger.Error("failed to transfer base64 url: ", log.Error(err))
+					return ""
+				}
+			}
 			// 去掉url后面的参数
 			url = strings.SplitN(url, "?", 2)[0]
 			if _, ok := pm[url]; ok {
 				return fmt.Sprintf(`![%s](%s)`, title, pm[url])
 			}
-			return fmt.Sprintf(`[%s](%s)`, title, url)
+			return fmt.Sprintf(`![%s](%s)`, title, url)
 		})
 		return &domain.AnalysisConfluenceResp{
 			ID:      uuid.NewString(),
@@ -171,4 +180,38 @@ func (c *ConfluenceUsecase) Analysis(ctx context.Context, data []byte, kbid stri
 	}
 
 	return finalResults, nil
+}
+
+var base64Regex = regexp.MustCompile(`data:(image/[^;]+);base64,([^)\s]+)`)
+
+func isBase64Url(url *string) bool {
+	return base64Regex.MatchString(*url)
+}
+
+func (c *ConfluenceUsecase) transferBase64Url(ctx context.Context, fileName, kbID string, url *string) (string, error) {
+	// 使用base64Regex捕获URL中的图片数据
+	matches := base64Regex.FindStringSubmatch(*url)
+	if len(matches) != 3 {
+		return "", fmt.Errorf("invalid base64 URL format")
+	}
+	imageType := matches[1]
+	imageData := matches[2]
+	// 将base64编码的数据转换为字节切片
+	decoder := base64.NewDecoder(base64.StdEncoding, strings.NewReader(imageData))
+	decodedLen := (len(imageData) * 3) / 4
+	if imageData[len(imageData)-2] == '=' {
+		decodedLen -= 2
+	} else if imageData[len(imageData)-1] == '=' {
+		decodedLen -= 1
+	}
+	exts, err := mime.ExtensionsByType(imageType)
+	if err != nil {
+		return "", fmt.Errorf("failed to get MIME extensions: %w", err)
+	}
+	fileName = fmt.Sprintf("%s-%s.%s", uuid.NewString(), fileName, exts[0]) // 使用UUID作为文件名
+	key, err := c.file.UploadFileFromReader(ctx, kbID, fileName, decoder, int64(decodedLen))
+	if err != nil {
+		return "", fmt.Errorf("failed to upload image to S3: %w", err)
+	}
+	return fmt.Sprintf("/%s/%s", domain.Bucket, key), nil
 }
