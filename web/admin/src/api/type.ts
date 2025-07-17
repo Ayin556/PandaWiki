@@ -477,6 +477,25 @@ export type ConversationListItem = {
   };
 };
 
+export type FeedbackListItem = {
+  node_id: string;
+  id: string;
+  created_at: string;
+  content: string;
+  node_name: string;
+  info: {
+    user_name: string;
+    remote_ip: string;
+  };
+  ip_address: {
+    ip: string;
+    country: string;
+    province: string;
+    city: string;
+  };
+  node_type: number;
+};
+
 export type FeedbackInfo = {
   feedback_content: string;
   feedback_type: number;
