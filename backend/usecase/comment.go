@@ -5,9 +5,11 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/samber/lo"
 
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/log"
+	"github.com/chaitin/panda-wiki/repo/ipdb"
 	"github.com/chaitin/panda-wiki/repo/pg"
 )
 
@@ -15,17 +17,20 @@ type CommentUsecase struct {
 	logger      *log.Logger
 	CommentRepo *pg.CommentRepository
 	NodeRepo    *pg.NodeRepository
+	ipRepo      *ipdb.IPAddressRepo
 }
 
-func NewCommentUsecase(commentRepo *pg.CommentRepository, logger *log.Logger, nodeRepo *pg.NodeRepository) *CommentUsecase {
+func NewCommentUsecase(commentRepo *pg.CommentRepository, logger *log.Logger,
+	nodeRepo *pg.NodeRepository, ipRepo *ipdb.IPAddressRepo) *CommentUsecase {
 	return &CommentUsecase{
 		logger:      logger.WithModule("usecase.comment"),
 		CommentRepo: commentRepo,
 		NodeRepo:    nodeRepo,
+		ipRepo:      ipRepo,
 	}
 }
 
-func (u *CommentUsecase) CreateComment(ctx context.Context, commentReq *domain.CommentReq, KbID string) (string, error) {
+func (u *CommentUsecase) CreateComment(ctx context.Context, commentReq *domain.CommentReq, KbID string, remoteIP string) (string, error) {
 	// node
 	if _, err := u.NodeRepo.GetNodeByID(ctx, commentReq.NodeID); err != nil {
 		return "", err
@@ -43,6 +48,7 @@ func (u *CommentUsecase) CreateComment(ctx context.Context, commentReq *domain.C
 		NodeID: commentReq.NodeID,
 		Info: domain.CommentInfo{
 			UserName: commentReq.UserName,
+			RemoteIP: remoteIP,
 		},
 		ParentID:  commentReq.ParentID,
 		RootID:    commentReq.RootID,
@@ -65,4 +71,39 @@ func (u *CommentUsecase) GetCommentListByNodeID(ctx context.Context, nodeID stri
 	}
 	// succcess
 	return domain.NewPaginatedResult(comments, uint64(total)), nil
+}
+
+func (u *CommentUsecase) GetCommentListByKbID(ctx context.Context, req *domain.CommentListReq) (*domain.PaginatedResult[[]*domain.CommentListItem], error) {
+	comments, total, err := u.CommentRepo.GetCommentListByKbID(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	// get ip address
+	ipAddressMap := make(map[string]*domain.IPAddress)
+	lo.Map(comments, func(comment *domain.CommentListItem, _ int) *domain.CommentListItem {
+		if _, ok := ipAddressMap[comment.Info.RemoteIP]; !ok {
+			ipAddress, err := u.ipRepo.GetIPAddress(ctx, comment.Info.RemoteIP)
+			if err != nil {
+				u.logger.Error("get ip address failed", log.Error(err), log.String("ip", comment.Info.RemoteIP))
+				return comment
+			}
+			ipAddressMap[comment.Info.RemoteIP] = ipAddress
+			comment.IPAddress = ipAddress
+		} else {
+			comment.IPAddress = ipAddressMap[comment.Info.RemoteIP]
+		}
+		return comment
+	})
+
+	return domain.NewPaginatedResult(comments, uint64(total)), nil
+}
+
+// 批量删除评论， （简单化，只删除传入评论id）
+func (u *CommentUsecase) DeleteCommentList(ctx context.Context, req *domain.DeleteCommentListReq) error {
+	err := u.CommentRepo.DeleteCommentList(ctx, req.IDS)
+	if err != nil {
+		return err
+	}
+	return nil
 }

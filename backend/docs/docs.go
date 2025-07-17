@@ -127,6 +127,74 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/comment": {
+            "get": {
+                "description": "GetCommentList",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "comment"
+                ],
+                "summary": "GetCommentList",
+                "parameters": [
+                    {
+                        "description": "CommentListReq",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.CommentListReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "conversationList",
+                        "schema": {
+                            "$ref": "#/definitions/handler_v1.CommentLists"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/comment/list": {
+            "delete": {
+                "description": "DeleteCommentList",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "comment"
+                ],
+                "summary": "DeleteCommentList",
+                "parameters": [
+                    {
+                        "description": "DeleteCommentListReq",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.DeleteCommentListReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "total",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/conversation": {
             "get": {
                 "description": "get conversation list",
@@ -2632,7 +2700,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/handler_share.CommentLists"
+                                            "$ref": "#/definitions/handler_share.ShareCommentLists"
                                         }
                                     }
                                 }
@@ -3350,8 +3418,70 @@ const docTemplate = `{
         "domain.CommentInfo": {
             "type": "object",
             "properties": {
+                "remote_ip": {
+                    "type": "string"
+                },
                 "user_name": {
                     "type": "string"
+                }
+            }
+        },
+        "domain.CommentListItem": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "info": {
+                    "$ref": "#/definitions/domain.CommentInfo"
+                },
+                "ip_address": {
+                    "description": "ip地址",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.IPAddress"
+                        }
+                    ]
+                },
+                "node_id": {
+                    "type": "string"
+                },
+                "node_name": {
+                    "description": "文档标题",
+                    "type": "string"
+                },
+                "node_type": {
+                    "type": "integer"
+                },
+                "root_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.CommentListReq": {
+            "type": "object",
+            "required": [
+                "kb_id",
+                "page",
+                "per_page"
+            ],
+            "properties": {
+                "kb_id": {
+                    "type": "string"
+                },
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "per_page": {
+                    "type": "integer",
+                    "minimum": 1
                 }
             }
         },
@@ -3712,6 +3842,17 @@ const docTemplate = `{
                 "password": {
                     "type": "string",
                     "minLength": 8
+                }
+            }
+        },
+        "domain.DeleteCommentListReq": {
+            "type": "object",
+            "properties": {
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
@@ -4988,13 +5129,27 @@ const docTemplate = `{
                 }
             }
         },
-        "handler_share.CommentLists": {
+        "handler_share.ShareCommentLists": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/domain.Comment"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "handler_v1.CommentLists": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.CommentListItem"
                     }
                 },
                 "total": {
