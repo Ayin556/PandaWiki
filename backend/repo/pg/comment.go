@@ -42,3 +42,38 @@ func (r *CommentRepository) GetCommentList(ctx context.Context, nodeID string) (
 	return comments, count, nil
 
 }
+
+func (r *CommentRepository) GetCommentListByKbID(ctx context.Context, req *domain.CommentListReq) ([]*domain.CommentListItem, int64, error) {
+	// 按照时间排序来查询kb_id的comments
+	comments := []*domain.CommentListItem{}
+	query := r.db.Model(&domain.Comment{}).Where("comments.kb_id = ?", req.KbID)
+	// count
+	var count int64
+	if err := query.Count(&count).Error; err != nil {
+		return nil, 0, err
+	}
+	// select
+	if err := query.
+		Joins("left join nodes on comments.node_id = nodes.id").
+		Select("comments.*, nodes.name as node_name, nodes.type as app_type").
+		Offset(req.Offset()).
+		Limit(req.Limit()).
+		Order("comments.created_at DESC").
+		Find(&comments).Error; err != nil {
+		return nil, 0, err
+	}
+
+	// success
+	return comments, count, nil
+
+}
+
+func (r *CommentRepository) DeleteCommentList(ctx context.Context, commentID []string) error {
+	// 批量删除指定id的comment,获取删除的总的数量、
+	query := r.db.Model(&domain.Comment{}).Where("id IN (?)", commentID)
+
+	if err := query.Delete(&domain.Comment{}).Error; err != nil {
+		return err
+	}
+	return nil
+}

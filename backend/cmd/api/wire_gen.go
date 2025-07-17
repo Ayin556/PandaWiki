@@ -119,6 +119,9 @@ func createApp() (*App, error) {
 	statRepository := pg2.NewStatRepository(db)
 	statUseCase := usecase.NewStatUseCase(statRepository, nodeRepository, conversationRepository, appRepository, ipAddressRepo, geoRepo, logger)
 	statHandler := v1.NewStatHandler(baseHandler, echo, statUseCase, logger)
+	commentRepository := pg2.NewCommentRepository(db, logger)
+	commentUsecase := usecase.NewCommentUsecase(commentRepository, logger, nodeRepository, ipAddressRepo)
+	commentHandler := v1.NewCommentHandler(echo, baseHandler, logger, authMiddleware, commentUsecase)
 	apiHandlers := &v1.APIHandlers{
 		UserHandler:          userHandler,
 		KnowledgeBaseHandler: knowledgeBaseHandler,
@@ -130,6 +133,7 @@ func createApp() (*App, error) {
 		CrawlerHandler:       crawlerHandler,
 		CreationHandler:      creationHandler,
 		StatHandler:          statHandler,
+		CommentHandler:       commentHandler,
 	}
 	shareNodeHandler := share.NewShareNodeHandler(baseHandler, echo, nodeUsecase, logger)
 	shareAppHandler := share.NewShareAppHandler(echo, baseHandler, logger, appUsecase)
@@ -137,8 +141,6 @@ func createApp() (*App, error) {
 	sitemapUsecase := usecase.NewSitemapUsecase(nodeRepository, knowledgeBaseRepository, logger)
 	shareSitemapHandler := share.NewShareSitemapHandler(echo, baseHandler, sitemapUsecase, appUsecase, logger)
 	shareStatHandler := share.NewShareStatHandler(baseHandler, echo, statUseCase, logger)
-	commentRepository := pg2.NewCommentRepository(db, logger)
-	commentUsecase := usecase.NewCommentUsecase(commentRepository, logger, nodeRepository)
 	shareCommentHandler := share.NewShareCommentHandler(echo, baseHandler, logger, commentUsecase, appUsecase)
 	shareHandler := &share.ShareHandler{
 		ShareNodeHandler:    shareNodeHandler,

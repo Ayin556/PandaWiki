@@ -399,8 +399,49 @@ definitions:
     type: object
   domain.CommentInfo:
     properties:
+      remote_ip:
+        type: string
       user_name:
         type: string
+    type: object
+  domain.CommentListItem:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      info:
+        $ref: '#/definitions/domain.CommentInfo'
+      ip_address:
+        allOf:
+        - $ref: '#/definitions/domain.IPAddress'
+        description: ip地址
+      node_id:
+        type: string
+      node_name:
+        description: 文档标题
+        type: string
+      node_type:
+        type: integer
+      root_id:
+        type: string
+    type: object
+  domain.CommentListReq:
+    properties:
+      kb_id:
+        type: string
+      page:
+        minimum: 1
+        type: integer
+      per_page:
+        minimum: 1
+        type: integer
+    required:
+    - kb_id
+    - page
+    - per_page
     type: object
   domain.CommentReq:
     properties:
@@ -636,6 +677,13 @@ definitions:
     required:
     - account
     - password
+    type: object
+  domain.DeleteCommentListReq:
+    properties:
+      ids:
+        items:
+          type: string
+        type: array
     type: object
   domain.DeleteUserReq:
     properties:
@@ -1486,11 +1534,20 @@ definitions:
       title:
         type: string
     type: object
-  handler_share.CommentLists:
+  handler_share.ShareCommentLists:
     properties:
       data:
         items:
           $ref: '#/definitions/domain.Comment'
+        type: array
+      total:
+        type: integer
+    type: object
+  handler_v1.CommentLists:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/domain.CommentListItem'
         type: array
       total:
         type: integer
@@ -1590,6 +1647,50 @@ paths:
       summary: Get app detail
       tags:
       - app
+  /api/v1/comment:
+    get:
+      consumes:
+      - application/json
+      description: GetCommentList
+      parameters:
+      - description: CommentListReq
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.CommentListReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: conversationList
+          schema:
+            $ref: '#/definitions/handler_v1.CommentLists'
+      summary: GetCommentList
+      tags:
+      - comment
+  /api/v1/comment/list:
+    delete:
+      consumes:
+      - application/json
+      description: DeleteCommentList
+      parameters:
+      - description: DeleteCommentListReq
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.DeleteCommentListReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: total
+          schema:
+            $ref: '#/definitions/domain.Response'
+      summary: DeleteCommentList
+      tags:
+      - comment
   /api/v1/conversation:
     get:
       consumes:
@@ -3143,7 +3244,7 @@ paths:
             - $ref: '#/definitions/domain.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/handler_share.CommentLists'
+                  $ref: '#/definitions/handler_share.ShareCommentLists'
               type: object
       summary: GetCommentList
       tags:

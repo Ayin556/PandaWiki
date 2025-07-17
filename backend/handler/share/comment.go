@@ -86,8 +86,10 @@ func (h *ShareCommentHandler) CreateComment(c echo.Context) error {
 	}
 
 	// 评论开启
+	remoteIP := c.RealIP()
+
 	// 插入到数据库中
-	commentID, err := h.usecase.CreateComment(ctx, &CommentReq, kbID)
+	commentID, err := h.usecase.CreateComment(ctx, &CommentReq, kbID, remoteIP)
 	if err != nil {
 		return h.NewResponseWithError(c, "create comment failed", err)
 	}
@@ -95,7 +97,7 @@ func (h *ShareCommentHandler) CreateComment(c echo.Context) error {
 	return h.NewResponseWithData(c, commentID)
 }
 
-type CommentLists = *domain.PaginatedResult[[]*domain.Comment]
+type ShareCommentLists = *domain.PaginatedResult[[]*domain.Comment]
 
 // GetCommentList
 //
@@ -104,8 +106,8 @@ type CommentLists = *domain.PaginatedResult[[]*domain.Comment]
 //	@Tags			share_comment
 //	@Accept			json
 //	@Produce		json
-//	@Param			id	query		string								true	"nodeID"
-//	@Success		200	{object}	domain.Response{data=CommentLists}	"CommentList
+//	@Param			id	query		string									true	"nodeID"
+//	@Success		200	{object}	domain.Response{data=ShareCommentLists}	"CommentList
 //	@Router			/share/v1/comment/list [get]
 func (h *ShareCommentHandler) GetCommentList(c echo.Context) error {
 	ctx := c.Request().Context()
