@@ -10,7 +10,7 @@ import { tableSx } from '@/constant/styles';
 import { useURLSearchParams } from '@/hooks';
 import { useAppSelector } from '@/store';
 import { Box, Button, ButtonBase, Stack, Tooltip } from '@mui/material';
-import { Ellipsis, Icon, Table, Modal, CusTabs } from 'ct-mui';
+import { Ellipsis, Icon, Table, Modal, CusTabs, Message } from 'ct-mui';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 
@@ -40,6 +40,7 @@ const Feedback = () => {
       },
       onOk: () => {
         deleteFeedback({ ids: [id] }).then(() => {
+          Message.success('删除成功');
           if (page === 1) {
             getData();
           } else {
