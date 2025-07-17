@@ -67,3 +67,16 @@ type CommentListItem struct {
 type DeleteCommentListReq struct {
 	IDS []string `json:"ids" query:"ids"`
 }
+
+type ShareCommentListItem struct {
+	ID string `json:"id" gorm:"primaryKey"`
+
+	KbID      string      `json:"kb_id"`
+	NodeID    string      `json:"node_id" gorm:"index"`
+	Info      CommentInfo `json:"info" gorm:"type:jsonb"`
+	ParentID  string      `json:"parent_id"`
+	RootID    string      `json:"root_id"`
+	Content   string      `json:"content"`
+	IPAddress *IPAddress  `json:"ip_address" gorm:"-"` // ip地址
+	CreatedAt time.Time   `json:"created_at"`
+}

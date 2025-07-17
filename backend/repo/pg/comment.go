@@ -25,9 +25,9 @@ func (r *CommentRepository) CreateComment(ctx context.Context, comment *domain.C
 	return nil
 }
 
-func (r *CommentRepository) GetCommentList(ctx context.Context, nodeID string) ([]*domain.Comment, int64, error) {
+func (r *CommentRepository) GetCommentList(ctx context.Context, nodeID string) ([]*domain.ShareCommentListItem, int64, error) {
 	// 按照时间排序来查询node_id的comments
-	comments := []*domain.Comment{}
+	comments := []*domain.ShareCommentListItem{}
 	query := r.db.Model(&domain.Comment{}).Where("node_id = ?", nodeID)
 
 	var count int64
