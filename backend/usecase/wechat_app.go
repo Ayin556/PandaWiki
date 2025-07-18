@@ -2,11 +2,7 @@ package usecase
 
 import (
 	"context"
-	"encoding/xml"
 	"errors"
-	"fmt"
-
-	"github.com/sbzhu/weworkapi_golang/wxbizmsgcrypt"
 
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/log"
@@ -50,50 +46,7 @@ func (u *AppUsecase) VerifyUrlWechatAPP(ctx context.Context, signature, timestam
 	return body, nil
 }
 
-func (u *AppUsecase) Wechat(ctx context.Context, signature, timestamp, nonce string, body []byte, KbId string, remoteIP string) error {
-	appInfo, err := u.GetAppDetailByKBIDAndAppType(ctx, KbId, domain.AppTypeWechatBot)
-	if err != nil {
-		u.logger.Error("find app detail failed")
-		return err
-	}
-	if appInfo.Settings.WeChatAppIsEnabled == nil && !*appInfo.Settings.WeChatAppIsEnabled {
-		return errors.New("wechat app bot is not enabled")
-
-	}
-
-	wc, err := wechat.NewWechatConfig(
-		ctx,
-		appInfo.Settings.WeChatAppCorpID,
-		appInfo.Settings.WeChatAppToken,
-		appInfo.Settings.WeChatAppEncodingAESKey,
-		KbId,
-		appInfo.Settings.WeChatAppSecret,
-		appInfo.Settings.WeChatAppAgentID,
-		u.logger,
-	)
-
-	if err != nil {
-		u.logger.Error("failed to create WechatConfig", log.Error(err))
-		return err
-	}
-	u.logger.Info("remote ip", log.String("ip", remoteIP))
-
-	// 先解密消息
-	wxCrypt := wxbizmsgcrypt.NewWXBizMsgCrypt(wc.Token, wc.EncodingAESKey, wc.CorpID, wxbizmsgcrypt.XmlType)
-	decryptMsg, errCode := wxCrypt.DecryptMsg(signature, timestamp, nonce, body)
-	if errCode != nil {
-		u.logger.Error("DecryptMsg failed", log.Error(err))
-		return fmt.Errorf("DecryptMsg failed: %v", errCode)
-	}
-	// u.logger.Info("decryptMsg", log.Any("msg:", decryptMsg))
-
-	var msg wechat.ReceivedMessage
-	err = xml.Unmarshal([]byte(decryptMsg), &msg)
-	if err != nil {
-		return err
-	}
-	u.logger.Debug("received message", log.Any("message", msg)) // debug level
-
+func (u *AppUsecase) Wechat(ctx context.Context, msg *wechat.ReceivedMessage, wc *wechat.WechatConfig, KbId string, remoteIP string) error {
 	// 调用接口，获取到用户的详细消息
 	userinfo, err := wc.GetUserInfo(msg.FromUserName)
 	if err != nil {
@@ -103,10 +56,10 @@ func (u *AppUsecase) Wechat(ctx context.Context, signature, timestamp, nonce str
 	u.logger.Info("get userinfo success", log.Any("userinfo", userinfo))
 
 	// use ai--> 并且传递用户消息
-	getQA := u.wechatQAFunc(KbId, appInfo.Type, remoteIP, userinfo)
+	getQA := u.wechatQAFunc(KbId, domain.AppTypeWechatBot, remoteIP, userinfo)
 
 	// 发送消息给用户
-	err = wc.Wechat(msg, getQA)
+	err = wc.Wechat(*msg, getQA)
 
 	if err != nil {
 		u.logger.Error("wc wechat failed", log.Error(err))
@@ -115,16 +68,8 @@ func (u *AppUsecase) Wechat(ctx context.Context, signature, timestamp, nonce str
 	return nil
 }
 
-func (u *AppUsecase) SendImmediateResponse(ctx context.Context, signature, timestamp, nonce string, body []byte, kbID string) ([]byte, error) {
-	appInfo, err := u.GetAppDetailByKBIDAndAppType(ctx, kbID, domain.AppTypeWechatBot)
-	if err != nil {
-		return nil, err
-	}
-	if appInfo.Settings.WeChatAppIsEnabled != nil && !*appInfo.Settings.WeChatAppIsEnabled {
-		return nil, errors.New("wechat app bot is not enabled")
-	}
-
-	wc, err := wechat.NewWechatConfig(
+func (u *AppUsecase) NewWechatConfig(ctx context.Context, appInfo *domain.AppDetailResp, kbID string) (*wechat.WechatConfig, error) {
+	return wechat.NewWechatConfig(
 		ctx,
 		appInfo.Settings.WeChatAppCorpID,
 		appInfo.Settings.WeChatAppToken,
@@ -134,25 +79,4 @@ func (u *AppUsecase) SendImmediateResponse(ctx context.Context, signature, times
 		appInfo.Settings.WeChatAppAgentID,
 		u.logger,
 	)
-
-	u.logger.Debug("wechat app info", log.Any("app", appInfo))
-
-	if err != nil {
-		return nil, err
-	}
-
-	wxCrypt := wxbizmsgcrypt.NewWXBizMsgCrypt(wc.Token, wc.EncodingAESKey, wc.CorpID, wxbizmsgcrypt.XmlType)
-	decryptMsg, errCode := wxCrypt.DecryptMsg(signature, timestamp, nonce, body)
-
-	if errCode != nil {
-		return nil, fmt.Errorf("decrypt msg failed: %v", errCode)
-	}
-
-	var msg wechat.ReceivedMessage
-	if err := xml.Unmarshal(decryptMsg, &msg); err != nil {
-		return nil, err
-	}
-
-	// send response "正在思考"
-	return wc.SendResponse(msg, "正在思考您的问题，请稍候...")
 }

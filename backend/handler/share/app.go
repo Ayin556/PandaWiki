@@ -11,6 +11,7 @@ import (
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/handler"
 	"github.com/chaitin/panda-wiki/log"
+	"github.com/chaitin/panda-wiki/pkg/bot/wechat"
 	"github.com/chaitin/panda-wiki/pkg/bot/wechatservice"
 	"github.com/chaitin/panda-wiki/usecase"
 )
@@ -151,19 +152,51 @@ func (h *ShareAppHandler) WechatHandlerApp(c echo.Context) error {
 
 	ctx := c.Request().Context()
 
-	immediateResponse, err := h.usecase.SendImmediateResponse(ctx, signature, timestamp, nonce, body, kbID)
+	// get appinfo and init wechatConfig
+	// 查找数据库，找到对应的app配置
+	appInfo, err := h.usecase.GetAppDetailByKBIDAndAppType(ctx, kbID, domain.AppTypeWechatBot)
 	if err != nil {
-		h.logger.Error("send response failed", log.Error(err))
+		return h.NewResponseWithError(c, "GetAppDetailByKBIDAndAppType failed", err)
+	}
+
+	if appInfo.Settings.WeChatAppIsEnabled != nil && !*appInfo.Settings.WeChatAppIsEnabled {
+		return h.NewResponseWithError(c, "wechat app bot is not enabled", nil)
+	}
+
+	wechatConfig, err := h.usecase.NewWechatConfig(context.Background(), appInfo, kbID)
+	if err != nil {
+		return h.NewResponseWithError(c, "wechat app config error", err)
+	}
+
+	// 解密消息
+	wxCrypt := wxbizmsgcrypt.NewWXBizMsgCrypt(wechatConfig.Token, wechatConfig.EncodingAESKey, wechatConfig.CorpID, wxbizmsgcrypt.XmlType)
+	decryptMsg, errCode := wxCrypt.DecryptMsg(signature, timestamp, nonce, body)
+	if errCode != nil {
+		return h.NewResponseWithError(c, "DecryptMsg failed", nil)
+	}
+
+	msg, err := wechatConfig.UnmarshalMsg(decryptMsg)
+	if err != nil {
+		return h.NewResponseWithError(c, "UnmarshalMsg failed", err)
+	}
+	h.logger.Info("wechat app msg", log.Any("user msg", msg))
+
+	if msg.MsgType != "text" { // 用户进入会话，或者其他非提问类型的事件
+		return c.String(http.StatusOK, "")
+	}
+
+	immediateResponse, err := wechatConfig.SendResponse(*msg, "用户稍等,正在思考您的问题,请稍候...")
+	if err != nil {
 		return h.NewResponseWithError(c, "Failed to send immediate response", err)
 	}
 
-	go func(signature, timestamp, nonce string, body []byte, KbId string, remoteIP string) {
+	go func(msg *wechat.ReceivedMessage, wechatConfig *wechat.WechatConfig, kbId string, remoteIP string) {
 		ctx := context.Background()
-		err := h.usecase.Wechat(ctx, signature, timestamp, nonce, body, KbId, remoteIP)
+		err := h.usecase.Wechat(ctx, msg, wechatConfig, kbId, remoteIP)
 		if err != nil {
 			h.logger.Error("wechat async failed")
 		}
-	}(signature, timestamp, nonce, body, kbID, remoteIP)
+	}(msg, wechatConfig, kbID, remoteIP)
 
 	return c.XMLBlob(http.StatusOK, []byte(immediateResponse))
 }
