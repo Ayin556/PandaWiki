@@ -57,12 +57,12 @@ func NewLLMUsecase(config *config.Config, rag rag.RAGService, conversationRepo *
 
 func (u *LLMUsecase) GetChatModel(ctx context.Context, model *domain.Model) (model.BaseChatModel, error) {
 	// config chat model
-	var temprature float32 = 0.0
+	var temperature float32 = 0.0
 	config := &openai.ChatModelConfig{
 		APIKey:      model.APIKey,
 		BaseURL:     model.BaseURL,
 		Model:       string(model.Model),
-		Temperature: &temprature,
+		Temperature: &temperature,
 	}
 	if model.Provider == domain.ModelProviderBrandAzureOpenAI {
 		config.ByAzure = true
@@ -83,7 +83,7 @@ func (u *LLMUsecase) GetChatModel(ctx context.Context, model *domain.Model) (mod
 			BaseURL:     model.BaseURL,
 			APIKey:      model.APIKey,
 			Model:       model.Model,
-			Temperature: temprature,
+			Temperature: temperature,
 		})
 		if err != nil {
 			return nil, fmt.Errorf("create chat model failed: %w", err)
@@ -120,7 +120,7 @@ func (u *LLMUsecase) GetChatModel(ctx context.Context, model *domain.Model) (mod
 			Timeout: config.Timeout,
 			Model:   config.Model,
 			Options: &api.Options{
-				Temperature: temprature,
+				Temperature: temperature,
 			},
 		})
 		if err != nil {
@@ -435,7 +435,7 @@ func (u *LLMUsecase) SummaryNode(ctx context.Context, model *domain.Model, name,
 		}
 		return summary
 	})
-	// 使用lo.Fliter处理错误
+	// 使用lo.Filter处理错误
 	defeatSummary := lo.Filter(summaries, func(summary string, index int) bool {
 		return summary == ""
 	})

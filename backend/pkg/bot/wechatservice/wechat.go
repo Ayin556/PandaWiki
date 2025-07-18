@@ -93,13 +93,13 @@ type ReplyMsg struct {
 	} `json:"text,omitempty"`
 }
 
-type TokenCahe struct {
+type TokenCache struct {
 	AccessToken string
 	TokenExpire time.Time
 	Mutex       sync.Mutex
 }
 
-var TokenCache *TokenCahe = &TokenCahe{}
+var tokenCache *TokenCache = &TokenCache{}
 
 // 获取用户消息应该得到的响应
 type WechatCustomerResponse struct {
@@ -311,12 +311,12 @@ func (cfg *WechatServiceConfig) Processmessage(msgRet *MsgRet, Kfmsg *WeixinUser
 }
 
 func (cfg *WechatServiceConfig) GetAccessToken() (string, error) {
-	TokenCache.Mutex.Lock()
-	defer TokenCache.Mutex.Unlock()
+	tokenCache.Mutex.Lock()
+	defer tokenCache.Mutex.Unlock()
 
-	if TokenCache.AccessToken != "" && time.Now().Before(TokenCache.TokenExpire) {
+	if tokenCache.AccessToken != "" && time.Now().Before(tokenCache.TokenExpire) {
 		cfg.logger.Info("access token has existed and is valid")
-		return TokenCache.AccessToken, nil
+		return tokenCache.AccessToken, nil
 	}
 
 	if cfg.Secret == "" || cfg.CorpID == "" {
@@ -342,13 +342,13 @@ func (cfg *WechatServiceConfig) GetAccessToken() (string, error) {
 		return "", errors.New("get wechat access token failed")
 	}
 
-	// succcess
+	// success
 	cfg.logger.Info("wechatservice get accesstoken success", log.Any("info", tokenResp.AccessToken))
 
-	TokenCache.AccessToken = tokenResp.AccessToken
-	TokenCache.TokenExpire = time.Now().Add(time.Duration(tokenResp.ExpiresIn-300) * time.Second)
+	tokenCache.AccessToken = tokenResp.AccessToken
+	tokenCache.TokenExpire = time.Now().Add(time.Duration(tokenResp.ExpiresIn-300) * time.Second)
 
-	return TokenCache.AccessToken, nil
+	return tokenCache.AccessToken, nil
 }
 
 // 解析微信客服消息

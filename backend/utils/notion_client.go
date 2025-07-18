@@ -151,16 +151,16 @@ func (c *NotionClient) getBlock(ctx context.Context, id string, prefix string, n
 		return nil
 	}
 
-	childerns, err := c.client.Block.GetChildren(ctx, notionapi.BlockID(id), &notionapi.Pagination{})
+	children, err := c.client.Block.GetChildren(ctx, notionapi.BlockID(id), &notionapi.Pagination{})
 	if err != nil {
 		c.logger.Info("get block's children error", log.String("block_id", id), log.Error(err))
 		return fmt.Errorf("get block's children %s error: %s", id, err.Error())
 	}
 	wg := sync.WaitGroup{}
-	for _, childern := range childerns.Results {
+	for _, children := range children.Results {
 
-		Id := childern.GetID().String()
-		if childern.GetType().String() == string(notionapi.BlockTypeBulletedListItem) {
+		Id := children.GetID().String()
+		if children.GetType().String() == string(notionapi.BlockTypeBulletedListItem) {
 			prefix += "	"
 		}
 		nowNode, err := c.root.GetNode(node)

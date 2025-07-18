@@ -85,13 +85,13 @@ type AccessToken struct {
 	ExpiresIn   int    `json:"expires_in"`
 }
 
-type TokenCahe struct {
+type TokenCache struct {
 	AccessToken string
 	TokenExpire time.Time
 	Mutex       sync.Mutex
 }
 
-var TokenCache *TokenCahe = &TokenCahe{}
+var tokenCache *TokenCache = &TokenCache{}
 
 func NewWechatConfig(ctx context.Context, CorpID, Token, EncodingAESKey string, kbid string, secret string, againtid string, logger *log.Logger) (*WechatConfig, error) {
 	return &WechatConfig{
@@ -213,7 +213,7 @@ func (cfg *WechatConfig) SendResponse(msg ReceivedMessage, content string) ([]by
 
 	wxcpt := wxbizmsgcrypt.NewWXBizMsgCrypt(cfg.Token, cfg.EncodingAESKey, cfg.CorpID, wxbizmsgcrypt.XmlType)
 
-	// responese
+	// response
 	var encryptMsg []byte
 	encryptMsg, errCode := wxcpt.EncryptMsg(string(responseXML), "", "")
 	if errCode != nil {
@@ -224,12 +224,12 @@ func (cfg *WechatConfig) SendResponse(msg ReceivedMessage, content string) ([]by
 }
 
 func (cfg *WechatConfig) GetAccessToken() (string, error) {
-	TokenCache.Mutex.Lock()
-	defer TokenCache.Mutex.Unlock()
+	tokenCache.Mutex.Lock()
+	defer tokenCache.Mutex.Unlock()
 
-	if TokenCache.AccessToken != "" && time.Now().Before(TokenCache.TokenExpire) {
+	if tokenCache.AccessToken != "" && time.Now().Before(tokenCache.TokenExpire) {
 		cfg.logger.Info("access token has existed and is valid")
-		return TokenCache.AccessToken, nil
+		return tokenCache.AccessToken, nil
 	}
 
 	if cfg.Secret == "" || cfg.CorpID == "" {
@@ -255,13 +255,13 @@ func (cfg *WechatConfig) GetAccessToken() (string, error) {
 		return "", errors.New("get wechat access token failed")
 	}
 
-	// succcess
+	// success
 	cfg.logger.Info("wechatapp get accesstoken success", log.Any("info", tokenResp.AccessToken))
 
-	TokenCache.AccessToken = tokenResp.AccessToken
-	TokenCache.TokenExpire = time.Now().Add(time.Duration(tokenResp.ExpiresIn-300) * time.Second)
+	tokenCache.AccessToken = tokenResp.AccessToken
+	tokenCache.TokenExpire = time.Now().Add(time.Duration(tokenResp.ExpiresIn-300) * time.Second)
 
-	return TokenCache.AccessToken, nil
+	return tokenCache.AccessToken, nil
 }
 
 func (cfg *WechatConfig) GetUserInfo(username string) (*UserInfo, error) {
