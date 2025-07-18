@@ -88,7 +88,7 @@ func (u *CommentUsecase) GetCommentListByNodeID(ctx context.Context, nodeID stri
 		}
 		return comment
 	})
-	// succcess
+	// success
 	return domain.NewPaginatedResult(comments, uint64(total)), nil
 }
 

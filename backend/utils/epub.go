@@ -34,7 +34,7 @@ type EpubConverter struct {
 	// id -> relative path
 	resourcesIdMap map[string]Item
 	// relative path -> id
-	relavitePath map[string]string
+	relativePath map[string]string
 }
 
 func NewEpubConverter(logger *log.Logger, minio *s3.MinioClient) *EpubConverter {
@@ -43,7 +43,7 @@ func NewEpubConverter(logger *log.Logger, minio *s3.MinioClient) *EpubConverter 
 		minioClient:    minio,
 		resources:      make(map[string]string),
 		resourcesIdMap: make(map[string]Item),
-		relavitePath:   make(map[string]string),
+		relativePath:   make(map[string]string),
 	}
 }
 
@@ -69,10 +69,10 @@ func (e *EpubConverter) Convert(ctx context.Context, kbID string, data *multipar
 
 	for _, item := range p.Manifest.Items {
 		e.resourcesIdMap[item.ID] = item
-		e.relavitePath[item.Href] = item.ID
+		e.relativePath[item.Href] = item.ID
 	}
 
-	// reslove resource file
+	// resolve resource file
 	if err := e.uploadFile(ctx, kbID, zipReader); err != nil {
 		return "", nil, err
 	}
@@ -213,7 +213,7 @@ func (e *EpubConverter) processFile(ctx context.Context, f *zip.File, kbID strin
 		file,
 		f.FileInfo().Size(),
 		minio.PutObjectOptions{
-			ContentType:  e.resourcesIdMap[e.relavitePath[f.Name]].MediaType,
+			ContentType:  e.resourcesIdMap[e.relativePath[f.Name]].MediaType,
 			UserMetadata: map[string]string{"originalname": filepath.Base(f.Name)},
 		},
 	)
