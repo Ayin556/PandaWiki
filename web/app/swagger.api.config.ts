@@ -11,7 +11,7 @@ const config = [
     templates: './api-templates',
     output: './src/request',
     filterPathname: (pathname: string) => {
-      return pathname.startsWith('/api/v1');
+      return pathname.startsWith('/share/v1');
     },
   },
   {

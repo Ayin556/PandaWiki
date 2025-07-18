@@ -87,11 +87,8 @@ export enum DomainCommentStatus {
 }
 
 export enum DomainAuthType {
-  /** 无认证 */
   AuthTypeNull = "",
-  /** 简单口令 */
   AuthTypeSimple = "simple",
-  /** 企业认证 */
   AuthTypeEnterprise = "enterprise",
 }
 
@@ -258,10 +255,6 @@ export interface DomainAppSettingsResp {
 
 export interface DomainAuthGetResp {
   auth_type?: DomainAuthType;
-}
-
-export interface DomainAuthLoginSimpleReq {
-  password: string;
 }
 
 export interface DomainBatchMoveReq {
@@ -1152,6 +1145,10 @@ export interface GetApiV1StatInstantPagesParams {
 export interface GetApiV1StatRefererHostsParams {
   /** kb_id */
   kb_id: string;
+}
+
+export interface GetShareV1AuthGetParams {
+  x_kb_id?: string;
 }
 
 export interface PostShareV1ChatMessageParams {
