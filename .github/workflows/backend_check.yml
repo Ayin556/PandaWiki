@@ -26,3 +26,25 @@ jobs:
           version: v2.1
           working-directory: backend
           args: --timeout 5m
+
+  go-mod-check:
+    name: go mod check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+          cache-dependency-path: 'backend/go.sum'
+
+      - name: Check go.mod formatting
+        working-directory: backend
+        run: |
+          if ! go mod tidy --diff ; then
+            echo "::error::go.mod or go.sum is not properly formatted. Please run 'go mod tidy' locally and commit the changes."
+            exit 1
+          fi
+          if ! go mod verify ; then
+            echo "::error::go.mod or go.sum has unverified dependencies. Please run 'go mod verify' locally and commit the changes."
+            exit 1
+          fi
