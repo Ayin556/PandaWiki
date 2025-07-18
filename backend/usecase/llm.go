@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"math"
 	"net/http"
 	"slices"
 	"strings"
@@ -19,7 +20,9 @@ import (
 	"github.com/cloudwego/eino/components/prompt"
 	"github.com/cloudwego/eino/schema"
 	"github.com/ollama/ollama/api"
+	"github.com/pkoukk/tiktoken-go"
 	"github.com/samber/lo"
+	"github.com/samber/lo/parallel"
 	"google.golang.org/genai"
 
 	"github.com/chaitin/panda-wiki/config"
@@ -348,7 +351,6 @@ func (u *LLMUsecase) CheckModel(ctx context.Context, req *domain.CheckModelReq) 
 		APIVersion: req.APIVersion,
 		Type:       req.Type,
 	})
-
 	if err != nil {
 		checkResp.Error = err.Error()
 		return checkResp, nil
@@ -404,6 +406,47 @@ func (u *LLMUsecase) SummaryNode(ctx context.Context, model *domain.Model, name,
 	if err != nil {
 		return "", err
 	}
+	chunks, err := u.SplitByTokenLimit(content, int(math.Floor(1024*32*0.95)))
+	if err != nil {
+		return "", err
+	}
+
+	summaries := parallel.Map(chunks, func(chunk string, _ int) string {
+		summary, err := u.Generate(ctx, chatModel, []*schema.Message{
+			{
+				Role:    "system",
+				Content: "你是文档总结助手，请根据文档内容总结出文档的摘要。摘要是纯文本，应该简洁明了，不要超过160个字。",
+			},
+			{
+				Role:    "user",
+				Content: fmt.Sprintf("文档名称：%s\n文档内容：%s", name, chunk),
+			},
+		})
+		if err != nil {
+			u.logger.Error("Failed to generate summary for chunk: ", log.Error(err))
+			return ""
+		}
+		if strings.HasPrefix(summary, "<think>") {
+			// remove <think> body </think>
+			endIndex := strings.Index(summary, "</think>")
+			if endIndex != -1 {
+				summary = strings.TrimSpace(summary[endIndex+8:]) // 8 is length of "</think>"
+			}
+		}
+		return summary
+	})
+	// 使用lo.Fliter处理错误
+	defeatSummary := lo.Filter(summaries, func(summary string, index int) bool {
+		return summary == ""
+	})
+	if len(defeatSummary) > 0 {
+		return "", fmt.Errorf("failed to generate summaries for all chunks: %d/%d", len(defeatSummary), len(chunks))
+	}
+
+	contents, err := u.SplitByTokenLimit(strings.Join(summaries, "\n\n"), int(math.Floor(1024*32*0.95)))
+	if err != nil {
+		return "", err
+	}
 	summary, err := u.Generate(ctx, chatModel, []*schema.Message{
 		{
 			Role:    "system",
@@ -411,7 +454,7 @@ func (u *LLMUsecase) SummaryNode(ctx context.Context, model *domain.Model, name,
 		},
 		{
 			Role:    "user",
-			Content: fmt.Sprintf("文档名称：%s\n文档内容：%s", name, content),
+			Content: fmt.Sprintf("文档名称：%s\n文档内容：%s", name, contents[0]),
 		},
 	})
 	if err != nil {
@@ -425,4 +468,35 @@ func (u *LLMUsecase) SummaryNode(ctx context.Context, model *domain.Model, name,
 		}
 	}
 	return summary, nil
+}
+
+func (u *LLMUsecase) SplitByTokenLimit(text string, maxTokens int) ([]string, error) {
+	if maxTokens <= 0 {
+		return nil, fmt.Errorf("maxTokens must be greater than 0")
+	}
+	encoding, err := tiktoken.GetEncoding("cl100k_base")
+	if err != nil {
+		return nil, fmt.Errorf("failed to get encoding: %w", err)
+	}
+	tokens := encoding.Encode(text, nil, nil)
+	if len(tokens) <= maxTokens {
+		return []string{text}, nil
+	}
+
+	// 预先计算需要的片段数量并分配空间
+	numChunks := (len(tokens) + maxTokens - 1) / maxTokens // 向上取整
+	result := make([]string, 0, numChunks)
+
+	for i := 0; i < len(tokens); i += maxTokens {
+		end := i + maxTokens
+		if end > len(tokens) {
+			end = len(tokens)
+		}
+
+		chunk := tokens[i:end]
+		decodedChunk := encoding.Decode(chunk)
+		result = append(result, decodedChunk)
+	}
+
+	return result, nil
 }
