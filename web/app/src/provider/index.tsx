@@ -4,7 +4,6 @@ import { KBDetail, NodeListItem, WidgetInfo } from '@/assets/type';
 import { useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { useLocalStorageState } from 'ahooks';
 
 interface StoreContextType {
   widget?: WidgetInfo;
@@ -47,9 +46,13 @@ export default function StoreProvider({
   token,
 }: StoreContextType & { children: React.ReactNode }) {
   const catalogSettings = kbDetail?.settings?.catalog_settings;
-  const [catalogWidth, setCatalogWidth] = useState(
-    catalogSettings?.catalog_width ?? 240
-  );
+  const [catalogWidth, setCatalogWidth] = useState<number>(() => {
+    if (typeof window !== 'undefined') {
+      const savedWidth = window.localStorage.getItem('CATALOG_WIDTH');
+      if (savedWidth) return Number(savedWidth);
+    }
+    return catalogSettings?.catalog_width ?? 260;
+  });
   const [nodeList, setNodeList] = useState<NodeListItem[] | undefined>(
     initialNodeList
   );
@@ -67,14 +70,13 @@ export default function StoreProvider({
   }, [kbDetail]);
 
   useEffect(() => {
-    if (catalogSettings?.catalog_width) {
-      setCatalogWidth(
-        Number(window.localStorage.getItem('CATALOG_WIDTH')) ??
-          catalogSettings?.catalog_width ??
-          240
-      );
+    if (typeof window !== 'undefined' && catalogSettings?.catalog_width) {
+      const savedWidth = window.localStorage.getItem('CATALOG_WIDTH');
+      if (!savedWidth) {
+        setCatalogWidth(catalogSettings.catalog_width);
+      }
     }
-  }, []);
+  }, [catalogSettings?.catalog_width]);
 
   useEffect(() => {
     setIsMobile(mediaQueryResult);
