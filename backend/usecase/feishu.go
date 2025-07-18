@@ -217,15 +217,17 @@ func (f *FeishuUseCase) GetDoc(ctx context.Context, req *domain.GetDocxReq) ([]*
 			}
 		case 5: // file
 			f.logger.Info("download [type 5]file ", log.String("url", source.Url), log.String("token", source.ObjToken))
-			title, content, err = f.downloadFile(ctx, req.AppID, req.AppSecret, source.ObjToken, req.KBID)
+			title, content, err = f.downloadFile(ctx, req.AppID, req.AppSecret, source.ObjToken, req.KBID, req.UserAccessToken)
 			if err != nil {
 				f.logger.Error("download [type 5]file failed", log.Error(err))
+				return nil // 返回 nil 表示失败
 			}
 		case 2: // sheet
 			f.logger.Info("download [type 2] sheet", log.String("url", source.Url), log.String("token", source.ObjToken))
 			title, content, err = f.downloadSheet(ctx, req.AppID, req.AppSecret, source.ObjToken, req.UserAccessToken, req.KBID)
 			if err != nil {
 				f.logger.Error("download [type 2] sheet failed", log.Error(err))
+				return nil // 返回 nil 表示失败
 			}
 		default: // 其他类型
 			f.logger.Error("unsupported obj type", log.Int("type", source.ObjType))
@@ -475,7 +477,7 @@ func (f *FeishuUseCase) downloadDocument(ctx context.Context, appID, secret, url
 	return title, result, nil
 }
 
-func (f *FeishuUseCase) downloadFile(ctx context.Context, appID, secret, fileToken, kbID string) (string, string, error) {
+func (f *FeishuUseCase) downloadFile(ctx context.Context, appID, secret, fileToken, kbID, userAccessToken string) (string, string, error) {
 	client := lark.NewClient(
 		appID, secret,
 	)
@@ -485,16 +487,14 @@ func (f *FeishuUseCase) downloadFile(ctx context.Context, appID, secret, fileTok
 		Build()
 
 	// 发起请求
-	resp, err := client.Drive.File.Download(ctx, req)
+	resp, err := client.Drive.File.Download(ctx, req, larkcore.WithUserAccessToken(userAccessToken))
 	// 处理错误
 	if err != nil {
-		fmt.Println(err)
 		return "", "", err
 	}
 
 	// 服务端错误处理
 	if !resp.Success() {
-		fmt.Printf("logId: %s, error response: \n%s", resp.RequestId(), larkcore.Prettify(resp.CodeError))
 		return "", "", fmt.Errorf("下载文件失败: %s", resp.Msg)
 	}
 
