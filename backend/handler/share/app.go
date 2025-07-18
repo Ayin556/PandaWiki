@@ -172,7 +172,6 @@ func (h *ShareAppHandler) WechatHandlerApp(c echo.Context) error {
 	wxCrypt := wxbizmsgcrypt.NewWXBizMsgCrypt(wechatConfig.Token, wechatConfig.EncodingAESKey, wechatConfig.CorpID, wxbizmsgcrypt.XmlType)
 	decryptMsg, errCode := wxCrypt.DecryptMsg(signature, timestamp, nonce, body)
 	if errCode != nil {
-		h.logger.Error("DecryptMsg failed", log.Any("decryptMsg err", errCode))
 		return h.NewResponseWithError(c, "DecryptMsg failed", nil)
 	}
 
