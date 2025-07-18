@@ -40,9 +40,9 @@ const Doc = ({
     kbDetail,
     mobile = false,
     catalogShow,
+    catalogWidth,
   } = useStore();
 
-  const catalogSetting = kbDetail?.settings?.catalog_settings;
   const footerSetting = kbDetail?.settings?.footer_settings;
   const [footerHeight, setFooterHeight] = useState(0);
   const [headings, setHeadings] = useState<Heading[]>([]);
@@ -255,12 +255,12 @@ const Doc = ({
           direction='column'
           alignItems='center'
           justifyContent='center'
+          style={{
+            marginLeft: catalogShow ? `${catalogWidth!}px` : '16px',
+          }}
           sx={{
             position: 'relative',
             height: `calc(100vh - ${footerHeight + 1}px)`,
-            ml: catalogShow
-              ? `${catalogSetting?.catalog_width ?? 260}px`
-              : '16px',
           }}
         >
           {footerHeight > 0 && (
