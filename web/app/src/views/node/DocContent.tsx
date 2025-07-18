@@ -11,7 +11,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { apiClient } from '@/api';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 dayjs.extend(relativeTime);
 dayjs.locale('zh-cn');
@@ -29,7 +29,7 @@ const DocContent = ({
   kbInfo?: KBDetail;
   commentList?: any[];
 }) => {
-  const { mobile = false, kbDetail, catalogShow } = useStore();
+  const { mobile = false, kbDetail, catalogShow, catalogWidth } = useStore();
   const [commentList, setCommentList] = useState<any[]>(propsCommentList ?? []);
   const [appDetail, setAppDetail] = useState<any>(kbInfo?.settings);
   const {
@@ -43,6 +43,9 @@ const DocContent = ({
       name: '',
     },
   });
+
+  const contentInputRef = useRef<HTMLInputElement>(null);
+  const [contentFocused, setContentFocused] = useState(false);
 
   const getComment = async () => {
     const res = await apiClient.clientGetComment(docId, info?.kb_id ?? '');
@@ -80,8 +83,6 @@ const DocContent = ({
   );
   if (!editorRef || !info) return null;
 
-  const catalogSetting = kbDetail?.settings?.catalog_settings;
-
   const renderIp = (ip_address: any = {}) => {
     const { city = '', country = '未知', province = '', ip } = ip_address;
     return (
@@ -96,11 +97,11 @@ const DocContent = ({
 
   return (
     <Box
+      style={{
+        marginLeft: catalogShow ? `${catalogWidth!}px` : '16px',
+        width: `calc(100% - ${catalogShow ? catalogWidth! : 16}px - 225px)`,
+      }}
       sx={{
-        width: `calc(100% - ${
-          catalogShow ? catalogSetting?.catalog_width ?? 260 : 16
-        }px - 225px)`,
-        ml: catalogShow ? `${catalogSetting?.catalog_width ?? 260}px` : '16px',
         wordBreak: 'break-all',
         color: 'text.primary',
         px: 10,
@@ -188,7 +189,6 @@ const DocContent = ({
       >
         <TiptapReader editorRef={editorRef} />
       </Box>
-
       {appDetail?.web_app_comment_settings?.is_enable && (
         <>
           {' '}
@@ -198,8 +198,9 @@ const DocContent = ({
             sx={{
               p: 2,
               border: '1px solid',
-              borderColor: 'divider',
+              borderColor: contentFocused ? 'text.primary' : 'divider',
               borderRadius: 2,
+              transition: 'all 0.2s ease-in-out',
             }}
           >
             <Controller
@@ -211,6 +212,15 @@ const DocContent = ({
               render={({ field }) => (
                 <TextField
                   {...field}
+                  inputRef={contentInputRef}
+                  onFocus={(e) => {
+                    setContentFocused(true);
+                    // field.onFocus?.(e);
+                  }}
+                  onBlur={(e) => {
+                    setContentFocused(false);
+                    field.onBlur?.();
+                  }}
                   placeholder='请输入评论'
                   fullWidth
                   multiline

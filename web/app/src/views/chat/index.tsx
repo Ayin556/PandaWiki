@@ -13,7 +13,14 @@ import SearchResult from './SearchResult';
 import { AnswerStatus } from './constant';
 
 const Chat = () => {
-  const { mobile = false, kb_id, token, kbDetail, catalogShow } = useStore()
+  const {
+    mobile = false,
+    kb_id,
+    token,
+    kbDetail,
+    catalogShow,
+    catalogWidth,
+  } = useStore();
 
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
   const sseClientRef = useRef<SSEClient<{
@@ -34,8 +41,6 @@ const Chat = () => {
   const [answer, setAnswer] = useState('');
   const [isUserScrolling, setIsUserScrolling] = useState(false);
   const [showType, setShowType] = useState<'chat' | 'search'>('chat');
-
-  const catalogSetting = kbDetail?.settings?.catalog_settings
 
   const chatAnswer = async (q: string) => {
     setChunkLoading(true);
@@ -74,12 +79,14 @@ const Chat = () => {
             });
             if (content) message.error(content);
           } else if (type === 'done') {
-            setAnswer(prevAnswer => {
+            setAnswer((prevAnswer) => {
               setConversation((prev) => {
                 const newConversation = [...prev];
                 newConversation[newConversation.length - 1].a = prevAnswer;
-                newConversation[newConversation.length - 1].update_time = dayjs().format('YYYY-MM-DD HH:mm:ss');
-                newConversation[newConversation.length - 1].message_id = messageIdRef.current;
+                newConversation[newConversation.length - 1].update_time =
+                  dayjs().format('YYYY-MM-DD HH:mm:ss');
+                newConversation[newConversation.length - 1].message_id =
+                  messageIdRef.current;
                 return newConversation;
               });
               return '';
@@ -107,7 +114,7 @@ const Chat = () => {
               return [...prev, chunk_result];
             });
           }
-        },
+        }
       );
     }
   };
@@ -115,7 +122,13 @@ const Chat = () => {
   const onSearch = (q: string, reset: boolean = false) => {
     if (loading || !q.trim()) return;
     const newConversation = reset ? [] : [...conversation];
-    newConversation.push({ q, a: '', score: 0, message_id: '', update_time: '' });
+    newConversation.push({
+      q,
+      a: '',
+      score: 0,
+      message_id: '',
+      update_time: '',
+    });
     messageIdRef.current = '';
     setConversation(newConversation);
     setAnswer('');
@@ -173,56 +186,73 @@ const Chat = () => {
           setLoading(false);
           setThinking(4);
           setAnswer((prev) => {
-            let value = ''
+            let value = '';
             if (prev) {
               value = prev + '\n\n<error>Request canceled</error>';
             }
             setConversation((prev) => {
               const newConversation = [...prev];
               newConversation[newConversation.length - 1].a = value;
-              newConversation[newConversation.length - 1].update_time = dayjs().format('YYYY-MM-DD HH:mm:ss');
-              newConversation[newConversation.length - 1].message_id = messageIdRef.current;
+              newConversation[newConversation.length - 1].update_time =
+                dayjs().format('YYYY-MM-DD HH:mm:ss');
+              newConversation[newConversation.length - 1].message_id =
+                messageIdRef.current;
               return newConversation;
             });
             return '';
           });
-        }
+        },
       });
     }
   }, []);
 
   if (mobile) {
-    return <Box sx={{ pt: 12, minHeight: '100vh', position: 'relative' }}>
-      <ChatTab showType={showType} setShowType={setShowType} />
-      <Box sx={{ mx: 3 }}>
-        {showType === 'chat' ? <ChatResult
-          conversation={conversation}
-          conversation_id={conversationId}
-          answer={answer}
-          loading={loading}
-          thinking={thinking}
-          setThinking={setThinking}
-          onSearch={onSearch}
-          setConversation={setConversation}
-          handleSearchAbort={handleSearchAbort}
-        /> : <SearchResult list={chunkResult} loading={chunkLoading} />}
+    return (
+      <Box sx={{ pt: 12, minHeight: '100vh', position: 'relative' }}>
+        <ChatTab showType={showType} setShowType={setShowType} />
+        <Box sx={{ mx: 3 }}>
+          {showType === 'chat' ? (
+            <ChatResult
+              conversation={conversation}
+              conversation_id={conversationId}
+              answer={answer}
+              loading={loading}
+              thinking={thinking}
+              setThinking={setThinking}
+              onSearch={onSearch}
+              setConversation={setConversation}
+              handleSearchAbort={handleSearchAbort}
+            />
+          ) : (
+            <SearchResult list={chunkResult} loading={chunkLoading} />
+          )}
+        </Box>
       </Box>
-    </Box>
+    );
   }
 
   return (
-    <Box sx={{
-      pt: 12,
-      ml: catalogShow ? `${catalogSetting?.catalog_width ?? 260}px` : '16px',
-      px: 10,
-      minHeight: '100vh',
-    }}>
-      <Stack alignItems="stretch" direction="row" gap={3} sx={{
-        height: 'calc(100vh - 120px)',
-        mb: 3,
-        maxWidth: '1200px',
-        mx: 'auto',
-      }}>
+    <Box
+      style={{
+        marginLeft: catalogShow ? `${catalogWidth!}px` : '16px',
+      }}
+      sx={{
+        pt: 12,
+        px: 10,
+        minHeight: '100vh',
+      }}
+    >
+      <Stack
+        alignItems='stretch'
+        direction='row'
+        gap={3}
+        sx={{
+          height: 'calc(100vh - 120px)',
+          mb: 3,
+          maxWidth: '1200px',
+          mx: 'auto',
+        }}
+      >
         <Box sx={{ position: 'relative', flex: 1, width: 0 }}>
           <ChatResult
             conversation={conversation}
@@ -236,21 +266,27 @@ const Chat = () => {
             handleSearchAbort={handleSearchAbort}
           />
         </Box>
-        <Box sx={{
-          flexShrink: 0,
-          width: 388,
-          border: '1px solid',
-          borderColor: 'divider',
-          borderRadius: '10px',
-          p: 3,
-          bgcolor: 'background.paper',
-        }}>
-          <Box sx={{
-            fontSize: '20px',
-            fontWeight: '700',
-            lineHeight: '28px',
-            mb: 2,
-          }}>搜索结果</Box>
+        <Box
+          sx={{
+            flexShrink: 0,
+            width: 388,
+            border: '1px solid',
+            borderColor: 'divider',
+            borderRadius: '10px',
+            p: 3,
+            bgcolor: 'background.paper',
+          }}
+        >
+          <Box
+            sx={{
+              fontSize: '20px',
+              fontWeight: '700',
+              lineHeight: '28px',
+              mb: 2,
+            }}
+          >
+            搜索结果
+          </Box>
           <SearchResult list={chunkResult} loading={chunkLoading} />
         </Box>
       </Stack>
