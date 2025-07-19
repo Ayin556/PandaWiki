@@ -47,11 +47,7 @@ export default function StoreProvider({
 }: StoreContextType & { children: React.ReactNode }) {
   const catalogSettings = kbDetail?.settings?.catalog_settings;
   const [catalogWidth, setCatalogWidth] = useState<number>(() => {
-    if (typeof window !== 'undefined') {
-      const savedWidth = window.localStorage.getItem('CATALOG_WIDTH');
-      if (savedWidth) return Number(savedWidth);
-    }
-    return catalogSettings?.catalog_width ?? 260;
+    return catalogSettings?.catalog_width || 260;
   });
   const [nodeList, setNodeList] = useState<NodeListItem[] | undefined>(
     initialNodeList
@@ -70,13 +66,11 @@ export default function StoreProvider({
   }, [kbDetail]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && catalogSettings?.catalog_width) {
-      const savedWidth = window.localStorage.getItem('CATALOG_WIDTH');
-      if (!savedWidth) {
-        setCatalogWidth(catalogSettings.catalog_width);
-      }
+    const savedWidth = window.localStorage.getItem('CATALOG_WIDTH');
+    if (Number(savedWidth) > 0) {
+      setCatalogWidth(Number(savedWidth));
     }
-  }, [catalogSettings?.catalog_width]);
+  }, []);
 
   useEffect(() => {
     setIsMobile(mediaQueryResult);

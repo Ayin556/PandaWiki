@@ -76,12 +76,14 @@ const Home = () => {
     <Box
       style={{
         marginLeft: catalogShow ? `${catalogWidth!}px` : '16px',
+        ...(mobile && {
+          marginLeft: 0,
+        }),
       }}
       sx={{
         pt: 8,
         minHeight: `calc(100vh - ${footerHeight + 1}px)`,
         ...(mobile && {
-          ml: 0,
           pt: nodeList ? 14 : 5,
         }),
       }}
