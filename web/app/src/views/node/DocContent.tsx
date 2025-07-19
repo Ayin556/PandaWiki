@@ -100,6 +100,10 @@ const DocContent = ({
       style={{
         marginLeft: catalogShow ? `${catalogWidth!}px` : '16px',
         width: `calc(100% - ${catalogShow ? catalogWidth! : 16}px - 225px)`,
+        ...(mobile && {
+          width: '100%',
+          marginLeft: 0,
+        }),
       }}
       sx={{
         wordBreak: 'break-all',
@@ -108,8 +112,6 @@ const DocContent = ({
         position: 'relative',
         zIndex: 1,
         ...(mobile && {
-          width: '100%',
-          marginLeft: 0,
           marginTop: '77px',
           px: 3,
           table: {
