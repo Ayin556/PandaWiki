@@ -292,7 +292,7 @@ func (r *KnowledgeBaseRepository) SyncKBAccessSettingsToCaddy(ctx context.Contex
 	return nil
 }
 
-func (r *KnowledgeBaseRepository) CreateKnowledgeBase(ctx context.Context, kb *domain.KnowledgeBase) error {
+func (r *KnowledgeBaseRepository) CreateKnowledgeBase(ctx context.Context, maxKB int, kb *domain.KnowledgeBase) error {
 	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		if err := tx.Create(kb).Error; err != nil {
 			return err
@@ -304,7 +304,7 @@ func (r *KnowledgeBaseRepository) CreateKnowledgeBase(ctx context.Context, kb *d
 			Find(&kbs).Error; err != nil {
 			return err
 		}
-		if len(kbs) > 1 {
+		if len(kbs) > maxKB {
 			return errors.New("kb is too many")
 		}
 

@@ -84,6 +84,8 @@ type CreateNodeReq struct {
 
 	Emoji      string          `json:"emoji"`
 	Visibility *NodeVisibility `json:"visibility"`
+
+	MaxNode int `json:"-"`
 }
 
 type GetNodeListReq struct {

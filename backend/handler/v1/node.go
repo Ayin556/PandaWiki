@@ -69,6 +69,10 @@ func (h *NodeHandler) CreateNode(c echo.Context) error {
 	if err := c.Validate(req); err != nil {
 		return h.NewResponseWithError(c, "validate request body failed", err)
 	}
+	req.MaxNode = 300
+	if maxNode := c.Get("max_node"); maxNode != nil {
+		req.MaxNode = maxNode.(int)
+	}
 	id, err := h.usecase.Create(c.Request().Context(), req)
 	if err != nil {
 		return h.NewResponseWithError(c, "create node failed", err)

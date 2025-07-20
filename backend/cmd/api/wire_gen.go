@@ -45,6 +45,11 @@ func createApp() (*App, error) {
 	if err != nil {
 		return nil, err
 	}
+	userAccessRepository := pg2.NewUserAccessRepository(db, logger)
+	authMiddleware, err := middleware.NewAuthMiddleware(configConfig, logger, userAccessRepository)
+	if err != nil {
+		return nil, err
+	}
 	ragService, err := rag.NewRAGService(configConfig, logger)
 	if err != nil {
 		return nil, err
@@ -66,14 +71,9 @@ func createApp() (*App, error) {
 		return nil, err
 	}
 	shareAuthMiddleware := middleware.NewShareAuthMiddleware(logger, knowledgeBaseUsecase)
-	baseHandler := handler.NewBaseHandler(echo, logger, configConfig, shareAuthMiddleware)
+	baseHandler := handler.NewBaseHandler(echo, logger, configConfig, authMiddleware, shareAuthMiddleware)
 	userRepository := pg2.NewUserRepository(db, logger)
 	userUsecase, err := usecase.NewUserUsecase(userRepository, logger, configConfig)
-	if err != nil {
-		return nil, err
-	}
-	userAccessRepository := pg2.NewUserAccessRepository(db, logger)
-	authMiddleware, err := middleware.NewAuthMiddleware(configConfig, logger, userAccessRepository)
 	if err != nil {
 		return nil, err
 	}
@@ -150,7 +150,10 @@ func createApp() (*App, error) {
 		ShareStatHandler:    shareStatHandler,
 		ShareCommentHandler: shareCommentHandler,
 	}
-	client := telemetry.NewClient(logger, knowledgeBaseRepository)
+	client, err := telemetry.NewClient(logger, knowledgeBaseRepository)
+	if err != nil {
+		return nil, err
+	}
 	app := &App{
 		HTTPServer:    httpServer,
 		Handlers:      apiHandlers,
