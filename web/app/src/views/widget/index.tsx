@@ -113,7 +113,9 @@ const Widget = () => {
   };
 
   const handleSearchAbort = () => {
-    sseClientRef.current?.unsubscribe();
+    if (loading) {
+      sseClientRef.current?.unsubscribe();
+    }
     setLoading(false);
     setThinking(4);
   };
@@ -158,9 +160,11 @@ const Widget = () => {
             }
             setConversation((prev) => {
               const newConversation = [...prev];
-              newConversation[newConversation.length - 1].a = value;
-              newConversation[newConversation.length - 1].update_time = dayjs().format('YYYY-MM-DD HH:mm:ss');
-              newConversation[newConversation.length - 1].message_id = messageIdRef.current;
+              if (newConversation.length > 0) {
+                newConversation[newConversation.length - 1].a = value;
+                newConversation[newConversation.length - 1].update_time = dayjs().format('YYYY-MM-DD HH:mm:ss');
+                newConversation[newConversation.length - 1].message_id = messageIdRef.current;
+              }
               return newConversation;
             });
             return '';

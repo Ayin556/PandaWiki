@@ -9,7 +9,7 @@ export async function middleware(request: NextRequest) {
   const pathname = url.pathname.replace(/client/, 'share')
 
   try {
-    const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+    const apiBaseUrl = process.env.TARGET || '';
     const targetUrl = `${apiBaseUrl}${pathname}${url.search}`;
 
     const proxyHeaders = new Headers();
