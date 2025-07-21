@@ -60,7 +60,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const kbDetail = await getKBDetailCached(kb_id)
 
   return {
-    metadataBase: new URL(process.env.NEXT_PUBLIC_API_URL || ''),
+    metadataBase: new URL(process.env.TARGET || ''),
     title: kbDetail?.settings?.title || 'Panda-Wiki',
     description: kbDetail?.settings?.desc || '',
     icons: {
