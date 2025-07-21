@@ -33,7 +33,7 @@ const menus = [
     label: '反馈',
     value: '/feedback',
     pathname: 'feedback',
-    icon: 'icon-fankui',
+    icon: 'icon-jushou',
     show: true,
   },
   {

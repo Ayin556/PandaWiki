@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import LinearProgress from '@mui/material/LinearProgress'
-import { styled } from '@mui/material/styles'
+import LinearProgress from '@mui/material/LinearProgress';
+import { styled } from '@mui/material/styles';
 import {
   LazyExoticComponent,
   Suspense,
   createElement,
   forwardRef,
   lazy,
-} from 'react'
-import { JSX } from 'react/jsx-runtime'
+} from 'react';
+import { JSX } from 'react/jsx-runtime';
 
 const LoaderWrapper = styled('div')({
   position: 'fixed',
@@ -16,13 +16,13 @@ const LoaderWrapper = styled('div')({
   left: 0,
   zIndex: 1301,
   width: '100%',
-})
+});
 
 const Loader = () => (
   <LoaderWrapper>
     <LinearProgress color='primary' />
   </LoaderWrapper>
-)
+);
 
 const LazyLoadable = (
   Component: LazyExoticComponent<() => JSX.Element>
@@ -31,7 +31,7 @@ const LazyLoadable = (
     <Suspense fallback={<Loader />}>
       <Component {...props} ref={ref} />
     </Suspense>
-  ))
+  ));
 
 const router = [
   {
@@ -69,11 +69,11 @@ const router = [
     ),
   },
   {
-    path: '/feedback',
+    path: '/feedback/:tab?',
     element: createElement(
       LazyLoadable(lazy(() => import('./pages/feedback')))
     ),
   },
-]
+];
 
-export default router
+export default router;
