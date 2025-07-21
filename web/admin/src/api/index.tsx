@@ -329,6 +329,15 @@ export const getFeedbackList = (
 export const deleteFeedback = (params: { ids: string[] }): Promise<void> =>
   request({ url: 'api/v1/comment/list', method: 'delete', params });
 
+export const getFeedbackEvaluateList = (
+  params: { kb_id: string } & Paging
+): Promise<ResposeList<FeedbackListItem>> =>
+  request({
+    url: 'api/v1/conversation/message/list',
+    method: 'get',
+    params,
+  });
+
 // =============================================》stat
 
 export const statInstantPage = (params: {

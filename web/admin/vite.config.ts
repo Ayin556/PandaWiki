@@ -20,7 +20,7 @@ export default defineConfig({
         secure: false,
         changeOrigin: true,
       },
-      '/static-file': 'http://169.254.15.12:9000',
+      '/static-file': 'https://10.10.7.43:2443',
     },
     host: '0.0.0.0',
   },
