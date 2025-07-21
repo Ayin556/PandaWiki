@@ -184,3 +184,36 @@ func (u *ConversationUsecase) FeedBack(ctx context.Context, feedback *domain.Fee
 	}
 	return nil
 }
+
+func (u *ConversationUsecase) GetMessageList(ctx context.Context, req *domain.MessageListReq) (*domain.PaginatedResult[[]*domain.ConversationMessageListItem], error) {
+	total, messageList, err := u.repo.GetMessageFeedBackList(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	// get ip address
+	ipAddressMap := make(map[string]*domain.IPAddress)
+	lo.Map(messageList, func(message *domain.ConversationMessageListItem, _ int) *domain.ConversationMessageListItem {
+		if _, ok := ipAddressMap[message.RemoteIP]; !ok {
+			ipAddress, err := u.ipRepo.GetIPAddress(ctx, message.RemoteIP)
+			if err != nil {
+				u.logger.Error("get ip address failed", log.Error(err), log.String("ip", message.RemoteIP))
+				return message
+			}
+			ipAddressMap[message.RemoteIP] = ipAddress
+			message.IPAddress = ipAddress
+		} else {
+			message.IPAddress = ipAddressMap[message.RemoteIP]
+		}
+		return message
+	})
+
+	return domain.NewPaginatedResult(messageList, uint64(total)), nil
+}
+
+func (u *ConversationUsecase) GetMessageDetail(ctx context.Context, messageId string) (*domain.ConversationMessage, error) {
+	message, err := u.repo.GetConversationMessagesDetailByID(ctx, messageId)
+	if err != nil {
+		return nil, err
+	}
+	return message, nil
+}
