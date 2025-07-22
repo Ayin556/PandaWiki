@@ -338,6 +338,11 @@ export const getFeedbackEvaluateList = (
     params,
   });
 
+export const getFeedbackEvaluateDetail = (params: {
+  id: string;
+}): Promise<ConversationDetail> =>
+  request({ url: 'api/v1/conversation/message/detail', method: 'get', params });
+
 // =============================================》stat
 
 export const statInstantPage = (params: {

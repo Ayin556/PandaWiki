@@ -1,10 +1,5 @@
-import {
-  ChatConversationPair,
-  ConversationDetail,
-  getConversationDetail,
-} from '@/api';
-import Avatar from '@/components/Avatar';
-import Card from '@/components/Card';
+import { ChatConversationPair } from '@/api';
+import { getApiV1ConversationMessageDetail } from '@/request';
 import MarkDown from '@/components/MarkDown';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
@@ -12,8 +7,6 @@ import {
   AccordionDetails,
   AccordionSummary,
   Box,
-  Stack,
-  useTheme,
 } from '@mui/material';
 import { Ellipsis, Icon, Modal } from 'ct-mui';
 import { useEffect, useState } from 'react';
@@ -29,27 +22,22 @@ const Detail = ({
   data: any;
   onClose: () => void;
 }) => {
-  const theme = useTheme();
-  const [detail, setDetail] = useState<ConversationDetail | null>(null);
-  const [conversations, setConversations] = useState<
-    ChatConversationPair[] | null
-  >(null);
+  const [conversations, setConversations] = useState<Omit<
+    ChatConversationPair,
+    'info'
+  > | null>(null);
 
   useEffect(() => {
-    if (data.length > 0) {
-      const pairs: ChatConversationPair[] = [];
-      const question = data[1];
-      const answer = data[0];
-      pairs.push({
-        user: question.content,
-        assistant: answer.content,
-        created_at: question.created_at,
-        info: answer.info,
-      } as ChatConversationPair);
-
-      setConversations(pairs);
+    if (open && id && data) {
+      getApiV1ConversationMessageDetail({ id }).then((res) => {
+        setConversations({
+          user: data.question,
+          assistant: res.content!,
+          created_at: res.created_at!,
+        });
+      });
     }
-  }, [data]);
+  }, [open, data, id]);
 
   return (
     <Modal
@@ -71,29 +59,26 @@ const Detail = ({
       footer={null}
     >
       <Box sx={{ fontSize: 14 }}>
-        <Stack gap={2}>
-          {conversations &&
-            conversations.map((item, index) => (
-              <Box key={index}>
-                <Accordion defaultExpanded={true}>
-                  <AccordionSummary
-                    expandIcon={<ExpandMoreIcon sx={{ fontSize: 24 }} />}
-                    sx={{
-                      userSelect: 'text',
-                      backgroundColor: 'background.paper2',
-                      fontSize: '18px',
-                      fontWeight: 'bold',
-                    }}
-                  >
-                    {item.user}
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    <MarkDown content={item.assistant || '未查询到回答内容'} />
-                  </AccordionDetails>
-                </Accordion>
-              </Box>
-            ))}
-        </Stack>
+        <Box>
+          <Accordion defaultExpanded={true}>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon sx={{ fontSize: 24 }} />}
+              sx={{
+                userSelect: 'text',
+                backgroundColor: 'background.paper2',
+                fontSize: '18px',
+                fontWeight: 'bold',
+              }}
+            >
+              {conversations?.user}
+            </AccordionSummary>
+            <AccordionDetails>
+              <MarkDown
+                content={conversations?.assistant || '未查询到回答内容'}
+              />
+            </AccordionDetails>
+          </Accordion>
+        </Box>
       </Box>
     </Modal>
   );

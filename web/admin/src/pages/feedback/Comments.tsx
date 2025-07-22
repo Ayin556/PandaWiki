@@ -1,9 +1,9 @@
+import { FeedbackListItem } from '@/api';
 import {
-  FeedbackListItem,
-  getFeedbackList,
-  deleteFeedback,
-  getKnowledgeBaseDetail,
-} from '@/api';
+  getApiV1KnowledgeBaseDetail,
+  getApiV1Comment,
+  deleteApiV1CommentList,
+} from '@/request';
 import NoData from '@/assets/images/nodata.png';
 import { tableSx } from '@/constant/styles';
 import { useURLSearchParams } from '@/hooks';
@@ -37,7 +37,7 @@ const Comments = () => {
         color: 'primary',
       },
       onOk: () => {
-        deleteFeedback({ ids: [id] }).then(() => {
+        deleteApiV1CommentList({ ids: [id] }).then(() => {
           Message.success('删除成功');
           if (page === 1) {
             getData();
@@ -132,10 +132,10 @@ const Comments = () => {
 
   const getData = () => {
     setLoading(true);
-    getFeedbackList({
+    getApiV1Comment({
+      kb_id,
       page,
       per_page: pageSize,
-      kb_id,
     })
       .then((res) => {
         setData(res.data);
@@ -157,8 +157,8 @@ const Comments = () => {
 
   useEffect(() => {
     if (kb_id) {
-      getKnowledgeBaseDetail({ id: kb_id }).then((res) => {
-        setBaseUrl(res.access_settings.base_url);
+      getApiV1KnowledgeBaseDetail({ id: kb_id }).then((res) => {
+        setBaseUrl(res!.access_settings!.base_url!);
       });
     }
   }, [kb_id]);
