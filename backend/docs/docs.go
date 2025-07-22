@@ -142,20 +142,43 @@ const docTemplate = `{
                 "summary": "GetCommentList",
                 "parameters": [
                     {
-                        "description": "CommentListReq",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/domain.CommentListReq"
-                        }
+                        "type": "string",
+                        "name": "kb_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "per_page",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "conversationList",
                         "schema": {
-                            "$ref": "#/definitions/handler_v1.CommentLists"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/handler_v1.CommentLists"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -176,13 +199,13 @@ const docTemplate = `{
                 "summary": "DeleteCommentList",
                 "parameters": [
                     {
-                        "description": "DeleteCommentListReq",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/domain.DeleteCommentListReq"
-                        }
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "name": "ids",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -309,6 +332,107 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "$ref": "#/definitions/domain.ConversationDetailResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/conversation/message/detail": {
+            "get": {
+                "description": "Get message detail",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Message"
+                ],
+                "summary": "Get message detail",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "message id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/domain.ConversationMessage"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/conversation/message/list": {
+            "get": {
+                "description": "GetMessageFeedBackList",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Message"
+                ],
+                "summary": "GetMessageFeedBackList",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "kb_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "per_page",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "MessageList",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/github_com_chaitin_panda-wiki_domain.PaginatedResult-array_domain_ConversationMessageListItem"
                                         }
                                     }
                                 }
@@ -3432,27 +3556,6 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.CommentListReq": {
-            "type": "object",
-            "required": [
-                "kb_id",
-                "page",
-                "per_page"
-            ],
-            "properties": {
-                "kb_id": {
-                    "type": "string"
-                },
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "per_page": {
-                    "type": "integer",
-                    "minimum": 1
-                }
-            }
-        },
         "domain.CommentReq": {
             "type": "object",
             "required": [
@@ -3591,7 +3694,14 @@ const docTemplate = `{
                         }
                     ]
                 },
+                "kb_id": {
+                    "type": "string"
+                },
                 "model": {
+                    "type": "string"
+                },
+                "parent_id": {
+                    "description": "parent_id",
                     "type": "string"
                 },
                 "prompt_tokens": {
@@ -3614,6 +3724,52 @@ const docTemplate = `{
                 },
                 "total_tokens": {
                     "type": "integer"
+                }
+            }
+        },
+        "domain.ConversationMessageListItem": {
+            "type": "object",
+            "properties": {
+                "app_id": {
+                    "type": "string"
+                },
+                "app_type": {
+                    "$ref": "#/definitions/domain.AppType"
+                },
+                "conversation_id": {
+                    "type": "string"
+                },
+                "conversation_info": {
+                    "description": "userInfo",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.ConversationInfo"
+                        }
+                    ]
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "info": {
+                    "description": "feedbackInfo",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.FeedBackInfo"
+                        }
+                    ]
+                },
+                "ip_address": {
+                    "$ref": "#/definitions/domain.IPAddress"
+                },
+                "question": {
+                    "type": "string"
+                },
+                "remote_ip": {
+                    "description": "stats",
+                    "type": "string"
                 }
             }
         },
@@ -3810,17 +3966,6 @@ const docTemplate = `{
                 "password": {
                     "type": "string",
                     "minLength": 8
-                }
-            }
-        },
-        "domain.DeleteCommentListReq": {
-            "type": "object",
-            "properties": {
-                "ids": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
                 }
             }
         },
@@ -5131,6 +5276,20 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
+                }
+            }
+        },
+        "github_com_chaitin_panda-wiki_domain.PaginatedResult-array_domain_ConversationMessageListItem": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.ConversationMessageListItem"
+                    }
+                },
+                "total": {
+                    "type": "integer"
                 }
             }
         },

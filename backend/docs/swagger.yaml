@@ -407,21 +407,6 @@ definitions:
       root_id:
         type: string
     type: object
-  domain.CommentListReq:
-    properties:
-      kb_id:
-        type: string
-      page:
-        minimum: 1
-        type: integer
-      per_page:
-        minimum: 1
-        type: integer
-    required:
-    - kb_id
-    - page
-    - per_page
-    type: object
   domain.CommentReq:
     properties:
       content:
@@ -509,7 +494,12 @@ definitions:
         allOf:
         - $ref: '#/definitions/domain.FeedBackInfo'
         description: feedbackinfo
+      kb_id:
+        type: string
       model:
+        type: string
+      parent_id:
+        description: parent_id
         type: string
       prompt_tokens:
         type: integer
@@ -524,6 +514,34 @@ definitions:
         $ref: '#/definitions/schema.RoleType'
       total_tokens:
         type: integer
+    type: object
+  domain.ConversationMessageListItem:
+    properties:
+      app_id:
+        type: string
+      app_type:
+        $ref: '#/definitions/domain.AppType'
+      conversation_id:
+        type: string
+      conversation_info:
+        allOf:
+        - $ref: '#/definitions/domain.ConversationInfo'
+        description: userInfo
+      created_at:
+        type: string
+      id:
+        type: string
+      info:
+        allOf:
+        - $ref: '#/definitions/domain.FeedBackInfo'
+        description: feedbackInfo
+      ip_address:
+        $ref: '#/definitions/domain.IPAddress'
+      question:
+        type: string
+      remote_ip:
+        description: stats
+        type: string
     type: object
   domain.ConversationReference:
     properties:
@@ -656,13 +674,6 @@ definitions:
     required:
     - account
     - password
-    type: object
-  domain.DeleteCommentListReq:
-    properties:
-      ids:
-        items:
-          type: string
-        type: array
     type: object
   domain.DeleteUserReq:
     properties:
@@ -1536,6 +1547,15 @@ definitions:
       title:
         type: string
     type: object
+  github_com_chaitin_panda-wiki_domain.PaginatedResult-array_domain_ConversationMessageListItem:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/domain.ConversationMessageListItem'
+        type: array
+      total:
+        type: integer
+    type: object
   handler_share.ShareCommentLists:
     properties:
       data:
@@ -1655,19 +1675,32 @@ paths:
       - application/json
       description: GetCommentList
       parameters:
-      - description: CommentListReq
-        in: body
-        name: request
+      - in: query
+        name: kb_id
         required: true
-        schema:
-          $ref: '#/definitions/domain.CommentListReq'
+        type: string
+      - in: query
+        minimum: 1
+        name: page
+        required: true
+        type: integer
+      - in: query
+        minimum: 1
+        name: per_page
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
         "200":
           description: conversationList
           schema:
-            $ref: '#/definitions/handler_v1.CommentLists'
+            allOf:
+            - $ref: '#/definitions/domain.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/handler_v1.CommentLists'
+              type: object
       summary: GetCommentList
       tags:
       - comment
@@ -1677,12 +1710,12 @@ paths:
       - application/json
       description: DeleteCommentList
       parameters:
-      - description: DeleteCommentListReq
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/domain.DeleteCommentListReq'
+      - collectionFormat: csv
+        in: query
+        items:
+          type: string
+        name: ids
+        type: array
       produces:
       - application/json
       responses:
@@ -1768,6 +1801,67 @@ paths:
       summary: get conversation detail
       tags:
       - conversation
+  /api/v1/conversation/message/detail:
+    get:
+      consumes:
+      - application/json
+      description: Get message detail
+      parameters:
+      - description: message id
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.ConversationMessage'
+              type: object
+      summary: Get message detail
+      tags:
+      - Message
+  /api/v1/conversation/message/list:
+    get:
+      consumes:
+      - application/json
+      description: GetMessageFeedBackList
+      parameters:
+      - in: query
+        name: kb_id
+        required: true
+        type: string
+      - in: query
+        minimum: 1
+        name: page
+        required: true
+        type: integer
+      - in: query
+        minimum: 1
+        name: per_page
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: MessageList
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_chaitin_panda-wiki_domain.PaginatedResult-array_domain_ConversationMessageListItem'
+              type: object
+      summary: GetMessageFeedBackList
+      tags:
+      - Message
   /api/v1/crawler/confluence/analysis_export_file:
     post:
       consumes:

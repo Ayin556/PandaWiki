@@ -32,7 +32,7 @@ func NewCommentHandler(e *echo.Echo, baseHandler *handler.BaseHandler, logger *l
 	return h
 }
 
-type CommentLists = *domain.PaginatedResult[[]*domain.CommentListItem]
+type CommentLists = domain.PaginatedResult[[]*domain.CommentListItem]
 
 // GetCommentList
 //
@@ -41,21 +41,21 @@ type CommentLists = *domain.PaginatedResult[[]*domain.CommentListItem]
 //	@Tags			comment
 //	@Accept			json
 //	@Produce		json
-//	@Param			request	body		domain.CommentListReq	true	"CommentListReq"
-//	@Success		200		{object}	CommentLists			"conversationList"
+//	@Param			req	query		domain.CommentListReq				true	"CommentListReq"
+//	@Success		200	{object}	domain.Response{data=CommentLists}	"conversationList"
 //	@Router			/api/v1/comment [get]
 func (h *CommentHandler) GetCommentList(c echo.Context) error {
-	var request domain.CommentListReq
-	if err := c.Bind(&request); err != nil {
+	var req domain.CommentListReq
+	if err := c.Bind(&req); err != nil {
 		return h.NewResponseWithError(c, "bind request", err)
 	}
-	if err := c.Validate(&request); err != nil {
+	if err := c.Validate(&req); err != nil {
 		return h.NewResponseWithError(c, "invalid request", err)
 	}
 
 	ctx := c.Request().Context()
 
-	conversationList, err := h.usecase.GetCommentListByKbID(ctx, &request)
+	conversationList, err := h.usecase.GetCommentListByKbID(ctx, &req)
 	if err != nil {
 		return h.NewResponseWithError(c, "failed to get comment list KBID", err)
 	}
@@ -69,18 +69,18 @@ func (h *CommentHandler) GetCommentList(c echo.Context) error {
 //	@Tags			comment
 //	@Accept			json
 //	@Produce		json
-//	@Param			request	body		domain.DeleteCommentListReq	true	"DeleteCommentListReq"
-//	@Success		200		{object}	domain.Response				"total"
+//	@Param			req	query		domain.DeleteCommentListReq	true	"DeleteCommentListReq"
+//	@Success		200	{object}	domain.Response				"total"
 //	@Router			/api/v1/comment/list [delete]
 func (h *CommentHandler) DeleteCommentList(c echo.Context) error {
-	var request domain.DeleteCommentListReq
+	var req domain.DeleteCommentListReq
 	ids := c.QueryParams()["ids[]"]
 	if len(ids) == 0 {
 		return h.NewResponseWithError(c, "len comment id is zero", nil)
 	}
-	request.IDS = ids
+	req.IDS = ids
 	ctx := c.Request().Context()
-	err := h.usecase.DeleteCommentList(ctx, &request)
+	err := h.usecase.DeleteCommentList(ctx, &req)
 	if err != nil {
 		return h.NewResponseWithError(c, "failed to delete comment list", err)
 	}

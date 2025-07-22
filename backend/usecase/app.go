@@ -109,7 +109,7 @@ func (u *AppUsecase) getQAFunc(kbID string, appType domain.AppType) bot.GetQAFun
 			u.logger.Error("wechat GetKnowledgeBaseByID failed", log.Error(err))
 		}
 		contentCh := make(chan string, 10)
-		var feedback = "\n\n---  \n\n此回答结果对您有帮助吗?  \n[👍 满意](%s) | [👎 不满意](%s)"
+		var feedback = "\n\n---  \n\n本答案由 PandaWiki 生成  \n[👍 满意](%s) | [👎 不满意](%s)"
 		var likeUrl = "%s/feedback?score=1&message_id=%s"
 		var dislikeUrl = "%s/feedback?score=-1&message_id=%s"
 		var messageId string

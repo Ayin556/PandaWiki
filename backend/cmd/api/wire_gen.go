@@ -78,7 +78,7 @@ func createApp() (*App, error) {
 		return nil, err
 	}
 	userHandler := v1.NewUserHandler(echo, baseHandler, logger, userUsecase, authMiddleware, configConfig)
-	conversationRepository := pg2.NewConversationRepository(db)
+	conversationRepository := pg2.NewConversationRepository(db, logger)
 	modelRepository := pg2.NewModelRepository(db, logger)
 	llmUsecase := usecase.NewLLMUsecase(configConfig, ragService, conversationRepository, knowledgeBaseRepository, nodeRepository, modelRepository, logger)
 	knowledgeBaseHandler := v1.NewKnowledgeBaseHandler(baseHandler, echo, knowledgeBaseUsecase, llmUsecase, authMiddleware, logger)
