@@ -1,4 +1,5 @@
-import { ConversationListItem, getFeedbackEvaluateList } from '@/api';
+import { getApiV1ConversationMessageList } from '@/request';
+import { DomainConversationMessageListItem } from '@/request/types';
 import Logo from '@/assets/images/logo.png';
 import NoData from '@/assets/images/nodata.png';
 import { AppType, FeedbackType } from '@/constant/enums';
@@ -7,6 +8,7 @@ import { useURLSearchParams } from '@/hooks';
 import { useAppSelector } from '@/store';
 import { Box, Stack, Tooltip } from '@mui/material';
 import { Ellipsis, Icon, Table } from 'ct-mui';
+import { ColumnsType } from 'ct-mui/dist/Table';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import Detail from './Detail';
@@ -16,21 +18,21 @@ const Evaluate = () => {
   const [searchParams] = useURLSearchParams();
   const subject = searchParams.get('subject') || '';
   const remoteIp = searchParams.get('remote_ip') || '';
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<DomainConversationMessageListItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [total, setTotal] = useState(0);
   const [open, setOpen] = useState(false);
   const [id, setId] = useState('');
-  const [feedbackInfo, setFeedbackInfo] = useState<any>({});
+  const [feedbackInfo, setFeedbackInfo] =
+    useState<DomainConversationMessageListItem>({});
 
-  const columns = [
+  const columns: ColumnsType<DomainConversationMessageListItem> = [
     {
-      dataIndex: 'subject',
+      dataIndex: 'question',
       title: '问题',
-      render: (text: string, record: any) => {
-        const info = record.conversation_messages[1];
+      render: (text: string, record) => {
         return (
           <>
             <Stack direction={'row'} alignItems={'center'} gap={1}>
@@ -44,12 +46,12 @@ const Evaluate = () => {
                 className='primary-color'
                 sx={{ cursor: 'pointer', flex: 1, width: 0 }}
                 onClick={() => {
-                  setId(record.id);
-                  setFeedbackInfo(record.conversation_messages);
+                  setId(record.id!);
+                  setFeedbackInfo(record);
                   setOpen(true);
                 }}
               >
-                {info.content}
+                {text}
               </Ellipsis>
             </Stack>
             <Box sx={{ color: 'text.auxiliary', fontSize: 12 }}>
@@ -60,27 +62,26 @@ const Evaluate = () => {
       },
     },
     {
-      dataIndex: 'feedback_info',
+      dataIndex: 'info',
       title: '用户反馈',
       width: 160,
-      render: (value: ConversationListItem['feedback_info'], record: any) => {
-        const info = record.conversation_messages[0].info;
+      render: (value: DomainConversationMessageListItem['info']) => {
         return (
           <Tooltip
             title={
-              (info?.feedback_content || value?.feedback_type > 0) && (
+              (value!.feedback_content || value!.feedback_type! > 0) && (
                 <Box>
-                  {info?.feedback_type > 0 && (
+                  {value!.feedback_type! > 0 && (
                     <Box>
                       {
                         FeedbackType[
-                          info?.feedback_type as keyof typeof FeedbackType
+                          value?.feedback_type as keyof typeof FeedbackType
                         ]
                       }
                     </Box>
                   )}
-                  {info?.feedback_content && (
-                    <Box>{info?.feedback_content}</Box>
+                  {value?.feedback_content && (
+                    <Box>{value?.feedback_content}</Box>
                   )}
                 </Box>
               )
@@ -92,12 +93,12 @@ const Evaluate = () => {
               gap={0.5}
               sx={{ cursor: 'pointer', fontSize: 14 }}
             >
-              {info?.score === 1 ? (
+              {value!.score === 1 ? (
                 <Icon
                   type='icon-dianzan-xuanzhong1'
                   sx={{ cursor: 'pointer', color: 'success.main' }}
                 />
-              ) : info?.score === -1 ? (
+              ) : value!.score === -1 ? (
                 <Icon
                   type='icon-a-diancai-weixuanzhong2'
                   sx={{ cursor: 'pointer', color: 'error.main' }}
@@ -117,8 +118,8 @@ const Evaluate = () => {
       dataIndex: 'info',
       title: '来源用户',
       width: 200,
-      render: (text: ConversationListItem['info'], record: any) => {
-        const user = record?.user_info || {};
+      render: (text, record) => {
+        const user = record?.conversation_info?.user_info || {};
         return (
           <Box sx={{ fontSize: 12 }}>
             <Stack
@@ -143,8 +144,7 @@ const Evaluate = () => {
       dataIndex: 'remote_ip',
       title: '来源 IP',
       width: 200,
-      render: (text: string, record: any) => {
-        const info = record.conversation_messages[1];
+      render: (text: string, record) => {
         const {
           city = '',
           country = '',
@@ -152,7 +152,7 @@ const Evaluate = () => {
         } = record.ip_address || {};
         return (
           <>
-            <Box>{info.remote_ip}</Box>
+            <Box>{text}</Box>
             <Box sx={{ color: 'text.auxiliary', fontSize: 12 }}>
               {country === '中国' ? `${province}-${city}` : `${country}`}
             </Box>
@@ -164,23 +164,22 @@ const Evaluate = () => {
       dataIndex: 'created_at',
       title: '问答时间',
       width: 120,
-      render: (text: string, record: any) => {
-        const info = record.conversation_messages[1];
-        return dayjs(info?.created_at).fromNow();
+      render: (text: string, record) => {
+        return dayjs(record?.created_at).fromNow();
       },
     },
   ];
 
   const getData = () => {
     setLoading(true);
-    getFeedbackEvaluateList({
+    getApiV1ConversationMessageList({
       page,
       per_page: pageSize,
       kb_id,
     })
       .then((res) => {
-        setData(res.data);
-        setTotal(res.total);
+        setData(res.data || []);
+        setTotal(res.total || 0);
       })
       .finally(() => {
         setLoading(false);
