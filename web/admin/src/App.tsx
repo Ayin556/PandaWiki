@@ -33,10 +33,12 @@ function App() {
   }, [pathname])
 
   useEffect(() => {
-    getLicenseInfo().then(res => {
-      dispatch(setLicense(res))
-    })
-  }, [])
+    if (token) {
+      getLicenseInfo().then(res => {
+        dispatch(setLicense(res))
+      })
+    }
+  }, [token])
 
   if (!token && !onlyAllowShareApi) {
     window.location.href = '/login'

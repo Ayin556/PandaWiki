@@ -264,6 +264,14 @@ export type DingBotSetting = {
   dingtalk_bot_template_id: string;
 };
 
+export type WechatOfficeAccountSetting = {
+  wechat_official_account_is_enabled: boolean,
+  wechat_official_account_app_id: string,
+  wechat_official_account_app_secret: string,
+  wechat_official_account_token: string,
+  wechat_official_account_encodingaeskey: string,
+}
+
 export type WecomBotSetting = {
   wechat_app_is_enabled: boolean;
   wechat_app_agent_id: number;
@@ -367,6 +375,7 @@ export type AppSetting = HeaderSetting &
   SEOSetting &
   CustomCodeSetting &
   DingBotSetting &
+  WechatOfficeAccountSetting &
   WecomBotSetting &
   WecomBotServiceSetting &
   FeishuBotSetting &
