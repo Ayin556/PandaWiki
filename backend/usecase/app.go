@@ -362,6 +362,12 @@ func (u *AppUsecase) GetAppDetailByKBIDAndAppType(ctx context.Context, kbID stri
 		// Discord
 		DiscordBotIsEnabled: app.Settings.DiscordBotIsEnabled,
 		DiscordBotToken:     app.Settings.DiscordBotToken,
+		// WechatOfficialAccount
+		WechatOfficialAccountIsEnabled:      app.Settings.WechatOfficialAccountIsEnabled,
+		WechatOfficialAccountAppID:          app.Settings.WechatOfficialAccountAppID,
+		WechatOfficialAccountAppSecret:      app.Settings.WechatOfficialAccountAppSecret,
+		WechatOfficialAccountToken:          app.Settings.WechatOfficialAccountToken,
+		WechatOfficialAccountEncodingAESKey: app.Settings.WechatOfficialAccountEncodingAESKey,
 		// theme
 		ThemeMode:     app.Settings.ThemeMode,
 		ThemeAndStyle: app.Settings.ThemeAndStyle,
