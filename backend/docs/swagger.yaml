@@ -135,6 +135,17 @@ definitions:
         type: string
       wechat_app_token:
         type: string
+      wechat_official_account_app_id:
+        type: string
+      wechat_official_account_app_secret:
+        type: string
+      wechat_official_account_encodingaeskey:
+        type: string
+      wechat_official_account_is_enabled:
+        description: WechatOfficialAccount
+        type: boolean
+      wechat_official_account_token:
+        type: string
       wechat_service_corpid:
         type: string
       wechat_service_encodingaeskey:
@@ -237,6 +248,17 @@ definitions:
         type: string
       wechat_app_token:
         type: string
+      wechat_official_account_app_id:
+        type: string
+      wechat_official_account_app_secret:
+        type: string
+      wechat_official_account_encodingaeskey:
+        type: string
+      wechat_official_account_is_enabled:
+        description: WechatOfficialAccount
+        type: boolean
+      wechat_official_account_token:
+        type: string
       wechat_service_corpid:
         type: string
       wechat_service_encodingaeskey:
@@ -265,6 +287,7 @@ definitions:
     - 5
     - 6
     - 7
+    - 8
     type: integer
     x-enum-varnames:
     - AppTypeWeb
@@ -274,6 +297,7 @@ definitions:
     - AppTypeWechatBot
     - AppTypeWechatServiceBot
     - AppTypeDisCordBot
+    - AppTypeWechatOfficialAccount
   domain.BatchMoveReq:
     properties:
       ids:

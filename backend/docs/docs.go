@@ -3148,6 +3148,22 @@ const docTemplate = `{
                 "wechat_app_token": {
                     "type": "string"
                 },
+                "wechat_official_account_app_id": {
+                    "type": "string"
+                },
+                "wechat_official_account_app_secret": {
+                    "type": "string"
+                },
+                "wechat_official_account_encodingaeskey": {
+                    "type": "string"
+                },
+                "wechat_official_account_is_enabled": {
+                    "description": "WechatOfficialAccount",
+                    "type": "boolean"
+                },
+                "wechat_official_account_token": {
+                    "type": "string"
+                },
                 "wechat_service_corpid": {
                     "type": "string"
                 },
@@ -3304,6 +3320,22 @@ const docTemplate = `{
                 "wechat_app_token": {
                     "type": "string"
                 },
+                "wechat_official_account_app_id": {
+                    "type": "string"
+                },
+                "wechat_official_account_app_secret": {
+                    "type": "string"
+                },
+                "wechat_official_account_encodingaeskey": {
+                    "type": "string"
+                },
+                "wechat_official_account_is_enabled": {
+                    "description": "WechatOfficialAccount",
+                    "type": "boolean"
+                },
+                "wechat_official_account_token": {
+                    "type": "string"
+                },
                 "wechat_service_corpid": {
                     "type": "string"
                 },
@@ -3343,7 +3375,8 @@ const docTemplate = `{
                 4,
                 5,
                 6,
-                7
+                7,
+                8
             ],
             "x-enum-varnames": [
                 "AppTypeWeb",
@@ -3352,7 +3385,8 @@ const docTemplate = `{
                 "AppTypeFeishuBot",
                 "AppTypeWechatBot",
                 "AppTypeWechatServiceBot",
-                "AppTypeDisCordBot"
+                "AppTypeDisCordBot",
+                "AppTypeWechatOfficialAccount"
             ]
         },
         "domain.BatchMoveReq": {
