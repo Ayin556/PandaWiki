@@ -1,14 +1,20 @@
 import { KnowledgeBaseListItem } from "@/api"
+import { useURLSearchParams } from "@/hooks"
 import { useAppDispatch, useAppSelector } from "@/store"
 import { setKbC, setKbId } from "@/store/slices/config"
 import custom from '@/themes/custom'
 import { Box, Button, IconButton, MenuItem, Select, Stack } from "@mui/material"
 import { Ellipsis, Icon, Message } from "ct-mui"
 import { useState } from "react"
+import { useLocation } from "react-router-dom"
 import KBDelete from "./KBDelete"
 
 const KBSelect = () => {
+  const location = useLocation()
+  const resetPagination = location.pathname.includes('/conversation')
+
   const dispatch = useAppDispatch()
+  const [_, setSearchParams] = useURLSearchParams()
   const { kb_id, kbList, license } = useAppSelector(state => state.config)
 
   const [deleteOpen, setDeleteOpen] = useState(false)
@@ -43,6 +49,7 @@ const KBSelect = () => {
       onChange={(e) => {
         if (e.target.value === kb_id || !e.target.value) return
         dispatch(setKbId(e.target.value as string))
+        if (resetPagination) setSearchParams({ page: '1', pageSize: '20' })
         Message.success('切换成功')
       }}
       IconComponent={({ className, ...rest }) => {

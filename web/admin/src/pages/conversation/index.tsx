@@ -16,15 +16,15 @@ import Search from "./Search"
 const Conversation = () => {
   const { kb_id = '' } = useAppSelector(state => state.config)
   const [searchParams, setSearchParams] = useURLSearchParams()
+  const conversion_id = searchParams.get('conversion_id') || ''
+  const page = Number(searchParams.get('page') || '1')
+  const pageSize = Number(searchParams.get('page_size') || '20')
   const subject = searchParams.get('subject') || ''
   const remoteIp = searchParams.get('remote_ip') || ''
   const [data, setData] = useState<ConversationListItem[]>([])
   const [loading, setLoading] = useState(false)
-  const [page, setPage] = useState(1)
-  const [pageSize, setPageSize] = useState(20)
   const [total, setTotal] = useState(0)
   const [open, setOpen] = useState(false)
-  const [id, setId] = useState('')
 
   const columns = [
     {
@@ -36,9 +36,9 @@ const Conversation = () => {
           <Stack direction={'row'} alignItems={'center'} gap={1}>
             <Icon sx={{ fontSize: 12 }} type={AppType[record.app_type as keyof typeof AppType]?.icon || ''} />
             <Ellipsis className="primary-color" sx={{ cursor: 'pointer', flex: 1, width: 0 }} onClick={() => {
-              setId(record.id)
-              setOpen(true)
+              // setId(record.id)
               setSearchParams({ conversion_id: record.id })
+              setOpen(true)
             }}>
               {text}
             </Ellipsis>
@@ -115,8 +115,8 @@ const Conversation = () => {
   }
 
   useEffect(() => {
-    setPage(1)
-  }, [subject, remoteIp, kb_id])
+    if (conversion_id) setOpen(true)
+  }, [conversion_id])
 
   useEffect(() => {
     if (kb_id) getData()
@@ -145,8 +145,7 @@ const Conversation = () => {
         page,
         pageSize,
         onChange: (page, pageSize) => {
-          setPage(page)
-          setPageSize(pageSize)
+          setSearchParams({ page: String(page), pageSize: String(pageSize) })
         },
       }}
       PaginationProps={{
@@ -164,7 +163,7 @@ const Conversation = () => {
         <Box>暂无数据</Box>
       </Stack>}
     />
-    <Detail id={id} open={open} onClose={() => {
+    <Detail id={conversion_id} open={open} onClose={() => {
       setOpen(false)
       setSearchParams({ conversion_id: '' })
     }} />
