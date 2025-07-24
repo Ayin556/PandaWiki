@@ -618,3 +618,10 @@ export type ConversationDistributionItem = {
   app_type: keyof typeof AppType;
   count: number;
 };
+
+// ============================================》license
+export type LicenseInfo = {
+  edition: 0 | 1 | 2
+  expired_at: number
+  started_at: number
+}
