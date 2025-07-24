@@ -6,6 +6,7 @@ import SSEClient from '@/utils/fetch';
 import { Box, Stack } from '@mui/material';
 import { message } from 'ct-mui';
 import dayjs from 'dayjs';
+import { useSetState } from 'ahooks';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import ChatResult from './ChatResult';
 import ChatTab from './ChatTab';
@@ -32,6 +33,9 @@ const Chat = () => {
   const messageIdRef = useRef('');
 
   const [conversation, setConversation] = useState<ConversationItem[]>([]);
+  const [conversationMap, setConversationMap] = useSetState<{
+    [key: string]: ConversationItem;
+  }>({});
   const [loading, setLoading] = useState(false);
   const [thinking, setThinking] = useState<keyof typeof AnswerStatus>(4);
   const [nonce, setNonce] = useState('');

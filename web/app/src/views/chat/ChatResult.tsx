@@ -10,7 +10,7 @@ import {
   IconZan,
   IconZaned,
 } from '@/components/icons';
-import MarkDown from '@/components/markdown';
+import MarkDown from '@/components/markdown2';
 import { useStore } from '@/provider';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
@@ -109,8 +109,16 @@ const ChatResult = ({
   };
 
   useEffect(() => {
-    scrollToBottom();
+    // scrollToBottom();
   }, [answer, conversation]);
+
+  useEffect(() => {
+    if (!loading) {
+      setTimeout(() => {
+        scrollToBottom();
+      });
+    }
+  }, [loading]);
 
   return (
     <Box
@@ -171,16 +179,22 @@ const ChatResult = ({
                 </Box>
               </AccordionSummary>
               <AccordionDetails>
-                <MarkDown content={item.a} />
-                {index === conversation.length - 1 && loading && !answer && (
-                  <>
-                    <Skeleton variant='text' width='100%' />
-                    <Skeleton variant='text' width='70%' />
-                  </>
+                {index === conversation.length - 1 ? (
+                  // 最后一个对话项：显示合并后的内容，避免闪烁
+                  <MarkDown content={item.a || answer || ''} />
+                ) : (
+                  // 非最后一个对话项：正常显示
+                  <MarkDown content={item.a} />
                 )}
-                {index === conversation.length - 1 && answer && (
-                  <MarkDown content={answer} />
-                )}
+                {index === conversation.length - 1 &&
+                  loading &&
+                  !answer &&
+                  !item.a && (
+                    <>
+                      <Skeleton variant='text' width='100%' />
+                      <Skeleton variant='text' width='70%' />
+                    </>
+                  )}
               </AccordionDetails>
             </Accordion>
             {(index !== conversation.length - 1 || !loading) && (
