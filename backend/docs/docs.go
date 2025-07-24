@@ -174,7 +174,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/handler_v1.CommentLists"
+                                            "$ref": "#/definitions/v1.CommentLists"
                                         }
                                     }
                                 }
@@ -280,7 +280,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/handler_v1.ConversationListItems"
+                                            "$ref": "#/definitions/v1.ConversationListItems"
                                         }
                                     }
                                 }
@@ -432,7 +432,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/github_com_chaitin_panda-wiki_domain.PaginatedResult-array_domain_ConversationMessageListItem"
+                                            "$ref": "#/definitions/domain.PaginatedResult-array_domain_ConversationMessageListItem"
                                         }
                                     }
                                 }
@@ -2824,7 +2824,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/handler_share.ShareCommentLists"
+                                            "$ref": "#/definitions/share.ShareCommentLists"
                                         }
                                     }
                                 }
@@ -4722,6 +4722,20 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.PaginatedResult-array_domain_ConversationMessageListItem": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.ConversationMessageListItem"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
         "domain.ParseURLItem": {
             "type": "object",
             "properties": {
@@ -5279,62 +5293,6 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_chaitin_panda-wiki_domain.PaginatedResult-array_domain_ConversationMessageListItem": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/domain.ConversationMessageListItem"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "handler_share.ShareCommentLists": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/domain.ShareCommentListItem"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "handler_v1.CommentLists": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/domain.CommentListItem"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "handler_v1.ConversationListItems": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/domain.ConversationListItem"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
         "schema.RoleType": {
             "type": "string",
             "enum": [
@@ -5349,6 +5307,48 @@ const docTemplate = `{
                 "System",
                 "Tool"
             ]
+        },
+        "share.ShareCommentLists": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.ShareCommentListItem"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "v1.CommentLists": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.CommentListItem"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "v1.ConversationListItems": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.ConversationListItem"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
         }
     }
 }`

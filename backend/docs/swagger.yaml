@@ -1180,6 +1180,15 @@ definitions:
       title:
         type: string
     type: object
+  domain.PaginatedResult-array_domain_ConversationMessageListItem:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/domain.ConversationMessageListItem'
+        type: array
+      total:
+        type: integer
+    type: object
   domain.ParseURLItem:
     properties:
       desc:
@@ -1547,42 +1556,6 @@ definitions:
       title:
         type: string
     type: object
-  github_com_chaitin_panda-wiki_domain.PaginatedResult-array_domain_ConversationMessageListItem:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/domain.ConversationMessageListItem'
-        type: array
-      total:
-        type: integer
-    type: object
-  handler_share.ShareCommentLists:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/domain.ShareCommentListItem'
-        type: array
-      total:
-        type: integer
-    type: object
-  handler_v1.CommentLists:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/domain.CommentListItem'
-        type: array
-      total:
-        type: integer
-    type: object
-  handler_v1.ConversationListItems:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/domain.ConversationListItem'
-        type: array
-      total:
-        type: integer
-    type: object
   schema.RoleType:
     enum:
     - assistant
@@ -1595,6 +1568,33 @@ definitions:
     - User
     - System
     - Tool
+  share.ShareCommentLists:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/domain.ShareCommentListItem'
+        type: array
+      total:
+        type: integer
+    type: object
+  v1.CommentLists:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/domain.CommentListItem'
+        type: array
+      total:
+        type: integer
+    type: object
+  v1.ConversationListItems:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/domain.ConversationListItem'
+        type: array
+      total:
+        type: integer
+    type: object
 info:
   contact: {}
 paths:
@@ -1699,7 +1699,7 @@ paths:
             - $ref: '#/definitions/domain.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/handler_v1.CommentLists'
+                  $ref: '#/definitions/v1.CommentLists'
               type: object
       summary: GetCommentList
       tags:
@@ -1765,7 +1765,7 @@ paths:
             - $ref: '#/definitions/domain.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/handler_v1.ConversationListItems'
+                  $ref: '#/definitions/v1.ConversationListItems'
               type: object
       summary: get conversation list
       tags:
@@ -1857,7 +1857,7 @@ paths:
             - $ref: '#/definitions/domain.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/github_com_chaitin_panda-wiki_domain.PaginatedResult-array_domain_ConversationMessageListItem'
+                  $ref: '#/definitions/domain.PaginatedResult-array_domain_ConversationMessageListItem'
               type: object
       summary: GetMessageFeedBackList
       tags:
@@ -3340,7 +3340,7 @@ paths:
             - $ref: '#/definitions/domain.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/handler_share.ShareCommentLists'
+                  $ref: '#/definitions/share.ShareCommentLists'
               type: object
       summary: GetCommentList
       tags:
