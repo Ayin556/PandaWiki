@@ -15,7 +15,7 @@ import Search from "./Search"
 
 const Conversation = () => {
   const { kb_id = '' } = useAppSelector(state => state.config)
-  const [searchParams] = useURLSearchParams()
+  const [searchParams, setSearchParams] = useURLSearchParams()
   const subject = searchParams.get('subject') || ''
   const remoteIp = searchParams.get('remote_ip') || ''
   const [data, setData] = useState<ConversationListItem[]>([])
@@ -38,6 +38,7 @@ const Conversation = () => {
             <Ellipsis className="primary-color" sx={{ cursor: 'pointer', flex: 1, width: 0 }} onClick={() => {
               setId(record.id)
               setOpen(true)
+              setSearchParams({ conversion_id: record.id })
             }}>
               {text}
             </Ellipsis>
@@ -93,9 +94,12 @@ const Conversation = () => {
     {
       dataIndex: 'created_at',
       title: '问答时间',
-      width: 120,
+      width: 160,
       render: (text: string) => {
-        return dayjs(text).fromNow()
+        return <Stack>
+          <Box>{dayjs(text).fromNow()}</Box>
+          <Box sx={{ fontSize: 12, color: 'text.auxiliary' }}>{dayjs(text).format('YYYY-MM-DD HH:mm:ss')}</Box>
+        </Stack>
       }
     },
   ]
@@ -162,6 +166,7 @@ const Conversation = () => {
     />
     <Detail id={id} open={open} onClose={() => {
       setOpen(false)
+      setSearchParams({ conversion_id: '' })
     }} />
   </Card>
 }
