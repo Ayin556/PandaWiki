@@ -5,7 +5,8 @@ import { IconFile, IconFolder } from '@/components/icons';
 import { useStore } from '@/provider';
 import { Box, Stack, Button, Divider, TextField, alpha } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
-import { TiptapReader, UseTiptapEditorReturn } from 'ct-tiptap-editor';
+import { UseTiptapEditorReturn } from 'ct-tiptap-editor';
+// import 'ct-tiptap-editor/dist/Tiptap/index.css';
 import { message } from 'ct-mui';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
@@ -140,7 +141,7 @@ const DocContent = ({
       }
     }
   );
-  if (!editorRef || !info) return null;
+  // if (!editorRef || !info) return null;
 
   const renderIp = (ip_address: any = {}) => {
     const { city = '', country = '未知', province = '', ip } = ip_address;
@@ -254,8 +255,13 @@ const DocContent = ({
             maxWidth: '100%',
           },
         }}
+
+        // dangerouslySetInnerHTML={{ __html: info?.content }}
       >
-        <TiptapReader editorRef={editorRef} />
+        <div
+          className='tiptap ProseMirror'
+          dangerouslySetInnerHTML={{ __html: info?.content || '' }}
+        />
       </Box>
       {appDetail?.web_app_comment_settings?.is_enable && (
         <>
