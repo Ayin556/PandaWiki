@@ -11,20 +11,29 @@ import (
 type Comment struct {
 	ID string `json:"id" gorm:"primaryKey"`
 
-	KbID      string      `json:"kb_id"`
-	UserID    string      `json:"user_id"`
-	NodeID    string      `json:"node_id" gorm:"index"`
-	Info      CommentInfo `json:"info" gorm:"type:jsonb"`
-	ParentID  string      `json:"parent_id"`
-	RootID    string      `json:"root_id"`
-	Content   string      `json:"content"`
-	CreatedAt time.Time   `json:"created_at"`
+	KbID      string        `json:"kb_id"`
+	UserID    string        `json:"user_id"`
+	NodeID    string        `json:"node_id" gorm:"index"`
+	Info      CommentInfo   `json:"info" gorm:"type:jsonb"`
+	ParentID  string        `json:"parent_id"`
+	RootID    string        `json:"root_id"`
+	Content   string        `json:"content"`
+	Status    CommentStatus `json:"status"` // status : -1 reject 0 pending 1 accept
+	CreatedAt time.Time     `json:"created_at"`
 }
 
 type CommentInfo struct {
 	UserName string `json:"user_name"`
 	RemoteIP string `json:"remote_ip"`
 }
+
+type CommentStatus int8
+
+const (
+	CommentStatusReject   CommentStatus = -1
+	CommentStatusPending  CommentStatus = 0
+	CommentStatusAccepted CommentStatus = 1
+)
 
 func (d *CommentInfo) Value() (driver.Value, error) {
 	return json.Marshal(d)
@@ -48,20 +57,22 @@ type CommentReq struct {
 }
 
 type CommentListReq struct {
-	KbID string `json:"kb_id" query:"kb_id" validate:"required"`
+	KbID   string         `json:"kb_id" query:"kb_id" validate:"required"`
+	Status *CommentStatus `json:"status" query:"status"`
 	Pager
 }
 
 type CommentListItem struct {
-	ID        string      `json:"id"`
-	NodeID    string      `json:"node_id"`
-	RootID    string      `json:"root_id"`
-	Info      CommentInfo `json:"info" gorm:"info;type:jsonb"`
-	NodeType  int         `json:"node_type"`
-	NodeName  string      `json:"node_name"` // 文档标题
-	Content   string      `json:"content"`
-	IPAddress *IPAddress  `json:"ip_address" gorm:"-"` // ip地址
-	CreatedAt time.Time   `json:"created_at"`
+	ID        string        `json:"id"`
+	NodeID    string        `json:"node_id"`
+	RootID    string        `json:"root_id"`
+	Info      CommentInfo   `json:"info" gorm:"info;type:jsonb"`
+	NodeType  int           `json:"node_type"`
+	NodeName  string        `json:"node_name"` // 文档标题
+	Content   string        `json:"content"`
+	Status    CommentStatus `json:"status"`              // status : -1 reject 0 pending 1 accept
+	IPAddress *IPAddress    `json:"ip_address" gorm:"-"` // ip地址
+	CreatedAt time.Time     `json:"created_at"`
 }
 
 type DeleteCommentListReq struct {

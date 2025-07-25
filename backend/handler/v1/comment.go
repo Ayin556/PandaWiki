@@ -1,12 +1,13 @@
 package v1
 
 import (
+	"github.com/labstack/echo/v4"
+
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/handler"
 	"github.com/chaitin/panda-wiki/log"
 	"github.com/chaitin/panda-wiki/middleware"
 	"github.com/chaitin/panda-wiki/usecase"
-	"github.com/labstack/echo/v4"
 )
 
 type CommentHandler struct {
@@ -26,7 +27,7 @@ func NewCommentHandler(e *echo.Echo, baseHandler *handler.BaseHandler, logger *l
 	}
 
 	group := e.Group("/api/v1/comment", h.auth.Authorize)
-	group.GET("", h.GetCommentList)
+	group.GET("", h.GetCommentModeratedList)
 	group.DELETE("/list", h.DeleteCommentList)
 
 	return h
@@ -34,17 +35,17 @@ func NewCommentHandler(e *echo.Echo, baseHandler *handler.BaseHandler, logger *l
 
 type CommentLists = domain.PaginatedResult[[]*domain.CommentListItem]
 
-// GetCommentList
+// GetCommentModeratedList
 //
-//	@Summary		GetCommentList
-//	@Description	GetCommentList
+//	@Summary		GetCommentModeratedList
+//	@Description	GetCommentModeratedList
 //	@Tags			comment
 //	@Accept			json
 //	@Produce		json
 //	@Param			req	query		domain.CommentListReq				true	"CommentListReq"
 //	@Success		200	{object}	domain.Response{data=CommentLists}	"conversationList"
 //	@Router			/api/v1/comment [get]
-func (h *CommentHandler) GetCommentList(c echo.Context) error {
+func (h *CommentHandler) GetCommentModeratedList(c echo.Context) error {
 	var req domain.CommentListReq
 	if err := c.Bind(&req); err != nil {
 		return h.NewResponseWithError(c, "bind request", err)
@@ -55,11 +56,17 @@ func (h *CommentHandler) GetCommentList(c echo.Context) error {
 
 	ctx := c.Request().Context()
 
-	conversationList, err := h.usecase.GetCommentListByKbID(ctx, &req)
+	var edition int
+	// get edition
+	if editionValue := c.Get("edition"); editionValue != nil {
+		edition = editionValue.(int)
+	}
+
+	commentList, err := h.usecase.GetCommentListByKbID(ctx, &req, edition)
 	if err != nil {
 		return h.NewResponseWithError(c, "failed to get comment list KBID", err)
 	}
-	return h.NewResponseWithData(c, conversationList)
+	return h.NewResponseWithData(c, commentList)
 }
 
 // DeleteCommentList
