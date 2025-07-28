@@ -142,11 +142,8 @@ const ActionMenu = ({
   );
 };
 
-const Comments = () => {
+const Comments = ({ commentStatus }: { commentStatus: number }) => {
   const { kb_id = '', license } = useAppSelector((state) => state.config);
-  const [searchParams] = useURLSearchParams();
-  const subject = searchParams.get('subject') || '';
-  const remoteIp = searchParams.get('remote_ip') || '';
   const [data, setData] = useState<DomainCommentListItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
@@ -176,7 +173,7 @@ const Comments = () => {
         deleteApiV1CommentList({ ids: [id] }).then(() => {
           Message.success('删除成功');
           if (page === 1) {
-            getData();
+            getData({});
           } else {
             setPage(1);
           }
@@ -197,7 +194,7 @@ const Comments = () => {
             GithubComChaitinPandaWikiProDomainCommentStatus.CommentStatusReject,
         }).then(() => {
           Message.success('拒绝成功');
-          getData();
+          getData({});
         });
       },
     });
@@ -215,7 +212,7 @@ const Comments = () => {
             GithubComChaitinPandaWikiProDomainCommentStatus.CommentStatusAccepted,
         }).then(() => {
           Message.success('通过成功');
-          getData();
+          getData({});
         });
       },
     });
@@ -304,7 +301,9 @@ const Comments = () => {
           <ActionMenu
             record={record}
             onDeleteComment={onDeleteComment}
-            onRefreshData={getData}
+            onRefreshData={() => {
+              getData({});
+            }}
             onRejectComment={onRejectComment}
             onApproveComment={onApproveComment}
           />
@@ -325,12 +324,31 @@ const Comments = () => {
     },
   ].filter(Boolean);
 
-  const getData = () => {
+  useEffect(() => {
+    setPage(1);
+  }, [commentStatus]);
+
+  const getData = ({
+    paramKbId,
+    paramPage,
+    paramPageSize,
+    paramCommentStatus,
+  }: {
+    paramKbId?: string;
+    paramPage?: number;
+    paramPageSize?: number;
+    paramCommentStatus?: number;
+  }) => {
     setLoading(true);
     getApiV1Comment({
-      kb_id,
-      page,
-      per_page: pageSize,
+      kb_id: paramKbId || kb_id,
+      page: paramPage || page,
+      per_page: paramPageSize || pageSize,
+      // @ts-expect-error 忽略类型错误
+      status:
+        (paramCommentStatus || commentStatus) === 99
+          ? undefined
+          : paramCommentStatus || commentStatus,
     })
       .then((res) => {
         setData(res.data || []);
@@ -351,19 +369,20 @@ const Comments = () => {
   };
 
   useEffect(() => {
+    if (!kb_id) return;
     setPage(1);
-  }, [subject, remoteIp, kb_id]);
+    getData({
+      paramPage: 1,
+      paramKbId: kb_id,
+      paramCommentStatus: commentStatus,
+    });
+  }, [kb_id, commentStatus]);
 
   useEffect(() => {
     if (kb_id) {
       getAppSetting();
     }
   }, [kb_id]);
-
-  useEffect(() => {
-    if (kb_id) getData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, pageSize, subject, remoteIp, kb_id]);
 
   useEffect(() => {
     if (kb_id) {
@@ -397,6 +416,10 @@ const Comments = () => {
         onChange: (page, pageSize) => {
           setPage(page);
           setPageSize(pageSize);
+          getData({
+            paramPage: page,
+            paramPageSize: pageSize,
+          });
         },
       }}
       PaginationProps={{
