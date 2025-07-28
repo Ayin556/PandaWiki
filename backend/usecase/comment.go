@@ -31,7 +31,7 @@ func NewCommentUsecase(commentRepo *pg.CommentRepository, logger *log.Logger,
 	}
 }
 
-func (u *CommentUsecase) CreateComment(ctx context.Context, commentReq *domain.CommentReq, KbID string, remoteIP string) (string, error) {
+func (u *CommentUsecase) CreateComment(ctx context.Context, commentReq *domain.CommentReq, KbID string, remoteIP string, status domain.CommentStatus) (string, error) {
 	// node
 	if _, err := u.NodeRepo.GetNodeByID(ctx, commentReq.NodeID); err != nil {
 		return "", err
@@ -56,6 +56,7 @@ func (u *CommentUsecase) CreateComment(ctx context.Context, commentReq *domain.C
 		Content:   commentReq.Content,
 		CreatedAt: time.Now(),
 		KbID:      KbID,
+		Status:    status,
 	})
 	if err != nil {
 		return "", err
@@ -65,8 +66,8 @@ func (u *CommentUsecase) CreateComment(ctx context.Context, commentReq *domain.C
 	return CommentStr, nil
 }
 
-func (u *CommentUsecase) GetCommentListByNodeID(ctx context.Context, nodeID string) (*domain.PaginatedResult[[]*domain.ShareCommentListItem], error) {
-	comments, total, err := u.CommentRepo.GetCommentList(ctx, nodeID)
+func (u *CommentUsecase) GetCommentListByNodeID(ctx context.Context, nodeID string, edition int) (*domain.PaginatedResult[[]*domain.ShareCommentListItem], error) {
+	comments, total, err := u.CommentRepo.GetCommentList(ctx, nodeID, edition)
 	if err != nil {
 		return nil, err
 	}
@@ -92,8 +93,8 @@ func (u *CommentUsecase) GetCommentListByNodeID(ctx context.Context, nodeID stri
 	return domain.NewPaginatedResult(comments, uint64(total)), nil
 }
 
-func (u *CommentUsecase) GetCommentListByKbID(ctx context.Context, req *domain.CommentListReq) (*domain.PaginatedResult[[]*domain.CommentListItem], error) {
-	comments, total, err := u.CommentRepo.GetCommentListByKbID(ctx, req)
+func (u *CommentUsecase) GetCommentListByKbID(ctx context.Context, req *domain.CommentListReq, edition int) (*domain.PaginatedResult[[]*domain.CommentListItem], error) {
+	comments, total, err := u.CommentRepo.GetCommentListByKbID(ctx, req, edition)
 	if err != nil {
 		return nil, err
 	}

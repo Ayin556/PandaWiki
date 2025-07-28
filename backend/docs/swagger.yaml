@@ -430,6 +430,10 @@ definitions:
         type: integer
       root_id:
         type: string
+      status:
+        allOf:
+        - $ref: '#/definitions/github_com_chaitin_panda-wiki_domain.CommentStatus'
+        description: 'status : -1 reject 0 pending 1 accept'
     type: object
   domain.CommentReq:
     properties:
@@ -1580,6 +1584,16 @@ definitions:
       title:
         type: string
     type: object
+  github_com_chaitin_panda-wiki_domain.CommentStatus:
+    enum:
+    - -1
+    - 0
+    - 1
+    type: integer
+    x-enum-varnames:
+    - CommentStatusReject
+    - CommentStatusPending
+    - CommentStatusAccepted
   schema.RoleType:
     enum:
     - assistant
@@ -1697,7 +1711,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: GetCommentList
+      description: GetCommentModeratedList
       parameters:
       - in: query
         name: kb_id
@@ -1713,6 +1727,17 @@ paths:
         name: per_page
         required: true
         type: integer
+      - enum:
+        - -1
+        - 0
+        - 1
+        in: query
+        name: status
+        type: integer
+        x-enum-varnames:
+        - CommentStatusReject
+        - CommentStatusPending
+        - CommentStatusAccepted
       produces:
       - application/json
       responses:
@@ -1725,7 +1750,7 @@ paths:
                 data:
                   $ref: '#/definitions/v1.CommentLists'
               type: object
-      summary: GetCommentList
+      summary: GetCommentModeratedList
       tags:
       - comment
   /api/v1/comment/list:

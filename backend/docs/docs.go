@@ -129,7 +129,7 @@ const docTemplate = `{
         },
         "/api/v1/comment": {
             "get": {
-                "description": "GetCommentList",
+                "description": "GetCommentModeratedList",
                 "consumes": [
                     "application/json"
                 ],
@@ -139,7 +139,7 @@ const docTemplate = `{
                 "tags": [
                     "comment"
                 ],
-                "summary": "GetCommentList",
+                "summary": "GetCommentModeratedList",
                 "parameters": [
                     {
                         "type": "string",
@@ -160,6 +160,21 @@ const docTemplate = `{
                         "name": "per_page",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "enum": [
+                            -1,
+                            0,
+                            1
+                        ],
+                        "type": "integer",
+                        "x-enum-varnames": [
+                            "CommentStatusReject",
+                            "CommentStatusPending",
+                            "CommentStatusAccepted"
+                        ],
+                        "name": "status",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -3587,6 +3602,14 @@ const docTemplate = `{
                 },
                 "root_id": {
                     "type": "string"
+                },
+                "status": {
+                    "description": "status : -1 reject 0 pending 1 accept",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_chaitin_panda-wiki_domain.CommentStatus"
+                        }
+                    ]
                 }
             }
         },
@@ -5326,6 +5349,19 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "github_com_chaitin_panda-wiki_domain.CommentStatus": {
+            "type": "integer",
+            "enum": [
+                -1,
+                0,
+                1
+            ],
+            "x-enum-varnames": [
+                "CommentStatusReject",
+                "CommentStatusPending",
+                "CommentStatusAccepted"
+            ]
         },
         "schema.RoleType": {
             "type": "string",

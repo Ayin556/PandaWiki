@@ -3,11 +3,12 @@ package share
 import (
 	"net/http"
 
+	"github.com/labstack/echo/v4"
+
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/handler"
 	"github.com/chaitin/panda-wiki/log"
 	"github.com/chaitin/panda-wiki/usecase"
-	"github.com/labstack/echo/v4"
 )
 
 type ShareCommentHandler struct {
@@ -88,8 +89,15 @@ func (h *ShareCommentHandler) CreateComment(c echo.Context) error {
 	// 评论开启
 	remoteIP := c.RealIP()
 
+	var status = 1 // no moderate
+	// 判断user is moderate comment ---> 默认false
+	if appinfo.Settings.WebAppCommentSettings.ModerationEnable {
+		status = 0
+	}
+	commentStatus := domain.CommentStatus(status)
+
 	// 插入到数据库中
-	commentID, err := h.usecase.CreateComment(ctx, &CommentReq, kbID, remoteIP)
+	commentID, err := h.usecase.CreateComment(ctx, &CommentReq, kbID, remoteIP, commentStatus)
 	if err != nil {
 		return h.NewResponseWithError(c, "create comment failed", err)
 	}
@@ -133,8 +141,14 @@ func (h *ShareCommentHandler) GetCommentList(c echo.Context) error {
 		return h.NewResponseWithError(c, "please check comment is open", nil)
 	}
 
-	// 查询数据库获取所有评论
-	commentsList, err := h.usecase.GetCommentListByNodeID(ctx, nodeID)
+	var edition int
+	// get edition
+	if editionValue := c.Get("edition"); editionValue != nil {
+		edition = editionValue.(int)
+	}
+
+	// 查询数据库获取所有评论-->0 所有， 1，2 为需要审核的评论
+	commentsList, err := h.usecase.GetCommentListByNodeID(ctx, nodeID, edition)
 	if err != nil {
 		return h.NewResponseWithError(c, "failed to get comment list", err)
 	}
