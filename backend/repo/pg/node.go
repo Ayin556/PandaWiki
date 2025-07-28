@@ -3,6 +3,8 @@ package pg
 import (
 	"context"
 	"errors"
+	"fmt"
+	"strings"
 	"time"
 
 	"gorm.io/gorm"
@@ -60,6 +62,11 @@ func (r *NodeRepository) Create(ctx context.Context, req *domain.CreateNodeReq) 
 		}
 
 		newPos := maxPos + (domain.MaxPosition-maxPos)/2.0
+		if newPos-maxPos < domain.MinPositionGap {
+			if err := r.reorderPositionsByParentID(tx, req.KBID, req.ParentID); err != nil {
+				return err
+			}
+		}
 
 		now := time.Now()
 
@@ -430,7 +437,17 @@ func (r *NodeRepository) MoveNodeBetween(ctx context.Context, id string, parentI
 			maxPos = nextNode.Position
 		}
 
+		node, err := r.GetNodeByID(ctx, id)
+		if err != nil {
+			return err
+		}
+
 		newPos := prevPos + (maxPos-prevPos)/2.0
+		if newPos-prevPos < domain.MinPositionGap {
+			if err := r.reorderPositionsByParentID(tx, node.KBID, parentID); err != nil {
+				return err
+			}
+		}
 
 		return tx.Model(&domain.Node{}).
 			Where("id = ?", id).
@@ -627,4 +644,70 @@ func (r *NodeRepository) GetNodeReleaseDetailByID(ctx context.Context, id string
 		return nil, err
 	}
 	return &nodeRelease, nil
+}
+
+// reorderPositionsByParentID 重排所给父节点下的所有子节点
+func (r *NodeRepository) reorderPositionsByParentID(tx *gorm.DB, kbID, parentID string) error {
+	var nodes []*domain.Node
+	if parentID == "" {
+		if err := tx.Model(&domain.Node{}).
+			Where("kb_id = ?", kbID).
+			Where("parent_id IS NULL OR parent_id = ''").
+			Order("position").
+			Find(&nodes).Error; err != nil {
+			return err
+		}
+	} else {
+		if err := tx.Model(&domain.Node{}).
+			Where("kb_id = ?", kbID).
+			Where("parent_id = ?", parentID).
+			Order("position").
+			Find(&nodes).Error; err != nil {
+			return err
+		}
+	}
+	return r.reorderPositions(tx, nodes)
+}
+
+// reorderPositions 重排所给节点
+func (r *NodeRepository) reorderPositions(tx *gorm.DB, nodes []*domain.Node) error {
+	if len(nodes) == 0 {
+		return nil
+	}
+
+	basePosition := int64(1000) // 起始位置
+	interval := int64(1000)     // 间隔
+
+	updates := make([]map[string]interface{}, len(nodes))
+	for i, node := range nodes {
+		newPosition := float64(basePosition + int64(i)*interval)
+		updates[i] = map[string]interface{}{
+			"id":       node.ID,
+			"position": newPosition,
+		}
+	}
+
+	batchSize := 300
+	for i := 0; i < len(updates); i += batchSize {
+		end := i + batchSize
+		if end > len(updates) {
+			end = len(updates)
+		}
+		batch := updates[i:end]
+
+		values := make([]string, 0, len(batch))
+		for _, update := range batch {
+			id := update["id"]
+			pos := update["position"]
+			values = append(values, fmt.Sprintf("('%v', %v)", id, pos))
+		}
+
+		sql := fmt.Sprintf("UPDATE nodes SET position = new_values.new_value FROM (VALUES %s) AS new_values(id, new_value) WHERE nodes.id = new_values.id", strings.Join(values, ", "))
+
+		if err := tx.Exec(sql).Error; err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
