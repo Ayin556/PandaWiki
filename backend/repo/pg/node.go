@@ -362,6 +362,9 @@ func (r *NodeRepository) GetNodeReleaseListByKBID(ctx context.Context, kbID stri
 		Where("kb_id = ?", kbID).
 		Order("created_at DESC").
 		First(&kbRelease).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
 		return nil, err
 	}
 
