@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useState } from 'react';
 import Comments from './Comments';
 import Evaluate from './Evaluate';
-import { Stack } from '@mui/material';
+import { Stack, Select, MenuItem } from '@mui/material';
 import { CusTabs } from 'ct-mui';
 
 const Feedback = () => {
@@ -13,6 +13,7 @@ const Feedback = () => {
   const { tab: tabParam } = useParams();
 
   const [tab, setTab] = useState(tabParam || 'evaluate');
+  const [commentStatus, setCommentStatus] = useState(99);
 
   return (
     <Card>
@@ -35,8 +36,20 @@ const Feedback = () => {
             { label: '文档纠错', value: 'correction', disabled: true },
           ]}
         />
+        <Select
+          value={commentStatus}
+          sx={{ width: 120 }}
+          onChange={(e) => {
+            setCommentStatus(+e.target.value as number);
+          }}
+        >
+          <MenuItem value={99}>全部</MenuItem>
+          <MenuItem value={0}>待审核</MenuItem>
+          <MenuItem value={1}>已通过</MenuItem>
+          <MenuItem value={-1}>已拒绝</MenuItem>
+        </Select>
       </Stack>
-      {tab === 'comments' && <Comments />}
+      {tab === 'comments' && <Comments commentStatus={commentStatus} />}
       {tab === 'evaluate' && <Evaluate />}
     </Card>
   );
