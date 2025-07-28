@@ -81,7 +81,7 @@
   // 创建垂直文字
   function createVerticalText(text) {
     return text.split('').map((char, index) =>
-      `<span style="animation-delay: ${0.1 + index * 0.05}s">${char}</span>`
+      `<span>${char}</span>`
     ).join('');
   }
 
