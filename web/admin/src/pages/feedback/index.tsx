@@ -11,9 +11,9 @@ import { CusTabs } from 'ct-mui';
 const Feedback = () => {
   const navigate = useNavigate();
   const { tab: tabParam } = useParams();
-
   const [tab, setTab] = useState(tabParam || 'evaluate');
   const [commentStatus, setCommentStatus] = useState(99);
+  const [showCommentsFilter, setShowCommentsFilter] = useState(false);
 
   return (
     <Card>
@@ -36,20 +36,27 @@ const Feedback = () => {
             { label: '文档纠错', value: 'correction', disabled: true },
           ]}
         />
-        <Select
-          value={commentStatus}
-          sx={{ width: 120 }}
-          onChange={(e) => {
-            setCommentStatus(+e.target.value as number);
-          }}
-        >
-          <MenuItem value={99}>全部</MenuItem>
-          <MenuItem value={0}>待审核</MenuItem>
-          <MenuItem value={1}>已通过</MenuItem>
-          <MenuItem value={-1}>已拒绝</MenuItem>
-        </Select>
+        {showCommentsFilter && (
+          <Select
+            value={commentStatus}
+            sx={{ width: 120 }}
+            onChange={(e) => {
+              setCommentStatus(+e.target.value as number);
+            }}
+          >
+            <MenuItem value={99}>全部</MenuItem>
+            <MenuItem value={0}>待审核</MenuItem>
+            <MenuItem value={1}>已通过</MenuItem>
+            <MenuItem value={-1}>已拒绝</MenuItem>
+          </Select>
+        )}
       </Stack>
-      {tab === 'comments' && <Comments commentStatus={commentStatus} />}
+      {tab === 'comments' && (
+        <Comments
+          commentStatus={commentStatus}
+          setShowCommentsFilter={setShowCommentsFilter}
+        />
+      )}
       {tab === 'evaluate' && <Evaluate />}
     </Card>
   );
