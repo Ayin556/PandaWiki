@@ -12,7 +12,7 @@ COPY . .
 ARG TARGETOS TARGETARCH
 RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg/mod \
-    GOOS=$TARGETOS GOARCH=$TARGETARCH go build -ldflags "-s -w -extldflags '-static'" -o /build/panda-wiki-consumer cmd/consumer/main.go cmd/consumer/wire_gen.go
+    GOOS=$TARGETOS GOARCH=$TARGETARCH go build -ldflags "-s -w -extldflags '-static'" -o /build/panda-wiki-consumer pro/cmd/consumer_pro/main.go pro/cmd/consumer_pro/wire_gen.go
 
 FROM alpine:3.21 AS consumer
 
