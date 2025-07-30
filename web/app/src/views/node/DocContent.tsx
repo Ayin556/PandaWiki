@@ -3,7 +3,7 @@
 import { KBDetail, NodeDetail } from '@/assets/type';
 import { IconFile, IconFolder } from '@/components/icons';
 import { useStore } from '@/provider';
-import { Box, Stack, Button, Divider, TextField } from '@mui/material';
+import { Box, Stack, Button, Divider, TextField, alpha } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import { TiptapReader, UseTiptapEditorReturn } from 'ct-tiptap-editor';
 import { message } from 'ct-mui';
@@ -12,6 +12,9 @@ import 'dayjs/locale/zh-cn';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { apiClient } from '@/api';
 import React, { useEffect, useRef, useState } from 'react';
+import { useTextSelection } from '@/hooks/useTextSelection';
+import TextSelectionTooltip from '@/components/textSelectionTooltip';
+import FeedbackDialog from '@/components/feedbackModal';
 
 dayjs.extend(relativeTime);
 dayjs.locale('zh-cn');
@@ -46,6 +49,73 @@ const DocContent = ({
 
   const contentInputRef = useRef<HTMLInputElement>(null);
   const [contentFocused, setContentFocused] = useState(false);
+
+  // 反馈弹窗状态
+  const [feedbackDialogOpen, setFeedbackDialogOpen] = useState(false);
+  const [feedbackData, setFeedbackData] = useState<{
+    selectedText: string;
+    screenshot?: string;
+  }>({ selectedText: '' });
+
+  // 使用划词功能hook
+  const {
+    selectedText,
+    tooltipAnchor,
+    tooltipOpen,
+    screenshot,
+    isCapturingScreenshot,
+    containerRef: docContentRef,
+    handleFeedbackSuggestion,
+    clearSelection,
+  } = useTextSelection({
+    onFeedback: (text: string, screenshotData?: string) => {
+      // 打开反馈弹窗
+      setFeedbackData({
+        selectedText: text,
+        screenshot: screenshotData,
+      });
+      setFeedbackDialogOpen(true);
+    },
+  });
+
+  // 关闭反馈弹窗
+  const handleFeedbackDialogClose = () => {
+    setFeedbackDialogOpen(false);
+    setFeedbackData({ selectedText: '' });
+    // 清理选择状态
+    clearSelection();
+  };
+
+  // 提交反馈
+  const handleFeedbackSubmit = async (data: {
+    correction_suggestion: string;
+  }) => {
+    try {
+      // TODO: 这里应该调用实际的反馈API
+      console.log('提交反馈:', {
+        selectedText: feedbackData.selectedText,
+        correction_suggestion: data.correction_suggestion,
+        screenshot: feedbackData.screenshot,
+        docId,
+        kbId: info?.kb_id,
+      });
+
+      message.success('反馈提交成功，感谢您的建议！');
+
+      // 这里可以调用实际的API
+      // const res = await apiClient.submitFeedback({
+      //   selectedText: feedbackData.selectedText,
+      //   correction_suggestion: data.correction_suggestion,
+      //   screenshot: feedbackData.screenshot,
+      //   docId,
+      //   kbId: info?.kb_id,
+      // });
+    } catch (error) {
+      console.error('提交反馈失败:', error);
+      message.error('提交反馈失败，请稍后重试');
+      throw error;
+    }
+  };
 
   const getComment = async () => {
     const res = await apiClient.clientGetComment(docId, info?.kb_id ?? '');
@@ -97,6 +167,7 @@ const DocContent = ({
 
   return (
     <Box
+      ref={docContentRef}
       style={{
         marginLeft: catalogShow ? `${catalogWidth!}px` : '16px',
         width: `calc(100% - ${catalogShow ? catalogWidth! : 16}px - 225px)`,
@@ -105,12 +176,18 @@ const DocContent = ({
           marginLeft: 0,
         }),
       }}
-      sx={{
+      sx={(theme) => ({
         wordBreak: 'break-all',
         color: 'text.primary',
         px: 10,
         position: 'relative',
         zIndex: 1,
+        '& ::selection': {
+          backgroundColor: `${alpha(
+            theme.palette.primary.main,
+            0.2
+          )} !important`,
+        },
         ...(mobile && {
           marginTop: '77px',
           px: 3,
@@ -118,7 +195,7 @@ const DocContent = ({
             minWidth: 'auto !important',
           },
         }),
-      }}
+      })}
     >
       <Stack
         direction={mobile ? 'column' : 'row'}
@@ -307,6 +384,24 @@ const DocContent = ({
           </Stack>
         </>
       )}
+
+      {/* 划词提示tooltip */}
+      <TextSelectionTooltip
+        open={tooltipOpen}
+        selectedText={selectedText}
+        anchorPosition={tooltipAnchor}
+        onFeedbackClick={handleFeedbackSuggestion}
+        isCapturingScreenshot={isCapturingScreenshot}
+      />
+
+      {/* 反馈弹窗 */}
+      <FeedbackDialog
+        open={feedbackDialogOpen}
+        onClose={handleFeedbackDialogClose}
+        selectedText={feedbackData.selectedText}
+        screenshot={feedbackData.screenshot}
+        onSubmit={handleFeedbackSubmit}
+      />
     </Box>
   );
 };
