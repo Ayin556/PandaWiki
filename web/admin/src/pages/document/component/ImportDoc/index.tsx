@@ -1,5 +1,6 @@
 import { ImportDocProps, ImportDocType } from '@/api/type'
 import ImportDocConfluence from './Confluence'
+import ImportDocYuque from './Yuque'
 import EpubImport from './Epub'
 import FeishuImport from './Feishu'
 import NotionImport from './Notion'
@@ -25,6 +26,8 @@ const ImportDoc = ({ type, open, refresh, onCancel, parentId = null }: ImportDoc
       return <EpubImport size={100} open={open} refresh={refresh} onCancel={onCancel} parentId={parentId} />
     case 'Wiki.js':
       return <WikijsImport size={100} open={open} refresh={refresh} onCancel={onCancel} parentId={parentId} />
+    case 'Yuque':
+      return <ImportDocYuque size={100} open={open} refresh={refresh} onCancel={onCancel} parentId={parentId} />
     case 'Feishu':
       return <FeishuImport open={open} refresh={refresh} onCancel={onCancel} parentId={parentId} />
     case 'Confluence':

@@ -81,6 +81,13 @@ const DocAdd = ({ refresh }: InputContentProps) => {
         setKey('Wiki.js')
       }
     },
+    'Yuque': {
+      label: '通过 语雀 导入',
+      onClick: () => {
+        setUrlOpen(true)
+        setKey('Yuque')
+      }
+    },
     Feishu: {
       label: '通过飞书文档导入',
       onClick: () => {
