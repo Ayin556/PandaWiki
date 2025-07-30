@@ -12,7 +12,6 @@ import {
 } from '@/request/types';
 import NoData from '@/assets/images/nodata.png';
 import { tableSx } from '@/constant/styles';
-import { useURLSearchParams } from '@/hooks';
 import { useAppSelector } from '@/store';
 import {
   Box,
@@ -142,7 +141,13 @@ const ActionMenu = ({
   );
 };
 
-const Comments = ({ commentStatus }: { commentStatus: number }) => {
+const Comments = ({
+  commentStatus,
+  setShowCommentsFilter,
+}: {
+  commentStatus: number;
+  setShowCommentsFilter: (show: boolean) => void;
+}) => {
   const { kb_id = '', license } = useAppSelector((state) => state.config);
   const [data, setData] = useState<DomainCommentListItem[]>([]);
   const [loading, setLoading] = useState(false);
@@ -155,8 +160,15 @@ const Comments = ({ commentStatus }: { commentStatus: number }) => {
     useState<DomainWebAppCommentSettings | null>(null);
 
   const isEnableReview = useMemo(() => {
-    return appSetting?.moderation_enable;
-  }, [appSetting]);
+    return !!(
+      appSetting?.moderation_enable &&
+      (license.edition === 1 || license.edition === 2)
+    );
+  }, [appSetting, license]);
+
+  useEffect(() => {
+    setShowCommentsFilter(isEnableReview);
+  }, [isEnableReview]);
 
   const onDeleteComment = (id: string) => {
     Modal.confirm({
