@@ -1048,6 +1048,60 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/crawler/yuque/analysis_export_file": {
+            "post": {
+                "description": "Analyze Yuque Export File",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "crawler"
+                ],
+                "summary": "AnalysisYuqueExportFile",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "file",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "kb_id",
+                        "name": "kb_id",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/domain.YuqueResp"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/creation/text": {
             "post": {
                 "description": "Text creation",
@@ -3607,7 +3661,7 @@ const docTemplate = `{
                     "description": "status : -1 reject 0 pending 1 accept",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/github_com_chaitin_panda-wiki_domain.CommentStatus"
+                            "$ref": "#/definitions/domain.CommentStatus"
                         }
                     ]
                 }
@@ -3636,6 +3690,19 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "domain.CommentStatus": {
+            "type": "integer",
+            "enum": [
+                -1,
+                0,
+                1
+            ],
+            "x-enum-varnames": [
+                "CommentStatusReject",
+                "CommentStatusPending",
+                "CommentStatusAccepted"
+            ]
         },
         "domain.ConversationDetailResp": {
             "type": "object",
@@ -5350,18 +5417,16 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_chaitin_panda-wiki_domain.CommentStatus": {
-            "type": "integer",
-            "enum": [
-                -1,
-                0,
-                1
-            ],
-            "x-enum-varnames": [
-                "CommentStatusReject",
-                "CommentStatusPending",
-                "CommentStatusAccepted"
-            ]
+        "domain.YuqueResp": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
         },
         "schema.RoleType": {
             "type": "string",
