@@ -120,7 +120,7 @@ func (s *CTRAG) AddModel(ctx context.Context, model *domain.Model) (string, erro
 		MaxTokens: 8192,
 		IsDefault: true,
 		Enabled:   true,
-		Config:    json.RawMessage(`{"max_context": 8192, "chunk_size": 1024, "chunk_overlap": 128, "dimension": 1536}`),
+		Config:    json.RawMessage(`{"max_context": 8192, "chunk_size": 1024, "chunk_overlap": 128, "dimension": 1024}`),
 	}
 	modelConfig, err := s.client.AddModelConfig(ctx, addReq)
 	if err != nil {
@@ -139,7 +139,7 @@ func (s *CTRAG) UpdateModel(ctx context.Context, model *domain.Model) error {
 		MaxTokens: 8192,
 		IsDefault: true,
 		Enabled:   true,
-		Config:    json.RawMessage(`{"max_context": 8192, "chunk_size": 1024, "chunk_overlap": 128, "dimension": 1536}`),
+		Config:    json.RawMessage(`{"max_context": 8192, "chunk_size": 1024, "chunk_overlap": 128, "dimension": 1024}`),
 	}
 	_, err := s.client.AddModelConfig(ctx, updateReq)
 	if err != nil {

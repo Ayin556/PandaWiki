@@ -39,11 +39,12 @@ type LLMUsecase struct {
 	kbRepo           *pg.KnowledgeBaseRepository
 	nodeRepo         *pg.NodeRepository
 	modelRepo        *pg.ModelRepository
+	promptRepo       *pg.PromptRepo
 	config           *config.Config
 	logger           *log.Logger
 }
 
-func NewLLMUsecase(config *config.Config, rag rag.RAGService, conversationRepo *pg.ConversationRepository, kbRepo *pg.KnowledgeBaseRepository, nodeRepo *pg.NodeRepository, modelRepo *pg.ModelRepository, logger *log.Logger) *LLMUsecase {
+func NewLLMUsecase(config *config.Config, rag rag.RAGService, conversationRepo *pg.ConversationRepository, kbRepo *pg.KnowledgeBaseRepository, nodeRepo *pg.NodeRepository, modelRepo *pg.ModelRepository, promptRepo *pg.PromptRepo, logger *log.Logger) *LLMUsecase {
 	return &LLMUsecase{
 		config:           config,
 		rag:              rag,
@@ -51,6 +52,7 @@ func NewLLMUsecase(config *config.Config, rag rag.RAGService, conversationRepo *
 		kbRepo:           kbRepo,
 		nodeRepo:         nodeRepo,
 		modelRepo:        modelRepo,
+		promptRepo:       promptRepo,
 		logger:           logger.WithModule("usecase.llm"),
 	}
 }
@@ -163,8 +165,17 @@ func (u *LLMUsecase) FormatConversationMessages(
 		if len(historyMessages) > 0 {
 			question := historyMessages[len(historyMessages)-1].Content
 
+			systemPrompt := domain.SystemPrompt
+			if prompt, err := u.promptRepo.GetPrompt(ctx, kbID); err != nil {
+				u.logger.Error("get prompt from settings failed", log.Error(err))
+			} else {
+				if prompt != "" {
+					systemPrompt = prompt
+				}
+			}
+
 			template := prompt.FromMessages(schema.GoTemplate,
-				schema.SystemMessage(domain.SystemPrompt),
+				schema.SystemMessage(systemPrompt),
 				schema.UserMessage(domain.UserQuestionFormatter),
 			)
 			// query dataset id from kb
