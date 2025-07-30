@@ -379,6 +379,8 @@ func (u *AppUsecase) GetAppDetailByKBIDAndAppType(ctx context.Context, kbID stri
 		WidgetBotSettings: app.Settings.WidgetBotSettings,
 		// webapp comment settings
 		WebAppCommentSettings: app.Settings.WebAppCommentSettings,
+		// document feedback
+		DocumentFeedBackIsEnabled: app.Settings.DocumentFeedBackIsEnabled,
 	}
 	if len(app.Settings.RecommendNodeIDs) > 0 {
 		nodes, err := u.nodeUsecase.GetRecommendNodeList(ctx, &domain.GetRecommendNodeListReq{
@@ -422,6 +424,8 @@ func (u *AppUsecase) GetWebAppInfo(ctx context.Context, kbID string) (*domain.Ap
 			FooterSettings: app.Settings.FooterSettings,
 			// widget bot settings
 			WebAppCommentSettings: app.Settings.WebAppCommentSettings,
+			// document feedback
+			DocumentFeedBackIsEnabled: app.Settings.DocumentFeedBackIsEnabled,
 		},
 	}
 	if len(app.Settings.RecommendNodeIDs) > 0 {
