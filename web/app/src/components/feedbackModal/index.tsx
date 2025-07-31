@@ -4,7 +4,7 @@ import { Modal } from 'ct-mui';
 import { useStore } from '@/provider';
 import { Controller, useForm } from 'react-hook-form';
 
-interface feedbackModalProps {
+interface FeedbackModalProps {
   open: boolean;
   onClose: () => void;
   selectedText: string;
@@ -16,7 +16,7 @@ interface FeedbackFormData {
   correction_suggestion: string;
 }
 
-export const feedbackModal: React.FC<feedbackModalProps> = ({
+export const FeedbackModal: React.FC<FeedbackModalProps> = ({
   open,
   onClose,
   selectedText,
@@ -187,4 +187,4 @@ export const feedbackModal: React.FC<feedbackModalProps> = ({
   );
 };
 
-export default feedbackModal;
+export default FeedbackModal;
