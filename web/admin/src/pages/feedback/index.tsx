@@ -5,8 +5,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useState } from 'react';
 import Comments from './Comments';
 import Evaluate from './Evaluate';
-import { Stack, Select, MenuItem } from '@mui/material';
+import { Stack, Select, MenuItem, Box, Tooltip } from '@mui/material';
 import { CusTabs } from 'ct-mui';
+import { useAppSelector } from '@/store';
+import InfoIcon from '@mui/icons-material/Info';
+import Correction from './Correction';
 
 const Feedback = () => {
   const navigate = useNavigate();
@@ -14,6 +17,8 @@ const Feedback = () => {
   const [tab, setTab] = useState(tabParam || 'evaluate');
   const [commentStatus, setCommentStatus] = useState(99);
   const [showCommentsFilter, setShowCommentsFilter] = useState(false);
+  const { license } = useAppSelector((state) => state.config);
+  const isPro = license.edition === 1 || license.edition === 2;
 
   return (
     <Card>
@@ -30,10 +35,30 @@ const Feedback = () => {
             navigate(`/feedback/${value}`);
           }}
           size='small'
+          sx={{
+            '.MuiButtonBase-root.Mui-disabled': {
+              pointerEvents: 'auto',
+            },
+          }}
           list={[
             { label: 'AI 问答评价', value: 'evaluate' },
             { label: '文档评论', value: 'comments' },
-            { label: '文档纠错', value: 'correction', disabled: true },
+            {
+              label: (
+                <Stack direction='row' alignItems='center' gap={0.5}>
+                  <Box>文档纠错</Box>
+                  {!isPro && (
+                    <Tooltip title='联创版和企业版可用' placement='top' arrow>
+                      <InfoIcon
+                        sx={{ color: 'text.secondary', fontSize: 14 }}
+                      />
+                    </Tooltip>
+                  )}
+                </Stack>
+              ),
+              value: 'correction',
+              disabled: !isPro,
+            },
           ]}
         />
         {showCommentsFilter && (
@@ -58,6 +83,7 @@ const Feedback = () => {
         />
       )}
       {tab === 'evaluate' && <Evaluate />}
+      {tab === 'correction' && <Correction />}
     </Card>
   );
 };

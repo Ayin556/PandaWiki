@@ -4,6 +4,11 @@ import {
   deleteApiV1CommentList,
   getApiV1AppDetail,
 } from '@/request';
+
+import {
+  postApiProV1CommentModerate,
+  DomainCommentStatus,
+} from '@/request/pro';
 import {
   DomainCommentListItem,
   DomainWebAppCommentSettings,
@@ -202,10 +207,9 @@ const Comments = ({
       content: '确定要拒绝该评论吗？',
       okText: '拒绝',
       onOk: () => {
-        postApiV1CommentModerate({
+        postApiProV1CommentModerate({
           ids: [id],
-          status:
-            GithubComChaitinPandaWikiProDomainCommentStatus.CommentStatusReject,
+          status: DomainCommentStatus.CommentStatusReject,
         }).then(() => {
           Message.success('拒绝成功');
           getData({});
@@ -220,10 +224,9 @@ const Comments = ({
       content: '确定要通过该评论吗？',
       okText: '通过',
       onOk: () => {
-        postApiV1CommentModerate({
+        postApiProV1CommentModerate({
           ids: [id],
-          status:
-            GithubComChaitinPandaWikiProDomainCommentStatus.CommentStatusAccepted,
+          status: DomainCommentStatus.CommentStatusAccepted,
         }).then(() => {
           Message.success('通过成功');
           getData({});

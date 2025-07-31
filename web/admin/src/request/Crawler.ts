@@ -32,9 +32,11 @@ import {
   DomainSearchWikiReq,
   DomainSearchWikiResp,
   DomainWikiJSResp,
+  DomainYuqueResp,
   PostApiV1CrawlerConfluenceAnalysisExportFilePayload,
   PostApiV1CrawlerEpubConvertPayload,
   PostApiV1CrawlerWikijsAnalysisExportFilePayload,
+  PostApiV1CrawlerYuqueAnalysisExportFilePayload,
 } from "./types";
 
 /**
@@ -390,6 +392,36 @@ export const postApiV1CrawlerWikijsAnalysisExportFile = (
     }
   >({
     path: `/api/v1/crawler/wikijs/analysis_export_file`,
+    method: "POST",
+    body: data,
+    type: ContentType.FormData,
+    format: "json",
+    ...params,
+  });
+
+/**
+ * @description Analyze Yuque Export File
+ *
+ * @tags crawler
+ * @name PostApiV1CrawlerYuqueAnalysisExportFile
+ * @summary AnalysisYuqueExportFile
+ * @request POST:/api/v1/crawler/yuque/analysis_export_file
+ * @response `200` `(DomainResponse & {
+    data?: (DomainYuqueResp)[],
+
+})` OK
+ */
+
+export const postApiV1CrawlerYuqueAnalysisExportFile = (
+  data: PostApiV1CrawlerYuqueAnalysisExportFilePayload,
+  params: RequestParams = {},
+) =>
+  request<
+    DomainResponse & {
+      data?: DomainYuqueResp[];
+    }
+  >({
+    path: `/api/v1/crawler/yuque/analysis_export_file`,
     method: "POST",
     body: data,
     type: ContentType.FormData,
