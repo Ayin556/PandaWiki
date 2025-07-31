@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/google/go-cmp/cmp"
 	"github.com/google/uuid"
 	"github.com/samber/lo"
 	"gorm.io/gorm"
@@ -410,7 +411,13 @@ func (r *KnowledgeBaseRepository) UpdateDatasetID(ctx context.Context, kbID, dat
 		Update("dataset_id", datasetID).Error
 }
 
-func (r *KnowledgeBaseRepository) UpdateKnowledgeBase(ctx context.Context, req *domain.UpdateKnowledgeBaseReq) error {
+func (r *KnowledgeBaseRepository) UpdateKnowledgeBase(ctx context.Context, req *domain.UpdateKnowledgeBaseReq) (bool, error) {
+	var isChanged bool
+	kb, err := r.GetKnowledgeBaseByID(ctx, req.ID)
+	if err != nil {
+		return false, err
+	}
+
 	updateMap := map[string]any{}
 	if req.Name != nil {
 		updateMap["name"] = req.Name
@@ -418,7 +425,8 @@ func (r *KnowledgeBaseRepository) UpdateKnowledgeBase(ctx context.Context, req *
 	if req.AccessSettings != nil {
 		updateMap["access_settings"] = req.AccessSettings
 	}
-	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+
+	if err = r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		if err := tx.Model(&domain.KnowledgeBase{}).Where("id = ?", req.ID).Updates(updateMap).Error; err != nil {
 			return err
 		}
@@ -436,7 +444,20 @@ func (r *KnowledgeBaseRepository) UpdateKnowledgeBase(ctx context.Context, req *
 			return fmt.Errorf("failed to sync kb access settings to caddy: %w", err)
 		}
 		return nil
-	})
+	}); err != nil {
+		return false, err
+	}
+
+	kbNew, err := r.GetKnowledgeBaseByID(ctx, req.ID)
+	if err != nil {
+		return false, err
+	}
+
+	if !cmp.Equal(kbNew.AccessSettings, kb.AccessSettings) {
+		isChanged = true
+	}
+
+	return isChanged, nil
 }
 
 func (r *KnowledgeBaseRepository) GetKnowledgeBaseByID(ctx context.Context, kbID string) (*domain.KnowledgeBase, error) {

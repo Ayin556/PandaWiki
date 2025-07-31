@@ -73,12 +73,21 @@ func (u *KnowledgeBaseUsecase) GetKnowledgeBaseList(ctx context.Context) ([]*dom
 }
 
 func (u *KnowledgeBaseUsecase) UpdateKnowledgeBase(ctx context.Context, req *domain.UpdateKnowledgeBaseReq) error {
-	if err := u.repo.UpdateKnowledgeBase(ctx, req); err != nil {
+	isChange, err := u.repo.UpdateKnowledgeBase(ctx, req)
+	if err != nil {
 		return err
 	}
+
+	if isChange {
+		if err := u.kbCache.ClearSession(ctx); err != nil {
+			return err
+		}
+	}
+
 	if err := u.kbCache.DeleteKB(ctx, req.ID); err != nil {
 		return err
 	}
+
 	return nil
 }
 

@@ -37,7 +37,15 @@ func createApp() (*App, error) {
 	}
 	logger := log.NewLogger(configConfig)
 	readOnlyMiddleware := middleware.NewReadonlyMiddleware(logger)
-	echo := http.NewEcho(logger, configConfig, readOnlyMiddleware)
+	cacheCache, err := cache.NewCache(configConfig)
+	if err != nil {
+		return nil, err
+	}
+	sessionMiddleware, err := middleware.NewSessionMiddleware(logger, configConfig, cacheCache)
+	if err != nil {
+		return nil, err
+	}
+	echo := http.NewEcho(logger, configConfig, readOnlyMiddleware, sessionMiddleware)
 	httpServer := &http.HTTPServer{
 		Echo: echo,
 	}
@@ -61,10 +69,6 @@ func createApp() (*App, error) {
 		return nil, err
 	}
 	ragRepository := mq2.NewRAGRepository(mqProducer)
-	cacheCache, err := cache.NewCache(configConfig)
-	if err != nil {
-		return nil, err
-	}
 	kbRepo := cache2.NewKBRepo(cacheCache)
 	knowledgeBaseUsecase, err := usecase.NewKnowledgeBaseUsecase(knowledgeBaseRepository, nodeRepository, ragRepository, ragService, kbRepo, logger, configConfig)
 	if err != nil {
@@ -143,6 +147,7 @@ func createApp() (*App, error) {
 	shareSitemapHandler := share.NewShareSitemapHandler(echo, baseHandler, sitemapUsecase, appUsecase, logger)
 	shareStatHandler := share.NewShareStatHandler(baseHandler, echo, statUseCase, logger)
 	shareCommentHandler := share.NewShareCommentHandler(echo, baseHandler, logger, commentUsecase, appUsecase)
+	shareAuthHandler := share.NewShareAuthHandler(echo, baseHandler, logger, knowledgeBaseUsecase)
 	shareHandler := &share.ShareHandler{
 		ShareNodeHandler:    shareNodeHandler,
 		ShareAppHandler:     shareAppHandler,
@@ -150,6 +155,7 @@ func createApp() (*App, error) {
 		ShareSitemapHandler: shareSitemapHandler,
 		ShareStatHandler:    shareStatHandler,
 		ShareCommentHandler: shareCommentHandler,
+		ShareAuthHandler:    shareAuthHandler,
 	}
 	client, err := telemetry.NewClient(logger, knowledgeBaseRepository)
 	if err != nil {
