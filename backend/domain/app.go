@@ -104,6 +104,8 @@ type AppSettings struct {
 	WidgetBotSettings WidgetBotSettings `json:"widget_bot_settings"`
 	// webapp comment settings
 	WebAppCommentSettings WebAppCommentSettings `json:"web_app_comment_settings"`
+	// document feedback
+	DocumentFeedBackIsEnabled *bool `json:"document_feedback_is_enabled,omitempty"`
 }
 
 type WebAppCommentSettings struct {
@@ -231,6 +233,8 @@ type AppSettingsResp struct {
 	WidgetBotSettings WidgetBotSettings `json:"widget_bot_settings"`
 	// webapp comment settings
 	WebAppCommentSettings WebAppCommentSettings `json:"web_app_comment_settings"`
+	// document feedback
+	DocumentFeedBackIsEnabled *bool `json:"document_feedback_is_enabled,omitempty"`
 }
 
 func (s *AppSettingsResp) Scan(value any) error {
