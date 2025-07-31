@@ -1,4 +1,5 @@
 import { KBDetail, NodeDetail, NodeListItem, WidgetInfo } from '@/assets/type';
+import { getServerHeader } from '@/utils/getServerHeader';
 
 interface ApiClientConfig {
   kb_id?: string;
@@ -29,15 +30,18 @@ class ApiClient {
     config: ApiClientConfig = {}
   ): Promise<Response<T>> {
     const { kb_id = '', headers = {}, cache, authToken, session } = config;
-
+    let serverHeader = {};
+    if (typeof window === 'undefined') {
+      serverHeader = await getServerHeader();
+    }
     const requestHeaders: Record<string, string> = {
+      ...serverHeader,
       'Content-Type': 'application/json',
       'x-kb-id': kb_id,
       ...headers,
     };
 
     if (session) requestHeaders['x-pw-session-id'] = session;
-    if (authToken) requestHeaders['x-simple-auth-password'] = authToken;
 
     const fullUrl = url.startsWith('http') ? url : `${this.baseURL}${url}`;
     try {

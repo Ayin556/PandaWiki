@@ -13,7 +13,6 @@
 import request, { ContentType, RequestParams } from "./httpClient";
 import {
   DeleteApiV1CommentListParams,
-  DomainCommentModerateListReq,
   DomainResponse,
   GetApiV1CommentParams,
   V1CommentLists,
@@ -67,29 +66,6 @@ export const deleteApiV1CommentList = (
     path: `/api/v1/comment/list`,
     method: "DELETE",
     query: query,
-    type: ContentType.Json,
-    format: "json",
-    ...params,
-  });
-
-/**
- * @description Moderate comment list
- *
- * @tags comment
- * @name PostApiV1CommentModerate
- * @summary Moderate comment list
- * @request POST:/api/v1/comment_moderate
- * @response `200` `DomainResponse` Success
- */
-
-export const postApiV1CommentModerate = (
-  req: DomainCommentModerateListReq,
-  params: RequestParams = {},
-) =>
-  request<DomainResponse>({
-    path: `/api/v1/comment_moderate`,
-    method: "POST",
-    body: req,
     type: ContentType.Json,
     format: "json",
     ...params,

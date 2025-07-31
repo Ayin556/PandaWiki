@@ -6,6 +6,7 @@ import {
 } from '@/api';
 import { useAppSelector } from '@/store';
 import InfoIcon from '@mui/icons-material/Info';
+import { DomainKnowledgeBaseDetail } from '@/request/types';
 import Card from '@/components/Card';
 import {
   Box,
@@ -27,7 +28,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { Message } from 'ct-mui';
 
 interface CardCommentProps {
-  kb: KnowledgeBaseListItem;
+  kb: DomainKnowledgeBaseDetail;
 }
 
 // 样式封装
@@ -111,7 +112,7 @@ const DocumentComments = ({
     );
   }, [data]);
 
-  const isModerationEnable = license.edition === 1 || license.edition === 2;
+  const isPro = license.edition === 1 || license.edition === 2;
 
   const onSubmit = handleSubmit((formData) => {
     updateAppDetail(
@@ -176,7 +177,7 @@ const DocumentComments = ({
         <StyledRow>
           <StyledLabel sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
             评论审核
-            {!isModerationEnable && (
+            {!isPro && (
               <Tooltip title='联创版和企业版可用' placement='top' arrow>
                 <InfoIcon sx={{ color: 'text.secondary', fontSize: 14 }} />
               </Tooltip>
@@ -189,7 +190,7 @@ const DocumentComments = ({
               <RadioGroup
                 row
                 {...field}
-                value={isModerationEnable ? field.value : undefined}
+                value={isPro ? field.value : undefined}
                 onChange={(e) => {
                   setIsEdit(true);
                   field.onChange(+e.target.value as 1 | 0);
@@ -197,16 +198,12 @@ const DocumentComments = ({
               >
                 <FormControlLabel
                   value={1}
-                  control={
-                    <Radio size='small' disabled={!isModerationEnable} />
-                  }
+                  control={<Radio size='small' disabled={!isPro} />}
                   label={<StyledRadioLabel>启用</StyledRadioLabel>}
                 />
                 <FormControlLabel
                   value={0}
-                  control={
-                    <Radio size='small' disabled={!isModerationEnable} />
-                  }
+                  control={<Radio size='small' disabled={!isPro} />}
                   label={<StyledRadioLabel>禁用</StyledRadioLabel>}
                 />
               </RadioGroup>
@@ -314,20 +311,56 @@ const DocumentCorrection = ({
   refresh: () => void;
 }) => {
   const [isEdit, setIsEdit] = useState(false);
-  const { control, handleSubmit } = useForm({
+  const { license } = useAppSelector((state) => state.config);
+  const { control, handleSubmit, setValue } = useForm({
     defaultValues: {
-      is_open: 0,
+      document_feedback_is_enabled: 0,
     },
   });
 
-  const onSubmit = handleSubmit((data) => {
+  const onSubmit = handleSubmit((formData) => {
     console.log(data);
-    refresh();
+    updateAppDetail(
+      { id: data.id },
+      {
+        settings: {
+          ...data.settings,
+          // @ts-expect-error 忽略类型错误
+          document_feedback_is_enabled: Boolean(
+            formData.document_feedback_is_enabled
+          ),
+        },
+      }
+    ).then(() => {
+      Message.success('保存成功');
+      setIsEdit(false);
+      refresh();
+    });
   });
+
+  const isPro = license.edition === 1 || license.edition === 2;
+
+  useEffect(() => {
+    setValue(
+      'document_feedback_is_enabled',
+      // @ts-expect-error 忽略类型错误
+      +data?.settings?.document_feedback_is_enabled
+    );
+  }, [data]);
+
   return (
     <Stack>
       <StyledHeader>
-        <StyledHeaderTitle>文档纠错（敬请期待）</StyledHeaderTitle>
+        <StyledHeaderTitle
+          sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
+        >
+          文档纠错
+          {!isPro && (
+            <Tooltip title='联创版和企业版可用' placement='top' arrow>
+              <InfoIcon sx={{ color: 'text.secondary', fontSize: 14 }} />
+            </Tooltip>
+          )}
+        </StyledHeaderTitle>
         {isEdit && (
           <Button variant='contained' size='small' onClick={onSubmit}>
             保存
@@ -339,22 +372,25 @@ const DocumentCorrection = ({
           <StyledLabel>文档纠错</StyledLabel>
           <Controller
             control={control}
-            name='is_open'
+            name='document_feedback_is_enabled'
             render={({ field }) => (
               <RadioGroup
                 row
+                {...field}
+                value={isPro ? field.value : undefined}
                 onChange={(e) => {
+                  setIsEdit(true);
                   field.onChange(+e.target.value as 1 | 0);
                 }}
               >
                 <FormControlLabel
                   value={1}
-                  control={<Radio size='small' disabled />}
+                  control={<Radio size='small' disabled={!isPro} />}
                   label={<StyledRadioLabel>启用</StyledRadioLabel>}
                 />
                 <FormControlLabel
                   value={0}
-                  control={<Radio size='small' disabled />}
+                  control={<Radio size='small' disabled={!isPro} />}
                   label={<StyledRadioLabel>禁用</StyledRadioLabel>}
                 />
               </RadioGroup>
