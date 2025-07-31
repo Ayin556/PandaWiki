@@ -129,16 +129,6 @@ const Catalog = ({
             color: 'text.primary',
           }}
         >
-          <Box
-            sx={{
-              px: 2,
-              pb: 1,
-              lineHeight: '22px',
-              fontWeight: 'bold',
-            }}
-          >
-            目录
-          </Box>
           <TextField
             slotProps={{
               input: {
@@ -152,9 +142,8 @@ const Catalog = ({
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             sx={{
-              width: 'calc(100% - 16px)',
+              width: 'calc(100% - 26px)',
               mb: 2,
-              mt: 1,
               ml: 2,
               bgcolor: 'background.default',
               borderRadius: '10px',
@@ -177,6 +166,17 @@ const Catalog = ({
               },
             }}
           />
+          <Box
+            sx={{
+              px: 2,
+              pb: 1,
+              lineHeight: '22px',
+              fontWeight: 'bold',
+            }}
+          >
+            目录
+          </Box>
+
           <Box
             sx={{
               height: 'calc(100vh - 78px)',
