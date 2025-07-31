@@ -83,6 +83,9 @@ export default function Login() {
   useEffect(() => {
     getShareV1AuthGet({}).then((res) => {
       setAuthType(res?.auth_type);
+      if (res?.auth_type === DomainAuthType.AuthTypeNull) {
+        router.push('/');
+      }
     });
   }, []);
 

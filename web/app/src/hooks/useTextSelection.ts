@@ -345,7 +345,6 @@ export const useTextSelection = ({
         setTooltipOpen(false);
         setSelectedText('');
         setScreenshot(undefined);
-        setIsCapturingScreenshot(false);
       }
     },
     [tooltipOpen]
@@ -374,7 +373,6 @@ export const useTextSelection = ({
     setTooltipOpen(false);
     setSelectedText('');
     setScreenshot(undefined);
-    setIsCapturingScreenshot(false);
 
     // 清理可能存在的高亮覆盖层元素
     const highlightOverlays = document.querySelectorAll(

@@ -11,6 +11,7 @@ import {
   Tooltip,
   Select,
   MenuItem,
+  Link,
 } from '@mui/material';
 import { putApiV1KnowledgeBaseDetail } from '@/request/KnowledgeBase';
 import { DomainKnowledgeBaseDetail } from '@/request/types';
@@ -119,6 +120,8 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
       >
         <Box
           sx={{
+            display: 'flex',
+            alignItems: 'center',
             '&::before': {
               content: '""',
               display: 'inline-block',
@@ -130,7 +133,24 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
             },
           }}
         >
-          访问认证
+          访问认证{' '}
+        </Box>
+        <Box sx={{ flexGrow: 1, ml: 1 }}>
+          <Link
+            component='a'
+            href='https://pandawiki.docs.baizhi.cloud/node/01986040-602c-736c-b99f-0b3cb9bb89e5'
+            target='_blank'
+            sx={{
+              fontSize: 14,
+              textDecoration: 'none',
+              fontWeight: 'normal',
+              '&:hover': {
+                fontWeight: 'bold',
+              },
+            }}
+          >
+            使用方法
+          </Link>
         </Box>
         {isEdit && (
           <Button variant='contained' size='small' onClick={onSubmit}>

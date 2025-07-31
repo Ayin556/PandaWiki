@@ -5,7 +5,7 @@ import { highlightText } from '@/utils';
 import { Box, Stack } from '@mui/material';
 import { Ellipsis } from 'ct-mui';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface CatalogFolderProps {
   id?: string;
@@ -24,6 +24,10 @@ const CatalogFolder = ({
 }: CatalogFolderProps) => {
   const [isExpanded, setIsExpanded] = useState(item.defaultExpand ?? true);
   const { themeMode = 'light' } = useStore();
+
+  useEffect(() => {
+    setIsExpanded(item.defaultExpand ?? true);
+  }, [item]);
 
   return (
     <Box key={item.id}>
