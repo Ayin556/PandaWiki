@@ -13,10 +13,7 @@ import {
   DomainCommentListItem,
   DomainWebAppCommentSettings,
 } from '@/request/types';
-import {
-  GithubComChaitinPandaWikiProDomainCommentStatus,
-  postApiV1CommentModerate,
-} from '@/request/other';
+
 import NoData from '@/assets/images/nodata.png';
 import { tableSx } from '@/constant/styles';
 import { useAppSelector } from '@/store';
@@ -404,7 +401,30 @@ const Comments = ({
   useEffect(() => {
     if (kb_id) {
       getApiV1KnowledgeBaseDetail({ id: kb_id }).then((res) => {
-        setBaseUrl(res!.access_settings!.base_url!);
+        if (res.access_settings?.base_url) {
+          setBaseUrl(res!.access_settings!.base_url!);
+        } else {
+          let defaultUrl: string = '';
+          const host = res.access_settings?.hosts?.[0] || '';
+          if (!host) return;
+
+          if (
+            res.access_settings?.ssl_ports &&
+            res.access_settings?.ssl_ports.length > 0
+          ) {
+            defaultUrl = res.access_settings.ssl_ports.includes(443)
+              ? `https://${host}`
+              : `https://${host}:${res.access_settings.ssl_ports[0]}`;
+          } else if (
+            res.access_settings?.ports &&
+            res.access_settings?.ports.length > 0
+          ) {
+            defaultUrl = res.access_settings.ports.includes(80)
+              ? `http://${host}`
+              : `http://${host}:${res.access_settings.ports[0]}`;
+          }
+          setBaseUrl(defaultUrl);
+        }
       });
     }
   }, [kb_id]);
