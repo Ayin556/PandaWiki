@@ -13,7 +13,7 @@ interface TooltipPosition {
 
 export const useTextSelection = ({
   onFeedback,
-  isEnabled = true,
+  isEnabled = false,
 }: TextSelectionHookProps = {}) => {
   const [selectedText, setSelectedText] = useState('');
   const [tooltipAnchor, setTooltipAnchor] = useState<TooltipPosition | null>(
