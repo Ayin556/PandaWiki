@@ -190,7 +190,7 @@ export const useTextSelection = ({
       await new Promise((resolve) => setTimeout(resolve, 150));
 
       // 截取当前浏览器窗口（视口）
-      let targetElement = document.body;
+      const targetElement = document.body;
 
       const dataUrl = await toPng(targetElement, {
         quality: 0.9,
@@ -216,7 +216,8 @@ export const useTextSelection = ({
             // 过滤掉MUI Popover相关元素
             if (
               element.classList?.contains('MuiPopover-root') ||
-              element.classList?.contains('MuiPopover-paper')
+              element.classList?.contains('MuiPopover-paper') ||
+              element.classList?.contains('MuiTooltip-tooltip')
             ) {
               return false;
             }

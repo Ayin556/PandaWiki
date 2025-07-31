@@ -29,19 +29,16 @@ export enum DomainScoreType {
   DisLike = -1,
 }
 
-/** @format int32 */
 export enum DomainNodeVisibility {
   NodeVisibilityPrivate = 1,
   NodeVisibilityPublic = 2,
 }
 
-/** @format int32 */
 export enum DomainNodeType {
   NodeTypeFolder = 1,
   NodeTypeDocument = 2,
 }
 
-/** @format int32 */
 export enum DomainNodeStatus {
   NodeStatusDraft = 1,
   NodeStatusReleased = 2,
@@ -79,7 +76,6 @@ export enum DomainFeedbackType {
   Other = 3,
 }
 
-/** @format int32 */
 export enum DomainCommentStatus {
   CommentStatusReject = -1,
   CommentStatusPending = 0,
@@ -87,15 +83,11 @@ export enum DomainCommentStatus {
 }
 
 export enum DomainAuthType {
-  /** 无认证 */
   AuthTypeNull = "",
-  /** 简单口令 */
   AuthTypeSimple = "simple",
-  /** 企业认证 */
   AuthTypeEnterprise = "enterprise",
 }
 
-/** @format int32 */
 export enum DomainAppType {
   AppTypeWeb = 1,
   AppTypeWidget = 2,
@@ -150,6 +142,8 @@ export interface DomainAppSettings {
   /** DisCordBot */
   discord_bot_is_enabled?: boolean;
   discord_bot_token?: string;
+  /** document feedback */
+  document_feedback_is_enabled?: boolean;
   feishu_bot_app_id?: string;
   feishu_bot_app_secret?: string;
   /** FeishuBot */
@@ -211,6 +205,8 @@ export interface DomainAppSettingsResp {
   /** DisCordBot */
   discord_bot_is_enabled?: boolean;
   discord_bot_token?: string;
+  /** document feedback */
+  document_feedback_is_enabled?: boolean;
   feishu_bot_app_id?: string;
   feishu_bot_app_secret?: string;
   /** FeishuBot */
@@ -941,6 +937,11 @@ export interface DomainWikiJSResp {
   title?: string;
 }
 
+export interface DomainYuqueResp {
+  content?: string;
+  title?: string;
+}
+
 export interface ShareShareCommentLists {
   data?: DomainShareCommentListItem[];
   total?: number;
@@ -974,7 +975,6 @@ export interface GetApiV1CommentParams {
   page: number;
   /** @min 1 */
   per_page: number;
-  /** @format int32 */
   status?: -1 | 0 | 1;
 }
 
@@ -1032,6 +1032,16 @@ export interface PostApiV1CrawlerEpubConvertPayload {
 }
 
 export interface PostApiV1CrawlerWikijsAnalysisExportFilePayload {
+  /**
+   * file
+   * @format binary
+   */
+  file: File;
+  /** kb_id */
+  kb_id: string;
+}
+
+export interface PostApiV1CrawlerYuqueAnalysisExportFilePayload {
   /**
    * file
    * @format binary
@@ -1152,10 +1162,6 @@ export interface GetApiV1StatInstantPagesParams {
 export interface GetApiV1StatRefererHostsParams {
   /** kb_id */
   kb_id: string;
-}
-
-export interface GetShareV1AuthGetParams {
-  x_kb_id?: string;
 }
 
 export interface PostShareV1ChatMessageParams {

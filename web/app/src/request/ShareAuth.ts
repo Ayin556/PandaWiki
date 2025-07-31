@@ -15,7 +15,6 @@ import {
   DomainAuthGetResp,
   DomainAuthLoginSimpleReq,
   DomainResponse,
-  GetShareV1AuthGetParams,
 } from "./types";
 
 /**
@@ -31,10 +30,7 @@ import {
 })` OK
  */
 
-export const getShareV1AuthGet = (
-  query: GetShareV1AuthGetParams,
-  params: RequestParams = {},
-) =>
+export const getShareV1AuthGet = (params: RequestParams = {}) =>
   request<
     DomainResponse & {
       data?: DomainAuthGetResp;
@@ -42,7 +38,6 @@ export const getShareV1AuthGet = (
   >({
     path: `/share/v1/auth/get`,
     method: "GET",
-    query: query,
     type: ContentType.Json,
     format: "json",
     ...params,

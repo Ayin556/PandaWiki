@@ -63,7 +63,7 @@ export const feedbackModal: React.FC<feedbackModalProps> = ({
     <Modal
       open={open}
       onCancel={handleClose}
-      width={900}
+      width={700}
       title='文档纠错'
       okText='提交反馈'
       cancelText='取消'
@@ -102,38 +102,6 @@ export const feedbackModal: React.FC<feedbackModalProps> = ({
             </Typography>
           </Box>
         </Box>
-
-        {/* 页面截图 */}
-        {screenshot && (
-          <Box>
-            <Typography
-              variant='subtitle2'
-              sx={{ mb: 1, fontWeight: 600, color: 'text.primary' }}
-            >
-              页面截图
-            </Typography>
-            <Box
-              sx={{
-                borderRadius: '10px',
-                overflow: 'hidden',
-                display: 'flex',
-                justifyContent: 'center',
-                bgcolor: 'background.default',
-              }}
-            >
-              <img
-                src={screenshot}
-                alt='页面截图'
-                style={{
-                  maxWidth: '100%',
-                  maxHeight: '400px',
-                  objectFit: 'contain',
-                }}
-              />
-            </Box>
-          </Box>
-        )}
-
         {/* 反馈意见 */}
         <Box>
           <Typography
@@ -183,6 +151,37 @@ export const feedbackModal: React.FC<feedbackModalProps> = ({
             )}
           />
         </Box>
+
+        {/* 页面截图 */}
+        {screenshot && (
+          <Box>
+            <Typography
+              variant='subtitle2'
+              sx={{ mb: 1, fontWeight: 600, color: 'text.primary' }}
+            >
+              页面截图
+            </Typography>
+            <Box
+              sx={{
+                borderRadius: '10px',
+                overflow: 'hidden',
+                display: 'flex',
+                justifyContent: 'center',
+                bgcolor: 'background.default',
+              }}
+            >
+              <img
+                src={screenshot}
+                alt='页面截图'
+                style={{
+                  maxWidth: '100%',
+                  maxHeight: '400px',
+                  objectFit: 'contain',
+                }}
+              />
+            </Box>
+          </Box>
+        )}
       </Stack>
     </Modal>
   );

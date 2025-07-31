@@ -22,6 +22,10 @@ export enum DomainCommentStatus {
   CommentStatusAccepted = 1,
 }
 
+export enum ConstsSourceType {
+  SourceTypeDingTalk = "dingtalk",
+}
+
 export interface DomainCommentModerateListReq {
   ids: string[];
   status: DomainCommentStatus;
@@ -71,9 +75,51 @@ export interface DomainResponse {
   success?: boolean;
 }
 
+export interface GithubComChaitinPandaWikiProApiAuthV1AuthItem {
+  created_at?: string;
+  id?: number;
+  ip?: string;
+  last_login_time?: string;
+  source_type?: ConstsSourceType;
+  username?: string;
+}
+
+export interface GithubComChaitinPandaWikiProApiAuthV1GetAuthResp {
+  auths?: GithubComChaitinPandaWikiProApiAuthV1AuthItem[];
+  client_id?: string;
+  client_secret?: string;
+  source_type?: ConstsSourceType;
+}
+
+export interface GithubComChaitinPandaWikiProApiAuthV1SetAuthReq {
+  clientID?: string;
+  clientSecret?: string;
+  kb_id?: string;
+  sourceType?: ConstsSourceType;
+}
+
+export interface GithubComChaitinPandaWikiProApiShareV1AuthDingTalkReq {
+  kb_id?: string;
+  redirect_url?: string;
+}
+
+export interface GithubComChaitinPandaWikiProApiShareV1AuthDingTalkResp {
+  url?: string;
+}
+
+export type GithubComChaitinPandaWikiProApiShareV1DingtalkCallbackResp = Record<
+  string,
+  any
+>;
+
 export interface HandlerV1DocFeedBackLists {
   data?: DomainDocumentFeedbackListItem[];
   total?: number;
+}
+
+export interface GetApiProV1AuthGetParams {
+  kb_id?: string;
+  source_type?: "dingtalk";
 }
 
 export interface GetApiProV1DocumentListParams {
@@ -108,4 +154,9 @@ export interface PostShareProV1DocumentFeedbackPayload {
    * @format binary
    */
   image?: File;
+}
+
+export interface GetShareProV1OpenapiDingtalkCallbackParams {
+  code?: string;
+  state?: string;
 }
