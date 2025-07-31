@@ -432,7 +432,7 @@ definitions:
         type: string
       status:
         allOf:
-        - $ref: '#/definitions/github_com_chaitin_panda-wiki_domain.CommentStatus'
+        - $ref: '#/definitions/domain.CommentStatus'
         description: 'status : -1 reject 0 pending 1 accept'
     type: object
   domain.CommentReq:
@@ -451,6 +451,16 @@ definitions:
     - content
     - node_id
     type: object
+  domain.CommentStatus:
+    enum:
+    - -1
+    - 0
+    - 1
+    type: integer
+    x-enum-varnames:
+    - CommentStatusReject
+    - CommentStatusPending
+    - CommentStatusAccepted
   domain.ConversationDetailResp:
     properties:
       app_id:
@@ -1584,16 +1594,13 @@ definitions:
       title:
         type: string
     type: object
-  github_com_chaitin_panda-wiki_domain.CommentStatus:
-    enum:
-    - -1
-    - 0
-    - 1
-    type: integer
-    x-enum-varnames:
-    - CommentStatusReject
-    - CommentStatusPending
-    - CommentStatusAccepted
+  domain.YuqueResp:
+    properties:
+      content:
+        type: string
+      title:
+        type: string
+    type: object
   schema.RoleType:
     enum:
     - assistant
@@ -2261,6 +2268,39 @@ paths:
                   type: array
               type: object
       summary: AnalysisWikijsExportFile
+      tags:
+      - crawler
+  /api/v1/crawler/yuque/analysis_export_file:
+    post:
+      consumes:
+      - application/json
+      description: Analyze Yuque Export File
+      parameters:
+      - description: file
+        in: formData
+        name: file
+        required: true
+        type: file
+      - description: kb_id
+        in: formData
+        name: kb_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.YuqueResp'
+                  type: array
+              type: object
+      summary: AnalysisYuqueExportFile
       tags:
       - crawler
   /api/v1/creation/text:

@@ -36,4 +36,5 @@ var ProviderSet = wire.NewSet(
 	NewStatUseCase,
 	NewConfluenceUsecase,
 	NewCommentUsecase,
+	NewYuqueUsecase,
 )

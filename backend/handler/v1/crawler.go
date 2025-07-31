@@ -24,6 +24,7 @@ type CrawlerHandler struct {
 	wikijsUsecase     *usecase.WikiJSUsecase
 	feishuUseCase     *usecase.FeishuUseCase
 	confluenceusecase *usecase.ConfluenceUsecase
+	yuqueusecase      *usecase.YuqueUsecase
 }
 
 func NewCrawlerHandler(echo *echo.Echo,
@@ -37,6 +38,7 @@ func NewCrawlerHandler(echo *echo.Echo,
 	wikijsUsecase *usecase.WikiJSUsecase,
 	feishuUseCase *usecase.FeishuUseCase,
 	confluenceusecase *usecase.ConfluenceUsecase,
+	yuqueusecase *usecase.YuqueUsecase,
 ) *CrawlerHandler {
 	h := &CrawlerHandler{
 		BaseHandler:       baseHandler,
@@ -48,6 +50,7 @@ func NewCrawlerHandler(echo *echo.Echo,
 		wikijsUsecase:     wikijsUsecase,
 		feishuUseCase:     feishuUseCase,
 		confluenceusecase: confluenceusecase,
+		yuqueusecase:      yuqueusecase,
 	}
 	group := echo.Group("/api/v1/crawler", auth.Authorize)
 	group.POST("/parse_rss", h.ParseRSS)
@@ -67,17 +70,11 @@ func NewCrawlerHandler(echo *echo.Echo,
 	group.POST("/feishu/get_doc", h.FeishuGetDoc)
 	// confluence
 	group.POST("/confluence/analysis_export_file", h.AnalysisConfluenceExportFile)
+	// yuque
+	group.POST("/yuque/analysis_export_file", h.AnalysisYuqueExportFile)
 	return h
 }
 
-/*
-curl -X POST \
-  http://10.10.7.195:8000/api/v1/crawler/notion/get_list \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDk3MTcxNDAsImlkIjoiZDZhNTE2MGMtNjU3Ni00MzdmLTk5NzYtMWViMmYxNDJhNzhkIn0.ne9vjlo2_V_2xfcEqMHN9ZkazZajEXcImBtfeKHkwXo" \
-  -d '{"integration": "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", "caption_title": ""}' \
-  --insecure
-*/
 // NotionGetList
 //
 //	@Summary		NotionGetList
@@ -105,14 +102,6 @@ func (h *CrawlerHandler) NotionGetList(c echo.Context) error {
 	return h.NewResponseWithData(c, resp)
 }
 
-/*
-curl -X POST \
-	http://10.10.7.195:8000/api/v1/crawler/notion/get_doc \
-	-H "Content-Type: application/json" \
-	-H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDk3MTcxNDAsImlkIjoiZDZhNTE2MGMtNjU3Ni00MzdmLTk5NzYtMWViMmYxNDJhNzhkIn0.ne9vjlo2_V_2xfcEqMHN9ZkazZajEXcImBtfeKHkwXo" \
-	-d '{"integration": "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","pages": [{"id": "20e3d80d-fab4-809c-a04c-d8df3821d961", "title": "28th Birthday"}]}' \
-	--insecure
-*/
 // GetDocs
 //
 //	@Summary		GetDocs
@@ -423,6 +412,34 @@ func (h *CrawlerHandler) AnalysisConfluenceExportFile(c echo.Context) error {
 	resp, err := h.confluenceusecase.Analysis(c.Request().Context(), data, req.KbID)
 	if err != nil {
 		return h.NewResponseWithError(c, "analysis confluence export file failed", err)
+	}
+	return h.NewResponseWithData(c, resp)
+}
+
+// AnalysisYuqueExportFile
+//
+//	@Summary		AnalysisYuqueExportFile
+//	@Description	Analyze Yuque Export File
+//	@Tags			crawler
+//	@Accept			json
+//	@Produce		json
+//	@Param			file	formData	file	true	"file"
+//	@Param			kb_id	formData	string	true	"kb_id"
+//	@Success		200		{object}	domain.Response{data=[]domain.YuqueResp}
+//	@Router			/api/v1/crawler/yuque/analysis_export_file [post]
+func (h *CrawlerHandler) AnalysisYuqueExportFile(c echo.Context) error {
+	f, err := c.FormFile("file")
+	if err != nil {
+		return h.NewResponseWithError(c, "get file failed", err)
+	}
+	var req domain.YuqueReq
+	req.KbID = c.FormValue("kb_id")
+	if err := c.Validate(req); err != nil {
+		return h.NewResponseWithError(c, "validate failed", err)
+	}
+	resp, err := h.yuqueusecase.AnalysisExportFile(c.Request().Context(), f, req.KbID)
+	if err != nil {
+		return h.NewResponseWithError(c, "analysis yuque export file failed", err)
 	}
 	return h.NewResponseWithData(c, resp)
 }
