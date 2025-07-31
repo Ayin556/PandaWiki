@@ -168,6 +168,7 @@ const docTemplate = `{
                             1
                         ],
                         "type": "integer",
+                        "format": "int32",
                         "x-enum-varnames": [
                             "CommentStatusReject",
                             "CommentStatusPending",
@@ -2697,6 +2698,93 @@ const docTemplate = `{
                 }
             }
         },
+        "/share/v1/auth/get": {
+            "get": {
+                "description": "AuthGet",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "share_auth"
+                ],
+                "summary": "AuthGet",
+                "operationId": "v1-AuthGet",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "kb_id",
+                        "name": "X-KB-ID",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/domain.AuthGetResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/share/v1/auth/login/simple": {
+            "post": {
+                "description": "AuthLoginSimple",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "share_auth"
+                ],
+                "summary": "AuthLoginSimple",
+                "operationId": "v1-AuthLoginSimple",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "kb_id",
+                        "name": "X-KB-ID",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "para",
+                        "name": "param",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.AuthLoginSimpleReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/share/v1/chat/feedback": {
             "post": {
                 "description": "Process user feedback for chat conversations",
@@ -3015,6 +3103,9 @@ const docTemplate = `{
             "properties": {
                 "base_url": {
                     "type": "string"
+                },
+                "enterprise_auth": {
+                    "$ref": "#/definitions/domain.EnterpriseAuth"
                 },
                 "hosts": {
                     "type": "array",
@@ -3437,6 +3528,7 @@ const docTemplate = `{
         },
         "domain.AppType": {
             "type": "integer",
+            "format": "int32",
             "enum": [
                 1,
                 2,
@@ -3456,6 +3548,48 @@ const docTemplate = `{
                 "AppTypeWechatServiceBot",
                 "AppTypeDisCordBot",
                 "AppTypeWechatOfficialAccount"
+            ]
+        },
+        "domain.AuthGetResp": {
+            "type": "object",
+            "properties": {
+                "auth_type": {
+                    "$ref": "#/definitions/domain.AuthType"
+                }
+            }
+        },
+        "domain.AuthLoginSimpleReq": {
+            "type": "object",
+            "required": [
+                "password"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.AuthType": {
+            "type": "string",
+            "enum": [
+                "",
+                "simple",
+                "enterprise"
+            ],
+            "x-enum-comments": {
+                "AuthTypeEnterprise": "企业认证",
+                "AuthTypeNull": "无认证",
+                "AuthTypeSimple": "简单口令"
+            },
+            "x-enum-descriptions": [
+                "无认证",
+                "简单口令",
+                "企业认证"
+            ],
+            "x-enum-varnames": [
+                "AuthTypeNull",
+                "AuthTypeSimple",
+                "AuthTypeEnterprise"
             ]
         },
         "domain.BatchMoveReq": {
@@ -3693,6 +3827,7 @@ const docTemplate = `{
         },
         "domain.CommentStatus": {
             "type": "integer",
+            "format": "int32",
             "enum": [
                 -1,
                 0,
@@ -4101,6 +4236,14 @@ const docTemplate = `{
             "properties": {
                 "user_id": {
                     "type": "string"
+                }
+            }
+        },
+        "domain.EnterpriseAuth": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
                 }
             }
         },
@@ -4750,6 +4893,7 @@ const docTemplate = `{
         },
         "domain.NodeStatus": {
             "type": "integer",
+            "format": "int32",
             "enum": [
                 1,
                 2
@@ -4779,6 +4923,7 @@ const docTemplate = `{
         },
         "domain.NodeType": {
             "type": "integer",
+            "format": "int32",
             "enum": [
                 1,
                 2
@@ -4790,6 +4935,7 @@ const docTemplate = `{
         },
         "domain.NodeVisibility": {
             "type": "integer",
+            "format": "int32",
             "enum": [
                 1,
                 2

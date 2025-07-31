@@ -47,7 +47,7 @@ func NewUserHandler(e *echo.Echo, baseHandler *handler.BaseHandler, logger *log.
 //	@Tags			user
 //	@Accept			json
 //	@Produce		json
-//	@Param			body	body		domain.CreateUserReq true	"CreateUser Request"
+//	@Param			body	body		domain.CreateUserReq	true	"CreateUser Request"
 //	@Success		200		{object}	domain.Response
 //	@Router			/api/v1/user/create [post]
 func (h *UserHandler) CreateUser(c echo.Context) error {

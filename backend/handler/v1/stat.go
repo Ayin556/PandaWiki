@@ -198,7 +198,7 @@ func (h *StatHandler) GetGeoCount(c echo.Context) error {
 //	@Tags			stat
 //	@Accept			json
 //	@Produce		json
-//	@Param			kb_id	query		string true "kb_id"
+//	@Param			kb_id	query		string	true	"kb_id"
 //	@Success		200		{object}	domain.Response
 //	@Router			/api/v1/stat/conversation_distribution [get]
 func (h *StatHandler) GetConversationDistribution(c echo.Context) error {

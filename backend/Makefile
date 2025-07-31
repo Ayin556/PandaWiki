@@ -11,6 +11,9 @@ generate_pro:
 	&& wire cmd/api_pro/wire.go \
 	&& wire cmd/consumer_pro/wire.go
 
+lint:generate generate_pro
+	go mod tidy && golangci-lint run
+
 SEQ_NAME=init
 migrate_sql:
 	migrate create -ext sql -dir store/pg/migration -seq ${SEQ_NAME}
