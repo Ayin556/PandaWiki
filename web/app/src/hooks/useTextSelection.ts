@@ -229,6 +229,14 @@ export const useTextSelection = ({
             ) {
               return false;
             }
+
+            // 过滤掉没有src属性或src为空的img标签
+            if (element.tagName === 'IMG') {
+              const src = element.getAttribute('src');
+              if (!src || src.trim() === '') {
+                return false;
+              }
+            }
           }
 
           return true;
