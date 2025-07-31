@@ -226,3 +226,20 @@ export const highlightText = (
     return part;
   });
 };
+
+export function base64ToFile(base64Data: string, filename: string) {
+  // 分割Base64字符串（移除前缀）
+  const arr = base64Data.split(',');
+  const mime = arr![0].match(/:(.*?);/)?.[1]; // 提取MIME类型
+  const bstr = atob(arr![1]); // 解码Base64字符串
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+
+  // 将解码后的二进制数据存入Uint8Array
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+
+  // 创建并返回File对象
+  return new File([u8arr], filename, { type: mime });
+}

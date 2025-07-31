@@ -1,5 +1,6 @@
 import React from 'react';
-import { Box, Button, Popover } from '@mui/material';
+import { alpha, Box, Button, Popover, Tooltip } from '@mui/material';
+import { IconErrorCorrection } from '@/components/icons';
 
 interface TextSelectionTooltipProps {
   open: boolean;
@@ -54,20 +55,33 @@ export const TextSelectionTooltip: React.FC<TextSelectionTooltipProps> = ({
           bgcolor: 'background.paper',
         }}
       >
-        <Button
-          size='small'
-          variant='contained'
-          onClick={onFeedbackClick}
-          loading={isCapturingScreenshot}
-          sx={{
-            fontSize: 12,
-            px: 2,
-            py: 0.5,
-            textTransform: 'none',
-          }}
-        >
-          反馈建议
-        </Button>
+        <Tooltip title='文档纠错'>
+          <Button
+            size='small'
+            variant='text'
+            onClick={onFeedbackClick}
+            loading={isCapturingScreenshot}
+            sx={(theme) => ({
+              fontSize: 12,
+              px: 0,
+              py: 0.5,
+              width: 24,
+              height: 24,
+              textTransform: 'none',
+              minWidth: 'auto',
+              borderRadius: 1,
+              '&:hover': {
+                backgroundColor: alpha(theme.palette.text.disabled, 0.1),
+              },
+            })}
+          >
+            {!isCapturingScreenshot && (
+              <IconErrorCorrection
+                sx={{ fontSize: 16, color: 'text.primary' }}
+              />
+            )}
+          </Button>
+        </Tooltip>
       </Box>
     </Popover>
   );

@@ -3,6 +3,7 @@ import { toPng } from 'html-to-image';
 
 interface TextSelectionHookProps {
   onFeedback?: (selectedText: string, screenshot?: string) => void;
+  isEnabled?: boolean;
 }
 
 interface TooltipPosition {
@@ -12,6 +13,7 @@ interface TooltipPosition {
 
 export const useTextSelection = ({
   onFeedback,
+  isEnabled = true,
 }: TextSelectionHookProps = {}) => {
   const [selectedText, setSelectedText] = useState('');
   const [tooltipAnchor, setTooltipAnchor] = useState<TooltipPosition | null>(
@@ -48,11 +50,13 @@ export const useTextSelection = ({
 
         const range = selection.getRangeAt(0);
         if (range.collapsed) return null;
+        console.log('🍎 range >>>', range);
 
         const highlightElements: HTMLElement[] = [];
 
         // 使用 getClientRects() 获取选中文本的所有矩形区域
         const rects = range.getClientRects();
+        console.log('🍎 rects >>>', rects);
 
         if (rects.length === 0) return null;
 
@@ -97,11 +101,8 @@ export const useTextSelection = ({
             width: `${rect.width}px`,
             height: `${adjustedHeight}px`,
             backgroundColor: getPrimaryColorWithAlpha(0.2),
-            borderRadius: '2px',
             pointerEvents: 'none',
             zIndex: '9999',
-            // 添加一个标识，用于在截图后识别和移除
-            border: '1px solid transparent',
           });
 
           // 将覆盖层添加到 body
@@ -308,19 +309,9 @@ export const useTextSelection = ({
   // 处理反馈建议
   const handleFeedbackSuggestion = useCallback(async () => {
     if (!selectedText || isCapturingScreenshot) return;
-
-    console.log('开始截图反馈，选中文本:', selectedText);
     setIsCapturingScreenshot(true);
 
     try {
-      // 检查当前是否还有选择
-      const currentSelection = window.getSelection();
-      console.log('当前选择状态:', {
-        hasSelection: !!currentSelection,
-        rangeCount: currentSelection?.rangeCount || 0,
-        selectedText: currentSelection?.toString() || '',
-      });
-
       // 小延迟确保UI状态更新完成
       await new Promise((resolve) => setTimeout(resolve, 100));
 
@@ -361,6 +352,8 @@ export const useTextSelection = ({
 
   // 设置事件监听器
   useEffect(() => {
+    if (!isEnabled) return;
+
     const handleMouseUp = (event: MouseEvent) => {
       // 延迟执行，确保选择完成
       setTimeout(() => handleTextSelection(event), 10);
@@ -373,7 +366,7 @@ export const useTextSelection = ({
       document.removeEventListener('mouseup', handleMouseUp);
       document.removeEventListener('click', handleDocumentClick);
     };
-  }, [handleTextSelection, handleDocumentClick]);
+  }, [handleTextSelection, handleDocumentClick, isEnabled]);
 
   // 清理选择状态的方法
   const clearSelection = useCallback(() => {

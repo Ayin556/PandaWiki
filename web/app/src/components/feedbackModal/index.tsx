@@ -4,7 +4,7 @@ import { Modal } from 'ct-mui';
 import { useStore } from '@/provider';
 import { Controller, useForm } from 'react-hook-form';
 
-interface FeedbackDialogProps {
+interface feedbackModalProps {
   open: boolean;
   onClose: () => void;
   selectedText: string;
@@ -16,7 +16,7 @@ interface FeedbackFormData {
   correction_suggestion: string;
 }
 
-export const FeedbackDialog: React.FC<FeedbackDialogProps> = ({
+export const feedbackModal: React.FC<feedbackModalProps> = ({
   open,
   onClose,
   selectedText,
@@ -64,7 +64,7 @@ export const FeedbackDialog: React.FC<FeedbackDialogProps> = ({
       open={open}
       onCancel={handleClose}
       width={900}
-      title='反馈建议'
+      title='文档纠错'
       okText='提交反馈'
       cancelText='取消'
       onOk={handleOk}
@@ -79,7 +79,7 @@ export const FeedbackDialog: React.FC<FeedbackDialogProps> = ({
             variant='subtitle2'
             sx={{ mb: 1, fontWeight: 600, color: 'text.primary' }}
           >
-            选中内容
+            纠错内容
           </Typography>
           <Box
             sx={{
@@ -188,4 +188,4 @@ export const FeedbackDialog: React.FC<FeedbackDialogProps> = ({
   );
 };
 
-export default FeedbackDialog;
+export default feedbackModal;

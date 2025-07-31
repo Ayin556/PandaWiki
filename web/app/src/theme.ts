@@ -88,7 +88,7 @@ const lightTheme = createTheme(
               lineHeight: '36px',
               paddingLeft: '16px',
               paddingRight: '16px',
-              boxShadow: "none",
+              boxShadow: 'none',
               transition: 'all 0.2s ease-in-out',
               borderRadius: '10px',
               fontWeight: '400',
@@ -96,8 +96,7 @@ const lightTheme = createTheme(
                 color: 'var(--mui-palette-primary-contrastText)',
                 backgroundColor: 'var(--mui-palette-text-primary)',
               }),
-              ...(ownerState.variant === 'text' && {
-              }),
+              ...(ownerState.variant === 'text' && {}),
               ...(ownerState.variant === 'outlined' && {
                 color: 'var(--mui-palette-text-primary)',
                 border: `1px solid var(--mui-palette-text-primary)`,
@@ -109,7 +108,7 @@ const lightTheme = createTheme(
                 height: '32px',
                 lineHeight: '32px',
               }),
-              "&:hover": {
+              '&:hover': {
                 boxShadow: 'none',
                 ...(ownerState.variant === 'text' && {
                   backgroundColor: 'var(--mui-palette-background-paper2)',
@@ -122,8 +121,8 @@ const lightTheme = createTheme(
             marginRight: 8,
             '>*:nth-of-type(1)': {
               fontSize: 14,
-            }
-          }
+            },
+          },
         },
       },
       MuiLink: {
@@ -161,7 +160,7 @@ const lightTheme = createTheme(
             },
             '&:before': {
               display: 'none',
-            }
+            },
           },
           content: {
             margin: 0,
@@ -170,7 +169,7 @@ const lightTheme = createTheme(
             '&.Mui-expanded': {
               margin: 0,
             },
-          }
+          },
         },
       },
       MuiAccordionDetails: {
@@ -180,9 +179,9 @@ const lightTheme = createTheme(
             borderColor: 'var(--mui-palette-divider)',
             padding: 0,
             paddingTop: '24px',
-          }
-        }
-      }
+          },
+        },
+      },
     },
   },
   zhCN,
@@ -337,7 +336,7 @@ const darkTheme = createTheme(
             },
             '&:before': {
               display: 'none',
-            }
+            },
           },
           content: {
             margin: 0,
@@ -346,7 +345,7 @@ const darkTheme = createTheme(
             '&.Mui-expanded': {
               margin: 0,
             },
-          }
+          },
         },
       },
       MuiAccordionDetails: {
@@ -356,9 +355,9 @@ const darkTheme = createTheme(
             borderColor: 'var(--mui-palette-divider)',
             padding: 0,
             paddingTop: '24px',
-          }
-        }
-      }
+          },
+        },
+      },
     },
   },
   zhCN,
@@ -366,4 +365,3 @@ const darkTheme = createTheme(
 );
 
 export { darkTheme, lightTheme };
-

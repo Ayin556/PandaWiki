@@ -15,6 +15,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useTextSelection } from '@/hooks/useTextSelection';
 import TextSelectionTooltip from '@/components/textSelectionTooltip';
 import FeedbackDialog from '@/components/feedbackModal';
+import { postShareProV1DocumentFeedback } from '@/request/pro/DocumentFeedback';
+import { base64ToFile } from '@/utils';
 
 dayjs.extend(relativeTime);
 dayjs.locale('zh-cn');
@@ -76,6 +78,7 @@ const DocContent = ({
       });
       setFeedbackDialogOpen(true);
     },
+    isEnabled: appDetail?.document_feedback_is_enabled,
   });
 
   // 关闭反馈弹窗
@@ -91,25 +94,15 @@ const DocContent = ({
     correction_suggestion: string;
   }) => {
     try {
-      // TODO: 这里应该调用实际的反馈API
-      console.log('提交反馈:', {
-        selectedText: feedbackData.selectedText,
+      return await postShareProV1DocumentFeedback({
+        content: feedbackData.selectedText,
         correction_suggestion: data.correction_suggestion,
-        screenshot: feedbackData.screenshot,
-        docId,
-        kbId: info?.kb_id,
+        node_id: docId,
+        image: base64ToFile(
+          feedbackData.screenshot!,
+          `${info?.name || 'screenshot'}.png`
+        ),
       });
-
-      message.success('反馈提交成功，感谢您的建议！');
-
-      // 这里可以调用实际的API
-      // const res = await apiClient.submitFeedback({
-      //   selectedText: feedbackData.selectedText,
-      //   correction_suggestion: data.correction_suggestion,
-      //   screenshot: feedbackData.screenshot,
-      //   docId,
-      //   kbId: info?.kb_id,
-      // });
     } catch (error) {
       console.error('提交反馈失败:', error);
       message.error('提交反馈失败，请稍后重试');
