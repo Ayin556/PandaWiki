@@ -206,6 +206,15 @@ export const parseConfluence = (
     data,
   });
 
+export const parseYuque = (
+  data: FormData
+): Promise<{ id: string; content: string; title: string }[]> =>
+  request({
+    url: 'api/v1/crawler/yuque/analysis_export_file',
+    method: 'post',
+    data,
+  });
+
 export const getFeishuKnowledgeBase = (
   data: ImportDocByFeishuFormData
 ): Promise<{ space_id: string; name: string }[]> =>

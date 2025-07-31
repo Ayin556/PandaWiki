@@ -566,6 +566,7 @@ export type ImportDocType =
   | 'Notion'
   | 'Epub'
   | 'Wiki.js'
+  | 'Yuque'
   | 'Feishu'
   | 'Confluence';
 
