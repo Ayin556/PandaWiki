@@ -229,6 +229,14 @@ export const useTextSelection = ({
             ) {
               return false;
             }
+
+            // 过滤掉没有src属性或src为空的img标签
+            if (element.tagName === 'IMG') {
+              const src = element.getAttribute('src');
+              if (!src || src.trim() === '') {
+                return false;
+              }
+            }
           }
 
           return true;
@@ -345,7 +353,6 @@ export const useTextSelection = ({
         setTooltipOpen(false);
         setSelectedText('');
         setScreenshot(undefined);
-        setIsCapturingScreenshot(false);
       }
     },
     [tooltipOpen]
@@ -374,7 +381,6 @@ export const useTextSelection = ({
     setTooltipOpen(false);
     setSelectedText('');
     setScreenshot(undefined);
-    setIsCapturingScreenshot(false);
 
     // 清理可能存在的高亮覆盖层元素
     const highlightOverlays = document.querySelectorAll(

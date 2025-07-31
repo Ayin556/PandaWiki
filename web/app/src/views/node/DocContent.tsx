@@ -93,21 +93,17 @@ const DocContent = ({
   const handleFeedbackSubmit = async (data: {
     correction_suggestion: string;
   }) => {
-    try {
-      return await postShareProV1DocumentFeedback({
-        content: feedbackData.selectedText,
-        correction_suggestion: data.correction_suggestion,
-        node_id: docId,
-        image: base64ToFile(
-          feedbackData.screenshot!,
-          `${info?.name || 'screenshot'}.png`
-        ),
-      });
-    } catch (error) {
-      console.error('提交反馈失败:', error);
-      message.error('提交反馈失败，请稍后重试');
-      throw error;
-    }
+    return await postShareProV1DocumentFeedback({
+      content: feedbackData.selectedText,
+      correction_suggestion: data.correction_suggestion,
+      node_id: docId,
+      image: feedbackData.screenshot
+        ? base64ToFile(
+            feedbackData.screenshot!,
+            `${info?.name || 'screenshot'}.png`
+          )
+        : undefined,
+    });
   };
 
   const getComment = async () => {

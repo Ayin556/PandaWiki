@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { TextField, Box, Typography, Stack } from '@mui/material';
-import { Modal } from 'ct-mui';
+import { message, Modal } from 'ct-mui';
 import { useStore } from '@/provider';
 import { Controller, useForm } from 'react-hook-form';
 
@@ -42,6 +42,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
       await onSubmit(data);
       reset();
       onClose();
+      message.success('提交反馈成功');
     } catch (error) {
       console.error('提交反馈失败:', error);
     } finally {
@@ -119,8 +120,8 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
             rules={{
               required: '请输入反馈意见',
               minLength: {
-                value: 10,
-                message: '反馈意见至少需要10个字符',
+                value: 5,
+                message: '反馈意见至少需要5个字符',
               },
             }}
             render={({ field }) => (
