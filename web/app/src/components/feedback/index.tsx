@@ -11,7 +11,7 @@ interface FeedbackProps {
   onSubmit: (
     message_id: string,
     score: number,
-    type: number,
+    type: string,
     content?: string
   ) => void;
   data: ConversationItem | null;

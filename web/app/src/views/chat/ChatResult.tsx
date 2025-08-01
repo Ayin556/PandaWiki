@@ -93,7 +93,7 @@ const ChatResult = ({
   const handleScore = async (
     message_id: string,
     score: number,
-    type?: number,
+    type?: string,
     content?: string
   ) => {
     const data: any = {

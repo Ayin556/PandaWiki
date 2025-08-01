@@ -18,7 +18,7 @@ import React, {
 import { incrementalRender } from './incrementalRenderer';
 import { createImageRenderer } from './imageRenderer';
 import {
-  createThinkingRenderer,
+  useThinkingRenderer,
   processThinkingContent,
 } from './thinkingRenderer';
 import { createMermaidRenderer } from './mermaidRenderer';
@@ -131,7 +131,7 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
   );
 
   // 创建thinking渲染器
-  const renderThinking = createThinkingRenderer({
+  const renderThinking = useThinkingRenderer({
     showThink,
     onToggle: handleThinkToggle,
     loading,
@@ -321,7 +321,7 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
     if (!containerRef.current || !mdRef.current || !content) return;
 
     // 处理 think 标签格式
-    let processedContent = processThinkingContent(content);
+    const processedContent = processThinkingContent(content);
 
     // 检查内容变化
     if (processedContent === lastContentRef.current) return;

@@ -86,7 +86,7 @@ export interface ThinkingRendererOptions {
   loading?: boolean;
 }
 
-export const createThinkingRenderer = (options: ThinkingRendererOptions) => {
+export const useThinkingRenderer = (options: ThinkingRendererOptions) => {
   const { showThink, onToggle, loading } = options;
 
   return useCallback(
