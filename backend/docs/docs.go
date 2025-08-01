@@ -168,6 +168,7 @@ const docTemplate = `{
                             1
                         ],
                         "type": "integer",
+                        "format": "int32",
                         "x-enum-varnames": [
                             "CommentStatusReject",
                             "CommentStatusPending",
@@ -3565,6 +3566,7 @@ const docTemplate = `{
         },
         "domain.AppType": {
             "type": "integer",
+            "format": "int32",
             "enum": [
                 1,
                 2,
@@ -3617,6 +3619,11 @@ const docTemplate = `{
                 "AuthTypeNull": "无认证",
                 "AuthTypeSimple": "简单口令"
             },
+            "x-enum-descriptions": [
+                "无认证",
+                "简单口令",
+                "企业认证"
+            ],
             "x-enum-varnames": [
                 "AuthTypeNull",
                 "AuthTypeSimple",
@@ -3858,6 +3865,7 @@ const docTemplate = `{
         },
         "domain.CommentStatus": {
             "type": "integer",
+            "format": "int32",
             "enum": [
                 -1,
                 0,
@@ -4906,6 +4914,7 @@ const docTemplate = `{
         },
         "domain.NodeStatus": {
             "type": "integer",
+            "format": "int32",
             "enum": [
                 1,
                 2
@@ -4935,6 +4944,7 @@ const docTemplate = `{
         },
         "domain.NodeType": {
             "type": "integer",
+            "format": "int32",
             "enum": [
                 1,
                 2
@@ -4946,6 +4956,7 @@ const docTemplate = `{
         },
         "domain.NodeVisibility": {
             "type": "integer",
+            "format": "int32",
             "enum": [
                 1,
                 2
