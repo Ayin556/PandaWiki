@@ -174,13 +174,14 @@ const AuthTypeModal = ({
         okButtonProps={{
           loading,
         }}
+        width={500}
         onOk={handleSubmit}
       >
         <CusTabs
-          sx={{ button: { width: 200 } }}
+          sx={{ width: '100%', button: { width: '50%' } }}
           list={[
-            { label: '联创版', value: 'code', disabled: loading },
-            { label: '企业版', value: 'file', disabled: loading },
+            { label: '在线激活', value: 'code', disabled: loading },
+            { label: '离线激活', value: 'file', disabled: loading },
           ]}
           value={selected}
           change={(v: string) => setSelected(v)}
