@@ -76,7 +76,6 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const lastContentRef = useRef<string>('');
   const mdRef = useRef<MarkdownIt | null>(null);
-  const mermaidSuccessLastRef = useRef<Map<string, string>>(new Map());
   const mermaidSuccessIdRef = useRef<Map<number, string>>(new Map());
   const imageRenderCacheRef = useRef<Map<number, string>>(new Map()); // 图片渲染缓存
 
@@ -171,7 +170,7 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
         }
 
         const defaultRender = originalFenceRender || md.renderer.rules.fence;
-        let result = defaultRender
+        const result = defaultRender
           ? defaultRender(tokens, idx, options, env, renderer)
           : `<pre><code>${code}</code></pre>`;
 
