@@ -104,15 +104,27 @@ func (u *AppUsecase) getQAFunc(kbID string, appType domain.AppType) bot.GetQAFun
 		if err != nil {
 			return nil, err
 		}
-		kb, err := u.chatUsecase.llmUsecase.kbRepo.GetKnowledgeBaseByID(ctx, kbID)
+		// check ai feedback. --> default is open
+		appinfo, err := u.GetAppDetailByKBIDAndAppType(ctx, kbID, domain.AppTypeWeb)
 		if err != nil {
-			u.logger.Error("wechat GetKnowledgeBaseByID failed", log.Error(err))
+			u.logger.Error("wechat GetAppDetailByKBIDAndAppType failed", log.Error(err))
 		}
-		contentCh := make(chan string, 10)
-		var feedback = "\n\n---  \n\n本答案由 PandaWiki 生成  \n[👍 满意](%s) | [👎 不满意](%s)"
+
+		var feedback = "\n\n---  \n\n本回答由 PandaWiki 基于 AI 生成，仅供参考。\n[👍 满意](%s) | [👎 不满意](%s)"
 		var likeUrl = "%s/feedback?score=1&message_id=%s"
 		var dislikeUrl = "%s/feedback?score=-1&message_id=%s"
 		var messageId string
+		var kb *domain.KnowledgeBase
+
+		if appinfo.Settings.AIFeedbackSettings.AIFeedbackIsEnabled == nil || *appinfo.Settings.AIFeedbackSettings.AIFeedbackIsEnabled { // open
+			kb, err = u.chatUsecase.llmUsecase.kbRepo.GetKnowledgeBaseByID(ctx, kbID)
+			if err != nil {
+				u.logger.Error("wechat GetKnowledgeBaseByID failed", log.Error(err))
+			}
+
+		}
+
+		contentCh := make(chan string, 10)
 		go func() {
 			defer close(contentCh)
 			for event := range eventCh {
@@ -126,12 +138,14 @@ func (u *AppUsecase) getQAFunc(kbID string, appType domain.AppType) bot.GetQAFun
 					messageId = event.Content
 				}
 			}
-
-			// contact
-			like := fmt.Sprintf(likeUrl, kb.AccessSettings.BaseURL, messageId)
-			dislike := fmt.Sprintf(dislikeUrl, kb.AccessSettings.BaseURL, messageId)
-			feedback_data := fmt.Sprintf(feedback, like, dislike)
-			contentCh <- feedback_data
+			// check again
+			// contact --> send
+			if kb != nil && (appinfo.Settings.AIFeedbackSettings.AIFeedbackIsEnabled == nil || *appinfo.Settings.AIFeedbackSettings.AIFeedbackIsEnabled) { // open
+				like := fmt.Sprintf(likeUrl, kb.AccessSettings.BaseURL, messageId)
+				dislike := fmt.Sprintf(dislikeUrl, kb.AccessSettings.BaseURL, messageId)
+				feedback_data := fmt.Sprintf(feedback, like, dislike)
+				contentCh <- feedback_data
+			}
 		}()
 		return contentCh, nil
 	}
@@ -155,15 +169,27 @@ func (u *AppUsecase) wechatQAFunc(kbID string, appType domain.AppType, remoteip 
 		if err != nil {
 			return nil, err
 		}
-		kb, err := u.chatUsecase.llmUsecase.kbRepo.GetKnowledgeBaseByID(ctx, kbID)
+		// check ai feedback. --> default is open
+		appinfo, err := u.GetAppDetailByKBIDAndAppType(ctx, kbID, domain.AppTypeWeb)
 		if err != nil {
-			u.logger.Error("wechat GetKnowledgeBaseByID failed", log.Error(err))
+			u.logger.Error("wechat GetAppDetailByKBIDAndAppType failed", log.Error(err))
 		}
-		contentCh := make(chan string, 10)
-		var feedback = "\n\n---  \n\n此回答结果对您有帮助吗?  \n[👍 满意](%s) | [👎 不满意](%s)"
+
+		var feedback = "\n\n---  \n\n本回答由 PandaWiki 基于 AI 生成，仅供参考。\n[👍 满意](%s) | [👎 不满意](%s)"
 		var likeUrl = "%s/feedback?score=1&message_id=%s"
 		var dislikeUrl = "%s/feedback?score=-1&message_id=%s"
 		var messageId string
+		var kb *domain.KnowledgeBase
+
+		if appinfo.Settings.AIFeedbackSettings.AIFeedbackIsEnabled == nil || *appinfo.Settings.AIFeedbackSettings.AIFeedbackIsEnabled { // open
+			kb, err = u.chatUsecase.llmUsecase.kbRepo.GetKnowledgeBaseByID(ctx, kbID)
+			if err != nil {
+				u.logger.Error("wechat GetKnowledgeBaseByID failed", log.Error(err))
+			}
+
+		}
+
+		contentCh := make(chan string, 10)
 		go func() {
 			defer close(contentCh)
 			for event := range eventCh { // get content from eventch
@@ -178,11 +204,14 @@ func (u *AppUsecase) wechatQAFunc(kbID string, appType domain.AppType, remoteip 
 				}
 			}
 
-			// contact
-			like := fmt.Sprintf(likeUrl, kb.AccessSettings.BaseURL, messageId)
-			dislike := fmt.Sprintf(dislikeUrl, kb.AccessSettings.BaseURL, messageId)
-			feedback_data := fmt.Sprintf(feedback, like, dislike)
-			contentCh <- feedback_data
+			// check again
+			// contact --> send
+			if kb != nil && (appinfo.Settings.AIFeedbackSettings.AIFeedbackIsEnabled == nil || *appinfo.Settings.AIFeedbackSettings.AIFeedbackIsEnabled) { // open
+				like := fmt.Sprintf(likeUrl, kb.AccessSettings.BaseURL, messageId)
+				dislike := fmt.Sprintf(dislikeUrl, kb.AccessSettings.BaseURL, messageId)
+				feedback_data := fmt.Sprintf(feedback, like, dislike)
+				contentCh <- feedback_data
+			}
 		}()
 		return contentCh, nil
 	}
@@ -381,7 +410,14 @@ func (u *AppUsecase) GetAppDetailByKBIDAndAppType(ctx context.Context, kbID stri
 		WebAppCommentSettings: app.Settings.WebAppCommentSettings,
 		// document feedback
 		DocumentFeedBackIsEnabled: app.Settings.DocumentFeedBackIsEnabled,
+		// AI Feedback
+		AIFeedbackSettings: app.Settings.AIFeedbackSettings,
 	}
+	// init ai feedback string
+	if app.Settings.AIFeedbackSettings.AIFeedbackType == nil {
+		appDetailResp.Settings.AIFeedbackSettings.AIFeedbackType = []string{"内容不准确", "没有帮助", "其他"}
+	}
+
 	if len(app.Settings.RecommendNodeIDs) > 0 {
 		nodes, err := u.nodeUsecase.GetRecommendNodeList(ctx, &domain.GetRecommendNodeListReq{
 			KBID:    kbID,
@@ -426,8 +462,15 @@ func (u *AppUsecase) GetWebAppInfo(ctx context.Context, kbID string) (*domain.Ap
 			WebAppCommentSettings: app.Settings.WebAppCommentSettings,
 			// document feedback
 			DocumentFeedBackIsEnabled: app.Settings.DocumentFeedBackIsEnabled,
+			// AI Feedback
+			AIFeedbackSettings: app.Settings.AIFeedbackSettings,
 		},
 	}
+	// init ai feedback string
+	if app.Settings.AIFeedbackSettings.AIFeedbackType == nil {
+		appInfo.Settings.AIFeedbackSettings.AIFeedbackType = []string{"内容不准确", "没有帮助", "其他"}
+	}
+
 	if len(app.Settings.RecommendNodeIDs) > 0 {
 		nodes, err := u.nodeUsecase.GetRecommendNodeList(ctx, &domain.GetRecommendNodeListReq{
 			KBID:    kbID,

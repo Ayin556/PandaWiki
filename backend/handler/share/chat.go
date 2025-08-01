@@ -197,16 +197,13 @@ func (h *ShareChatHandler) FeedBack(c echo.Context) error {
 	// 前端传入对应的conversationId和feedback内容，后端处理并返回反馈结果
 	var feedbackReq domain.FeedbackRequest
 	if err := c.Bind(&feedbackReq); err != nil {
-		h.logger.Error("bind feedback request failed", log.Error(err))
 		return h.NewResponseWithError(c, "bind feedback request failed", err)
 	}
 	if err := c.Validate(&feedbackReq); err != nil {
-		h.logger.Error("validate request failed", log.Error(err))
 		return h.NewResponseWithError(c, "validate request failed", err)
 	}
 	h.logger.Debug("receive feedback request:", log.Any("feedback_request", feedbackReq))
 	if err := h.conversationUsecase.FeedBack(c.Request().Context(), &feedbackReq); err != nil {
-		h.logger.Error("handle feedback failed", log.Error(err))
 		return h.NewResponseWithError(c, "handle feedback failed", err)
 	}
 	return h.NewResponseWithData(c, "success")

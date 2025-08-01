@@ -1,4 +1,13 @@
 definitions:
+  domain.AIFeedbackSettings:
+    properties:
+      ai_feedback_type:
+        items:
+          type: string
+        type: array
+      is_enabled:
+        type: boolean
+    type: object
   domain.AccessSettings:
     properties:
       base_url:
@@ -56,6 +65,10 @@ definitions:
     type: object
   domain.AppSettings:
     properties:
+      ai_feedback_settings:
+        allOf:
+        - $ref: '#/definitions/domain.AIFeedbackSettings'
+        description: AI feedback
       auto_sitemap:
         type: boolean
       body_code:
@@ -172,6 +185,10 @@ definitions:
     type: object
   domain.AppSettingsResp:
     properties:
+      ai_feedback_settings:
+        allOf:
+        - $ref: '#/definitions/domain.AIFeedbackSettings'
+        description: AI feedback
       auto_sitemap:
         type: boolean
       body_code:
@@ -771,7 +788,7 @@ definitions:
       feedback_content:
         type: string
       feedback_type:
-        $ref: '#/definitions/domain.FeedbackType'
+        type: string
       score:
         $ref: '#/definitions/domain.ScoreType'
     type: object
@@ -790,22 +807,11 @@ definitions:
         - $ref: '#/definitions/domain.ScoreType'
         description: -1 踩 ,0 1 赞成
       type:
-        allOf:
-        - $ref: '#/definitions/domain.FeedbackType'
-        description: 1 内容不准确，2 没有帮助，3 其他
+        description: 内容不准确，没有帮助，.......
+        type: string
     required:
     - message_id
     type: object
-  domain.FeedbackType:
-    enum:
-    - 1
-    - 2
-    - 3
-    type: integer
-    x-enum-varnames:
-    - ContentErr
-    - NoHelp
-    - Other
   domain.FooterSettings:
     properties:
       brand_desc:

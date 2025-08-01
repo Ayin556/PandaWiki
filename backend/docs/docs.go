@@ -3097,6 +3097,20 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "domain.AIFeedbackSettings": {
+            "type": "object",
+            "properties": {
+                "ai_feedback_type": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "is_enabled": {
+                    "type": "boolean"
+                }
+            }
+        },
         "domain.AccessSettings": {
             "type": "object",
             "properties": {
@@ -3184,6 +3198,14 @@ const docTemplate = `{
         "domain.AppSettings": {
             "type": "object",
             "properties": {
+                "ai_feedback_settings": {
+                    "description": "AI feedback",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.AIFeedbackSettings"
+                        }
+                    ]
+                },
                 "auto_sitemap": {
                     "type": "boolean"
                 },
@@ -3360,6 +3382,14 @@ const docTemplate = `{
         "domain.AppSettingsResp": {
             "type": "object",
             "properties": {
+                "ai_feedback_settings": {
+                    "description": "AI feedback",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.AIFeedbackSettings"
+                        }
+                    ]
+                },
                 "auto_sitemap": {
                     "type": "boolean"
                 },
@@ -4265,7 +4295,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "feedback_type": {
-                    "$ref": "#/definitions/domain.FeedbackType"
+                    "type": "string"
                 },
                 "score": {
                     "$ref": "#/definitions/domain.ScoreType"
@@ -4298,27 +4328,10 @@ const docTemplate = `{
                     ]
                 },
                 "type": {
-                    "description": "1 内容不准确，2 没有帮助，3 其他",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/domain.FeedbackType"
-                        }
-                    ]
+                    "description": "内容不准确，没有帮助，.......",
+                    "type": "string"
                 }
             }
-        },
-        "domain.FeedbackType": {
-            "type": "integer",
-            "enum": [
-                1,
-                2,
-                3
-            ],
-            "x-enum-varnames": [
-                "ContentErr",
-                "NoHelp",
-                "Other"
-            ]
         },
         "domain.FooterSettings": {
             "type": "object",
