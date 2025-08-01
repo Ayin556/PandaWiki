@@ -40,20 +40,17 @@ const createMarkdownIt = (): MarkdownIt => {
     linkify: true,
     typographer: true,
     highlight: (str: string, lang: string): string => {
-      console.log(lang, 'lang ------', hljs.getLanguage(lang));
       if (lang && hljs.getLanguage(lang)) {
         try {
           const highlighted = hljs.highlight(str, { language: lang });
-          console.log(highlighted, 'highlighted ------');
           return `<pre class="hljs" style="cursor: pointer;"><code class="language-${lang}">${highlighted.value}</code></pre>`;
         } catch {
           // 处理高亮失败的情况
         }
       }
-      // return `<pre class="hljs" style="cursor: pointer;"><code>${md.utils.escapeHtml(
-      //   str
-      // )}</code></pre>`;
-      return `<pre class="hljs" style="cursor: pointer;"><code>${str}</code></pre>`;
+      return `<pre class="hljs" style="cursor: pointer;"><code>${md.utils.escapeHtml(
+        str
+      )}</code></pre>`;
     },
   });
 
@@ -179,13 +176,13 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
           : `<pre><code>${code}</code></pre>`;
 
         // 添加点击复制功能
-        result = result.replace(
-          /<pre[^>]*>/,
-          `<pre style="cursor: pointer; position: relative;" onclick="window.handleCodeCopy && window.handleCodeCopy(\`${code.replace(
-            /`/g,
-            '\\`'
-          )}\`)">`
-        );
+        // result = result.replace(
+        //   /<pre[^>]*>/,
+        //   `<pre style="cursor: pointer; position: relative;" onclick="window.handleCodeCopy && window.handleCodeCopy(\`${code.replace(
+        //     /`/g,
+        //     '\\`'
+        //   )}\`)">`
+        // );
 
         return result;
       };
