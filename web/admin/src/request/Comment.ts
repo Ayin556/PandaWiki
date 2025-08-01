@@ -10,7 +10,7 @@
  * ---------------------------------------------------------------
  */
 
-import request, { ContentType, RequestParams } from "./httpClient";
+import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
   DeleteApiV1CommentListParams,
   DomainResponse,
@@ -35,7 +35,7 @@ export const getApiV1Comment = (
   query: GetApiV1CommentParams,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: V1CommentLists;
     }
@@ -62,7 +62,7 @@ export const deleteApiV1CommentList = (
   query: DeleteApiV1CommentListParams,
   params: RequestParams = {},
 ) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/api/v1/comment/list`,
     method: "DELETE",
     query: query,

@@ -1,8 +1,8 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
-import { apiClient } from './api';
-import { middleware as clientMiddleware } from './middleware/client';
+import { getShareV1AppWidgetInfo } from './request/ShareApp';
+// import { middleware as clientMiddleware } from './middleware/client';
 import { middleware as homeMiddleware } from './middleware/home';
 
 const proxyShare = async (request: NextRequest) => {
@@ -39,10 +39,9 @@ export async function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
   const pathname = url.pathname;
   if (pathname.startsWith('/widget')) {
-    const kb_id = request.headers.get('x-kb-id') || process.env.DEV_KB_ID || '';
-    const widgetInfo = await apiClient.serverGetWidgetInfo(kb_id);
-    if (widgetInfo.success) {
-      if (!widgetInfo?.data?.settings?.widget_bot_settings?.is_open) {
+    const widgetInfo: any = await getShareV1AppWidgetInfo();
+    if (widgetInfo) {
+      if (!widgetInfo?.settings?.widget_bot_settings?.is_open) {
         return NextResponse.redirect(new URL('/not-fount', request.url));
       }
     }
@@ -64,9 +63,10 @@ export async function middleware(request: NextRequest) {
 
   let response: NextResponse;
 
-  if (pathname.startsWith('/client/')) {
-    response = await clientMiddleware(request);
-  } else if (pathname.startsWith('/share/')) {
+  // if (pathname.startsWith('/client/')) {
+  //   response = await clientMiddleware(request);
+  // } else
+  if (pathname.startsWith('/share/')) {
     response = await proxyShare(request);
   } else {
     response = await homeMiddleware(request, headers, sessionId);
@@ -79,6 +79,7 @@ export async function middleware(request: NextRequest) {
     });
   }
 
+  response.headers.set('x-current-path', pathname);
   return response;
 }
 
@@ -91,6 +92,6 @@ export const config = {
     '/welcome',
     '/auth/login',
     '/node/:path*',
-    '/client/:path*',
+    // '/client/:path*',
   ],
 };

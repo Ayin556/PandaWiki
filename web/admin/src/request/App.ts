@@ -10,7 +10,7 @@
  * ---------------------------------------------------------------
  */
 
-import request, { ContentType, RequestParams } from "./httpClient";
+import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
   DeleteApiV1AppParams,
   DomainAppDetailResp,
@@ -33,7 +33,7 @@ export const putApiV1App = (
   app: DomainUpdateAppReq,
   params: RequestParams = {},
 ) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/api/v1/app`,
     method: "PUT",
     body: app,
@@ -56,7 +56,7 @@ export const deleteApiV1App = (
   query: DeleteApiV1AppParams,
   params: RequestParams = {},
 ) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/api/v1/app`,
     method: "DELETE",
     query: query,
@@ -81,7 +81,7 @@ export const getApiV1AppDetail = (
   query: GetApiV1AppDetailParams,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: DomainAppDetailResp;
     }

@@ -10,7 +10,7 @@
  * ---------------------------------------------------------------
  */
 
-import request, { ContentType, RequestParams } from "./httpClient";
+import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import { DomainObjectUploadResp, PostApiV1FileUploadPayload } from "./types";
 
 /**
@@ -27,7 +27,7 @@ export const postApiV1FileUpload = (
   data: PostApiV1FileUploadPayload,
   params: RequestParams = {},
 ) =>
-  request<DomainObjectUploadResp>({
+  httpRequest<DomainObjectUploadResp>({
     path: `/api/v1/file/upload`,
     method: "POST",
     body: data,

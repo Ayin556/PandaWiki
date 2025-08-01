@@ -10,7 +10,7 @@
  * ---------------------------------------------------------------
  */
 
-import request, { ContentType, RequestParams } from "./httpClient";
+import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
   DomainCommentReq,
   DomainResponse,
@@ -35,7 +35,7 @@ export const postShareV1Comment = (
   comment: DomainCommentReq,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: string;
     }
@@ -65,7 +65,7 @@ export const getShareV1CommentList = (
   query: GetShareV1CommentListParams,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: ShareShareCommentLists;
     }

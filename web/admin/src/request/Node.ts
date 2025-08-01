@@ -10,7 +10,7 @@
  * ---------------------------------------------------------------
  */
 
-import request, { ContentType, RequestParams } from "./httpClient";
+import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
   DomainBatchMoveReq,
   DomainCreateNodeReq,
@@ -48,7 +48,7 @@ export const postApiV1Node = (
   body: DomainCreateNodeReq,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: Record<string, any>;
     }
@@ -78,7 +78,7 @@ export const postApiV1NodeAction = (
   action: DomainNodeActionReq,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: Record<string, any>;
     }
@@ -105,7 +105,7 @@ export const postApiV1NodeBatchMove = (
   body: DomainBatchMoveReq,
   params: RequestParams = {},
 ) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/api/v1/node/batch_move`,
     method: "POST",
     body: body,
@@ -131,7 +131,7 @@ export const getApiV1NodeDetail = (
   query: GetApiV1NodeDetailParams,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: DomainNodeDetailResp;
     }
@@ -158,7 +158,7 @@ export const putApiV1NodeDetail = (
   body: DomainUpdateNodeReq,
   params: RequestParams = {},
 ) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/api/v1/node/detail`,
     method: "PUT",
     body: body,
@@ -184,7 +184,7 @@ export const getApiV1NodeList = (
   query: GetApiV1NodeListParams,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: DomainNodeListItemResp[];
     }
@@ -211,7 +211,7 @@ export const postApiV1NodeMove = (
   body: DomainMoveNodeReq,
   params: RequestParams = {},
 ) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/api/v1/node/move`,
     method: "POST",
     body: body,
@@ -237,7 +237,7 @@ export const getApiV1NodeRecommendNodes = (
   query: GetApiV1NodeRecommendNodesParams,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: DomainRecommendNodeListResp[];
     }
@@ -267,7 +267,7 @@ export const getApiV1NodeReleaseDetail = (
   query: GetApiV1NodeReleaseDetailParams,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: DomainGetNodeReleaseDetailResp;
     }
@@ -297,7 +297,7 @@ export const getApiV1NodeReleaseList = (
   query: GetApiV1NodeReleaseListParams,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: DomainNodeReleaseListItem[];
     }
@@ -324,7 +324,7 @@ export const postApiV1NodeSummary = (
   body: DomainNodeSummaryReq,
   params: RequestParams = {},
 ) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/api/v1/node/summary`,
     method: "POST",
     body: body,

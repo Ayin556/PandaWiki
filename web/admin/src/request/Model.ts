@@ -10,7 +10,7 @@
  * ---------------------------------------------------------------
  */
 
-import request, { ContentType, RequestParams } from "./httpClient";
+import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
   DomainCheckModelReq,
   DomainCheckModelResp,
@@ -37,7 +37,7 @@ export const putApiV1Model = (
   model: DomainUpdateModelReq,
   params: RequestParams = {},
 ) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/api/v1/model`,
     method: "PUT",
     body: model,
@@ -60,7 +60,7 @@ export const postApiV1Model = (
   model: DomainCreateModelReq,
   params: RequestParams = {},
 ) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/api/v1/model`,
     method: "POST",
     body: model,
@@ -86,7 +86,7 @@ export const postApiV1ModelCheck = (
   model: DomainCheckModelReq,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: DomainCheckModelResp;
     }
@@ -116,7 +116,7 @@ export const getApiV1ModelDetail = (
   query: GetApiV1ModelDetailParams,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: DomainModelDetailResp;
     }
@@ -143,7 +143,7 @@ export const getApiV1ModelDetail = (
  */
 
 export const getApiV1ModelList = (params: RequestParams = {}) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: DomainModelListItem;
     }
@@ -172,7 +172,7 @@ export const getApiV1ModelProviderSupported = (
   query: GetApiV1ModelProviderSupportedParams,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: DomainGetProviderModelListResp;
     }

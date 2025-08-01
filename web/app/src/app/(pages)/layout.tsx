@@ -1,4 +1,5 @@
-import { apiClient } from '@/api';
+import { getShareV1AppWebInfo } from '@/request/ShareApp';
+import { getShareV1NodeList } from '@/request/ShareNode';
 import StoreProvider from '@/provider';
 import { darkTheme, lightTheme } from '@/theme';
 import { Box } from '@mui/material';
@@ -9,7 +10,6 @@ import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import { cookies, headers } from 'next/headers';
 import Script from 'next/script';
-import { cache } from 'react';
 import { getSelectorsByUserAgent } from 'react-device-detect';
 import '../globals.css';
 
@@ -31,22 +31,6 @@ const gilory = localFont({
   ],
 });
 
-const getKBDetailCached = cache(async (kb_id: string) => {
-  const result = await apiClient.serverGetKBInfo(kb_id);
-  if (!result.success) {
-    return undefined;
-  }
-  return result.data;
-});
-
-const getNodeListCached = cache(async (kb_id: string, authToken: string) => {
-  const result = await apiClient.serverGetNodeList(kb_id, authToken);
-  if (!result.success) {
-    return undefined;
-  }
-  return result.data;
-});
-
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
@@ -55,9 +39,7 @@ export const viewport: Viewport = {
 };
 
 export async function generateMetadata(): Promise<Metadata> {
-  const headersList = await headers();
-  const kb_id = headersList.get('x-kb-id') || process.env.DEV_KB_ID || '';
-  const kbDetail = await getKBDetailCached(kb_id);
+  const kbDetail: any = await getShareV1AppWebInfo();
 
   return {
     metadataBase: new URL(process.env.TARGET || ''),
@@ -85,8 +67,8 @@ const Layout = async ({
   const kb_id = headersList.get('x-kb-id') || process.env.DEV_KB_ID || '';
   const authToken = cookieStore.get(`auth_${kb_id}`)?.value || '';
 
-  const kbDetail = await getKBDetailCached(kb_id);
-  const nodeList = await getNodeListCached(kb_id, authToken);
+  const kbDetail: any = await getShareV1AppWebInfo();
+  const nodeList: any = await getShareV1NodeList();
 
   const themeMode = kbDetail?.settings?.theme_mode || 'light';
 

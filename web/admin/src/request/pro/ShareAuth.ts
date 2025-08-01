@@ -10,7 +10,7 @@
  * ---------------------------------------------------------------
  */
 
-import request, { ContentType, RequestParams } from "./httpClient";
+import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
   DomainResponse,
   GithubComChaitinPandaWikiProApiShareV1AuthDingTalkReq,
@@ -34,7 +34,7 @@ export const postShareProV1AuthDingtalk = (
   param: GithubComChaitinPandaWikiProApiShareV1AuthDingTalkReq,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: GithubComChaitinPandaWikiProApiShareV1AuthDingTalkResp;
     }

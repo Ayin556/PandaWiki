@@ -10,7 +10,7 @@
  * ---------------------------------------------------------------
  */
 
-import request, { ContentType, RequestParams } from "./httpClient";
+import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
   DomainDeleteDocumentFeedbackReq,
   DomainResponse,
@@ -33,7 +33,7 @@ export const deleteApiProV1DocumentFeedback = (
   req: DomainDeleteDocumentFeedbackReq,
   params: RequestParams = {},
 ) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/api/pro/v1/document/feedback`,
     method: "DELETE",
     body: req,
@@ -59,7 +59,7 @@ export const getApiProV1DocumentList = (
   query: GetApiProV1DocumentListParams,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: HandlerV1DocFeedBackLists;
     }
@@ -86,7 +86,7 @@ export const postShareProV1DocumentFeedback = (
   data: PostShareProV1DocumentFeedbackPayload,
   params: RequestParams = {},
 ) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/share/pro/v1/document/feedback`,
     method: "POST",
     body: data,

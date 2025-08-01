@@ -10,7 +10,7 @@
  * ---------------------------------------------------------------
  */
 
-import request, { ContentType, RequestParams } from "./httpClient";
+import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
   DomainResponse,
   GetApiProV1AuthGetParams,
@@ -35,7 +35,7 @@ export const getApiProV1AuthGet = (
   query: GetApiProV1AuthGetParams,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: GithubComChaitinPandaWikiProApiAuthV1GetAuthResp;
     }
@@ -62,7 +62,7 @@ export const postApiProV1AuthSet = (
   param: GithubComChaitinPandaWikiProApiAuthV1SetAuthReq,
   params: RequestParams = {},
 ) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/api/pro/v1/auth/set`,
     method: "POST",
     body: param,

@@ -1,7 +1,7 @@
 'use client';
 
-import { apiClient } from '@/api';
 import { ConversationItem } from '@/assets/type';
+import { postShareV1ChatFeedback } from '@/request/ShareChat';
 import Feedback from '@/components/feedback';
 import {
   IconArrowUp,
@@ -58,7 +58,13 @@ const ChatResult = ({
   setConversation,
 }: ChatResultProps) => {
   const [input, setInput] = useState('');
-  const { mobile = false, themeMode = 'light', kb_id = '', token } = useStore();
+  const {
+    mobile = false,
+    themeMode = 'light',
+    kb_id = '',
+    token,
+    kbDetail,
+  } = useStore();
   const [open, setOpen] = useState(false);
   const [conversationItem, setConversationItem] =
     useState<ConversationItem | null>(null);
@@ -69,6 +75,10 @@ const ChatResult = ({
       setInput('');
     }
   };
+
+  const isFeedbackEnabled =
+    // @ts-ignore
+    kbDetail?.settings?.ai_feedback_settings?.is_enabled || false;
 
   const scrollToBottom = () => {
     const container = document.querySelector('.conversation-container');
@@ -83,7 +93,7 @@ const ChatResult = ({
   const handleScore = async (
     message_id: string,
     score: number,
-    type?: number,
+    type?: string,
     content?: string
   ) => {
     const data: any = {
@@ -95,17 +105,13 @@ const ChatResult = ({
     };
     if (type) data.type = type;
     if (content) data.feedback_content = content;
-    const res = await apiClient.clientFeedback(data);
-    if (res.success) {
-      message.success('反馈成功');
-      setConversation(
-        conversation.map((item) => {
-          return item.message_id === message_id ? { ...item, score } : item;
-        })
-      );
-    } else {
-      message.error(res.message || '反馈失败');
-    }
+    await postShareV1ChatFeedback(data);
+    message.success('反馈成功');
+    setConversation(
+      conversation.map((item) => {
+        return item.message_id === message_id ? { ...item, score } : item;
+      })
+    );
   };
 
   useEffect(() => {
@@ -201,6 +207,7 @@ const ChatResult = ({
               <Stack
                 direction='row'
                 alignItems='center'
+                justifyContent='space-between'
                 gap={3}
                 sx={{
                   fontSize: 12,
@@ -208,28 +215,41 @@ const ChatResult = ({
                   mt: 2,
                 }}
               >
-                本答案由 PandaWiki 生成于 {dayjs(item.update_time).fromNow()}
-                {item.score === 1 && <IconZaned sx={{ cursor: 'pointer' }} />}
-                {item.score !== 1 && (
-                  <IconZan
-                    sx={{ cursor: 'pointer' }}
-                    onClick={() => {
-                      if (item.score === 0) handleScore(item.message_id, 1);
-                    }}
-                  />
-                )}
-                {item.score !== -1 && (
-                  <IconCai
-                    sx={{ cursor: 'pointer' }}
-                    onClick={() => {
-                      if (item.score === 0) {
-                        setConversationItem(item);
-                        setOpen(true);
-                      }
-                    }}
-                  />
-                )}
-                {item.score === -1 && <IconCaied sx={{ cursor: 'pointer' }} />}
+                本回答由 PandaWiki 基于 AI 生成，仅供参考。
+                <Stack direction='row' gap={3} alignItems='center'>
+                  <span>生成于 {dayjs(item.update_time).fromNow()}</span>
+
+                  {isFeedbackEnabled && (
+                    <>
+                      {item.score === 1 && (
+                        <IconZaned sx={{ cursor: 'pointer' }} />
+                      )}
+                      {item.score !== 1 && (
+                        <IconZan
+                          sx={{ cursor: 'pointer' }}
+                          onClick={() => {
+                            if (item.score === 0)
+                              handleScore(item.message_id, 1);
+                          }}
+                        />
+                      )}
+                      {item.score !== -1 && (
+                        <IconCai
+                          sx={{ cursor: 'pointer' }}
+                          onClick={() => {
+                            if (item.score === 0) {
+                              setConversationItem(item);
+                              setOpen(true);
+                            }
+                          }}
+                        />
+                      )}
+                      {item.score === -1 && (
+                        <IconCaied sx={{ cursor: 'pointer' }} />
+                      )}
+                    </>
+                  )}
+                </Stack>
               </Stack>
             )}
           </Box>

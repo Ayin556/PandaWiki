@@ -10,7 +10,7 @@
  * ---------------------------------------------------------------
  */
 
-import request, { ContentType, RequestParams } from "./httpClient";
+import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import { DomainTextReq } from "./types";
 
 /**
@@ -27,7 +27,7 @@ export const postApiV1CreationText = (
   body: DomainTextReq,
   params: RequestParams = {},
 ) =>
-  request<string>({
+  httpRequest<string>({
     path: `/api/v1/creation/text`,
     method: "POST",
     body: body,

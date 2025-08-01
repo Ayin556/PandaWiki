@@ -10,7 +10,7 @@
  * ---------------------------------------------------------------
  */
 
-import request, { ContentType, RequestParams } from "./httpClient";
+import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
   DomainAuthGetResp,
   DomainAuthLoginSimpleReq,
@@ -31,7 +31,7 @@ import {
  */
 
 export const getShareV1AuthGet = (params: RequestParams = {}) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: DomainAuthGetResp;
     }
@@ -57,7 +57,7 @@ export const postShareV1AuthLoginSimple = (
   param: DomainAuthLoginSimpleReq,
   params: RequestParams = {},
 ) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/share/v1/auth/login/simple`,
     method: "POST",
     body: param,

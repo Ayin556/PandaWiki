@@ -2,43 +2,26 @@
 
 import { useStore } from '@/provider';
 import { addOpacityToColor, copyText } from '@/utils';
-import { Box, Dialog, useTheme } from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 import 'katex/dist/katex.min.css';
 import mk from '@vscode/markdown-it-katex';
 import MarkdownIt from 'markdown-it';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/an-old-hope.css';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useMemo,
+} from 'react';
 import { incrementalRender } from './incrementalRenderer';
-import mermaid from 'mermaid';
-
-// ==================== 常量定义 ====================
-const MERMAID_CONFIG = {
-  startOnLoad: false,
-  theme: 'default' as const,
-  securityLevel: 'loose' as const,
-  fontFamily: 'inherit',
-  suppressErrorRendering: true,
-};
-
-const IMAGE_STYLES = {
-  BASE: [
-    'border-style: none',
-    'border-radius: 10px',
-    'margin-left: 5px',
-    'box-shadow: 0px 0px 3px 1px rgba(0,0,5,0.15)',
-    'cursor: pointer',
-    'max-width: 60%',
-    'box-sizing: content-box',
-    'background-color: var(--color-canvas-default)',
-  ],
-  DEFAULT_SIZE: { width: 'auto', height: 'auto' },
-};
-
-const LOADING_MESSAGES = {
-  MERMAID_WAITING: '🔄 等待图表代码...',
-  MERMAID_INCOMPLETE: '🔄 等待完整的图表代码...',
-};
+import { createImageRenderer } from './imageRenderer';
+import {
+  useThinkingRenderer,
+  processThinkingContent,
+} from './thinkingRenderer';
+import { createMermaidRenderer } from './mermaidRenderer';
 
 // ==================== 类型定义 ====================
 interface MarkDown2Props {
@@ -46,99 +29,31 @@ interface MarkDown2Props {
   content: string;
 }
 
-interface ImageAttributes {
-  [key: string]: string;
-}
-
-interface RenderOptions {
-  width?: string;
-  height?: string;
-  customStyle?: string;
-  otherAttrs?: ImageAttributes;
-}
-
-// ==================== Mermaid 相关功能 ====================
-let isMermaidInitialized = false;
-
-/**
- * 初始化 Mermaid
- */
-const initializeMermaid = (): boolean => {
-  if (!isMermaidInitialized) {
-    try {
-      mermaid.initialize(MERMAID_CONFIG);
-      isMermaidInitialized = true;
-      return true;
-    } catch (error) {
-      console.error('Mermaid initialization error:', error);
-      return false;
-    }
-  }
-  return true;
-};
-
-/**
- * 渲染 Mermaid 图表（支持渐进式渲染）
- */
-const renderMermaidChart = async (
-  index: number,
-  code: string,
-  mermaidSuccessLastRef: React.RefObject<Map<string, string>>,
-  mermaidSuccessIdRef: React.RefObject<Map<string, string>>
-): Promise<string> => {
-  try {
-    if (!initializeMermaid()) {
-      throw new Error('Mermaid initialization failed');
-    }
-
-    if (mermaidSuccessIdRef.current.has(code)) {
-      return '';
-    }
-
-    const id = `mermaid-${Date.now()}-${Math.random()
-      .toString(36)
-      .substr(2, 9)}`;
-    let svg: string = mermaidSuccessLastRef.current.get(index.toString()) || '';
-    try {
-      const renderResult = await mermaid.render(id, code);
-      svg = renderResult.svg;
-      mermaidSuccessLastRef.current.set(index.toString(), svg);
-      mermaidSuccessIdRef.current.set(code, svg);
-    } catch (renderError) {
-      if (!svg) {
-        return `<div class="mermaid-loading">${LOADING_MESSAGES.MERMAID_WAITING}</div>`;
-      }
-    }
-    return svg;
-  } catch (error) {
-    return `<div class="mermaid-progressive" data-status="loading">
-      <div class="mermaid-loading">${LOADING_MESSAGES.MERMAID_INCOMPLETE}</div>
-    </div>`;
-  }
-};
-
 // ==================== 工具函数 ====================
 /**
  * 创建 MarkdownIt 实例
  */
 const createMarkdownIt = (): MarkdownIt => {
   const md = new MarkdownIt({
-    html: true,
+    html: false,
     breaks: true,
     linkify: true,
     typographer: true,
     highlight: (str: string, lang: string): string => {
+      console.log(lang, 'lang ------', hljs.getLanguage(lang));
       if (lang && hljs.getLanguage(lang)) {
         try {
           const highlighted = hljs.highlight(str, { language: lang });
+          console.log(highlighted, 'highlighted ------');
           return `<pre class="hljs" style="cursor: pointer;"><code class="language-${lang}">${highlighted.value}</code></pre>`;
         } catch {
           // 处理高亮失败的情况
         }
       }
-      return `<pre class="hljs" style="cursor: pointer;"><code>${md.utils.escapeHtml(
-        str
-      )}</code></pre>`;
+      // return `<pre class="hljs" style="cursor: pointer;"><code>${md.utils.escapeHtml(
+      //   str
+      // )}</code></pre>`;
+      return `<pre class="hljs" style="cursor: pointer;"><code>${str}</code></pre>`;
     },
   });
 
@@ -152,50 +67,6 @@ const createMarkdownIt = (): MarkdownIt => {
   return md;
 };
 
-/**
- * 安全的字符串哈希函数
- */
-const hashString = (str: string): string => {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i);
-    hash = (hash << 5) - hash + char;
-    hash = hash & hash; // 转换为32位整数
-  }
-  return Math.abs(hash).toString(36);
-};
-
-/**
- * 安全的 Base64 编码，支持中文
- */
-const safeBase64Encode = (str: string): string => {
-  try {
-    return btoa(
-      encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) =>
-        String.fromCharCode(parseInt(p1, 16))
-      )
-    );
-  } catch {
-    return hashString(str);
-  }
-};
-
-/**
- * 安全的 Base64 解码
- */
-const safeBase64Decode = (str: string): string => {
-  try {
-    return decodeURIComponent(
-      atob(str)
-        .split('')
-        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join('')
-    );
-  } catch {
-    return str;
-  }
-};
-
 // ==================== 主组件 ====================
 const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
   const theme = useTheme();
@@ -203,22 +74,16 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
 
   // 状态管理
   const [showThink, setShowThink] = useState(false);
-  const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewImgSrc, setPreviewImgSrc] = useState('');
 
   // Refs
   const containerRef = useRef<HTMLDivElement>(null);
   const lastContentRef = useRef<string>('');
   const mdRef = useRef<MarkdownIt | null>(null);
   const mermaidSuccessLastRef = useRef<Map<string, string>>(new Map());
-  const mermaidSuccessIdRef = useRef<Map<string, string>>(new Map());
+  const mermaidSuccessIdRef = useRef<Map<number, string>>(new Map());
+  const imageRenderCacheRef = useRef<Map<number, string>>(new Map()); // 图片渲染缓存
 
   // ==================== 事件处理函数 ====================
-  const handleImageClick = useCallback((src: string) => {
-    setPreviewImgSrc(src);
-    setPreviewOpen(true);
-  }, []);
-
   const handleCodeClick = useCallback((code: string) => {
     copyText(code);
   }, []);
@@ -241,114 +106,42 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
 
   // ==================== 渲染器函数 ====================
   /**
-   * 渲染图片
+   * 处理图片加载成功
    */
-  const renderImage = useCallback(
-    (src: string, alt: string, options: RenderOptions = {}) => {
-      const {
-        width = IMAGE_STYLES.DEFAULT_SIZE.width,
-        height = IMAGE_STYLES.DEFAULT_SIZE.height,
-        customStyle = '',
-        otherAttrs = {},
-      } = options;
-
-      const imageKey = `img_${src}`;
-      const attrs = Object.entries(otherAttrs)
-        .map(([name, value]) => `${name}="${value}"`)
-        .join(' ');
-
-      const baseStyles = [
-        `width: ${width}`,
-        `height: ${height}`,
-        ...IMAGE_STYLES.BASE,
-      ];
-
-      if (customStyle) {
-        baseStyles.push(customStyle);
-      }
-
-      const styleString = baseStyles.join('; ');
-
-      return `
-      <div class="image-container">
-        <img 
-          src="${src}" 
-          alt="${alt || 'markdown-img'}" 
-          data-key="${imageKey}"
-          referrerpolicy="no-referrer"
-          ${attrs}
-          style="${styleString}"
-        />
-      </div>
-    `;
-    },
-    []
-  );
-
-  /**
-   * 渲染 Mermaid 容器
-   */
-  const renderMermaid = useCallback((code: string) => {
-    const encodedCode = safeBase64Encode(code);
-    const svg = mermaidSuccessIdRef.current.get(safeBase64Decode(code)) || '';
-    return `<div class="mermaid-container" data-code="${encodedCode}">${svg}</div>`;
+  const handleImageLoad = useCallback((index: number, html: string) => {
+    imageRenderCacheRef.current.set(index, html);
   }, []);
 
   /**
-   * 创建思考区域的切换按钮
+   * 处理图片加载失败
    */
-  const createThinkToggleButton = useCallback(() => {
-    if (loading) return '';
+  const handleImageError = useCallback((index: number, html: string) => {
+    imageRenderCacheRef.current.set(index, html);
+  }, []);
 
-    return `<button 
-      class="think-toggle-btn" 
-      onclick="window.handleThinkToggle && window.handleThinkToggle()" 
-      style="
-        background: ${theme.palette.background.paper};
-        border: none;
-        border-radius: 50%;
-        width: 32px;
-        height: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        margin-left: auto;
-        flex-shrink: 0;
-        transition: all 0.2s;
-        color: ${theme.palette.text.secondary};
-      "
-      onmouseover="this.style.backgroundColor='${addOpacityToColor(
-        theme.palette.primary.main,
-        0.1
-      )}'; this.style.color='${theme.palette.primary.main}'"
-      onmouseout="this.style.backgroundColor='${
-        theme.palette.background.paper
-      }'; this.style.color='${theme.palette.text.secondary}'"
-    >
-      <span style="
-        transform: ${showThink ? 'rotate(-180deg)' : 'rotate(0deg)'};
-        transition: transform 0.3s;
-        font-size: 18px;
-        line-height: 1;
-      ">↓</span>
-    </button>`;
-  }, [loading, theme, showThink]);
+  // 创建图片渲染器
+  const renderImage = useMemo(
+    () =>
+      createImageRenderer({
+        onImageLoad: handleImageLoad,
+        onImageError: handleImageError,
+        imageRenderCache: imageRenderCacheRef.current,
+      }),
+    [handleImageLoad, handleImageError]
+  );
 
-  // ==================== 绑定事件 ====================
-  /**
-   * 绑定图片点击事件
-   */
-  const bindImageEvents = useCallback(() => {
-    if (!containerRef.current) return;
+  // 创建thinking渲染器
+  const renderThinking = useThinkingRenderer({
+    showThink,
+    onToggle: handleThinkToggle,
+    loading,
+  });
 
-    const images = containerRef.current.querySelectorAll('img[data-key]');
-    images.forEach((img) => {
-      const imgElement = img as HTMLImageElement;
-      imgElement.onclick = null; // 移除旧事件
-      imgElement.onclick = () => handleImageClick(imgElement.src);
-    });
-  }, [handleImageClick]);
+  // 创建mermaid渲染器
+  const renderMermaid = useMemo(
+    () => createMermaidRenderer(mermaidSuccessIdRef),
+    []
+  );
 
   // ==================== 渲染器自定义 ====================
   /**
@@ -357,45 +150,16 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
   const customizeRenderer = useCallback(
     (md: MarkdownIt) => {
       const originalFenceRender = md.renderer.rules.fence;
-
       // 自定义图片渲染
+      let imageCount = 0;
+      let mermaidCount = 0;
       md.renderer.rules.image = (tokens, idx) => {
+        imageCount++;
         const token = tokens[idx];
-        const srcIndex = token.attrIndex('src');
-        const src = srcIndex >= 0 ? token.attrs![srcIndex][1] : '';
-        const alt = token.content;
-
-        // 解析属性
+        const src = token.attrGet('src') || '';
+        const alt = token.attrGet('alt') || token.content;
         const attrs = token.attrs || [];
-        const otherAttrs: ImageAttributes = {};
-        let width = IMAGE_STYLES.DEFAULT_SIZE.width;
-        let height = IMAGE_STYLES.DEFAULT_SIZE.height;
-        let customStyle = '';
-
-        attrs.forEach(([name, value]) => {
-          switch (name) {
-            case 'width':
-              width = value;
-              break;
-            case 'height':
-              height = value;
-              break;
-            case 'style':
-              customStyle = value;
-              break;
-            default:
-              if (name !== 'src' && name !== 'alt') {
-                otherAttrs[name] = value;
-              }
-          }
-        });
-
-        return renderImage(src, alt, {
-          width,
-          height,
-          customStyle,
-          otherAttrs,
-        });
+        return renderImage(src, alt, attrs, imageCount - 1);
       };
 
       // 自定义代码块渲染
@@ -405,7 +169,8 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
         const code = token.content;
 
         if (info === 'mermaid') {
-          return renderMermaid(code);
+          mermaidCount++;
+          return renderMermaid(code, mermaidCount);
         }
 
         const defaultRender = originalFenceRender || md.renderer.rules.fence;
@@ -463,6 +228,10 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
         const originalHtmlBlock = md.renderer.rules.html_block;
         const originalHtmlInline = md.renderer.rules.html_inline;
 
+        // 用于跟踪thinking状态
+        let isInThinking = false;
+        let thinkingContent = '';
+
         md.renderer.rules.html_block = (
           tokens,
           idx,
@@ -473,13 +242,28 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
           const token = tokens[idx];
           const content = token.content;
 
-          // 处理 think 标签
+          // 处理 think 标签开始
           if (content.includes('<think>')) {
-            return `<div class="think-content">
-            <div class="think-inner ${!showThink ? 'three-ellipsis' : ''}">`;
+            isInThinking = true;
+            thinkingContent = '';
+            return ''; // 不输出任何内容，开始收集
           }
+
+          // 处理 think 标签结束
           if (content.includes('</think>')) {
-            return `</div>${createThinkToggleButton()}</div>`;
+            if (isInThinking) {
+              isInThinking = false;
+              const renderedThinking = renderThinking(thinkingContent.trim());
+              thinkingContent = '';
+              return renderedThinking;
+            }
+            return '';
+          }
+
+          // 如果在thinking标签内，收集内容
+          if (isInThinking) {
+            thinkingContent += content;
+            return '';
           }
 
           // 处理 error 标签
@@ -512,7 +296,7 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
 
       setupCustomHtmlHandlers();
     },
-    [renderImage, renderMermaid, showThink, theme, createThinkToggleButton]
+    [renderImage, renderMermaid, renderThinking, showThink, theme]
   );
 
   // ==================== Effects ====================
@@ -526,27 +310,18 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
   // 设置全局函数
   useEffect(() => {
     (window as any).handleCodeCopy = handleCodeClick;
-    (window as any).handleThinkToggle = handleThinkToggle;
 
     return () => {
       delete (window as any).handleCodeCopy;
-      delete (window as any).handleThinkToggle;
     };
-  }, [handleCodeClick, handleThinkToggle]);
+  }, [handleCodeClick]);
 
   // 主要的内容渲染 Effect
   useEffect(() => {
     if (!containerRef.current || !mdRef.current || !content) return;
 
     // 处理 think 标签格式
-    let processedContent = content;
-    if (!processedContent.includes('\n\n</think>')) {
-      const idx = processedContent.indexOf('\n</think>');
-      if (idx !== -1) {
-        processedContent =
-          content.slice(0, idx) + '\n\n</think>' + content.slice(idx + 9);
-      }
-    }
+    const processedContent = processThinkingContent(content);
 
     // 检查内容变化
     if (processedContent === lastContentRef.current) return;
@@ -554,98 +329,19 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
     customizeRenderer(mdRef.current);
 
     try {
+      // 渲染markdown（thinking标签在renderer rules中直接处理）
       const newHtml = mdRef.current.render(processedContent);
+
       incrementalRender(containerRef.current, newHtml, lastContentRef.current);
-      bindImageEvents();
       lastContentRef.current = processedContent;
-
-      // 处理 Mermaid 图表渲染
-      const mermaidContainers =
-        containerRef.current.querySelectorAll('.mermaid-container');
-
-      if (mermaidContainers.length === 0) {
-        onScrollBottom();
-        return;
-      }
-
-      // 递归渲染 Mermaid 图表
-      const renderMermaidSequentially = async (index: number) => {
-        if (index >= mermaidContainers.length) return;
-
-        const element = mermaidContainers[index] as HTMLElement;
-        const encodedCode = element.dataset.code || '';
-
-        if (encodedCode) {
-          try {
-            const code = safeBase64Decode(encodedCode);
-            const rendered = await renderMermaidChart(
-              index,
-              code,
-              mermaidSuccessLastRef,
-              mermaidSuccessIdRef
-            );
-            if (rendered) {
-              element.innerHTML = rendered;
-            }
-
-            if (index === mermaidContainers.length - 1) {
-              onScrollBottom();
-            }
-
-            await renderMermaidSequentially(index + 1);
-          } catch (error) {
-            console.error('Mermaid rendering error:', error);
-          }
-        }
-      };
-
-      renderMermaidSequentially(0);
+      onScrollBottom();
     } catch (error) {
       console.error('Markdown 渲染错误:', error);
       if (containerRef.current) {
         containerRef.current.innerHTML = '<div>Markdown 渲染错误</div>';
       }
-      bindImageEvents();
     }
-  }, [content, customizeRenderer, bindImageEvents, onScrollBottom]);
-
-  // Think 标签样式处理
-  useEffect(() => {
-    if (!containerRef.current) return;
-
-    const thinkElements =
-      containerRef.current.querySelectorAll('.think-content');
-    thinkElements.forEach((element) => {
-      const thinkDiv = element as HTMLElement;
-
-      // 设置容器样式
-      Object.assign(thinkDiv.style, {
-        display: 'flex',
-        alignItems: 'flex-end',
-        gap: '16px',
-        fontSize: '12px',
-        color: theme.palette.text.secondary,
-        marginBottom: '40px',
-        lineHeight: '20px',
-        backgroundColor: theme.palette.background.paper,
-        padding: '16px',
-        cursor: 'pointer',
-        borderRadius: '10px',
-      });
-
-      // 设置内容区域样式
-      const contentDiv = thinkDiv.querySelector('.think-inner') as HTMLElement;
-      if (contentDiv) {
-        Object.assign(contentDiv.style, {
-          transition: 'height 0.3s',
-          overflow: 'hidden',
-          height: showThink ? 'auto' : '60px',
-        });
-
-        contentDiv.classList.toggle('three-ellipsis', !showThink);
-      }
-    });
-  }, [showThink, theme, content]);
+  }, [content, customizeRenderer, onScrollBottom]);
 
   // ==================== 组件样式 ====================
   const componentStyles = {
@@ -653,26 +349,6 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
     background: 'transparent',
     '--primary-color': theme.palette.primary.main,
     '--background-paper': theme.palette.background.paper,
-
-    // Think 区域样式
-    '.think-content': {
-      display: 'flex',
-      alignItems: 'flex-end',
-      gap: '16px',
-      fontSize: '12px',
-      color: 'text.tertiary',
-      marginBottom: '40px',
-      lineHeight: '20px',
-      bgcolor: 'background.paper',
-      padding: '16px',
-      cursor: 'pointer',
-      borderRadius: '10px',
-      '.think-inner': {
-        transition: 'height 0.3s',
-        overflow: 'hidden',
-        height: showThink ? 'auto' : '60px',
-      },
-    },
 
     // 省略号样式
     '.three-ellipsis': {
@@ -683,15 +359,24 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
       textOverflow: 'ellipsis',
     },
 
-    // 按钮样式
-    '.think-toggle-btn': {
-      '&:hover': {
-        backgroundColor: addOpacityToColor(theme.palette.primary.main, 0.1),
-        color: theme.palette.primary.main,
-      },
-      '&:active': {
-        transform: 'scale(0.95)',
-      },
+    // 图片和 Mermaid 样式
+    '.image-container': {
+      position: 'relative',
+      display: 'inline-block',
+    },
+    '.image-error': {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: '100px',
+      color: '#999',
+      fontSize: '14px',
+    },
+    '.mermaid-loading': {
+      textAlign: 'center',
+      padding: '20px',
+      color: 'text.secondary',
+      fontSize: '14px',
     },
 
     // LaTeX 样式
@@ -712,18 +397,6 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
       },
     },
 
-    // 图片和 Mermaid 样式
-    '.image-container': {
-      position: 'relative',
-      display: 'inline-block',
-    },
-    '.mermaid-loading': {
-      textAlign: 'center',
-      padding: '20px',
-      color: 'text.secondary',
-      fontSize: '14px',
-    },
-
     // 暗色主题下的 LaTeX 样式
     ...(themeMode === 'dark' && {
       '.katex, .katex *, .katex .mord, .katex .mrel, .katex .mop, .katex .mbin, .katex .mpunct, .katex .mopen, .katex .mclose, .katex-display':
@@ -740,25 +413,6 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
       sx={componentStyles}
     >
       <div ref={containerRef} />
-
-      {/* 图片预览弹窗 */}
-      <Dialog
-        sx={{
-          '.MuiDialog-paper': {
-            maxWidth: '95vw',
-            maxHeight: '95vh',
-          },
-        }}
-        open={previewOpen}
-        onClose={() => setPreviewOpen(false)}
-      >
-        <img
-          onClick={() => setPreviewOpen(false)}
-          src={previewImgSrc}
-          alt='preview'
-          style={{ width: '100%', height: '100%' }}
-        />
-      </Dialog>
     </Box>
   );
 };

@@ -225,22 +225,51 @@ const AIQuestion = ({
   refresh: () => void;
 }) => {
   const [isEdit, setIsEdit] = useState(false);
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit, setValue } = useForm({
     defaultValues: {
-      is_open: 0,
+      is_enabled: false,
+      ai_feedback_type: [],
     },
   });
-  const [feedback, setFeedback] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState('');
 
-  const onSubmit = handleSubmit((data) => {
-    console.log({ ...data, feedback });
-    refresh();
+  const onSubmit = handleSubmit((formData) => {
+    updateAppDetail(
+      { id: data.id },
+      {
+        settings: {
+          ...data.settings,
+          // @ts-expect-error 忽略类型错误
+          ai_feedback_settings: {
+            ...formData,
+          },
+        },
+      }
+    ).then(() => {
+      Message.success('保存成功');
+      setIsEdit(false);
+      refresh();
+    });
   });
+
+  useEffect(() => {
+    setValue(
+      'is_enabled',
+      // @ts-expect-error 忽略类型错误
+      data.settings?.ai_feedback_settings?.is_enabled || false
+    );
+
+    setValue(
+      'ai_feedback_type',
+      // @ts-expect-error 忽略类型错误
+      data.settings?.ai_feedback_settings?.ai_feedback_type || []
+    );
+  }, [data]);
+
   return (
     <Stack>
       <StyledHeader>
-        <StyledHeaderTitle>AI 问答评价 （敬请期待）</StyledHeaderTitle>
+        <StyledHeaderTitle>AI 问答评价</StyledHeaderTitle>
         {isEdit && (
           <Button variant='contained' size='small' onClick={onSubmit}>
             保存
@@ -251,21 +280,32 @@ const AIQuestion = ({
         <StyledRow>
           <StyledLabel>AI 问答评价</StyledLabel>
           <Box sx={{ flex: 1 }}>
-            <Autocomplete
-              multiple
-              freeSolo
-              disabled
-              options={AI_FEEDBACK_OPTIONS}
-              value={feedback}
-              inputValue={inputValue}
-              onInputChange={(_, newInputValue) => setInputValue(newInputValue)}
-              onChange={(_, newValue) => setFeedback(newValue as string[])}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  size='small'
-                  placeholder='选择或输入评价，可多选，回车确认'
-                  variant='outlined'
+            <Controller
+              control={control}
+              name='ai_feedback_type'
+              render={({ field }) => (
+                <Autocomplete
+                  {...field}
+                  multiple
+                  freeSolo
+                  options={AI_FEEDBACK_OPTIONS}
+                  inputValue={inputValue}
+                  onInputChange={(_, newInputValue) =>
+                    setInputValue(newInputValue)
+                  }
+                  onChange={(_, newValue) => {
+                    setIsEdit(true);
+                    const newValues = [...new Set(newValue as string[])];
+                    field.onChange(newValues);
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      size='small'
+                      placeholder='选择或输入评价，可多选，回车确认'
+                      variant='outlined'
+                    />
+                  )}
                 />
               )}
             />
@@ -275,23 +315,24 @@ const AIQuestion = ({
           <StyledLabel>评价开关</StyledLabel>
           <Controller
             control={control}
-            name='is_open'
+            name='is_enabled'
             render={({ field }) => (
               <RadioGroup
                 row
-                // {...field}
+                {...field}
                 onChange={(e) => {
-                  field.onChange(+e.target.value as 1 | 0);
+                  setIsEdit(true);
+                  field.onChange(e.target.value === 'true');
                 }}
               >
                 <FormControlLabel
-                  value={1}
-                  control={<Radio size='small' disabled />}
+                  value={true}
+                  control={<Radio size='small' />}
                   label={<StyledRadioLabel>启用</StyledRadioLabel>}
                 />
                 <FormControlLabel
-                  value={0}
-                  control={<Radio size='small' disabled />}
+                  value={false}
+                  control={<Radio size='small' />}
                   label={<StyledRadioLabel>禁用</StyledRadioLabel>}
                 />
               </RadioGroup>
