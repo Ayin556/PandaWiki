@@ -10,7 +10,7 @@
  * ---------------------------------------------------------------
  */
 
-import request, { ContentType, RequestParams } from "./httpClient";
+import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
   DomainAnalysisConfluenceResp,
   DomainEpubResp,
@@ -56,7 +56,7 @@ export const postApiV1CrawlerConfluenceAnalysisExportFile = (
   data: PostApiV1CrawlerConfluenceAnalysisExportFilePayload,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: DomainAnalysisConfluenceResp[];
     }
@@ -86,7 +86,7 @@ export const postApiV1CrawlerEpubConvert = (
   data: PostApiV1CrawlerEpubConvertPayload,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: DomainEpubResp;
     }
@@ -116,7 +116,7 @@ export const postApiV1CrawlerFeishuGetDoc = (
   body: DomainGetDocxReq,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: DomainGetDocxResp[];
     }
@@ -146,7 +146,7 @@ export const postApiV1CrawlerFeishuListDoc = (
   body: DomainSearchDocxReq,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: DomainSearchDocxResp[];
     }
@@ -176,7 +176,7 @@ export const postApiV1CrawlerFeishuListSpaces = (
   body: DomainGetSpaceListReq,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: DomainGetSpaceListResp[];
     }
@@ -206,7 +206,7 @@ export const postApiV1CrawlerFeishuSearchWiki = (
   body: DomainSearchWikiReq,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: DomainSearchWikiResp[];
     }
@@ -236,7 +236,7 @@ export const postApiV1CrawlerNotionGetDoc = (
   body: DomainGetDocsReq,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: DomainPage[];
     }
@@ -266,7 +266,7 @@ export const postApiV1CrawlerNotionGetList = (
   body: DomainNotnionGetListReq,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: DomainPageInfo[];
     }
@@ -296,7 +296,7 @@ export const postApiV1CrawlerParseRss = (
   body: DomainParseURLReq,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: DomainParseURLResp;
     }
@@ -326,7 +326,7 @@ export const postApiV1CrawlerParseSitemap = (
   body: DomainParseURLReq,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: DomainParseURLResp;
     }
@@ -356,7 +356,7 @@ export const postApiV1CrawlerScrape = (
   body: DomainScrapeReq,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: DomainScrapeResp;
     }
@@ -386,7 +386,7 @@ export const postApiV1CrawlerWikijsAnalysisExportFile = (
   data: PostApiV1CrawlerWikijsAnalysisExportFilePayload,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: DomainWikiJSResp[];
     }
@@ -416,7 +416,7 @@ export const postApiV1CrawlerYuqueAnalysisExportFile = (
   data: PostApiV1CrawlerYuqueAnalysisExportFilePayload,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: DomainYuqueResp[];
     }

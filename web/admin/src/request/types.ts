@@ -70,12 +70,6 @@ export enum DomainMessageFrom {
   MessageFromPrivate = 2,
 }
 
-export enum DomainFeedbackType {
-  ContentErr = 1,
-  NoHelp = 2,
-  Other = 3,
-}
-
 export enum DomainCommentStatus {
   CommentStatusReject = -1,
   CommentStatusPending = 0,
@@ -97,6 +91,11 @@ export enum DomainAppType {
   AppTypeWechatServiceBot = 6,
   AppTypeDisCordBot = 7,
   AppTypeWechatOfficialAccount = 8,
+}
+
+export interface DomainAIFeedbackSettings {
+  ai_feedback_type?: string[];
+  is_enabled?: boolean;
 }
 
 export interface DomainAccessSettings {
@@ -127,6 +126,8 @@ export interface DomainAppDetailResp {
 }
 
 export interface DomainAppSettings {
+  /** AI feedback */
+  ai_feedback_settings?: DomainAIFeedbackSettings;
   auto_sitemap?: boolean;
   body_code?: string;
   btns?: unknown[];
@@ -190,6 +191,8 @@ export interface DomainAppSettings {
 }
 
 export interface DomainAppSettingsResp {
+  /** AI feedback */
+  ai_feedback_settings?: DomainAIFeedbackSettings;
   auto_sitemap?: boolean;
   body_code?: string;
   btns?: unknown[];
@@ -490,7 +493,7 @@ export interface DomainEpubResp {
 
 export interface DomainFeedBackInfo {
   feedback_content?: string;
-  feedback_type?: DomainFeedbackType;
+  feedback_type?: string;
   score?: DomainScoreType;
 }
 
@@ -504,8 +507,8 @@ export interface DomainFeedbackRequest {
   message_id: string;
   /** -1 踩 ,0 1 赞成 */
   score?: DomainScoreType;
-  /** 1 内容不准确，2 没有帮助，3 其他 */
-  type?: DomainFeedbackType;
+  /** 内容不准确，没有帮助，....... */
+  type?: string;
 }
 
 export interface DomainFooterSettings {

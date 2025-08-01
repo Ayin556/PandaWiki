@@ -10,7 +10,7 @@
  * ---------------------------------------------------------------
  */
 
-import request, { ContentType, RequestParams } from "./httpClient";
+import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
   DomainConversationDetailResp,
   DomainResponse,
@@ -36,7 +36,7 @@ export const getApiV1Conversation = (
   query: GetApiV1ConversationParams,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: V1ConversationListItems;
     }
@@ -66,7 +66,7 @@ export const getApiV1ConversationDetail = (
   query: GetApiV1ConversationDetailParams,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: DomainConversationDetailResp;
     }

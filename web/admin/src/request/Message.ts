@@ -10,7 +10,7 @@
  * ---------------------------------------------------------------
  */
 
-import request, { ContentType, RequestParams } from "./httpClient";
+import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
   DomainConversationMessage,
   DomainPaginatedResultArrayDomainConversationMessageListItem,
@@ -36,7 +36,7 @@ export const getApiV1ConversationMessageDetail = (
   query: GetApiV1ConversationMessageDetailParams,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: DomainConversationMessage;
     }
@@ -66,7 +66,7 @@ export const getApiV1ConversationMessageList = (
   query: GetApiV1ConversationMessageListParams,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: DomainPaginatedResultArrayDomainConversationMessageListItem;
     }

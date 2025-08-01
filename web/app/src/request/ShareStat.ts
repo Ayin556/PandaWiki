@@ -10,7 +10,7 @@
  * ---------------------------------------------------------------
  */
 
-import { ContentType, RequestParams } from "./httpClient";
+import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import { DomainResponse, DomainStatPageReq } from "./types";
 
 /**
@@ -27,7 +27,7 @@ export const postShareV1StatPage = (
   request: DomainStatPageReq,
   params: RequestParams = {},
 ) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/share/v1/stat/page`,
     method: "POST",
     body: request,

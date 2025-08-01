@@ -10,7 +10,7 @@
  * ---------------------------------------------------------------
  */
 
-import request, { ContentType, RequestParams } from "./httpClient";
+import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import { DomainResponse } from "./types";
 
 /**
@@ -24,7 +24,7 @@ import { DomainResponse } from "./types";
  */
 
 export const getShareV1AppWebInfo = (params: RequestParams = {}) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/share/v1/app/web/info`,
     method: "GET",
     type: ContentType.Json,
@@ -43,7 +43,7 @@ export const getShareV1AppWebInfo = (params: RequestParams = {}) =>
  */
 
 export const getShareV1AppWidgetInfo = (params: RequestParams = {}) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/share/v1/app/widget/info`,
     method: "GET",
     type: ContentType.Json,

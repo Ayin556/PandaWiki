@@ -11,13 +11,16 @@ import { message } from 'ct-mui';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { apiClient } from '@/api';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTextSelection } from '@/hooks/useTextSelection';
 import TextSelectionTooltip from '@/components/textSelectionTooltip';
 import FeedbackDialog from '@/components/feedbackModal';
 import { postShareProV1DocumentFeedback } from '@/request/pro/DocumentFeedback';
 import { base64ToFile } from '@/utils';
+import {
+  getShareV1CommentList,
+  postShareV1Comment,
+} from '@/request/ShareComment';
 
 dayjs.extend(relativeTime);
 dayjs.locale('zh-cn');
@@ -108,12 +111,8 @@ const DocContent = ({
   };
 
   const getComment = async () => {
-    const res = await apiClient.clientGetComment(docId, info?.kb_id ?? '');
-    if (res.success) {
-      setCommentList(res.data?.data ?? []);
-    } else {
-      message.error(res.message || '获取评论失败');
-    }
+    const res = await getShareV1CommentList({ id: docId });
+    setCommentList(res.data ?? []);
   };
 
   useEffect(() => {
@@ -128,17 +127,15 @@ const DocContent = ({
 
   const onSubmit = handleSubmit(
     async (data: { content: string; name: string }) => {
-      const res = await apiClient.clientPostComment({
+      postShareV1Comment({
         content: data.content,
         node_id: docId,
         user_name: data.name,
-        kb_id: info?.kb_id ?? '',
-      });
-      if (res.success) {
+      }).then((res) => {
         getComment();
         reset();
         message.success('评论成功');
-      }
+      });
     }
   );
   // if (!editorRef || !info) return null;

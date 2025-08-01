@@ -10,7 +10,7 @@
  * ---------------------------------------------------------------
  */
 
-import request, { ContentType, RequestParams } from "./httpClient";
+import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import { DomainResponse, GetShareV1NodeDetailParams } from "./types";
 
 /**
@@ -27,7 +27,7 @@ export const getShareV1NodeDetail = (
   query: GetShareV1NodeDetailParams,
   params: RequestParams = {},
 ) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/share/v1/node/detail`,
     method: "GET",
     query: query,
@@ -47,7 +47,7 @@ export const getShareV1NodeDetail = (
  */
 
 export const getShareV1NodeList = (params: RequestParams = {}) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/share/v1/node/list`,
     method: "GET",
     type: ContentType.Json,

@@ -181,7 +181,7 @@ const Chat = () => {
   useEffect(() => {
     if (kb_id) {
       sseClientRef.current = new SSEClient({
-        url: `/client/v1/chat/message`,
+        url: `/share/v1/chat/message`,
         headers: {
           'Content-Type': 'application/json',
         },

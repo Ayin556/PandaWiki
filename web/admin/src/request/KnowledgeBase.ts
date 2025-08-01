@@ -10,7 +10,7 @@
  * ---------------------------------------------------------------
  */
 
-import request, { ContentType, RequestParams } from "./httpClient";
+import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
   DeleteApiV1KnowledgeBaseDetailParams,
   DomainCreateKBReleaseReq,
@@ -38,7 +38,7 @@ export const postApiV1KnowledgeBase = (
   body: DomainCreateKnowledgeBaseReq,
   params: RequestParams = {},
 ) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/api/v1/knowledge_base`,
     method: "POST",
     body: body,
@@ -64,7 +64,7 @@ export const getApiV1KnowledgeBaseDetail = (
   query: GetApiV1KnowledgeBaseDetailParams,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: DomainKnowledgeBaseDetail;
     }
@@ -91,7 +91,7 @@ export const putApiV1KnowledgeBaseDetail = (
   body: DomainUpdateKnowledgeBaseReq,
   params: RequestParams = {},
 ) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/api/v1/knowledge_base/detail`,
     method: "PUT",
     body: body,
@@ -114,7 +114,7 @@ export const deleteApiV1KnowledgeBaseDetail = (
   query: DeleteApiV1KnowledgeBaseDetailParams,
   params: RequestParams = {},
 ) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/api/v1/knowledge_base/detail`,
     method: "DELETE",
     query: query,
@@ -137,7 +137,7 @@ export const deleteApiV1KnowledgeBaseDetail = (
  */
 
 export const getApiV1KnowledgeBaseList = (params: RequestParams = {}) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: DomainKnowledgeBaseListItem[];
     }
@@ -163,7 +163,7 @@ export const postApiV1KnowledgeBaseRelease = (
   body: DomainCreateKBReleaseReq,
   params: RequestParams = {},
 ) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/api/v1/knowledge_base/release`,
     method: "POST",
     body: body,
@@ -189,7 +189,7 @@ export const getApiV1KnowledgeBaseReleaseList = (
   query: GetApiV1KnowledgeBaseReleaseListParams,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: DomainGetKBReleaseListResp;
     }

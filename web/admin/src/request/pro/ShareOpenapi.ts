@@ -10,7 +10,7 @@
  * ---------------------------------------------------------------
  */
 
-import request, { ContentType, RequestParams } from "./httpClient";
+import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
   DomainResponse,
   GetShareProV1OpenapiDingtalkCallbackParams,
@@ -34,7 +34,7 @@ export const getShareProV1OpenapiDingtalkCallback = (
   query: GetShareProV1OpenapiDingtalkCallbackParams,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: GithubComChaitinPandaWikiProApiShareV1DingtalkCallbackResp;
     }

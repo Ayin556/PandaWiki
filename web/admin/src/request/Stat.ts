@@ -10,7 +10,7 @@
  * ---------------------------------------------------------------
  */
 
-import request, { ContentType, RequestParams } from "./httpClient";
+import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
   DomainResponse,
   GetApiV1StatBrowsersParams,
@@ -37,7 +37,7 @@ export const getApiV1StatBrowsers = (
   query: GetApiV1StatBrowsersParams,
   params: RequestParams = {},
 ) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/api/v1/stat/browsers`,
     method: "GET",
     query: query,
@@ -60,7 +60,7 @@ export const getApiV1StatConversationDistribution = (
   query: GetApiV1StatConversationDistributionParams,
   params: RequestParams = {},
 ) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/api/v1/stat/conversation_distribution`,
     method: "GET",
     query: query,
@@ -83,7 +83,7 @@ export const getApiV1StatCount = (
   query: GetApiV1StatCountParams,
   params: RequestParams = {},
 ) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/api/v1/stat/count`,
     method: "GET",
     query: query,
@@ -106,7 +106,7 @@ export const getApiV1StatGeoCount = (
   query: GetApiV1StatGeoCountParams,
   params: RequestParams = {},
 ) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/api/v1/stat/geo_count`,
     method: "GET",
     query: query,
@@ -129,7 +129,7 @@ export const getApiV1StatHotPages = (
   query: GetApiV1StatHotPagesParams,
   params: RequestParams = {},
 ) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/api/v1/stat/hot_pages`,
     method: "GET",
     query: query,
@@ -152,7 +152,7 @@ export const getApiV1StatInstantCount = (
   query: GetApiV1StatInstantCountParams,
   params: RequestParams = {},
 ) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/api/v1/stat/instant_count`,
     method: "GET",
     query: query,
@@ -175,7 +175,7 @@ export const getApiV1StatInstantPages = (
   query: GetApiV1StatInstantPagesParams,
   params: RequestParams = {},
 ) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/api/v1/stat/instant_pages`,
     method: "GET",
     query: query,
@@ -198,7 +198,7 @@ export const getApiV1StatRefererHosts = (
   query: GetApiV1StatRefererHostsParams,
   params: RequestParams = {},
 ) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/api/v1/stat/referer_hosts`,
     method: "GET",
     query: query,

@@ -10,7 +10,7 @@
  * ---------------------------------------------------------------
  */
 
-import request, { ContentType, RequestParams } from "./httpClient";
+import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
   DomainLicenseResp,
   DomainResponse,
@@ -31,7 +31,7 @@ import {
  */
 
 export const getApiV1License = (params: RequestParams = {}) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: DomainLicenseResp;
     }
@@ -60,7 +60,7 @@ export const postApiV1License = (
   data: PostApiV1LicensePayload,
   params: RequestParams = {},
 ) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: DomainLicenseResp;
     }

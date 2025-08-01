@@ -10,7 +10,7 @@
  * ---------------------------------------------------------------
  */
 
-import { ContentType, RequestParams } from "./httpClient";
+import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
   DomainChatRequest,
   DomainFeedbackRequest,
@@ -33,7 +33,7 @@ export const postShareV1ChatFeedback = (
   request: DomainFeedbackRequest,
   params: RequestParams = {},
 ) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/share/v1/chat/feedback`,
     method: "POST",
     body: request,
@@ -57,7 +57,7 @@ export const postShareV1ChatMessage = (
   request: DomainChatRequest,
   params: RequestParams = {},
 ) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/share/v1/chat/message`,
     method: "POST",
     query: query,
@@ -82,7 +82,7 @@ export const postShareV1ChatWidget = (
   request: DomainChatRequest,
   params: RequestParams = {},
 ) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/share/v1/chat/widget`,
     method: "POST",
     query: query,

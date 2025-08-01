@@ -15,3 +15,13 @@ export async function getServerHeader(): Promise<Record<string, string>> {
     cookie: cookieHeader,
   };
 }
+
+export async function getServerPathname(): Promise<string> {
+  const { headers } = await import('next/headers');
+  const headersList = await headers();
+
+  // 从中间件设置的自定义 header 中获取当前路径
+  const pathname = headersList.get('x-current-path') || '/';
+
+  return pathname;
+}

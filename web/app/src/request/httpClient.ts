@@ -10,7 +10,7 @@
  * ---------------------------------------------------------------
  */
 
-import { getServerHeader } from "@/utils/getServerHeader";
+import { getServerHeader, getServerPathname } from "@/utils/getServerHeader";
 import { message as alert } from "ct-mui";
 import { notFound, redirect } from "next/navigation";
 export type QueryParamsType = Record<string | number, any>;
@@ -268,8 +268,13 @@ export class HttpClient<SecurityDataType = unknown> {
       }
 
       if (response.status === 401 && typeof window === "undefined") {
-        redirect("/auth/login");
-        return Promise.reject(response);
+        const pathname = await getServerPathname();
+        if (!pathnameWhiteList.includes(pathname)) {
+          redirect("/auth/login");
+          return Promise.reject(response);
+        } else {
+          return {};
+        }
       }
 
       if (response.status === 404) {

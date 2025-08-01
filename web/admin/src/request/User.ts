@@ -10,7 +10,7 @@
  * ---------------------------------------------------------------
  */
 
-import request, { ContentType, RequestParams } from "./httpClient";
+import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
   DomainCreateUserReq,
   DomainDeleteUserReq,
@@ -33,7 +33,7 @@ import {
  */
 
 export const getApiV1User = (params: RequestParams = {}) =>
-  request<DomainUserInfoResp>({
+  httpRequest<DomainUserInfoResp>({
     path: `/api/v1/user`,
     method: "GET",
     type: ContentType.Json,
@@ -54,7 +54,7 @@ export const postApiV1UserCreate = (
   body: DomainCreateUserReq,
   params: RequestParams = {},
 ) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/api/v1/user/create`,
     method: "POST",
     body: body,
@@ -77,7 +77,7 @@ export const deleteApiV1UserDelete = (
   body: DomainDeleteUserReq,
   params: RequestParams = {},
 ) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/api/v1/user/delete`,
     method: "DELETE",
     body: body,
@@ -100,7 +100,7 @@ export const deleteApiV1UserDelete = (
  */
 
 export const getApiV1UserList = (params: RequestParams = {}) =>
-  request<
+  httpRequest<
     DomainResponse & {
       data?: DomainUserListItemResp[];
     }
@@ -126,7 +126,7 @@ export const postApiV1UserLogin = (
   body: DomainLoginReq,
   params: RequestParams = {},
 ) =>
-  request<DomainLoginResp>({
+  httpRequest<DomainLoginResp>({
     path: `/api/v1/user/login`,
     method: "POST",
     body: body,
@@ -149,7 +149,7 @@ export const putApiV1UserResetPassword = (
   body: DomainResetPasswordReq,
   params: RequestParams = {},
 ) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/api/v1/user/reset_password`,
     method: "PUT",
     body: body,

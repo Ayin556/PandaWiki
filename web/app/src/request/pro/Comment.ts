@@ -10,7 +10,7 @@
  * ---------------------------------------------------------------
  */
 
-import request, { ContentType, RequestParams } from "./httpClient";
+import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import { DomainCommentModerateListReq, DomainResponse } from "./types";
 
 /**
@@ -27,7 +27,7 @@ export const postApiProV1CommentModerate = (
   req: DomainCommentModerateListReq,
   params: RequestParams = {},
 ) =>
-  request<DomainResponse>({
+  httpRequest<DomainResponse>({
     path: `/api/pro/v1/comment_moderate`,
     method: "POST",
     body: req,

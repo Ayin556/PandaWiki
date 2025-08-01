@@ -1,6 +1,7 @@
 'use client';
 
-import { apiClient } from '@/api';
+import { getShareV1NodeDetail } from '@/request/ShareNode';
+import { postShareV1StatPage } from '@/request/ShareStat';
 import NotData from '@/assets/images/nodata.png';
 import { Heading, KBDetail, NodeDetail } from '@/assets/type';
 import Footer from '@/components/footer';
@@ -100,18 +101,9 @@ const Doc = ({
 
   const getData = async (id: string) => {
     try {
-      const result = await apiClient.clientGetNodeDetail(
-        id,
-        kb_id || '',
-        token
-      );
-      if (result.success) {
-        setNode(result.data);
-        if (document)
-          document.title = kbDetail?.name + ' - ' + result.data?.name;
-      } else {
-        message.error(result.message || 'Failed to fetch');
-      }
+      const result: any = await getShareV1NodeDetail({ id });
+      setNode(result);
+      document.title = kbDetail?.name + ' - ' + result?.name;
     } catch (error) {
       console.error('page Error fetching document content:', error);
     }
@@ -128,11 +120,9 @@ const Doc = ({
   useEffect(() => {
     if (!firstRequest) {
       getData(docId || '');
-      apiClient.clientStatPage({
+      postShareV1StatPage({
         scene: VisitSceneNode,
         node_id: docId || '',
-        kb_id: kb_id || '',
-        authToken: token,
       });
     }
     setFirstRequest(false);
