@@ -58,6 +58,12 @@ export interface DomainDocumentFeedbackListItem {
   user_id?: string;
 }
 
+export interface DomainGetNodeReleaseDetailResp {
+  content?: string;
+  meta?: DomainNodeMeta;
+  name?: string;
+}
+
 export interface DomainIPAddress {
   city?: string;
   country?: string;
@@ -70,6 +76,23 @@ export interface DomainLicenseResp {
   expired_at?: number;
   started_at?: number;
   state?: number;
+}
+
+export interface DomainNodeMeta {
+  emoji?: string;
+  summary?: string;
+}
+
+export interface DomainNodeReleaseListItem {
+  id?: string;
+  meta?: DomainNodeMeta;
+  name?: string;
+  node_id?: string;
+  /** release */
+  release_id?: string;
+  release_message?: string;
+  release_name?: string;
+  updated_at?: string;
 }
 
 export interface DomainResponse {
@@ -145,6 +168,15 @@ export interface GetApiProV1DocumentListParams {
   page: number;
   /** @min 1 */
   per_page: number;
+}
+
+export interface GetApiProV1NodeReleaseDetailParams {
+  id: string;
+}
+
+export interface GetApiProV1NodeReleaseListParams {
+  kb_id: string;
+  node_id: string;
 }
 
 export interface PostApiV1LicensePayload {
