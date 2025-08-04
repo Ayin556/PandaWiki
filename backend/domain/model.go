@@ -18,6 +18,7 @@ const (
 	ModelProviderBrandBaiLian     ModelProvider = "BaiLian"
 	ModelProviderBrandVolcengine  ModelProvider = "Volcengine"
 	ModelProviderBrandGemini      ModelProvider = "Gemini"
+	ModelProviderBrandZhiPu       ModelProvider = "ZhiPu" // 智谱
 	ModelProviderBrandOther       ModelProvider = "Other"
 )
 
@@ -84,7 +85,7 @@ type CheckModelReq struct {
 }
 
 type BaseModelInfo struct {
-	Provider   ModelProvider `json:"provider" validate:"required,oneof=OpenAI Ollama DeepSeek SiliconFlow Moonshot Other AzureOpenAI BaiZhiCloud Hunyuan BaiLian Volcengine Gemini"`
+	Provider   ModelProvider `json:"provider" validate:"required,oneof=OpenAI Ollama DeepSeek SiliconFlow Moonshot Other AzureOpenAI BaiZhiCloud Hunyuan BaiLian Volcengine Gemini ZhiPu"`
 	Model      string        `json:"model" validate:"required"`
 	BaseURL    string        `json:"base_url" validate:"required"`
 	APIKey     string        `json:"api_key"`
@@ -129,8 +130,11 @@ var ModelProviderBrandModelsList = map[ModelProvider][]ProviderModelListItem{
 	ModelProviderBrandVolcengine: {
 		{Model: "doubao-seed-1.6-250615"},
 		{Model: "doubao-seed-1.6-flash-250615"},
+		{Model: "doubao-seed-1.6-flash-250715"},
 		{Model: "doubao-seed-1.6-thinking-250615"},
+		{Model: "doubao-seed-1.6-thinking-250715"},
 		{Model: "doubao-1.5-thinking-vision-pro-250428"},
+		{Model: "Doubao-1.5-thinking-pro-250415"},
 		{Model: "deepseek-r1-250528"},
 	},
 	ModelProviderBrandGemini: {
@@ -146,10 +150,29 @@ var ModelProviderBrandModelsList = map[ModelProvider][]ProviderModelListItem{
 		{Model: "gemini-1.5-pro"},
 		{Model: "gemini-embedding-001"},
 	},
+	ModelProviderBrandZhiPu: {
+		{Model: "glm-4.5"},
+		{Model: "glm-4.5-x"},
+		{Model: "glm-4.5-air"},
+		{Model: "glm-4.5-airx"},
+		{Model: "glm-4.5-flash"},
+		{Model: "glm-4-plus"},
+		{Model: "glm-4-air-250414"},
+		{Model: "glm-4-airx"},
+		{Model: "glm-4-long"},
+		{Model: "glm-4-flashx-250414"},
+		{Model: "glm-4-flash-250414"},
+		{Model: "glm-z1-air"},
+		{Model: "glm-z1-airx"},
+		{Model: "glm-z1-flashx"},
+		{Model: "glm-z1-flash"},
+		{Model: "glm-4v-plus-0111"},
+		{Model: "glm-4v-flash"},
+	},
 }
 
 type GetProviderModelListReq struct {
-	Provider  string    `json:"provider" query:"provider" validate:"required,oneof=SiliconFlow OpenAI Ollama DeepSeek Moonshot AzureOpenAI BaiZhiCloud Hunyuan BaiLian Volcengine Gemini"`
+	Provider  string    `json:"provider" query:"provider" validate:"required,oneof=SiliconFlow OpenAI Ollama DeepSeek Moonshot AzureOpenAI BaiZhiCloud Hunyuan BaiLian Volcengine Gemini ZhiPu"`
 	BaseURL   string    `json:"base_url" query:"base_url" validate:"required"`
 	APIKey    string    `json:"api_key" query:"api_key"`
 	APIHeader string    `json:"api_header" query:"api_header"`

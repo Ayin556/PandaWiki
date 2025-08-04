@@ -261,7 +261,6 @@ func (h *ShareAppHandler) WechatHandlerService(c echo.Context) error {
 
 	// 查找数据库，找到对应的app配置
 	appInfo, err := h.usecase.GetAppDetailByKBIDAndAppType(ctx, kbID, domain.AppTypeWechatServiceBot)
-
 	if err != nil {
 		h.logger.Error("GetAppDetailByKBIDAndAppType failed", log.Error(err))
 		return h.NewResponseWithError(c, "GetAppDetailByKBIDAndAppType failed", err)
@@ -348,7 +347,6 @@ func (h *ShareAppHandler) VerifyUrlWechatOfficialAccount(c echo.Context) error {
 		return h.NewResponseWithError(c, "serve message failed", err)
 	}
 	return nil
-
 }
 
 func (h *ShareAppHandler) WechatHandlerOfficialAccount(c echo.Context) error {

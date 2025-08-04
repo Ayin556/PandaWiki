@@ -20,7 +20,7 @@ require (
 	github.com/cloudwego/eino-ext/components/model/ollama v0.0.0-20250624023530-68a1e4282a8e
 	github.com/cloudwego/eino-ext/components/model/openai v0.0.0-20250522060253-ddb617598b09
 	github.com/go-playground/validator v9.31.0+incompatible
-	github.com/golang-jwt/jwt/v5 v5.2.2
+	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/golang-migrate/migrate/v4 v4.18.3
 	github.com/google/generative-ai-go v0.20.1
 	github.com/google/go-cmp v0.7.0
@@ -48,6 +48,7 @@ require (
 	github.com/spf13/viper v1.20.1
 	github.com/swaggo/echo-swagger v1.4.1
 	github.com/swaggo/swag v1.16.5
+	github.com/yankeguo/zhipu v0.1.5
 	github.com/yuin/goldmark v1.7.11
 	go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho v0.60.0
 	go.opentelemetry.io/otel v1.35.0
@@ -110,6 +111,7 @@ require (
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-redis/redis/v8 v8.11.5 // indirect
+	github.com/go-resty/resty/v2 v2.16.5 // indirect
 	github.com/go-viper/mapstructure/v2 v2.2.1 // indirect
 	github.com/goccy/go-json v0.10.5 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
