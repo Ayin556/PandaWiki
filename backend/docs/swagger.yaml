@@ -900,15 +900,6 @@ definitions:
       total:
         type: integer
     type: object
-  domain.GetNodeReleaseDetailResp:
-    properties:
-      content:
-        type: string
-      meta:
-        $ref: '#/definitions/domain.NodeMeta'
-      name:
-        type: string
-    type: object
   domain.GetProviderModelListResp:
     properties:
       models:
@@ -1201,26 +1192,6 @@ definitions:
       emoji:
         type: string
       summary:
-        type: string
-    type: object
-  domain.NodeReleaseListItem:
-    properties:
-      id:
-        type: string
-      meta:
-        $ref: '#/definitions/domain.NodeMeta'
-      name:
-        type: string
-      node_id:
-        type: string
-      release_id:
-        description: release
-        type: string
-      release_message:
-        type: string
-      release_name:
-        type: string
-      updated_at:
         type: string
     type: object
   domain.NodeStatus:
@@ -2969,62 +2940,6 @@ paths:
                   type: array
               type: object
       summary: Recommend Nodes
-      tags:
-      - node
-  /api/v1/node/release/detail:
-    get:
-      consumes:
-      - application/json
-      description: Get Node Release Detail
-      parameters:
-      - in: query
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/domain.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/domain.GetNodeReleaseDetailResp'
-              type: object
-      summary: Get Node Release Detail
-      tags:
-      - node
-  /api/v1/node/release/list:
-    get:
-      consumes:
-      - application/json
-      description: Get Node Release List
-      parameters:
-      - in: query
-        name: kb_id
-        required: true
-        type: string
-      - in: query
-        name: node_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/domain.Response'
-            - properties:
-                data:
-                  items:
-                    $ref: '#/definitions/domain.NodeReleaseListItem'
-                  type: array
-              type: object
-      summary: Get Node Release List
       tags:
       - node
   /api/v1/node/summary:
