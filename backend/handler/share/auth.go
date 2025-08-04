@@ -78,7 +78,8 @@ func (h *ShareAuthHandler) AuthGet(c echo.Context) error {
 	}
 
 	resp := &domain.AuthGetResp{
-		AuthType: kb.AccessSettings.GetAuthType(),
+		AuthType:   kb.AccessSettings.GetAuthType(),
+		SourceType: kb.AccessSettings.SourceType,
 	}
 	return h.NewResponseWithData(c, resp)
 }

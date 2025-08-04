@@ -3098,6 +3098,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "consts.SourceType": {
+            "type": "string",
+            "enum": [
+                "dingtalk",
+                "feishu"
+            ],
+            "x-enum-varnames": [
+                "SourceTypeDingTalk",
+                "SourceTypeFeishu"
+            ]
+        },
         "domain.AIFeedbackSettings": {
             "type": "object",
             "properties": {
@@ -3141,6 +3152,14 @@ const docTemplate = `{
                 },
                 "simple_auth": {
                     "$ref": "#/definitions/domain.SimpleAuth"
+                },
+                "source_type": {
+                    "description": "企业认证来源",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/consts.SourceType"
+                        }
+                    ]
                 },
                 "ssl_ports": {
                     "type": "array",
@@ -3593,6 +3612,9 @@ const docTemplate = `{
             "properties": {
                 "auth_type": {
                     "$ref": "#/definitions/domain.AuthType"
+                },
+                "source_type": {
+                    "$ref": "#/definitions/consts.SourceType"
                 }
             }
         },

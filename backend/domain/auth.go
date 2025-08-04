@@ -1,5 +1,7 @@
 package domain
 
+import "github.com/chaitin/panda-wiki/pro/consts"
+
 type AuthType string
 
 const (
@@ -15,7 +17,8 @@ type AuthGetReq struct {
 }
 
 type AuthGetResp struct {
-	AuthType AuthType `json:"auth_type"`
+	AuthType   AuthType          `json:"auth_type"`
+	SourceType consts.SourceType `json:"source_type"`
 }
 
 type AuthLoginSimpleReq struct {
