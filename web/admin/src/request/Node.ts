@@ -14,12 +14,10 @@ import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
   DomainBatchMoveReq,
   DomainCreateNodeReq,
-  DomainGetNodeReleaseDetailResp,
   DomainMoveNodeReq,
   DomainNodeActionReq,
   DomainNodeDetailResp,
   DomainNodeListItemResp,
-  DomainNodeReleaseListItem,
   DomainNodeSummaryReq,
   DomainRecommendNodeListResp,
   DomainResponse,
@@ -27,8 +25,6 @@ import {
   GetApiV1NodeDetailParams,
   GetApiV1NodeListParams,
   GetApiV1NodeRecommendNodesParams,
-  GetApiV1NodeReleaseDetailParams,
-  GetApiV1NodeReleaseListParams,
 } from "./types";
 
 /**
@@ -243,66 +239,6 @@ export const getApiV1NodeRecommendNodes = (
     }
   >({
     path: `/api/v1/node/recommend_nodes`,
-    method: "GET",
-    query: query,
-    type: ContentType.Json,
-    format: "json",
-    ...params,
-  });
-
-/**
- * @description Get Node Release Detail
- *
- * @tags node
- * @name GetApiV1NodeReleaseDetail
- * @summary Get Node Release Detail
- * @request GET:/api/v1/node/release/detail
- * @response `200` `(DomainResponse & {
-    data?: DomainGetNodeReleaseDetailResp,
-
-})` OK
- */
-
-export const getApiV1NodeReleaseDetail = (
-  query: GetApiV1NodeReleaseDetailParams,
-  params: RequestParams = {},
-) =>
-  httpRequest<
-    DomainResponse & {
-      data?: DomainGetNodeReleaseDetailResp;
-    }
-  >({
-    path: `/api/v1/node/release/detail`,
-    method: "GET",
-    query: query,
-    type: ContentType.Json,
-    format: "json",
-    ...params,
-  });
-
-/**
- * @description Get Node Release List
- *
- * @tags node
- * @name GetApiV1NodeReleaseList
- * @summary Get Node Release List
- * @request GET:/api/v1/node/release/list
- * @response `200` `(DomainResponse & {
-    data?: (DomainNodeReleaseListItem)[],
-
-})` OK
- */
-
-export const getApiV1NodeReleaseList = (
-  query: GetApiV1NodeReleaseListParams,
-  params: RequestParams = {},
-) =>
-  httpRequest<
-    DomainResponse & {
-      data?: DomainNodeReleaseListItem[];
-    }
-  >({
-    path: `/api/v1/node/release/list`,
     method: "GET",
     query: query,
     type: ContentType.Json,

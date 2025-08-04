@@ -545,12 +545,6 @@ export interface DomainGetKBReleaseListResp {
   total?: number;
 }
 
-export interface DomainGetNodeReleaseDetailResp {
-  content?: string;
-  meta?: DomainNodeMeta;
-  name?: string;
-}
-
 export interface DomainGetProviderModelListResp {
   models?: DomainProviderModelListItem[];
 }
@@ -689,18 +683,6 @@ export interface DomainNodeListItemResp {
 export interface DomainNodeMeta {
   emoji?: string;
   summary?: string;
-}
-
-export interface DomainNodeReleaseListItem {
-  id?: string;
-  meta?: DomainNodeMeta;
-  name?: string;
-  node_id?: string;
-  /** release */
-  release_id?: string;
-  release_message?: string;
-  release_name?: string;
-  updated_at?: string;
 }
 
 export interface DomainNodeSummaryReq {
@@ -1116,15 +1098,6 @@ export interface GetApiV1NodeListParams {
 export interface GetApiV1NodeRecommendNodesParams {
   kb_id: string;
   node_ids: string[];
-}
-
-export interface GetApiV1NodeReleaseDetailParams {
-  id: string;
-}
-
-export interface GetApiV1NodeReleaseListParams {
-  kb_id: string;
-  node_id: string;
 }
 
 export interface GetApiV1StatBrowsersParams {
