@@ -1,4 +1,12 @@
 definitions:
+  consts.SourceType:
+    enum:
+    - dingtalk
+    - feishu
+    type: string
+    x-enum-varnames:
+    - SourceTypeDingTalk
+    - SourceTypeFeishu
   domain.AIFeedbackSettings:
     properties:
       ai_feedback_type:
@@ -28,6 +36,10 @@ definitions:
         type: string
       simple_auth:
         $ref: '#/definitions/domain.SimpleAuth'
+      source_type:
+        allOf:
+        - $ref: '#/definitions/consts.SourceType'
+        description: 企业认证来源
       ssl_ports:
         items:
           type: integer
@@ -313,6 +325,7 @@ definitions:
     - 6
     - 7
     - 8
+    format: int32
     type: integer
     x-enum-varnames:
     - AppTypeWeb
@@ -327,6 +340,8 @@ definitions:
     properties:
       auth_type:
         $ref: '#/definitions/domain.AuthType'
+      source_type:
+        $ref: '#/definitions/consts.SourceType'
     type: object
   domain.AuthLoginSimpleReq:
     properties:
@@ -345,6 +360,10 @@ definitions:
       AuthTypeEnterprise: 企业认证
       AuthTypeNull: 无认证
       AuthTypeSimple: 简单口令
+    x-enum-descriptions:
+    - 无认证
+    - 简单口令
+    - 企业认证
     x-enum-varnames:
     - AuthTypeNull
     - AuthTypeSimple
@@ -507,6 +526,7 @@ definitions:
     - -1
     - 0
     - 1
+    format: int32
     type: integer
     x-enum-varnames:
     - CommentStatusReject
@@ -1201,6 +1221,7 @@ definitions:
     enum:
     - 1
     - 2
+    format: int32
     type: integer
     x-enum-varnames:
     - NodeStatusDraft
@@ -1221,6 +1242,7 @@ definitions:
     enum:
     - 1
     - 2
+    format: int32
     type: integer
     x-enum-varnames:
     - NodeTypeFolder
@@ -1229,6 +1251,7 @@ definitions:
     enum:
     - 1
     - 2
+    format: int32
     type: integer
     x-enum-varnames:
     - NodeVisibilityPrivate
@@ -1783,6 +1806,7 @@ paths:
         - -1
         - 0
         - 1
+        format: int32
         in: query
         name: status
         type: integer

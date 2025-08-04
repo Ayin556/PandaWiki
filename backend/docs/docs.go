@@ -168,6 +168,7 @@ const docTemplate = `{
                             1
                         ],
                         "type": "integer",
+                        "format": "int32",
                         "x-enum-varnames": [
                             "CommentStatusReject",
                             "CommentStatusPending",
@@ -3097,6 +3098,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "consts.SourceType": {
+            "type": "string",
+            "enum": [
+                "dingtalk",
+                "feishu"
+            ],
+            "x-enum-varnames": [
+                "SourceTypeDingTalk",
+                "SourceTypeFeishu"
+            ]
+        },
         "domain.AIFeedbackSettings": {
             "type": "object",
             "properties": {
@@ -3140,6 +3152,14 @@ const docTemplate = `{
                 },
                 "simple_auth": {
                     "$ref": "#/definitions/domain.SimpleAuth"
+                },
+                "source_type": {
+                    "description": "企业认证来源",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/consts.SourceType"
+                        }
+                    ]
                 },
                 "ssl_ports": {
                     "type": "array",
@@ -3565,6 +3585,7 @@ const docTemplate = `{
         },
         "domain.AppType": {
             "type": "integer",
+            "format": "int32",
             "enum": [
                 1,
                 2,
@@ -3591,6 +3612,9 @@ const docTemplate = `{
             "properties": {
                 "auth_type": {
                     "$ref": "#/definitions/domain.AuthType"
+                },
+                "source_type": {
+                    "$ref": "#/definitions/consts.SourceType"
                 }
             }
         },
@@ -3617,6 +3641,11 @@ const docTemplate = `{
                 "AuthTypeNull": "无认证",
                 "AuthTypeSimple": "简单口令"
             },
+            "x-enum-descriptions": [
+                "无认证",
+                "简单口令",
+                "企业认证"
+            ],
             "x-enum-varnames": [
                 "AuthTypeNull",
                 "AuthTypeSimple",
@@ -3858,6 +3887,7 @@ const docTemplate = `{
         },
         "domain.CommentStatus": {
             "type": "integer",
+            "format": "int32",
             "enum": [
                 -1,
                 0,
@@ -4906,6 +4936,7 @@ const docTemplate = `{
         },
         "domain.NodeStatus": {
             "type": "integer",
+            "format": "int32",
             "enum": [
                 1,
                 2
@@ -4935,6 +4966,7 @@ const docTemplate = `{
         },
         "domain.NodeType": {
             "type": "integer",
+            "format": "int32",
             "enum": [
                 1,
                 2
@@ -4946,6 +4978,7 @@ const docTemplate = `{
         },
         "domain.NodeVisibility": {
             "type": "integer",
+            "format": "int32",
             "enum": [
                 1,
                 2

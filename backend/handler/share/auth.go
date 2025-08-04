@@ -78,7 +78,8 @@ func (h *ShareAuthHandler) AuthGet(c echo.Context) error {
 	}
 
 	resp := &domain.AuthGetResp{
-		AuthType: kb.AccessSettings.GetAuthType(),
+		AuthType:   kb.AccessSettings.GetAuthType(),
+		SourceType: kb.AccessSettings.SourceType,
 	}
 	return h.NewResponseWithData(c, resp)
 }
@@ -122,7 +123,7 @@ func (h *ShareAuthHandler) AuthLoginSimple(c echo.Context) error {
 		return h.NewResponseWithError(c, "simple auth password is incorrect", nil)
 	}
 
-	sess, err := session.Get("_pw_auth_session", c)
+	sess, err := session.Get(domain.SessionName, c)
 	if err != nil {
 		h.logger.Error("get session failed", log.Error(err))
 		return err

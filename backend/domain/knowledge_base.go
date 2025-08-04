@@ -6,6 +6,8 @@ import (
 	"errors"
 	"fmt"
 	"time"
+
+	"github.com/chaitin/panda-wiki/consts"
 )
 
 // table: knowledge_bases
@@ -23,15 +25,16 @@ type KnowledgeBase struct {
 }
 
 type AccessSettings struct {
-	Ports          []int          `json:"ports"`
-	SSLPorts       []int          `json:"ssl_ports"`
-	PublicKey      string         `json:"public_key"`
-	PrivateKey     string         `json:"private_key"`
-	Hosts          []string       `json:"hosts"`
-	BaseURL        string         `json:"base_url"`
-	TrustedProxies []string       `json:"trusted_proxies"`
-	SimpleAuth     SimpleAuth     `json:"simple_auth"`
-	EnterpriseAuth EnterpriseAuth `json:"enterprise_auth"`
+	Ports          []int             `json:"ports"`
+	SSLPorts       []int             `json:"ssl_ports"`
+	PublicKey      string            `json:"public_key"`
+	PrivateKey     string            `json:"private_key"`
+	Hosts          []string          `json:"hosts"`
+	BaseURL        string            `json:"base_url"`
+	TrustedProxies []string          `json:"trusted_proxies"`
+	SimpleAuth     SimpleAuth        `json:"simple_auth"`
+	EnterpriseAuth EnterpriseAuth    `json:"enterprise_auth"`
+	SourceType     consts.SourceType `json:"source_type"` // 企业认证来源
 }
 
 type SimpleAuth struct {
