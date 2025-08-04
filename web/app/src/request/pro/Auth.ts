@@ -25,6 +25,7 @@ import {
  * @name GetApiProV1AuthGet
  * @summary 获取授权信息
  * @request GET:/api/pro/v1/auth/get
+ * @secure
  * @response `200` `(DomainResponse & {
     data?: GithubComChaitinPandaWikiProApiAuthV1GetAuthResp,
 
@@ -43,6 +44,7 @@ export const getApiProV1AuthGet = (
     path: `/api/pro/v1/auth/get`,
     method: "GET",
     query: query,
+    secure: true,
     type: ContentType.Json,
     format: "json",
     ...params,
@@ -55,6 +57,7 @@ export const getApiProV1AuthGet = (
  * @name PostApiProV1AuthSet
  * @summary 设置授权信息
  * @request POST:/api/pro/v1/auth/set
+ * @secure
  * @response `200` `DomainResponse` OK
  */
 
@@ -66,6 +69,7 @@ export const postApiProV1AuthSet = (
     path: `/api/pro/v1/auth/set`,
     method: "POST",
     body: param,
+    secure: true,
     type: ContentType.Json,
     format: "json",
     ...params,

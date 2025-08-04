@@ -46,6 +46,8 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
     },
   });
 
+  const source_type = watch('source_type');
+
   const enabled = watch('enabled');
 
   const onSubmit = handleSubmit((value) => {
@@ -61,6 +63,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
           enterprise_auth: {
             enabled: value.enabled === '3',
           },
+          source_type: value.source_type,
         },
       }),
       value.enabled === '3' && isPro
@@ -96,15 +99,15 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
   }, [kb, isPro]);
 
   useEffect(() => {
-    if (!isPro || !kb_id) return;
+    if (!isPro || !kb_id || enabled !== '3') return;
     getApiProV1AuthGet({
       kb_id,
-      source_type: 'dingtalk',
+      source_type: source_type,
     }).then((res) => {
       setValue('client_id', res.client_id!);
       setValue('client_secret', res.client_secret!);
     });
-  }, [kb_id, isPro]);
+  }, [kb_id, isPro, source_type, enabled]);
 
   return (
     <>
@@ -253,101 +256,116 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
               control={control}
               name='source_type'
               render={({ field }) => (
-                <Select {...field} fullWidth sx={{ height: 53 }}>
+                <Select
+                  {...field}
+                  onChange={(e) => {
+                    field.onChange(e.target.value);
+                    setIsEdit(true);
+                  }}
+                  fullWidth
+                  sx={{ height: 53 }}
+                >
                   <MenuItem value={ConstsSourceType.SourceTypeDingTalk}>
                     钉钉登录
                   </MenuItem>
+                  <MenuItem value={ConstsSourceType.SourceTypeFeishu}>
+                    飞书登录
+                  </MenuItem>
                   <MenuItem value='2' disabled>
                     企业微信登录
-                  </MenuItem>
-                  <MenuItem value='3' disabled>
-                    飞书登录
                   </MenuItem>
                 </Select>
               )}
             />
           </Stack>
 
-          <Stack
-            direction={'row'}
-            gap={2}
-            alignItems={'center'}
-            sx={{ mx: 2, mt: 2 }}
-          >
-            <Box
-              sx={{
-                width: 156,
-                fontSize: 14,
-                lineHeight: '32px',
-                flexShrink: 0,
-              }}
-            >
-              Client ID
-            </Box>
-            <Controller
-              control={control}
-              name='client_id'
-              rules={{
-                required: {
-                  value: true,
-                  message: 'Client Id 不能为空',
-                },
-              }}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  onChange={(e) => {
-                    field.onChange(e.target.value);
-                    setIsEdit(true);
+          {[
+            ConstsSourceType.SourceTypeDingTalk,
+            ConstsSourceType.SourceTypeFeishu,
+          ].includes(source_type) && (
+            <>
+              <Stack
+                direction={'row'}
+                gap={2}
+                alignItems={'center'}
+                sx={{ mx: 2, mt: 2 }}
+              >
+                <Box
+                  sx={{
+                    width: 156,
+                    fontSize: 14,
+                    lineHeight: '32px',
+                    flexShrink: 0,
                   }}
-                  fullWidth
-                  placeholder='请输入'
-                  error={!!errors.client_id}
-                  helperText={errors.client_id?.message}
-                />
-              )}
-            />
-          </Stack>
-          <Stack
-            direction={'row'}
-            gap={2}
-            alignItems={'center'}
-            sx={{ mx: 2, mt: 2 }}
-          >
-            <Box
-              sx={{
-                width: 156,
-                fontSize: 14,
-                lineHeight: '32px',
-                flexShrink: 0,
-              }}
-            >
-              Client Secret
-            </Box>
-            <Controller
-              control={control}
-              name='client_secret'
-              rules={{
-                required: {
-                  value: true,
-                  message: ' Client Secret 不能为空',
-                },
-              }}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  onChange={(e) => {
-                    field.onChange(e.target.value);
-                    setIsEdit(true);
+                >
+                  Client ID
+                </Box>
+                <Controller
+                  control={control}
+                  name='client_id'
+                  rules={{
+                    required: {
+                      value: true,
+                      message: 'Client Id 不能为空',
+                    },
                   }}
-                  placeholder='请输入'
-                  error={!!errors.client_secret}
-                  helperText={errors.client_secret?.message}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      onChange={(e) => {
+                        field.onChange(e.target.value);
+                        setIsEdit(true);
+                      }}
+                      fullWidth
+                      placeholder='请输入'
+                      error={!!errors.client_id}
+                      helperText={errors.client_id?.message}
+                    />
+                  )}
                 />
-              )}
-            />
-          </Stack>
+              </Stack>
+              <Stack
+                direction={'row'}
+                gap={2}
+                alignItems={'center'}
+                sx={{ mx: 2, mt: 2 }}
+              >
+                <Box
+                  sx={{
+                    width: 156,
+                    fontSize: 14,
+                    lineHeight: '32px',
+                    flexShrink: 0,
+                  }}
+                >
+                  Client Secret
+                </Box>
+                <Controller
+                  control={control}
+                  name='client_secret'
+                  rules={{
+                    required: {
+                      value: true,
+                      message: ' Client Secret 不能为空',
+                    },
+                  }}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      onChange={(e) => {
+                        field.onChange(e.target.value);
+                        setIsEdit(true);
+                      }}
+                      placeholder='请输入'
+                      error={!!errors.client_secret}
+                      helperText={errors.client_secret?.message}
+                    />
+                  )}
+                />
+              </Stack>
+            </>
+          )}
         </>
       )}
     </>
