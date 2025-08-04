@@ -35,7 +35,7 @@
     }
 
     try {
-      const response = await fetch(`${widgetDomain}/client/v1/app/widget/info`, {
+      const response = await fetch(`${widgetDomain}/share/v1/app/widget/info`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
