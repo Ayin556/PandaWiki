@@ -450,6 +450,7 @@ definitions:
         - BaiLian
         - Volcengine
         - Gemini
+        - ZhiPu
       type:
         allOf:
         - $ref: '#/definitions/domain.ModelType'
@@ -735,6 +736,7 @@ definitions:
         - BaiLian
         - Volcengine
         - Gemini
+        - ZhiPu
       type:
         allOf:
         - $ref: '#/definitions/domain.ModelType'
@@ -1083,8 +1085,11 @@ definitions:
     - BaiLian
     - Volcengine
     - Gemini
+    - ZhiPu
     - Other
     type: string
+    x-enum-comments:
+      ModelProviderBrandZhiPu: 智谱
     x-enum-varnames:
     - ModelProviderBrandOpenAI
     - ModelProviderBrandOllama
@@ -1097,6 +1102,7 @@ definitions:
     - ModelProviderBrandBaiLian
     - ModelProviderBrandVolcengine
     - ModelProviderBrandGemini
+    - ModelProviderBrandZhiPu
     - ModelProviderBrandOther
   domain.ModelType:
     enum:
@@ -1565,6 +1571,7 @@ definitions:
         - BaiLian
         - Volcengine
         - Gemini
+        - ZhiPu
       type:
         allOf:
         - $ref: '#/definitions/domain.ModelType'
@@ -2719,6 +2726,7 @@ paths:
         - BaiLian
         - Volcengine
         - Gemini
+        - ZhiPu
         in: query
         name: provider
         required: true

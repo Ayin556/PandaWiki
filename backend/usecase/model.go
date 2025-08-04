@@ -211,7 +211,11 @@ func (u *ModelUsecase) UpdateUsage(ctx context.Context, modelID string, usage *s
 
 func (u *ModelUsecase) GetUserModelList(ctx context.Context, req *domain.GetProviderModelListReq) (*domain.GetProviderModelListResp, error) {
 	switch provider := domain.ModelProvider(req.Provider); provider {
-	case domain.ModelProviderBrandMoonshot, domain.ModelProviderBrandDeepSeek, domain.ModelProviderBrandAzureOpenAI, domain.ModelProviderBrandVolcengine:
+	case domain.ModelProviderBrandMoonshot,
+		domain.ModelProviderBrandDeepSeek,
+		domain.ModelProviderBrandAzureOpenAI,
+		domain.ModelProviderBrandVolcengine,
+		domain.ModelProviderBrandZhiPu:
 		return &domain.GetProviderModelListResp{
 			Models: domain.ModelProviderBrandModelsList[domain.ModelProvider(req.Provider)],
 		}, nil

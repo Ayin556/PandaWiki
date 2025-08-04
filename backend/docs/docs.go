@@ -1660,7 +1660,8 @@ const docTemplate = `{
                             "Hunyuan",
                             "BaiLian",
                             "Volcengine",
-                            "Gemini"
+                            "Gemini",
+                            "ZhiPu"
                         ],
                         "type": "string",
                         "name": "provider",
@@ -3771,7 +3772,8 @@ const docTemplate = `{
                         "Hunyuan",
                         "BaiLian",
                         "Volcengine",
-                        "Gemini"
+                        "Gemini",
+                        "ZhiPu"
                     ],
                     "allOf": [
                         {
@@ -4211,7 +4213,8 @@ const docTemplate = `{
                         "Hunyuan",
                         "BaiLian",
                         "Volcengine",
-                        "Gemini"
+                        "Gemini",
+                        "ZhiPu"
                     ],
                     "allOf": [
                         {
@@ -4740,8 +4743,12 @@ const docTemplate = `{
                 "BaiLian",
                 "Volcengine",
                 "Gemini",
+                "ZhiPu",
                 "Other"
             ],
+            "x-enum-comments": {
+                "ModelProviderBrandZhiPu": "智谱"
+            },
             "x-enum-varnames": [
                 "ModelProviderBrandOpenAI",
                 "ModelProviderBrandOllama",
@@ -4754,6 +4761,7 @@ const docTemplate = `{
                 "ModelProviderBrandBaiLian",
                 "ModelProviderBrandVolcengine",
                 "ModelProviderBrandGemini",
+                "ModelProviderBrandZhiPu",
                 "ModelProviderBrandOther"
             ]
         },
@@ -5457,7 +5465,8 @@ const docTemplate = `{
                         "Hunyuan",
                         "BaiLian",
                         "Volcengine",
-                        "Gemini"
+                        "Gemini",
+                        "ZhiPu"
                     ],
                     "allOf": [
                         {

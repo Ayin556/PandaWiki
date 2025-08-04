@@ -208,6 +208,16 @@ export const ModelProvider = {
     modelDocumentUrl: 'https://ai.google.dev/gemini-api/docs',
     defaultBaseUrl: 'https://generativelanguage.googleapis.com',
   },
+  ZhiPu: {  
+    label: 'ZhiPu',  
+    cn: '智谱',  
+    icon: 'icon-zhipuqingyan', // 需要添加对应的图标  
+    urlWrite: false,  
+    secretRequired: true,  
+    customHeader: false,  
+    modelDocumentUrl: 'https://open.bigmodel.cn/usercenter/apikeys',  
+    defaultBaseUrl: 'https://open.bigmodel.cn/api/paas/v4',  
+  },
   Other: {
     label: 'Other',
     cn: '其他',
