@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/chaitin/panda-wiki/pro/consts"
+	"github.com/chaitin/panda-wiki/consts"
 )
 
 // table: knowledge_bases

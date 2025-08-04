@@ -1,6 +1,8 @@
 package domain
 
-import "github.com/chaitin/panda-wiki/pro/consts"
+import (
+	"github.com/chaitin/panda-wiki/consts"
+)
 
 type AuthType string
 
