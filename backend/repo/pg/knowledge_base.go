@@ -558,18 +558,3 @@ func (r *KnowledgeBaseRepository) GetLatestRelease(ctx context.Context, kbID str
 	}
 	return &release, nil
 }
-
-func (r *KnowledgeBaseRepository) GetKBReleaseListByIDs(ctx context.Context, kbID string, ids []string) (map[string]*domain.KBRelease, error) {
-	var kbReleases []*domain.KBRelease
-	if err := r.db.Model(&domain.KBRelease{}).
-		Where("kb_id = ? AND id IN ?", kbID, ids).
-		Find(&kbReleases).Error; err != nil {
-		return nil, err
-	}
-
-	releaseIDMap := make(map[string]*domain.KBRelease)
-	for _, release := range kbReleases {
-		releaseIDMap[release.ID] = release
-	}
-	return releaseIDMap, nil
-}
