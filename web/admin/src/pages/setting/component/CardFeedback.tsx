@@ -227,7 +227,7 @@ const AIQuestion = ({
   const [isEdit, setIsEdit] = useState(false);
   const { control, handleSubmit, setValue } = useForm({
     defaultValues: {
-      is_enabled: false,
+      is_enabled: true,
       ai_feedback_type: [],
     },
   });
@@ -256,7 +256,7 @@ const AIQuestion = ({
     setValue(
       'is_enabled',
       // @ts-expect-error 忽略类型错误
-      data.settings?.ai_feedback_settings?.is_enabled || false
+      data.settings?.ai_feedback_settings?.is_enabled ?? true
     );
 
     setValue(
