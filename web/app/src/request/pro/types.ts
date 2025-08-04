@@ -10,12 +10,14 @@
  * ---------------------------------------------------------------
  */
 
+/** @format int32 */
 export enum DomainLicenseEdition {
   LicenseEditionFree = 0,
   LicenseEditionContributor = 1,
   LicenseEditionEnterprise = 2,
 }
 
+/** @format int32 */
 export enum DomainCommentStatus {
   CommentStatusReject = -1,
   CommentStatusPending = 0,
@@ -24,6 +26,7 @@ export enum DomainCommentStatus {
 
 export enum ConstsSourceType {
   SourceTypeDingTalk = "dingtalk",
+  SourceTypeFeishu = "feishu",
 }
 
 export interface DomainCommentModerateListReq {
@@ -107,7 +110,21 @@ export interface GithubComChaitinPandaWikiProApiShareV1AuthDingTalkResp {
   url?: string;
 }
 
+export interface GithubComChaitinPandaWikiProApiShareV1AuthFeishuReq {
+  kb_id?: string;
+  redirect_url?: string;
+}
+
+export interface GithubComChaitinPandaWikiProApiShareV1AuthFeishuResp {
+  url?: string;
+}
+
 export type GithubComChaitinPandaWikiProApiShareV1DingtalkCallbackResp = Record<
+  string,
+  any
+>;
+
+export type GithubComChaitinPandaWikiProApiShareV1FeishuCallbackResp = Record<
   string,
   any
 >;
@@ -119,7 +136,7 @@ export interface HandlerV1DocFeedBackLists {
 
 export interface GetApiProV1AuthGetParams {
   kb_id?: string;
-  source_type?: "dingtalk";
+  source_type?: "dingtalk" | "feishu";
 }
 
 export interface GetApiProV1DocumentListParams {
@@ -157,6 +174,11 @@ export interface PostShareProV1DocumentFeedbackPayload {
 }
 
 export interface GetShareProV1OpenapiDingtalkCallbackParams {
+  code?: string;
+  state?: string;
+}
+
+export interface GetShareProV1OpenapiFeishuCallbackParams {
   code?: string;
   state?: string;
 }

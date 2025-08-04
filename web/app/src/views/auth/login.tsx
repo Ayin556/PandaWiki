@@ -1,13 +1,16 @@
 'use client';
 
-import { postShareProV1AuthDingtalk } from '@/request/pro/ShareAuth';
+import {
+  postShareProV1AuthDingtalk,
+  postShareProV1AuthFeishu,
+} from '@/request/pro/ShareAuth';
 import {
   getShareV1AuthGet,
   postShareV1AuthLoginSimple,
 } from '@/request/ShareAuth';
 import { getShareV1NodeList } from '@/request/ShareNode';
 
-import { DomainAuthType } from '@/request/types';
+import { DomainAuthType, ConstsSourceType } from '@/request/types';
 import Logo from '@/assets/images/logo.png';
 import Footer from '@/components/footer';
 import { IconLock } from '@/components/icons';
@@ -24,12 +27,13 @@ import { message } from 'ct-mui';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { IconDingDing } from '@/components/icons';
+import { IconDingDing, IconFeishu } from '@/components/icons';
 
 export default function Login() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [authType, setAuthType] = useState<DomainAuthType>();
+  const [sourceType, setSourceType] = useState<ConstsSourceType>();
   const router = useRouter();
   const {
     kbDetail,
@@ -80,9 +84,18 @@ export default function Login() {
     });
   };
 
+  const handleFeishuLogin = () => {
+    postShareProV1AuthFeishu({
+      redirect_url: window.location.origin,
+    }).then((res) => {
+      window.location.href = res.url || '/';
+    });
+  };
+
   useEffect(() => {
     getShareV1AuthGet({}).then((res) => {
       setAuthType(res?.auth_type);
+      setSourceType(res?.source_type);
       if (res?.auth_type === DomainAuthType.AuthTypeNull) {
         router.push('/');
       }
@@ -135,7 +148,6 @@ export default function Login() {
             </Stack>
             {authType === DomainAuthType.AuthTypeSimple && (
               <>
-                {' '}
                 <TextField
                   fullWidth
                   type='password'
@@ -190,9 +202,16 @@ export default function Login() {
 
             {authType === DomainAuthType.AuthTypeEnterprise && (
               <>
-                <IconButton onClick={handleDingTalkLogin}>
-                  <IconDingDing sx={{ fontSize: 40 }}></IconDingDing>
-                </IconButton>
+                {sourceType === ConstsSourceType.SourceTypeDingTalk && (
+                  <IconButton onClick={handleDingTalkLogin}>
+                    <IconDingDing sx={{ fontSize: 40 }}></IconDingDing>
+                  </IconButton>
+                )}
+                {sourceType === ConstsSourceType.SourceTypeFeishu && (
+                  <IconButton onClick={handleFeishuLogin}>
+                    <IconFeishu sx={{ fontSize: 40 }}></IconFeishu>
+                  </IconButton>
+                )}
               </>
             )}
 
