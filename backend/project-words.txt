@@ -15,3 +15,12 @@ htmltomarkdown
 Kaufmann
 pandawiki
 errcheck
+raglite
+genai
+Ollama
+cloudwego
+eino
+deepseek
+rerank
+tiktoken
+pkoukk
