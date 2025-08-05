@@ -492,7 +492,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
               },
 
               '.MuiTableCell-root': {
-                px: 2,
+                px: '16px !important',
                 height: 'auto !important',
               },
               '.MuiTableRow-root': {
