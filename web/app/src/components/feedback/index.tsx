@@ -2,8 +2,7 @@ import { ConversationItem } from '@/assets/type';
 import { useStore } from '@/provider';
 import { Box, Stack, TextField } from '@mui/material';
 import { Modal } from 'ct-mui';
-import { useEffect, useState } from 'react';
-import { getShareV1AppWebInfo } from '@/request/ShareApp';
+import { useState } from 'react';
 
 interface FeedbackProps {
   open: boolean;
@@ -21,7 +20,6 @@ const Feedback = ({ open, onClose, onSubmit, data }: FeedbackProps) => {
   const { themeMode, kbDetail } = useStore();
   const [type, setType] = useState<string>('');
   const [content, setContent] = useState('');
-  const [appInfo, setAppInfo] = useState<any>({});
 
   const tags: string[] =
     // @ts-ignore

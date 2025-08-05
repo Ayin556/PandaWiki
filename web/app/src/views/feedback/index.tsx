@@ -3,40 +3,36 @@ import feedback from '@/assets/images/feedback.png';
 import Footer from '@/components/footer';
 import { useStore } from '@/provider';
 import { postShareV1ChatFeedback } from '@/request/ShareChat';
+import { DomainFeedbackRequest } from '@/request/types';
 import { Box, Button, Stack, TextField } from '@mui/material';
 import { message } from 'ct-mui';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-const tags = [
-  { label: '内容不准确', value: 1 },
-  { label: '没有帮助', value: 2 },
-  { label: '其他', value: 3 },
-];
-
 const Feedback = () => {
   const searchParams = useSearchParams();
-
+  const { kbDetail } = useStore();
   const message_id = searchParams.get('message_id') || '';
   const conversation_id = searchParams.get('conversation_id') || '';
   const score = parseInt(searchParams.get('score') || '-1') as -1 | 1;
 
-  const { kb_id, token } = useStore();
-  const [type, setType] = useState<number>(0);
+  const tags: string[] =
+    // @ts-ignore
+    kbDetail?.settings?.ai_feedback_settings?.ai_feedback_type || [];
+
+  const [type, setType] = useState<string>('');
   const [content, setContent] = useState('');
   const [success, setSuccess] = useState(score === 1);
 
   const handleSubmit = async () => {
-    const data: any = {
-      kb_id: kb_id || '',
-      authToken: token || '',
+    const data: DomainFeedbackRequest = {
       conversation_id,
       message_id,
       score,
+      type,
+      feedback_content: content,
     };
-    if (type > 0) data.type = type;
-    if (content) data.feedback_content = content;
     await postShareV1ChatFeedback(data);
     setSuccess(true);
     message.success('反馈成功');
@@ -98,24 +94,23 @@ const Feedback = () => {
             >
               {tags.map((tag) => (
                 <Box
-                  key={tag.value}
+                  key={tag}
                   sx={{
                     py: 0.75,
                     px: 2,
                     fontSize: 12,
                     borderRadius: '10px',
                     border: '1px solid',
-                    borderColor:
-                      type === tag.value ? 'primary.main' : 'divider',
+                    borderColor: type === tag ? 'primary.main' : 'divider',
                     cursor: 'pointer',
-                    color: type === tag.value ? 'primary.main' : 'text.primary',
+                    color: type === tag ? 'primary.main' : 'text.primary',
                     bgcolor: 'background.paper',
                   }}
                   onClick={() => {
-                    setType(tag.value);
+                    setType(tag);
                   }}
                 >
-                  {tag.label}
+                  {tag}
                 </Box>
               ))}
             </Stack>
