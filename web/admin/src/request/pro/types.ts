@@ -27,6 +27,7 @@ export enum DomainCommentStatus {
 export enum ConstsSourceType {
   SourceTypeDingTalk = "dingtalk",
   SourceTypeFeishu = "feishu",
+  SourceTypeWeCom = "wecom",
 }
 
 export interface DomainCommentModerateListReq {
@@ -111,6 +112,7 @@ export interface GithubComChaitinPandaWikiProApiAuthV1AuthItem {
 }
 
 export interface GithubComChaitinPandaWikiProApiAuthV1GetAuthResp {
+  agent_id?: string;
   auths?: GithubComChaitinPandaWikiProApiAuthV1AuthItem[];
   client_id?: string;
   client_secret?: string;
@@ -118,6 +120,7 @@ export interface GithubComChaitinPandaWikiProApiAuthV1GetAuthResp {
 }
 
 export interface GithubComChaitinPandaWikiProApiAuthV1SetAuthReq {
+  agent_id?: string;
   clientID?: string;
   clientSecret?: string;
   kb_id?: string;
@@ -142,12 +145,26 @@ export interface GithubComChaitinPandaWikiProApiShareV1AuthFeishuResp {
   url?: string;
 }
 
+export interface GithubComChaitinPandaWikiProApiShareV1AuthWecomReq {
+  kb_id?: string;
+  redirect_url?: string;
+}
+
+export interface GithubComChaitinPandaWikiProApiShareV1AuthWecomResp {
+  url?: string;
+}
+
 export type GithubComChaitinPandaWikiProApiShareV1DingtalkCallbackResp = Record<
   string,
   any
 >;
 
 export type GithubComChaitinPandaWikiProApiShareV1FeishuCallbackResp = Record<
+  string,
+  any
+>;
+
+export type GithubComChaitinPandaWikiProApiShareV1WecomCallbackResp = Record<
   string,
   any
 >;
@@ -159,7 +176,7 @@ export interface HandlerV1DocFeedBackLists {
 
 export interface GetApiProV1AuthGetParams {
   kb_id?: string;
-  source_type?: "dingtalk" | "feishu";
+  source_type?: "dingtalk" | "feishu" | "wecom";
 }
 
 export interface GetApiProV1DocumentListParams {
@@ -211,6 +228,11 @@ export interface GetShareProV1OpenapiDingtalkCallbackParams {
 }
 
 export interface GetShareProV1OpenapiFeishuCallbackParams {
+  code?: string;
+  state?: string;
+}
+
+export interface GetShareProV1OpenapiWecomCallbackParams {
   code?: string;
   state?: string;
 }

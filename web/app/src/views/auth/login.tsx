@@ -3,6 +3,7 @@
 import {
   postShareProV1AuthDingtalk,
   postShareProV1AuthFeishu,
+  postShareProV1AuthWecom,
 } from '@/request/pro/ShareAuth';
 import {
   getShareV1AuthGet,
@@ -13,7 +14,6 @@ import { getShareV1NodeList } from '@/request/ShareNode';
 import { DomainAuthType, ConstsSourceType } from '@/request/types';
 import Logo from '@/assets/images/logo.png';
 import Footer from '@/components/footer';
-import { IconLock } from '@/components/icons';
 import { useStore } from '@/provider';
 import {
   Box,
@@ -27,7 +27,12 @@ import { message } from 'ct-mui';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { IconDingDing, IconFeishu } from '@/components/icons';
+import {
+  IconLock,
+  IconDingDing,
+  IconFeishu,
+  IconQiyeweixin,
+} from '@/components/icons';
 
 export default function Login() {
   const [password, setPassword] = useState('');
@@ -86,6 +91,14 @@ export default function Login() {
 
   const handleFeishuLogin = () => {
     postShareProV1AuthFeishu({
+      redirect_url: window.location.origin,
+    }).then((res) => {
+      window.location.href = res.url || '/';
+    });
+  };
+
+  const handleQiyeweixinLogin = () => {
+    postShareProV1AuthWecom({
       redirect_url: window.location.origin,
     }).then((res) => {
       window.location.href = res.url || '/';
@@ -210,6 +223,11 @@ export default function Login() {
                 {sourceType === ConstsSourceType.SourceTypeFeishu && (
                   <IconButton onClick={handleFeishuLogin}>
                     <IconFeishu sx={{ fontSize: 40 }}></IconFeishu>
+                  </IconButton>
+                )}
+                {sourceType === ConstsSourceType.SourceTypeWeCom && (
+                  <IconButton onClick={handleQiyeweixinLogin}>
+                    <IconQiyeweixin sx={{ fontSize: 28 }}></IconQiyeweixin>
                   </IconButton>
                 )}
               </>

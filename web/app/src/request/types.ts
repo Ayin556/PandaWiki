@@ -54,6 +54,7 @@ export enum DomainModelType {
 }
 
 export enum DomainModelProvider {
+  /** 智谱 */
   ModelProviderBrandOpenAI = "OpenAI",
   ModelProviderBrandOllama = "Ollama",
   ModelProviderBrandDeepSeek = "DeepSeek",
@@ -65,6 +66,7 @@ export enum DomainModelProvider {
   ModelProviderBrandBaiLian = "BaiLian",
   ModelProviderBrandVolcengine = "Volcengine",
   ModelProviderBrandGemini = "Gemini",
+  ModelProviderBrandZhiPu = "ZhiPu",
   ModelProviderBrandOther = "Other",
 }
 
@@ -104,6 +106,7 @@ export enum DomainAppType {
 export enum ConstsSourceType {
   SourceTypeDingTalk = "dingtalk",
   SourceTypeFeishu = "feishu",
+  SourceTypeWeCom = "wecom",
 }
 
 export interface DomainAIFeedbackSettings {
@@ -119,6 +122,7 @@ export interface DomainAccessSettings {
   private_key?: string;
   public_key?: string;
   simple_auth?: DomainSimpleAuth;
+  /** 企业认证来源 */
   source_type?: ConstsSourceType;
   ssl_ports?: number[];
   trusted_proxies?: string[];
@@ -324,7 +328,8 @@ export interface DomainCheckModelReq {
     | "Hunyuan"
     | "BaiLian"
     | "Volcengine"
-    | "Gemini";
+    | "Gemini"
+    | "ZhiPu";
   type: "chat" | "embedding" | "rerank";
 }
 
@@ -473,7 +478,8 @@ export interface DomainCreateModelReq {
     | "Hunyuan"
     | "BaiLian"
     | "Volcengine"
-    | "Gemini";
+    | "Gemini"
+    | "ZhiPu";
   type: "chat" | "embedding" | "rerank";
 }
 
@@ -558,12 +564,6 @@ export interface DomainGetDocxResp {
 export interface DomainGetKBReleaseListResp {
   data?: DomainKBReleaseListItemResp[];
   total?: number;
-}
-
-export interface DomainGetNodeReleaseDetailResp {
-  content?: string;
-  meta?: DomainNodeMeta;
-  name?: string;
 }
 
 export interface DomainGetProviderModelListResp {
@@ -704,18 +704,6 @@ export interface DomainNodeListItemResp {
 export interface DomainNodeMeta {
   emoji?: string;
   summary?: string;
-}
-
-export interface DomainNodeReleaseListItem {
-  id?: string;
-  meta?: DomainNodeMeta;
-  name?: string;
-  node_id?: string;
-  /** release */
-  release_id?: string;
-  release_message?: string;
-  release_name?: string;
-  updated_at?: string;
 }
 
 export interface DomainNodeSummaryReq {
@@ -900,7 +888,8 @@ export interface DomainUpdateModelReq {
     | "Hunyuan"
     | "BaiLian"
     | "Volcengine"
-    | "Gemini";
+    | "Gemini"
+    | "ZhiPu";
   type: "chat" | "embedding" | "rerank";
 }
 
@@ -1115,7 +1104,8 @@ export interface GetApiV1ModelProviderSupportedParams {
     | "Hunyuan"
     | "BaiLian"
     | "Volcengine"
-    | "Gemini";
+    | "Gemini"
+    | "ZhiPu";
   type: "chat" | "embedding" | "rerank";
 }
 
@@ -1132,15 +1122,6 @@ export interface GetApiV1NodeListParams {
 export interface GetApiV1NodeRecommendNodesParams {
   kb_id: string;
   node_ids: string[];
-}
-
-export interface GetApiV1NodeReleaseDetailParams {
-  id: string;
-}
-
-export interface GetApiV1NodeReleaseListParams {
-  kb_id: string;
-  node_id: string;
 }
 
 export interface GetApiV1StatBrowsersParams {
