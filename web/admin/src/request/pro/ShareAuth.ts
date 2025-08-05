@@ -17,6 +17,8 @@ import {
   GithubComChaitinPandaWikiProApiShareV1AuthDingTalkResp,
   GithubComChaitinPandaWikiProApiShareV1AuthFeishuReq,
   GithubComChaitinPandaWikiProApiShareV1AuthFeishuResp,
+  GithubComChaitinPandaWikiProApiShareV1AuthWecomReq,
+  GithubComChaitinPandaWikiProApiShareV1AuthWecomResp,
 } from "./types";
 
 /**
@@ -72,6 +74,36 @@ export const postShareProV1AuthFeishu = (
     }
   >({
     path: `/share/pro/v1/auth/feishu`,
+    method: "POST",
+    body: param,
+    type: ContentType.Json,
+    format: "json",
+    ...params,
+  });
+
+/**
+ * @description 企业微信登录
+ *
+ * @tags ShareAuth
+ * @name PostShareProV1AuthWecom
+ * @summary 企业微信登录
+ * @request POST:/share/pro/v1/auth/wecom
+ * @response `200` `(DomainResponse & {
+    data?: GithubComChaitinPandaWikiProApiShareV1AuthWecomResp,
+
+})` OK
+ */
+
+export const postShareProV1AuthWecom = (
+  param: GithubComChaitinPandaWikiProApiShareV1AuthWecomReq,
+  params: RequestParams = {},
+) =>
+  httpRequest<
+    DomainResponse & {
+      data?: GithubComChaitinPandaWikiProApiShareV1AuthWecomResp;
+    }
+  >({
+    path: `/share/pro/v1/auth/wecom`,
     method: "POST",
     body: param,
     type: ContentType.Json,

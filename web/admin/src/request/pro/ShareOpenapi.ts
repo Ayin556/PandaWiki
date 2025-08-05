@@ -15,8 +15,10 @@ import {
   DomainResponse,
   GetShareProV1OpenapiDingtalkCallbackParams,
   GetShareProV1OpenapiFeishuCallbackParams,
+  GetShareProV1OpenapiWecomCallbackParams,
   GithubComChaitinPandaWikiProApiShareV1DingtalkCallbackResp,
   GithubComChaitinPandaWikiProApiShareV1FeishuCallbackResp,
+  GithubComChaitinPandaWikiProApiShareV1WecomCallbackResp,
 } from "./types";
 
 /**
@@ -72,6 +74,36 @@ export const getShareProV1OpenapiFeishuCallback = (
     }
   >({
     path: `/share/pro/v1/openapi/feishu/callback`,
+    method: "GET",
+    query: query,
+    type: ContentType.Json,
+    format: "json",
+    ...params,
+  });
+
+/**
+ * @description 企业微信回调
+ *
+ * @tags ShareOpenapi
+ * @name GetShareProV1OpenapiWecomCallback
+ * @summary 企业微信回调
+ * @request GET:/share/pro/v1/openapi/wecom/callback
+ * @response `200` `(DomainResponse & {
+    data?: GithubComChaitinPandaWikiProApiShareV1WecomCallbackResp,
+
+})` OK
+ */
+
+export const getShareProV1OpenapiWecomCallback = (
+  query: GetShareProV1OpenapiWecomCallbackParams,
+  params: RequestParams = {},
+) =>
+  httpRequest<
+    DomainResponse & {
+      data?: GithubComChaitinPandaWikiProApiShareV1WecomCallbackResp;
+    }
+  >({
+    path: `/share/pro/v1/openapi/wecom/callback`,
     method: "GET",
     query: query,
     type: ContentType.Json,

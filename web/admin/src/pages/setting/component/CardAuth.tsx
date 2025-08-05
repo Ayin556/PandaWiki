@@ -1,5 +1,6 @@
 import { AuthSetting } from '@/api/type';
 import { ConstsSourceType } from '@/request/pro/types';
+import dayjs from 'dayjs';
 import {
   Box,
   Button,
@@ -13,11 +14,13 @@ import {
   MenuItem,
   Link,
 } from '@mui/material';
+import NoData from '@/assets/images/nodata.png';
 import { putApiV1KnowledgeBaseDetail } from '@/request/KnowledgeBase';
 import { DomainKnowledgeBaseDetail } from '@/request/types';
+import { GithubComChaitinPandaWikiProApiAuthV1AuthItem } from '@/request/pro/types';
 import { getApiProV1AuthGet, postApiProV1AuthSet } from '@/request/pro/Auth';
 import InfoIcon from '@mui/icons-material/Info';
-import { Message } from 'ct-mui';
+import { Message, Table, Icon } from 'ct-mui';
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useAppSelector } from '@/store';
@@ -27,9 +30,18 @@ interface CardAuthProps {
   refresh: (value: AuthSetting) => void;
 }
 
+const sourceTypeIcon = {
+  [ConstsSourceType.SourceTypeDingTalk]: 'icon-dingdingjiqiren',
+  [ConstsSourceType.SourceTypeFeishu]: 'icon-feishujiqiren',
+  [ConstsSourceType.SourceTypeWeCom]: 'icon-qiyeweixinjiqiren',
+};
+
 const CardAuth = ({ kb, refresh }: CardAuthProps) => {
   const { license, kb_id } = useAppSelector((state) => state.config);
   const [isEdit, setIsEdit] = useState(false);
+  const [memberList, setMemberList] = useState<
+    GithubComChaitinPandaWikiProApiAuthV1AuthItem[]
+  >([]);
   const {
     control,
     handleSubmit,
@@ -42,7 +54,9 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
       password: '',
       client_id: '',
       client_secret: '',
-      source_type: ConstsSourceType.SourceTypeDingTalk,
+      source_type:
+        kb.access_settings?.source_type || ConstsSourceType.SourceTypeDingTalk,
+      agent_id: '',
     },
   });
 
@@ -72,6 +86,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
             sourceType: value.source_type,
             clientID: value.client_id,
             clientSecret: value.client_secret,
+            agent_id: value.agent_id,
           })
         : Promise.resolve(),
     ]).then(() => {
@@ -89,6 +104,13 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
   }, [license]);
 
   useEffect(() => {
+    setValue(
+      'source_type',
+      kb.access_settings?.source_type || ConstsSourceType.SourceTypeDingTalk
+    );
+  }, [kb]);
+
+  useEffect(() => {
     if (kb.access_settings?.simple_auth) {
       setValue('enabled', kb.access_settings.simple_auth.enabled ? '2' : '1');
       setValue('password', kb.access_settings.simple_auth.password ?? '');
@@ -104,10 +126,42 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
       kb_id,
       source_type: source_type,
     }).then((res) => {
+      setMemberList(res.auths || []);
       setValue('client_id', res.client_id!);
       setValue('client_secret', res.client_secret!);
+      setValue('agent_id', res.agent_id!);
     });
   }, [kb_id, isPro, source_type, enabled]);
+
+  const columns = [
+    {
+      title: '用户名',
+      dataIndex: 'username',
+      render: (text: string) => {
+        return (
+          <Stack direction={'row'} alignItems={'center'} gap={1}>
+            <Icon type={sourceTypeIcon[source_type]} sx={{ fontSize: 16 }} />
+            {text}
+          </Stack>
+        );
+      },
+    },
+    {
+      title: 'created_at',
+      dataIndex: 'created_at',
+      render: (
+        text: string,
+        record: GithubComChaitinPandaWikiProApiAuthV1AuthItem
+      ) => {
+        return (
+          <Box sx={{ color: 'text.secondary' }}>
+            {dayjs(text).fromNow()}加入，
+            {dayjs(record.last_login_time).fromNow()}活跃
+          </Box>
+        );
+      },
+    },
+  ];
 
   return (
     <>
@@ -271,7 +325,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
                   <MenuItem value={ConstsSourceType.SourceTypeFeishu}>
                     飞书登录
                   </MenuItem>
-                  <MenuItem value='2' disabled>
+                  <MenuItem value={ConstsSourceType.SourceTypeWeCom}>
                     企业微信登录
                   </MenuItem>
                 </Select>
@@ -279,93 +333,183 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
             />
           </Stack>
 
-          {[
-            ConstsSourceType.SourceTypeDingTalk,
-            ConstsSourceType.SourceTypeFeishu,
-          ].includes(source_type) && (
-            <>
-              <Stack
-                direction={'row'}
-                gap={2}
-                alignItems={'center'}
-                sx={{ mx: 2, mt: 2 }}
-              >
-                <Box
-                  sx={{
-                    width: 156,
-                    fontSize: 14,
-                    lineHeight: '32px',
-                    flexShrink: 0,
+          <Stack
+            direction={'row'}
+            gap={2}
+            alignItems={'center'}
+            sx={{ mx: 2, mt: 2 }}
+          >
+            <Box
+              sx={{
+                width: 156,
+                fontSize: 14,
+                lineHeight: '32px',
+                flexShrink: 0,
+              }}
+            >
+              Client ID
+            </Box>
+            <Controller
+              control={control}
+              name='client_id'
+              rules={{
+                required: {
+                  value: true,
+                  message: 'Client Id 不能为空',
+                },
+              }}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  onChange={(e) => {
+                    field.onChange(e.target.value);
+                    setIsEdit(true);
                   }}
-                >
-                  Client ID
-                </Box>
-                <Controller
-                  control={control}
-                  name='client_id'
-                  rules={{
-                    required: {
-                      value: true,
-                      message: 'Client Id 不能为空',
-                    },
-                  }}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      onChange={(e) => {
-                        field.onChange(e.target.value);
-                        setIsEdit(true);
-                      }}
-                      fullWidth
-                      placeholder='请输入'
-                      error={!!errors.client_id}
-                      helperText={errors.client_id?.message}
-                    />
-                  )}
+                  fullWidth
+                  placeholder='请输入'
+                  error={!!errors.client_id}
+                  helperText={errors.client_id?.message}
                 />
-              </Stack>
-              <Stack
-                direction={'row'}
-                gap={2}
-                alignItems={'center'}
-                sx={{ mx: 2, mt: 2 }}
-              >
-                <Box
-                  sx={{
-                    width: 156,
-                    fontSize: 14,
-                    lineHeight: '32px',
-                    flexShrink: 0,
+              )}
+            />
+          </Stack>
+          <Stack
+            direction={'row'}
+            gap={2}
+            alignItems={'center'}
+            sx={{ mx: 2, mt: 2 }}
+          >
+            <Box
+              sx={{
+                width: 156,
+                fontSize: 14,
+                lineHeight: '32px',
+                flexShrink: 0,
+              }}
+            >
+              Client Secret
+            </Box>
+            <Controller
+              control={control}
+              name='client_secret'
+              rules={{
+                required: {
+                  value: true,
+                  message: ' Client Secret 不能为空',
+                },
+              }}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  fullWidth
+                  onChange={(e) => {
+                    field.onChange(e.target.value);
+                    setIsEdit(true);
                   }}
-                >
-                  Client Secret
-                </Box>
-                <Controller
-                  control={control}
-                  name='client_secret'
-                  rules={{
-                    required: {
-                      value: true,
-                      message: ' Client Secret 不能为空',
-                    },
-                  }}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      fullWidth
-                      onChange={(e) => {
-                        field.onChange(e.target.value);
-                        setIsEdit(true);
-                      }}
-                      placeholder='请输入'
-                      error={!!errors.client_secret}
-                      helperText={errors.client_secret?.message}
-                    />
-                  )}
+                  placeholder='请输入'
+                  error={!!errors.client_secret}
+                  helperText={errors.client_secret?.message}
                 />
-              </Stack>
-            </>
+              )}
+            />
+          </Stack>
+          {source_type === ConstsSourceType.SourceTypeWeCom && (
+            <Stack
+              direction={'row'}
+              gap={2}
+              alignItems={'center'}
+              sx={{ mx: 2, mt: 2 }}
+            >
+              <Box
+                sx={{
+                  width: 156,
+                  fontSize: 14,
+                  lineHeight: '32px',
+                  flexShrink: 0,
+                }}
+              >
+                Agent ID
+              </Box>
+              <Controller
+                control={control}
+                name='agent_id'
+                rules={{
+                  required: {
+                    value: true,
+                    message: 'Agent ID  不能为空',
+                  },
+                }}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    onChange={(e) => {
+                      field.onChange(e.target.value);
+                      setIsEdit(true);
+                    }}
+                    placeholder='请输入'
+                    error={!!errors.agent_id}
+                    helperText={errors.agent_id?.message}
+                  />
+                )}
+              />
+            </Stack>
           )}
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              m: 2,
+              height: 32,
+              fontWeight: 'bold',
+              '&::before': {
+                content: '""',
+                display: 'inline-block',
+                width: 4,
+                height: 12,
+                bgcolor: 'common.black',
+                borderRadius: '2px',
+                mr: 1,
+              },
+            }}
+          >
+            成员{' '}
+          </Box>
+          <Table
+            columns={columns}
+            dataSource={memberList}
+            showHeader={false}
+            rowKey='id'
+            size='small'
+            sx={{
+              mx: 2,
+              '.MuiTableContainer-root': {
+                maxHeight: 400,
+                border: '1px dashed',
+                borderColor: 'divider',
+                borderRadius: '10px',
+                borderBottom: 'none',
+              },
+
+              '.MuiTableCell-root': {
+                px: 2,
+                height: 'auto !important',
+              },
+              '.MuiTableRow-root': {
+                '&:hover': {
+                  '.MuiTableCell-root': {
+                    backgroundColor: 'transparent !important',
+                  },
+                },
+              },
+            }}
+            renderEmpty={
+              <Stack alignItems={'center'} sx={{ mt: 20 }}>
+                <img src={NoData} width={174} />
+                <Box>暂无数据</Box>
+              </Stack>
+            }
+          />
         </>
       )}
     </>
