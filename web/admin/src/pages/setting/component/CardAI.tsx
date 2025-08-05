@@ -1,9 +1,12 @@
-import { KnowledgeBaseListItem } from '@/api';
 import { DomainKnowledgeBaseDetail } from '@/request/types';
 import Card from '@/components/Card';
-import { Box, Button, Slider, Stack, TextField } from '@mui/material';
-import { useState } from 'react';
+import { getApiProV1Prompt, postApiProV1Prompt } from '@/request/pro/Prompt';
+import { Box, Button, Slider, Stack, TextField, Tooltip } from '@mui/material';
+import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import InfoIcon from '@mui/icons-material/Info';
+import { useAppSelector } from '@/store';
+import { Message } from 'ct-mui';
 
 interface CardAIProps {
   kb: DomainKnowledgeBaseDetail;
@@ -11,17 +14,37 @@ interface CardAIProps {
 
 const CardAI = ({ kb }: CardAIProps) => {
   const [isEdit, setIsEdit] = useState(false);
-  const { control, handleSubmit, reset } = useForm({
+  const { license } = useAppSelector((state) => state.config);
+
+  const { control, handleSubmit, setValue } = useForm({
     defaultValues: {
-      welcome_str: '',
       block_words: '',
       interval: 0,
+      content: '',
     },
   });
 
-  const onSubmit = (data: any) => {
+  const onSubmit = handleSubmit((data) => {
     console.log(data);
-  };
+    postApiProV1Prompt({
+      kb_id: kb.id!,
+      content: data.content,
+    }).then(() => {
+      Message.success('保存成功');
+      setIsEdit(false);
+    });
+  });
+
+  const isPro = useMemo(() => {
+    return license.edition === 1 || license.edition === 2;
+  }, [license]);
+
+  useEffect(() => {
+    if (!kb.id || !isPro) return;
+    getApiProV1Prompt({ kb_id: kb.id! }).then((res) => {
+      setValue('content', res.content || '');
+    });
+  }, [kb, isPro]);
 
   return (
     <Card>
@@ -33,7 +56,7 @@ const CardAI = ({ kb }: CardAIProps) => {
           bgcolor: 'background.paper2',
         }}
       >
-        AI 设置（敬请期待）
+        AI 设置
       </Box>
       <Stack
         direction='row'
@@ -47,6 +70,8 @@ const CardAI = ({ kb }: CardAIProps) => {
       >
         <Box
           sx={{
+            display: 'flex',
+            alignItems: 'center',
             '&::before': {
               content: '""',
               display: 'inline-block',
@@ -59,13 +84,14 @@ const CardAI = ({ kb }: CardAIProps) => {
           }}
         >
           智能问答
+          {!isPro && (
+            <Tooltip title='联创版和企业版可用' placement='top' arrow>
+              <InfoIcon sx={{ color: 'text.secondary', fontSize: 14, ml: 1 }} />
+            </Tooltip>
+          )}
         </Box>
         {isEdit && (
-          <Button
-            variant='contained'
-            size='small'
-            onClick={handleSubmit(onSubmit)}
-          >
+          <Button variant='contained' size='small' onClick={onSubmit}>
             保存
           </Button>
         )}
@@ -78,18 +104,25 @@ const CardAI = ({ kb }: CardAIProps) => {
           sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}
         >
           <Box sx={{ fontSize: 14, lineHeight: '32px' }}>智能问答提示语</Box>
-          {/* <Button size="small" component='a' href='https://pandawiki.docs.baizhi.cloud/node/01971b5f-4520-7c4b-8b4e-683ec5235adc' target="_blank">使用方法</Button> */}
+          {/* <Button
+            size='small'
+            component='a'
+            href='https://pandawiki.docs.baizhi.cloud/node/01971b5f-4520-7c4b-8b4e-683ec5235adc'
+            target='_blank'
+          >
+            使用方法
+          </Button> */}
         </Stack>
         <Controller
           control={control}
-          name='welcome_str'
+          name='content'
           render={({ field }) => (
             <TextField
               {...field}
               fullWidth
+              disabled={!isPro}
               multiline
               rows={4}
-              disabled
               placeholder='智能问答提示语'
               onChange={(e) => {
                 field.onChange(e.target.value);
@@ -99,7 +132,7 @@ const CardAI = ({ kb }: CardAIProps) => {
           )}
         />
         <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
-          屏蔽问题中的关键字
+          屏蔽问题中的关键字（敬请期待）
         </Box>
         <Controller
           control={control}
@@ -118,7 +151,7 @@ const CardAI = ({ kb }: CardAIProps) => {
           )}
         />
         <Box sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}>
-          连续提问时间间隔
+          连续提问时间间隔（敬请期待）
         </Box>
         <Controller
           control={control}

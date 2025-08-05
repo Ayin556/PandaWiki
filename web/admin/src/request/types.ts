@@ -65,6 +65,7 @@ export enum DomainModelProvider {
   ModelProviderBrandBaiLian = "BaiLian",
   ModelProviderBrandVolcengine = "Volcengine",
   ModelProviderBrandGemini = "Gemini",
+  ModelProviderBrandZhiPu = "ZhiPu",
   ModelProviderBrandOther = "Other",
 }
 
@@ -119,6 +120,7 @@ export interface DomainAccessSettings {
   private_key?: string;
   public_key?: string;
   simple_auth?: DomainSimpleAuth;
+  /** 企业认证来源 */
   source_type?: ConstsSourceType;
   ssl_ports?: number[];
   trusted_proxies?: string[];
@@ -324,7 +326,8 @@ export interface DomainCheckModelReq {
     | "Hunyuan"
     | "BaiLian"
     | "Volcengine"
-    | "Gemini";
+    | "Gemini"
+    | "ZhiPu";
   type: "chat" | "embedding" | "rerank";
 }
 
@@ -473,7 +476,8 @@ export interface DomainCreateModelReq {
     | "Hunyuan"
     | "BaiLian"
     | "Volcengine"
-    | "Gemini";
+    | "Gemini"
+    | "ZhiPu";
   type: "chat" | "embedding" | "rerank";
 }
 
@@ -882,7 +886,8 @@ export interface DomainUpdateModelReq {
     | "Hunyuan"
     | "BaiLian"
     | "Volcengine"
-    | "Gemini";
+    | "Gemini"
+    | "ZhiPu";
   type: "chat" | "embedding" | "rerank";
 }
 
@@ -1097,7 +1102,8 @@ export interface GetApiV1ModelProviderSupportedParams {
     | "Hunyuan"
     | "BaiLian"
     | "Volcengine"
-    | "Gemini";
+    | "Gemini"
+    | "ZhiPu";
   type: "chat" | "embedding" | "rerank";
 }
 
