@@ -10,14 +10,12 @@
  * ---------------------------------------------------------------
  */
 
-/** @format int32 */
 export enum DomainLicenseEdition {
   LicenseEditionFree = 0,
   LicenseEditionContributor = 1,
   LicenseEditionEnterprise = 2,
 }
 
-/** @format int32 */
 export enum DomainCommentStatus {
   CommentStatusReject = -1,
   CommentStatusPending = 0,
@@ -33,6 +31,11 @@ export enum ConstsSourceType {
 export interface DomainCommentModerateListReq {
   ids: string[];
   status: DomainCommentStatus;
+}
+
+export interface DomainCreatePromptReq {
+  content: string;
+  kb_id: string;
 }
 
 export interface DomainDeleteDocumentFeedbackReq {
@@ -94,6 +97,10 @@ export interface DomainNodeReleaseListItem {
   release_message?: string;
   release_name?: string;
   updated_at?: string;
+}
+
+export interface DomainPrompt {
+  content?: string;
 }
 
 export interface DomainResponse {
@@ -194,6 +201,11 @@ export interface GetApiProV1NodeReleaseDetailParams {
 export interface GetApiProV1NodeReleaseListParams {
   kb_id: string;
   node_id: string;
+}
+
+export interface GetApiProV1PromptParams {
+  /** knowledge base ID */
+  kb_id: string;
 }
 
 export interface PostApiV1LicensePayload {
