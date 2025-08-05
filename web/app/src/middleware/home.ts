@@ -41,6 +41,7 @@ export async function middleware(
         {
           headers: {
             'x-pw-session-id': session,
+            ...headers,
           },
         }
       );

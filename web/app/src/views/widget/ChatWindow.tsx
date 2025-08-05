@@ -80,7 +80,7 @@ const ChatWindow = ({
 
   const isFeedbackEnabled =
     // @ts-ignore
-    kbDetail?.settings?.ai_feedback_settings?.is_enabled || false;
+    kbDetail?.settings?.ai_feedback_settings?.is_enabled ?? true;
 
   const scrollToBottom = () => {
     const container = document.querySelector('.conversation-container');

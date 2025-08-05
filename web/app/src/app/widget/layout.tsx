@@ -1,4 +1,5 @@
 import StoreProvider from '@/provider';
+import { getShareV1AppWebInfo } from '@/request/ShareApp';
 import { darkTheme, lightTheme } from '@/theme';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import { getShareV1AppWidgetInfo } from '@/request/ShareApp';
@@ -33,6 +34,7 @@ const Layout = async ({
   const headersList = await headers();
   const kb_id = headersList.get('x-kb-id') || process.env.DEV_KB_ID || '';
   const widgetDetail: any = await getShareV1AppWidgetInfo();
+  const kbDetail: any = await getShareV1AppWebInfo();
   const themeMode =
     widgetDetail?.settings?.widget_bot_settings?.theme_mode || 'light';
 
@@ -45,6 +47,7 @@ const Layout = async ({
               kb_id={kb_id}
               widget={widgetDetail}
               themeMode={themeMode || 'light'}
+              kbDetail={kbDetail}
             >
               {children}
             </StoreProvider>

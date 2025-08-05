@@ -2,6 +2,7 @@ import StoreProvider from '@/provider';
 import { lightTheme } from '@/theme';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import { ThemeProvider } from 'ct-mui';
+import { getShareV1AppWebInfo } from '@/request/ShareApp';
 import localFont from 'next/font/local';
 import { headers } from 'next/headers';
 import React from 'react';
@@ -29,23 +30,27 @@ const Layout = async ({
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
-  const headersList = await headers()
-  const kb_id = headersList.get('x-kb-id') || process.env.DEV_KB_ID || ''
+  const headersList = await headers();
+  const kbDetail: any = await getShareV1AppWebInfo();
+  const kb_id = headersList.get('x-kb-id') || process.env.DEV_KB_ID || '';
 
-  return <html lang="en">
-    <body className={`${gilory.variable}`}>
-      <ThemeProvider theme={lightTheme}>
-        <AppRouterCacheProvider>
-          <StoreProvider
-            kb_id={kb_id}
-            themeMode={'light'}
-          >
-            {children}
-          </StoreProvider>
-        </AppRouterCacheProvider>
-      </ThemeProvider>
-    </body>
-  </html>
+  return (
+    <html lang='en'>
+      <body className={`${gilory.variable}`}>
+        <ThemeProvider theme={lightTheme}>
+          <AppRouterCacheProvider>
+            <StoreProvider
+              kb_id={kb_id}
+              themeMode={'light'}
+              kbDetail={kbDetail}
+            >
+              {children}
+            </StoreProvider>
+          </AppRouterCacheProvider>
+        </ThemeProvider>
+      </body>
+    </html>
+  );
 };
 
 export default Layout;
