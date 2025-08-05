@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"fmt"
 	"io"
 
 	"github.com/labstack/echo/v4"
@@ -302,7 +303,7 @@ func (h *CrawlerHandler) FeishuListSpaces(c echo.Context) error {
 	}
 	resp, err := h.feishuUseCase.GetSpacelist(c.Request().Context(), req)
 	if err != nil {
-		return h.NewResponseWithError(c, "list spaces failed", err)
+		return h.NewResponseWithError(c, fmt.Sprintf("list spaces failed %s", err.Error()), err)
 	}
 	return h.NewResponseWithData(c, resp)
 }
@@ -327,7 +328,7 @@ func (h *CrawlerHandler) FeishuListDoc(c echo.Context) error {
 	}
 	resp, err := h.feishuUseCase.ListDocx(c.Request().Context(), req)
 	if err != nil {
-		return h.NewResponseWithError(c, "search docx failed", err)
+		return h.NewResponseWithError(c, fmt.Sprintf("search docx failed %s", err.Error()), err)
 	}
 	return h.NewResponseWithData(c, resp)
 }
@@ -349,7 +350,7 @@ func (h *CrawlerHandler) FeishuSearchWiki(c echo.Context) error {
 	}
 	resp, err := h.feishuUseCase.SearchWiki(c.Request().Context(), req)
 	if err != nil {
-		return h.NewResponseWithError(c, "search wiki failed", err)
+		return h.NewResponseWithError(c, fmt.Sprintf("search wiki failed %s", err.Error()), err)
 	}
 	return h.NewResponseWithData(c, resp)
 }
@@ -374,7 +375,7 @@ func (h *CrawlerHandler) FeishuGetDoc(c echo.Context) error {
 	}
 	resp, err := h.feishuUseCase.GetDoc(c.Request().Context(), req)
 	if err != nil {
-		return h.NewResponseWithError(c, "get docx failed", err)
+		return h.NewResponseWithError(c, fmt.Sprintf("get docx failed %s", err.Error()), err)
 	}
 	return h.NewResponseWithData(c, resp)
 }
