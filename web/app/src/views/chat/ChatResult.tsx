@@ -49,6 +49,7 @@ interface ChatResultProps {
   handleSearchAbort: () => void;
   setConversation: (conversation: ConversationItem[]) => void;
   setThinking: (thinking: keyof typeof AnswerStatus) => void;
+  onReset: () => void;
 }
 
 const ChatResult = ({
@@ -61,6 +62,7 @@ const ChatResult = ({
   handleSearchAbort,
   setThinking,
   setConversation,
+  onReset,
 }: ChatResultProps) => {
   const router = useRouter();
   const [input, setInput] = useState('');
@@ -288,9 +290,12 @@ const ChatResult = ({
       >
         {conversation.length > 0 && (
           <Button
-            variant='contained'
+            variant='outlined'
             sx={{ alignSelf: 'center' }}
-            onClick={() => router.push(`/chat`)}
+            onClick={() => {
+              router.push(`/chat`);
+              onReset();
+            }}
           >
             <IconNewChat sx={{ fontSize: 18, mr: 1 }} />
             开启新会话
