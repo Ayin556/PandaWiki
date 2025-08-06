@@ -39,6 +39,16 @@ const Chat = ({
   const [isUserScrolling, setIsUserScrolling] = useState(false);
   const [showType, setShowType] = useState<'chat' | 'search'>('chat');
 
+  const onReset = () => {
+    setConversationId('');
+    setConversation([]);
+    setAnswer('');
+    setChunkResult([]);
+    setChunkLoading(false);
+    setLoading(false);
+    setNonce('');
+  };
+
   const chatAnswer = async (q: string) => {
     setChunkLoading(true);
     setLoading(true);
@@ -79,11 +89,17 @@ const Chat = ({
             setAnswer((prevAnswer) => {
               setConversation((prev) => {
                 const newConversation = [...prev];
-                newConversation[newConversation.length - 1].a = prevAnswer;
-                newConversation[newConversation.length - 1].update_time =
-                  dayjs().format('YYYY-MM-DD HH:mm:ss');
-                newConversation[newConversation.length - 1].message_id =
-                  messageIdRef.current;
+                const lastConversation =
+                  newConversation[newConversation.length - 1];
+                if (lastConversation) {
+                  lastConversation.a = prevAnswer;
+                  lastConversation.update_time = dayjs().format(
+                    'YYYY-MM-DD HH:mm:ss'
+                  );
+                  lastConversation.message_id = messageIdRef.current;
+                  lastConversation.source = 'chat';
+                }
+
                 return newConversation;
               });
               return '';
@@ -120,7 +136,9 @@ const Chat = ({
     if (loading || !q.trim()) return;
     const newConversation = reset
       ? []
-      : conversation.filter((item) => item.source !== 'history');
+      : conversation.some((item) => item.source === 'history')
+      ? []
+      : [...conversation];
     newConversation.push({
       q,
       a: '',
@@ -226,6 +244,7 @@ const Chat = ({
               setThinking={setThinking}
               onSearch={onSearch}
               setConversation={setConversation}
+              onReset={onReset}
               handleSearchAbort={handleSearchAbort}
             />
           ) : (
@@ -266,6 +285,7 @@ const Chat = ({
             loading={loading}
             thinking={thinking}
             setThinking={setThinking}
+            onReset={onReset}
             onSearch={onSearch}
             setConversation={setConversation}
             handleSearchAbort={handleSearchAbort}
