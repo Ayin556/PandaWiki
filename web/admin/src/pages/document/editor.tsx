@@ -40,29 +40,31 @@ const DocEditor = () => {
   const handleSave = async (
     auto?: boolean,
     publish?: boolean,
-    html?: string
+    html?: string,
+    nodeDetail?: any,
   ) => {
     if (!editorRef || !detail) return;
     const content = html || editorRef.getHtml();
     cancelTimer();
     try {
+      const newDetail = nodeDetail ?? detail
       await updateNode({
         id,
         content,
-        kb_id: detail.kb_id,
-        emoji: detail.meta.emoji,
-        summary: detail.meta.summary,
-        name: detail.name,
+        kb_id: newDetail.kb_id,
+        emoji: newDetail.meta.emoji,
+        summary: newDetail.meta.summary,
+        name: newDetail.name,
       });
       setDetail({
-        ...detail,
+        ...newDetail,
         status: 1,
         updated_at: dayjs().format('YYYY-MM-DD HH:mm:ss'),
         content,
-        name: detail.name,
+        name: newDetail.name,
         meta: {
-          emoji: detail.meta.emoji || '',
-          summary: detail.meta.summary || '',
+          emoji: newDetail.meta.emoji || '',
+          summary: newDetail.meta.summary || '',
         },
       });
       if (publish) {
@@ -129,7 +131,7 @@ const DocEditor = () => {
   const resetTimer = () => {
     cancelTimer();
     timer.current = setInterval(() => {
-      handleSave(true);
+      handleSave(true, undefined, undefined, detail);
     }, 1000 * 60);
   };
 
@@ -139,7 +141,7 @@ const DocEditor = () => {
     } else {
       resetTimer();
     }
-  }, [showVersion]);
+  }, [showVersion, detail]);
 
   useEffect(() => {
     cancelTimer();
