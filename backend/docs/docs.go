@@ -4217,6 +4217,9 @@ const docTemplate = `{
                 "parent_id": {
                     "type": "string"
                 },
+                "position": {
+                    "type": "number"
+                },
                 "type": {
                     "enum": [
                         1,
@@ -5472,6 +5475,9 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "position": {
+                    "type": "number"
                 },
                 "summary": {
                     "type": "string"

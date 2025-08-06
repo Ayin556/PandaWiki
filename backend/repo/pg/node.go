@@ -61,10 +61,18 @@ func (r *NodeRepository) Create(ctx context.Context, req *domain.CreateNodeReq) 
 			return err
 		}
 
-		newPos := maxPos + (domain.MaxPosition-maxPos)/2.0
-		if newPos-maxPos < domain.MinPositionGap {
-			if err := r.reorderPositionsByParentID(tx, req.KBID, req.ParentID); err != nil {
-				return err
+		var newPos float64
+		if req.Position != nil { // user specify position
+			if *req.Position > domain.MaxPosition || *req.Position < 0 {
+				return errors.New("user specify position out of range")
+			}
+			newPos = *req.Position
+		} else { // default the last
+			newPos = maxPos + (domain.MaxPosition-maxPos)/2.0
+			if newPos-maxPos < domain.MinPositionGap {
+				if err := r.reorderPositionsByParentID(tx, req.KBID, req.ParentID); err != nil {
+					return err
+				}
 			}
 		}
 
@@ -178,6 +186,13 @@ func (r *NodeRepository) UpdateNodeContent(ctx context.Context, req *domain.Upda
 
 	if req.Visibility != nil {
 		updateMap["visibility"] = *req.Visibility
+		updateStatus = true
+	}
+	if req.Position != nil { // user specify position
+		updateMap["position"] = *req.Position
+		if *req.Position > domain.MaxPosition || *req.Position < 0 {
+			return errors.New("user specify position out of range")
+		}
 		updateStatus = true
 	}
 	if updateStatus {
