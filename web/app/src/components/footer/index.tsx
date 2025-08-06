@@ -1,3 +1,5 @@
+'use client';
+
 import logo from '@/assets/images/logo.png';
 import { useStore } from '@/provider';
 import { Box, Divider, Stack } from '@mui/material';

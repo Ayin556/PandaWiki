@@ -6,22 +6,18 @@ import SSEClient from '@/utils/fetch';
 import { Box, Stack } from '@mui/material';
 import { message } from 'ct-mui';
 import dayjs from 'dayjs';
-import { useSetState } from 'ahooks';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import ChatResult from './ChatResult';
 import ChatTab from './ChatTab';
 import SearchResult from './SearchResult';
 import { AnswerStatus } from './constant';
 
-const Chat = () => {
-  const {
-    mobile = false,
-    kb_id,
-    token,
-    kbDetail,
-    catalogShow,
-    catalogWidth,
-  } = useStore();
+const Chat = ({
+  conversation: initialConversation,
+}: {
+  conversation: ConversationItem[];
+}) => {
+  const { mobile = false, kb_id, catalogShow, catalogWidth } = useStore();
 
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
   const sseClientRef = useRef<SSEClient<{
@@ -31,11 +27,8 @@ const Chat = () => {
   }> | null>(null);
 
   const messageIdRef = useRef('');
-
-  const [conversation, setConversation] = useState<ConversationItem[]>([]);
-  const [conversationMap, setConversationMap] = useSetState<{
-    [key: string]: ConversationItem;
-  }>({});
+  const [conversation, setConversation] =
+    useState<ConversationItem[]>(initialConversation);
   const [loading, setLoading] = useState(false);
   const [thinking, setThinking] = useState<keyof typeof AnswerStatus>(4);
   const [nonce, setNonce] = useState('');
@@ -125,13 +118,16 @@ const Chat = () => {
 
   const onSearch = (q: string, reset: boolean = false) => {
     if (loading || !q.trim()) return;
-    const newConversation = reset ? [] : [...conversation];
+    const newConversation = reset
+      ? []
+      : conversation.filter((item) => item.source !== 'history');
     newConversation.push({
       q,
       a: '',
       score: 0,
       message_id: '',
       update_time: '',
+      source: 'chat',
     });
     messageIdRef.current = '';
     setConversation(newConversation);
@@ -209,6 +205,12 @@ const Chat = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if (conversationId) {
+      window.history.replaceState(null, '', `/chat/${conversationId}`);
+    }
+  }, [conversationId]);
+
   if (mobile) {
     return (
       <Box sx={{ pt: 12, minHeight: '100vh', position: 'relative' }}>
@@ -269,29 +271,31 @@ const Chat = () => {
             handleSearchAbort={handleSearchAbort}
           />
         </Box>
-        <Box
-          sx={{
-            flexShrink: 0,
-            width: 388,
-            border: '1px solid',
-            borderColor: 'divider',
-            borderRadius: '10px',
-            p: 3,
-            bgcolor: 'background.paper',
-          }}
-        >
+        {(chunkLoading || chunkResult.length > 0) && (
           <Box
             sx={{
-              fontSize: '20px',
-              fontWeight: '700',
-              lineHeight: '28px',
-              mb: 2,
+              flexShrink: 0,
+              width: 388,
+              border: '1px solid',
+              borderColor: 'divider',
+              borderRadius: '10px',
+              p: 3,
+              bgcolor: 'background.paper',
             }}
           >
-            搜索结果
+            <Box
+              sx={{
+                fontSize: '20px',
+                fontWeight: '700',
+                lineHeight: '28px',
+                mb: 2,
+              }}
+            >
+              搜索结果
+            </Box>
+            <SearchResult list={chunkResult} loading={chunkLoading} />
           </Box>
-          <SearchResult list={chunkResult} loading={chunkLoading} />
-        </Box>
+        )}
       </Stack>
     </Box>
   );

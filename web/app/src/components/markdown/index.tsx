@@ -215,9 +215,9 @@ const MarkDown = ({ loading = false, content }: MarkDownProps) => {
             ...rest
           }: React.HTMLAttributes<HTMLElement>) {
             const match = /language-(\w+)/.exec(className || '');
-            // if (match?.[1] === 'mermaid') {
-            //   return <MermaidDiagram chart={String(children)} />;
-            // }
+            if (match?.[1] === 'mermaid') {
+              return <MermaidDiagram chart={String(children)} />;
+            }
             return match ? (
               <SyntaxHighlighter
                 showLineNumbers

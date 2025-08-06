@@ -111,6 +111,7 @@ const Widget = () => {
       score: 0,
       update_time: '',
       message_id: '',
+      source: 'chat',
     });
     messageIdRef.current = '';
     setConversation(newConversation);
