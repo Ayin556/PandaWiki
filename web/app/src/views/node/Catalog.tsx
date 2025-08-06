@@ -179,7 +179,7 @@ const Catalog = ({
 
           <Box
             sx={{
-              height: 'calc(100vh - 78px)',
+              height: 'calc(100vh - 130px)',
               overflowY: 'auto',
               overflowX: 'hidden',
               '&::-webkit-scrollbar': {

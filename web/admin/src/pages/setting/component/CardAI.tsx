@@ -103,7 +103,7 @@ const CardAI = ({ kb }: CardAIProps) => {
           justifyContent={'space-between'}
           sx={{ fontSize: 14, lineHeight: '32px', my: 1 }}
         >
-          <Box sx={{ fontSize: 14, lineHeight: '32px' }}>智能问答提示语</Box>
+          <Box sx={{ fontSize: 14, lineHeight: '32px' }}>智能问答提示词</Box>
           {/* <Button
             size='small'
             component='a'
@@ -123,7 +123,7 @@ const CardAI = ({ kb }: CardAIProps) => {
               disabled={!isPro}
               multiline
               rows={4}
-              placeholder='智能问答提示语'
+              placeholder='智能问答提示词'
               onChange={(e) => {
                 field.onChange(e.target.value);
                 setIsEdit(true);

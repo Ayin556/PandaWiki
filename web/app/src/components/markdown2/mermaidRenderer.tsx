@@ -53,6 +53,6 @@ export const createMermaidRenderer = (
       } catch (renderError) {}
     });
 
-    return `<div class="mermaid-container ${className}">${svg}</div>`;
+    return `<pre><div class="mermaid-container ${className}">${svg}</div></pre>`;
   };
 };

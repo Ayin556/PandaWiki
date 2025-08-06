@@ -3,6 +3,7 @@
 import { ConversationItem } from '@/assets/type';
 import { postShareV1ChatFeedback } from '@/request/ShareChat';
 import Feedback from '@/components/feedback';
+import { useRouter } from 'next/navigation';
 import {
   IconArrowUp,
   IconCai,
@@ -10,14 +11,18 @@ import {
   IconZan,
   IconZaned,
 } from '@/components/icons';
-import MarkDown from '@/components/markdown2';
+import MarkDown from '@/components/markdown';
+import MarkDown2 from '@/components/markdown2';
 import { useStore } from '@/provider';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { IconCopy, IconNewChat } from '@/components/icons';
+import { copyText } from '@/utils';
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
   Box,
+  Button,
   IconButton,
   Skeleton,
   Stack,
@@ -57,6 +62,7 @@ const ChatResult = ({
   setThinking,
   setConversation,
 }: ChatResultProps) => {
+  const router = useRouter();
   const [input, setInput] = useState('');
   const {
     mobile = false,
@@ -185,13 +191,16 @@ const ChatResult = ({
                 </Box>
               </AccordionSummary>
               <AccordionDetails>
-                {index === conversation.length - 1 ? (
+                {item.source === 'history' ? (
+                  <MarkDown content={item.a} />
+                ) : index === conversation.length - 1 ? (
                   // 最后一个对话项：显示合并后的内容，避免闪烁
-                  <MarkDown content={item.a || answer || ''} />
+                  <MarkDown2 content={item.a || answer || ''} />
                 ) : (
                   // 非最后一个对话项：正常显示
-                  <MarkDown content={item.a} />
+                  <MarkDown2 content={item.a} />
                 )}
+
                 {index === conversation.length - 1 &&
                   loading &&
                   !answer &&
@@ -219,7 +228,14 @@ const ChatResult = ({
                 <Stack direction='row' gap={3} alignItems='center'>
                   <span>生成于 {dayjs(item.update_time).fromNow()}</span>
 
-                  {isFeedbackEnabled && (
+                  <IconCopy
+                    sx={{ cursor: 'pointer' }}
+                    onClick={() => {
+                      copyText(item.a);
+                    }}
+                  />
+
+                  {isFeedbackEnabled && item.source === 'chat' && (
                     <>
                       {item.score === 1 && (
                         <IconZaned sx={{ cursor: 'pointer' }} />
@@ -257,18 +273,29 @@ const ChatResult = ({
       </Stack>
       <Box
         sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 1,
           position: 'absolute',
           left: 0,
           right: 0,
           bottom: 0,
-          borderRadius: '10px',
-          border: '1px solid',
-          borderColor: 'divider',
+
           ...(mobile && {
             p: 0,
           }),
         }}
       >
+        {conversation.length > 0 && (
+          <Button
+            variant='contained'
+            sx={{ alignSelf: 'center' }}
+            onClick={() => router.push(`/chat`)}
+          >
+            <IconNewChat sx={{ fontSize: 18, mr: 1 }} />
+            开启新会话
+          </Button>
+        )}
         <Box
           sx={{
             bgcolor:
@@ -276,6 +303,8 @@ const ChatResult = ({
             px: 3,
             py: 2,
             borderRadius: '10px',
+            border: '1px solid',
+            borderColor: 'divider',
           }}
         >
           <TextField

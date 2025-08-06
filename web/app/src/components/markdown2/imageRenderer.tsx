@@ -85,6 +85,7 @@ const ImageComponent: React.FC<ImageComponentProps> = ({
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>(
     'loading'
   );
+  const classname = `image-container-${imageIndex}`;
   const [previewOpen, setPreviewOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -168,20 +169,16 @@ const ImageComponent: React.FC<ImageComponentProps> = ({
   }
 
   return (
-    <>
-      <div ref={containerRef} className='image-container'>
-        <img
-          src={src}
-          alt={alt || 'markdown-img'}
-          data-key={`img_${imageIndex}`}
-          referrerPolicy='no-referrer'
-          onLoad={handleLoad}
-          onError={handleError}
-          onClick={handleImageClick}
-          {...getOtherProps()}
-        />
-      </div>
-
+    <div ref={containerRef} className={`image-container ${classname}`}>
+      <img
+        src={src}
+        alt={alt || 'markdown-img'}
+        referrerPolicy='no-referrer'
+        onLoad={handleLoad}
+        onError={handleError}
+        onClick={handleImageClick}
+        {...getOtherProps()}
+      />
       {/* 图片预览弹窗 */}
       <Dialog
         sx={{
@@ -200,7 +197,7 @@ const ImageComponent: React.FC<ImageComponentProps> = ({
           style={{ width: '100%', height: '100%' }}
         />
       </Dialog>
-    </>
+    </div>
   );
 };
 
@@ -239,6 +236,18 @@ export const createImageRenderer = (options: ImageRendererOptions) => {
       />
     );
 
-    return container.innerHTML;
+    setTimeout(() => {
+      const imageContainer = document.querySelector(
+        `.image-container-${imageIndex}`
+      );
+      if (imageContainer) {
+        imageContainer.outerHTML = container.innerHTML;
+      }
+    });
+
+    return (
+      container.innerHTML ||
+      `<div  className="image-container image-container-${imageIndex}"}></div>`
+    );
   };
 };
