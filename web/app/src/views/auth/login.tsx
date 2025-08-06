@@ -4,6 +4,7 @@ import {
   postShareProV1AuthDingtalk,
   postShareProV1AuthFeishu,
   postShareProV1AuthWecom,
+  postShareProV1AuthOauth,
 } from '@/request/pro/ShareAuth';
 import {
   getShareV1AuthGet,
@@ -32,6 +33,7 @@ import {
   IconDingDing,
   IconFeishu,
   IconQiyeweixin,
+  IconOAuth,
 } from '@/components/icons';
 
 export default function Login() {
@@ -99,6 +101,14 @@ export default function Login() {
 
   const handleQiyeweixinLogin = () => {
     postShareProV1AuthWecom({
+      redirect_url: window.location.origin,
+    }).then((res) => {
+      window.location.href = res.url || '/';
+    });
+  };
+
+  const handleOAuthLogin = () => {
+    postShareProV1AuthOauth({
       redirect_url: window.location.origin,
     }).then((res) => {
       window.location.href = res.url || '/';
@@ -228,6 +238,11 @@ export default function Login() {
                 {sourceType === ConstsSourceType.SourceTypeWeCom && (
                   <IconButton onClick={handleQiyeweixinLogin}>
                     <IconQiyeweixin sx={{ fontSize: 28 }}></IconQiyeweixin>
+                  </IconButton>
+                )}
+                {sourceType === ConstsSourceType.SourceTypeOAuth && (
+                  <IconButton onClick={handleOAuthLogin}>
+                    <IconOAuth sx={{ fontSize: 40 }}></IconOAuth>
                   </IconButton>
                 )}
               </>

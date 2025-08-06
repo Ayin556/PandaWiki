@@ -107,6 +107,7 @@ export enum ConstsSourceType {
   SourceTypeDingTalk = "dingtalk",
   SourceTypeFeishu = "feishu",
   SourceTypeWeCom = "wecom",
+  SourceTypeOAuth = "oauth",
 }
 
 export interface DomainAIFeedbackSettings {
