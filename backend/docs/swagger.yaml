@@ -4,11 +4,13 @@ definitions:
     - dingtalk
     - feishu
     - wecom
+    - oauth
     type: string
     x-enum-varnames:
     - SourceTypeDingTalk
     - SourceTypeFeishu
     - SourceTypeWeCom
+    - SourceTypeOAuth
   domain.AIFeedbackSettings:
     properties:
       ai_feedback_type:

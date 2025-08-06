@@ -3060,12 +3060,14 @@ const docTemplate = `{
             "enum": [
                 "dingtalk",
                 "feishu",
-                "wecom"
+                "wecom",
+                "oauth"
             ],
             "x-enum-varnames": [
                 "SourceTypeDingTalk",
                 "SourceTypeFeishu",
-                "SourceTypeWeCom"
+                "SourceTypeWeCom",
+                "SourceTypeOAuth"
             ]
         },
         "domain.AIFeedbackSettings": {
