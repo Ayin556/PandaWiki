@@ -47,6 +47,7 @@ type LLMUsecase struct {
 
 func NewLLMUsecase(config *config.Config, rag rag.RAGService, conversationRepo *pg.ConversationRepository, kbRepo *pg.KnowledgeBaseRepository, nodeRepo *pg.NodeRepository, modelRepo *pg.ModelRepository, promptRepo *pg.PromptRepo, logger *log.Logger) *LLMUsecase {
 	tiktoken.SetBpeLoader(&utils.Localloader{})
+	tiktoken.SetBpeLoader(&utils.Localloader{})
 	return &LLMUsecase{
 		config:           config,
 		rag:              rag,

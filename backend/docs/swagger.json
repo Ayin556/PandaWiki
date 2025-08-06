@@ -157,7 +157,6 @@
                             1
                         ],
                         "type": "integer",
-                        "format": "int32",
                         "x-enum-varnames": [
                             "CommentStatusReject",
                             "CommentStatusPending",
@@ -3537,7 +3536,6 @@
         },
         "domain.AppType": {
             "type": "integer",
-            "format": "int32",
             "enum": [
                 1,
                 2,
@@ -3593,11 +3591,6 @@
                 "AuthTypeNull": "无认证",
                 "AuthTypeSimple": "简单口令"
             },
-            "x-enum-descriptions": [
-                "无认证",
-                "简单口令",
-                "企业认证"
-            ],
             "x-enum-varnames": [
                 "AuthTypeNull",
                 "AuthTypeSimple",
@@ -3840,7 +3833,6 @@
         },
         "domain.CommentStatus": {
             "type": "integer",
-            "format": "int32",
             "enum": [
                 -1,
                 0,
@@ -4857,7 +4849,6 @@
         },
         "domain.NodeStatus": {
             "type": "integer",
-            "format": "int32",
             "enum": [
                 1,
                 2
@@ -4887,7 +4878,6 @@
         },
         "domain.NodeType": {
             "type": "integer",
-            "format": "int32",
             "enum": [
                 1,
                 2
@@ -4899,7 +4889,6 @@
         },
         "domain.NodeVisibility": {
             "type": "integer",
-            "format": "int32",
             "enum": [
                 1,
                 2
