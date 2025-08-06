@@ -149,14 +149,16 @@ func createApp() (*App, error) {
 	shareStatHandler := share.NewShareStatHandler(baseHandler, echo, statUseCase, logger)
 	shareCommentHandler := share.NewShareCommentHandler(echo, baseHandler, logger, commentUsecase, appUsecase)
 	shareAuthHandler := share.NewShareAuthHandler(echo, baseHandler, logger, knowledgeBaseUsecase)
+	shareConversationHandler := share.NewShareConversationHandler(baseHandler, echo, conversationUsecase, logger)
 	shareHandler := &share.ShareHandler{
-		ShareNodeHandler:    shareNodeHandler,
-		ShareAppHandler:     shareAppHandler,
-		ShareChatHandler:    shareChatHandler,
-		ShareSitemapHandler: shareSitemapHandler,
-		ShareStatHandler:    shareStatHandler,
-		ShareCommentHandler: shareCommentHandler,
-		ShareAuthHandler:    shareAuthHandler,
+		ShareNodeHandler:         shareNodeHandler,
+		ShareAppHandler:          shareAppHandler,
+		ShareChatHandler:         shareChatHandler,
+		ShareSitemapHandler:      shareSitemapHandler,
+		ShareStatHandler:         shareStatHandler,
+		ShareCommentHandler:      shareCommentHandler,
+		ShareAuthHandler:         shareAuthHandler,
+		ShareConversationHandler: shareConversationHandler,
 	}
 	client, err := telemetry.NewClient(logger, knowledgeBaseRepository)
 	if err != nil {
