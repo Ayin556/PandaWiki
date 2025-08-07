@@ -29,6 +29,7 @@ export enum ConstsSourceType {
   SourceTypeFeishu = "feishu",
   SourceTypeWeCom = "wecom",
   SourceTypeOAuth = "oauth",
+  SourceTypeCAS = "cas",
 }
 
 export interface DomainCommentModerateListReq {
@@ -112,6 +113,25 @@ export interface DomainResponse {
   success?: boolean;
 }
 
+export interface GithubComChaitinPandaWikiProApiAuthV1AuthGetResp {
+  agent_id?: string;
+  authorize_url?: string;
+  auths?: GithubComChaitinPandaWikiProApiAuthV1AuthItem[];
+  avatar_field?: string;
+  cas_url?: string;
+  /** CAS特定配置 */
+  cas_version?: string;
+  client_id?: string;
+  client_secret?: string;
+  email_field?: string;
+  id_field?: string;
+  name_field?: string;
+  scopes?: string[];
+  source_type?: ConstsSourceType;
+  token_url?: string;
+  user_info_url?: string;
+}
+
 export interface GithubComChaitinPandaWikiProApiAuthV1AuthItem {
   avatar_url?: string;
   created_at?: string;
@@ -122,26 +142,12 @@ export interface GithubComChaitinPandaWikiProApiAuthV1AuthItem {
   username?: string;
 }
 
-export interface GithubComChaitinPandaWikiProApiAuthV1GetAuthResp {
-  agent_id?: string;
-  authorize_url?: string;
-  auths?: GithubComChaitinPandaWikiProApiAuthV1AuthItem[];
-  avatar_field?: string;
-  client_id?: string;
-  client_secret?: string;
-  email_field?: string;
-  id_field?: string;
-  name_field?: string;
-  scopes?: string[];
-  source_type?: ConstsSourceType;
-  token_url?: string;
-  user_info_url?: string;
-}
-
-export interface GithubComChaitinPandaWikiProApiAuthV1SetAuthReq {
+export interface GithubComChaitinPandaWikiProApiAuthV1AuthSetReq {
   agent_id?: string;
   authorize_url?: string;
   avatar_field?: string;
+  cas_url?: string;
+  cas_version?: string;
   client_id?: string;
   client_secret?: string;
   email_field?: string;
@@ -152,6 +158,15 @@ export interface GithubComChaitinPandaWikiProApiAuthV1SetAuthReq {
   source_type?: ConstsSourceType;
   token_url?: string;
   user_info_url?: string;
+}
+
+export interface GithubComChaitinPandaWikiProApiShareV1AuthCASReq {
+  kb_id?: string;
+  redirect_url?: string;
+}
+
+export interface GithubComChaitinPandaWikiProApiShareV1AuthCASResp {
+  url?: string;
 }
 
 export interface GithubComChaitinPandaWikiProApiShareV1AuthDingTalkReq {
@@ -190,6 +205,11 @@ export interface GithubComChaitinPandaWikiProApiShareV1AuthWecomResp {
   url?: string;
 }
 
+export type GithubComChaitinPandaWikiProApiShareV1CASCallbackResp = Record<
+  string,
+  any
+>;
+
 export type GithubComChaitinPandaWikiProApiShareV1DingtalkCallbackResp = Record<
   string,
   any
@@ -217,7 +237,7 @@ export interface HandlerV1DocFeedBackLists {
 
 export interface GetApiProV1AuthGetParams {
   kb_id?: string;
-  source_type?: "dingtalk" | "feishu" | "wecom" | "oauth";
+  source_type?: "dingtalk" | "feishu" | "wecom" | "oauth" | "cas";
 }
 
 export interface GetApiProV1DocumentListParams {
@@ -266,6 +286,11 @@ export interface PostShareProV1DocumentFeedbackPayload {
    * @format binary
    */
   image?: File;
+}
+
+export interface GetShareProV1OpenapiCasCallbackParams {
+  state?: string;
+  ticket?: string;
 }
 
 export interface GetShareProV1OpenapiDingtalkCallbackParams {

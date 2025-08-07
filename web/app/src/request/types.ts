@@ -54,6 +54,7 @@ export enum DomainModelType {
 }
 
 export enum DomainModelProvider {
+  /** 智谱 */
   ModelProviderBrandOpenAI = "OpenAI",
   ModelProviderBrandOllama = "Ollama",
   ModelProviderBrandDeepSeek = "DeepSeek",
@@ -65,7 +66,6 @@ export enum DomainModelProvider {
   ModelProviderBrandBaiLian = "BaiLian",
   ModelProviderBrandVolcengine = "Volcengine",
   ModelProviderBrandGemini = "Gemini",
-  /** 智谱 */
   ModelProviderBrandZhiPu = "ZhiPu",
   ModelProviderBrandOther = "Other",
 }
@@ -108,6 +108,7 @@ export enum ConstsSourceType {
   SourceTypeFeishu = "feishu",
   SourceTypeWeCom = "wecom",
   SourceTypeOAuth = "oauth",
+  SourceTypeCAS = "cas",
 }
 
 export interface DomainAIFeedbackSettings {
@@ -490,6 +491,7 @@ export interface DomainCreateNodeReq {
   kb_id: string;
   name: string;
   parent_id?: string;
+  position?: number;
   type: 1 | 2;
   visibility?: DomainNodeVisibility;
 }
@@ -913,6 +915,7 @@ export interface DomainUpdateNodeReq {
   id: string;
   kb_id: string;
   name?: string;
+  position?: number;
   summary?: string;
   visibility?: DomainNodeVisibility;
 }

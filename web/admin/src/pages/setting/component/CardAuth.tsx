@@ -95,6 +95,8 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
       id_field: '',
       name_field: '',
       email_field: '',
+      cas_url: '',
+      cas_version:'2',
     },
   });
 
@@ -133,6 +135,8 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
             name_field: value.name_field,
             avatar_field: value.avatar_field,
             email_field: value.email_field,
+            cas_url: value.cas_url,
+            cas_version: value.cas_version,
           })
         : Promise.resolve(),
     ]).then(() => {
@@ -184,6 +188,8 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
       setValue('name_field', res.name_field!);
       setValue('avatar_field', res.avatar_field!);
       setValue('email_field', res.email_field!);
+      setValue('cas_url', res.cas_url!);
+      setValue('cas_version', res.cas_version!);
     });
   }, [kb_id, isPro, source_type, enabled]);
 
@@ -493,6 +499,58 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
     );
   };
 
+  const casForm = () => {
+    return (
+      <>
+        <FormItem label='CAS URL' required>
+          <Controller
+            control={control}
+            rules={{
+              required: 'CAS URL 不能为空',
+            }}
+            name='cas_url'
+            render={({ field }) => (
+              <TextField
+                {...field}
+                fullWidth
+                placeholder='请输入'
+                error={!!errors.cas_url}
+                helperText={errors.cas_url?.message}
+                onChange={(e) => {
+                  field.onChange(e.target.value);
+                  setIsEdit(true);
+                }}
+              />
+            )}
+          />
+        </FormItem>
+        <FormItem label='CAS Version' required>
+          <Controller
+            control={control}
+            name='cas_version'
+            render={({ field }) => (
+              <TextField
+                {...field}
+                fullWidth
+                placeholder='请输入'
+                error={!!errors.cas_version}
+                helperText={errors.cas_version?.message}
+                select
+                onChange={(e) => {
+                  field.onChange(e.target.value);
+                  setIsEdit(true);
+                }}
+              >
+                <MenuItem value="2">2</MenuItem>
+                <MenuItem value="3">3</MenuItem>
+              </TextField>
+            )}
+          />
+        </FormItem>
+      </>
+    );
+  };
+
   return (
     <>
       <Stack
@@ -661,6 +719,9 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
                   <MenuItem value={ConstsSourceType.SourceTypeOAuth}>
                     OAuth 登录
                   </MenuItem>
+                  <MenuItem value={ConstsSourceType.SourceTypeCAS}>
+                    CAS 登录
+                  </MenuItem>
                 </Select>
               )}
             />
@@ -753,6 +814,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
           )}
 
           {source_type === ConstsSourceType.SourceTypeOAuth && oauthForm()}
+          {source_type === ConstsSourceType.SourceTypeCAS && casForm()}
           <Box
             sx={{
               display: 'flex',

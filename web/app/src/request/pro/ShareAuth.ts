@@ -13,6 +13,8 @@
 import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
   DomainResponse,
+  GithubComChaitinPandaWikiProApiShareV1AuthCASReq,
+  GithubComChaitinPandaWikiProApiShareV1AuthCASResp,
   GithubComChaitinPandaWikiProApiShareV1AuthDingTalkReq,
   GithubComChaitinPandaWikiProApiShareV1AuthDingTalkResp,
   GithubComChaitinPandaWikiProApiShareV1AuthFeishuReq,
@@ -22,6 +24,36 @@ import {
   GithubComChaitinPandaWikiProApiShareV1AuthWecomReq,
   GithubComChaitinPandaWikiProApiShareV1AuthWecomResp,
 } from "./types";
+
+/**
+ * @description CAS登录
+ *
+ * @tags ShareAuth
+ * @name PostShareProV1AuthCas
+ * @summary CAS登录
+ * @request POST:/share/pro/v1/auth/cas
+ * @response `200` `(DomainResponse & {
+    data?: GithubComChaitinPandaWikiProApiShareV1AuthCASResp,
+
+})` OK
+ */
+
+export const postShareProV1AuthCas = (
+  param: GithubComChaitinPandaWikiProApiShareV1AuthCASReq,
+  params: RequestParams = {},
+) =>
+  httpRequest<
+    DomainResponse & {
+      data?: GithubComChaitinPandaWikiProApiShareV1AuthCASResp;
+    }
+  >({
+    path: `/share/pro/v1/auth/cas`,
+    method: "POST",
+    body: param,
+    type: ContentType.Json,
+    format: "json",
+    ...params,
+  });
 
 /**
  * @description 钉钉登录
