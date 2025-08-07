@@ -13,15 +13,47 @@
 import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
   DomainResponse,
+  GetShareProV1OpenapiCasCallbackParams,
   GetShareProV1OpenapiDingtalkCallbackParams,
   GetShareProV1OpenapiFeishuCallbackParams,
   GetShareProV1OpenapiOauthCallbackParams,
   GetShareProV1OpenapiWecomCallbackParams,
+  GithubComChaitinPandaWikiProApiShareV1CASCallbackResp,
   GithubComChaitinPandaWikiProApiShareV1DingtalkCallbackResp,
   GithubComChaitinPandaWikiProApiShareV1FeishuCallbackResp,
   GithubComChaitinPandaWikiProApiShareV1OAuthCallbackResp,
   GithubComChaitinPandaWikiProApiShareV1WecomCallbackResp,
 } from "./types";
+
+/**
+ * @description CAS回调
+ *
+ * @tags ShareOpenapi
+ * @name GetShareProV1OpenapiCasCallback
+ * @summary CAS回调
+ * @request GET:/share/pro/v1/openapi/cas/callback
+ * @response `200` `(DomainResponse & {
+    data?: GithubComChaitinPandaWikiProApiShareV1CASCallbackResp,
+
+})` OK
+ */
+
+export const getShareProV1OpenapiCasCallback = (
+  query: GetShareProV1OpenapiCasCallbackParams,
+  params: RequestParams = {},
+) =>
+  httpRequest<
+    DomainResponse & {
+      data?: GithubComChaitinPandaWikiProApiShareV1CASCallbackResp;
+    }
+  >({
+    path: `/share/pro/v1/openapi/cas/callback`,
+    method: "GET",
+    query: query,
+    type: ContentType.Json,
+    format: "json",
+    ...params,
+  });
 
 /**
  * @description dingtalk回调

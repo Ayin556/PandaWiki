@@ -1,6 +1,5 @@
-module.exports = {
+export default {
   parser: 'typescript',
-  printWidth: 120,
   tabWidth: 2,
   useTabs: false,
   semi: true,
@@ -18,4 +17,4 @@ module.exports = {
   proseWrap: 'preserve',
   htmlWhitespaceSensitivity: 'css',
   endOfLine: 'lf',
-}
+} 

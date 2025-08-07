@@ -5,6 +5,7 @@ import {
   postShareProV1AuthFeishu,
   postShareProV1AuthWecom,
   postShareProV1AuthOauth,
+  postShareProV1AuthCas,
 } from '@/request/pro/ShareAuth';
 import {
   getShareV1AuthGet,
@@ -34,6 +35,7 @@ import {
   IconFeishu,
   IconQiyeweixin,
   IconOAuth,
+  IconCAS,
 } from '@/components/icons';
 
 export default function Login() {
@@ -109,6 +111,14 @@ export default function Login() {
 
   const handleOAuthLogin = () => {
     postShareProV1AuthOauth({
+      redirect_url: window.location.origin,
+    }).then((res) => {
+      window.location.href = res.url || '/';
+    });
+  };
+
+  const handleCASLogin = () => {
+    postShareProV1AuthCas({
       redirect_url: window.location.origin,
     }).then((res) => {
       window.location.href = res.url || '/';
@@ -243,6 +253,12 @@ export default function Login() {
                 {sourceType === ConstsSourceType.SourceTypeOAuth && (
                   <IconButton onClick={handleOAuthLogin}>
                     <IconOAuth sx={{ fontSize: 40 }}></IconOAuth>
+                  </IconButton>
+                )}
+
+                {sourceType === ConstsSourceType.SourceTypeCAS && (
+                  <IconButton onClick={handleCASLogin}>
+                    <IconCAS sx={{ fontSize: 40 }}></IconCAS>
                   </IconButton>
                 )}
               </>
