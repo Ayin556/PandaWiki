@@ -3061,13 +3061,15 @@ const docTemplate = `{
                 "dingtalk",
                 "feishu",
                 "wecom",
-                "oauth"
+                "oauth",
+                "cas"
             ],
             "x-enum-varnames": [
                 "SourceTypeDingTalk",
                 "SourceTypeFeishu",
                 "SourceTypeWeCom",
-                "SourceTypeOAuth"
+                "SourceTypeOAuth",
+                "SourceTypeCAS"
             ]
         },
         "domain.AIFeedbackSettings": {
@@ -4699,19 +4701,7 @@ const docTemplate = `{
                 "ModelProviderBrandZhiPu": "智谱"
             },
             "x-enum-descriptions": [
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "智谱",
-                ""
+                "智谱"
             ],
             "x-enum-varnames": [
                 "ModelProviderBrandOpenAI",

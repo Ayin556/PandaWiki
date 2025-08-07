@@ -7,4 +7,5 @@ const (
 	SourceTypeFeishu   SourceType = "feishu"
 	SourceTypeWeCom    SourceType = "wecom"
 	SourceTypeOAuth    SourceType = "oauth"
+	SourceTypeCAS      SourceType = "cas"
 )
