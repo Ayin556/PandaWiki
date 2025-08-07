@@ -243,15 +243,17 @@ export interface GetApiProV1PromptParams {
 }
 
 export interface PostApiV1LicensePayload {
+  /** license edition */
+  license_edition: "contributor" | "enterprise";
   /** license type */
   license_type: "file" | "code";
   /**
    * license file
    * @format binary
    */
-  license_file: File;
+  license_file?: File;
   /** license code */
-  license_code: string;
+  license_code?: string;
 }
 
 export interface PostShareProV1DocumentFeedbackPayload {
