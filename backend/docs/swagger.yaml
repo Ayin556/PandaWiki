@@ -5,12 +5,14 @@ definitions:
     - feishu
     - wecom
     - oauth
+    - cas
     type: string
     x-enum-varnames:
     - SourceTypeDingTalk
     - SourceTypeFeishu
     - SourceTypeWeCom
     - SourceTypeOAuth
+    - SourceTypeCAS
   domain.AIFeedbackSettings:
     properties:
       ai_feedback_type:
@@ -1088,19 +1090,7 @@ definitions:
     x-enum-comments:
       ModelProviderBrandZhiPu: 智谱
     x-enum-descriptions:
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
     - 智谱
-    - ""
     x-enum-varnames:
     - ModelProviderBrandOpenAI
     - ModelProviderBrandOllama
