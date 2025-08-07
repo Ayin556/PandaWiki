@@ -13,7 +13,7 @@ import WikijsImport from './Wikijs'
 const ImportDoc = ({ type, open, refresh, onCancel, parentId = null }: ImportDocProps & { type: ImportDocType }) => {
   switch (type) {
     case 'OfflineFile':
-      return <OfflineFileImport size={100} open={open} refresh={refresh} onCancel={onCancel} parentId={parentId} />
+      return <OfflineFileImport open={open} refresh={refresh} onCancel={onCancel} parentId={parentId} />
     case 'URL':
       return <URLImport open={open} refresh={refresh} onCancel={onCancel} parentId={parentId} />
     case 'RSS':
@@ -23,15 +23,15 @@ const ImportDoc = ({ type, open, refresh, onCancel, parentId = null }: ImportDoc
     case 'Notion':
       return <NotionImport open={open} refresh={refresh} onCancel={onCancel} parentId={parentId} />
     case 'Epub':
-      return <EpubImport size={100} open={open} refresh={refresh} onCancel={onCancel} parentId={parentId} />
+      return <EpubImport open={open} refresh={refresh} onCancel={onCancel} parentId={parentId} />
     case 'Wiki.js':
-      return <WikijsImport size={100} open={open} refresh={refresh} onCancel={onCancel} parentId={parentId} />
+      return <WikijsImport open={open} refresh={refresh} onCancel={onCancel} parentId={parentId} />
     case 'Yuque':
-      return <ImportDocYuque size={100} open={open} refresh={refresh} onCancel={onCancel} parentId={parentId} />
+      return <ImportDocYuque open={open} refresh={refresh} onCancel={onCancel} parentId={parentId} />
     case 'Feishu':
       return <FeishuImport open={open} refresh={refresh} onCancel={onCancel} parentId={parentId} />
     case 'Confluence':
-      return <ImportDocConfluence size={100}
+      return <ImportDocConfluence
         open={open} refresh={refresh} onCancel={onCancel} parentId={parentId} />
     default:
       return null

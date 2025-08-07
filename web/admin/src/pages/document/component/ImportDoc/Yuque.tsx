@@ -40,7 +40,6 @@ const ImportDocYuque = ({ open, refresh, onCancel, parentId = null, size: defaul
   const [isUploading, setIsUploading] = useState(0)
   const [currentFileIndex, setCurrentFileIndex] = useState(0)
   const [uploadProgress, setUploadProgress] = useState(0)
-  const size = 1024 * 1024 * (defaultSize || 20)
 
   const onChangeFile = (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
     setAcceptedFiles(acceptedFiles)
@@ -161,7 +160,6 @@ const ImportDocYuque = ({ open, refresh, onCancel, parentId = null, size: defaul
         type='drag'
         multiple={false}
         accept={'.lakebook'}
-        size={size}
       />
       <Stack>
         <Box component='a'
@@ -219,11 +217,6 @@ const ImportDocYuque = ({ open, refresh, onCancel, parentId = null, size: defaul
                   primary={file.name}
                   secondary={formatByte(file.size)}
                 />
-                {size && file.size > size && (
-                  <Typography variant='caption' color='error' sx={{ ml: 2, fontSize: 12 }}>
-                    超过大小限制
-                  </Typography>
-                )}
               </ListItem>
             })}
           </List>

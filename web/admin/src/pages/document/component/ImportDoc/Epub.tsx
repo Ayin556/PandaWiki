@@ -39,7 +39,6 @@ const EpubImport = ({ open, refresh, onCancel, parentId = null, size: defaultSiz
   const [isUploading, setIsUploading] = useState(0)
   const [currentFileIndex, setCurrentFileIndex] = useState(0)
   const [uploadProgress, setUploadProgress] = useState(0)
-  const size = 1024 * 1024 * (defaultSize || 20)
 
   const onChangeFile = (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
     setAcceptedFiles(acceptedFiles)
@@ -167,7 +166,6 @@ const EpubImport = ({ open, refresh, onCancel, parentId = null, size: defaultSiz
         type='drag'
         multiple={true}
         accept={'.epub'}
-        size={size}
       />
       {isUploading === 1 && <Box sx={{ mt: 2 }}>
         <Box sx={{ fontSize: 14, mb: 1 }}>
@@ -218,11 +216,6 @@ const EpubImport = ({ open, refresh, onCancel, parentId = null, size: defaultSiz
                   primary={file.name}
                   secondary={formatByte(file.size)}
                 />
-                {size && file.size > size && (
-                  <Typography variant='caption' color='error' sx={{ ml: 2, fontSize: 12 }}>
-                    超过大小限制
-                  </Typography>
-                )}
               </ListItem>
             })}
           </List>
