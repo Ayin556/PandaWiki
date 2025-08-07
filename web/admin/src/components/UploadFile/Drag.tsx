@@ -25,7 +25,6 @@ const Upload = ({
   onChange,
   type = 'select',
   accept,
-  size,
   multiple = true
 }: UploadProps) => {
   const theme = useTheme()
@@ -34,19 +33,13 @@ const Upload = ({
 
   const onDrop = useCallback(
     (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
-      const validFiles = acceptedFiles.filter(file => {
-        if (size && file.size > size) {
-          Message.error('文件大小不能超过 ' + formatByte(size))
-          return false
-        }
-        return true
-      })
+      const validFiles = acceptedFiles
 
       const newFiles = multiple ? [...file, ...validFiles] : validFiles
       setDropFiles(newFiles)
       onChange(newFiles, rejectedFiles)
     },
-    [dropFiles, onChange, multiple, size]
+    [dropFiles, onChange, multiple]
   )
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -100,9 +93,9 @@ const Upload = ({
           <Typography variant='body2' color='text.secondary' sx={{ mt: 1, fontSize: 12 }}>
             支持格式 {accept || '所有文件'}
           </Typography>
-          {size && <Typography variant='body2' color='text.secondary' sx={{ mt: 0.5, fontSize: 12 }}>
+          {/* {size && <Typography variant='body2' color='text.secondary' sx={{ mt: 0.5, fontSize: 12 }}>
             支持上传大小不超过 {formatByte(size)} 的文件
-          </Typography>}
+          </Typography>} */}
         </Stack>
       )}
 
