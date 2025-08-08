@@ -6,6 +6,7 @@ definitions:
     - wecom
     - oauth
     - cas
+    - ldap
     type: string
     x-enum-varnames:
     - SourceTypeDingTalk
@@ -13,6 +14,7 @@ definitions:
     - SourceTypeWeCom
     - SourceTypeOAuth
     - SourceTypeCAS
+    - SourceTypeLDAP
   domain.AIFeedbackSettings:
     properties:
       ai_feedback_type:

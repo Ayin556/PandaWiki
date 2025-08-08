@@ -8,4 +8,5 @@ const (
 	SourceTypeWeCom    SourceType = "wecom"
 	SourceTypeOAuth    SourceType = "oauth"
 	SourceTypeCAS      SourceType = "cas"
+	SourceTypeLDAP     SourceType = "ldap"
 )
