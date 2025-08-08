@@ -995,6 +995,60 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/crawler/shiyuan/analysis_export_file": {
+            "post": {
+                "description": "Analyze ShiYuan Export File",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "crawler"
+                ],
+                "summary": "AnalysisShiyuanExportFile",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "file",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "kb_id",
+                        "name": "kb_id",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/domain.ShiYuanResp"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/crawler/wikijs/analysis_export_file": {
             "post": {
                 "description": "AnalysisWikijsExportFile",
@@ -4701,7 +4755,19 @@ const docTemplate = `{
                 "ModelProviderBrandZhiPu": "智谱"
             },
             "x-enum-descriptions": [
-                "智谱"
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "智谱",
+                ""
             ],
             "x-enum-varnames": [
                 "ModelProviderBrandOpenAI",
@@ -5263,6 +5329,20 @@ const docTemplate = `{
                 },
                 "role": {
                     "$ref": "#/definitions/schema.RoleType"
+                }
+            }
+        },
+        "domain.ShiYuanResp": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
                 }
             }
         },

@@ -26,6 +26,7 @@ type CrawlerHandler struct {
 	feishuUseCase     *usecase.FeishuUseCase
 	confluenceusecase *usecase.ConfluenceUsecase
 	yuqueusecase      *usecase.YuqueUsecase
+	shiyuanusecase    *usecase.ShiYuanUsecase
 }
 
 func NewCrawlerHandler(echo *echo.Echo,
@@ -40,6 +41,7 @@ func NewCrawlerHandler(echo *echo.Echo,
 	feishuUseCase *usecase.FeishuUseCase,
 	confluenceusecase *usecase.ConfluenceUsecase,
 	yuqueusecase *usecase.YuqueUsecase,
+	shiyuanusecase *usecase.ShiYuanUsecase,
 ) *CrawlerHandler {
 	h := &CrawlerHandler{
 		BaseHandler:       baseHandler,
@@ -52,6 +54,7 @@ func NewCrawlerHandler(echo *echo.Echo,
 		feishuUseCase:     feishuUseCase,
 		confluenceusecase: confluenceusecase,
 		yuqueusecase:      yuqueusecase,
+		shiyuanusecase:    shiyuanusecase,
 	}
 	group := echo.Group("/api/v1/crawler", auth.Authorize)
 	group.POST("/parse_rss", h.ParseRSS)
@@ -73,6 +76,8 @@ func NewCrawlerHandler(echo *echo.Echo,
 	group.POST("/confluence/analysis_export_file", h.AnalysisConfluenceExportFile)
 	// yuque
 	group.POST("/yuque/analysis_export_file", h.AnalysisYuqueExportFile)
+	// shiyuan
+	group.POST("/shiyuan/analysis_export_file", h.AnalysisShiyuanExportFile)
 	return h
 }
 
@@ -441,6 +446,34 @@ func (h *CrawlerHandler) AnalysisYuqueExportFile(c echo.Context) error {
 	resp, err := h.yuqueusecase.AnalysisExportFile(c.Request().Context(), f, req.KbID)
 	if err != nil {
 		return h.NewResponseWithError(c, "analysis yuque export file failed", err)
+	}
+	return h.NewResponseWithData(c, resp)
+}
+
+// AnalysisShiyuanExportFile
+//
+//	@Summary		AnalysisShiyuanExportFile
+//	@Description	Analyze ShiYuan Export File
+//	@Tags			crawler
+//	@Accept			json
+//	@Produce		json
+//	@Param			file	formData	file	true	"file"
+//	@Param			kb_id	formData	string	true	"kb_id"
+//	@Success		200		{object}	domain.Response{data=[]domain.ShiYuanResp}
+//	@Router			/api/v1/crawler/shiyuan/analysis_export_file [post]
+func (h *CrawlerHandler) AnalysisShiyuanExportFile(c echo.Context) error {
+	f, err := c.FormFile("file")
+	if err != nil {
+		return h.NewResponseWithError(c, "get file failed", err)
+	}
+	var req domain.ShiYuanReq
+	req.KBID = c.FormValue("kb_id")
+	if err := c.Validate(req); err != nil {
+		return h.NewResponseWithError(c, "validate failed", err)
+	}
+	resp, err := h.shiyuanusecase.AnalysisExportFile(c.Request().Context(), f, req.KBID)
+	if err != nil {
+		return h.NewResponseWithError(c, fmt.Sprintf("analysis shiyuan export file failed%s", err.Error()), err)
 	}
 	return h.NewResponseWithData(c, resp)
 }
