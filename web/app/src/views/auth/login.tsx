@@ -86,7 +86,14 @@ export default function Login() {
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
-      handleLogin();
+      if (authType === DomainAuthType.AuthTypeEnterprise && sourceType === ConstsSourceType.SourceTypeLDAP) {
+        // For LDAP auth, check if both username and password are filled before submitting
+        if (username.trim() && password.trim()) {
+          handleLDAPLogin();
+        }
+      } else {
+        handleLogin();
+      }
     }
   };
 
@@ -322,7 +329,6 @@ export default function Login() {
                             value={username}
                             autoFocus
                             onChange={(e) => setUsername(e.target.value)}
-                            onKeyDown={handleKeyDown}
                             placeholder='用户名'
                             disabled={loading}
                             slotProps={{
