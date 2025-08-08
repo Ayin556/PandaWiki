@@ -30,6 +30,7 @@ export enum ConstsSourceType {
   SourceTypeWeCom = "wecom",
   SourceTypeOAuth = "oauth",
   SourceTypeCAS = "cas",
+  SourceTypeLDAP = "ldap",
 }
 
 export interface DomainCommentModerateListReq {
@@ -118,6 +119,10 @@ export interface GithubComChaitinPandaWikiProApiAuthV1AuthGetResp {
   authorize_url?: string;
   auths?: GithubComChaitinPandaWikiProApiAuthV1AuthItem[];
   avatar_field?: string;
+  /** 绑定DN */
+  bind_dn?: string;
+  /** 绑定密码 */
+  bind_password?: string;
   cas_url?: string;
   /** CAS特定配置 */
   cas_version?: string;
@@ -125,10 +130,16 @@ export interface GithubComChaitinPandaWikiProApiAuthV1AuthGetResp {
   client_secret?: string;
   email_field?: string;
   id_field?: string;
+  /** LDAP特定配置 */
+  ldap_server_url?: string;
   name_field?: string;
   scopes?: string[];
   source_type?: ConstsSourceType;
   token_url?: string;
+  /** 用户基础DN */
+  user_base_dn?: string;
+  /** 用户查询过滤器 */
+  user_filter?: string;
   user_info_url?: string;
 }
 
@@ -146,17 +157,28 @@ export interface GithubComChaitinPandaWikiProApiAuthV1AuthSetReq {
   agent_id?: string;
   authorize_url?: string;
   avatar_field?: string;
+  /** 绑定DN */
+  bind_dn?: string;
+  /** 绑定密码 */
+  bind_password?: string;
   cas_url?: string;
+  /** CAS特定配置 */
   cas_version?: string;
   client_id?: string;
   client_secret?: string;
   email_field?: string;
   id_field?: string;
   kb_id?: string;
+  /** LDAP特定配置 */
+  ldap_server_url?: string;
   name_field?: string;
   scopes?: string[];
   source_type?: ConstsSourceType;
   token_url?: string;
+  /** 用户基础DN */
+  user_base_dn?: string;
+  /** 用户查询过滤器 */
+  user_filter?: string;
   user_info_url?: string;
 }
 
@@ -186,6 +208,17 @@ export interface GithubComChaitinPandaWikiProApiShareV1AuthFeishuReq {
 export interface GithubComChaitinPandaWikiProApiShareV1AuthFeishuResp {
   url?: string;
 }
+
+export interface GithubComChaitinPandaWikiProApiShareV1AuthLDAPReq {
+  kb_id?: string;
+  password: string;
+  username: string;
+}
+
+export type GithubComChaitinPandaWikiProApiShareV1AuthLDAPResp = Record<
+  string,
+  any
+>;
 
 export interface GithubComChaitinPandaWikiProApiShareV1AuthOAuthReq {
   kb_id?: string;
@@ -237,7 +270,7 @@ export interface HandlerV1DocFeedBackLists {
 
 export interface GetApiProV1AuthGetParams {
   kb_id?: string;
-  source_type?: "dingtalk" | "feishu" | "wecom" | "oauth" | "cas";
+  source_type?: "dingtalk" | "feishu" | "wecom" | "oauth" | "cas" | "ldap";
 }
 
 export interface GetApiProV1DocumentListParams {
@@ -263,15 +296,17 @@ export interface GetApiProV1PromptParams {
 }
 
 export interface PostApiV1LicensePayload {
+  /** license edition */
+  license_edition: "contributor" | "enterprise";
   /** license type */
   license_type: "file" | "code";
   /**
    * license file
    * @format binary
    */
-  license_file: File;
+  license_file?: File;
   /** license code */
-  license_code: string;
+  license_code?: string;
 }
 
 export interface PostShareProV1DocumentFeedbackPayload {

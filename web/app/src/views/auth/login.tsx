@@ -6,6 +6,7 @@ import {
   postShareProV1AuthWecom,
   postShareProV1AuthOauth,
   postShareProV1AuthCas,
+  postShareProV1AuthLdap,
 } from '@/request/pro/ShareAuth';
 import {
   getShareV1AuthGet,
@@ -36,10 +37,14 @@ import {
   IconQiyeweixin,
   IconOAuth,
   IconCAS,
+  IconUser,
+  IconPassword,
+  IconLDAP,
 } from '@/components/icons';
 
 export default function Login() {
   const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(false);
   const [authType, setAuthType] = useState<DomainAuthType>();
   const [sourceType, setSourceType] = useState<ConstsSourceType>();
@@ -123,6 +128,30 @@ export default function Login() {
     }).then((res) => {
       window.location.href = res.url || '/';
     });
+  };
+
+  const handleLDAPLogin = () => {
+    if (!kb_id) {
+      message.error('知识库配置错误');
+      return;
+    }
+    setLoading(true);
+    try {
+      postShareProV1AuthLdap({
+        username,
+        password,
+      }).then(() => {
+        getShareV1NodeList().then((res) => {
+          setNodeList?.((res as any) ?? []);
+          message.success('认证成功');
+          router.push('/');
+        });
+      });
+    } catch (error) {
+      message.error('认证失败，请重试');
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -260,6 +289,98 @@ export default function Login() {
                   <IconButton onClick={handleCASLogin}>
                     <IconCAS sx={{ fontSize: 40 }}></IconCAS>
                   </IconButton>
+                )}
+
+                {sourceType === ConstsSourceType.SourceTypeLDAP && (
+                  <Stack spacing={2} width='100%'>
+                    {(() => {
+                      const textFieldSx = {
+                        borderRadius: '10px',
+                        overflow: 'hidden',
+                        '& .MuiInputBase-input': {
+                          p: 2,
+                          lineHeight: '24px',
+                          height: '24px',
+                          fontFamily: 'Mono',
+                        },
+                        '& .MuiOutlinedInput-root': {
+                          pr: '18px',
+                          bgcolor: 'background.paper',
+                          '& fieldset': {
+                            borderRadius: '10px',
+                            borderColor: 'divider',
+                            px: 2,
+                          },
+                        },
+                      };
+
+                      return (
+                        <>
+                          <TextField
+                            fullWidth
+                            type='text'
+                            value={username}
+                            autoFocus
+                            onChange={(e) => setUsername(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            placeholder='用户名'
+                            disabled={loading}
+                            slotProps={{
+                              input: {
+                                startAdornment: (
+                                  <InputAdornment position='start'>
+                                    <IconUser
+                                      sx={{ fontSize: 16, width: 24, height: 16 }}
+                                    />
+                                  </InputAdornment>
+                                ),
+                              },
+                            }}
+                            sx={textFieldSx}
+                          />
+                          <TextField
+                            fullWidth
+                            type='password'
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            placeholder='密码'
+                            disabled={loading}
+                            slotProps={{
+                              input: {
+                                startAdornment: (
+                                  <InputAdornment position='start'>
+                                    <IconPassword
+                                      sx={{ fontSize: 16, width: 24, height: 16 }}
+                                    />
+                                  </InputAdornment>
+                                ),
+                              },
+                            }}
+                            sx={textFieldSx}
+                          />
+                          <Button
+                            fullWidth
+                            variant='contained'
+                            onClick={handleLDAPLogin}
+                            sx={{
+                              mt: 2,
+                              height: '50px',
+                              fontSize: 16,
+                              borderRadius: '10px',
+                              boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)'
+                            }}
+                            startIcon={<IconLDAP sx={{
+                              fontSize: 16, width: 24, height: 16, color: (loading || !username.trim() || !password.trim()) ? '' : '#e73f3f'
+                            }} />}
+                            disabled={loading || !username.trim() || !password.trim()}
+                          >
+                            {loading ? '验证中...' : '登录'}
+                          </Button>
+                        </>
+                      );
+                    })()}
+                  </Stack>
                 )}
               </>
             )}
