@@ -109,6 +109,7 @@ export enum ConstsSourceType {
   SourceTypeWeCom = "wecom",
   SourceTypeOAuth = "oauth",
   SourceTypeCAS = "cas",
+  SourceTypeLDAP = "ldap",
 }
 
 export interface DomainAIFeedbackSettings {

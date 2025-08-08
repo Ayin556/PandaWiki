@@ -97,6 +97,12 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
       email_field: '',
       cas_url: '',
       cas_version:'2',
+      // ldap
+      bind_dn: '',
+      bind_password: '',
+      ldap_server_url: '',
+      user_base_dn: '',
+      user_filter: '',
     },
   });
 
@@ -137,6 +143,12 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
             email_field: value.email_field,
             cas_url: value.cas_url,
             cas_version: value.cas_version,
+            // ldap
+            bind_dn: value.bind_dn,
+            bind_password: value.bind_password,
+            ldap_server_url: value.ldap_server_url,
+            user_base_dn: value.user_base_dn,
+            user_filter: value.user_filter,
           })
         : Promise.resolve(),
     ]).then(() => {
@@ -190,6 +202,12 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
       setValue('email_field', res.email_field!);
       setValue('cas_url', res.cas_url!);
       setValue('cas_version', res.cas_version!);
+      // ldap
+      setValue('bind_dn', res.bind_dn!);
+      setValue('bind_password', res.bind_password!)
+      setValue('ldap_server_url', res.ldap_server_url!),
+      setValue('user_base_dn', res.user_base_dn!),
+      setValue('user_filter', res.user_filter!)
     });
   }, [kb_id, isPro, source_type, enabled]);
 
@@ -551,6 +569,111 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
     );
   };
 
+  const ldapForm = () => {
+    return (
+      <>
+        <FormItem label='LDAP Server URL' required>
+          <Controller
+            control={control}
+            rules={{
+              required: 'LDAP Server URL 不能为空',
+            }}
+            name='ldap_server_url'
+            render={({ field }) => (
+              <TextField
+                {...field}
+                fullWidth
+                placeholder='请输入'
+                error={!!errors.cas_url}
+                helperText={errors.ldap_server_url?.message}
+                onChange={(e) => {
+                  field.onChange(e.target.value);
+                  setIsEdit(true);
+                }}
+              />
+            )}
+          />
+        </FormItem>
+        <FormItem label='Bind DN' required>
+          <Controller
+            control={control}
+            name='bind_dn'
+            render={({ field }) => (
+              <TextField
+                {...field}
+                fullWidth
+                placeholder='请输入'
+                error={!!errors.bind_dn}
+                helperText={errors.bind_dn?.message}
+                onChange={(e) => {
+                  field.onChange(e.target.value);
+                  setIsEdit(true);
+                }}
+              />
+            )}
+          />
+        </FormItem>
+        <FormItem label='Bind Password' required>
+          <Controller
+            control={control}
+            name='bind_password'
+            render={({ field }) => (
+              <TextField
+                {...field}
+                fullWidth
+                placeholder='请输入'
+                error={!!errors.bind_password}
+                helperText={errors.bind_password?.message}
+                onChange={(e) => {
+                  field.onChange(e.target.value);
+                  setIsEdit(true);
+                }}
+              />
+            )}
+          />
+        </FormItem>
+        <FormItem label='用户 Base DN' required>
+          <Controller
+            control={control}
+            name='user_base_dn'
+            render={({ field }) => (
+              <TextField
+                {...field}
+                fullWidth
+                placeholder='请输入'
+                error={!!errors.user_base_dn}
+                helperText={errors.user_base_dn?.message}
+                onChange={(e) => {
+                  field.onChange(e.target.value);
+                  setIsEdit(true);
+                }}
+              />
+            )}
+          />
+        </FormItem>
+        <FormItem label='用户查询条件' required>
+          <Controller
+            control={control}
+            name='user_filter'
+            render={({ field }) => (
+              <TextField
+                {...field}
+                fullWidth
+                placeholder='请输入'
+                error={!!errors.user_filter}
+                helperText={errors.user_filter?.message}
+                onChange={(e) => {
+                  field.onChange(e.target.value);
+                  setIsEdit(true);
+                }}
+              />
+            )}
+          />
+        </FormItem>
+      </>
+    );
+  };
+
   return (
     <>
       <Stack
@@ -722,6 +845,9 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
                   <MenuItem value={ConstsSourceType.SourceTypeCAS}>
                     CAS 登录
                   </MenuItem>
+                  <MenuItem value={ConstsSourceType.SourceTypeLDAP}>
+                    LDAP 登录
+                  </MenuItem>
                 </Select>
               )}
             />
@@ -815,6 +941,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
 
           {source_type === ConstsSourceType.SourceTypeOAuth && oauthForm()}
           {source_type === ConstsSourceType.SourceTypeCAS && casForm()}
+          {source_type === ConstsSourceType.SourceTypeLDAP && ldapForm()}
           <Box
             sx={{
               display: 'flex',
