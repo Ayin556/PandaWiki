@@ -1,4 +1,4 @@
-import { createNode, ImportDocListItem, ImportDocProps, parseYuque } from "@/api"
+import { createNode, ImportDocListItem, ImportDocProps, parseSiyuan } from "@/api"
 import Upload from "@/components/UploadFile/Drag"
 import { useAppSelector } from "@/store"
 import { formatByte } from "@/utils"
@@ -27,7 +27,7 @@ const StepText = {
   }
 }
 
-const ImportDocYuque = ({ open, refresh, onCancel, parentId = null }: ImportDocProps) => {
+const ImportDocSiyuan = ({ open, refresh, onCancel, parentId = null }: ImportDocProps) => {
 
   const { kb_id } = useAppSelector(state => state.config)
   const [step, setStep] = useState<keyof typeof StepText>('pull')
@@ -75,7 +75,7 @@ const ImportDocYuque = ({ open, refresh, onCancel, parentId = null }: ImportDocP
         const formData = new FormData()
         formData.append("file", acceptedFiles[i])
         formData.append("kb_id", kb_id)
-        const pages = await parseYuque(formData)
+        const pages = await parseSiyuan(formData)
         for (const page of pages) {
           setItems(prev => [{ url: page.title + i, title: page.title, content: page.content, success: -1, id: '' }, ...prev])
         }
@@ -159,7 +159,7 @@ const ImportDocYuque = ({ open, refresh, onCancel, parentId = null }: ImportDocP
         onChange={(accept, reject) => onChangeFile(accept, reject)}
         type='drag'
         multiple={false}
-        accept={'.lakebook'}
+        accept={'.zip'}
       />
       <Stack>
         <Box component='a'
@@ -320,4 +320,4 @@ const ImportDocYuque = ({ open, refresh, onCancel, parentId = null }: ImportDocP
   </Modal>
 }
 
-export default ImportDocYuque
+export default ImportDocSiyuan

@@ -156,7 +156,7 @@ const TreeItem = React.forwardRef<
   const menuList = useMemo(() => {
     if (menu) {
       return (
-        menu({ item, createItem, renameItem, isEditting, removeItem }) || []
+        menu({ item, createItem, renameItem, isEditing: isEditting, removeItem }) || []
       );
     }
     return [];

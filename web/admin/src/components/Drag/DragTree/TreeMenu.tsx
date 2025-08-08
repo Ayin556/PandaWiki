@@ -20,7 +20,7 @@ export type TreeMenuOptions = {
   item: ITreeItem
   createItem: (type: 1 | 2) => void
   renameItem: () => void
-  isEditting: boolean
+  isEditing: boolean
   removeItem: (id: string) => void
 }
 

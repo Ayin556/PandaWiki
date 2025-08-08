@@ -72,7 +72,7 @@ const Content = () => {
   }
 
   const menu = (opra: TreeMenuOptions): TreeMenuItem[] => {
-    const { item, createItem, renameItem, isEditting } = opra
+    const { item, createItem, renameItem, isEditing: isEditing } = opra
     return [
       ...(item.type === 1 ? [
         { label: '创建文件夹', key: 'folder', onClick: () => createItem(1) },
@@ -87,6 +87,7 @@ const Content = () => {
             { label: '通过 Epub 导入', key: 'Epub', onClick: () => handleUrl(item, 'Epub') },
             { label: '通过 Wiki.js 导入', key: 'Wiki.js', onClick: () => handleUrl(item, 'Wiki.js') },
             { label: '通过 语雀 导入', key: 'Yuque', onClick: () => handleUrl(item, 'Yuque') },
+            { label: '通过 思源笔记 导入', key: 'Siyuan', onClick: () => handleUrl(item, 'Siyuan') },
             { label: '通过飞书文档导入', key: 'Feishu', onClick: () => handleUrl(item, 'Feishu') },
             { label: '通过 Confluence 导入', key: 'Confluence', onClick: () => handleUrl(item, 'Confluence') }
           ]
@@ -98,7 +99,7 @@ const Content = () => {
         ...(item.status === 1 ? [{ label: '更新发布', key: 'update_publish', onClick: () => handlePublish(item) }] : []),
         { label: item.summary ? '查看摘要' : '生成摘要', key: 'summary', onClick: () => handleSummary(item) },
       ] : []),
-      ...(!isEditting ? [{ label: '重命名', key: 'rename', onClick: renameItem }] : []),
+      ...(!isEditing ? [{ label: '重命名', key: 'rename', onClick: renameItem }] : []),
       { label: '删除', key: 'delete', onClick: () => handleDelete(item) }
     ]
   }
