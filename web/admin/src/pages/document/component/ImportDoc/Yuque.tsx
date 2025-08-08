@@ -27,7 +27,7 @@ const StepText = {
   }
 }
 
-const ImportDocYuque = ({ open, refresh, onCancel, parentId = null, size: defaultSize }: ImportDocProps) => {
+const ImportDocYuque = ({ open, refresh, onCancel, parentId = null }: ImportDocProps) => {
 
   const { kb_id } = useAppSelector(state => state.config)
   const [step, setStep] = useState<keyof typeof StepText>('pull')
@@ -320,4 +320,4 @@ const ImportDocYuque = ({ open, refresh, onCancel, parentId = null, size: defaul
   </Modal>
 }
 
-export default ImportDocYuque 
+export default ImportDocYuque

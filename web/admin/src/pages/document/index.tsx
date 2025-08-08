@@ -72,7 +72,7 @@ const Content = () => {
   }
 
   const menu = (opra: TreeMenuOptions): TreeMenuItem[] => {
-    const { item, createItem, renameItem, isEditting } = opra
+    const { item, createItem, renameItem, isEditing: isEditing } = opra
     return [
       ...(item.type === 1 ? [
         { label: '创建文件夹', key: 'folder', onClick: () => createItem(1) },
@@ -99,7 +99,7 @@ const Content = () => {
         ...(item.status === 1 ? [{ label: '更新发布', key: 'update_publish', onClick: () => handlePublish(item) }] : []),
         { label: item.summary ? '查看摘要' : '生成摘要', key: 'summary', onClick: () => handleSummary(item) },
       ] : []),
-      ...(!isEditting ? [{ label: '重命名', key: 'rename', onClick: renameItem }] : []),
+      ...(!isEditing ? [{ label: '重命名', key: 'rename', onClick: renameItem }] : []),
       { label: '删除', key: 'delete', onClick: () => handleDelete(item) }
     ]
   }

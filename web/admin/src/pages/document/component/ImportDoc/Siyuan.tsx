@@ -27,7 +27,7 @@ const StepText = {
   }
 }
 
-const ImportDocSiyuan = ({ open, refresh, onCancel, parentId = null, size: defaultSize }: ImportDocProps) => {
+const ImportDocSiyuan = ({ open, refresh, onCancel, parentId = null }: ImportDocProps) => {
 
   const { kb_id } = useAppSelector(state => state.config)
   const [step, setStep] = useState<keyof typeof StepText>('pull')
