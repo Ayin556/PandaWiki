@@ -9,6 +9,7 @@ import RSSImport from './RSS'
 import SitemapImport from './Sitemap'
 import URLImport from './URL'
 import WikijsImport from './Wikijs'
+import ImportDocSiyuan from './Siyuan'
 
 const ImportDoc = ({ type, open, refresh, onCancel, parentId = null }: ImportDocProps & { type: ImportDocType }) => {
   switch (type) {
@@ -28,6 +29,8 @@ const ImportDoc = ({ type, open, refresh, onCancel, parentId = null }: ImportDoc
       return <WikijsImport open={open} refresh={refresh} onCancel={onCancel} parentId={parentId} />
     case 'Yuque':
       return <ImportDocYuque open={open} refresh={refresh} onCancel={onCancel} parentId={parentId} />
+    case 'Siyuan':
+      return <ImportDocSiyuan open={open} refresh={refresh} onCancel={onCancel} parentId={parentId} />
     case 'Feishu':
       return <FeishuImport open={open} refresh={refresh} onCancel={onCancel} parentId={parentId} />
     case 'Confluence':

@@ -215,6 +215,15 @@ export const parseYuque = (
     data,
   });
 
+export const parseSiyuan = (
+  data: FormData
+): Promise<{ id: string; content: string; title: string }[]> =>
+  request({
+    url: 'api/v1/crawler/shiyuan/analysis_export_file',
+    method: 'post',
+    data,
+  });
+
 export const getFeishuKnowledgeBase = (
   data: ImportDocByFeishuFormData
 ): Promise<{ space_id: string; name: string }[]> =>

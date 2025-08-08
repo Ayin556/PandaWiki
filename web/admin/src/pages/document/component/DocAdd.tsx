@@ -88,6 +88,13 @@ const DocAdd = ({ refresh }: InputContentProps) => {
         setKey('Yuque')
       }
     },
+    'Siyuan': {
+      label: '通过 思源笔记 导入',
+      onClick: () => {
+        setUrlOpen(true)
+        setKey('Siyuan')
+      }
+    },
     Feishu: {
       label: '通过飞书文档导入',
       onClick: () => {

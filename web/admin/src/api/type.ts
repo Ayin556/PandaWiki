@@ -567,6 +567,7 @@ export type ImportDocType =
   | 'Epub'
   | 'Wiki.js'
   | 'Yuque'
+  | 'Siyuan'
   | 'Feishu'
   | 'Confluence';
 
