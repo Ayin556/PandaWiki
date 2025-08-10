@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	modelkit "github.com/chaitin/ModelKit/usecase"
 	"github.com/cloudwego/eino/schema"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -199,7 +200,15 @@ func (u *ChatUsecase) Chat(ctx context.Context, req *domain.ChatRequest) (<-chan
 		// 5. LLM inference (streaming callback), message storage, token statistics
 		answer := ""
 		usage := schema.TokenUsage{}
-		chatModel, err := u.llmUsecase.GetChatModel(ctx, req.ModelInfo)
+
+		modelkitModel, err := req.ModelInfo.ToModelkitModel()
+		if err != nil {
+			u.logger.Error("failed to convert model to modelkit model", log.Error(err))
+			eventCh <- domain.SSEEvent{Type: "error", Content: "failed to convert model to modelkit model"}
+			return
+		}
+		chatModel, err := modelkit.GetChatModel(ctx, modelkitModel)
+
 		if err != nil {
 			u.logger.Error("failed to get chat model", log.Error(err))
 			eventCh <- domain.SSEEvent{Type: "error", Content: "failed to get chat model"}
