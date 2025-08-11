@@ -473,7 +473,7 @@ func (h *CrawlerHandler) AnalysisSiyuanExportFile(c echo.Context) error {
 	}
 	resp, err := h.siyuanusecase.AnalysisExportFile(c.Request().Context(), f, req.KBID)
 	if err != nil {
-		return h.NewResponseWithError(c, fmt.Sprintf("analysis siyuan export file failed%s", err.Error()), err)
+		return h.NewResponseWithError(c, fmt.Sprintf("analysis file failed%s", err.Error()), err)
 	}
 	return h.NewResponseWithData(c, resp)
 }
