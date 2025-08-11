@@ -4757,7 +4757,19 @@ const docTemplate = `{
                 "ModelProviderBrandZhiPu": "智谱"
             },
             "x-enum-descriptions": [
-                "智谱"
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "智谱",
+                ""
             ],
             "x-enum-varnames": [
                 "ModelProviderBrandOpenAI",

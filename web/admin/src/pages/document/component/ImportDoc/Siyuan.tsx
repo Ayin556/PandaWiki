@@ -144,7 +144,7 @@ const ImportDocSiyuan = ({ open, refresh, onCancel, parentId = null }: ImportDoc
   }
 
   return <Modal
-    title={`通过 语雀 导入`}
+    title={`通过 思源笔记 导入`}
     open={open}
     onCancel={handleCancel}
     onOk={handleOk}
@@ -163,7 +163,7 @@ const ImportDocSiyuan = ({ open, refresh, onCancel, parentId = null }: ImportDoc
       />
       <Stack>
         <Box component='a'
-          href='https://pandawiki.docs.baizhi.cloud/node/01976929-0e76-77a9-aed9-842e60933464#%E9%80%9A%E8%BF%87%E8%AF%AD%E9%9B%80%E5%AF%BC%E5%85%A5' target='_blank'
+          href='https://pandawiki.docs.baizhi.cloud/node/01976929-0e76-77a9-aed9-842e60933464#%E9%80%9A%E8%BF%87%E6%80%9D%E6%BA%90%E7%AC%94%E8%AE%B0%E5%AF%BC%E5%85%A5' target='_blank'
           sx={{ fontSize: 12, color: 'primary.main', display: 'block', mt: 1 }}>
           使用方法
         </Box>

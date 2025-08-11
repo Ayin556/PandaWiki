@@ -31,12 +31,12 @@ import {
   DomainSearchDocxResp,
   DomainSearchWikiReq,
   DomainSearchWikiResp,
-  DomainShiYuanResp,
+  DomainSiYuanResp,
   DomainWikiJSResp,
   DomainYuqueResp,
   PostApiV1CrawlerConfluenceAnalysisExportFilePayload,
   PostApiV1CrawlerEpubConvertPayload,
-  PostApiV1CrawlerShiyuanAnalysisExportFilePayload,
+  PostApiV1CrawlerSiyuanAnalysisExportFilePayload,
   PostApiV1CrawlerWikijsAnalysisExportFilePayload,
   PostApiV1CrawlerYuqueAnalysisExportFilePayload,
 } from "./types";
@@ -372,28 +372,28 @@ export const postApiV1CrawlerScrape = (
   });
 
 /**
- * @description Analyze ShiYuan Export File
+ * @description Analyze SiYuan Export File
  *
  * @tags crawler
- * @name PostApiV1CrawlerShiyuanAnalysisExportFile
- * @summary AnalysisShiyuanExportFile
- * @request POST:/api/v1/crawler/shiyuan/analysis_export_file
+ * @name PostApiV1CrawlerSiyuanAnalysisExportFile
+ * @summary AnalysisSiyuanExportFile
+ * @request POST:/api/v1/crawler/siyuan/analysis_export_file
  * @response `200` `(DomainResponse & {
-    data?: (DomainShiYuanResp)[],
+    data?: (DomainSiYuanResp)[],
 
 })` OK
  */
 
-export const postApiV1CrawlerShiyuanAnalysisExportFile = (
-  data: PostApiV1CrawlerShiyuanAnalysisExportFilePayload,
+export const postApiV1CrawlerSiyuanAnalysisExportFile = (
+  data: PostApiV1CrawlerSiyuanAnalysisExportFilePayload,
   params: RequestParams = {},
 ) =>
   httpRequest<
     DomainResponse & {
-      data?: DomainShiYuanResp[];
+      data?: DomainSiYuanResp[];
     }
   >({
-    path: `/api/v1/crawler/shiyuan/analysis_export_file`,
+    path: `/api/v1/crawler/siyuan/analysis_export_file`,
     method: "POST",
     body: data,
     type: ContentType.FormData,
