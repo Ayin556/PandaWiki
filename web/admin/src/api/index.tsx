@@ -224,6 +224,15 @@ export const parseSiyuan = (
     data,
   });
 
+export const parseMinDoc = (
+  data: FormData,
+): Promise<{ id: string; content: string; title: string }[]> =>
+  request({
+    url: 'api/v1/crawler/siyuan/analysis_export_file',
+    method: 'post',
+    data,
+  });
+
 export const getFeishuKnowledgeBase = (
   data: ImportDocByFeishuFormData,
 ): Promise<{ space_id: string; name: string }[]> =>
