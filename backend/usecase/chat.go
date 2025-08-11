@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"time"
 
@@ -21,20 +22,47 @@ type ChatUsecase struct {
 	modelUsecase        *ModelUsecase
 	appRepo             *pg.AppRepository
 	blockWordRepo       *pg.BlockWordRepo
+	kbRepo              *pg.KnowledgeBaseRepository
 	logger              *log.Logger
 }
 
-func NewChatUsecase(llmUsecase *LLMUsecase, conversationUsecase *ConversationUsecase, modelUsecase *ModelUsecase, appRepo *pg.AppRepository,
-	blockWordRepo *pg.BlockWordRepo, logger *log.Logger) *ChatUsecase {
+func NewChatUsecase(llmUsecase *LLMUsecase, kbRepo *pg.KnowledgeBaseRepository, conversationUsecase *ConversationUsecase, modelUsecase *ModelUsecase, appRepo *pg.AppRepository,
+	blockWordRepo *pg.BlockWordRepo, logger *log.Logger) (*ChatUsecase, error) {
 	u := &ChatUsecase{
 		llmUsecase:          llmUsecase,
 		conversationUsecase: conversationUsecase,
 		modelUsecase:        modelUsecase,
 		appRepo:             appRepo,
 		blockWordRepo:       blockWordRepo,
+		kbRepo:              kbRepo,
 		logger:              logger.WithModule("usecase.chat"),
 	}
-	return u
+	if err := u.initDFA(); err != nil {
+		u.logger.Error("failed to init dfa", log.Error(err))
+		return nil, err
+	}
+	return u, nil
+}
+
+func (u *ChatUsecase) initDFA() error {
+	ctx := context.Background()
+	kbList, err := u.kbRepo.GetKnowledgeBaseList(context.Background())
+	if err != nil {
+		return fmt.Errorf("failed to get kb list: %w", err)
+	}
+	for _, kb := range kbList {
+		if kb != nil {
+			words, err := u.blockWordRepo.GetBlockWords(ctx, kb.ID)
+			if err != nil {
+				u.logger.Error("failed to get words", log.Error(err), log.String("kb_id", kb.ID))
+				return fmt.Errorf("failed to get words for kb: %w", err)
+			}
+			if len(words) > 0 {
+				utils.InitDFA(kb.ID, words)
+			}
+		}
+	}
+	return nil
 }
 
 func (u *ChatUsecase) Chat(ctx context.Context, req *domain.ChatRequest) (<-chan domain.SSEEvent, error) {
@@ -126,7 +154,7 @@ func (u *ChatUsecase) Chat(ctx context.Context, req *domain.ChatRequest) (<-chan
 			return
 		}
 		if len(blockWords) > 0 { // check --> filter
-			questionFilter := utils.GetDFA()
+			questionFilter := utils.GetDFA(req.KBID)
 			if err := questionFilter.Check(req.Message); err != nil { // exist then return err
 				answer := "**您的问题包含敏感词, AI 无法回答你的问题**"
 				eventCh <- domain.SSEEvent{Type: "error", Content: answer}
@@ -245,7 +273,7 @@ func (u *ChatUsecase) CreateAcOnChunk(ctx context.Context, kbID string, answer *
 		}
 	}
 	// get filter --> exist
-	filter := utils.GetDFA()
+	filter := utils.GetDFA(kbID)
 
 	onChunk := func(ctx context.Context, dataType, chunk string) error {
 		buffer.WriteString(chunk)

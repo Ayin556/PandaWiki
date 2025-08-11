@@ -6,20 +6,31 @@ import (
 )
 
 var (
-	dfaInstance *DFA
+	dfaInstance map[string]*DFA
+	mu          sync.RWMutex
 )
 
 // GetDFA returns the singleton instance of DFA
-func GetDFA() *DFA {
-	return dfaInstance
+func GetDFA(kbID string) *DFA {
+	mu.RLock()
+	defer mu.RUnlock()
+	return dfaInstance[kbID]
 }
 
-// NewDFA Initialize a new DFA. --> this func used by pro
-func NewDFA() *DFA {
-	dfaInstance = &DFA{
+// InitDFA Initialize a new DFA. --> this func used by pro
+func InitDFA(kbID string, words []string) {
+	mu.Lock()
+	defer mu.Unlock()
+	newDFA := &DFA{
 		Root: NewTrieNode(),
 	}
-	return dfaInstance
+	for _, word := range words {
+		newDFA.AddWord(word)
+	}
+	if dfaInstance == nil {
+		dfaInstance = make(map[string]*DFA)
+	}
+	dfaInstance[kbID] = newDFA
 }
 
 // TrieNode Define the nodes of DFA

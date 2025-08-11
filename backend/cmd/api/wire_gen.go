@@ -103,7 +103,10 @@ func createApp() (*App, error) {
 	conversationUsecase := usecase.NewConversationUsecase(conversationRepository, nodeRepository, geoRepo, logger, ipAddressRepo)
 	modelUsecase := usecase.NewModelUsecase(modelRepository, nodeRepository, ragRepository, ragService, logger, configConfig, knowledgeBaseRepository)
 	blockWordRepo := pg2.NewBlockWordRepo(db, logger)
-	chatUsecase := usecase.NewChatUsecase(llmUsecase, conversationUsecase, modelUsecase, appRepository, blockWordRepo, logger)
+	chatUsecase, err := usecase.NewChatUsecase(llmUsecase, knowledgeBaseRepository, conversationUsecase, modelUsecase, appRepository, blockWordRepo, logger)
+	if err != nil {
+		return nil, err
+	}
 	appUsecase := usecase.NewAppUsecase(appRepository, nodeUsecase, logger, configConfig, chatUsecase)
 	appHandler := v1.NewAppHandler(echo, baseHandler, logger, authMiddleware, appUsecase, modelUsecase, conversationUsecase, configConfig)
 	fileUsecase := usecase.NewFileUsecase(logger, minioClient, configConfig)
