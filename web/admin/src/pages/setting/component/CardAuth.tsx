@@ -126,7 +126,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
           source_type: value.source_type,
         },
       }),
-      value.enabled === '3' && isPro
+      value.enabled === '3' && isEnterprise
         ? postApiProV1AuthSet({
             kb_id,
             source_type: value.source_type,
@@ -161,8 +161,8 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
     });
   });
 
-  const isPro = useMemo(() => {
-    return license.edition === 1 || license.edition === 2;
+  const isEnterprise = useMemo(() => {
+    return license.edition === 2;
   }, [license]);
 
   useEffect(() => {
@@ -177,13 +177,13 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
       setValue('enabled', kb.access_settings.simple_auth.enabled ? '2' : '1');
       setValue('password', kb.access_settings.simple_auth.password ?? '');
     }
-    if (kb.access_settings?.enterprise_auth?.enabled && isPro) {
+    if (kb.access_settings?.enterprise_auth?.enabled && isEnterprise) {
       setValue('enabled', '3');
     }
-  }, [kb, isPro]);
+  }, [kb, isEnterprise]);
 
   useEffect(() => {
-    if (!isPro || !kb_id || enabled !== '3') return;
+    if (!isEnterprise || !kb_id || enabled !== '3') return;
     getApiProV1AuthGet({
       kb_id,
       source_type: source_type,
@@ -205,11 +205,11 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
       // ldap
       setValue('bind_dn', res.bind_dn!);
       setValue('bind_password', res.bind_password!);
-      (setValue('ldap_server_url', res.ldap_server_url!),
-        setValue('user_base_dn', res.user_base_dn!),
-        setValue('user_filter', res.user_filter!));
+      setValue('ldap_server_url', res.ldap_server_url!);
+      setValue('user_base_dn', res.user_base_dn!);
+      setValue('user_filter', res.user_filter!);
     });
-  }, [kb_id, isPro, source_type, enabled]);
+  }, [kb_id, isEnterprise, source_type, enabled]);
 
   const columns = [
     {
@@ -757,7 +757,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
               />
               <FormControlLabel
                 value={'3'}
-                control={<Radio size='small' disabled={!isPro} />}
+                control={<Radio size='small' disabled={!isEnterprise} />}
                 label={
                   <Stack
                     direction='row'
@@ -766,7 +766,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
                     sx={{ width: 135 }}
                   >
                     企业级身份认证
-                    {!isPro && (
+                    {!isEnterprise && (
                       <Tooltip title='企业版可用' placement='top' arrow>
                         <InfoIcon
                           sx={{ color: 'text.secondary', fontSize: 14 }}

@@ -17,3 +17,15 @@ declare module '@tiptap/core' {
     };
   }
 }
+
+declare module '@mui/material/styles/createPalette' {
+  interface TypeBackground {
+    paper0?: string;
+    paper2?: string;
+    chip?: string;
+    circle?: string;
+    hover?: string;
+    focus?: string;
+    disabled?: string;
+  }
+}
