@@ -111,37 +111,75 @@ const AuthTypeModal = ({
                 {EditionType[license.edition as keyof typeof EditionType].text}
               </Box>
               {license.edition === 0 ? (
-                <Button
-                  size='small'
-                  startIcon={
-                    <Box>
-                      <LottieIcon
-                        id='version'
-                        src={Takeoff}
-                        style={{ width: 16, height: 16, display: 'flex' }}
-                      />
-                    </Box>
-                  }
-                  onClick={() => setUpdateOpen(true)}
-                >
-                  激活授权
-                </Button>
+                <Stack direction={'row'} gap={2}>
+                  <Button
+                    size='small'
+                    startIcon={
+                      <Box>
+                        <LottieIcon
+                          id='version'
+                          src={Takeoff}
+                          style={{ width: 16, height: 16, display: 'flex' }}
+                        />
+                      </Box>
+                    }
+                    onClick={() => setUpdateOpen(true)}
+                  >
+                    激活授权
+                  </Button>
+                  <Button
+                    size='small'
+                    startIcon={
+                      <Box>
+                        <LottieIcon
+                          id='consult'
+                          src={HelpCenter}
+                          style={{ width: 16, height: 16, display: 'flex' }}
+                        />
+                      </Box>
+                    }
+                    onClick={() => {
+                      window.open('https://baizhi.cloud/consult');
+                    }}
+                  >
+                    商务咨询
+                  </Button>
+                </Stack>
               ) : (
-                <Button
-                  size='small'
-                  startIcon={
-                    <Box>
-                      <LottieIcon
-                        id='version'
-                        src={Takeoff}
-                        style={{ width: 16, height: 16, display: 'flex' }}
-                      />
-                    </Box>
-                  }
-                  onClick={() => setUpdateOpen(true)}
-                >
-                  切换授权
-                </Button>
+                <Stack direction={'row'} gap={2}>
+                  <Button
+                    size='small'
+                    startIcon={
+                      <Box>
+                        <LottieIcon
+                          id='version'
+                          src={Takeoff}
+                          style={{ width: 16, height: 16, display: 'flex' }}
+                        />
+                      </Box>
+                    }
+                    onClick={() => setUpdateOpen(true)}
+                  >
+                    切换授权
+                  </Button>
+                  <Button
+                    size='small'
+                    startIcon={
+                      <Box>
+                        <LottieIcon
+                          id='consult'
+                          src={HelpCenter}
+                          style={{ width: 16, height: 16, display: 'flex' }}
+                        />
+                      </Box>
+                    }
+                    onClick={() => {
+                      window.open('https://baizhi.cloud/consult');
+                    }}
+                  >
+                    商务咨询
+                  </Button>
+                </Stack>
               )}
             </Stack>
           </Stack>
@@ -167,6 +205,8 @@ const AuthTypeModal = ({
               )}
             </Box>
           )}
+
+          
         </Stack>
       </Modal>
       <Modal
