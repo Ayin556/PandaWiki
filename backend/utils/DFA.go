@@ -121,7 +121,7 @@ func (d *DFA) Filter(text string) string {
 				node = nextNode // 下移
 				if node.IsEnd { // 是否为结尾，即匹配到敏感词，替换为*
 					for k := i; k <= j; k++ {
-						result[k] = 'x'
+						result[k] = '🚫'
 					}
 				}
 				j++ // next char
