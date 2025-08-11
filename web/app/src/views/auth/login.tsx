@@ -12,11 +12,12 @@ import {
   getShareV1AuthGet,
   postShareV1AuthLoginSimple,
 } from '@/request/ShareAuth';
+import { clearCookie } from '@/utils/cookie';
 import { getShareV1NodeList } from '@/request/ShareNode';
 
 import { DomainAuthType, ConstsSourceType } from '@/request/types';
 import Logo from '@/assets/images/logo.png';
-import Footer from '@/components/footer';
+import { FooterProvider } from '@/components/footer';
 import { useStore } from '@/provider';
 import {
   Box,
@@ -49,25 +50,16 @@ export default function Login() {
   const [authType, setAuthType] = useState<DomainAuthType>();
   const [sourceType, setSourceType] = useState<ConstsSourceType>();
   const router = useRouter();
-  const {
-    kbDetail,
-    kb_id,
-    themeMode,
-    mobile = false,
-    setNodeList,
-  } = useStore();
+  const { kbDetail, themeMode, mobile = false, setNodeList } = useStore();
 
   const handleLogin = async () => {
     if (!password.trim()) {
       message.error('请输入访问口令');
       return;
     }
-    if (!kb_id) {
-      message.error('知识库配置错误');
-      return;
-    }
     setLoading(true);
     try {
+      clearCookie();
       postShareV1AuthLoginSimple({
         password,
       }).then(() => {
@@ -98,6 +90,7 @@ export default function Login() {
   };
 
   const handleDingTalkLogin = () => {
+    clearCookie();
     postShareProV1AuthDingtalk({
       redirect_url: window.location.origin,
     }).then((res) => {
@@ -106,6 +99,7 @@ export default function Login() {
   };
 
   const handleFeishuLogin = () => {
+    clearCookie();
     postShareProV1AuthFeishu({
       redirect_url: window.location.origin,
     }).then((res) => {
@@ -114,6 +108,7 @@ export default function Login() {
   };
 
   const handleQiyeweixinLogin = () => {
+    clearCookie();
     postShareProV1AuthWecom({
       redirect_url: window.location.origin,
     }).then((res) => {
@@ -122,6 +117,7 @@ export default function Login() {
   };
 
   const handleOAuthLogin = () => {
+    clearCookie();
     postShareProV1AuthOauth({
       redirect_url: window.location.origin,
     }).then((res) => {
@@ -411,7 +407,7 @@ export default function Login() {
           margin: '0 auto',
         }}
       >
-        <Footer showBrand={false} />
+        <FooterProvider showBrand={false} />
       </Box>
     </>
   );

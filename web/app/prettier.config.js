@@ -1,5 +1,4 @@
 module.exports = {
-  parser: 'typescript',
   tabWidth: 2,
   useTabs: false,
   semi: true,
@@ -9,7 +8,7 @@ module.exports = {
   trailingComma: 'all',
   bracketSpacing: true,
   bracketSameLine: false,
-  arrowParens: 'always',
+  arrowParens: 'avoid',
   rangeStart: 0,
   rangeEnd: Infinity,
   requirePragma: false,
@@ -17,4 +16,4 @@ module.exports = {
   proseWrap: 'preserve',
   htmlWhitespaceSensitivity: 'css',
   endOfLine: 'lf',
-}
+};

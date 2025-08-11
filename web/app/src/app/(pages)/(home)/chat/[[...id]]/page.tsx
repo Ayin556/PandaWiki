@@ -1,5 +1,5 @@
 import { ConversationItem } from '@/assets/type';
-import Footer from '@/components/footer';
+import { FooterProvider } from '@/components/footer';
 import Header from '@/components/header';
 import Chat from '@/views/chat';
 import Catalog from '@/views/node/Catalog';
@@ -75,7 +75,7 @@ const ChatPage = async ({ params }: PageProps) => {
       <Catalog />
       <Header />
       <Chat conversation={conversation} />
-      <Footer />
+      <FooterProvider />
     </Box>
   );
 };

@@ -26,6 +26,7 @@ PandaWiki 是一个基于 Next.js 的 Wiki 知识库系统，支持文档管理�
    ```
 3. 配置环境变量：
    - 在项目根目录下，新建文件 `.env.local` , 根据需求修改环境变量，实际字段如下：
+
      ```env
      # 目标服务配置
      TARGET=http://your_target_ip:8000 # 后端服务地址
@@ -38,6 +39,7 @@ PandaWiki 是一个基于 Next.js 的 Wiki 知识库系统，支持文档管理�
      SWAGGER_BASE_URL=http://your_swagger_ip:8000 # Swagger API 文档地址
      SWAGGER_AUTH_TOKEN=your_swagger_token # Swagger 认证令牌
      ```
+
 4. 启动开发服务器：
    ```bash
    pnpm dev

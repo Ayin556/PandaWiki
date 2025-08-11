@@ -15,7 +15,7 @@ import ChatWindow from './ChatWindow';
 
 const Widget = () => {
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down('sm'));
-  const { widget, themeMode, kb_id } = useStore();
+  const { widget, themeMode } = useStore();
 
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
   const sseClientRef = useRef<SSEClient<{
@@ -97,7 +97,7 @@ const Widget = () => {
               return newAnswer;
             });
           }
-        }
+        },
       );
     }
   };
@@ -153,36 +153,34 @@ const Widget = () => {
   }, [handleScroll]);
 
   useEffect(() => {
-    if (kb_id) {
-      sseClientRef.current = new SSEClient({
-        url: `/share/v1/chat/widget`,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        onCancel: () => {
-          setLoading(false);
-          setThinking(4);
-          setAnswer((prev) => {
-            let value = '';
-            if (prev) {
-              value = prev + '\n\n<error>Request canceled</error>';
+    sseClientRef.current = new SSEClient({
+      url: `/share/v1/chat/widget`,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      onCancel: () => {
+        setLoading(false);
+        setThinking(4);
+        setAnswer((prev) => {
+          let value = '';
+          if (prev) {
+            value = prev + '\n\n<error>Request canceled</error>';
+          }
+          setConversation((prev) => {
+            const newConversation = [...prev];
+            if (newConversation.length > 0) {
+              newConversation[newConversation.length - 1].a = value;
+              newConversation[newConversation.length - 1].update_time =
+                dayjs().format('YYYY-MM-DD HH:mm:ss');
+              newConversation[newConversation.length - 1].message_id =
+                messageIdRef.current;
             }
-            setConversation((prev) => {
-              const newConversation = [...prev];
-              if (newConversation.length > 0) {
-                newConversation[newConversation.length - 1].a = value;
-                newConversation[newConversation.length - 1].update_time =
-                  dayjs().format('YYYY-MM-DD HH:mm:ss');
-                newConversation[newConversation.length - 1].message_id =
-                  messageIdRef.current;
-              }
-              return newConversation;
-            });
-            return '';
+            return newConversation;
           });
-        },
-      });
-    }
+          return '';
+        });
+      },
+    });
   }, []);
 
   return (

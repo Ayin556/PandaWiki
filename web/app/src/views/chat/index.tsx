@@ -17,7 +17,7 @@ const Chat = ({
 }: {
   conversation: ConversationItem[];
 }) => {
-  const { mobile = false, kb_id, catalogShow, catalogWidth } = useStore();
+  const { mobile = false, catalogShow, catalogWidth } = useStore();
 
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
   const sseClientRef = useRef<SSEClient<{
@@ -94,7 +94,7 @@ const Chat = ({
                 if (lastConversation) {
                   lastConversation.a = prevAnswer;
                   lastConversation.update_time = dayjs().format(
-                    'YYYY-MM-DD HH:mm:ss'
+                    'YYYY-MM-DD HH:mm:ss',
                   );
                   lastConversation.message_id = messageIdRef.current;
                   lastConversation.source = 'chat';
@@ -127,7 +127,7 @@ const Chat = ({
               return [...prev, chunk_result];
             });
           }
-        }
+        },
       );
     }
   };
@@ -193,34 +193,32 @@ const Chat = ({
   }, []);
 
   useEffect(() => {
-    if (kb_id) {
-      sseClientRef.current = new SSEClient({
-        url: `/share/v1/chat/message`,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        onCancel: () => {
-          setLoading(false);
-          setThinking(4);
-          setAnswer((prev) => {
-            let value = '';
-            if (prev) {
-              value = prev + '\n\n<error>Request canceled</error>';
-            }
-            setConversation((prev) => {
-              const newConversation = [...prev];
-              newConversation[newConversation.length - 1].a = value;
-              newConversation[newConversation.length - 1].update_time =
-                dayjs().format('YYYY-MM-DD HH:mm:ss');
-              newConversation[newConversation.length - 1].message_id =
-                messageIdRef.current;
-              return newConversation;
-            });
-            return '';
+    sseClientRef.current = new SSEClient({
+      url: `/share/v1/chat/message`,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      onCancel: () => {
+        setLoading(false);
+        setThinking(4);
+        setAnswer((prev) => {
+          let value = '';
+          if (prev) {
+            value = prev + '\n\n<error>Request canceled</error>';
+          }
+          setConversation((prev) => {
+            const newConversation = [...prev];
+            newConversation[newConversation.length - 1].a = value;
+            newConversation[newConversation.length - 1].update_time =
+              dayjs().format('YYYY-MM-DD HH:mm:ss');
+            newConversation[newConversation.length - 1].message_id =
+              messageIdRef.current;
+            return newConversation;
           });
-        },
-      });
-    }
+          return '';
+        });
+      },
+    });
   }, []);
 
   useEffect(() => {
