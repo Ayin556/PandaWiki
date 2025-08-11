@@ -1,12 +1,12 @@
 import { updateKnowledgeBase } from '@/api';
 import { DomainKnowledgeBaseDetail } from '@/request/types';
-import Card from '@/components/Card';
 import { useAppSelector } from '@/store';
 import { setKbList } from '@/store/slices/config';
-import { Box, Button, Stack, TextField } from '@mui/material';
+import { TextField } from '@mui/material';
 import { Message } from 'ct-mui';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { SettingCard, SettingCardItem } from './Common';
 
 interface CardKBProps {
   kb: DomainKnowledgeBaseDetail;
@@ -38,49 +38,8 @@ const CardKB = ({ kb }: CardKBProps) => {
   }, [kb]);
 
   return (
-    <Card>
-      <Box
-        sx={{
-          fontWeight: 'bold',
-          px: 2,
-          py: 1.5,
-          bgcolor: 'background.paper2',
-        }}
-      >
-        后台信息
-      </Box>
-      <Stack
-        direction='row'
-        alignItems={'center'}
-        justifyContent={'space-between'}
-        sx={{
-          m: 2,
-          height: 32,
-          fontWeight: 'bold',
-        }}
-      >
-        <Box
-          sx={{
-            '&::before': {
-              content: '""',
-              display: 'inline-block',
-              width: 4,
-              height: 12,
-              bgcolor: 'common.black',
-              borderRadius: '2px',
-              mr: 1,
-            },
-          }}
-        >
-          知识库名称
-        </Box>
-        {isEdit && (
-          <Button variant='contained' size='small' onClick={handleSave}>
-            保存
-          </Button>
-        )}
-      </Stack>
-      <Box sx={{ m: 2 }}>
+    <SettingCard title='后台信息'>
+      <SettingCardItem title='知识库名称' isEdit={isEdit} onSubmit={handleSave}>
         <TextField
           fullWidth
           value={kbName}
@@ -89,7 +48,8 @@ const CardKB = ({ kb }: CardKBProps) => {
             setIsEdit(true);
           }}
         />
-      </Box>
+      </SettingCardItem>
+
       {/* <Divider sx={{ my: 2 }} /> */}
       {/* <Stack direction='row' alignItems={'center'} justifyContent={'space-between'} sx={{
       m: 2,
@@ -131,7 +91,7 @@ const CardKB = ({ kb }: CardKBProps) => {
       </Stack>)}
     </Box> */}
       {/* <AddRole open={addOpen} onCancel={() => setAddOpen(false)} onOk={() => setAddOpen(false)} /> */}
-    </Card>
+    </SettingCard>
   );
 };
 

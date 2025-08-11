@@ -80,8 +80,8 @@ const EditorHeader = ({
   const [delOpen, setDelOpen] = useState(false);
   const [rollbackOpen, setRollbackOpen] = useState(false);
 
-  const isPro = useMemo(() => {
-    return license.edition === 1 || license.edition === 2;
+  const isEnterprise = useMemo(() => {
+    return license.edition === 2;
   }, [license]);
 
   const handleRollback = () => {
@@ -278,14 +278,10 @@ const EditorHeader = ({
                   {
                     key: 'version',
                     label: (
-                      <StyledMenuSelect disabled={!isPro}>
+                      <StyledMenuSelect disabled={!isEnterprise}>
                         历史版本{' '}
-                        {!isPro && (
-                          <Tooltip
-                            title='联创版和企业版可用'
-                            placement='top'
-                            arrow
-                          >
+                        {!isEnterprise && (
+                          <Tooltip title='企业版可用' placement='top' arrow>
                             <InfoIcon
                               sx={{ color: 'text.secondary', fontSize: 14 }}
                             />
@@ -294,7 +290,7 @@ const EditorHeader = ({
                       </StyledMenuSelect>
                     ),
                     onClick: () => {
-                      if (isPro) {
+                      if (isEnterprise) {
                         setShowVersion(true);
                       }
                     },
