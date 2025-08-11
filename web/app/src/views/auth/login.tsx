@@ -63,7 +63,7 @@ export default function Login() {
       postShareV1AuthLoginSimple({
         password,
       }).then(() => {
-        getShareV1NodeList().then((res) => {
+        getShareV1NodeList().then(res => {
           setNodeList?.((res as any) ?? []);
           message.success('认证成功');
           router.push('/');
@@ -78,7 +78,10 @@ export default function Login() {
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
-      if (authType === DomainAuthType.AuthTypeEnterprise && sourceType === ConstsSourceType.SourceTypeLDAP) {
+      if (
+        authType === DomainAuthType.AuthTypeEnterprise &&
+        sourceType === ConstsSourceType.SourceTypeLDAP
+      ) {
         // For LDAP auth, check if both username and password are filled before submitting
         if (username.trim() && password.trim()) {
           handleLDAPLogin();
@@ -93,7 +96,7 @@ export default function Login() {
     clearCookie();
     postShareProV1AuthDingtalk({
       redirect_url: window.location.origin,
-    }).then((res) => {
+    }).then(res => {
       window.location.href = res.url || '/';
     });
   };
@@ -102,7 +105,7 @@ export default function Login() {
     clearCookie();
     postShareProV1AuthFeishu({
       redirect_url: window.location.origin,
-    }).then((res) => {
+    }).then(res => {
       window.location.href = res.url || '/';
     });
   };
@@ -111,7 +114,7 @@ export default function Login() {
     clearCookie();
     postShareProV1AuthWecom({
       redirect_url: window.location.origin,
-    }).then((res) => {
+    }).then(res => {
       window.location.href = res.url || '/';
     });
   };
@@ -120,7 +123,7 @@ export default function Login() {
     clearCookie();
     postShareProV1AuthOauth({
       redirect_url: window.location.origin,
-    }).then((res) => {
+    }).then(res => {
       window.location.href = res.url || '/';
     });
   };
@@ -128,7 +131,7 @@ export default function Login() {
   const handleCASLogin = () => {
     postShareProV1AuthCas({
       redirect_url: window.location.origin,
-    }).then((res) => {
+    }).then(res => {
       window.location.href = res.url || '/';
     });
   };
@@ -144,7 +147,7 @@ export default function Login() {
         username,
         password,
       }).then(() => {
-        getShareV1NodeList().then((res) => {
+        getShareV1NodeList().then(res => {
           setNodeList?.((res as any) ?? []);
           message.success('认证成功');
           router.push('/');
@@ -158,7 +161,7 @@ export default function Login() {
   };
 
   useEffect(() => {
-    getShareV1AuthGet({}).then((res) => {
+    getShareV1AuthGet({}).then(res => {
       setAuthType(res?.auth_type);
       setSourceType(res?.source_type);
       if (res?.auth_type === DomainAuthType.AuthTypeNull) {
@@ -218,7 +221,7 @@ export default function Login() {
                   type='password'
                   value={password}
                   autoFocus
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={e => setPassword(e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder='请输入访问口令'
                   disabled={loading}
@@ -324,7 +327,7 @@ export default function Login() {
                             type='text'
                             value={username}
                             autoFocus
-                            onChange={(e) => setUsername(e.target.value)}
+                            onChange={e => setUsername(e.target.value)}
                             placeholder='用户名'
                             disabled={loading}
                             slotProps={{
@@ -332,7 +335,11 @@ export default function Login() {
                                 startAdornment: (
                                   <InputAdornment position='start'>
                                     <IconUser
-                                      sx={{ fontSize: 16, width: 24, height: 16 }}
+                                      sx={{
+                                        fontSize: 16,
+                                        width: 24,
+                                        height: 16,
+                                      }}
                                     />
                                   </InputAdornment>
                                 ),
@@ -344,7 +351,7 @@ export default function Login() {
                             fullWidth
                             type='password'
                             value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            onChange={e => setPassword(e.target.value)}
                             onKeyDown={handleKeyDown}
                             placeholder='密码'
                             disabled={loading}
@@ -353,7 +360,11 @@ export default function Login() {
                                 startAdornment: (
                                   <InputAdornment position='start'>
                                     <IconPassword
-                                      sx={{ fontSize: 16, width: 24, height: 16 }}
+                                      sx={{
+                                        fontSize: 16,
+                                        width: 24,
+                                        height: 16,
+                                      }}
                                     />
                                   </InputAdornment>
                                 ),
@@ -370,12 +381,26 @@ export default function Login() {
                               height: '50px',
                               fontSize: 16,
                               borderRadius: '10px',
-                              boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)'
+                              boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
                             }}
-                            startIcon={<IconLDAP sx={{
-                              fontSize: 16, width: 24, height: 16, color: (loading || !username.trim() || !password.trim()) ? '' : '#e73f3f'
-                            }} />}
-                            disabled={loading || !username.trim() || !password.trim()}
+                            startIcon={
+                              <IconLDAP
+                                sx={{
+                                  fontSize: 16,
+                                  width: 24,
+                                  height: 16,
+                                  color:
+                                    loading ||
+                                    !username.trim() ||
+                                    !password.trim()
+                                      ? ''
+                                      : '#e73f3f',
+                                }}
+                              />
+                            }
+                            disabled={
+                              loading || !username.trim() || !password.trim()
+                            }
                           >
                             {loading ? '验证中...' : '登录'}
                           </Button>

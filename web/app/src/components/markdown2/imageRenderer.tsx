@@ -83,7 +83,7 @@ const ImageComponent: React.FC<ImageComponentProps> = ({
   onError,
 }) => {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>(
-    'loading'
+    'loading',
   );
   const classname = `image-container-${imageIndex}`;
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -106,11 +106,11 @@ const ImageComponent: React.FC<ImageComponentProps> = ({
     if (!styleStr) return {};
     const styleObj: Record<string, string> = {};
     const declarations = styleStr.split(';').filter(Boolean);
-    declarations.forEach((decl) => {
-      const [prop, value] = decl.split(':').map((s) => s.trim());
+    declarations.forEach(decl => {
+      const [prop, value] = decl.split(':').map(s => s.trim());
       if (prop && value) {
         const camelProp = prop.replace(/-([a-z])/g, (_, letter) =>
-          letter.toUpperCase()
+          letter.toUpperCase(),
         );
         styleObj[camelProp] = value;
       }
@@ -214,7 +214,7 @@ export const createImageRenderer = (options: ImageRendererOptions) => {
     src: string,
     alt: string,
     attrs: [string, string][] = [],
-    imageIndex: number
+    imageIndex: number,
   ) => {
     // 检查缓存
     const cached = imageRenderCache.get(imageIndex);
@@ -233,12 +233,12 @@ export const createImageRenderer = (options: ImageRendererOptions) => {
         imageIndex={imageIndex}
         onLoad={onImageLoad}
         onError={onImageError}
-      />
+      />,
     );
 
     setTimeout(() => {
       const imageContainer = document.querySelector(
-        `.image-container-${imageIndex}`
+        `.image-container-${imageIndex}`,
       );
       if (imageContainer) {
         imageContainer.outerHTML = container.innerHTML;

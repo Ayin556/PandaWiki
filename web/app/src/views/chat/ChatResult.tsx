@@ -108,7 +108,7 @@ const ChatResult = ({
     await postShareV1ChatFeedback(data);
     message.success('反馈成功');
     setConversation(
-      conversation.map((item) => {
+      conversation.map(item => {
         return item.message_id === message_id ? { ...item, score } : item;
       }),
     );
@@ -338,8 +338,8 @@ const ChatResult = ({
             }}
             size='small'
             value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
+            onChange={e => setInput(e.target.value)}
+            onKeyDown={e => {
               const isComposing =
                 e.nativeEvent.isComposing || e.nativeEvent.keyCode === 229;
               if (

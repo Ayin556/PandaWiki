@@ -24,7 +24,7 @@ const ChatPage = async ({ params }: PageProps) => {
     });
     if (res.messages) {
       let current: Partial<ConversationItem> = {};
-      res.messages.forEach((message) => {
+      res.messages.forEach(message => {
         if (message.role === 'user') {
           if (current.q) {
             conversation.push({

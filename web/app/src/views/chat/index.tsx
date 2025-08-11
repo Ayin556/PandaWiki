@@ -69,16 +69,16 @@ const Chat = ({
         JSON.stringify(reqData),
         ({ type, content, chunk_result }) => {
           if (type === 'conversation_id') {
-            setConversationId((prev) => prev + content);
+            setConversationId(prev => prev + content);
           } else if (type === 'message_id') {
             messageIdRef.current += content;
           } else if (type === 'nonce') {
-            setNonce((prev) => prev + content);
+            setNonce(prev => prev + content);
           } else if (type === 'error') {
             setChunkLoading(false);
             setLoading(false);
             setThinking(4);
-            setAnswer((prev) => {
+            setAnswer(prev => {
               if (content) {
                 return prev + `\n\n回答出现错误：<error>${content}</error>`;
               }
@@ -86,8 +86,8 @@ const Chat = ({
             });
             if (content) message.error(content);
           } else if (type === 'done') {
-            setAnswer((prevAnswer) => {
-              setConversation((prev) => {
+            setAnswer(prevAnswer => {
+              setConversation(prev => {
                 const newConversation = [...prev];
                 const lastConversation =
                   newConversation[newConversation.length - 1];
@@ -109,7 +109,7 @@ const Chat = ({
             setThinking(4);
           } else if (type === 'data') {
             setChunkLoading(false);
-            setAnswer((prev) => {
+            setAnswer(prev => {
               const newAnswer = prev + content;
               if (newAnswer.includes('</think>')) {
                 setThinking(3);
@@ -123,7 +123,7 @@ const Chat = ({
               return newAnswer;
             });
           } else if (type === 'chunk_result') {
-            setChunkResult((prev) => {
+            setChunkResult(prev => {
               return [...prev, chunk_result];
             });
           }
@@ -136,9 +136,9 @@ const Chat = ({
     if (loading || !q.trim()) return;
     const newConversation = reset
       ? []
-      : conversation.some((item) => item.source === 'history')
-      ? []
-      : [...conversation];
+      : conversation.some(item => item.source === 'history')
+        ? []
+        : [...conversation];
     newConversation.push({
       q,
       a: '',
@@ -201,12 +201,12 @@ const Chat = ({
       onCancel: () => {
         setLoading(false);
         setThinking(4);
-        setAnswer((prev) => {
+        setAnswer(prev => {
           let value = '';
           if (prev) {
             value = prev + '\n\n<error>Request canceled</error>';
           }
-          setConversation((prev) => {
+          setConversation(prev => {
             const newConversation = [...prev];
             newConversation[newConversation.length - 1].a = value;
             newConversation[newConversation.length - 1].update_time =

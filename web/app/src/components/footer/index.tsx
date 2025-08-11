@@ -46,7 +46,12 @@ const Footer = ({
             <Box sx={{ mb: 3 }}>
               <Stack direction={'row'} alignItems={'center'} gap={1}>
                 {footerSetting?.brand_logo && (
-                  <img src={footerSetting.brand_logo} alt='PandaWiki' width={24} height={24} />
+                  <img
+                    src={footerSetting.brand_logo}
+                    alt='PandaWiki'
+                    width={24}
+                    height={24}
+                  />
                 )}
                 <Box
                   sx={{
@@ -100,8 +105,13 @@ const Footer = ({
                   >
                     {group.name}
                   </Box>
-                  {group.links?.map((link) => (
-                    <Link href={link.url} target='_blank' key={link.name} prefetch={false}>
+                  {group.links?.map(link => (
+                    <Link
+                      href={link.url}
+                      target='_blank'
+                      key={link.name}
+                      prefetch={false}
+                    >
                       {link.name}
                     </Link>
                   ))}
@@ -116,11 +126,22 @@ const Footer = ({
           </Box>
         )}
         {!!footerSetting?.icp && (
-          <Box sx={{ height: 40, lineHeight: '40px', color: 'text.tertiary' }}>{footerSetting?.icp}</Box>
+          <Box sx={{ height: 40, lineHeight: '40px', color: 'text.tertiary' }}>
+            {footerSetting?.icp}
+          </Box>
         )}
-        <Stack direction={'row'} alignItems={'center'} gap={0.5} sx={{ height: 40, lineHeight: '40px' }}>
+        <Stack
+          direction={'row'}
+          alignItems={'center'}
+          gap={0.5}
+          sx={{ height: 40, lineHeight: '40px' }}
+        >
           本网站由
-          <Link href={'https://pandawiki.docs.baizhi.cloud/'} target='_blank' prefetch={false}>
+          <Link
+            href={'https://pandawiki.docs.baizhi.cloud/'}
+            target='_blank'
+            prefetch={false}
+          >
             <Stack
               direction={'row'}
               alignItems={'center'}
@@ -170,9 +191,19 @@ const Footer = ({
           <Stack direction={'row'} justifyContent={'space-between'} gap={10}>
             <Box sx={{ width: '30%', minWidth: 200 }}>
               {footerSetting?.brand_name && (
-                <Stack direction={'row'} alignItems={'center'} gap={1} sx={{ mb: 2 }}>
+                <Stack
+                  direction={'row'}
+                  alignItems={'center'}
+                  gap={1}
+                  sx={{ mb: 2 }}
+                >
                   {footerSetting?.brand_logo && (
-                    <img src={footerSetting.brand_logo} alt='PandaWiki' width={24} height={24} />
+                    <img
+                      src={footerSetting.brand_logo}
+                      alt='PandaWiki'
+                      width={24}
+                      height={24}
+                    />
                   )}
                   <Box
                     sx={{
@@ -187,11 +218,13 @@ const Footer = ({
                 </Stack>
               )}
               {footerSetting?.brand_desc && (
-                <Box sx={{ fontSize: 12, lineHeight: '26px' }}>{footerSetting.brand_desc}</Box>
+                <Box sx={{ fontSize: 12, lineHeight: '26px' }}>
+                  {footerSetting.brand_desc}
+                </Box>
               )}
             </Box>
             <Stack direction={'row'} justifyContent={'flex-end'} gap={15}>
-              {footerSetting?.brand_groups?.map((group) => (
+              {footerSetting?.brand_groups?.map(group => (
                 <Stack
                   gap={1.5}
                   key={group.name}
@@ -213,8 +246,13 @@ const Footer = ({
                   >
                     {group.name}
                   </Box>
-                  {group.links?.map((link) => (
-                    <Link href={link.url} target='_blank' key={link.name} prefetch={false}>
+                  {group.links?.map(link => (
+                    <Link
+                      href={link.url}
+                      target='_blank'
+                      key={link.name}
+                      prefetch={false}
+                    >
                       {link.name}
                     </Link>
                   ))}
@@ -231,21 +269,45 @@ const Footer = ({
           textAlign: 'center',
         }}
       >
-        <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
-          <Stack direction={'row'} alignItems={'center'} gap={1} sx={{ color: 'text.tertiary' }}>
-            {!!footerSetting?.corp_name && <Box>© 2025 {footerSetting?.corp_name} 版权所有</Box>}
+        <Stack
+          direction={'row'}
+          alignItems={'center'}
+          justifyContent={'space-between'}
+        >
+          <Stack
+            direction={'row'}
+            alignItems={'center'}
+            gap={1}
+            sx={{ color: 'text.tertiary' }}
+          >
+            {!!footerSetting?.corp_name && (
+              <Box>© 2025 {footerSetting?.corp_name} 版权所有</Box>
+            )}
             {!!footerSetting?.corp_name && !!footerSetting?.icp && !mobile && (
               <Divider orientation='vertical' sx={{ mx: 0.5, height: 16 }} />
             )}
             {!!footerSetting?.icp && (
-              <Link href={`https://beian.miit.gov.cn/`} target='_blank' prefetch={false}>
+              <Link
+                href={`https://beian.miit.gov.cn/`}
+                target='_blank'
+                prefetch={false}
+              >
                 {footerSetting?.icp}
               </Link>
             )}
           </Stack>
-          <Stack direction={'row'} alignItems={'center'} gap={0.5} sx={{ color: 'text.secondary' }}>
+          <Stack
+            direction={'row'}
+            alignItems={'center'}
+            gap={0.5}
+            sx={{ color: 'text.secondary' }}
+          >
             本网站由
-            <Link href={'https://pandawiki.docs.baizhi.cloud/'} prefetch={false} target='_blank'>
+            <Link
+              href={'https://pandawiki.docs.baizhi.cloud/'}
+              prefetch={false}
+              target='_blank'
+            >
               <Stack
                 direction={'row'}
                 alignItems={'center'}

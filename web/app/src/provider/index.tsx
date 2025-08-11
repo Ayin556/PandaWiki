@@ -88,7 +88,7 @@ export default function StoreProvider({
         mobile: isMobile,
         setNodeList,
         catalogWidth,
-        setCatalogWidth: (value) => {
+        setCatalogWidth: value => {
           setCatalogWidth(value);
           window.localStorage.setItem('CATALOG_WIDTH', value.toString());
         },

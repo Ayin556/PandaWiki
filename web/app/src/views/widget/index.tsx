@@ -14,7 +14,7 @@ import ChatInput from './ChatInput';
 import ChatWindow from './ChatWindow';
 
 const Widget = () => {
-  const isMobile = useMediaQuery((theme) => theme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery(theme => theme.breakpoints.down('sm'));
   const { widget, themeMode } = useStore();
 
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
@@ -52,15 +52,15 @@ const Widget = () => {
         JSON.stringify(reqData),
         ({ type, content }) => {
           if (type === 'conversation_id') {
-            setConversationId((prev) => prev + content);
+            setConversationId(prev => prev + content);
           } else if (type === 'message_id') {
             messageIdRef.current += content;
           } else if (type === 'nonce') {
-            setNonce((prev) => prev + content);
+            setNonce(prev => prev + content);
           } else if (type === 'error') {
             setLoading(false);
             setThinking(4);
-            setAnswer((prev) => {
+            setAnswer(prev => {
               if (content) {
                 return prev + `\n\n回答出现错误：<error>${content}</error>`;
               }
@@ -68,8 +68,8 @@ const Widget = () => {
             });
             if (content) message.error(content);
           } else if (type === 'done') {
-            setAnswer((prevAnswer) => {
-              setConversation((prev) => {
+            setAnswer(prevAnswer => {
+              setConversation(prev => {
                 const newConversation = [...prev];
                 newConversation[newConversation.length - 1].a = prevAnswer;
                 newConversation[newConversation.length - 1].update_time =
@@ -83,7 +83,7 @@ const Widget = () => {
             setLoading(false);
             setThinking(4);
           } else if (type === 'data') {
-            setAnswer((prev) => {
+            setAnswer(prev => {
               const newAnswer = prev + content;
               if (newAnswer.includes('</think>')) {
                 setThinking(3);
@@ -161,12 +161,12 @@ const Widget = () => {
       onCancel: () => {
         setLoading(false);
         setThinking(4);
-        setAnswer((prev) => {
+        setAnswer(prev => {
           let value = '';
           if (prev) {
             value = prev + '\n\n<error>Request canceled</error>';
           }
-          setConversation((prev) => {
+          setConversation(prev => {
             const newConversation = [...prev];
             if (newConversation.length > 0) {
               newConversation[newConversation.length - 1].a = value;
@@ -267,7 +267,7 @@ const Widget = () => {
                 mt: 2,
               }}
             >
-              {widget?.settings?.recommend_questions?.map((item) => (
+              {widget?.settings?.recommend_questions?.map(item => (
                 <Box
                   key={item}
                   onClick={() => onSearch(item, true)}
@@ -308,7 +308,7 @@ const Widget = () => {
                   推荐内容
                 </Box>
                 <Stack direction={'row'} flexWrap={'wrap'}>
-                  {widget.recommend_nodes.map((it) => {
+                  {widget.recommend_nodes.map(it => {
                     return (
                       <Link
                         href={`/node/${it.id}`}
