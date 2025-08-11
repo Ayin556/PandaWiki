@@ -848,7 +848,7 @@ export interface DomainShareConversationMessage {
   role?: SchemaRoleType;
 }
 
-export interface DomainShiYuanResp {
+export interface DomainSiYuanResp {
   content?: string;
   id?: number;
   title?: string;
@@ -1063,7 +1063,7 @@ export interface PostApiV1CrawlerEpubConvertPayload {
   kb_id: string;
 }
 
-export interface PostApiV1CrawlerShiyuanAnalysisExportFilePayload {
+export interface PostApiV1CrawlerSiyuanAnalysisExportFilePayload {
   /**
    * file
    * @format binary

@@ -219,7 +219,7 @@ export const parseSiyuan = (
   data: FormData
 ): Promise<{ id: string; content: string; title: string }[]> =>
   request({
-    url: 'api/v1/crawler/shiyuan/analysis_export_file',
+    url: 'api/v1/crawler/siyuan/analysis_export_file',
     method: 'post',
     data,
   });
