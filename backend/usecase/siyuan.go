@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"mime/multipart"
+	"net/http"
 	"net/url"
 	"path/filepath"
 	"strings"
@@ -60,7 +61,7 @@ func (u *SiYuanUsecase) AnalysisExportFile(ctx context.Context, fileHeader *mult
 	}
 
 	uploadResults := make([]uploadResulet, len(nonMdFiles))
-	g, ctx := errgroup.WithContext(ctx)
+	g, errCtx := errgroup.WithContext(ctx)
 
 	for i, file := range nonMdFiles {
 		// 为每个文件创建闭包
@@ -68,7 +69,7 @@ func (u *SiYuanUsecase) AnalysisExportFile(ctx context.Context, fileHeader *mult
 		f := file
 		g.Go(func() error {
 			// 获取信号量
-			if err := sem.Acquire(ctx, 1); err != nil {
+			if err := sem.Acquire(errCtx, 1); err != nil {
 				return err
 			}
 			defer sem.Release(1)
@@ -82,7 +83,7 @@ func (u *SiYuanUsecase) AnalysisExportFile(ctx context.Context, fileHeader *mult
 
 			// 处理资源文件
 			key, err := u.fileusecase.UploadFileFromReader(
-				ctx,
+				errCtx,
 				kbID,
 				f.Name,
 				File,
@@ -130,6 +131,15 @@ func (u *SiYuanUsecase) AnalysisExportFile(ctx context.Context, fileHeader *mult
 			if originUrl == nil {
 				return "", nil
 			}
+			if strings.HasPrefix(*originUrl, "http") || strings.HasPrefix(*originUrl, "https") {
+				resp, err := http.Get(*originUrl)
+				if err != nil {
+					return "", err
+				}
+				defer resp.Body.Close()
+				key, err := u.fileusecase.UploadFileFromReader(ctx, kbID, *originUrl, resp.Body, resp.ContentLength)
+				return fmt.Sprintf("/%s/%s", domain.Bucket, key), err
+			}
 			absPath := filepath.Join(filepath.Dir(fileName), *originUrl)
 			unescapeStr, err := url.PathUnescape(filepath.Base(absPath))
 			if err != nil {
@@ -147,8 +157,12 @@ func (u *SiYuanUsecase) AnalysisExportFile(ctx context.Context, fileHeader *mult
 			u.logger.Error("exchange markdown image url failed")
 			return nil, fmt.Errorf("exchange markdown image url failed: %v", err)
 		}
+		title := filepath.Base(fileName)
+		if title == "" {
+			title = utils.GetTitleFromMarkdown(string(content))
+		}
 		resp := domain.SiYuanResp{
-			Title:   fileName,
+			Title:   title,
 			Content: string(newContent),
 		}
 		results = append(results, resp)
