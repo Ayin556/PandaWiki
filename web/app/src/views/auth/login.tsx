@@ -137,10 +137,6 @@ export default function Login() {
   };
 
   const handleLDAPLogin = () => {
-    if (!kb_id) {
-      message.error('知识库配置错误');
-      return;
-    }
     setLoading(true);
     try {
       postShareProV1AuthLdap({

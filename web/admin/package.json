@@ -11,6 +11,7 @@
     "api": "cx-swagger-api",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,css,scss,md,mdx,json,yml,yaml,mjs,cjs}\"",
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,css,scss,md,mdx,json,yml,yaml,mjs,cjs}\"",
+    "prepare": "cd ../../ && husky web/admin/.husky"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,css,scss,md,mdx,json,yml,yaml,mjs,cjs}": "prettier --write"

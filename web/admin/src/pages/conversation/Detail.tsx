@@ -34,12 +34,12 @@ const Detail = ({
   >(null);
 
   const getDetail = () => {
-    getConversationDetail({ id }).then((res) => {
+    getConversationDetail({ id }).then(res => {
       setDetail(res);
       const pairs: ChatConversationPair[] = [];
       let currentPair: Partial<ChatConversationPair> = {};
 
-      res.messages.forEach((message) => {
+      res.messages.forEach(message => {
         if (message.role === 'user') {
           if (currentPair.user) {
             pairs.push({

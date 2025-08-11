@@ -13,7 +13,7 @@ interface CardKBProps {
 }
 
 const CardKB = ({ kb }: CardKBProps) => {
-  const { kbList } = useAppSelector((state) => state.config);
+  const { kbList } = useAppSelector(state => state.config);
   const dispatch = useDispatch();
   const [kbName, setKbName] = useState(kb.name);
   const [isEdit, setIsEdit] = useState(false);
@@ -24,10 +24,10 @@ const CardKB = ({ kb }: CardKBProps) => {
       Message.success('保存成功');
       dispatch(
         setKbList(
-          kbList.map((item) =>
-            item.id === kb.id ? { ...item, name: kbName } : item
-          )
-        )
+          kbList.map(item =>
+            item.id === kb.id ? { ...item, name: kbName } : item,
+          ),
+        ),
       );
       setIsEdit(false);
     });
@@ -84,7 +84,7 @@ const CardKB = ({ kb }: CardKBProps) => {
         <TextField
           fullWidth
           value={kbName}
-          onChange={(e) => {
+          onChange={e => {
             setKbName(e.target.value);
             setIsEdit(true);
           }}

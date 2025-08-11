@@ -67,7 +67,7 @@ export const FormItem = ({
 };
 
 const CardAuth = ({ kb, refresh }: CardAuthProps) => {
-  const { license, kb_id } = useAppSelector((state) => state.config);
+  const { license, kb_id } = useAppSelector(state => state.config);
   const [isEdit, setIsEdit] = useState(false);
   const [scopeInputValue, setScopeInputValue] = useState('');
   const [memberList, setMemberList] = useState<
@@ -96,7 +96,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
       name_field: '',
       email_field: '',
       cas_url: '',
-      cas_version:'2',
+      cas_version: '2',
       // ldap
       bind_dn: '',
       bind_password: '',
@@ -110,7 +110,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
   const userInfoUrl = watch('user_info_url');
   const enabled = watch('enabled');
 
-  const onSubmit = handleSubmit((value) => {
+  const onSubmit = handleSubmit(value => {
     Promise.all([
       putApiV1KnowledgeBaseDetail({
         id: kb.id!,
@@ -168,7 +168,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
   useEffect(() => {
     setValue(
       'source_type',
-      kb.access_settings?.source_type || ConstsSourceType.SourceTypeDingTalk
+      kb.access_settings?.source_type || ConstsSourceType.SourceTypeDingTalk,
     );
   }, [kb]);
 
@@ -187,7 +187,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
     getApiProV1AuthGet({
       kb_id,
       source_type: source_type,
-    }).then((res) => {
+    }).then(res => {
       setMemberList(res.auths || []);
       setValue('client_id', res.client_id!);
       setValue('client_secret', res.client_secret!);
@@ -204,10 +204,10 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
       setValue('cas_version', res.cas_version!);
       // ldap
       setValue('bind_dn', res.bind_dn!);
-      setValue('bind_password', res.bind_password!)
-      setValue('ldap_server_url', res.ldap_server_url!),
-      setValue('user_base_dn', res.user_base_dn!),
-      setValue('user_filter', res.user_filter!)
+      setValue('bind_password', res.bind_password!);
+      (setValue('ldap_server_url', res.ldap_server_url!),
+        setValue('user_base_dn', res.user_base_dn!),
+        setValue('user_filter', res.user_filter!));
     });
   }, [kb_id, isPro, source_type, enabled]);
 
@@ -236,7 +236,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
       dataIndex: 'created_at',
       render: (
         text: string,
-        record: GithubComChaitinPandaWikiProApiAuthV1AuthItem
+        record: GithubComChaitinPandaWikiProApiAuthV1AuthItem,
       ) => {
         return (
           <Box sx={{ color: 'text.secondary' }}>
@@ -265,7 +265,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
                 placeholder='请输入'
                 error={!!errors.token_url}
                 helperText={errors.token_url?.message}
-                onChange={(e) => {
+                onChange={e => {
                   field.onChange(e.target.value);
                   setIsEdit(true);
                 }}
@@ -287,7 +287,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
                 placeholder='请输入'
                 error={!!errors.authorize_url}
                 helperText={errors.authorize_url?.message}
-                onChange={(e) => {
+                onChange={e => {
                   field.onChange(e.target.value);
                   setIsEdit(true);
                 }}
@@ -309,7 +309,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
                 placeholder='请输入'
                 error={!!errors.client_id}
                 helperText={errors.client_id?.message}
-                onChange={(e) => {
+                onChange={e => {
                   field.onChange(e.target.value);
                   setIsEdit(true);
                 }}
@@ -331,7 +331,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
                 placeholder='请输入'
                 error={!!errors.client_secret}
                 helperText={errors.client_secret?.message}
-                onChange={(e) => {
+                onChange={e => {
                   field.onChange(e.target.value);
                   setIsEdit(true);
                 }}
@@ -345,7 +345,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
             name='scopes'
             control={control}
             rules={{
-              validate: (value) => {
+              validate: value => {
                 if (value.length === 0) {
                   return 'Scope 不能为空';
                 }
@@ -375,7 +375,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
                     return <Chip key={key} label={label} {...tagProps} />;
                   })
                 }
-                renderInput={(params) => (
+                renderInput={params => (
                   <TextField
                     {...params}
                     required
@@ -413,7 +413,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
                 placeholder='请输入'
                 error={!!errors.user_info_url}
                 helperText={errors.user_info_url?.message}
-                onChange={(e) => {
+                onChange={e => {
                   field.onChange(e.target.value);
                   setIsEdit(true);
                 }}
@@ -437,7 +437,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
                     placeholder='请输入'
                     error={!!errors.id_field}
                     helperText={errors.id_field?.message}
-                    onChange={(e) => {
+                    onChange={e => {
                       field.onChange(e.target.value);
                       setIsEdit(true);
                     }}
@@ -459,7 +459,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
                     placeholder='请输入'
                     error={!!errors.name_field}
                     helperText={errors.name_field?.message}
-                    onChange={(e) => {
+                    onChange={e => {
                       field.onChange(e.target.value);
                       setIsEdit(true);
                     }}
@@ -481,7 +481,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
                     placeholder='请输入'
                     error={!!errors.avatar_field}
                     helperText={errors.avatar_field?.message}
-                    onChange={(e) => {
+                    onChange={e => {
                       field.onChange(e.target.value);
                       setIsEdit(true);
                     }}
@@ -503,7 +503,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
                     placeholder='请输入'
                     error={!!errors.email_field}
                     helperText={errors.email_field?.message}
-                    onChange={(e) => {
+                    onChange={e => {
                       field.onChange(e.target.value);
                       setIsEdit(true);
                     }}
@@ -534,7 +534,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
                 placeholder='请输入'
                 error={!!errors.cas_url}
                 helperText={errors.cas_url?.message}
-                onChange={(e) => {
+                onChange={e => {
                   field.onChange(e.target.value);
                   setIsEdit(true);
                 }}
@@ -554,13 +554,13 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
                 error={!!errors.cas_version}
                 helperText={errors.cas_version?.message}
                 select
-                onChange={(e) => {
+                onChange={e => {
                   field.onChange(e.target.value);
                   setIsEdit(true);
                 }}
               >
-                <MenuItem value="2">2</MenuItem>
-                <MenuItem value="3">3</MenuItem>
+                <MenuItem value='2'>2</MenuItem>
+                <MenuItem value='3'>3</MenuItem>
               </TextField>
             )}
           />
@@ -586,7 +586,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
                 placeholder='请输入'
                 error={!!errors.cas_url}
                 helperText={errors.ldap_server_url?.message}
-                onChange={(e) => {
+                onChange={e => {
                   field.onChange(e.target.value);
                   setIsEdit(true);
                 }}
@@ -605,7 +605,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
                 placeholder='请输入'
                 error={!!errors.bind_dn}
                 helperText={errors.bind_dn?.message}
-                onChange={(e) => {
+                onChange={e => {
                   field.onChange(e.target.value);
                   setIsEdit(true);
                 }}
@@ -624,7 +624,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
                 placeholder='请输入'
                 error={!!errors.bind_password}
                 helperText={errors.bind_password?.message}
-                onChange={(e) => {
+                onChange={e => {
                   field.onChange(e.target.value);
                   setIsEdit(true);
                 }}
@@ -643,7 +643,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
                 placeholder='请输入'
                 error={!!errors.user_base_dn}
                 helperText={errors.user_base_dn?.message}
-                onChange={(e) => {
+                onChange={e => {
                   field.onChange(e.target.value);
                   setIsEdit(true);
                 }}
@@ -662,7 +662,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
                 placeholder='请输入'
                 error={!!errors.user_filter}
                 helperText={errors.user_filter?.message}
-                onChange={(e) => {
+                onChange={e => {
                   field.onChange(e.target.value);
                   setIsEdit(true);
                 }}
@@ -740,7 +740,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
               row
               {...field}
               value={field.value}
-              onChange={(e) => {
+              onChange={e => {
                 field.onChange(e.target.value);
                 setIsEdit(true);
               }}
@@ -794,7 +794,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
               <TextField
                 {...field}
                 fullWidth
-                onChange={(e) => {
+                onChange={e => {
                   field.onChange(e.target.value);
                   setIsEdit(true);
                 }}
@@ -823,7 +823,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
               render={({ field }) => (
                 <Select
                   {...field}
-                  onChange={(e) => {
+                  onChange={e => {
                     field.onChange(e.target.value);
                     setIsEdit(true);
                   }}
@@ -872,7 +872,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
                   render={({ field }) => (
                     <TextField
                       {...field}
-                      onChange={(e) => {
+                      onChange={e => {
                         field.onChange(e.target.value);
                         setIsEdit(true);
                       }}
@@ -898,7 +898,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
                     <TextField
                       {...field}
                       fullWidth
-                      onChange={(e) => {
+                      onChange={e => {
                         field.onChange(e.target.value);
                         setIsEdit(true);
                       }}
@@ -924,7 +924,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
                       <TextField
                         {...field}
                         fullWidth
-                        onChange={(e) => {
+                        onChange={e => {
                           field.onChange(e.target.value);
                           setIsEdit(true);
                         }}

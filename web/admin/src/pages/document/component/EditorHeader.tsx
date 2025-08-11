@@ -45,7 +45,7 @@ const StyledMenuSelect = styled('div')<{ disabled?: boolean }>(
         ? 'transparent'
         : addOpacityToColor(theme.palette.primary.main, 0.1),
     },
-  })
+  }),
 );
 
 interface EditorHeaderProps {
@@ -75,7 +75,7 @@ const EditorHeader = ({
 }: EditorHeaderProps) => {
   const editor = editorRef?.editor || null;
   const theme = useTheme();
-  const { kb_id, license } = useAppSelector((state) => state.config);
+  const { kb_id, license } = useAppSelector(state => state.config);
   const [renameOpen, setRenameOpen] = useState(false);
   const [delOpen, setDelOpen] = useState(false);
   const [rollbackOpen, setRollbackOpen] = useState(false);
@@ -98,7 +98,7 @@ const EditorHeader = ({
     setShowVersion(false);
     Message.success(
       `已使用版本 ${curVersion.release.release_name} 内容，需要保存并发布才能生效`,
-      5
+      5,
     );
   };
 
@@ -216,7 +216,7 @@ const EditorHeader = ({
                 readOnly={showVersion}
                 type={detail?.type}
                 value={detail?.meta?.emoji}
-                onChange={(value) => {
+                onChange={value => {
                   cancelTimer?.();
                   updateNode({ id: detail.id, kb_id: kb_id, emoji: value })
                     .then(() => {
@@ -268,7 +268,7 @@ const EditorHeader = ({
                           parent_id: detail.parent_id || null,
                           type: detail.type,
                           emoji: detail.meta.emoji,
-                        }).then((res) => {
+                        }).then(res => {
                           Message.success('复制成功');
                           window.open(`/doc/editor/${res.id}`, '_blank');
                         });
@@ -341,7 +341,7 @@ const EditorHeader = ({
                           ':hover': {
                             bgcolor: addOpacityToColor(
                               theme.palette.primary.main,
-                              0.1
+                              0.1,
                             ),
                           },
                         }}
@@ -369,7 +369,7 @@ const EditorHeader = ({
                           ':hover': {
                             bgcolor: addOpacityToColor(
                               theme.palette.primary.main,
-                              0.1
+                              0.1,
                             ),
                           },
                         }}
@@ -415,7 +415,7 @@ const EditorHeader = ({
                             ':hover': {
                               bgcolor: addOpacityToColor(
                                 theme.palette.primary.main,
-                                0.1
+                                0.1,
                               ),
                             },
                           }}
@@ -444,7 +444,7 @@ const EditorHeader = ({
                           ':hover': {
                             bgcolor: addOpacityToColor(
                               theme.palette.primary.main,
-                              0.1
+                              0.1,
                             ),
                           },
                         }}

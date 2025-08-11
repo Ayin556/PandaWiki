@@ -16,7 +16,7 @@ api-templates
 src/request
 scripts
 src/assets/fonts/iconfont.js
-src/assets/fonts/json/*
+src/assets/json
 
 
 # Misc
