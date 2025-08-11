@@ -138,7 +138,7 @@ const MarkDown = ({ loading = false, content }: MarkDownProps) => {
                       ':hover': {
                         bgcolor: addOpacityToColor(
                           theme.palette.primary.main,
-                          0.1
+                          0.1,
                         ),
                         color: theme.palette.primary.main,
                       },

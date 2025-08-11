@@ -8,7 +8,15 @@ import Upload from '@/components/UploadFile/Drag';
 import { EditionType } from '@/constant/enums';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { setLicense } from '@/store/slices/config';
-import { Box, Button, IconButton, MenuItem, Select, Stack, TextField } from '@mui/material';
+import {
+  Box,
+  Button,
+  IconButton,
+  MenuItem,
+  Select,
+  Stack,
+  TextField,
+} from '@mui/material';
 import { CusTabs, Icon, Message, Modal } from 'ct-mui';
 import dayjs from 'dayjs';
 import { useState } from 'react';
@@ -28,12 +36,14 @@ const AuthTypeModal = ({
   latestVersion,
 }: AuthTypeModalProps) => {
   const dispatch = useAppDispatch();
-  const { license } = useAppSelector((state) => state.config);
+  const { license } = useAppSelector(state => state.config);
 
-  const [selected, setSelected] = useState<"file" | "code">(
-    license.edition === 2 ? 'file' : 'code'
+  const [selected, setSelected] = useState<'file' | 'code'>(
+    license.edition === 2 ? 'file' : 'code',
   );
-  const [authVersion, setAuthVersion] = useState<"contributor" | "enterprise">(license.edition === 2 ? 'enterprise' : 'contributor');
+  const [authVersion, setAuthVersion] = useState<'contributor' | 'enterprise'>(
+    license.edition === 2 ? 'enterprise' : 'contributor',
+  );
   const [updateOpen, setUpdateOpen] = useState(false);
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
@@ -45,7 +55,7 @@ const AuthTypeModal = ({
       license_type: selected,
       license_code: code,
       license_file: file,
-    }
+    };
     setLoading(true);
 
     postApiV1License(params)
@@ -55,7 +65,7 @@ const AuthTypeModal = ({
         setCode('');
         setFile(undefined);
 
-        getLicenseInfo().then((res) => {
+        getLicenseInfo().then(res => {
           dispatch(setLicense(res));
         });
       })
@@ -95,7 +105,7 @@ const AuthTypeModal = ({
                   }
                   onClick={() => {
                     window.open(
-                      'https://pandawiki.docs.baizhi.cloud/node/01971615-05b8-7924-9af7-15f73784f893'
+                      'https://pandawiki.docs.baizhi.cloud/node/01971615-05b8-7924-9af7-15f73784f893',
                     );
                   }}
                 >
@@ -187,9 +197,17 @@ const AuthTypeModal = ({
             { label: '离线激活', value: 'file', disabled: loading },
           ]}
           value={selected}
-          change={(v: string) => setSelected(v as "file" | "code")}
+          change={(v: string) => setSelected(v as 'file' | 'code')}
         />
-        <TextField select fullWidth sx={{ mt: 2 }} value={authVersion} onChange={(e) => setAuthVersion(e.target.value as "contributor" | "enterprise")}>
+        <TextField
+          select
+          fullWidth
+          sx={{ mt: 2 }}
+          value={authVersion}
+          onChange={e =>
+            setAuthVersion(e.target.value as 'contributor' | 'enterprise')
+          }
+        >
           <MenuItem value='contributor'>联创版</MenuItem>
           <MenuItem value='enterprise'>企业版</MenuItem>
         </TextField>
@@ -200,14 +218,14 @@ const AuthTypeModal = ({
             variant='outlined'
             value={code}
             fullWidth
-            onChange={(e) => setCode(e.target.value)}
+            onChange={e => setCode(e.target.value)}
           />
         )}
         {selected === 'file' && (
           <Box sx={{ mt: 2 }}>
             <Upload
               file={file ? [file] : []}
-              onChange={(accept) => setFile(accept[0])}
+              onChange={accept => setFile(accept[0])}
               type='drag'
               multiple={false}
               size={1024 * 1024}

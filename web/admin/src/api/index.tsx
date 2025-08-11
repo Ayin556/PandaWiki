@@ -74,12 +74,12 @@ export const getKnowledgeBaseDetail = (params: {
   request({ url: 'api/v1/knowledge_base/detail', method: 'get', params });
 
 export const updateKnowledgeBase = (
-  data: Partial<UpdateKnowledgeBaseData>
+  data: Partial<UpdateKnowledgeBaseData>,
 ): Promise<void> =>
   request({ url: 'api/v1/knowledge_base/detail', method: 'put', data });
 
 export const createKnowledgeBase = (
-  data: Partial<UpdateKnowledgeBaseData>
+  data: Partial<UpdateKnowledgeBaseData>,
 ): Promise<{ id: string }> =>
   request({ url: 'api/v1/knowledge_base', method: 'post', data });
 
@@ -87,7 +87,7 @@ export const deleteKnowledgeBase = (params: { id: string }): Promise<void> =>
   request({ url: 'api/v1/knowledge_base/detail', method: 'delete', params });
 
 export const getReleaseList = (
-  params: { kb_id: string } & Paging
+  params: { kb_id: string } & Paging,
 ): Promise<ResposeList<ReleaseListItem>> =>
   request({ url: 'api/v1/knowledge_base/release/list', method: 'get', params });
 
@@ -102,7 +102,7 @@ export const addRelease = (data: {
 // =============================================》node
 
 export const getNodeList = (
-  params: NodeListFilterData
+  params: NodeListFilterData,
 ): Promise<NodeListItem[]> =>
   request({ url: 'api/v1/node/list', method: 'get', params });
 
@@ -133,12 +133,12 @@ export const createNode = (data: CreateNodeData): Promise<{ id: string }> =>
   request({ url: 'api/v1/node', method: 'post', data });
 
 export const createNodeSummary = (
-  data: CreateNodeSummaryData
+  data: CreateNodeSummaryData,
 ): Promise<{ summary: string }> =>
   request({ url: 'api/v1/node/summary', method: 'post', data });
 
 export const getNodeRecommend = (
-  params: GetNodeRecommendData
+  params: GetNodeRecommendData,
 ): Promise<RecommendNode[]> =>
   request({ url: 'api/v1/node/recommend_nodes', method: 'get', params });
 
@@ -157,7 +157,7 @@ export const getNodeReleaseDetail = (params: {
 
 export const scrapeCrawler = (
   data: { url: string; kb_id: string },
-  config?: { signal: AbortSignal }
+  config?: { signal: AbortSignal },
 ): Promise<{ content: string; title: string }> =>
   request({ url: 'api/v1/crawler/scrape', method: 'post', data, ...config });
 
@@ -184,12 +184,12 @@ export const getNotionIntegrationDetail = (data: {
   request({ url: 'api/v1/crawler/notion/get_doc', method: 'post', data });
 
 export const convertEpub = (
-  data: FormData
+  data: FormData,
 ): Promise<{ content: string; title: string }> =>
   request({ url: 'api/v1/crawler/epub/convert', method: 'post', data });
 
 export const parseWikijs = (
-  data: FormData
+  data: FormData,
 ): Promise<{ id: string; content: string; title: string }[]> =>
   request({
     url: 'api/v1/crawler/wikijs/analysis_export_file',
@@ -198,7 +198,7 @@ export const parseWikijs = (
   });
 
 export const parseConfluence = (
-  data: FormData
+  data: FormData,
 ): Promise<{ id: string; content: string; title: string }[]> =>
   request({
     url: 'api/v1/crawler/confluence/analysis_export_file',
@@ -207,7 +207,7 @@ export const parseConfluence = (
   });
 
 export const parseYuque = (
-  data: FormData
+  data: FormData,
 ): Promise<{ id: string; content: string; title: string }[]> =>
   request({
     url: 'api/v1/crawler/yuque/analysis_export_file',
@@ -216,7 +216,7 @@ export const parseYuque = (
   });
 
 export const parseSiyuan = (
-  data: FormData
+  data: FormData,
 ): Promise<{ id: string; content: string; title: string }[]> =>
   request({
     url: 'api/v1/crawler/siyuan/analysis_export_file',
@@ -225,18 +225,18 @@ export const parseSiyuan = (
   });
 
 export const getFeishuKnowledgeBase = (
-  data: ImportDocByFeishuFormData
+  data: ImportDocByFeishuFormData,
 ): Promise<{ space_id: string; name: string }[]> =>
   request({ url: 'api/v1/crawler/feishu/list_spaces', method: 'post', data });
 
 export const getFeishuCloudDocs = (
-  data: ImportDocByFeishuFormData
+  data: ImportDocByFeishuFormData,
 ): Promise<
   { url: string; name: string; obj_token: string; obj_type: number }[]
 > => request({ url: 'api/v1/crawler/feishu/list_doc', method: 'post', data });
 
 export const getFeishuKBDocById = (
-  data: ImportDocByFeishuFormData & { space_id: string }
+  data: ImportDocByFeishuFormData & { space_id: string },
 ): Promise<
   {
     space_id: string;
@@ -256,7 +256,7 @@ export const getFeishuDocDetail = (
       obj_token: string;
       obj_type: number;
     }[];
-  }
+  },
 ): Promise<{ content: string; title: string }[]> =>
   request({ url: 'api/v1/crawler/feishu/get_doc', method: 'post', data });
 
@@ -267,19 +267,19 @@ export const uploadFile = (
   config?: {
     onUploadProgress?: (event: { progress: number }) => void;
     abortSignal?: AbortSignal;
-  }
+  },
 ): Promise<{ key: string }> =>
   request({
     url: 'api/v1/file/upload',
     method: 'post',
     data,
     onUploadProgress: config?.onUploadProgress
-      ? (progressEvent) => {
-        const progress = Math.round(
-          (progressEvent.loaded * 100) / (progressEvent.total || 1)
-        );
-        config.onUploadProgress?.({ progress });
-      }
+      ? progressEvent => {
+          const progress = Math.round(
+            (progressEvent.loaded * 100) / (progressEvent.total || 1),
+          );
+          config.onUploadProgress?.({ progress });
+        }
       : undefined,
     signal: config?.abortSignal,
     headers: { 'Content-Type': 'multipart/form-data' },
@@ -295,14 +295,14 @@ export const getAppDetail = (params: {
 
 export const updateAppDetail = (
   params: { id: string },
-  app: UpdateAppDetailData
+  app: UpdateAppDetailData,
 ): Promise<void> =>
   request({ url: 'api/v1/app', method: 'put', params, data: app });
 
 // =============================================》model
 
 export const getModelNameList = (
-  data: GetModelNameData
+  data: GetModelNameData,
 ): Promise<{ models: { model: string }[] }> =>
   request({ url: 'api/v1/model/provider/supported', method: 'post', data });
 
@@ -329,7 +329,7 @@ export const getAppLink = (params: { link: string }): Promise<AppDetail> =>
 // =============================================》conversation
 
 export const getConversationList = (
-  params: GetConversationListData
+  params: GetConversationListData,
 ): Promise<ResposeList<ConversationListItem>> =>
   request({ url: 'api/v1/conversation', method: 'get', params });
 
@@ -341,7 +341,7 @@ export const getConversationDetail = (params: {
 // =============================================》feedback
 
 export const getFeedbackList = (
-  params: { kb_id: string } & Paging
+  params: { kb_id: string } & Paging,
 ): Promise<ResposeList<FeedbackListItem>> =>
   request({ url: 'api/v1/comment', method: 'get', params });
 
@@ -349,7 +349,7 @@ export const deleteFeedback = (params: { ids: string[] }): Promise<void> =>
   request({ url: 'api/v1/comment/list', method: 'delete', params });
 
 export const getFeedbackEvaluateList = (
-  params: { kb_id: string } & Paging
+  params: { kb_id: string } & Paging,
 ): Promise<ResposeList<FeedbackListItem>> =>
   request({
     url: 'api/v1/conversation/message/list',
@@ -411,4 +411,4 @@ export const getLicenseInfo = (): Promise<LicenseInfo> =>
   request({ url: 'api/v1/license', method: 'get' });
 
 export const activeLicense = (data: FormData): Promise<void> =>
-  request({ url: 'api/v1/license', method: 'post', data })
+  request({ url: 'api/v1/license', method: 'post', data });

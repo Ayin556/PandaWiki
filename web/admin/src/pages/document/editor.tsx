@@ -47,7 +47,7 @@ const DocEditor = () => {
     const content = html || editorRef.getHtml();
     cancelTimer();
     try {
-      const newDetail = nodeDetail ?? detail
+      const newDetail = nodeDetail ?? detail;
       await updateNode({
         id,
         content,
@@ -86,12 +86,12 @@ const DocEditor = () => {
   const handleUpload = async (
     file: File,
     onProgress?: (progress: { progress: number }) => void,
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
   ) => {
     const formData = new FormData();
     formData.append('file', file);
     const { key } = await uploadFile(formData, {
-      onUploadProgress: (event) => {
+      onUploadProgress: event => {
         onProgress?.(event);
       },
       abortSignal,
@@ -105,7 +105,7 @@ const DocEditor = () => {
     size: 100,
     aiUrl: '/api/v1/creation/text',
     onUpload: handleUpload,
-    onSave: (html) => handleSave(undefined, false, html),
+    onSave: html => handleSave(undefined, false, html),
     onUpdate: () => {
       setEdited(true);
       if (detail) setDetail({ ...detail, status: 1 });
@@ -116,7 +116,7 @@ const DocEditor = () => {
   });
 
   const getDetail = (unCover?: boolean) => {
-    getNodeDetail({ id }).then((res) => {
+    getNodeDetail({ id }).then(res => {
       setDetail(res);
       if (!unCover) setDocContent(res.content || '');
       setEdited(false);
@@ -146,9 +146,9 @@ const DocEditor = () => {
   useEffect(() => {
     cancelTimer();
     if (editorRef) {
-      editorRef.setContent(docContent || '').then((headings) => {
+      editorRef.setContent(docContent || '').then(headings => {
         setHeadings(headings);
-        setMaxH(Math.min(...headings.map((h) => h.heading)));
+        setMaxH(Math.min(...headings.map(h => h.heading)));
       });
       resetTimer();
     }

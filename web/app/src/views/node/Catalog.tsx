@@ -42,7 +42,7 @@ const Catalog = ({
   const originalTree = addExpandState(
     filterEmptyFolders(convertToTree(nodeList) || []),
     id as string,
-    catalogFolderExpand
+    catalogFolderExpand,
   );
 
   const tree = useMemo(() => {
@@ -140,7 +140,7 @@ const Catalog = ({
             size='small'
             placeholder='搜索'
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={e => setSearchTerm(e.target.value)}
             sx={{
               width: 'calc(100% - 26px)',
               mb: 2,
@@ -189,7 +189,7 @@ const Catalog = ({
               scrollbarWidth: 'none',
             }}
           >
-            {tree.map((item) => (
+            {tree.map(item => (
               <CatalogFolder
                 id={id}
                 key={item.id}

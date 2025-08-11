@@ -92,7 +92,7 @@ const DocumentComments = ({
   data: AppDetail;
   refresh: () => void;
 }) => {
-  const { license } = useAppSelector((state) => state.config);
+  const { license } = useAppSelector(state => state.config);
   const [isEdit, setIsEdit] = useState(false);
   const { control, handleSubmit, setValue } = useForm({
     defaultValues: {
@@ -108,13 +108,13 @@ const DocumentComments = ({
     setValue(
       'moderation_enable',
       // @ts-expect-error 忽略类型错误
-      +data?.settings?.web_app_comment_settings?.moderation_enable
+      +data?.settings?.web_app_comment_settings?.moderation_enable,
     );
   }, [data]);
 
   const isPro = license.edition === 1 || license.edition === 2;
 
-  const onSubmit = handleSubmit((formData) => {
+  const onSubmit = handleSubmit(formData => {
     updateAppDetail(
       { id: data.id },
       {
@@ -128,7 +128,7 @@ const DocumentComments = ({
             moderation_enable: Boolean(formData.moderation_enable),
           },
         },
-      }
+      },
     ).then(() => {
       Message.success('保存成功');
       setIsEdit(false);
@@ -155,7 +155,7 @@ const DocumentComments = ({
               <RadioGroup
                 row
                 {...field}
-                onChange={(e) => {
+                onChange={e => {
                   setIsEdit(true);
                   field.onChange(+e.target.value as 1 | 0);
                 }}
@@ -191,7 +191,7 @@ const DocumentComments = ({
                 row
                 {...field}
                 value={isPro ? field.value : undefined}
-                onChange={(e) => {
+                onChange={e => {
                   setIsEdit(true);
                   field.onChange(+e.target.value as 1 | 0);
                 }}
@@ -233,7 +233,7 @@ const AIQuestion = ({
   });
   const [inputValue, setInputValue] = useState('');
 
-  const onSubmit = handleSubmit((formData) => {
+  const onSubmit = handleSubmit(formData => {
     updateAppDetail(
       { id: data.id },
       {
@@ -244,7 +244,7 @@ const AIQuestion = ({
             ...formData,
           },
         },
-      }
+      },
     ).then(() => {
       Message.success('保存成功');
       setIsEdit(false);
@@ -256,13 +256,13 @@ const AIQuestion = ({
     setValue(
       'is_enabled',
       // @ts-expect-error 忽略类型错误
-      data.settings?.ai_feedback_settings?.is_enabled ?? true
+      data.settings?.ai_feedback_settings?.is_enabled ?? true,
     );
 
     setValue(
       'ai_feedback_type',
       // @ts-expect-error 忽略类型错误
-      data.settings?.ai_feedback_settings?.ai_feedback_type || []
+      data.settings?.ai_feedback_settings?.ai_feedback_type || [],
     );
   }, [data]);
 
@@ -298,7 +298,7 @@ const AIQuestion = ({
                     const newValues = [...new Set(newValue as string[])];
                     field.onChange(newValues);
                   }}
-                  renderInput={(params) => (
+                  renderInput={params => (
                     <TextField
                       {...params}
                       size='small'
@@ -320,7 +320,7 @@ const AIQuestion = ({
               <RadioGroup
                 row
                 {...field}
-                onChange={(e) => {
+                onChange={e => {
                   setIsEdit(true);
                   field.onChange(e.target.value === 'true');
                 }}
@@ -352,14 +352,14 @@ const DocumentCorrection = ({
   refresh: () => void;
 }) => {
   const [isEdit, setIsEdit] = useState(false);
-  const { license } = useAppSelector((state) => state.config);
+  const { license } = useAppSelector(state => state.config);
   const { control, handleSubmit, setValue } = useForm({
     defaultValues: {
       document_feedback_is_enabled: 0,
     },
   });
 
-  const onSubmit = handleSubmit((formData) => {
+  const onSubmit = handleSubmit(formData => {
     console.log(data);
     updateAppDetail(
       { id: data.id },
@@ -368,10 +368,10 @@ const DocumentCorrection = ({
           ...data.settings,
           // @ts-expect-error 忽略类型错误
           document_feedback_is_enabled: Boolean(
-            formData.document_feedback_is_enabled
+            formData.document_feedback_is_enabled,
           ),
         },
-      }
+      },
     ).then(() => {
       Message.success('保存成功');
       setIsEdit(false);
@@ -385,7 +385,7 @@ const DocumentCorrection = ({
     setValue(
       'document_feedback_is_enabled',
       // @ts-expect-error 忽略类型错误
-      +data?.settings?.document_feedback_is_enabled
+      +data?.settings?.document_feedback_is_enabled,
     );
   }, [data]);
 
@@ -419,7 +419,7 @@ const DocumentCorrection = ({
                 row
                 {...field}
                 value={isPro ? field.value : undefined}
-                onChange={(e) => {
+                onChange={e => {
                   setIsEdit(true);
                   field.onChange(+e.target.value as 1 | 0);
                 }}

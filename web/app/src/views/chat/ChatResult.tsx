@@ -66,13 +66,7 @@ const ChatResult = ({
 }: ChatResultProps) => {
   const router = useRouter();
   const [input, setInput] = useState('');
-  const {
-    mobile = false,
-    themeMode = 'light',
-    kb_id = '',
-    token,
-    kbDetail,
-  } = useStore();
+  const { mobile = false, themeMode = 'light', kbDetail } = useStore();
   const [open, setOpen] = useState(false);
   const [conversationItem, setConversationItem] =
     useState<ConversationItem | null>(null);
@@ -102,11 +96,9 @@ const ChatResult = ({
     message_id: string,
     score: number,
     type?: string,
-    content?: string
+    content?: string,
   ) => {
     const data: any = {
-      kb_id,
-      authToken: token,
       conversation_id,
       message_id,
       score,
@@ -116,9 +108,9 @@ const ChatResult = ({
     await postShareV1ChatFeedback(data);
     message.success('反馈成功');
     setConversation(
-      conversation.map((item) => {
+      conversation.map(item => {
         return item.message_id === message_id ? { ...item, score } : item;
-      })
+      }),
     );
   };
 
@@ -147,7 +139,6 @@ const ChatResult = ({
         scrollbarWidth: 'none',
         msOverflowStyle: 'none',
         ...(mobile && {
-          position: 'relative',
           overflow: 'hidden',
           height: 'calc(100vh - 180px)',
         }),
@@ -216,10 +207,10 @@ const ChatResult = ({
             </Accordion>
             {(index !== conversation.length - 1 || !loading) && (
               <Stack
-                direction='row'
-                alignItems='center'
+                direction={mobile ? 'column' : 'row'}
+                alignItems={mobile ? 'flex-start' : 'center'}
                 justifyContent='space-between'
-                gap={3}
+                gap={mobile ? 1 : 3}
                 sx={{
                   fontSize: 12,
                   color: 'text.tertiary',
@@ -285,6 +276,8 @@ const ChatResult = ({
 
           ...(mobile && {
             p: 0,
+            left: 24,
+            right: 24,
           }),
         }}
       >
@@ -345,8 +338,8 @@ const ChatResult = ({
             }}
             size='small'
             value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
+            onChange={e => setInput(e.target.value)}
+            onKeyDown={e => {
               const isComposing =
                 e.nativeEvent.isComposing || e.nativeEvent.keyCode === 229;
               if (
