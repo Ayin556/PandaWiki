@@ -568,6 +568,7 @@ export type ImportDocType =
   | 'Wiki.js'
   | 'Yuque'
   | 'Siyuan'
+  | 'MinDoc'
   | 'Feishu'
   | 'Confluence';
 

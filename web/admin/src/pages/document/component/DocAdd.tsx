@@ -95,6 +95,13 @@ const DocAdd = ({ refresh }: InputContentProps) => {
         setKey('Siyuan');
       },
     },
+    MinDoc: {
+      label: '通过 MinDoc 导入',
+      onClick: () => {
+        setUrlOpen(true);
+        setKey('MinDoc');
+      },
+    },
     Feishu: {
       label: '通过飞书文档导入',
       onClick: () => {

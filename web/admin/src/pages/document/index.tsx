@@ -150,6 +150,11 @@ const Content = () => {
                   onClick: () => handleUrl(item, 'Siyuan'),
                 },
                 {
+                  label: '通过 MinDoc 导入',
+                  key: 'MinDoc',
+                  onClick: () => handleUrl(item, 'MinDoc'),
+                },
+                {
                   label: '通过飞书文档导入',
                   key: 'Feishu',
                   onClick: () => handleUrl(item, 'Feishu'),

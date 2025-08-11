@@ -10,6 +10,7 @@ import SitemapImport from './Sitemap';
 import URLImport from './URL';
 import WikijsImport from './Wikijs';
 import ImportDocSiyuan from './Siyuan';
+import ImportDocMinDoc from './MinDoc';
 
 const ImportDoc = ({
   type,
@@ -94,6 +95,15 @@ const ImportDoc = ({
     case 'Siyuan':
       return (
         <ImportDocSiyuan
+          open={open}
+          refresh={refresh}
+          onCancel={onCancel}
+          parentId={parentId}
+        />
+      );
+    case 'MinDoc':
+      return (
+        <ImportDocMinDoc
           open={open}
           refresh={refresh}
           onCancel={onCancel}
