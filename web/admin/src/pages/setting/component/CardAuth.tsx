@@ -767,7 +767,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
                   >
                     企业级身份认证
                     {!isPro && (
-                      <Tooltip title='联创版和企业版可用' placement='top' arrow>
+                      <Tooltip title='企业版可用' placement='top' arrow>
                         <InfoIcon
                           sx={{ color: 'text.secondary', fontSize: 14 }}
                         />
