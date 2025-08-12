@@ -54,6 +54,9 @@ func (u *SiYuanUsecase) AnalysisExportFile(ctx context.Context, fileHeader *mult
 	// 预分配结果 slice
 	nonMdFiles := make([]*zip.File, 0)
 	for _, file := range zipReader.File {
+		if strings.HasPrefix(file.Name, "__MACOSX") || strings.HasSuffix(file.Name, ".DS_Store") {
+			continue
+		}
 		ext := filepath.Ext(strings.ToLower(file.Name))
 		if ext != ".md" {
 			nonMdFiles = append(nonMdFiles, file)
@@ -109,12 +112,15 @@ func (u *SiYuanUsecase) AnalysisExportFile(ctx context.Context, fileHeader *mult
 	ossPathMap := make(map[string]string)
 	for _, res := range uploadResults {
 		if res.fileName != "" && res.keys != "" {
-			ossPathMap[res.fileName] = res.keys
+			ossPathMap[filepath.Base(res.fileName)] = res.keys
 		}
 	}
 
 	// 处理md文件
 	for _, file := range zipReader.File {
+		if strings.HasPrefix(file.Name, "__MACOSX") || strings.HasSuffix(file.Name, ".DS_Store") {
+			continue
+		}
 		fileName := file.Name
 		ext := filepath.Ext(strings.ToLower(fileName))
 		if ext != ".md" {
@@ -133,23 +139,32 @@ func (u *SiYuanUsecase) AnalysisExportFile(ctx context.Context, fileHeader *mult
 			}
 			if strings.HasPrefix(*originUrl, "http") || strings.HasPrefix(*originUrl, "https") {
 				resp, err := http.Get(*originUrl)
+				// 获取不到的在线链接，保留原样
 				if err != nil {
-					return "", err
+					return *originUrl, nil
 				}
 				defer resp.Body.Close()
 				key, err := u.fileusecase.UploadFileFromReader(ctx, kbID, *originUrl, resp.Body, resp.ContentLength)
-				return fmt.Sprintf("/%s/%s", domain.Bucket, key), err
+				if err != nil {
+					u.logger.Error("upload file failed")
+					return *originUrl, nil
+				}
+				return fmt.Sprintf("/%s/%s", domain.Bucket, key), nil
 			}
-			absPath := filepath.Join(filepath.Dir(fileName), *originUrl)
-			unescapeStr, err := url.PathUnescape(filepath.Base(absPath))
+			unescapeStr, err := url.PathUnescape(filepath.Base(*originUrl))
 			if err != nil {
 				u.logger.Error("url path unescape failed")
 				return "", fmt.Errorf("url path unescape failed: %v", err)
 			}
-			absPath = filepath.Join(filepath.Dir(absPath), unescapeStr)
-			ossKey, ok := ossPathMap[absPath]
+			unescapeStr, err = utils.RemoveURLParams(unescapeStr)
+			if err != nil {
+				u.logger.Error("remove url params failed")
+				return "", fmt.Errorf("remove url params failed: %v", err)
+			}
+			ossKey, ok := ossPathMap[unescapeStr]
 			if !ok {
-				return "", fmt.Errorf("oss key not found for url")
+				u.logger.Error("oss key not found for url", log.String("file", unescapeStr))
+				return *originUrl, nil
 			}
 			return fmt.Sprintf("/%s/%s", domain.Bucket, ossKey), nil
 		})
