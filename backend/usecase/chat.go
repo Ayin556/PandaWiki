@@ -155,8 +155,8 @@ func (u *ChatUsecase) Chat(ctx context.Context, req *domain.ChatRequest) (<-chan
 		}
 		if len(blockWords) > 0 { // check --> filter
 			questionFilter := utils.GetDFA(req.KBID)
-			if err := questionFilter.Check(req.Message); err != nil { // exist then return err
-				answer := "**您的问题包含敏感词, AI 无法回答你的问题**"
+			if err := questionFilter.DFA.Check(req.Message); err != nil { // exist then return err
+				answer := "**您的问题包含敏感词, AI 无法回答您的问题。**"
 				eventCh <- domain.SSEEvent{Type: "error", Content: answer}
 				// save ai answer and set it err
 				if err := u.conversationUsecase.CreateChatConversationMessage(context.Background(), req.KBID, &domain.ConversationMessage{
@@ -263,15 +263,6 @@ func (u *ChatUsecase) CreateAcOnChunk(ctx context.Context, kbID string, answer *
 		return onChunk, nil
 	}
 
-	var bufferSize int
-	for _, word := range blockWords {
-		if word != "" {
-			// 计算bufferSize
-			if len([]rune(word)) > bufferSize {
-				bufferSize = len([]rune(word))
-			}
-		}
-	}
 	// get filter --> exist
 	filter := utils.GetDFA(kbID)
 
@@ -282,20 +273,20 @@ func (u *ChatUsecase) CreateAcOnChunk(ctx context.Context, kbID string, answer *
 		bufferRunes := []rune(buffer.String())
 
 		// 基于 rune 长度与 bufferSize 进行比较，确保正确处理多字节字符
-		if len(bufferRunes) >= bufferSize {
+		if len(bufferRunes) >= filter.BuffSize {
 			fullContent := buffer.String() // get buffer string
 
 			// 直接处理完整内容
-			processedContent := u.replaceWithSimpleString(fullContent, filter)
+			processedContent := u.replaceWithSimpleString(fullContent, filter.DFA)
 			processedRunes := []rune(processedContent)
 
 			// 输出前面的部分，保留后面bufferSize - 1个rune
-			outputPart := string(processedRunes[:len(processedRunes)-bufferSize+1])
+			outputPart := string(processedRunes[:len(processedRunes)-filter.BuffSize+1])
 			*answer += outputPart
 			eventCh <- domain.SSEEvent{Type: dataType, Content: outputPart}
 
 			// 清空缓冲区
-			newBufferContent := string(processedRunes[len(processedRunes)-bufferSize+1:])
+			newBufferContent := string(processedRunes[len(processedRunes)-filter.BuffSize+1:])
 			buffer.Reset()
 			buffer.WriteString(newBufferContent)
 		}
@@ -306,7 +297,7 @@ func (u *ChatUsecase) CreateAcOnChunk(ctx context.Context, kbID string, answer *
 		bufferRunes := []rune(buffer.String())
 		if len(bufferRunes) > 0 {
 			fullContent := buffer.String()
-			processedContent := u.replaceWithSimpleString(fullContent, filter)
+			processedContent := u.replaceWithSimpleString(fullContent, filter.DFA)
 			*answer += processedContent
 			eventCh <- domain.SSEEvent{Type: dataType, Content: processedContent}
 		}
