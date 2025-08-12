@@ -6,12 +6,17 @@ import (
 )
 
 var (
-	dfaInstance map[string]*DFA
+	dfaInstance map[string]*DFAInstance
 	mu          sync.RWMutex
 )
 
+type DFAInstance struct {
+	DFA      *DFA
+	BuffSize int
+}
+
 // GetDFA returns the singleton instance of DFA
-func GetDFA(kbID string) *DFA {
+func GetDFA(kbID string) *DFAInstance {
 	mu.RLock()
 	defer mu.RUnlock()
 	return dfaInstance[kbID]
@@ -24,13 +29,20 @@ func InitDFA(kbID string, words []string) {
 	newDFA := &DFA{
 		Root: NewTrieNode(),
 	}
+	var BuffSize int // 默认为0
 	for _, word := range words {
 		newDFA.AddWord(word)
+		if BuffSize < len([]rune(word)) {
+			BuffSize = len([]rune(word))
+		}
 	}
 	if dfaInstance == nil {
-		dfaInstance = make(map[string]*DFA)
+		dfaInstance = make(map[string]*DFAInstance)
 	}
-	dfaInstance[kbID] = newDFA
+	dfaInstance[kbID] = &DFAInstance{
+		DFA:      newDFA,
+		BuffSize: BuffSize,
+	}
 }
 
 // TrieNode Define the nodes of DFA
