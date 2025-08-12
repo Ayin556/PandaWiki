@@ -5564,6 +5564,9 @@ const docTemplate = `{
         "domain.UserInfo": {
             "type": "object",
             "properties": {
+                "auth_user_id": {
+                    "type": "integer"
+                },
                 "avatar": {
                     "description": "avatar",
                     "type": "string"

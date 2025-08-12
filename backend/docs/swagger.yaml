@@ -1636,6 +1636,8 @@ definitions:
     type: object
   domain.UserInfo:
     properties:
+      auth_user_id:
+        type: integer
       avatar:
         description: avatar
         type: string

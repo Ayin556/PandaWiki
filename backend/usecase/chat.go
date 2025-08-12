@@ -23,11 +23,12 @@ type ChatUsecase struct {
 	appRepo             *pg.AppRepository
 	blockWordRepo       *pg.BlockWordRepo
 	kbRepo              *pg.KnowledgeBaseRepository
+	AuthRepo            *pg.AuthRepo
 	logger              *log.Logger
 }
 
 func NewChatUsecase(llmUsecase *LLMUsecase, kbRepo *pg.KnowledgeBaseRepository, conversationUsecase *ConversationUsecase, modelUsecase *ModelUsecase, appRepo *pg.AppRepository,
-	blockWordRepo *pg.BlockWordRepo, logger *log.Logger) (*ChatUsecase, error) {
+	blockWordRepo *pg.BlockWordRepo, authRepo *pg.AuthRepo, logger *log.Logger) (*ChatUsecase, error) {
 	u := &ChatUsecase{
 		llmUsecase:          llmUsecase,
 		conversationUsecase: conversationUsecase,
@@ -35,6 +36,7 @@ func NewChatUsecase(llmUsecase *LLMUsecase, kbRepo *pg.KnowledgeBaseRepository, 
 		appRepo:             appRepo,
 		blockWordRepo:       blockWordRepo,
 		kbRepo:              kbRepo,
+		AuthRepo:            authRepo,
 		logger:              logger.WithModule("usecase.chat"),
 	}
 	if err := u.initDFA(); err != nil {
