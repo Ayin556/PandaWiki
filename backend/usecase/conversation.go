@@ -20,6 +20,7 @@ type ConversationUsecase struct {
 	geoCacheRepo *cache.GeoRepo
 	logger       *log.Logger
 	ipRepo       *ipdb.IPAddressRepo
+	authRepo     *pg.AuthRepo
 }
 
 func NewConversationUsecase(
@@ -28,12 +29,14 @@ func NewConversationUsecase(
 	geoCacheRepo *cache.GeoRepo,
 	logger *log.Logger,
 	ipRepo *ipdb.IPAddressRepo,
+	authRepo *pg.AuthRepo,
 ) *ConversationUsecase {
 	return &ConversationUsecase{
 		repo:         repo,
 		nodeRepo:     nodeRepo,
 		geoCacheRepo: geoCacheRepo,
 		ipRepo:       ipRepo,
+		authRepo:     authRepo,
 		logger:       logger.WithModule("usecase.conversation"),
 	}
 }
@@ -50,15 +53,26 @@ func (u *ConversationUsecase) GetConversationList(ctx context.Context, request *
 	}
 	// get feedback info
 	conversationIDs := make([]string, 0, len(conversations))
+	// get all conversation authID
+	authIDs := make([]uint, 0, len(conversations))
 
 	for _, c := range conversations {
 		conversationIDs = append(conversationIDs, c.ID)
+		// 检查 s_id 是否有效，避免查询无效数据
+		if c.Info.UserInfo.AuthUserID != 0 {
+			authIDs = append(authIDs, c.Info.UserInfo.AuthUserID)
+		}
 	}
 
 	// 遍历拿到的c，去数据库里面搜索最新的用户回复
 	feedbackMap, err := u.repo.GetConversationFeedBackInfoByIDs(ctx, conversationIDs)
 	if err != nil {
 		u.logger.Error("get latest feedback by conversation id failed", log.Error(err))
+	}
+	// get user info according authIDs
+	authMap, err := u.authRepo.GetAuthUserinfoByIDs(ctx, authIDs)
+	if err != nil {
+		u.logger.Error("get user info failed", log.Error(err))
 	}
 
 	// get ip address
@@ -77,6 +91,13 @@ func (u *ConversationUsecase) GetConversationList(ctx context.Context, request *
 		}
 		if _, ok := feedbackMap[conversation.ID]; ok {
 			conversation.FeedBackInfo = feedbackMap[conversation.ID]
+		}
+		if _, ok := authMap[conversation.Info.UserInfo.AuthUserID]; ok {
+			conversation.Info.UserInfo = domain.UserInfo{
+				NickName: authMap[conversation.Info.UserInfo.AuthUserID].AuthUserInfo.Username,
+				Avatar:   authMap[conversation.Info.UserInfo.AuthUserID].AuthUserInfo.AvatarUrl,
+				Email:    authMap[conversation.Info.UserInfo.AuthUserID].AuthUserInfo.Email,
+			}
 		}
 		return conversation
 	})
