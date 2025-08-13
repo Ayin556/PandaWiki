@@ -48,9 +48,14 @@ func (y *YuqueUsecase) AnalysisExportFile(ctx context.Context, fileHeader *multi
 
 func (y *YuqueUsecase) exchangeUrl(ctx context.Context, md, kbid string) (string, error) {
 	res, err := utils.ExchangeMarkDownImageUrl(ctx, []byte(md), func(ctx context.Context, originUrl *string) (string, error) {
+		if originUrl == nil {
+			y.logger.Error("Origin URL is nil")
+			return "", nil
+		}
 		resp, err := http.Get(*originUrl)
 		if err != nil {
-			return "", err
+			y.logger.Error("Failed to get image from URL", log.String("origin_url", *originUrl), log.String("error", err.Error()))
+			return *originUrl, nil
 		}
 		defer resp.Body.Close()
 		key, err := y.fileusecase.UploadFileFromReader(ctx, kbid, *originUrl, resp.Body, resp.ContentLength)
