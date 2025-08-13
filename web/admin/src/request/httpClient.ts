@@ -67,7 +67,7 @@ const redirectToLogin = () => {
   window.location.href = `${pathname}?${search}`;
 };
 
-type ExtractDataProp<T> = T extends { data?: infer U } ? U : never;
+type ExtractDataProp<T> = T extends { data?: infer U } ? U : T;
 
 export class HttpClient<SecurityDataType = unknown> {
   public instance: AxiosInstance;
@@ -103,7 +103,7 @@ export class HttpClient<SecurityDataType = unknown> {
         Message.error(response.statusText);
         return Promise.reject(response);
       },
-      (err) => {
+      (error) => {
         if (error.response?.status === 401) {
           window.location.href = "/login";
           localStorage.removeItem("panda_wiki_token");

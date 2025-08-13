@@ -49,9 +49,15 @@ export interface DomainDeleteDocumentFeedbackReq {
 }
 
 export interface DomainDocumentFeedbackInfo {
+  /** user */
+  auth_user_id?: number;
+  /** avatar */
+  avatar?: string;
+  email?: string;
   /** ip */
   remote_ip?: string;
   screen_shot?: string;
+  user_name?: string;
 }
 
 export interface DomainDocumentFeedbackListItem {
