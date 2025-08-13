@@ -3587,6 +3587,14 @@ const docTemplate = `{
                         }
                     ]
                 },
+                "web_app_custom_style": {
+                    "description": "WebAppCustomStyle",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.WebAppCustomSettings"
+                        }
+                    ]
+                },
                 "wechat_app_agent_id": {
                     "type": "string"
                 },
@@ -3768,6 +3776,14 @@ const docTemplate = `{
                     "allOf": [
                         {
                             "$ref": "#/definitions/domain.WebAppCommentSettings"
+                        }
+                    ]
+                },
+                "web_app_custom_style": {
+                    "description": "WebAppCustomStyle",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.WebAppCustomSettings"
                         }
                     ]
                 },
@@ -5632,6 +5648,17 @@ const docTemplate = `{
                 },
                 "moderation_enable": {
                     "type": "boolean"
+                }
+            }
+        },
+        "domain.WebAppCustomSettings": {
+            "type": "object",
+            "properties": {
+                "allow_theme_switching": {
+                    "type": "boolean"
+                },
+                "header_search_placeholder": {
+                    "type": "string"
                 }
             }
         },
