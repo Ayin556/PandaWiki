@@ -282,9 +282,14 @@ export default function Login() {
                   </IconButton>
                 )}
                 {sourceType === ConstsSourceType.SourceTypeOAuth && (
-                  <IconButton onClick={handleOAuthLogin}>
-                    <IconOAuth sx={{ fontSize: 40 }}></IconOAuth>
-                  </IconButton>
+                  <Button
+                    fullWidth
+                    variant='contained'
+                    onClick={handleOAuthLogin}
+                    sx={{ height: '50px', fontSize: 16 }}
+                  >
+                    登录
+                  </Button>
                 )}
 
                 {sourceType === ConstsSourceType.SourceTypeCAS && (
@@ -387,8 +392,8 @@ export default function Login() {
                                   height: 16,
                                   color:
                                     loading ||
-                                      !username.trim() ||
-                                      !password.trim()
+                                    !username.trim() ||
+                                    !password.trim()
                                       ? ''
                                       : '#e73f3f',
                                 }}

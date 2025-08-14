@@ -9,7 +9,6 @@ import {
   RadioGroup,
   Stack,
   TextField,
-  Tooltip,
   Select,
   MenuItem,
   Link,
@@ -23,7 +22,6 @@ import { DomainKnowledgeBaseDetail } from '@/request/types';
 import { GithubComChaitinPandaWikiProApiAuthV1AuthItem } from '@/request/pro/types';
 import { getApiProV1AuthGet, postApiProV1AuthSet } from '@/request/pro/Auth';
 import { StyledFormLabel } from '@/components/Form';
-import InfoIcon from '@mui/icons-material/Info';
 import { Message, Table, Icon } from 'ct-mui';
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -33,6 +31,14 @@ interface CardAuthProps {
   kb: DomainKnowledgeBaseDetail;
   refresh: (value: AuthSetting) => void;
 }
+
+const EXTEND_CONSTS_SOURCE_TYPE = {
+  ...ConstsSourceType,
+  SourceTypePassword: 'password',
+} as const;
+
+type ExtendConstsSourceType =
+  (typeof EXTEND_CONSTS_SOURCE_TYPE)[keyof typeof EXTEND_CONSTS_SOURCE_TYPE];
 
 const sourceTypeIcon = {
   [ConstsSourceType.SourceTypeDingTalk]: 'icon-dingdingjiqiren',
@@ -85,7 +91,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
       password: '',
       client_id: '',
       client_secret: '',
-      source_type: kb.access_settings?.source_type as ConstsSourceType,
+      source_type: kb.access_settings?.source_type as ExtendConstsSourceType,
       agent_id: '',
       token_url: '',
       authorize_url: '',
@@ -117,19 +123,24 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
         access_settings: {
           ...kb.access_settings,
           simple_auth: {
-            enabled: value.enabled === '2',
+            enabled:
+              value.enabled === '2' &&
+              source_type === EXTEND_CONSTS_SOURCE_TYPE.SourceTypePassword,
             password: value.password,
           },
           enterprise_auth: {
-            enabled: value.enabled === '3',
+            enabled:
+              value.enabled === '2' &&
+              source_type !== EXTEND_CONSTS_SOURCE_TYPE.SourceTypePassword,
           },
-          source_type: value.source_type,
+          source_type: value.source_type as ConstsSourceType,
+          is_forbidden: value.enabled === '3',
         },
       }),
-      value.enabled === '3' && isEnterprise
+      value.enabled === '2' && isEnterprise
         ? postApiProV1AuthSet({
             kb_id,
-            source_type: value.source_type,
+            source_type: value.source_type as ConstsSourceType,
             client_id: value.client_id,
             client_secret: value.client_secret,
             agent_id: value.agent_id,
@@ -168,25 +179,32 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
   useEffect(() => {
     setValue(
       'source_type',
-      kb.access_settings?.source_type || ConstsSourceType.SourceTypeDingTalk,
+      isEnterprise
+        ? kb.access_settings?.source_type ||
+            EXTEND_CONSTS_SOURCE_TYPE.SourceTypePassword
+        : EXTEND_CONSTS_SOURCE_TYPE.SourceTypePassword,
     );
-  }, [kb]);
+  }, [kb, isEnterprise]);
 
   useEffect(() => {
     if (kb.access_settings?.simple_auth) {
       setValue('enabled', kb.access_settings.simple_auth.enabled ? '2' : '1');
       setValue('password', kb.access_settings.simple_auth.password ?? '');
     }
-    if (kb.access_settings?.enterprise_auth?.enabled && isEnterprise) {
+    if (kb.access_settings?.enterprise_auth?.enabled) {
+      setValue('enabled', '2');
+    }
+    if (kb.access_settings?.is_forbidden) {
       setValue('enabled', '3');
     }
-  }, [kb, isEnterprise]);
+  }, [kb]);
 
   useEffect(() => {
-    if (!isEnterprise || !kb_id || enabled !== '3') return;
+    if (!isEnterprise || !kb_id || enabled !== '2') return;
+
     getApiProV1AuthGet({
       kb_id,
-      source_type: source_type,
+      source_type: source_type as ConstsSourceType,
     }).then(res => {
       setMemberList(res.auths || []);
       setValue('client_id', res.client_id!);
@@ -569,6 +587,33 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
     );
   };
 
+  const passwordForm = () => {
+    return (
+      <FormItem label='访问口令' required>
+        <Controller
+          control={control}
+          rules={{
+            required: '访问口令不能为空',
+          }}
+          name='password'
+          render={({ field }) => (
+            <TextField
+              {...field}
+              fullWidth
+              placeholder='请输入'
+              error={!!errors.password}
+              helperText={errors.password?.message}
+              onChange={e => {
+                field.onChange(e.target.value);
+                setIsEdit(true);
+              }}
+            />
+          )}
+        />
+      </FormItem>
+    );
+  };
+
   const ldapForm = () => {
     return (
       <>
@@ -730,7 +775,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
         <Box
           sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0 }}
         >
-          可访问性
+          访问控制
         </Box>
         <Controller
           control={control}
@@ -748,14 +793,14 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
               <FormControlLabel
                 value={'1'}
                 control={<Radio size='small' />}
-                label={<Box sx={{ width: 65 }}>公开访问</Box>}
+                label={<Box sx={{ width: 65 }}>完全公开</Box>}
               />
               <FormControlLabel
                 value={'2'}
                 control={<Radio size='small' />}
-                label={<Box sx={{ width: 95 }}>简单口令访问</Box>}
+                label={<Box sx={{ width: 65 }}>需要认证</Box>}
               />
-              <FormControlLabel
+              {/* <FormControlLabel
                 value={'3'}
                 control={<Radio size='small' disabled={!isEnterprise} />}
                 label={
@@ -775,48 +820,19 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
                     )}
                   </Stack>
                 }
+              /> */}
+              <FormControlLabel
+                value={'3'}
+                control={<Radio size='small' />}
+                label={<Box sx={{ width: 65 }}>禁止访问</Box>}
               />
             </RadioGroup>
           )}
         />
       </Stack>
       {enabled === '2' && (
-        <Stack direction={'row'} gap={2} alignItems={'center'} sx={{ mx: 2 }}>
-          <Box
-            sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0 }}
-          >
-            访问口令
-          </Box>
-          <Controller
-            control={control}
-            name='password'
-            render={({ field }) => (
-              <TextField
-                {...field}
-                fullWidth
-                onChange={e => {
-                  field.onChange(e.target.value);
-                  setIsEdit(true);
-                }}
-                placeholder='输入访问口令'
-              />
-            )}
-          />
-        </Stack>
-      )}
-      {enabled === '3' && (
         <>
-          <Stack direction={'row'} gap={2} alignItems={'center'} sx={{ mx: 2 }}>
-            <Box
-              sx={{
-                width: 156,
-                fontSize: 14,
-                lineHeight: '32px',
-                flexShrink: 0,
-              }}
-            >
-              登录方式
-            </Box>
+          <FormItem label='登录方式'>
             <Controller
               control={control}
               name='source_type'
@@ -828,30 +844,53 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
                     setIsEdit(true);
                   }}
                   fullWidth
-                  sx={{ height: 53 }}
+                  sx={{ height: 52 }}
                 >
-                  <MenuItem value={ConstsSourceType.SourceTypeDingTalk}>
-                    钉钉登录
+                  <MenuItem
+                    value={EXTEND_CONSTS_SOURCE_TYPE.SourceTypePassword}
+                  >
+                    密码认证
                   </MenuItem>
-                  <MenuItem value={ConstsSourceType.SourceTypeFeishu}>
-                    飞书登录
+                  <MenuItem
+                    value={EXTEND_CONSTS_SOURCE_TYPE.SourceTypeDingTalk}
+                    disabled={!isEnterprise}
+                  >
+                    钉钉登录 {isEnterprise ? '' : '(企业版可用)'}
                   </MenuItem>
-                  <MenuItem value={ConstsSourceType.SourceTypeWeCom}>
-                    企业微信登录
+                  <MenuItem
+                    value={EXTEND_CONSTS_SOURCE_TYPE.SourceTypeFeishu}
+                    disabled={!isEnterprise}
+                  >
+                    飞书登录 {isEnterprise ? '' : '(企业版可用)'}
                   </MenuItem>
-                  <MenuItem value={ConstsSourceType.SourceTypeOAuth}>
-                    OAuth 登录
+                  <MenuItem
+                    value={EXTEND_CONSTS_SOURCE_TYPE.SourceTypeWeCom}
+                    disabled={!isEnterprise}
+                  >
+                    企业微信登录 {isEnterprise ? '' : '(企业版可用)'}
                   </MenuItem>
-                  <MenuItem value={ConstsSourceType.SourceTypeCAS}>
-                    CAS 登录
+                  <MenuItem
+                    value={EXTEND_CONSTS_SOURCE_TYPE.SourceTypeOAuth}
+                    disabled={!isEnterprise}
+                  >
+                    OAuth 登录 {isEnterprise ? '' : '(企业版可用)'}
                   </MenuItem>
-                  <MenuItem value={ConstsSourceType.SourceTypeLDAP}>
-                    LDAP 登录
+                  <MenuItem
+                    value={EXTEND_CONSTS_SOURCE_TYPE.SourceTypeCAS}
+                    disabled={!isEnterprise}
+                  >
+                    CAS 登录 {isEnterprise ? '' : '(企业版可用)'}
+                  </MenuItem>
+                  <MenuItem
+                    value={EXTEND_CONSTS_SOURCE_TYPE.SourceTypeLDAP}
+                    disabled={!isEnterprise}
+                  >
+                    LDAP 登录 {isEnterprise ? '' : '(企业版可用)'}
                   </MenuItem>
                 </Select>
               )}
             />
-          </Stack>
+          </FormItem>
 
           {[
             ConstsSourceType.SourceTypeDingTalk,
@@ -939,64 +978,73 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
             </>
           )}
 
-          {source_type === ConstsSourceType.SourceTypeOAuth && oauthForm()}
-          {source_type === ConstsSourceType.SourceTypeCAS && casForm()}
-          {source_type === ConstsSourceType.SourceTypeLDAP && ldapForm()}
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              m: 2,
-              height: 32,
-              fontWeight: 'bold',
-              '&::before': {
-                content: '""',
-                display: 'inline-block',
-                width: 4,
-                height: 12,
-                bgcolor: 'common.black',
-                borderRadius: '2px',
-                mr: 1,
-              },
-            }}
-          >
-            成员{' '}
-          </Box>
-          <Table
-            columns={columns}
-            dataSource={memberList}
-            showHeader={false}
-            rowKey='id'
-            size='small'
-            sx={{
-              mx: 2,
-              '.MuiTableContainer-root': {
-                maxHeight: 400,
-                border: '1px dashed',
-                borderColor: 'divider',
-                borderRadius: '10px',
-                borderBottom: 'none',
-              },
+          {source_type === EXTEND_CONSTS_SOURCE_TYPE.SourceTypeOAuth &&
+            oauthForm()}
+          {source_type === EXTEND_CONSTS_SOURCE_TYPE.SourceTypeCAS && casForm()}
+          {source_type === EXTEND_CONSTS_SOURCE_TYPE.SourceTypeLDAP &&
+            ldapForm()}
+          {source_type === EXTEND_CONSTS_SOURCE_TYPE.SourceTypePassword &&
+            passwordForm()}
 
-              '.MuiTableCell-root': {
-                px: '16px !important',
-                height: 'auto !important',
-              },
-              '.MuiTableRow-root': {
-                '&:hover': {
-                  '.MuiTableCell-root': {
-                    backgroundColor: 'transparent !important',
+          {source_type !== EXTEND_CONSTS_SOURCE_TYPE.SourceTypePassword && (
+            <>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  m: 2,
+                  height: 32,
+                  fontWeight: 'bold',
+                  '&::before': {
+                    content: '""',
+                    display: 'inline-block',
+                    width: 4,
+                    height: 12,
+                    bgcolor: 'common.black',
+                    borderRadius: '2px',
+                    mr: 1,
                   },
-                },
-              },
-            }}
-            renderEmpty={
-              <Stack alignItems={'center'}>
-                <img src={NoData} width={124} />
-                <Box>暂无数据</Box>
-              </Stack>
-            }
-          />
+                }}
+              >
+                成员{' '}
+              </Box>
+              <Table
+                columns={columns}
+                dataSource={memberList}
+                showHeader={false}
+                rowKey='id'
+                size='small'
+                sx={{
+                  mx: 2,
+                  '.MuiTableContainer-root': {
+                    maxHeight: 400,
+                    border: '1px dashed',
+                    borderColor: 'divider',
+                    borderRadius: '10px',
+                    borderBottom: 'none',
+                  },
+
+                  '.MuiTableCell-root': {
+                    px: '16px !important',
+                    height: 'auto !important',
+                  },
+                  '.MuiTableRow-root': {
+                    '&:hover': {
+                      '.MuiTableCell-root': {
+                        backgroundColor: 'transparent !important',
+                      },
+                    },
+                  },
+                }}
+                renderEmpty={
+                  <Stack alignItems={'center'}>
+                    <img src={NoData} width={124} />
+                    <Box>暂无数据</Box>
+                  </Stack>
+                }
+              />
+            </>
+          )}
         </>
       )}
     </>

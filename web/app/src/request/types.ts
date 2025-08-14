@@ -103,6 +103,22 @@ export enum DomainAppType {
   AppTypeWechatOfficialAccount = 8,
 }
 
+export enum ConstsUserRole {
+  /** 管理员 */
+  UserRoleAdmin = "admin",
+  /** 普通用户 */
+  UserRoleUser = "user",
+}
+
+export enum ConstsUserKBPermission {
+  /** 完全控制 */
+  UserKBPermissionFullControl = "full_control",
+  /** 文档管理 */
+  UserKBPermissionDocManage = "doc_manage",
+  /** 数据运营 */
+  UserKBPermissionDataOperate = "data_operate",
+}
+
 export enum ConstsSourceType {
   SourceTypeDingTalk = "dingtalk",
   SourceTypeFeishu = "feishu",
@@ -121,6 +137,8 @@ export interface DomainAccessSettings {
   base_url?: string;
   enterprise_auth?: DomainEnterpriseAuth;
   hosts?: string[];
+  /** 禁止访问 */
+  is_forbidden?: boolean;
   ports?: number[];
   private_key?: string;
   public_key?: string;
@@ -497,16 +515,6 @@ export interface DomainCreateNodeReq {
   visibility?: DomainNodeVisibility;
 }
 
-export interface DomainCreateUserReq {
-  account: string;
-  /** @minLength 8 */
-  password: string;
-}
-
-export interface DomainDeleteUserReq {
-  user_id: string;
-}
-
 export interface DomainEnterpriseAuth {
   enabled?: boolean;
 }
@@ -606,6 +614,8 @@ export interface DomainKnowledgeBaseDetail {
   dataset_id?: string;
   id?: string;
   name?: string;
+  /** 用户对知识库的权限 */
+  perm?: ConstsUserKBPermission;
   updated_at?: string;
 }
 
@@ -621,15 +631,6 @@ export interface DomainKnowledgeBaseListItem {
 export interface DomainLink {
   name?: string;
   url?: string;
-}
-
-export interface DomainLoginReq {
-  account: string;
-  password: string;
-}
-
-export interface DomainLoginResp {
-  token?: string;
 }
 
 export interface DomainModelDetailResp {
@@ -771,12 +772,6 @@ export interface DomainRecommendNodeListResp {
   type?: DomainNodeType;
 }
 
-export interface DomainResetPasswordReq {
-  id: string;
-  /** @minLength 8 */
-  new_password: string;
-}
-
 export interface DomainResponse {
   data?: unknown;
   message?: string;
@@ -846,6 +841,12 @@ export interface DomainShareConversationMessage {
   content?: string;
   created_at?: string;
   role?: SchemaRoleType;
+}
+
+export interface DomainSiYuanResp {
+  content?: string;
+  id?: number;
+  title?: string;
 }
 
 export interface DomainSimpleAuth {
@@ -931,19 +932,6 @@ export interface DomainUserInfo {
   user_id?: string;
 }
 
-export interface DomainUserInfoResp {
-  account?: string;
-  created_at?: string;
-  id?: string;
-  last_access?: string;
-}
-
-export interface DomainUserListItemResp {
-  account?: string;
-  id?: string;
-  last_access?: string;
-}
-
 export interface DomainWebAppCommentSettings {
   is_enable?: boolean;
   moderation_enable?: boolean;
@@ -980,6 +968,71 @@ export interface V1CommentLists {
 export interface V1ConversationListItems {
   data?: DomainConversationListItem[];
   total?: number;
+}
+
+export interface V1CreateUserReq {
+  account: string;
+  /** @minLength 8 */
+  password: string;
+  role: "admin" | "user";
+}
+
+export interface V1DeleteUserReq {
+  user_id: string;
+}
+
+export interface V1KBUserInviteReq {
+  kb_id: string;
+  perm: "full_control" | "doc_manage" | "data_operate";
+  user_id: string;
+}
+
+export interface V1KBUserListItemResp {
+  account?: string;
+  id?: string;
+  perms?: ConstsUserKBPermission;
+  role?: ConstsUserRole;
+}
+
+export interface V1KBUserUpdateReq {
+  kb_id: string;
+  perm: "full_control" | "doc_manage" | "data_operate";
+  user_id: string;
+}
+
+export interface V1LoginReq {
+  account: string;
+  password: string;
+}
+
+export interface V1LoginResp {
+  token?: string;
+}
+
+export interface V1ResetPasswordReq {
+  id: string;
+  /** @minLength 8 */
+  new_password: string;
+}
+
+export interface V1UserInfoResp {
+  account?: string;
+  created_at?: string;
+  id?: string;
+  last_access?: string;
+  role?: ConstsUserRole;
+}
+
+export interface V1UserListItemResp {
+  account?: string;
+  created_at?: string;
+  id?: string;
+  last_access?: string;
+  role?: ConstsUserRole;
+}
+
+export interface V1UserListResp {
+  users?: V1UserListItemResp[];
 }
 
 export interface DeleteApiV1AppParams {
@@ -1057,6 +1110,16 @@ export interface PostApiV1CrawlerEpubConvertPayload {
   kb_id: string;
 }
 
+export interface PostApiV1CrawlerSiyuanAnalysisExportFilePayload {
+  /**
+   * file
+   * @format binary
+   */
+  file: File;
+  /** kb_id */
+  kb_id: string;
+}
+
 export interface PostApiV1CrawlerWikijsAnalysisExportFilePayload {
   /**
    * file
@@ -1098,6 +1161,16 @@ export interface DeleteApiV1KnowledgeBaseDetailParams {
 }
 
 export interface GetApiV1KnowledgeBaseReleaseListParams {
+  /** Knowledge Base ID */
+  kb_id: string;
+}
+
+export interface DeleteApiV1KnowledgeBaseUserDeleteParams {
+  kb_id: string;
+  user_id: string;
+}
+
+export interface GetApiV1KnowledgeBaseUserListParams {
   /** Knowledge Base ID */
   kb_id: string;
 }

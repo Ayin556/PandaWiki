@@ -1,9 +1,9 @@
-import notFound from '@/assets/images/404.png';
+import block from '@/assets/images/block.png';
 import { FooterProvider } from '@/components/footer';
 import { Box, Stack } from '@mui/material';
 import Image from 'next/image';
 
-export default function NotFound() {
+export default function BlockPage() {
   return (
     <Box
       sx={{
@@ -22,13 +22,13 @@ export default function NotFound() {
         justifyContent='center'
         alignItems='center'
       >
-        <Image src={notFound.src} alt='404' width={380} height={200} />
+        <Image src={block.src} alt='404' width={380} height={200} />
         <Stack
           gap={3}
           alignItems='center'
           sx={{ color: 'text.tertiary', fontSize: 14, mt: 3 }}
         >
-          页面不存在
+          页面被屏蔽
         </Stack>
       </Stack>
       <Box

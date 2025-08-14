@@ -1,21 +1,21 @@
 import { updateAppDetail } from '@/api';
-import { AppDetail, CatalogSetting } from '@/api/type';
+import { CatalogSetting } from '@/api/type';
+import { DomainAppDetailResp } from '@/request/types';
 import {
   Box,
-  Button,
   FormControlLabel,
   Radio,
   RadioGroup,
   Slider,
-  Stack,
 } from '@mui/material';
 import { Message } from 'ct-mui';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { FormItem, SettingCardItem } from './Common';
 
 interface CardCatalogProps {
   id: string;
-  data: AppDetail;
+  data: DomainAppDetailResp;
   refresh: (value: CatalogSetting) => void;
 }
 
@@ -29,25 +29,26 @@ const CardCatalog = ({ id, data, refresh }: CardCatalogProps) => {
     },
   });
 
-  const onSubmit = (value: CatalogSetting) => {
+  const onSubmit = handleSubmit(value => {
     updateAppDetail(
       { id },
+      // @ts-expect-error 类型不匹配
       { settings: { ...data.settings, catalog_settings: value } },
     ).then(() => {
       refresh(value);
       Message.success('保存成功');
       setIsEdit(false);
     });
-  };
+  });
 
   useEffect(() => {
     setValue(
       'catalog_visible',
-      data.settings?.catalog_settings?.catalog_visible || 1,
+      (data.settings?.catalog_settings?.catalog_visible || 1) as 1 | 2,
     );
     setValue(
       'catalog_folder',
-      data.settings?.catalog_settings?.catalog_folder || 1,
+      (data.settings?.catalog_settings?.catalog_folder || 1) as 1 | 2,
     );
     setValue(
       'catalog_width',
@@ -56,46 +57,8 @@ const CardCatalog = ({ id, data, refresh }: CardCatalogProps) => {
   }, [data]);
 
   return (
-    <>
-      <Stack
-        direction='row'
-        alignItems={'center'}
-        justifyContent={'space-between'}
-        sx={{
-          m: 2,
-          height: 32,
-          fontWeight: 'bold',
-        }}
-      >
-        <Box
-          sx={{
-            '&::before': {
-              content: '""',
-              display: 'inline-block',
-              width: 4,
-              height: 12,
-              bgcolor: 'common.black',
-              borderRadius: '2px',
-              mr: 1,
-            },
-          }}
-        >
-          左侧目录导航
-        </Box>
-        {isEdit && (
-          <Button
-            variant='contained'
-            size='small'
-            onClick={handleSubmit(onSubmit)}
-          >
-            保存
-          </Button>
-        )}
-      </Stack>
-      <Stack direction={'row'} alignItems={'center'} gap={2} sx={{ mx: 2 }}>
-        <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px' }}>
-          左侧目录导航
-        </Box>
+    <SettingCardItem title='左侧目录导航' isEdit={isEdit} onSubmit={onSubmit}>
+      <FormItem label='左侧目录导航'>
         <Controller
           control={control}
           name='catalog_visible'
@@ -121,9 +84,9 @@ const CardCatalog = ({ id, data, refresh }: CardCatalogProps) => {
             </RadioGroup>
           )}
         />
-      </Stack>
-      <Stack direction={'row'} alignItems={'center'} gap={2} sx={{ mx: 2 }}>
-        <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px' }}>文件夹</Box>
+      </FormItem>
+
+      <FormItem label='文件夹'>
         <Controller
           control={control}
           name='catalog_folder'
@@ -149,13 +112,9 @@ const CardCatalog = ({ id, data, refresh }: CardCatalogProps) => {
             </RadioGroup>
           )}
         />
-      </Stack>
-      <Stack direction={'row'} alignItems={'center'} gap={2} sx={{ mx: 2 }}>
-        <Box
-          sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0 }}
-        >
-          导航宽度
-        </Box>
+      </FormItem>
+
+      <FormItem label='导航宽度'>
         <Controller
           control={control}
           name='catalog_width'
@@ -215,8 +174,8 @@ const CardCatalog = ({ id, data, refresh }: CardCatalogProps) => {
             />
           )}
         />
-      </Stack>
-    </>
+      </FormItem>
+    </SettingCardItem>
   );
 };
 

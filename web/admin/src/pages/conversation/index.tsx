@@ -1,13 +1,15 @@
-import { ConversationListItem, getConversationList } from '@/api';
+import { DomainConversationListItem } from '@/request/types';
+import { getApiV1Conversation } from '@/request/Conversation';
 import Logo from '@/assets/images/logo.png';
 import NoData from '@/assets/images/nodata.png';
 import Card from '@/components/Card';
-import { AppType, FeedbackType } from '@/constant/enums';
+import { AppType } from '@/constant/enums';
 import { tableSx } from '@/constant/styles';
 import { useURLSearchParams } from '@/hooks';
 import { useAppSelector } from '@/store';
-import { Box, Stack, Tooltip } from '@mui/material';
+import { Box, Stack } from '@mui/material';
 import { Ellipsis, Icon, Table } from 'ct-mui';
+import { ColumnType } from 'ct-mui/dist/Table';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import Detail from './Detail';
@@ -21,16 +23,16 @@ const Conversation = () => {
   const pageSize = Number(searchParams.get('page_size') || '20');
   const subject = searchParams.get('subject') || '';
   const remoteIp = searchParams.get('remote_ip') || '';
-  const [data, setData] = useState<ConversationListItem[]>([]);
+  const [data, setData] = useState<DomainConversationListItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);
   const [open, setOpen] = useState(false);
 
-  const columns = [
+  const columns: ColumnType<DomainConversationListItem>[] = [
     {
       dataIndex: 'subject',
       title: '问题',
-      render: (text: string, record: ConversationListItem) => {
+      render: (text: string, record) => {
         const isGroupChat = record.info?.user_info?.from === 1;
         return (
           <>
@@ -46,7 +48,7 @@ const Conversation = () => {
                 sx={{ cursor: 'pointer', flex: 1, width: 0 }}
                 onClick={() => {
                   // setId(record.id)
-                  setSearchParams({ conversion_id: record.id });
+                  setSearchParams({ conversion_id: record.id! });
                   setOpen(true);
                 }}
               >
@@ -64,7 +66,7 @@ const Conversation = () => {
       dataIndex: 'info',
       title: '来源用户',
       width: 220,
-      render: (text: ConversationListItem['info']) => {
+      render: (text: DomainConversationListItem['info']) => {
         const user = text?.user_info;
         return (
           <Box sx={{ fontSize: 12 }}>
@@ -90,8 +92,8 @@ const Conversation = () => {
       dataIndex: 'remote_ip',
       title: '来源 IP',
       width: 200,
-      render: (text: string, record: ConversationListItem) => {
-        const { city = '', country = '', province = '' } = record.ip_address;
+      render: (text: string, record) => {
+        const { city = '', country = '', province = '' } = record.ip_address!;
         return (
           <>
             <Box>{text}</Box>
@@ -121,7 +123,7 @@ const Conversation = () => {
 
   const getData = () => {
     setLoading(true);
-    getConversationList({
+    getApiV1Conversation({
       page,
       per_page: pageSize,
       kb_id,
@@ -129,8 +131,8 @@ const Conversation = () => {
       remote_ip: remoteIp,
     })
       .then(res => {
-        setData(res.data);
-        setTotal(res.total);
+        setData(res.data || []);
+        setTotal(res.total || 0);
       })
       .finally(() => {
         setLoading(false);

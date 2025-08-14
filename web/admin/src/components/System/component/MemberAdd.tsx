@@ -1,11 +1,14 @@
-import { createUser } from '@/api';
+import { postApiV1UserCreate } from '@/request/User';
 import Card from '@/components/Card';
 import { copyText, generatePassword } from '@/utils';
 import { CheckCircle } from '@mui/icons-material';
-import { Box, Button, Stack, TextField } from '@mui/material';
+import { Box, Button, MenuItem, Stack, TextField, Select } from '@mui/material';
+import { FormItem } from '@/components/Form';
 import { Modal } from 'ct-mui';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+
+type Role = 'admin' | 'user';
 
 const MemberAdd = ({ refresh }: { refresh: () => void }) => {
   const [addMember, setAddMember] = useState(false);
@@ -21,6 +24,7 @@ const MemberAdd = ({ refresh }: { refresh: () => void }) => {
   } = useForm({
     defaultValues: {
       account: '',
+      role: 'user' as Role,
     },
   });
 
@@ -39,10 +43,10 @@ const MemberAdd = ({ refresh }: { refresh: () => void }) => {
     });
   };
 
-  const onSumbit = ({ account }: { account: string }) => {
+  const onSubmit = ({ account }: { account: string }) => {
     setLoading(true);
     const password = generatePassword();
-    createUser({ account, password })
+    postApiV1UserCreate({ account, password, role: 'user' })
       .then(() => {
         setPassword(password);
         setAddMember(false);
@@ -100,38 +104,55 @@ const MemberAdd = ({ refresh }: { refresh: () => void }) => {
           setAddMember(false);
           reset();
         }}
-        onOk={handleSubmit(onSumbit)}
+        onOk={handleSubmit(onSubmit)}
         okButtonProps={{
           loading,
         }}
       >
-        <Box sx={{ fontSize: 14, lineHeight: '32px', mb: 1 }}>
-          用户名{' '}
-          <Box component={'span'} sx={{ color: 'red' }}>
-            *
-          </Box>
-        </Box>
-        <Controller
-          control={control}
-          name='account'
-          rules={{
-            required: {
-              value: true,
-              message: '用户名不能为空',
-            },
-          }}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              fullWidth
-              autoFocus
-              size='small'
-              placeholder='输入用户名'
-              error={!!errors.account}
-              helperText={errors.account?.message}
-            />
-          )}
-        />
+        <FormItem label='用户名' required>
+          <Controller
+            control={control}
+            name='account'
+            rules={{
+              required: {
+                value: true,
+                message: '用户名不能为空',
+              },
+            }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                fullWidth
+                autoFocus
+                placeholder='输入用户名'
+                error={!!errors.account}
+                helperText={errors.account?.message}
+              />
+            )}
+          />
+        </FormItem>
+        <FormItem label='角色' required sx={{ mt: 2 }}>
+          <Controller
+            control={control}
+            name='role'
+            render={({ field }) => (
+              <TextField
+                {...field}
+                fullWidth
+                select
+                sx={{
+                  '.MuiSelect-select': {
+                    lineHeight: '19px !important',
+                    minHeight: '19px !important',
+                  },
+                }}
+              >
+                <MenuItem value='user'>普通用户</MenuItem>
+                <MenuItem value='admin'>超级管理员</MenuItem>
+              </TextField>
+            )}
+          />
+        </FormItem>
       </Modal>
     </>
   );

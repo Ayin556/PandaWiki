@@ -1,6 +1,7 @@
 import { ChatConversationPair } from '@/api';
 import { getApiV1ConversationMessageDetail } from '@/request';
 import MarkDown from '@/components/MarkDown';
+import { useAppSelector } from '@/store';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
   Accordion,
@@ -26,10 +27,11 @@ const Detail = ({
     ChatConversationPair,
     'info'
   > | null>(null);
+  const { kb_id = '' } = useAppSelector(state => state.config);
 
   useEffect(() => {
     if (open && id && data) {
-      getApiV1ConversationMessageDetail({ id }).then(res => {
+      getApiV1ConversationMessageDetail({ id, kb_id }).then(res => {
         setConversations({
           user: data.question,
           assistant: res.content!,

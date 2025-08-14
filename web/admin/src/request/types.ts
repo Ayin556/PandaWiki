@@ -54,6 +54,7 @@ export enum DomainModelType {
 }
 
 export enum DomainModelProvider {
+  /** 智谱 */
   ModelProviderBrandOpenAI = "OpenAI",
   ModelProviderBrandOllama = "Ollama",
   ModelProviderBrandDeepSeek = "DeepSeek",
@@ -65,7 +66,6 @@ export enum DomainModelProvider {
   ModelProviderBrandBaiLian = "BaiLian",
   ModelProviderBrandVolcengine = "Volcengine",
   ModelProviderBrandGemini = "Gemini",
-  /** 智谱 */
   ModelProviderBrandZhiPu = "ZhiPu",
   ModelProviderBrandOther = "Other",
 }
@@ -103,6 +103,24 @@ export enum DomainAppType {
   AppTypeWechatOfficialAccount = 8,
 }
 
+export enum ConstsUserRole {
+  /** 管理员 */
+  UserRoleAdmin = "admin",
+  /** 普通用户 */
+  UserRoleUser = "user",
+}
+
+export enum ConstsUserKBPermission {
+  /** 无权限 */
+  UserKBPermissionNull = "",
+  /** 完全控制 */
+  UserKBPermissionFullControl = "full_control",
+  /** 文档管理 */
+  UserKBPermissionDocManage = "doc_manage",
+  /** 数据运营 */
+  UserKBPermissionDataOperate = "data_operate",
+}
+
 export enum ConstsSourceType {
   SourceTypeDingTalk = "dingtalk",
   SourceTypeFeishu = "feishu",
@@ -121,6 +139,8 @@ export interface DomainAccessSettings {
   base_url?: string;
   enterprise_auth?: DomainEnterpriseAuth;
   hosts?: string[];
+  /** 禁止访问 */
+  is_forbidden?: boolean;
   ports?: number[];
   private_key?: string;
   public_key?: string;
@@ -342,10 +362,6 @@ export interface DomainCheckModelResp {
 }
 
 export interface DomainCommentInfo {
-  auth_user_id?: number;
-  /** avatar */
-  avatar?: string;
-  email?: string;
   remote_ip?: string;
   user_name?: string;
 }
@@ -501,16 +517,6 @@ export interface DomainCreateNodeReq {
   visibility?: DomainNodeVisibility;
 }
 
-export interface DomainCreateUserReq {
-  account: string;
-  /** @minLength 8 */
-  password: string;
-}
-
-export interface DomainDeleteUserReq {
-  user_id: string;
-}
-
 export interface DomainEnterpriseAuth {
   enabled?: boolean;
 }
@@ -610,6 +616,8 @@ export interface DomainKnowledgeBaseDetail {
   dataset_id?: string;
   id?: string;
   name?: string;
+  /** 用户对知识库的权限 */
+  perm?: ConstsUserKBPermission;
   updated_at?: string;
 }
 
@@ -625,15 +633,6 @@ export interface DomainKnowledgeBaseListItem {
 export interface DomainLink {
   name?: string;
   url?: string;
-}
-
-export interface DomainLoginReq {
-  account: string;
-  password: string;
-}
-
-export interface DomainLoginResp {
-  token?: string;
 }
 
 export interface DomainModelDetailResp {
@@ -773,12 +772,6 @@ export interface DomainRecommendNodeListResp {
   recommend_nodes?: DomainRecommendNodeListResp[];
   summary?: string;
   type?: DomainNodeType;
-}
-
-export interface DomainResetPasswordReq {
-  id: string;
-  /** @minLength 8 */
-  new_password: string;
 }
 
 export interface DomainResponse {
@@ -942,19 +935,6 @@ export interface DomainUserInfo {
   user_id?: string;
 }
 
-export interface DomainUserInfoResp {
-  account?: string;
-  created_at?: string;
-  id?: string;
-  last_access?: string;
-}
-
-export interface DomainUserListItemResp {
-  account?: string;
-  id?: string;
-  last_access?: string;
-}
-
 export interface DomainWebAppCommentSettings {
   is_enable?: boolean;
   moderation_enable?: boolean;
@@ -991,6 +971,71 @@ export interface V1CommentLists {
 export interface V1ConversationListItems {
   data?: DomainConversationListItem[];
   total?: number;
+}
+
+export interface V1CreateUserReq {
+  account: string;
+  /** @minLength 8 */
+  password: string;
+  role: "admin" | "user";
+}
+
+export interface V1DeleteUserReq {
+  user_id: string;
+}
+
+export interface V1KBUserInviteReq {
+  kb_id: string;
+  perm: "full_control" | "doc_manage" | "data_operate";
+  user_id: string;
+}
+
+export interface V1KBUserListItemResp {
+  account?: string;
+  id?: string;
+  perms?: ConstsUserKBPermission;
+  role?: ConstsUserRole;
+}
+
+export interface V1KBUserUpdateReq {
+  kb_id: string;
+  perm: "full_control" | "doc_manage" | "data_operate";
+  user_id: string;
+}
+
+export interface V1LoginReq {
+  account: string;
+  password: string;
+}
+
+export interface V1LoginResp {
+  token?: string;
+}
+
+export interface V1ResetPasswordReq {
+  id: string;
+  /** @minLength 8 */
+  new_password: string;
+}
+
+export interface V1UserInfoResp {
+  account?: string;
+  created_at?: string;
+  id?: string;
+  last_access?: string;
+  role?: ConstsUserRole;
+}
+
+export interface V1UserListItemResp {
+  account?: string;
+  created_at?: string;
+  id?: string;
+  last_access?: string;
+  role?: ConstsUserRole;
+}
+
+export interface V1UserListResp {
+  users?: V1UserListItemResp[];
 }
 
 export interface DeleteApiV1AppParams {
@@ -1031,13 +1076,13 @@ export interface GetApiV1ConversationParams {
 }
 
 export interface GetApiV1ConversationDetailParams {
-  /** conversation id */
   id: string;
+  kb_id: string;
 }
 
 export interface GetApiV1ConversationMessageDetailParams {
-  /** message id */
   id: string;
+  kb_id: string;
 }
 
 export interface GetApiV1ConversationMessageListParams {
@@ -1123,6 +1168,16 @@ export interface GetApiV1KnowledgeBaseReleaseListParams {
   kb_id: string;
 }
 
+export interface DeleteApiV1KnowledgeBaseUserDeleteParams {
+  kb_id: string;
+  user_id: string;
+}
+
+export interface GetApiV1KnowledgeBaseUserListParams {
+  /** Knowledge Base ID */
+  kb_id: string;
+}
+
 export interface GetApiV1ModelDetailParams {
   /** model id */
   id: string;
@@ -1149,8 +1204,8 @@ export interface GetApiV1ModelProviderSupportedParams {
 }
 
 export interface GetApiV1NodeDetailParams {
-  /** ID */
   id: string;
+  kb_id: string;
 }
 
 export interface GetApiV1NodeListParams {

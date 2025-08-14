@@ -123,7 +123,7 @@ const CardAI = ({ kb }: CardAIProps) => {
                 inputValue={questionInputValue}
                 options={[]}
                 fullWidth
-                // disabled={!isEnterprise}
+                disabled={!isEnterprise}
                 onInputChange={(_, value) => {
                   setQuestionInputValue(value);
                 }}

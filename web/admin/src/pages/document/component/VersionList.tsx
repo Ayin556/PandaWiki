@@ -77,7 +77,7 @@ const VersionList = ({ changeVersion }: VersionListProps) => {
   }, [curVersion]);
 
   useEffect(() => {
-    getApiProV1NodeReleaseList({ kb_id, node_id: id }).then((res) => {
+    getApiProV1NodeReleaseList({ kb_id, node_id: id }).then(res => {
       setVersion(res || []);
       if (res.length > 0) {
         setCurVersion(res[0]);
