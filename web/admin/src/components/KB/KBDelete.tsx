@@ -1,4 +1,5 @@
-import { deleteKnowledgeBase, KnowledgeBaseListItem } from '@/api';
+import { KnowledgeBaseListItem } from '@/api';
+import { deleteApiV1KnowledgeBaseDetail } from '@/request/KnowledgeBase';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { setKbC, setKbId, setKbList } from '@/store/slices/config';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
@@ -19,7 +20,7 @@ const KBDelete = ({ open, onClose, data }: KBDeleteProps) => {
 
   const handleOk = () => {
     if (!data) return;
-    deleteKnowledgeBase({ id: data?.id || '' }).then(() => {
+    deleteApiV1KnowledgeBaseDetail({ id: data?.id || '' }).then(() => {
       Message.success('删除成功');
       if (kb_id === data.id) {
         dispatch(setKbId(kbList[0].id));

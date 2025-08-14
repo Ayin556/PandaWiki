@@ -1,4 +1,5 @@
-import { updateUser, UserInfo } from '@/api';
+import { UserInfo } from '@/api';
+import { putApiV1UserResetPassword } from '@/request/User';
 import Card from '@/components/Card';
 import { copyText, generatePassword } from '@/utils';
 import { CheckCircle } from '@mui/icons-material';
@@ -45,7 +46,7 @@ const MemberUpdate = ({ user, refresh, type }: UpdateMemberProps) => {
 
   const onSumbit = (data: { password: string }) => {
     setLoading(true);
-    updateUser({ id: user.id, new_password: data.password })
+    putApiV1UserResetPassword({ id: user.id, new_password: data.password })
       .then(() => {
         setPassword(data.password);
         setUpdateOpen(false);

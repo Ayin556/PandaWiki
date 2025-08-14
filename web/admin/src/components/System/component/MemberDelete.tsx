@@ -1,4 +1,5 @@
-import { deleteUser, UserInfo } from '@/api';
+import { UserInfo } from '@/api';
+import { deleteApiV1UserDelete } from '@/request/User';
 import Card from '@/components/Card';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { Box, Stack } from '@mui/material';
@@ -15,7 +16,7 @@ interface MemberDeleteProps {
 const MemberDelete = ({ open, onClose, user, refresh }: MemberDeleteProps) => {
   const submit = () => {
     if (!user?.id) return;
-    deleteUser({ user_id: user.id }).then(() => {
+    deleteApiV1UserDelete({ user_id: user.id }).then(() => {
       Message.success('删除成功');
       refresh();
       onClose();

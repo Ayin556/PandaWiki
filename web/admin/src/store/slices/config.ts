@@ -1,11 +1,12 @@
-import { KnowledgeBaseListItem, LicenseInfo } from '@/api';
+import { KnowledgeBaseListItem } from '@/api';
 import { DomainKnowledgeBaseDetail, V1UserInfoResp } from '@/request/types';
+import { DomainLicenseResp } from '@/request/pro/types';
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface config {
   user: V1UserInfoResp;
   kb_id: string;
-  license: LicenseInfo;
+  license: DomainLicenseResp;
   kbList: KnowledgeBaseListItem[];
   kb_c: boolean;
   modelStatus: boolean;

@@ -127,7 +127,7 @@ const CardKB = ({ kb }: CardKBProps) => {
             startIcon={<Icon type='icon-tianjiachengyuan' />}
             onClick={() => setAddOpen(true)}
           >
-            添加成员
+            添加管理员
           </Button>
         }
       >

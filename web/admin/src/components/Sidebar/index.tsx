@@ -89,7 +89,13 @@ const Sidebar = () => {
   }, [kbDetail]);
 
   useEffect(() => {
-    const menu = menus.find(it => pathname.includes(it.value));
+    const menu = menus.find(it => {
+      if (it.value === '/') {
+        return pathname === '/';
+      }
+      return pathname.startsWith(it.value);
+    });
+
     if (!menu && menus.length > 0) {
       navigate(menus[0].value);
     }

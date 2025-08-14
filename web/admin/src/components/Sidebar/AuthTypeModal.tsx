@@ -1,5 +1,4 @@
-import { activeLicense, getLicenseInfo } from '@/api';
-import { postApiV1License } from '@/request/pro/License';
+import { postApiV1License, getApiV1License } from '@/request/pro/License';
 import { PostApiV1LicensePayload } from '@/request/pro/types';
 import HelpCenter from '@/assets/json/help-center.json';
 import Takeoff from '@/assets/json/takeoff.json';
@@ -65,7 +64,7 @@ const AuthTypeModal = ({
         setCode('');
         setFile(undefined);
 
-        getLicenseInfo().then(res => {
+        getApiV1License().then(res => {
           dispatch(setLicense(res));
         });
       })
@@ -215,8 +214,6 @@ const AuthTypeModal = ({
               )}
             </Box>
           )}
-
-          
         </Stack>
       </Modal>
       <Modal

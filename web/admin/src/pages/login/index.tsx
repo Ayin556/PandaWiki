@@ -1,4 +1,4 @@
-import { login } from '@/api';
+import { postApiV1UserLogin } from '@/request/User';
 import Bgi from '@/assets/images/login-bgi.png';
 import Logo from '@/assets/images/logo.png';
 import Avatar from '@/components/Avatar';
@@ -19,9 +19,9 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
 
   const submit = () => {
-    login({ account, password })
+    postApiV1UserLogin({ account, password })
       .then(res => {
-        localStorage.setItem('panda_wiki_token', res.token);
+        localStorage.setItem('panda_wiki_token', res.token!);
         navigate(redirect);
         Message.success('登录成功');
       })

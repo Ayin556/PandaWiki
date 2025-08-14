@@ -1,10 +1,8 @@
+import { createNode, ImportDocListItem, ImportDocProps } from '@/api';
 import {
-  createNode,
-  getNotionIntegration,
-  getNotionIntegrationDetail,
-  ImportDocListItem,
-  ImportDocProps,
-} from '@/api';
+  postApiV1CrawlerNotionGetDoc,
+  postApiV1CrawlerNotionGetList,
+} from '@/request/Crawler';
 import { useAppSelector } from '@/store';
 import {
   Box,
@@ -64,12 +62,12 @@ const NotionImport = ({
   };
 
   const handleURL = async () => {
-    const data = await getNotionIntegration({ integration: url });
+    const data = await postApiV1CrawlerNotionGetList({ integration: url });
     setItems(
       data.map(item => ({
-        title: item.title,
+        title: item.title!,
         content: '',
-        url: item.id,
+        url: item.id!,
         success: -1,
         id: '',
       })),
@@ -83,7 +81,7 @@ const NotionImport = ({
     const notionData = items.filter(item => selectIds.includes(item.url));
     for (const item of notionData) {
       newQueue.push(async () => {
-        const res = await getNotionIntegrationDetail({
+        const res = await postApiV1CrawlerNotionGetDoc({
           pages: [{ id: item.url, title: item.title }],
           integration: url,
           kb_id,

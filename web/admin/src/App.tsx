@@ -8,7 +8,8 @@ import { Box } from '@mui/material';
 import { ThemeProvider } from 'ct-mui';
 import { useEffect } from 'react';
 import { useLocation, useRoutes } from 'react-router-dom';
-import { getLicenseInfo, getUser } from './api';
+import { getUser } from './api';
+import { getApiV1License } from './request/pro/License';
 import KBCreate from './components/KB/KBCreate';
 import { setLicense, setUser } from './store/slices/config';
 
@@ -36,7 +37,7 @@ function App() {
 
   useEffect(() => {
     if (token) {
-      getLicenseInfo().then(res => {
+      getApiV1License().then(res => {
         dispatch(setLicense(res));
       });
     }

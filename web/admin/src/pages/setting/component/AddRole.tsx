@@ -121,7 +121,7 @@ const AddRole = ({ open, onCancel, onOk, selectedIds }: AddRoleProps) => {
 
   return (
     <Modal
-      title='添加成员'
+      title='添加管理员'
       open={open}
       onCancel={onCancel}
       onOk={onSubmit}
@@ -223,7 +223,7 @@ const AddRole = ({ open, onCancel, onOk, selectedIds }: AddRoleProps) => {
             文档管理
           </MenuItem>
           <MenuItem value={ConstsUserKBPermission.UserKBPermissionDataOperate}>
-            数据操作
+            数据运营
           </MenuItem>
         </Select>
       </FormItem>

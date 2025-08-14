@@ -1,4 +1,6 @@
-import { getReleaseList, ReleaseListItem } from '@/api';
+import { ReleaseListItem } from '@/api';
+import { getApiV1KnowledgeBaseReleaseList } from '@/request/KnowledgeBase';
+import { DomainKBReleaseListItemResp } from '@/request/types';
 import NoData from '@/assets/images/nodata.png';
 import Card from '@/components/Card';
 import { tableSx } from '@/constant/styles';
@@ -23,7 +25,7 @@ const Release = () => {
   const [publishOpen, setPublishOpen] = useState(false);
   const [curVersionId, setCurVersionId] = useState('');
 
-  const [data, setData] = useState<ReleaseListItem[]>([]);
+  const [data, setData] = useState<DomainKBReleaseListItemResp[]>([]);
 
   const columns = [
     {
@@ -85,11 +87,12 @@ const Release = () => {
 
   const getData = () => {
     setLoading(true);
-    getReleaseList({ kb_id, page, per_page: pageSize })
+    // @ts-expect-error 类型错误
+    getApiV1KnowledgeBaseReleaseList({ kb_id, page, per_page: pageSize })
       .then(res => {
-        setData(res.data);
-        setTotal(res.total);
-        if (res.data && res.data.length > 0) setCurVersionId(res.data[0].id);
+        setData(res.data || []);
+        setTotal(res.total || 0);
+        if (res.data && res.data.length > 0) setCurVersionId(res.data[0].id!);
       })
       .finally(() => {
         setLoading(false);
