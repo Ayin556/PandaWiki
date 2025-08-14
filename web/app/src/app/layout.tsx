@@ -2,11 +2,11 @@ import { getShareV1AppWebInfo } from '@/request/ShareApp';
 import StoreProvider from '@/provider';
 import { darkTheme, lightTheme } from '@/theme';
 import { Box } from '@mui/material';
-import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import { ThemeProvider } from 'ct-mui';
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
-import { cookies, headers } from 'next/headers';
+import { headers } from 'next/headers';
 import { getSelectorsByUserAgent } from 'react-device-detect';
 import './globals.css';
 
