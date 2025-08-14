@@ -342,6 +342,10 @@ export interface DomainCheckModelResp {
 }
 
 export interface DomainCommentInfo {
+  auth_user_id?: number;
+  /** avatar */
+  avatar?: string;
+  email?: string;
   remote_ip?: string;
   user_name?: string;
 }
@@ -928,6 +932,7 @@ export interface DomainUpdateNodeReq {
 }
 
 export interface DomainUserInfo {
+  auth_user_id?: number;
   /** avatar */
   avatar?: string;
   email?: string;

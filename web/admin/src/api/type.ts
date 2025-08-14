@@ -606,6 +606,11 @@ export type StatInstantPageItme = {
   };
   node_id: string;
   node_name: string;
+  info?: {
+    username: string;
+    avatar_url: string;
+    email: string;
+  };
 };
 
 export type RefererHostItem = {

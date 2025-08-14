@@ -4,6 +4,7 @@ import {
   StatInstantPageItme,
   TrendData,
 } from '@/api';
+import Logo from '@/assets/images/logo.png';
 import ClockIcon from '@/assets/images/clock.png';
 import Nodata from '@/assets/images/nodata.png';
 import BarTrend from '@/components/BarTrend';
@@ -134,15 +135,38 @@ const RTVisitor = ({ isWideScreen }: { isWideScreen: boolean }) => {
                       {it.node_name || '-'}
                     </Ellipsis>
                   </Stack>
-                  <Box
-                    sx={{
-                      color: 'text.auxiliary',
-                      fontSize: '12px',
-                      ...(!isWideScreen && { ml: '20px', fontSize: 10 }),
-                    }}
+
+                  <Stack
+                    direction={'row'}
+                    alignItems={'center'}
+                    gap={isWideScreen ? 6 : 1}
                   >
-                    {it.ip_address.province} - {it.ip_address.city}
-                  </Box>
+                    <Box sx={{ fontSize: 12, color: 'text.auxiliary' }}>
+                      <Stack
+                        direction={'row'}
+                        alignItems={'center'}
+                        gap={0.5}
+                        sx={{ cursor: 'pointer' }}
+                      >
+                        <img src={it?.info?.avatar_url || Logo} width={14} />
+                        <Box>{it?.info?.username || '匿名用户'}</Box>
+                      </Stack>
+                      {it?.info?.email && (
+                        <Box sx={{ color: 'text.auxiliary' }}>
+                          {it?.info?.email}
+                        </Box>
+                      )}
+                    </Box>
+                    <Box
+                      sx={{
+                        color: 'text.auxiliary',
+                        fontSize: '12px',
+                        ...(!isWideScreen && { ml: '20px', fontSize: 10 }),
+                      }}
+                    >
+                      {it.ip_address.province} - {it.ip_address.city}
+                    </Box>
+                  </Stack>
                 </Stack>
               ))}
             </Box>

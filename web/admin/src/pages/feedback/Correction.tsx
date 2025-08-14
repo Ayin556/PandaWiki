@@ -1,5 +1,5 @@
 import { getApiV1KnowledgeBaseDetail } from '@/request';
-
+import Logo from '@/assets/images/logo.png';
 import {
   deleteApiProV1DocumentFeedback,
   getApiProV1DocumentList,
@@ -118,6 +118,30 @@ const Correction = () => {
             }
             alt='反馈截图'
           />
+        );
+      },
+    },
+    {
+      dataIndex: 'info',
+      title: '来源用户',
+      width: 200,
+      render: (_: string, record: DomainDocumentFeedbackListItem) => {
+        const user = record?.info || {};
+        return (
+          <Box sx={{ fontSize: 12 }}>
+            <Stack
+              direction={'row'}
+              alignItems={'center'}
+              gap={0.5}
+              sx={{ cursor: 'pointer' }}
+            >
+              <img src={user?.avatar || Logo} width={16} />
+              <Box sx={{ fontSize: 14 }}>{user?.user_name || '匿名用户'}</Box>
+            </Stack>
+            {user?.email && (
+              <Box sx={{ color: 'text.auxiliary' }}>{user?.email}</Box>
+            )}
+          </Box>
         );
       },
     },
