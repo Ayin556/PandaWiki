@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/samber/lo"
 
+	"github.com/chaitin/panda-wiki/consts"
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/log"
 	"github.com/chaitin/panda-wiki/repo/ipdb"
@@ -70,7 +71,7 @@ func (u *CommentUsecase) CreateComment(ctx context.Context, commentReq *domain.C
 	return CommentStr, nil
 }
 
-func (u *CommentUsecase) GetCommentListByNodeID(ctx context.Context, nodeID string, edition int) (*domain.PaginatedResult[[]*domain.ShareCommentListItem], error) {
+func (u *CommentUsecase) GetCommentListByNodeID(ctx context.Context, nodeID string, edition consts.LicenseEdition) (*domain.PaginatedResult[[]*domain.ShareCommentListItem], error) {
 	comments, total, err := u.CommentRepo.GetCommentList(ctx, nodeID, edition)
 	if err != nil {
 		return nil, err
@@ -115,7 +116,7 @@ func (u *CommentUsecase) GetCommentListByNodeID(ctx context.Context, nodeID stri
 	return domain.NewPaginatedResult(comments, uint64(total)), nil
 }
 
-func (u *CommentUsecase) GetCommentListByKbID(ctx context.Context, req *domain.CommentListReq, edition int) (*domain.PaginatedResult[[]*domain.CommentListItem], error) {
+func (u *CommentUsecase) GetCommentListByKbID(ctx context.Context, req *domain.CommentListReq, edition consts.LicenseEdition) (*domain.PaginatedResult[[]*domain.CommentListItem], error) {
 	comments, total, err := u.CommentRepo.GetCommentListByKbID(ctx, req, edition)
 	if err != nil {
 		return nil, err

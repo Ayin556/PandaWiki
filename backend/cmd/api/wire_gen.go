@@ -69,14 +69,14 @@ func createApp() (*App, error) {
 		return nil, err
 	}
 	ragRepository := mq2.NewRAGRepository(mqProducer)
+	userRepository := pg2.NewUserRepository(db, logger)
 	kbRepo := cache2.NewKBRepo(cacheCache)
-	knowledgeBaseUsecase, err := usecase.NewKnowledgeBaseUsecase(knowledgeBaseRepository, nodeRepository, ragRepository, ragService, kbRepo, logger, configConfig)
+	knowledgeBaseUsecase, err := usecase.NewKnowledgeBaseUsecase(knowledgeBaseRepository, nodeRepository, ragRepository, userRepository, ragService, kbRepo, logger, configConfig)
 	if err != nil {
 		return nil, err
 	}
 	shareAuthMiddleware := middleware.NewShareAuthMiddleware(logger, knowledgeBaseUsecase)
 	baseHandler := handler.NewBaseHandler(echo, logger, configConfig, authMiddleware, shareAuthMiddleware)
-	userRepository := pg2.NewUserRepository(db, logger)
 	userUsecase, err := usecase.NewUserUsecase(userRepository, logger, configConfig)
 	if err != nil {
 		return nil, err
@@ -130,7 +130,7 @@ func createApp() (*App, error) {
 	creationHandler := v1.NewCreationHandler(echo, baseHandler, logger, creationUsecase)
 	statRepository := pg2.NewStatRepository(db)
 	statUseCase := usecase.NewStatUseCase(statRepository, nodeRepository, conversationRepository, appRepository, ipAddressRepo, geoRepo, authRepo, logger)
-	statHandler := v1.NewStatHandler(baseHandler, echo, statUseCase, logger)
+	statHandler := v1.NewStatHandler(baseHandler, echo, statUseCase, logger, authMiddleware)
 	commentRepository := pg2.NewCommentRepository(db, logger)
 	commentUsecase := usecase.NewCommentUsecase(commentRepository, logger, nodeRepository, ipAddressRepo, authRepo)
 	commentHandler := v1.NewCommentHandler(echo, baseHandler, logger, authMiddleware, commentUsecase)

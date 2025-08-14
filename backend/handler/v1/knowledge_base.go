@@ -6,6 +6,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/samber/lo"
 
+	"github.com/chaitin/panda-wiki/consts"
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/handler"
 	"github.com/chaitin/panda-wiki/log"
@@ -41,11 +42,20 @@ func NewKnowledgeBaseHandler(
 	group.POST("", h.CreateKnowledgeBase)
 	group.GET("/list", h.GetKnowledgeBaseList)
 	group.GET("/detail", h.GetKnowledgeBaseDetail)
-	group.PUT("/detail", h.UpdateKnowledgeBase)
-	group.DELETE("/detail", h.DeleteKnowledgeBase)
+	group.PUT("/detail", h.UpdateKnowledgeBase, h.auth.ValidateKBUserPerm(consts.UserKBPermissionFullControl))
+	group.DELETE("/detail", h.DeleteKnowledgeBase, h.auth.ValidateKBUserPerm(consts.UserKBPermissionFullControl))
+
+	// user management
+	userGroup := group.Group("/user", h.auth.ValidateKBUserPerm(consts.UserKBPermissionFullControl))
+	userGroup.GET("/list", h.KBUserList)
+	userGroup.POST("/invite", h.KBUserInvite)
+	userGroup.PATCH("/update", h.KBUserUpdate)
+	userGroup.DELETE("/delete", h.KBUserDelete)
+
 	// release
-	group.POST("/release", h.CreateKBRelease)
-	group.GET("/release/list", h.GetKBReleaseList)
+	releaseGroup := group.Group("/release", h.auth.ValidateKBUserPerm(consts.UserKBPermissionDocManage))
+	releaseGroup.POST("", h.CreateKBRelease)
+	releaseGroup.GET("/list", h.GetKBReleaseList)
 
 	return h
 }
@@ -86,7 +96,12 @@ func (h *KnowledgeBaseHandler) CreateKnowledgeBase(c echo.Context) error {
 		req.MaxKB = maxKB.(int)
 	}
 
-	did, err := h.usecase.CreateKnowledgeBase(c.Request().Context(), &req)
+	userId, ok := h.auth.MustGetUserID(c)
+	if !ok {
+		return h.NewResponseWithError(c, "failed to get user", nil)
+	}
+
+	did, err := h.usecase.CreateKnowledgeBase(c.Request().Context(), &req, userId)
 	if err != nil {
 		if errors.Is(err, domain.ErrPortHostAlreadyExists) {
 			return h.NewResponseWithError(c, "端口或域名已被其他知识库占用", nil)
@@ -112,7 +127,13 @@ func (h *KnowledgeBaseHandler) CreateKnowledgeBase(c echo.Context) error {
 //	@Success		200	{object}	domain.Response{data=[]domain.KnowledgeBaseListItem}
 //	@Router			/api/v1/knowledge_base/list [get]
 func (h *KnowledgeBaseHandler) GetKnowledgeBaseList(c echo.Context) error {
-	knowledgeBases, err := h.usecase.GetKnowledgeBaseList(c.Request().Context())
+
+	userId, ok := h.auth.MustGetUserID(c)
+	if !ok {
+		return h.NewResponseWithError(c, "not found user", nil)
+	}
+
+	knowledgeBases, err := h.usecase.GetKnowledgeBaseListByUserId(c.Request().Context(), userId)
 	if err != nil {
 		return h.NewResponseWithError(c, "failed to get knowledge base list", err)
 	}
@@ -161,6 +182,7 @@ func (h *KnowledgeBaseHandler) UpdateKnowledgeBase(c echo.Context) error {
 //	@Tags			knowledge_base
 //	@Accept			json
 //	@Produce		json
+//	@Security		bearerAuth
 //	@Param			id	query		string	true	"Knowledge Base ID"
 //	@Success		200	{object}	domain.Response{data=domain.KnowledgeBaseDetail}
 //	@Router			/api/v1/knowledge_base/detail [get]
@@ -170,12 +192,30 @@ func (h *KnowledgeBaseHandler) GetKnowledgeBaseDetail(c echo.Context) error {
 		return h.NewResponseWithError(c, "kb id is required", nil)
 	}
 
+	userID, ok := h.auth.MustGetUserID(c)
+	if !ok {
+		return h.NewResponseWithError(c, "failed to get user", nil)
+	}
+
 	kb, err := h.usecase.GetKnowledgeBase(c.Request().Context(), kbID)
 	if err != nil {
 		return h.NewResponseWithError(c, "failed to get knowledge base detail", err)
 	}
 
-	return h.NewResponseWithData(c, kb)
+	perm, err := h.usecase.GetKnowledgeBasePerm(c.Request().Context(), kbID, userID)
+	if err != nil {
+		return h.NewResponseWithError(c, "failed to get knowledge base permission", err)
+	}
+
+	return h.NewResponseWithData(c, &domain.KnowledgeBaseDetail{
+		ID:             kb.ID,
+		Name:           kb.Name,
+		DatasetID:      kb.DatasetID,
+		Perm:           perm,
+		AccessSettings: kb.AccessSettings,
+		CreatedAt:      kb.CreatedAt,
+		UpdatedAt:      kb.UpdatedAt,
+	})
 }
 
 // DeleteKnowledgeBase

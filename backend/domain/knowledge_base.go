@@ -34,7 +34,8 @@ type AccessSettings struct {
 	TrustedProxies []string          `json:"trusted_proxies"`
 	SimpleAuth     SimpleAuth        `json:"simple_auth"`
 	EnterpriseAuth EnterpriseAuth    `json:"enterprise_auth"`
-	SourceType     consts.SourceType `json:"source_type"` // 企业认证来源
+	SourceType     consts.SourceType `json:"source_type"`  // 企业认证来源
+	IsForbidden    bool              `json:"is_forbidden"` // 禁止访问
 }
 
 type SimpleAuth struct {
@@ -101,9 +102,9 @@ type KnowledgeBaseDetail struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
 
-	DatasetID string `json:"dataset_id"`
-
-	AccessSettings AccessSettings `json:"access_settings" gorm:"type:jsonb"`
+	DatasetID      string                  `json:"dataset_id"`
+	Perm           consts.UserKBPermission `json:"perm"` // 用户对知识库的权限
+	AccessSettings AccessSettings          `json:"access_settings" gorm:"type:jsonb"`
 
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`

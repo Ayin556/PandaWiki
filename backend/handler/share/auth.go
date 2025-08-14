@@ -1,14 +1,13 @@
 package share
 
 import (
-	"net/http"
-
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo/v4"
 
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/handler"
 	"github.com/chaitin/panda-wiki/log"
+	"github.com/chaitin/panda-wiki/middleware"
 	"github.com/chaitin/panda-wiki/usecase"
 )
 
@@ -30,23 +29,9 @@ func NewShareAuthHandler(
 		kbUsecase:   kbUsecase,
 	}
 
-	group := e.Group("share/v1/auth",
-		h.ShareAuthMiddleware.Authorize,
-	)
-	group.GET("/get", h.AuthGet)
+	shareAuthMiddleware := middleware.NewShareAuthMiddleware(logger, kbUsecase)
 
-	share := e.Group("share/v1/auth",
-		func(next echo.HandlerFunc) echo.HandlerFunc {
-			return func(c echo.Context) error {
-				c.Response().Header().Set("Access-Control-Allow-Origin", "*")
-				c.Response().Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-				c.Response().Header().Set("Access-Control-Allow-Headers", "Content-Type, Origin, Accept")
-				if c.Request().Method == "OPTIONS" {
-					return c.NoContent(http.StatusOK)
-				}
-				return next(c)
-			}
-		})
+	share := e.Group("share/v1/auth", shareAuthMiddleware.CheckForbidden)
 	share.GET("/get", h.AuthGet)
 	share.POST("/login/simple", h.AuthLoginSimple)
 	return h

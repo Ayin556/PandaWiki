@@ -104,8 +104,8 @@ func (u *ConversationUsecase) GetConversationList(ctx context.Context, request *
 	return domain.NewPaginatedResult(conversations, total), nil
 }
 
-func (u *ConversationUsecase) GetConversationDetail(ctx context.Context, conversationID string) (*domain.ConversationDetailResp, error) {
-	conversation, err := u.repo.GetConversationDetail(ctx, "", conversationID)
+func (u *ConversationUsecase) GetConversationDetail(ctx context.Context, kbID, conversationID string) (*domain.ConversationDetailResp, error) {
+	conversation, err := u.repo.GetConversationDetail(ctx, kbID, conversationID)
 	if err != nil {
 		return nil, err
 	}
@@ -251,8 +251,8 @@ func (u *ConversationUsecase) GetMessageList(ctx context.Context, req *domain.Me
 	return domain.NewPaginatedResult(messageList, uint64(total)), nil
 }
 
-func (u *ConversationUsecase) GetMessageDetail(ctx context.Context, messageId string) (*domain.ConversationMessage, error) {
-	message, err := u.repo.GetConversationMessagesDetailByID(ctx, messageId)
+func (u *ConversationUsecase) GetMessageDetail(ctx context.Context, kbId, messageId string) (*domain.ConversationMessage, error) {
+	message, err := u.repo.GetConversationMessagesDetailByKbID(ctx, kbId, messageId)
 	if err != nil {
 		return nil, err
 	}

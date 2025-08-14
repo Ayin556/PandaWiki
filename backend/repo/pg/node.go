@@ -241,11 +241,12 @@ func (r *NodeRepository) UpdateNodeContent(ctx context.Context, req *domain.Upda
 	return err
 }
 
-func (r *NodeRepository) GetByID(ctx context.Context, id string) (*domain.NodeDetailResp, error) {
+func (r *NodeRepository) GetByID(ctx context.Context, id, kbId string) (*domain.NodeDetailResp, error) {
 	var node *domain.NodeDetailResp
 	if err := r.db.WithContext(ctx).
 		Model(&domain.Node{}).
 		Where("id = ?", id).
+		Where("kb_id = ?", kbId).
 		First(&node).Error; err != nil {
 		return nil, err
 	}

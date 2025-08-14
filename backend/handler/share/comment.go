@@ -5,6 +5,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 
+	"github.com/chaitin/panda-wiki/consts"
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/handler"
 	"github.com/chaitin/panda-wiki/log"
@@ -148,14 +149,8 @@ func (h *ShareCommentHandler) GetCommentList(c echo.Context) error {
 		return h.NewResponseWithError(c, "please check comment is open", nil)
 	}
 
-	var edition int
-	// get edition
-	if editionValue := c.Get("edition"); editionValue != nil {
-		edition = editionValue.(int)
-	}
-
 	// 查询数据库获取所有评论-->0 所有， 1，2 为需要审核的评论
-	commentsList, err := h.usecase.GetCommentListByNodeID(ctx, nodeID, edition)
+	commentsList, err := h.usecase.GetCommentListByNodeID(ctx, nodeID, consts.GetLicenseEdition(c))
 	if err != nil {
 		return h.NewResponseWithError(c, "failed to get comment list", err)
 	}
