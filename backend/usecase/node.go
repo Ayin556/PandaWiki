@@ -256,7 +256,7 @@ func (u *NodeUsecase) BatchMoveNode(ctx context.Context, req *domain.BatchMoveRe
 }
 
 func (u *NodeUsecase) convertMDToHTML(mdStr string) string {
-	extensions := parser.CommonExtensions & ^parser.Autolink | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock
+	extensions := parser.CommonExtensions & ^parser.Autolink & ^parser.MathJax
 	p := parser.NewWithExtensions(extensions)
 	doc := p.Parse([]byte(mdStr))
 
