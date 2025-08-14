@@ -3827,6 +3827,16 @@ const docTemplate = `{
         "domain.CommentInfo": {
             "type": "object",
             "properties": {
+                "auth_user_id": {
+                    "type": "integer"
+                },
+                "avatar": {
+                    "description": "avatar",
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
                 "remote_ip": {
                     "type": "string"
                 },

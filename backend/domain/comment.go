@@ -23,8 +23,11 @@ type Comment struct {
 }
 
 type CommentInfo struct {
-	UserName string `json:"user_name"`
-	RemoteIP string `json:"remote_ip"`
+	AuthUserID uint   `json:"auth_user_id"`
+	UserName   string `json:"user_name"`
+	Email      string `json:"email"`
+	Avatar     string `json:"avatar"` // avatar
+	RemoteIP   string `json:"remote_ip"`
 }
 
 type CommentStatus int8

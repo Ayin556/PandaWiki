@@ -43,7 +43,7 @@ func NewShareCommentHandler(
 				}
 				return next(c)
 			}
-		})
+		}, h.ShareAuthMiddleware.Authorize)
 
 	share.POST("", h.CreateComment)
 	share.GET("/list", h.GetCommentList)
@@ -89,6 +89,13 @@ func (h *ShareCommentHandler) CreateComment(c echo.Context) error {
 	// 评论开启
 	remoteIP := c.RealIP()
 
+	// get user info --> no enterprise is nil
+	var userIDValue uint
+	userID := c.Get("user_id")
+	if userID != nil { // can find userinfo from auth
+		userIDValue = userID.(uint)
+	}
+
 	var status = 1 // no moderate
 	// 判断user is moderate comment ---> 默认false
 	if appinfo.Settings.WebAppCommentSettings.ModerationEnable {
@@ -97,7 +104,7 @@ func (h *ShareCommentHandler) CreateComment(c echo.Context) error {
 	commentStatus := domain.CommentStatus(status)
 
 	// 插入到数据库中
-	commentID, err := h.usecase.CreateComment(ctx, &CommentReq, kbID, remoteIP, commentStatus)
+	commentID, err := h.usecase.CreateComment(ctx, &CommentReq, kbID, remoteIP, commentStatus, userIDValue)
 	if err != nil {
 		return h.NewResponseWithError(c, "create comment failed", err)
 	}

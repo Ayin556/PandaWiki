@@ -481,6 +481,13 @@ definitions:
     type: object
   domain.CommentInfo:
     properties:
+      auth_user_id:
+        type: integer
+      avatar:
+        description: avatar
+        type: string
+      email:
+        type: string
       remote_ip:
         type: string
       user_name:

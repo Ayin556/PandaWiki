@@ -211,6 +211,19 @@ func (u *ConversationUsecase) GetMessageList(ctx context.Context, req *domain.Me
 	if err != nil {
 		return nil, err
 	}
+	// get auth userinfo --> auth_user_id is not 0
+	authIDs := make([]uint, 0, len(messageList))
+	for _, message := range messageList {
+		if message.ConversationInfo.UserInfo.AuthUserID != 0 {
+			authIDs = append(authIDs, message.ConversationInfo.UserInfo.AuthUserID)
+		}
+	}
+	// get user info according authIDs
+	authMap, err := u.authRepo.GetAuthUserinfoByIDs(ctx, authIDs)
+	if err != nil {
+		u.logger.Error("get user info failed", log.Error(err))
+	}
+
 	// get ip address
 	ipAddressMap := make(map[string]*domain.IPAddress)
 	lo.Map(messageList, func(message *domain.ConversationMessageListItem, _ int) *domain.ConversationMessageListItem {
@@ -224,6 +237,13 @@ func (u *ConversationUsecase) GetMessageList(ctx context.Context, req *domain.Me
 			message.IPAddress = ipAddress
 		} else {
 			message.IPAddress = ipAddressMap[message.RemoteIP]
+		}
+		if _, ok := authMap[message.ConversationInfo.UserInfo.AuthUserID]; ok {
+			message.ConversationInfo.UserInfo = domain.UserInfo{
+				NickName: authMap[message.ConversationInfo.UserInfo.AuthUserID].AuthUserInfo.Username,
+				Avatar:   authMap[message.ConversationInfo.UserInfo.AuthUserID].AuthUserInfo.AvatarUrl,
+				Email:    authMap[message.ConversationInfo.UserInfo.AuthUserID].AuthUserInfo.Email,
+			}
 		}
 		return message
 	})
