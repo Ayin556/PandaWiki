@@ -269,11 +269,22 @@ export class HttpClient<SecurityDataType = unknown> {
 
         if (typeof window !== "undefined") {
           if (!pathnameWhiteList.includes(window.location.pathname)) {
-            const urlObj = new URL(response.url);
             if (response.status === 401) {
               redirectToLogin();
             }
           }
+          return;
+        }
+      }
+
+      if (response.status === 403) {
+        console.log("response 403:", response);
+        if (typeof window === "undefined") {
+          redirect("/block");
+          return;
+        }
+        if (typeof window !== "undefined") {
+          window.location.href = "/block";
           return;
         }
       }

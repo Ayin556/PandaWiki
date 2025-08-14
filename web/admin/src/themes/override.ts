@@ -398,7 +398,7 @@ const componentStyleOverrides = (theme: ThemeColor) => {
       styleOverrides: {
         root: {
           padding: 0,
-          paddingRight: '8px',
+          marginRight: '8px',
         },
       },
     },

@@ -131,7 +131,7 @@ const KBSelect = () => {
               key={item.id}
               value={item.id}
               sx={{
-                '&:hover .hover-del-space-icon': { display: 'block' },
+                '&:hover .hover-del-space-icon': { display: 'inline-flex' },
               }}
             >
               <Stack

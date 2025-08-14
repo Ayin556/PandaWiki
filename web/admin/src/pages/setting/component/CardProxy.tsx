@@ -1,8 +1,9 @@
 import { updateKnowledgeBase } from '@/api';
-import { KnowledgeBaseListItem } from '@/api/type';
+import { DomainKnowledgeBaseDetail } from '@/request/types';
+import { SettingCardItem, FormItem } from './Common';
+
 import {
   Box,
-  Button,
   FormControl,
   FormControlLabel,
   Radio,
@@ -17,7 +18,7 @@ const CardProxy = ({
   kb,
   refresh,
 }: {
-  kb: KnowledgeBaseListItem;
+  kb: DomainKnowledgeBaseDetail;
   refresh: () => void;
 }) => {
   const [isEdit, setIsEdit] = useState(false);
@@ -52,33 +53,9 @@ const CardProxy = ({
   }, [kb]);
 
   return (
-    <>
-      <Stack
-        direction='row'
-        alignItems={'center'}
-        justifyContent={'space-between'}
-        sx={{
-          m: 2,
-          height: 32,
-          fontWeight: 'bold',
-        }}
-      >
-        <Box
-          sx={{
-            '&::before': {
-              content: '""',
-              display: 'inline-block',
-              fontWeight: 'bold',
-              width: 4,
-              height: 12,
-              bgcolor: 'common.black',
-              borderRadius: '2px',
-              mr: 1,
-            },
-          }}
-        >
-          前置反向代理
-        </Box>
+    <SettingCardItem
+      title='前置反向代理'
+      more={
         <Box
           sx={{
             flexGrow: 1,
@@ -90,68 +67,52 @@ const CardProxy = ({
         >
           用于修正源 IP 获取错误的问题
         </Box>
-        {isEdit && (
-          <Button variant='contained' size='small' onClick={handleSave}>
-            保存
-          </Button>
-        )}
-      </Stack>
-      <Stack gap={2} sx={{ mx: 2 }}>
-        <Stack direction={'row'} gap={2} alignItems={'center'}>
-          <Box sx={{ width: 156, fontSize: 14, lineHeight: '32px' }}>
-            前置反向代理
-          </Box>
-          <FormControl>
-            <RadioGroup
-              value={hasProxy}
-              onChange={e => {
-                setHasProxy(e.target.value === 'true');
-                if (proxyIP === '') {
-                  setProxyIP('0.0.0.0/0');
-                }
-                setIsEdit(true);
-              }}
-            >
-              <Stack direction={'row'}>
-                <FormControlLabel
-                  value={false}
-                  control={<Radio size='small' />}
-                  label='无前置反向代理'
-                />
-                <FormControlLabel
-                  value={true}
-                  control={<Radio size='small' />}
-                  label='有前置反向代理'
-                />
-              </Stack>
-            </RadioGroup>
-          </FormControl>
-        </Stack>
-        {hasProxy && (
-          <Stack direction={'row'} gap={2} alignItems={'center'}>
-            <Box
-              sx={{
-                width: 156,
-                fontSize: 14,
-                lineHeight: '32px',
-                flexShrink: 0,
-              }}
-            >
-              可信代理 IP
-            </Box>
-            <TextField
-              fullWidth
-              label='可信代理 IP'
-              value={proxyIP}
-              onChange={e => {
-                setProxyIP(e.target.value);
-                setIsEdit(true);
-              }}
-            />
-          </Stack>
-        )}
-      </Stack>
-    </>
+      }
+      isEdit={isEdit}
+      onSubmit={handleSave}
+    >
+      <FormItem label='前置反向代理'>
+        <FormControl>
+          <RadioGroup
+            value={hasProxy}
+            onChange={e => {
+              setHasProxy(e.target.value === 'true');
+              if (proxyIP === '') {
+                setProxyIP('0.0.0.0/0');
+              }
+              setIsEdit(true);
+            }}
+          >
+            <Stack direction={'row'}>
+              <FormControlLabel
+                value={false}
+                control={<Radio size='small' />}
+                label='无前置反向代理'
+              />
+              <FormControlLabel
+                value={true}
+                control={<Radio size='small' />}
+                label='有前置反向代理'
+              />
+            </Stack>
+          </RadioGroup>
+        </FormControl>
+      </FormItem>
+
+      {hasProxy && (
+        <FormItem label='可信代理 IP'>
+          <TextField
+            fullWidth
+            label='可信代理 IP'
+            value={proxyIP}
+            onChange={e => {
+              setProxyIP(e.target.value);
+              setIsEdit(true);
+            }}
+          />
+        </FormItem>
+      )}
+    </SettingCardItem>
   );
 };
 

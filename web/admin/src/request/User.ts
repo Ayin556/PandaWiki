@@ -12,14 +12,14 @@
 
 import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
-  DomainCreateUserReq,
-  DomainDeleteUserReq,
-  DomainLoginReq,
-  DomainLoginResp,
-  DomainResetPasswordReq,
   DomainResponse,
-  DomainUserInfoResp,
-  DomainUserListItemResp,
+  V1CreateUserReq,
+  V1DeleteUserReq,
+  V1LoginReq,
+  V1LoginResp,
+  V1ResetPasswordReq,
+  V1UserInfoResp,
+  V1UserListResp,
 } from "./types";
 
 /**
@@ -29,11 +29,11 @@ import {
  * @name GetApiV1User
  * @summary GetUser
  * @request GET:/api/v1/user
- * @response `200` `DomainUserInfoResp` OK
+ * @response `200` `V1UserInfoResp` OK
  */
 
 export const getApiV1User = (params: RequestParams = {}) =>
-  httpRequest<DomainUserInfoResp>({
+  httpRequest<V1UserInfoResp>({
     path: `/api/v1/user`,
     method: "GET",
     type: ContentType.Json,
@@ -51,7 +51,7 @@ export const getApiV1User = (params: RequestParams = {}) =>
  */
 
 export const postApiV1UserCreate = (
-  body: DomainCreateUserReq,
+  body: V1CreateUserReq,
   params: RequestParams = {},
 ) =>
   httpRequest<DomainResponse>({
@@ -74,7 +74,7 @@ export const postApiV1UserCreate = (
  */
 
 export const deleteApiV1UserDelete = (
-  body: DomainDeleteUserReq,
+  body: V1DeleteUserReq,
   params: RequestParams = {},
 ) =>
   httpRequest<DomainResponse>({
@@ -94,7 +94,7 @@ export const deleteApiV1UserDelete = (
  * @summary ListUsers
  * @request GET:/api/v1/user/list
  * @response `200` `(DomainResponse & {
-    data?: (DomainUserListItemResp)[],
+    data?: V1UserListResp,
 
 })` OK
  */
@@ -102,7 +102,7 @@ export const deleteApiV1UserDelete = (
 export const getApiV1UserList = (params: RequestParams = {}) =>
   httpRequest<
     DomainResponse & {
-      data?: DomainUserListItemResp[];
+      data?: V1UserListResp;
     }
   >({
     path: `/api/v1/user/list`,
@@ -119,14 +119,14 @@ export const getApiV1UserList = (params: RequestParams = {}) =>
  * @name PostApiV1UserLogin
  * @summary Login
  * @request POST:/api/v1/user/login
- * @response `200` `DomainLoginResp` OK
+ * @response `200` `V1LoginResp` OK
  */
 
 export const postApiV1UserLogin = (
-  body: DomainLoginReq,
+  body: V1LoginReq,
   params: RequestParams = {},
 ) =>
-  httpRequest<DomainLoginResp>({
+  httpRequest<V1LoginResp>({
     path: `/api/v1/user/login`,
     method: "POST",
     body: body,
@@ -146,7 +146,7 @@ export const postApiV1UserLogin = (
  */
 
 export const putApiV1UserResetPassword = (
-  body: DomainResetPasswordReq,
+  body: V1ResetPasswordReq,
   params: RequestParams = {},
 ) =>
   httpRequest<DomainResponse>({

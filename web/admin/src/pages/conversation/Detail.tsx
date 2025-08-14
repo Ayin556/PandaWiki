@@ -1,11 +1,10 @@
-import {
-  ChatConversationPair,
-  ConversationDetail,
-  getConversationDetail,
-} from '@/api';
+import { ChatConversationPair } from '@/api';
+import { getApiV1ConversationDetail } from '@/request/Conversation';
+import { DomainConversationDetailResp } from '@/request/types';
 import Avatar from '@/components/Avatar';
 import Card from '@/components/Card';
 import MarkDown from '@/components/MarkDown';
+import { useAppSelector } from '@/store';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
   Accordion,
@@ -28,18 +27,20 @@ const Detail = ({
   onClose: () => void;
 }) => {
   const theme = useTheme();
-  const [detail, setDetail] = useState<ConversationDetail | null>(null);
+  const { kb_id = '' } = useAppSelector(state => state.config);
+  const [detail, setDetail] = useState<DomainConversationDetailResp | null>(
+    null,
+  );
   const [conversations, setConversations] = useState<
     ChatConversationPair[] | null
   >(null);
 
   const getDetail = () => {
-    getConversationDetail({ id }).then(res => {
+    getApiV1ConversationDetail({ id, kb_id }).then(res => {
       setDetail(res);
       const pairs: ChatConversationPair[] = [];
       let currentPair: Partial<ChatConversationPair> = {};
-
-      res.messages.forEach(message => {
+      res.messages?.forEach(message => {
         if (message.role === 'user') {
           if (currentPair.user) {
             pairs.push({
@@ -56,6 +57,7 @@ const Detail = ({
           if (currentPair.user) {
             currentPair.assistant = message.content;
             currentPair.created_at = message.created_at;
+            // @ts-expect-error 类型不兼容
             currentPair.info = message.info;
             pairs.push(currentPair as ChatConversationPair);
             currentPair = {};
@@ -102,7 +104,7 @@ const Detail = ({
     >
       {detail ? (
         <Box sx={{ fontSize: 14 }}>
-          {detail.references?.length > 0 && (
+          {(detail.references?.length || 0) > 0 && (
             <>
               <Stack
                 direction={'row'}
@@ -125,7 +127,7 @@ const Detail = ({
                 内容来源
               </Stack>
               <Card sx={{ p: 2, bgcolor: 'background.paper2' }}>
-                {detail.references.map((item, index) => (
+                {detail.references?.map((item, index) => (
                   <Stack
                     direction={'row'}
                     alignItems={'center'}
@@ -133,6 +135,7 @@ const Detail = ({
                     key={index}
                   >
                     <Avatar
+                      // @ts-expect-error 类型不兼容
                       src={item.favicon}
                       sx={{ width: 18, height: 18 }}
                       errorIcon={
@@ -152,6 +155,7 @@ const Detail = ({
                           '&:hover': { color: 'primary.main' },
                         }}
                       >
+                        {/* @ts-expect-error 类型不兼容 */}
                         {item.title}
                       </Box>
                     </Ellipsis>

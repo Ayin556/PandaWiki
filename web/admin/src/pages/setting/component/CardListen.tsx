@@ -1,14 +1,11 @@
-import {
-  KnowledgeBaseFormData,
-  KnowledgeBaseListItem,
-  updateKnowledgeBase,
-  UpdateKnowledgeBaseData,
-} from '@/api';
+import { updateKnowledgeBase, UpdateKnowledgeBaseData } from '@/api';
 import FileText from '@/components/UploadFile/FileText';
-import { Box, Button, Checkbox, Stack, TextField } from '@mui/material';
+import { Box, Checkbox, Stack, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Message } from 'ct-mui';
+import { DomainKnowledgeBaseDetail } from '@/request/types';
+import { SettingCardItem, FormItem } from './Common';
 
 // 验证规则常量
 const VALIDATION_RULES = {
@@ -29,7 +26,7 @@ const VALIDATION_RULES = {
   domain: {
     pattern: {
       value:
-        /^(localhost|((([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?)\.)+[a-zA-Z]{2,})|(\d{1,3}(?:\.\d{1,3}){3})|(\[[0-9a-fA-F:]+\]))$/,
+        /^(localhost|((([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)\.)+[a-zA-Z]{2,})|(\d{1,3}(?:\.\d{1,3}){3})|(\[[0-9a-fA-F:]+\]))$/,
       message: '请输入有效的域名、IP 或 localhost',
     },
   },
@@ -39,7 +36,7 @@ const CardListen = ({
   kb,
   refresh,
 }: {
-  kb: KnowledgeBaseListItem;
+  kb: DomainKnowledgeBaseDetail;
   refresh: () => void;
 }) => {
   const [isEdit, setIsEdit] = useState<boolean>(false);
@@ -50,7 +47,7 @@ const CardListen = ({
     setValue,
     watch,
     handleSubmit,
-  } = useForm<KnowledgeBaseFormData>({
+  } = useForm({
     defaultValues: {
       domain: '',
       http: false,
@@ -64,7 +61,7 @@ const CardListen = ({
 
   const { http, https } = watch();
 
-  const onSubmit = (value: KnowledgeBaseFormData) => {
+  const onSubmit = handleSubmit(value => {
     const formData: Partial<UpdateKnowledgeBaseData['access_settings']> = {};
     if (!value.http && !value.https) {
       Message.error('至少需要启用一种服务');
@@ -86,236 +83,200 @@ const CardListen = ({
       }
     }
     updateKnowledgeBase({
-      id: kb.id,
+      id: kb.id!,
       access_settings: {
-        base_url: kb.access_settings.base_url || '',
-        simple_auth: kb.access_settings.simple_auth || null,
+        base_url: kb.access_settings?.base_url || '',
+        simple_auth: kb.access_settings?.simple_auth || null,
         ...formData,
       },
     }).then(() => {
       Message.success('更新成功');
       refresh();
     });
-  };
+  });
 
   useEffect(() => {
-    setValue('domain', kb.access_settings.hosts?.[0] || '');
-    setValue('http', (kb.access_settings.ports?.length || 0) > 0);
-    setValue('https', (kb.access_settings.ssl_ports?.length || 0) > 0);
-    setValue('port', kb.access_settings.ports?.[0] || 80);
-    setValue('ssl_port', kb.access_settings.ssl_ports?.[0] || 443);
-    setValue('httpsCert', kb.access_settings.public_key || '');
-    setValue('httpsKey', kb.access_settings.private_key || '');
+    setValue('domain', kb.access_settings?.hosts?.[0] || '');
+    setValue('http', (kb.access_settings?.ports?.length || 0) > 0);
+    setValue('https', (kb.access_settings?.ssl_ports?.length || 0) > 0);
+    setValue('port', kb.access_settings?.ports?.[0] || 80);
+    setValue('ssl_port', kb.access_settings?.ssl_ports?.[0] || 443);
+    setValue('httpsCert', kb.access_settings?.public_key || '');
+    setValue('httpsKey', kb.access_settings?.private_key || '');
   }, [kb]);
 
   return (
-    <>
-      <Stack
-        direction='row'
-        alignItems={'center'}
-        justifyContent={'space-between'}
-        sx={{
-          m: 2,
-          height: 32,
-          fontWeight: 'bold',
-        }}
+    <SettingCardItem title='服务监听方式' isEdit={isEdit} onSubmit={onSubmit}>
+      <FormItem label='域名'>
+        <Controller
+          control={control}
+          name='domain'
+          rules={VALIDATION_RULES.domain}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              fullWidth
+              label='域名'
+              onChange={e => {
+                field.onChange(e.target.value);
+                setIsEdit(true);
+              }}
+              error={!!errors.domain}
+              helperText={errors.domain?.message}
+            />
+          )}
+        />
+      </FormItem>
+
+      <FormItem
+        label={
+          <Stack direction={'row'} gap={2} alignItems={'center'}>
+            <Controller
+              control={control}
+              name='http'
+              render={({ field: { value, onChange, ...field } }) => (
+                <Checkbox
+                  {...field}
+                  id='http'
+                  checked={value}
+                  onChange={e => {
+                    onChange(e.target.checked);
+                    setIsEdit(true);
+                  }}
+                  size='small'
+                  sx={{ p: 0 }}
+                />
+              )}
+            />
+            <Box
+              component={'label'}
+              htmlFor='http'
+              sx={{
+                width: 120,
+                flexShrink: 0,
+                cursor: 'pointer',
+                fontSize: 14,
+                color: http ? 'text.primary' : 'text.auxiliary',
+              }}
+            >
+              启用 HTTP
+            </Box>
+          </Stack>
+        }
       >
-        <Box
-          sx={{
-            '&::before': {
-              content: '""',
-              display: 'inline-block',
-              width: 4,
-              height: 12,
-              bgcolor: 'common.black',
-              borderRadius: '2px',
-              mr: 1,
-            },
-          }}
-        >
-          服务监听方式
-        </Box>
-        {isEdit && (
-          <Button
-            variant='contained'
-            size='small'
-            onClick={handleSubmit(onSubmit)}
-          >
-            保存
-          </Button>
-        )}
-      </Stack>
+        <Controller
+          control={control}
+          name='port'
+          rules={VALIDATION_RULES.port}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label='HTTP 端口'
+              fullWidth
+              disabled={!http}
+              onChange={e => {
+                field.onChange(e.target.value);
+                setIsEdit(true);
+              }}
+              type='number'
+              value={http ? +field.value || 80 : ''}
+              error={!!errors.port}
+              helperText={errors.port?.message}
+            />
+          )}
+        />
+      </FormItem>
 
-      <Box sx={{ mx: 2 }}>
-        <Stack direction={'row'} gap={2} alignItems={'center'}>
-          <Box
-            component={'label'}
-            sx={{ width: 156, flexShrink: 0, fontSize: 14, lineHeight: '32px' }}
-          >
-            域名
-          </Box>
-          <Controller
-            control={control}
-            name='domain'
-            rules={VALIDATION_RULES.domain}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                fullWidth
-                label='域名'
-                onChange={e => {
-                  field.onChange(e.target.value);
-                  setIsEdit(true);
-                }}
-                error={!!errors.domain}
-                helperText={errors.domain?.message}
-              />
-            )}
-          />
-        </Stack>
-        <Stack direction={'row'} gap={2} alignItems={'center'} sx={{ mt: 2.5 }}>
-          <Controller
-            control={control}
-            name='http'
-            render={({ field: { value, onChange, ...field } }) => (
-              <Checkbox
-                {...field}
-                id='http'
-                checked={value}
-                onChange={e => {
-                  onChange(e.target.checked);
-                  setIsEdit(true);
-                }}
-                size='small'
-                sx={{ p: 0 }}
-              />
-            )}
-          />
-          <Box
-            component={'label'}
-            htmlFor='http'
-            sx={{
-              width: 120,
-              flexShrink: 0,
-              cursor: 'pointer',
-              fontSize: 14,
-              color: http ? 'text.primary' : 'text.auxiliary',
-            }}
-          >
-            启用 HTTP
-          </Box>
-          {
+      <FormItem
+        label={
+          <Stack direction={'row'} gap={2} alignItems={'center'}>
             <Controller
               control={control}
-              name='port'
-              rules={VALIDATION_RULES.port}
-              render={({ field }) => (
-                <TextField
+              name='https'
+              render={({ field: { value, onChange, ...field } }) => (
+                <Checkbox
                   {...field}
-                  label='HTTP 端口'
-                  fullWidth
-                  disabled={!http}
+                  id='https'
+                  size='small'
+                  checked={value}
                   onChange={e => {
-                    field.onChange(e.target.value);
+                    onChange(e.target.checked);
                     setIsEdit(true);
                   }}
-                  type='number'
-                  value={http ? +field.value || 80 : ''}
-                  error={!!errors.port}
-                  helperText={errors.port?.message}
+                  sx={{ p: 0 }}
                 />
               )}
             />
-          }
-        </Stack>
-
-        <Stack direction={'row'} gap={2} alignItems={'center'} sx={{ mt: 1.5 }}>
-          <Controller
-            control={control}
-            name='https'
-            render={({ field: { value, onChange, ...field } }) => (
-              <Checkbox
-                {...field}
-                id='https'
-                size='small'
-                checked={value}
-                onChange={e => {
-                  onChange(e.target.checked);
-                  setIsEdit(true);
-                }}
-                sx={{ p: 0 }}
-              />
-            )}
-          />
-          <Box
-            component={'label'}
-            htmlFor='https'
-            sx={{
-              width: 120,
-              flexShrink: 0,
-              cursor: 'pointer',
-              fontSize: 14,
-              color: https ? 'text.primary' : 'text.auxiliary',
-            }}
-          >
-            启用 HTTPS
-          </Box>
-          {
-            <Controller
-              control={control}
-              name='ssl_port'
-              rules={VALIDATION_RULES.port}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label='HTTPS 端口'
-                  fullWidth
-                  disabled={!https}
-                  onChange={e => {
-                    field.onChange(e.target.value);
-                    setIsEdit(true);
-                  }}
-                  type='number'
-                  value={https ? +field.value || 443 : ''}
-                  error={!!errors.ssl_port}
-                  helperText={errors.ssl_port?.message}
-                />
-              )}
+            <Box
+              component={'label'}
+              htmlFor='https'
+              sx={{
+                width: 120,
+                flexShrink: 0,
+                cursor: 'pointer',
+                fontSize: 14,
+                color: https ? 'text.primary' : 'text.auxiliary',
+              }}
+            >
+              启用 HTTPS
+            </Box>
+          </Stack>
+        }
+      >
+        <Controller
+          control={control}
+          name='ssl_port'
+          rules={VALIDATION_RULES.port}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label='HTTPS 端口'
+              fullWidth
+              disabled={!https}
+              onChange={e => {
+                field.onChange(e.target.value);
+                setIsEdit(true);
+              }}
+              type='number'
+              value={https ? +field.value || 443 : ''}
+              error={!!errors.ssl_port}
+              helperText={errors.ssl_port?.message}
             />
-          }
-          <Controller
-            control={control}
-            name='httpsCert'
-            render={({ field }) => (
-              <FileText
-                {...field}
-                tip={'证书文件'}
-                disabled={!https}
-                onChange={value => {
-                  setIsEdit(true);
-                  field.onChange(value);
-                }}
-              />
-            )}
-          />
-          <Controller
-            control={control}
-            name='httpsKey'
-            render={({ field }) => (
-              <FileText
-                {...field}
-                tip={'私钥文件'}
-                disabled={!https}
-                onChange={value => {
-                  setIsEdit(true);
-                  field.onChange(value);
-                }}
-              />
-            )}
-          />
-        </Stack>
-      </Box>
-    </>
+          )}
+        />
+
+        <Controller
+          control={control}
+          name='httpsCert'
+          render={({ field }) => (
+            <FileText
+              {...field}
+              tip={'证书文件'}
+              disabled={!https}
+              onChange={value => {
+                setIsEdit(true);
+                field.onChange(value);
+              }}
+            />
+          )}
+        />
+        <Controller
+          control={control}
+          name='httpsKey'
+          render={({ field }) => (
+            <FileText
+              {...field}
+              tip={'私钥文件'}
+              disabled={!https}
+              onChange={value => {
+                setIsEdit(true);
+                field.onChange(value);
+              }}
+            />
+          )}
+        />
+      </FormItem>
+    </SettingCardItem>
   );
 };
 

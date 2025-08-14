@@ -139,9 +139,19 @@ const RTVisitor = ({ isWideScreen }: { isWideScreen: boolean }) => {
                   <Stack
                     direction={'row'}
                     alignItems={'center'}
-                    gap={isWideScreen ? 6 : 1}
+                    justifyContent={'space-between'}
+                    sx={{
+                      width: 260,
+                      ...(!isWideScreen && { width: 200 }),
+                    }}
                   >
-                    <Box sx={{ fontSize: 12, color: 'text.auxiliary' }}>
+                    <Box
+                      sx={{
+                        fontSize: 12,
+                        color: 'text.auxiliary',
+                        ...(!isWideScreen && { ml: '20px', fontSize: 10 }),
+                      }}
+                    >
                       <Stack
                         direction={'row'}
                         alignItems={'center'}

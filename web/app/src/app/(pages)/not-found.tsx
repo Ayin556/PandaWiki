@@ -1,6 +1,5 @@
-'use client';
 import notFound from '@/assets/images/404.png';
-import Footer from '@/components/footer';
+import { FooterProvider } from '@/components/footer';
 import { Box, Stack } from '@mui/material';
 import Image from 'next/image';
 
@@ -42,7 +41,7 @@ export default function NotFound() {
           zIndex: 1000,
         }}
       >
-        <Footer showBrand={false} fullWidth={true} />
+        <FooterProvider showBrand={false} fullWidth={true} />
       </Box>
     </Box>
   );

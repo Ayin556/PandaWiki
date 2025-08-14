@@ -1,23 +1,18 @@
-import {
-  AppDetail,
-  getAppDetail,
-  KnowledgeBaseListItem,
-  updateAppDetail,
-} from '@/api';
+import { updateAppDetail } from '@/api';
 import { useAppSelector } from '@/store';
 import InfoIcon from '@mui/icons-material/Info';
-import { DomainKnowledgeBaseDetail } from '@/request/types';
+import {
+  DomainAppDetailResp,
+  DomainKnowledgeBaseDetail,
+} from '@/request/types';
 import Card from '@/components/Card';
 import {
   Box,
-  Button,
   FormControlLabel,
   Radio,
   RadioGroup,
-  Slider,
   Stack,
   TextField,
-  Divider,
   styled,
   Tooltip,
 } from '@mui/material';
@@ -27,6 +22,7 @@ import { useEffect, useState } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import { Message } from 'ct-mui';
 import { FormItem, SettingCard, SettingCardItem } from './Common';
+import { getApiV1AppDetail } from '@/request/App';
 
 interface CardCommentProps {
   kb: DomainKnowledgeBaseDetail;
@@ -89,7 +85,7 @@ const DocumentComments = ({
   data,
   refresh,
 }: {
-  data: AppDetail;
+  data: DomainAppDetailResp;
   refresh: () => void;
 }) => {
   const { license } = useAppSelector(state => state.config);
@@ -202,7 +198,7 @@ const AIQuestion = ({
   data,
   refresh,
 }: {
-  data: AppDetail;
+  data: DomainAppDetailResp;
   refresh: () => void;
 }) => {
   const [isEdit, setIsEdit] = useState(false);
@@ -314,7 +310,7 @@ const DocumentCorrection = ({
   data,
   refresh,
 }: {
-  data: AppDetail;
+  data: DomainAppDetailResp;
   refresh: () => void;
 }) => {
   const [isEdit, setIsEdit] = useState(false);
@@ -328,7 +324,7 @@ const DocumentCorrection = ({
   const onSubmit = handleSubmit(formData => {
     console.log(data);
     updateAppDetail(
-      { id: data.id },
+      { id: data.id! },
       {
         settings: {
           ...data.settings,
@@ -401,16 +397,18 @@ const DocumentCorrection = ({
 };
 
 const CardFeedback = ({ kb }: CardCommentProps) => {
-  const [info, setInfo] = useState<any>({});
+  const [info, setInfo] = useState<DomainAppDetailResp | null>(null);
 
   const getInfo = async () => {
-    const res = await getAppDetail({ kb_id: kb.id, type: 1 });
+    const res = await getApiV1AppDetail({ kb_id: kb.id!, type: '1' });
     setInfo(res);
   };
 
   useEffect(() => {
     getInfo();
   }, [kb]);
+
+  if (!info) return <></>;
 
   return (
     <SettingCard title='反馈'>

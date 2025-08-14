@@ -2,7 +2,7 @@ import { getModelList, ModelListItem } from '@/api';
 import ErrorJSON from '@/assets/json/error.json';
 import Card from '@/components/Card';
 import { ModelProvider } from '@/constant/enums';
-import { useAppDispatch } from '@/store';
+import { useAppDispatch, useAppSelector } from '@/store';
 import { setModelStatus } from '@/store/slices/config';
 import { addOpacityToColor } from '@/utils';
 import { Box, Button, Stack, Tooltip, useTheme } from '@mui/material';
@@ -14,6 +14,7 @@ import ModelAdd from './component/ModelAdd';
 
 const System = () => {
   const theme = useTheme();
+  const { user } = useAppSelector(state => state.config);
   const [open, setOpen] = useState(false);
   const dispatch = useAppDispatch();
   const [addOpen, setAddOpen] = useState(false);
@@ -54,14 +55,17 @@ const System = () => {
   return (
     <>
       <Box sx={{ position: 'relative' }}>
-        <Button
-          size='small'
-          variant='outlined'
-          startIcon={<Icon type='icon-a-chilunshezhisheding' />}
-          onClick={() => setOpen(true)}
-        >
-          系统配置
-        </Button>
+        {user.role === 'admin' && (
+          <Button
+            size='small'
+            variant='outlined'
+            startIcon={<Icon type='icon-a-chilunshezhisheding' />}
+            onClick={() => setOpen(true)}
+          >
+            系统配置
+          </Button>
+        )}
+
         {(!chatModelData || !embeddingModelData || !rerankModelData) && (
           <Tooltip arrow title='暂未配置模型'>
             <Stack

@@ -1,6 +1,4 @@
-import { getAppDetail, KnowledgeBaseListItem } from '@/api';
-import Card from '@/components/Card';
-import { Box, Divider } from '@mui/material';
+import { Divider } from '@mui/material';
 import { useEffect, useState } from 'react';
 import CardAuth from './CardAuth';
 import CardCatalog from './CardCatalog';
@@ -13,7 +11,12 @@ import CardWebHeader from './CardWebHeader';
 import CardWebSEO from './CardWebSEO';
 import CardWebWelcome from './CardWebWelcome';
 import CardProxy from './CardProxy';
-import { DomainKnowledgeBaseDetail } from '@/request/types';
+import {
+  DomainAppDetailResp,
+  DomainKnowledgeBaseDetail,
+} from '@/request/types';
+import { getApiV1AppDetail } from '@/request/App';
+import { SettingCard } from './Common';
 
 interface CardWebProps {
   kb: DomainKnowledgeBaseDetail;
@@ -21,10 +24,10 @@ interface CardWebProps {
 }
 
 const CardWeb = ({ kb, refresh }: CardWebProps) => {
-  const [info, setInfo] = useState<any>({});
+  const [info, setInfo] = useState<DomainAppDetailResp | null>(null);
 
   const getInfo = async () => {
-    const res = await getAppDetail({ kb_id: kb.id, type: 1 });
+    const res = await getApiV1AppDetail({ kb_id: kb.id!, type: '1' });
     setInfo(res);
   };
 
@@ -32,26 +35,13 @@ const CardWeb = ({ kb, refresh }: CardWebProps) => {
     getInfo();
   }, [kb]);
 
-  if (!info.id) return <></>;
+  if (!info?.id) return <></>;
 
   return (
-    <Card>
-      <Box
-        sx={{
-          fontWeight: 'bold',
-          px: 2,
-          py: 1.5,
-          bgcolor: 'background.paper2',
-        }}
-      >
-        门户网站
-      </Box>
+    <SettingCard title='门户网站'>
       <CardListen kb={kb} refresh={refresh} />
-      <Divider sx={{ my: 2 }} />
       <CardProxy kb={kb} refresh={refresh} />
-      <Divider sx={{ my: 2 }} />
       <CardBasicInfo kb={kb} refresh={refresh} />
-      <Divider sx={{ my: 2 }} />
       <CardAuth kb={kb} refresh={refresh} />
       <Divider sx={{ my: 2 }} />
       <CardStyle
@@ -71,7 +61,6 @@ const CardWeb = ({ kb, refresh }: CardWebProps) => {
           });
         }}
       />
-      <Divider sx={{ my: 2 }} />
       <CardWebHeader
         id={info.id}
         data={info}
@@ -85,7 +74,6 @@ const CardWeb = ({ kb, refresh }: CardWebProps) => {
           });
         }}
       />
-      <Divider sx={{ my: 2 }} />
       <CardCatalog
         id={info.id}
         data={info}
@@ -102,7 +90,6 @@ const CardWeb = ({ kb, refresh }: CardWebProps) => {
           });
         }}
       />
-      <Divider sx={{ my: 2 }} />
       <CardFooter
         id={info.id}
         data={info}
@@ -161,7 +148,7 @@ const CardWeb = ({ kb, refresh }: CardWebProps) => {
           });
         }}
       />
-    </Card>
+    </SettingCard>
   );
 };
 export default CardWeb;

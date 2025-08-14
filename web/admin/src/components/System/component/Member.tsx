@@ -1,30 +1,37 @@
-import { getUserList, UserInfo } from '@/api';
+import { getApiV1UserList } from '@/request/User';
+import { ConstsUserRole, V1UserListItemResp } from '@/request/types';
 import NoData from '@/assets/images/nodata.png';
 import Card from '@/components/Card';
 import { tableSx } from '@/constant/styles';
 import { useAppSelector } from '@/store';
 import { Box, Button, Stack, Tooltip } from '@mui/material';
 import { Table } from 'ct-mui';
+import { ColumnType } from 'ct-mui/dist/Table';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import MemberAdd from './MemberAdd';
 import MemberDelete from './MemberDelete';
 import MemberUpdate from './MemberUpdate';
 
+const ConstsUserRoleMap = {
+  [ConstsUserRole.UserRoleAdmin]: '超级管理员',
+  [ConstsUserRole.UserRoleUser]: '普通用户',
+};
+
 const Member = () => {
   const { user } = useAppSelector(state => state.config);
   const [loading, setLoading] = useState(false);
-  const [userList, setUserList] = useState<UserInfo[]>([]);
-  const [curUser, setCurUser] = useState<UserInfo | null>(null);
+  const [userList, setUserList] = useState<V1UserListItemResp[]>([]);
+  const [curUser, setCurUser] = useState<V1UserListItemResp | null>(null);
   const [curType, setCurType] = useState<'delete' | 'reset-password' | null>(
     null,
   );
 
-  const columns = [
+  const columns: ColumnType<V1UserListItemResp>[] = [
     {
       title: '用户名',
       dataIndex: 'account',
-      render: (text: string, record: UserInfo) => (
+      render: (text: string, record) => (
         <Stack direction={'row'} alignItems={'center'} gap={2}>
           {text}
           {user?.id === record.id ? (
@@ -45,6 +52,11 @@ const Member = () => {
       ),
     },
     {
+      title: '身份',
+      dataIndex: 'role',
+      render: (text: ConstsUserRole) => <Box>{ConstsUserRoleMap[text]}</Box>,
+    },
+    {
       title: '上次使用时间',
       dataIndex: 'last_access',
       render: (text: string) => (
@@ -55,7 +67,7 @@ const Member = () => {
       title: '',
       dataIndex: 'action',
       width: 120,
-      render: (_: string, record: UserInfo) => (
+      render: (_, record) => (
         <Stack direction={'row'} gap={2}>
           {record.account === 'admin' ? (
             <Tooltip
@@ -160,8 +172,9 @@ const Member = () => {
 
   const getData = () => {
     setLoading(true);
-    getUserList()
-      .then(res => {
+    getApiV1UserList()
+      .then(data => {
+        const res = data.users || [];
         const idx = res.findIndex(item => item.id === user?.id);
         if (idx !== -1) {
           setUserList([res[idx], ...res.slice(0, idx), ...res.slice(idx + 1)]);

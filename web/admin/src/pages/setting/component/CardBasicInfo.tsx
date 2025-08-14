@@ -1,6 +1,8 @@
-import { KnowledgeBaseListItem, updateKnowledgeBase } from '@/api';
+import { updateKnowledgeBase } from '@/api';
+import { DomainKnowledgeBaseDetail } from '@/request/types';
+import { FormItem, SettingCardItem } from './Common';
 import { validateUrl } from '@/utils';
-import { Box, Button, Stack, TextField } from '@mui/material';
+import { TextField } from '@mui/material';
 import { Message } from 'ct-mui';
 import { useEffect, useState } from 'react';
 
@@ -8,7 +10,7 @@ const CardBasicInfo = ({
   kb,
   refresh,
 }: {
-  kb: KnowledgeBaseListItem;
+  kb: DomainKnowledgeBaseDetail;
   refresh: () => void;
 }) => {
   const [url, setUrl] = useState<string>('');
@@ -34,7 +36,7 @@ const CardBasicInfo = ({
   };
 
   useEffect(() => {
-    if (kb.access_settings.base_url) {
+    if (kb?.access_settings?.base_url) {
       setUrl(kb.access_settings.base_url);
       return;
     }
@@ -47,14 +49,14 @@ const CardBasicInfo = ({
     }
 
     if (
-      kb.access_settings.ssl_ports &&
+      kb.access_settings?.ssl_ports &&
       kb.access_settings.ssl_ports.length > 0
     ) {
       return kb.access_settings.ssl_ports.includes(443)
         ? `https://${host}`
         : `https://${host}:${kb.access_settings.ssl_ports[0]}`;
     } else if (
-      kb.access_settings.ports &&
+      kb.access_settings?.ports &&
       kb.access_settings.ports.length > 0
     ) {
       return kb.access_settings.ports.includes(80)
@@ -66,51 +68,8 @@ const CardBasicInfo = ({
   };
 
   return (
-    <>
-      <Stack
-        direction='row'
-        alignItems={'center'}
-        justifyContent={'space-between'}
-        sx={{
-          m: 2,
-          height: 32,
-          fontWeight: 'bold',
-        }}
-      >
-        <Box
-          sx={{
-            '&::before': {
-              content: '""',
-              display: 'inline-block',
-              width: 4,
-              height: 12,
-              bgcolor: 'common.black',
-              borderRadius: '2px',
-              mr: 1,
-            },
-          }}
-        >
-          网站基本信息
-        </Box>
-        {isEdit && (
-          <Button variant='contained' size='small' onClick={handleSave}>
-            保存
-          </Button>
-        )}
-      </Stack>
-      <Stack
-        direction={'row'}
-        gap={2}
-        alignItems={'center'}
-        sx={{ fontSize: 14, lineHeight: '32px', my: 1, mx: 2 }}
-      >
-        <Box
-          component={'label'}
-          sx={{ width: 156, flexShrink: 0, fontSize: 14, lineHeight: '32px' }}
-        >
-          网址绝对路径前缀
-        </Box>
-
+    <SettingCardItem title='网站基本信息' isEdit={isEdit} onSubmit={handleSave}>
+      <FormItem label='网址绝对路径前缀'>
         <TextField
           fullWidth
           label='网址绝对路径前缀'
@@ -126,8 +85,8 @@ const CardBasicInfo = ({
           }}
           placeholder={baseUrlPlaceholder()}
         />
-      </Stack>
-    </>
+      </FormItem>
+    </SettingCardItem>
   );
 };
 

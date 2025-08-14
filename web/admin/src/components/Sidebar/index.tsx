@@ -1,19 +1,26 @@
 import Logo from '@/assets/images/logo.png';
 import Qrcode from '@/assets/images/qrcode.png';
+
 import { Box, Button, Stack, useTheme } from '@mui/material';
+import { ConstsUserKBPermission } from '@/request/types';
 import { Icon, Modal } from 'ct-mui';
-import { useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { useState, useMemo, useEffect } from 'react';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import Avatar from '../Avatar';
 import Version from './Version';
+import { useAppSelector } from '@/store';
 
-const menus = [
+const MENUS = [
   {
     label: '文档',
     value: '/',
     pathname: 'document',
     icon: 'icon-neirongguanli',
     show: true,
+    perms: [
+      ConstsUserKBPermission.UserKBPermissionFullControl,
+      ConstsUserKBPermission.UserKBPermissionDocManage,
+    ],
   },
   {
     label: '统计',
@@ -21,6 +28,10 @@ const menus = [
     pathname: 'stat',
     icon: 'icon-tongjifenxi1',
     show: true,
+    perms: [
+      ConstsUserKBPermission.UserKBPermissionFullControl,
+      ConstsUserKBPermission.UserKBPermissionDataOperate,
+    ],
   },
   {
     label: '问答',
@@ -28,6 +39,10 @@ const menus = [
     pathname: 'conversation',
     icon: 'icon-duihualishi1',
     show: true,
+    perms: [
+      ConstsUserKBPermission.UserKBPermissionFullControl,
+      ConstsUserKBPermission.UserKBPermissionDataOperate,
+    ],
   },
   {
     label: '反馈',
@@ -35,6 +50,10 @@ const menus = [
     pathname: 'feedback',
     icon: 'icon-jushou',
     show: true,
+    perms: [
+      ConstsUserKBPermission.UserKBPermissionFullControl,
+      ConstsUserKBPermission.UserKBPermissionDataOperate,
+    ],
   },
   {
     label: '发布',
@@ -42,6 +61,10 @@ const menus = [
     pathname: 'release',
     icon: 'icon-paper-full',
     show: true,
+    perms: [
+      ConstsUserKBPermission.UserKBPermissionFullControl,
+      ConstsUserKBPermission.UserKBPermissionDocManage,
+    ],
   },
   {
     label: '设置',
@@ -49,13 +72,29 @@ const menus = [
     pathname: 'application-setting',
     icon: 'icon-chilun',
     show: true,
+    perms: [ConstsUserKBPermission.UserKBPermissionFullControl],
   },
 ];
 
 const Sidebar = () => {
   const { pathname } = useLocation();
+  const { kbDetail } = useAppSelector(state => state.config);
   const theme = useTheme();
   const [showQrcode, setShowQrcode] = useState(false);
+  const navigate = useNavigate();
+  const menus = useMemo(() => {
+    return MENUS.filter(it => {
+      return it.perms.includes(kbDetail.perm!);
+    });
+  }, [kbDetail]);
+
+  useEffect(() => {
+    const menu = menus.find(it => pathname.includes(it.value));
+    if (!menu && menus.length > 0) {
+      navigate(menus[0].value);
+    }
+  }, [pathname, menus]);
+
   return (
     <Stack
       sx={{

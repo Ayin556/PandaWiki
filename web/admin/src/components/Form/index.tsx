@@ -1,4 +1,4 @@
-import { styled, FormLabel, Box } from '@mui/material';
+import { styled, FormLabel, Box, SxProps } from '@mui/material';
 
 export const StyledFormLabel = styled(FormLabel)(({ theme }) => ({
   display: 'block',
@@ -15,13 +15,15 @@ export const FormItem = ({
   label,
   children,
   required,
+  sx,
 }: {
   label: string | React.ReactNode;
   children: React.ReactNode;
   required?: boolean;
+  sx?: SxProps;
 }) => {
   return (
-    <Box>
+    <Box sx={sx}>
       <StyledFormLabel required={required}>{label}</StyledFormLabel>
       {children}
     </Box>
