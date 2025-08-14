@@ -154,6 +154,18 @@ func (r *ConversationRepository) GetConversationMessagesDetailByID(ctx context.C
 	return message, nil
 }
 
+func (r *ConversationRepository) GetConversationMessagesDetailByKbID(ctx context.Context, kbId, messageId string) (*domain.ConversationMessage, error) {
+	message := &domain.ConversationMessage{}
+	if err := r.db.WithContext(ctx).
+		Model(&domain.ConversationMessage{}).
+		Where("id = ?", messageId).
+		Where("kb_id = ?", kbId).
+		First(&message).Error; err != nil {
+		return nil, err
+	}
+	return message, nil
+}
+
 // 更新反馈信息
 func (r *ConversationRepository) UpdateMessageFeedback(ctx context.Context, feedback *domain.FeedbackRequest) error {
 	// 更新字段

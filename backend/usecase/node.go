@@ -58,8 +58,8 @@ func (u *NodeUsecase) GetList(ctx context.Context, req *domain.GetNodeListReq) (
 	return nodes, nil
 }
 
-func (u *NodeUsecase) GetByID(ctx context.Context, id string) (*domain.NodeDetailResp, error) {
-	node, err := u.nodeRepo.GetByID(ctx, id)
+func (u *NodeUsecase) GetNodeByKBID(ctx context.Context, id, kbId string) (*domain.NodeDetailResp, error) {
+	node, err := u.nodeRepo.GetByID(ctx, id, kbId)
 	if err != nil {
 		return nil, err
 	}

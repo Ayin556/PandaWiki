@@ -322,15 +322,13 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "user id",
-                        "name": "X-SafePoint-User-ID",
-                        "in": "header",
+                        "name": "id",
+                        "in": "query",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "conversation id",
-                        "name": "id",
+                        "name": "kb_id",
                         "in": "query",
                         "required": true
                     }
@@ -373,8 +371,13 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "message id",
                         "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "kb_id",
                         "in": "query",
                         "required": true
                     }
@@ -1262,6 +1265,11 @@ const docTemplate = `{
         },
         "/api/v1/knowledge_base/detail": {
             "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "description": "GetKnowledgeBaseDetail",
                 "consumes": [
                     "application/json"
@@ -1477,6 +1485,178 @@ const docTemplate = `{
                                     }
                                 }
                             ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/knowledge_base/user/delete": {
+            "delete": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "Remove user from knowledge base",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "knowledge_base"
+                ],
+                "summary": "KBUserDelete",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "kb_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/knowledge_base/user/invite": {
+            "post": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "Invite user to knowledge base",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "knowledge_base"
+                ],
+                "summary": "KBUserInvite",
+                "parameters": [
+                    {
+                        "description": "Invite User Request",
+                        "name": "param",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.KBUserInviteReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/knowledge_base/user/list": {
+            "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "KBUserList",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "knowledge_base"
+                ],
+                "summary": "KBUserList",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Knowledge Base ID",
+                        "name": "kb_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/v1.KBUserListItemResp"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/knowledge_base/user/update": {
+            "patch": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "Update user permission in knowledge base",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "knowledge_base"
+                ],
+                "summary": "KBUserUpdate",
+                "parameters": [
+                    {
+                        "description": "Update User Permission Request",
+                        "name": "param",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.KBUserUpdateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Response"
                         }
                     }
                 }
@@ -1909,8 +2089,13 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID",
                         "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "kb_id",
                         "in": "query",
                         "required": true
                     }
@@ -2414,7 +2599,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.UserInfoResp"
+                            "$ref": "#/definitions/v1.UserInfoResp"
                         }
                     }
                 }
@@ -2440,7 +2625,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.CreateUserReq"
+                            "$ref": "#/definitions/v1.CreateUserReq"
                         }
                     }
                 ],
@@ -2474,7 +2659,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.DeleteUserReq"
+                            "$ref": "#/definitions/v1.DeleteUserReq"
                         }
                     }
                 ],
@@ -2513,10 +2698,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/domain.UserListItemResp"
-                                            }
+                                            "$ref": "#/definitions/v1.UserListResp"
                                         }
                                     }
                                 }
@@ -2546,7 +2728,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.LoginReq"
+                            "$ref": "#/definitions/v1.LoginReq"
                         }
                     }
                 ],
@@ -2554,7 +2736,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.LoginResp"
+                            "$ref": "#/definitions/v1.LoginResp"
                         }
                     }
                 }
@@ -2580,7 +2762,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.ResetPasswordReq"
+                            "$ref": "#/definitions/v1.ResetPasswordReq"
                         }
                     }
                 ],
@@ -3128,6 +3310,52 @@ const docTemplate = `{
                 "SourceTypeLDAP"
             ]
         },
+        "consts.UserKBPermission": {
+            "type": "string",
+            "enum": [
+                "",
+                "full_control",
+                "doc_manage",
+                "data_operate"
+            ],
+            "x-enum-comments": {
+                "UserKBPermissionDataOperate": "数据运营",
+                "UserKBPermissionDocManage": "文档管理",
+                "UserKBPermissionFullControl": "完全控制",
+                "UserKBPermissionNull": "无权限"
+            },
+            "x-enum-descriptions": [
+                "无权限",
+                "完全控制",
+                "文档管理",
+                "数据运营"
+            ],
+            "x-enum-varnames": [
+                "UserKBPermissionNull",
+                "UserKBPermissionFullControl",
+                "UserKBPermissionDocManage",
+                "UserKBPermissionDataOperate"
+            ]
+        },
+        "consts.UserRole": {
+            "type": "string",
+            "enum": [
+                "admin",
+                "user"
+            ],
+            "x-enum-comments": {
+                "UserRoleAdmin": "管理员",
+                "UserRoleUser": "普通用户"
+            },
+            "x-enum-descriptions": [
+                "管理员",
+                "普通用户"
+            ],
+            "x-enum-varnames": [
+                "UserRoleAdmin",
+                "UserRoleUser"
+            ]
+        },
         "domain.AIFeedbackSettings": {
             "type": "object",
             "properties": {
@@ -3156,6 +3384,10 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
+                },
+                "is_forbidden": {
+                    "description": "禁止访问",
+                    "type": "boolean"
                 },
                 "ports": {
                     "type": "array",
@@ -4306,33 +4538,6 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.CreateUserReq": {
-            "type": "object",
-            "required": [
-                "account",
-                "password"
-            ],
-            "properties": {
-                "account": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string",
-                    "minLength": 8
-                }
-            }
-        },
-        "domain.DeleteUserReq": {
-            "type": "object",
-            "required": [
-                "user_id"
-            ],
-            "properties": {
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
         "domain.EnterpriseAuth": {
             "type": "object",
             "properties": {
@@ -4589,6 +4794,14 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "perm": {
+                    "description": "用户对知识库的权限",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/consts.UserKBPermission"
+                        }
+                    ]
+                },
                 "updated_at": {
                     "type": "string"
                 }
@@ -4624,29 +4837,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "url": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.LoginReq": {
-            "type": "object",
-            "required": [
-                "account",
-                "password"
-            ],
-            "properties": {
-                "account": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.LoginResp": {
-            "type": "object",
-            "properties": {
-                "token": {
                     "type": "string"
                 }
             }
@@ -4767,19 +4957,7 @@ const docTemplate = `{
                 "ModelProviderBrandZhiPu": "智谱"
             },
             "x-enum-descriptions": [
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "智谱",
-                ""
+                "智谱"
             ],
             "x-enum-varnames": [
                 "ModelProviderBrandOpenAI",
@@ -5135,22 +5313,6 @@ const docTemplate = `{
                 },
                 "type": {
                     "$ref": "#/definitions/domain.NodeType"
-                }
-            }
-        },
-        "domain.ResetPasswordReq": {
-            "type": "object",
-            "required": [
-                "id",
-                "new_password"
-            ],
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "new_password": {
-                    "type": "string",
-                    "minLength": 8
                 }
             }
         },
@@ -5598,37 +5760,6 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.UserInfoResp": {
-            "type": "object",
-            "properties": {
-                "account": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "last_access": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.UserListItemResp": {
-            "type": "object",
-            "properties": {
-                "account": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "last_access": {
-                    "type": "string"
-                }
-            }
-        },
         "domain.WebAppCommentSettings": {
             "type": "object",
             "properties": {
@@ -5738,18 +5869,228 @@ const docTemplate = `{
                     "type": "integer"
                 }
             }
+        },
+        "v1.CreateUserReq": {
+            "type": "object",
+            "required": [
+                "account",
+                "password",
+                "role"
+            ],
+            "properties": {
+                "account": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 8
+                },
+                "role": {
+                    "enum": [
+                        "admin",
+                        "user"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/consts.UserRole"
+                        }
+                    ]
+                }
+            }
+        },
+        "v1.DeleteUserReq": {
+            "type": "object",
+            "required": [
+                "user_id"
+            ],
+            "properties": {
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.KBUserInviteReq": {
+            "type": "object",
+            "required": [
+                "kb_id",
+                "perm",
+                "user_id"
+            ],
+            "properties": {
+                "kb_id": {
+                    "type": "string"
+                },
+                "perm": {
+                    "enum": [
+                        "full_control",
+                        "doc_manage",
+                        "data_operate"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/consts.UserKBPermission"
+                        }
+                    ]
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.KBUserListItemResp": {
+            "type": "object",
+            "properties": {
+                "account": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "perms": {
+                    "$ref": "#/definitions/consts.UserKBPermission"
+                },
+                "role": {
+                    "$ref": "#/definitions/consts.UserRole"
+                }
+            }
+        },
+        "v1.KBUserUpdateReq": {
+            "type": "object",
+            "required": [
+                "kb_id",
+                "perm",
+                "user_id"
+            ],
+            "properties": {
+                "kb_id": {
+                    "type": "string"
+                },
+                "perm": {
+                    "enum": [
+                        "full_control",
+                        "doc_manage",
+                        "data_operate"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/consts.UserKBPermission"
+                        }
+                    ]
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.LoginReq": {
+            "type": "object",
+            "required": [
+                "account",
+                "password"
+            ],
+            "properties": {
+                "account": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.LoginResp": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.ResetPasswordReq": {
+            "type": "object",
+            "required": [
+                "id",
+                "new_password"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "new_password": {
+                    "type": "string",
+                    "minLength": 8
+                }
+            }
+        },
+        "v1.UserInfoResp": {
+            "type": "object",
+            "properties": {
+                "account": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "last_access": {
+                    "type": "string"
+                },
+                "role": {
+                    "$ref": "#/definitions/consts.UserRole"
+                }
+            }
+        },
+        "v1.UserListItemResp": {
+            "type": "object",
+            "properties": {
+                "account": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "last_access": {
+                    "type": "string"
+                },
+                "role": {
+                    "$ref": "#/definitions/consts.UserRole"
+                }
+            }
+        },
+        "v1.UserListResp": {
+            "type": "object",
+            "properties": {
+                "users": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.UserListItemResp"
+                    }
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "bearerAuth": {
+            "description": "Type \"Bearer\" + a space + your token to authorize",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "",
+	Version:          "1.0",
 	Host:             "",
-	BasePath:         "",
+	BasePath:         "/",
 	Schemes:          []string{},
-	Title:            "",
-	Description:      "",
+	Title:            "panda-wiki API",
+	Description:      "panda-wiki API documentation",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

@@ -4,6 +4,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 
+	"github.com/chaitin/panda-wiki/consts"
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/handler"
 	"github.com/chaitin/panda-wiki/log"
@@ -100,11 +101,8 @@ func (h *ModelHandler) CreateModel(c echo.Context) error {
 	if err := c.Validate(&req); err != nil {
 		return h.NewResponseWithError(c, "invalid request", err)
 	}
-	edition := 0
-	if editionVal := c.Get("edition"); editionVal != nil {
-		edition = editionVal.(int)
-	}
-	if edition == 1 && req.Provider != domain.ModelProviderBrandBaiZhiCloud {
+
+	if consts.GetLicenseEdition(c) == consts.LicenseEditionContributor && req.Provider != domain.ModelProviderBrandBaiZhiCloud {
 		return h.NewResponseWithError(c, "联创版只能使用百智云模型哦~", nil)
 	}
 	ctx := c.Request().Context()
@@ -141,11 +139,8 @@ func (h *ModelHandler) UpdateModel(c echo.Context) error {
 	if err := c.Validate(&req); err != nil {
 		return h.NewResponseWithError(c, "invalid request", err)
 	}
-	edition := 0
-	if editionVal := c.Get("edition"); editionVal != nil {
-		edition = editionVal.(int)
-	}
-	if edition == 1 && req.Provider != domain.ModelProviderBrandBaiZhiCloud {
+
+	if consts.GetLicenseEdition(c) == consts.LicenseEditionContributor && req.Provider != domain.ModelProviderBrandBaiZhiCloud {
 		return h.NewResponseWithError(c, "联创版只能使用百智云模型哦~", nil)
 	}
 	ctx := c.Request().Context()

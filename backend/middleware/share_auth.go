@@ -23,6 +23,38 @@ func NewShareAuthMiddleware(logger *log.Logger, kbUsecase *usecase.KnowledgeBase
 	}
 }
 
+func (h *ShareAuthMiddleware) CheckForbidden(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		kbID := c.Request().Header.Get("X-KB-ID")
+		if kbID == "" {
+			h.logger.Error("kb_id is empty")
+			return c.JSON(http.StatusBadRequest, domain.Response{
+				Success: false,
+				Message: "kb_id is required",
+			})
+		}
+
+		kb, err := h.kbUsecase.GetKnowledgeBase(c.Request().Context(), kbID)
+		if err != nil {
+			h.logger.Error("get knowledge base failed", log.String("kb_id", kbID), log.Error(err))
+			return c.JSON(http.StatusInternalServerError, domain.Response{
+				Success: false,
+				Message: "failed to get knowledge base detail",
+			})
+		}
+
+		if kb.AccessSettings.IsForbidden {
+			h.logger.Warn("access forbidden", log.String("kb_id", kbID))
+			return c.JSON(http.StatusForbidden, domain.Response{
+				Success: false,
+				Message: "access is forbidden",
+			})
+		}
+
+		return next(c)
+	}
+}
+
 func (h *ShareAuthMiddleware) Authorize(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		kbID := c.Request().Header.Get("X-KB-ID")
@@ -40,6 +72,14 @@ func (h *ShareAuthMiddleware) Authorize(next echo.HandlerFunc) echo.HandlerFunc 
 			return c.JSON(http.StatusUnauthorized, domain.Response{
 				Success: false,
 				Message: "Unauthorized",
+			})
+		}
+
+		if kb.AccessSettings.IsForbidden {
+			h.logger.Warn("access forbidden", log.String("kb_id", kbID))
+			return c.JSON(http.StatusForbidden, domain.Response{
+				Success: false,
+				Message: "access is forbidden",
 			})
 		}
 

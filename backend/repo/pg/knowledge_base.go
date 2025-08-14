@@ -17,7 +17,9 @@ import (
 	"github.com/samber/lo"
 	"gorm.io/gorm"
 
+	v1 "github.com/chaitin/panda-wiki/api/kb/v1"
 	"github.com/chaitin/panda-wiki/config"
+	"github.com/chaitin/panda-wiki/consts"
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/log"
 	"github.com/chaitin/panda-wiki/store/pg"
@@ -293,7 +295,7 @@ func (r *KnowledgeBaseRepository) SyncKBAccessSettingsToCaddy(ctx context.Contex
 	return nil
 }
 
-func (r *KnowledgeBaseRepository) CreateKnowledgeBase(ctx context.Context, maxKB int, kb *domain.KnowledgeBase) error {
+func (r *KnowledgeBaseRepository) CreateKnowledgeBase(ctx context.Context, maxKB int, kb *domain.KnowledgeBase, user *domain.User) error {
 	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		if err := tx.Create(kb).Error; err != nil {
 			return err
@@ -360,6 +362,17 @@ func (r *KnowledgeBaseRepository) CreateKnowledgeBase(ctx context.Context, maxKB
 		}).Error; err != nil {
 			return err
 		}
+
+		if user.Role == consts.UserRoleUser {
+			if err := r.CreateKBUser(ctx, &domain.KBUsers{
+				KBId:   kb.ID,
+				UserId: user.ID,
+				Perm:   consts.UserKBPermissionFullControl,
+			}); err != nil {
+				return err
+			}
+		}
+
 		return nil
 	})
 }
@@ -401,6 +414,45 @@ func (r *KnowledgeBaseRepository) GetKnowledgeBaseList(ctx context.Context) ([]*
 		Find(&kbs).Error; err != nil {
 		return nil, err
 	}
+	return kbs, nil
+}
+
+func (r *KnowledgeBaseRepository) GetKnowledgeBaseListByUserId(ctx context.Context, userId string) ([]*domain.KnowledgeBaseListItem, error) {
+	var user domain.User
+	err := r.db.WithContext(ctx).
+		Where("id = ?", userId).
+		First(&user).Error
+	if err != nil {
+		return nil, err
+	}
+	kbs := make([]*domain.KnowledgeBaseListItem, 0)
+
+	if user.Role == consts.UserRoleAdmin {
+		if err := r.db.WithContext(ctx).
+			Model(&domain.KnowledgeBase{}).
+			Order("created_at ASC").
+			Find(&kbs).Error; err != nil {
+			return nil, err
+		}
+	} else {
+		var kbIDs []string
+		if err := r.db.WithContext(ctx).
+			Table("kb_users").
+			Where("user_id = ?", userId).
+			Pluck("kb_id", &kbIDs).Error; err != nil {
+			return nil, err
+		}
+		if len(kbIDs) > 0 {
+			if err := r.db.WithContext(ctx).
+				Model(&domain.KnowledgeBase{}).
+				Where("id IN ?", kbIDs).
+				Order("created_at ASC").
+				Find(&kbs).Error; err != nil {
+				return nil, err
+			}
+		}
+	}
+
 	return kbs, nil
 }
 
@@ -557,4 +609,90 @@ func (r *KnowledgeBaseRepository) GetLatestRelease(ctx context.Context, kbID str
 		return nil, err
 	}
 	return &release, nil
+}
+
+func (r *KnowledgeBaseRepository) GetKBUserlist(ctx context.Context, kbID string) ([]v1.KBUserListItemResp, error) {
+	var users []v1.KBUserListItemResp
+	err := r.db.WithContext(ctx).
+		Model(&domain.User{}).
+		Select("users.id, users.account, users.role, kbu.perm, kbu.created_at").
+		Joins("INNER JOIN kb_users kbu ON users.id = kbu.user_id").
+		Where("kbu.kb_id = ?", kbID).
+		Where("users.role = ?", consts.UserRoleUser).
+		Order("kbu.created_at DESC").
+		Scan(&users).Error
+	if err != nil {
+		return nil, err
+	}
+
+	var adminUsers []v1.KBUserListItemResp
+	err = r.db.WithContext(ctx).
+		Model(&domain.User{}).
+		Select("users.id, users.account, users.role").
+		Where("users.role = ?", consts.UserRoleAdmin).
+		Order("Users.id DESC").
+		Scan(&adminUsers).Error
+	if err != nil {
+		return nil, err
+	}
+	for index := range adminUsers {
+		adminUsers[index].Perm = consts.UserKBPermissionFullControl
+	}
+
+	users = append(users, adminUsers...)
+	return users, nil
+}
+
+func (r *KnowledgeBaseRepository) CreateKBUser(ctx context.Context, kbUser *domain.KBUsers) error {
+
+	return r.db.WithContext(ctx).Create(kbUser).Error
+}
+
+func (r *KnowledgeBaseRepository) UpdateKBUserPerm(ctx context.Context, kbId, userId string, perm consts.UserKBPermission) error {
+	return r.db.WithContext(ctx).
+		Model(&domain.KBUsers{}).
+		Where("kb_id = ? AND user_id = ?", kbId, userId).
+		Update("perm", perm).Error
+}
+
+func (r *KnowledgeBaseRepository) DeleteKBUser(ctx context.Context, kbId, userId string) error {
+	return r.db.WithContext(ctx).
+		Where("kb_id = ? AND user_id = ?", kbId, userId).
+		Delete(&domain.KBUsers{}).Error
+}
+
+func (r *KnowledgeBaseRepository) GetKBUser(ctx context.Context, kbId, userId string) (*domain.KBUsers, error) {
+	var users domain.KBUsers
+	err := r.db.WithContext(ctx).
+		Where("kb_id = ? AND user_id = ?", kbId, userId).
+		First(&users).Error
+	if err != nil {
+		return nil, err
+	}
+	return &users, err
+}
+
+func (r *KnowledgeBaseRepository) GetKBPermByUserId(ctx context.Context, kbId, userId string) (consts.UserKBPermission, error) {
+
+	var (
+		user domain.User
+		perm consts.UserKBPermission
+	)
+
+	if err := r.db.WithContext(ctx).Model(&domain.User{}).Where("id = ?", userId).First(&user).Error; err != nil {
+		return perm, err
+	}
+	if user.Role == consts.UserRoleAdmin {
+		return consts.UserKBPermissionFullControl, nil
+	}
+
+	kbUser, err := r.GetKBUser(ctx, kbId, userId)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return consts.UserKBPermissionNull, nil
+		}
+		return perm, err
+	}
+
+	return kbUser.Perm, nil
 }

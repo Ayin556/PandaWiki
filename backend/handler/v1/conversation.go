@@ -3,6 +3,8 @@ package v1
 import (
 	"github.com/labstack/echo/v4"
 
+	v1 "github.com/chaitin/panda-wiki/api/conversation/v1"
+	"github.com/chaitin/panda-wiki/consts"
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/handler"
 	"github.com/chaitin/panda-wiki/log"
@@ -24,7 +26,7 @@ func NewConversationHandler(echo *echo.Echo, baseHandler *handler.BaseHandler, l
 		auth:        auth,
 		usecase:     usecase,
 	}
-	group := echo.Group("/api/v1/conversation", handler.auth.Authorize)
+	group := echo.Group("/api/v1/conversation", handler.auth.Authorize, handler.auth.ValidateKBUserPerm(consts.UserKBPermissionDataOperate))
 	group.GET("", handler.GetConversationList)
 	group.GET("/detail", handler.GetConversationDetail)
 	group.GET("/message/list", handler.GetMessageFeedBackList)
@@ -35,7 +37,7 @@ func NewConversationHandler(echo *echo.Echo, baseHandler *handler.BaseHandler, l
 
 type ConversationListItems = domain.PaginatedResult[[]domain.ConversationListItem]
 
-// get conversation list
+// GetConversationList
 //
 //	@Summary		get conversation list
 //	@Description	get conversation list
@@ -61,24 +63,27 @@ func (h *ConversationHandler) GetConversationList(c echo.Context) error {
 	return h.NewResponseWithData(c, conversationList)
 }
 
-// get conversation detail
+// GetConversationDetail
 //
 //	@Summary		get conversation detail
 //	@Description	get conversation detail
 //	@Tags			conversation
 //	@Accept			json
 //	@Produce		json
-//	@Param			X-SafePoint-User-ID	header		string	true	"user id"
-//	@Param			id					query		string	true	"conversation id"
-//	@Success		200					{object}	domain.Response{data=domain.ConversationDetailResp}
+//	@Param			param	query		v1.GetConversationDetailReq	true	"conversation id"
+//	@Success		200		{object}	domain.Response{data=domain.ConversationDetailResp}
 //	@Router			/api/v1/conversation/detail [get]
 func (h *ConversationHandler) GetConversationDetail(c echo.Context) error {
-	conversationID := c.QueryParam("id")
-	if conversationID == "" {
-		return h.NewResponseWithError(c, "conversation id is required", nil)
+
+	var req v1.GetConversationDetailReq
+	if err := c.Bind(&req); err != nil {
+		return h.NewResponseWithError(c, "invalid request", err)
+	}
+	if err := c.Validate(&req); err != nil {
+		return h.NewResponseWithError(c, "validate request failed", err)
 	}
 
-	conversation, err := h.usecase.GetConversationDetail(c.Request().Context(), conversationID)
+	conversation, err := h.usecase.GetConversationDetail(c.Request().Context(), req.KbId, req.ID)
 	if err != nil {
 		return h.NewResponseWithError(c, "failed to get conversation detail", err)
 	}
@@ -86,7 +91,7 @@ func (h *ConversationHandler) GetConversationDetail(c echo.Context) error {
 	return h.NewResponseWithData(c, conversation)
 }
 
-// GetMessageFeedBackList GetMessageFeedBackList
+// GetMessageFeedBackList
 //
 //	@Summary		GetMessageFeedBackList
 //	@Description	GetMessageFeedBackList
@@ -111,19 +116,26 @@ func (h *ConversationHandler) GetMessageFeedBackList(c echo.Context) error {
 	return h.NewResponseWithData(c, messages)
 }
 
-// GetMessageDetail get message detail
+// GetMessageDetail
 //
 //	@Summary		Get message detail
 //	@Description	Get message detail
 //	@Tags			Message
 //	@Accept			json
 //	@Produce		json
-//	@Param			id	query		string	true	"message id"
+//	@Param			id	query		v1.GetMessageDetailReq	true	"message id"
 //	@Success		200	{object}	domain.Response{data=domain.ConversationMessage}
 //	@Router			/api/v1/conversation/message/detail [get]
 func (h *ConversationHandler) GetMessageDetail(c echo.Context) error {
-	messageID := c.QueryParam("id")
-	message, err := h.usecase.GetMessageDetail(c.Request().Context(), messageID)
+	var req v1.GetMessageDetailReq
+	if err := c.Bind(&req); err != nil {
+		return h.NewResponseWithError(c, "invalid request", err)
+	}
+	if err := c.Validate(&req); err != nil {
+		return h.NewResponseWithError(c, "validate request failed", err)
+	}
+
+	message, err := h.usecase.GetMessageDetail(c.Request().Context(), req.KbId, req.ID)
 	if err != nil {
 		return h.NewResponseWithError(c, "failed to get message detail", err)
 	}

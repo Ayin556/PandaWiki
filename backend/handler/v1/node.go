@@ -3,6 +3,8 @@ package v1
 import (
 	"github.com/labstack/echo/v4"
 
+	v1 "github.com/chaitin/panda-wiki/api/node/v1"
+	"github.com/chaitin/panda-wiki/consts"
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/handler"
 	"github.com/chaitin/panda-wiki/log"
@@ -31,7 +33,7 @@ func NewNodeHandler(
 		auth:        auth,
 	}
 
-	group := echo.Group("/api/v1/node", h.auth.Authorize)
+	group := echo.Group("/api/v1/node", h.auth.Authorize, h.auth.ValidateKBUserPerm(consts.UserKBPermissionDocManage))
 	group.GET("/list", h.GetNodeList)
 	group.POST("", h.CreateNode)
 	group.GET("/detail", h.GetNodeDetail)
@@ -104,29 +106,34 @@ func (h *NodeHandler) GetNodeList(c echo.Context) error {
 	return h.NewResponseWithData(c, nodes)
 }
 
-// Get Node Detail
+// GetNodeDetail
 //
 //	@Summary		Get Node Detail
 //	@Description	Get Node Detail
 //	@Tags			node
 //	@Accept			json
 //	@Produce		json
-//	@Param			id	query		string	true	"ID"
-//	@Success		200	{object}	domain.Response{data=domain.NodeDetailResp}
+//	@Param			param	query		v1.GetNodeDetailReq	true	"conversation id"
+//	@Success		200		{object}	domain.Response{data=domain.NodeDetailResp}
 //	@Router			/api/v1/node/detail [get]
 func (h *NodeHandler) GetNodeDetail(c echo.Context) error {
-	nodeID := c.QueryParam("id")
-	if nodeID == "" {
-		return h.NewResponseWithError(c, "node id is required", nil)
+
+	var req v1.GetNodeDetailReq
+	if err := c.Bind(&req); err != nil {
+		return h.NewResponseWithError(c, "invalid request", err)
 	}
-	node, err := h.usecase.GetByID(c.Request().Context(), nodeID)
+	if err := c.Validate(&req); err != nil {
+		return h.NewResponseWithError(c, "validate request failed", err)
+	}
+
+	node, err := h.usecase.GetNodeByKBID(c.Request().Context(), req.ID, req.KbId)
 	if err != nil {
 		return h.NewResponseWithError(c, "get node detail failed", err)
 	}
 	return h.NewResponseWithData(c, node)
 }
 
-// Node Action
+// NodeAction
 //
 //	@Summary		Node Action
 //	@Description	Node Action
@@ -179,7 +186,7 @@ func (h *NodeHandler) UpdateNodeDetail(c echo.Context) error {
 	return h.NewResponseWithData(c, nil)
 }
 
-// Move Node
+// MoveNode
 //
 //	@Summary		Move Node
 //	@Description	Move Node
@@ -204,7 +211,7 @@ func (h *NodeHandler) MoveNode(c echo.Context) error {
 	return h.NewResponseWithData(c, nil)
 }
 
-// Summary Node
+// SummaryNode
 //
 //	@Summary		Summary Node
 //	@Description	Summary Node
@@ -235,7 +242,7 @@ func (h *NodeHandler) SummaryNode(c echo.Context) error {
 	})
 }
 
-// Recommend Nodes
+// RecommendNodes
 //
 //	@Summary		Recommend Nodes
 //	@Description	Recommend Nodes

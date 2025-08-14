@@ -54,12 +54,13 @@ func createApp() (*App, error) {
 		return nil, err
 	}
 	nodeUsecase := usecase.NewNodeUsecase(nodeRepository, ragRepository, knowledgeBaseRepository, llmUsecase, logger, minioClient, modelRepository)
+	userRepository := pg2.NewUserRepository(db, logger)
 	cacheCache, err := cache.NewCache(configConfig)
 	if err != nil {
 		return nil, err
 	}
 	kbRepo := cache2.NewKBRepo(cacheCache)
-	knowledgeBaseUsecase, err := usecase.NewKnowledgeBaseUsecase(knowledgeBaseRepository, nodeRepository, ragRepository, ragService, kbRepo, logger, configConfig)
+	knowledgeBaseUsecase, err := usecase.NewKnowledgeBaseUsecase(knowledgeBaseRepository, nodeRepository, ragRepository, userRepository, ragService, kbRepo, logger, configConfig)
 	if err != nil {
 		return nil, err
 	}
