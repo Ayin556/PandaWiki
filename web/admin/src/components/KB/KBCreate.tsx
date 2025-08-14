@@ -1,9 +1,9 @@
+import { KnowledgeBaseFormData } from '@/api';
 import {
-  createKnowledgeBase,
-  getKnowledgeBaseList,
-  KnowledgeBaseFormData,
-  UpdateKnowledgeBaseData,
-} from '@/api';
+  postApiV1KnowledgeBase,
+  getApiV1KnowledgeBaseList,
+} from '@/request/KnowledgeBase';
+import { DomainCreateKnowledgeBaseReq } from '@/request/types';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { setKbC, setKbId, setKbList } from '@/store/slices/config';
 import { CheckCircle } from '@mui/icons-material';
@@ -40,7 +40,7 @@ const VALIDATION_RULES = {
   domain: {
     pattern: {
       value:
-        /^(localhost|((([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?)\.)+[a-zA-Z]{2,})|(\d{1,3}(?:\.\d{1,3}){3})|(\[[0-9a-fA-F:]+\]))$/,
+        /^(localhost|((([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)\.)+[a-zA-Z]{2,})|(\d{1,3}(?:\.\d{1,3}){3})|(\[[0-9a-fA-F:]+\]))$/,
       message: '请输入有效的域名、IP 或 localhost',
     },
   },
@@ -79,9 +79,7 @@ const KBCreate = () => {
   const { http, https, port, ssl_port, domain, name } = watch();
 
   const onSubmit = (value: KnowledgeBaseFormData) => {
-    const formData: Partial<
-      UpdateKnowledgeBaseData['access_settings'] & { name: string }
-    > = { name: value.name };
+    const formData: DomainCreateKnowledgeBaseReq = { name: value.name };
     if (value.domain) formData.hosts = [value.domain];
     if (value.http) formData.ports = [+value.port];
     if (value.https) {
@@ -97,7 +95,8 @@ const KBCreate = () => {
         return;
       }
     }
-    createKnowledgeBase(formData)
+    postApiV1KnowledgeBase(formData)
+      // @ts-expect-error 类型错误
       .then(({ id }) => {
         Message.success('创建成功');
         setOpen(false);
@@ -112,7 +111,7 @@ const KBCreate = () => {
 
   const getKbList = (id?: string) => {
     const kb_id = id || localStorage.getItem('kb_id') || '';
-    getKnowledgeBaseList().then(res => {
+    getApiV1KnowledgeBaseList().then(res => {
       if (res.length > 0) {
         dispatch(setKbList(res));
         if (res.find(item => item.id === kb_id)) {

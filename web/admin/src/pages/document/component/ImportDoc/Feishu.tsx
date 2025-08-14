@@ -1,13 +1,15 @@
 import {
   createNode,
-  getFeishuCloudDocs,
-  getFeishuDocDetail,
-  getFeishuKBDocById,
-  getFeishuKnowledgeBase,
   ImportDocByFeishuFormData,
   ImportDocListItem,
   ImportDocProps,
 } from '@/api';
+import {
+  postApiV1CrawlerFeishuListDoc,
+  postApiV1CrawlerFeishuGetDoc,
+  postApiV1CrawlerFeishuSearchWiki,
+  postApiV1CrawlerFeishuListSpaces,
+} from '@/request/Crawler';
 import { useAppSelector } from '@/store';
 import {
   Box,
@@ -99,7 +101,7 @@ const FeishuImport = ({
       for (const item of feishuItems) {
         newQueue.push(async () => {
           try {
-            const res = await getFeishuDocDetail({
+            const res = await postApiV1CrawlerFeishuGetDoc({
               sources: [
                 {
                   url: item.url,
@@ -140,13 +142,16 @@ const FeishuImport = ({
 
   const onSubmit = (data: ImportDocByFeishuFormData) => {
     setLoading(true);
-    Promise.all([getFeishuKnowledgeBase(data), getFeishuCloudDocs(data)])
+    Promise.all([
+      postApiV1CrawlerFeishuListSpaces(data),
+      postApiV1CrawlerFeishuListDoc(data),
+    ])
       .then(([res1, res2]) => {
         if (res1.length > 0) {
           setList(
             res1.map(item => ({
-              space_id: item.space_id,
-              name: item.name,
+              space_id: item.space_id!,
+              name: item.name!,
               done: false,
               loading: false,
             })),
@@ -155,14 +160,14 @@ const FeishuImport = ({
         if (res2.length > 0) {
           setItems(
             res2.map(item => ({
-              title: item.name || item.url.toString(),
+              title: item.name || item.url!.toString(),
               content: '',
-              url: item.url,
+              url: item.url!,
               success: -1,
               id: '',
               space_id: '',
-              obj_token: item.obj_token,
-              obj_type: item.obj_type,
+              obj_token: item.obj_token!,
+              obj_type: item.obj_type!,
             })),
           );
         }
@@ -586,7 +591,7 @@ const FeishuImport = ({
                               : it,
                           ),
                         );
-                        getFeishuKBDocById({
+                        postApiV1CrawlerFeishuSearchWiki({
                           space_id: item.space_id,
                           ...getValues(),
                         })
@@ -594,14 +599,14 @@ const FeishuImport = ({
                             setItems(prev => [
                               ...prev,
                               ...(res || []).map(it => ({
-                                title: it.title,
+                                title: it.title!,
                                 content: '',
-                                url: it.url,
+                                url: it.url!,
                                 success: -1 as const,
                                 id: '',
                                 space_id: item.space_id,
-                                obj_token: it.obj_token,
-                                obj_type: it.obj_type,
+                                obj_token: it.obj_token!,
+                                obj_type: it.obj_type!,
                               })),
                             ]);
                             if ((res || []).length > 0) setStep('import');
