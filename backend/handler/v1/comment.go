@@ -27,7 +27,7 @@ func NewCommentHandler(e *echo.Echo, baseHandler *handler.BaseHandler, logger *l
 		usecase:     usecase,
 	}
 
-	group := e.Group("/api/v1/comment", h.auth.Authorize)
+	group := e.Group("/api/v1/comment", h.auth.Authorize, h.auth.ValidateKBUserPerm(consts.UserKBPermissionDataOperate))
 	group.GET("", h.GetCommentModeratedList)
 	group.DELETE("/list", h.DeleteCommentList)
 
