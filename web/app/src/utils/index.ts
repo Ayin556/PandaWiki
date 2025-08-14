@@ -27,12 +27,10 @@ export function addOpacityToColor(color: string, opacity: number) {
 }
 
 export const copyText = (text: string, callback?: () => void) => {
-  const isOriginIP = /^http:\/\/(\d{1,3}\.){3}\d{1,3}(:\d+)?$/.test(
-    window.location.origin,
-  );
+  const isNotHttps = !/^https:\/\//.test(window.location.origin);
 
-  if (isOriginIP) {
-    message.error('http 协议下不支持复制，请使用 https 协议');
+  if (isNotHttps) {
+    message.error('非 https 协议下不支持复制，请使用 https 协议');
     return;
   }
 

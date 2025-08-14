@@ -111,6 +111,8 @@ export enum ConstsUserRole {
 }
 
 export enum ConstsUserKBPermission {
+  /** 无权限 */
+  UserKBPermissionNull = "",
   /** 完全控制 */
   UserKBPermissionFullControl = "full_control",
   /** 文档管理 */
@@ -360,6 +362,10 @@ export interface DomainCheckModelResp {
 }
 
 export interface DomainCommentInfo {
+  auth_user_id?: number;
+  /** avatar */
+  avatar?: string;
+  email?: string;
   remote_ip?: string;
   user_name?: string;
 }
@@ -923,6 +929,7 @@ export interface DomainUpdateNodeReq {
 }
 
 export interface DomainUserInfo {
+  auth_user_id?: number;
   /** avatar */
   avatar?: string;
   email?: string;
@@ -1073,13 +1080,13 @@ export interface GetApiV1ConversationParams {
 }
 
 export interface GetApiV1ConversationDetailParams {
-  /** conversation id */
   id: string;
+  kb_id: string;
 }
 
 export interface GetApiV1ConversationMessageDetailParams {
-  /** message id */
   id: string;
+  kb_id: string;
 }
 
 export interface GetApiV1ConversationMessageListParams {
@@ -1201,8 +1208,8 @@ export interface GetApiV1ModelProviderSupportedParams {
 }
 
 export interface GetApiV1NodeDetailParams {
-  /** ID */
   id: string;
+  kb_id: string;
 }
 
 export interface GetApiV1NodeListParams {
