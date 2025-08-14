@@ -244,13 +244,18 @@ export class HttpClient<SecurityDataType = unknown> {
               if (response.status === 403) {
                 console.log('response 403:', response);
                 if (typeof window === 'undefined') {
-                    redirect('/block');
-                    return
+                    const pathname = await getServerPathname();
+                    if (pathname !== "/block") {
+                        redirect("/block");
+                      }
                 }
                 if (typeof window !== 'undefined') {
-                    window.location.href = '/block';
-                    return
+                    const pathname = window.location.pathname;
+                    if (pathname !== '/block') {
+                        window.location.href = '/block';
+                    }    
                 }
+                return Promise.reject(403)
               }
 
      

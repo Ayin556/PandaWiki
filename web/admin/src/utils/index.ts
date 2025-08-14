@@ -93,12 +93,10 @@ export const getShortcutKeyText = (shortcutKey: string[]) => {
 };
 
 export const copyText = (text: string, callback?: () => void) => {
-  const isOriginIP = /^https?:\/\/(\d{1,3}\.){3}\d{1,3}(:\d+)?$/.test(
-    window.location.origin,
-  );
+  const isNotHttps = !/^https:\/\//.test(window.location.origin);
 
-  if (isOriginIP) {
-    Message.error('http 协议下不支持复制，请使用 https 协议');
+  if (isNotHttps) {
+    Message.error('非 https 协议下不支持复制，请使用 https 协议');
     return;
   }
 

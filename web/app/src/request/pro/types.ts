@@ -11,13 +11,6 @@
  */
 
 /** @format int32 */
-export enum DomainLicenseEdition {
-  LicenseEditionFree = 0,
-  LicenseEditionContributor = 1,
-  LicenseEditionEnterprise = 2,
-}
-
-/** @format int32 */
 export enum DomainCommentStatus {
   CommentStatusReject = -1,
   CommentStatusPending = 0,
@@ -31,6 +24,13 @@ export enum ConstsSourceType {
   SourceTypeOAuth = "oauth",
   SourceTypeCAS = "cas",
   SourceTypeLDAP = "ldap",
+}
+
+/** @format int32 */
+export enum ConstsLicenseEdition {
+  LicenseEditionFree = 0,
+  LicenseEditionContributor = 1,
+  LicenseEditionEnterprise = 2,
 }
 
 export interface DomainCommentModerateListReq {
@@ -49,9 +49,15 @@ export interface DomainDeleteDocumentFeedbackReq {
 }
 
 export interface DomainDocumentFeedbackInfo {
+  /** user */
+  auth_user_id?: number;
+  /** avatar */
+  avatar?: string;
+  email?: string;
   /** ip */
   remote_ip?: string;
   screen_shot?: string;
+  user_name?: string;
 }
 
 export interface DomainDocumentFeedbackListItem {
@@ -81,7 +87,7 @@ export interface DomainIPAddress {
 }
 
 export interface DomainLicenseResp {
-  edition?: DomainLicenseEdition;
+  edition?: ConstsLicenseEdition;
   expired_at?: number;
   started_at?: number;
   state?: number;

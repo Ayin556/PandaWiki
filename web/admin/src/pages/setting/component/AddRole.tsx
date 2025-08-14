@@ -200,11 +200,6 @@ const AddRole = ({ open, onCancel, onOk, selectedIds }: AddRoleProps) => {
             gap={0.5}
           >
             权限
-            {!isEnterprise && (
-              <Tooltip title='企业版可用' placement='top' arrow>
-                <InfoIcon sx={{ color: 'text.secondary', fontSize: 14 }} />
-              </Tooltip>
-            )}
           </Stack>
         }
         sx={{ mt: 2 }}
@@ -213,17 +208,22 @@ const AddRole = ({ open, onCancel, onOk, selectedIds }: AddRoleProps) => {
           fullWidth
           sx={{ height: 52 }}
           value={perm}
-          disabled={!isEnterprise}
           onChange={e => setPerm(e.target.value as ConstsUserKBPermission)}
         >
           <MenuItem value={ConstsUserKBPermission.UserKBPermissionFullControl}>
             完全控制
           </MenuItem>
-          <MenuItem value={ConstsUserKBPermission.UserKBPermissionDocManage}>
-            文档管理
+          <MenuItem
+            disabled={!isEnterprise}
+            value={ConstsUserKBPermission.UserKBPermissionDocManage}
+          >
+            文档管理 {isEnterprise ? '' : '(企业版可用)'}
           </MenuItem>
-          <MenuItem value={ConstsUserKBPermission.UserKBPermissionDataOperate}>
-            数据运营
+          <MenuItem
+            disabled={!isEnterprise}
+            value={ConstsUserKBPermission.UserKBPermissionDataOperate}
+          >
+            数据运营 {isEnterprise ? '' : '(企业版可用)'}
           </MenuItem>
         </Select>
       </FormItem>
