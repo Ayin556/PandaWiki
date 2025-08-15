@@ -68,7 +68,7 @@ const TreeItem = React.forwardRef<
           {
             id: new Date().getTime().toString(),
             name: '',
-            level: 2,
+            level: item.level + 1,
             type,
             emoji: '',
             status: 1,
