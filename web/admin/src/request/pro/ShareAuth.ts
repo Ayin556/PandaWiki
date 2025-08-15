@@ -19,6 +19,8 @@ import {
   GithubComChaitinPandaWikiProApiShareV1AuthDingTalkResp,
   GithubComChaitinPandaWikiProApiShareV1AuthFeishuReq,
   GithubComChaitinPandaWikiProApiShareV1AuthFeishuResp,
+  GithubComChaitinPandaWikiProApiShareV1AuthGitHubReq,
+  GithubComChaitinPandaWikiProApiShareV1AuthGitHubResp,
   GithubComChaitinPandaWikiProApiShareV1AuthLDAPReq,
   GithubComChaitinPandaWikiProApiShareV1AuthLDAPResp,
   GithubComChaitinPandaWikiProApiShareV1AuthOAuthReq,
@@ -110,6 +112,36 @@ export const postShareProV1AuthFeishu = (
     }
   >({
     path: `/share/pro/v1/auth/feishu`,
+    method: "POST",
+    body: param,
+    type: ContentType.Json,
+    format: "json",
+    ...params,
+  });
+
+/**
+ * @description GitHub登录
+ *
+ * @tags ShareAuth
+ * @name PostShareProV1AuthGithub
+ * @summary GitHub登录
+ * @request POST:/share/pro/v1/auth/github
+ * @response `200` `(DomainResponse & {
+    data?: GithubComChaitinPandaWikiProApiShareV1AuthGitHubResp,
+
+})` OK
+ */
+
+export const postShareProV1AuthGithub = (
+  param: GithubComChaitinPandaWikiProApiShareV1AuthGitHubReq,
+  params: RequestParams = {},
+) =>
+  httpRequest<
+    DomainResponse & {
+      data?: GithubComChaitinPandaWikiProApiShareV1AuthGitHubResp;
+    }
+  >({
+    path: `/share/pro/v1/auth/github`,
     method: "POST",
     body: param,
     type: ContentType.Json,

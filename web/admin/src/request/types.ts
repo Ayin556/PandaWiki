@@ -126,6 +126,7 @@ export enum ConstsSourceType {
   SourceTypeFeishu = "feishu",
   SourceTypeWeCom = "wecom",
   SourceTypeOAuth = "oauth",
+  SourceTypeGitHub = "github",
   SourceTypeCAS = "cas",
   SourceTypeLDAP = "ldap",
 }
@@ -362,6 +363,10 @@ export interface DomainCheckModelResp {
 }
 
 export interface DomainCommentInfo {
+  auth_user_id?: number;
+  /** avatar */
+  avatar?: string;
+  email?: string;
   remote_ip?: string;
   user_name?: string;
 }
