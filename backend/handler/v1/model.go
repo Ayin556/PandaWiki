@@ -4,6 +4,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 
+	modelkitDomain "github.com/chaitin/ModelKit/domain"
+	modelkit "github.com/chaitin/ModelKit/usecase"
 	"github.com/chaitin/panda-wiki/consts"
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/handler"
@@ -169,7 +171,13 @@ func (h *ModelHandler) CheckModel(c echo.Context) error {
 		return h.NewResponseWithError(c, "invalid request", err)
 	}
 	ctx := c.Request().Context()
-	model, err := h.llmUsecase.CheckModel(ctx, &req)
+	model, err := modelkit.CheckModel(ctx, &modelkitDomain.CheckModelReq{
+		Provider: string(req.Provider),
+		Model:    req.Model,
+		BaseURL:  req.BaseURL,
+		APIKey:   req.APIKey,
+		APIHeader: req.APIHeader,
+	})
 	if err != nil {
 		return h.NewResponseWithError(c, "get model failed", err)
 	}
@@ -196,7 +204,13 @@ func (h *ModelHandler) GetProviderSupportedModelList(c echo.Context) error {
 	}
 	ctx := c.Request().Context()
 
-	models, err := h.usecase.GetUserModelList(ctx, &req)
+	models, err := modelkit.ModelList(ctx, &modelkitDomain.ModelListReq{
+		Provider: req.Provider,
+		BaseURL:  req.BaseURL,
+		APIKey:   req.APIKey,
+		APIHeader: req.APIHeader,
+		Type:      string(req.Type),
+	})
 	if err != nil {
 		return h.NewResponseWithError(c, "get user model list failed", err)
 	}

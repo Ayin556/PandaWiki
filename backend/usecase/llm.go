@@ -1,31 +1,24 @@
 package usecase
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"math"
-	"net/http"
 	"slices"
 	"strings"
 	"time"
 
 	"github.com/cloudwego/eino-ext/components/model/deepseek"
-	"github.com/cloudwego/eino-ext/components/model/gemini"
-	"github.com/cloudwego/eino-ext/components/model/ollama"
-	"github.com/cloudwego/eino-ext/components/model/openai"
 	"github.com/cloudwego/eino/components/model"
 	"github.com/cloudwego/eino/components/prompt"
 	"github.com/cloudwego/eino/schema"
-	"github.com/ollama/ollama/api"
 	"github.com/pkoukk/tiktoken-go"
 	"github.com/samber/lo"
 	"github.com/samber/lo/parallel"
 	"golang.org/x/sync/semaphore"
-	"google.golang.org/genai"
 
+	modelkit "github.com/chaitin/ModelKit/usecase"
 	"github.com/chaitin/panda-wiki/config"
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/log"
@@ -56,87 +49,6 @@ func NewLLMUsecase(config *config.Config, rag rag.RAGService, conversationRepo *
 		modelRepo:        modelRepo,
 		promptRepo:       promptRepo,
 		logger:           logger.WithModule("usecase.llm"),
-	}
-}
-
-func (u *LLMUsecase) GetChatModel(ctx context.Context, model *domain.Model) (model.BaseChatModel, error) {
-	// config chat model
-	var temperature float32 = 0.0
-	config := &openai.ChatModelConfig{
-		APIKey:      model.APIKey,
-		BaseURL:     model.BaseURL,
-		Model:       string(model.Model),
-		Temperature: &temperature,
-	}
-	if model.Provider == domain.ModelProviderBrandAzureOpenAI {
-		config.ByAzure = true
-		config.APIVersion = model.APIVersion
-		if config.APIVersion == "" {
-			config.APIVersion = "2024-10-21"
-		}
-	}
-	if model.APIHeader != "" {
-		client := getHttpClientWithAPIHeaderMap(model.APIHeader)
-		if client != nil {
-			config.HTTPClient = client
-		}
-	}
-	switch model.Provider {
-	case domain.ModelProviderBrandDeepSeek:
-		chatModel, err := deepseek.NewChatModel(ctx, &deepseek.ChatModelConfig{
-			BaseURL:     model.BaseURL,
-			APIKey:      model.APIKey,
-			Model:       model.Model,
-			Temperature: temperature,
-		})
-		if err != nil {
-			return nil, fmt.Errorf("create chat model failed: %w", err)
-		}
-		return chatModel, nil
-	case domain.ModelProviderBrandGemini:
-		client, err := genai.NewClient(ctx, &genai.ClientConfig{
-			APIKey: model.APIKey,
-		})
-		if err != nil {
-			return nil, fmt.Errorf("create genai client failed: %w", err)
-		}
-
-		chatModel, err := gemini.NewChatModel(ctx, &gemini.Config{
-			Client: client,
-			Model:  model.Model,
-			ThinkingConfig: &genai.ThinkingConfig{
-				IncludeThoughts: true,
-				ThinkingBudget:  nil,
-			},
-		})
-		if err != nil {
-			return nil, fmt.Errorf("create chat model failed: %w", err)
-		}
-		return chatModel, nil
-	case domain.ModelProviderBrandOllama:
-		baseUrl, err := utils.URLRemovePath(config.BaseURL)
-		if err != nil {
-			return nil, fmt.Errorf("ollama url parse failed: %w", err)
-		}
-
-		chatModel, err := ollama.NewChatModel(ctx, &ollama.ChatModelConfig{
-			BaseURL: baseUrl,
-			Timeout: config.Timeout,
-			Model:   config.Model,
-			Options: &api.Options{
-				Temperature: temperature,
-			},
-		})
-		if err != nil {
-			return nil, fmt.Errorf("create chat model failed: %w", err)
-		}
-		return chatModel, nil
-	default:
-		chatModel, err := openai.NewChatModel(ctx, config)
-		if err != nil {
-			return nil, fmt.Errorf("create chat model failed: %w", err)
-		}
-		return chatModel, nil
 	}
 }
 
@@ -304,121 +216,16 @@ func (u *LLMUsecase) Generate(
 	return resp.Content, nil
 }
 
-func (u *LLMUsecase) CheckModel(ctx context.Context, req *domain.CheckModelReq) (*domain.CheckModelResp, error) {
-	checkResp := &domain.CheckModelResp{}
-
-	if req.Type == domain.ModelTypeEmbedding || req.Type == domain.ModelTypeRerank {
-		url := req.BaseURL
-		reqBody := map[string]any{}
-		if req.Type == domain.ModelTypeEmbedding {
-			reqBody = map[string]any{
-				"model":           req.Model,
-				"input":           "PandaWiki is a platform for creating and sharing knowledge bases.",
-				"encoding_format": "float",
-			}
-			url = req.BaseURL + "/embeddings"
-		}
-		if req.Type == domain.ModelTypeRerank {
-			reqBody = map[string]any{
-				"model": req.Model,
-				"documents": []string{
-					"PandaWiki is a platform for creating and sharing knowledge bases.",
-					"PandaWiki is a platform for creating and sharing knowledge bases.",
-					"PandaWiki is a platform for creating and sharing knowledge bases.",
-				},
-				"query": "PandaWiki",
-			}
-			url = req.BaseURL + "/rerank"
-		}
-		body, err := json.Marshal(reqBody)
-		if err != nil {
-			checkResp.Error = fmt.Sprintf("marshal request body failed: %s", err.Error())
-			return checkResp, nil
-		}
-		request, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewBuffer(body))
-		if err != nil {
-			checkResp.Error = fmt.Sprintf("new request failed: %s", err.Error())
-			return checkResp, nil
-		}
-		request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", req.APIKey))
-		request.Header.Set("Content-Type", "application/json")
-		resp, err := http.DefaultClient.Do(request)
-		if err != nil {
-			checkResp.Error = fmt.Sprintf("send request failed: %s", err.Error())
-			return checkResp, nil
-		}
-		defer resp.Body.Close()
-		if resp.StatusCode != http.StatusOK {
-			checkResp.Error = fmt.Sprintf("request failed: %s", resp.Status)
-			return checkResp, nil
-		}
-		return checkResp, nil
-	}
-
-	chatModel, err := u.GetChatModel(ctx, &domain.Model{
-		Provider:   req.Provider,
-		Model:      req.Model,
-		APIKey:     req.APIKey,
-		APIHeader:  req.APIHeader,
-		BaseURL:    req.BaseURL,
-		APIVersion: req.APIVersion,
-		Type:       req.Type,
-	})
-	if err != nil {
-		checkResp.Error = err.Error()
-		return checkResp, nil
-	}
-	resp, err := chatModel.Generate(ctx, []*schema.Message{
-		schema.SystemMessage("You are a helpful assistant."),
-		schema.UserMessage("hi"),
-	})
-	if err != nil {
-		checkResp.Error = err.Error()
-		return checkResp, nil
-	}
-	content := resp.Content
-	if content == "" {
-		checkResp.Error = "generate failed"
-		return checkResp, nil
-	}
-	checkResp.Content = content
-	return checkResp, nil
-}
-
-type headerTransport struct {
-	headers map[string]string
-	base    http.RoundTripper
-}
-
-func (t *headerTransport) RoundTrip(req *http.Request) (*http.Response, error) {
-	for k, v := range t.headers {
-		req.Header.Set(k, v)
-	}
-	return t.base.RoundTrip(req)
-}
-
-func getHttpClientWithAPIHeaderMap(header string) *http.Client {
-	headerMap := utils.GetHeaderMap(header)
-	if len(headerMap) > 0 {
-		// create http client with custom transport for headers
-		client := &http.Client{
-			Timeout: 0,
-		}
-		// Wrap the transport to add headers
-		client.Transport = &headerTransport{
-			headers: headerMap,
-			base:    http.DefaultTransport,
-		}
-		return client
-	}
-	return nil
-}
-
 func (u *LLMUsecase) SummaryNode(ctx context.Context, model *domain.Model, name, content string) (string, error) {
-	chatModel, err := u.GetChatModel(ctx, model)
+	modelkitModel, err := model.ToModelkitModel()
 	if err != nil {
 		return "", err
 	}
+	chatModel, err := modelkit.GetChatModel(ctx, modelkitModel)
+	if err != nil {
+		return "", err
+	}
+
 	chunks, err := u.SplitByTokenLimit(content, int(math.Floor(1024*32*0.95)))
 	if err != nil {
 		return "", err

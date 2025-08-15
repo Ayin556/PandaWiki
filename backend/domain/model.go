@@ -2,6 +2,9 @@ package domain
 
 import (
 	"time"
+
+	modelkitConsts "github.com/chaitin/ModelKit/consts"
+	modelkitDomain "github.com/chaitin/ModelKit/domain"
 )
 
 type ModelProvider string
@@ -48,6 +51,27 @@ type Model struct {
 
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
+}
+
+// ToModelkitModel converts domain.Model to modelkitDomain.PandaModel
+func (m *Model) ToModelkitModel() (*modelkitDomain.ModelMetadata, error) {
+	provider, err := modelkitConsts.ParseModelProvider(string(m.Provider))
+	if err != nil {
+		return nil, err
+	}
+	modelType, err := modelkitConsts.ParseModelType(string(m.Type))
+	if err != nil {
+		return nil, err
+	}
+	return &modelkitDomain.ModelMetadata{
+		Provider:   provider,
+		ModelName:  m.Model,
+		APIKey:     m.APIKey,
+		BaseURL:    m.BaseURL,
+		APIVersion: m.APIVersion,
+		APIHeader:  m.APIHeader,
+		ModelType:  modelType,
+	}, nil
 }
 
 type ModelListItem struct {
@@ -97,78 +121,6 @@ type BaseModelInfo struct {
 type CheckModelResp struct {
 	Error   string `json:"error"`
 	Content string `json:"content"`
-}
-
-var ModelProviderBrandModelsList = map[ModelProvider][]ProviderModelListItem{
-	ModelProviderBrandOpenAI: {
-		{Model: "gpt-4o"},
-	},
-	ModelProviderBrandDeepSeek: {
-		{Model: "deepseek-reasoner"},
-		{Model: "deepseek-chat"},
-	},
-	ModelProviderBrandMoonshot: {
-		{Model: "moonshot-v1-auto"},
-		{Model: "moonshot-v1-8k"},
-		{Model: "moonshot-v1-32k"},
-		{Model: "moonshot-v1-128k"},
-	},
-	ModelProviderBrandAzureOpenAI: {
-		{Model: "gpt-4"},
-		{Model: "gpt-4o"},
-		{Model: "gpt-4o-mini"},
-		{Model: "gpt-4o-nano"},
-		{Model: "gpt-4.1"},
-		{Model: "gpt-4.1-mini"},
-		{Model: "gpt-4.1-nano"},
-		{Model: "o1"},
-		{Model: "o1-mini"},
-		{Model: "o3"},
-		{Model: "o3-mini"},
-		{Model: "o4-mini"},
-	},
-	ModelProviderBrandVolcengine: {
-		{Model: "doubao-seed-1.6-250615"},
-		{Model: "doubao-seed-1.6-flash-250615"},
-		{Model: "doubao-seed-1.6-flash-250715"},
-		{Model: "doubao-seed-1.6-thinking-250615"},
-		{Model: "doubao-seed-1.6-thinking-250715"},
-		{Model: "doubao-1.5-thinking-vision-pro-250428"},
-		{Model: "Doubao-1.5-thinking-pro-250415"},
-		{Model: "deepseek-r1-250528"},
-	},
-	ModelProviderBrandGemini: {
-		{Model: "gemini-2.5-pro"},
-		{Model: "gemini-2.5-flash"},
-		{Model: "gemini-2.5-flash-lite-preview-06-17"},
-		{Model: "gemini-2.5-flash-preview-tts"},
-		{Model: "gemini-2.5-pro-preview-tts"},
-		{Model: "gemini-2.0-flash"},
-		{Model: "gemini-2.0-flash-lite"},
-		{Model: "gemini-1.5-flash"},
-		{Model: "gemini-1.5-flash-8b"},
-		{Model: "gemini-1.5-pro"},
-		{Model: "gemini-embedding-001"},
-	},
-	ModelProviderBrandZhiPu: {
-		{Model: "glm-4.5"},
-		{Model: "glm-4.5-x"},
-		{Model: "glm-4.5-air"},
-		{Model: "glm-4.5-airx"},
-		{Model: "glm-4.5-flash"},
-		{Model: "glm-4-plus"},
-		{Model: "glm-4-air-250414"},
-		{Model: "glm-4-airx"},
-		{Model: "glm-4-long"},
-		{Model: "glm-4-flashx-250414"},
-		{Model: "glm-4-flash-250414"},
-		{Model: "glm-z1-air"},
-		{Model: "glm-z1-airx"},
-		{Model: "glm-z1-flashx"},
-		{Model: "glm-z1-flash"},
-		{Model: "glm-4v-plus-0111"},
-		{Model: "glm-4v-flash"},
-	},
 }
 
 type GetProviderModelListReq struct {
