@@ -3298,6 +3298,7 @@ const docTemplate = `{
                 "feishu",
                 "wecom",
                 "oauth",
+                "github",
                 "cas",
                 "ldap"
             ],
@@ -3306,6 +3307,7 @@ const docTemplate = `{
                 "SourceTypeFeishu",
                 "SourceTypeWeCom",
                 "SourceTypeOAuth",
+                "SourceTypeGitHub",
                 "SourceTypeCAS",
                 "SourceTypeLDAP"
             ]
