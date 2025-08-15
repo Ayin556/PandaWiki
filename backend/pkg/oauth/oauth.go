@@ -90,10 +90,18 @@ func (c *Client) GetUserInfo(code string) (*UserInfo, error) {
 
 	jsonString := string(buf)
 
+	email := gjson.Get(jsonString, c.config.EmailField).String()
+	if email == "" && c.config.UserInfoURL == githubUserInfoURL {
+		email, err = c.GetGithubPrimaryEmail(token)
+		if err != nil {
+			c.logger.Warn("GetGithubPrimaryEmail failed", log.Error(err))
+		}
+	}
+
 	return &UserInfo{
 		ID:        gjson.Get(jsonString, c.config.IDField).String(),
 		AvatarUrl: gjson.Get(jsonString, c.config.AvatarField).String(),
 		Name:      gjson.Get(jsonString, c.config.NameField).String(),
-		Email:     gjson.Get(jsonString, c.config.EmailField).String(),
+		Email:     email,
 	}, nil
 }

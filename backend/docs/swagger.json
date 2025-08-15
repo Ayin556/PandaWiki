@@ -3291,6 +3291,7 @@
                 "feishu",
                 "wecom",
                 "oauth",
+                "github",
                 "cas",
                 "ldap"
             ],
@@ -3299,6 +3300,7 @@
                 "SourceTypeFeishu",
                 "SourceTypeWeCom",
                 "SourceTypeOAuth",
+                "SourceTypeGitHub",
                 "SourceTypeCAS",
                 "SourceTypeLDAP"
             ]

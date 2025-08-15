@@ -55,3 +55,16 @@ func (cache *Cache) DeleteKeysWithPrefix(ctx context.Context, prefix string) err
 	}
 	return nil
 }
+
+func (cache *Cache) AcquireLock(ctx context.Context, key string) bool {
+	result, err := cache.SetNX(ctx, key, true, 10*time.Second).Result()
+	if err != nil {
+		return false
+	}
+	return result
+}
+
+func (cache *Cache) ReleaseLock(ctx context.Context, key string) bool {
+	_, err := cache.Del(ctx, key).Result()
+	return err == nil
+}
