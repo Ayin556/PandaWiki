@@ -124,7 +124,7 @@ const KBSelect = () => {
               dispatch(setKbC(true));
             }}
           >
-            创建新知识库
+            创建新 Wiki 站
           </Button>
           {kbList.map(item => (
             <MenuItem

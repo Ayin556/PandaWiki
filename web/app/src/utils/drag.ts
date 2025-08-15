@@ -29,12 +29,24 @@ export function convertToTree(data: NodeListItem[]) {
   nodeMap.forEach(node => {
     if (node.parentId && nodeMap.has(node.parentId)) {
       const parent = nodeMap.get(node.parentId)!;
-      node.level = parent.level + 1;
       parent.children!.push(node);
     } else {
       rootNodes.push(node);
     }
   });
+
+  // 递归计算每个节点的实际层级
+  const calculateLevel = (nodes: ITreeItem[], level: number = 0) => {
+    nodes.forEach(node => {
+      node.level = level;
+      if (node.children?.length) {
+        calculateLevel(node.children, level + 1);
+      }
+    });
+  };
+
+  // 从根节点开始计算层级
+  calculateLevel(rootNodes);
 
   // 对所有层级的节点进行排序
   const sortChildren = (nodes: ITreeItem[]) => {

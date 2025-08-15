@@ -1,32 +1,31 @@
 import { updateKnowledgeBase } from '@/api';
 import {
-  getApiV1KnowledgeBaseUserList,
   deleteApiV1KnowledgeBaseUserDelete,
+  getApiV1KnowledgeBaseUserList,
   patchApiV1KnowledgeBaseUserUpdate,
 } from '@/request/KnowledgeBase';
 import {
-  DomainKnowledgeBaseDetail,
   ConstsUserKBPermission,
+  DomainKnowledgeBaseDetail,
   V1KBUserListItemResp,
 } from '@/request/types';
 import { useAppSelector } from '@/store';
 import { setKbList } from '@/store/slices/config';
+import InfoIcon from '@mui/icons-material/Info';
 import {
   Box,
   Button,
-  IconButton,
+  MenuItem,
   Select,
   Stack,
   TextField,
-  MenuItem,
-  Tooltip,
+  Tooltip
 } from '@mui/material';
-import { Message, Icon, Ellipsis, Modal } from 'ct-mui';
+import { Ellipsis, Icon, Message, Modal } from 'ct-mui';
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { SettingCard, SettingCardItem } from './Common';
 import AddRole from './AddRole';
-import InfoIcon from '@mui/icons-material/Info';
+import { SettingCard, SettingCardItem } from './Common';
 
 interface CardKBProps {
   kb: DomainKnowledgeBaseDetail;
@@ -108,7 +107,7 @@ const CardKB = ({ kb }: CardKBProps) => {
 
   return (
     <SettingCard title='后台信息'>
-      <SettingCardItem title='知识库名称' isEdit={isEdit} onSubmit={handleSave}>
+      <SettingCardItem title='Wiki 站名称' isEdit={isEdit} onSubmit={handleSave}>
         <TextField
           fullWidth
           value={kbName}

@@ -44,7 +44,7 @@ const KBDelete = ({ open, onClose, data }: KBDeleteProps) => {
       title={
         <Stack direction='row' alignItems='center' gap={1}>
           <ErrorOutlineIcon sx={{ color: 'warning.main' }} />
-          确定要删除该知识库吗？
+          确定要删除该 Wiki 站吗？
         </Stack>
       }
     >

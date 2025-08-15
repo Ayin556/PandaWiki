@@ -1,7 +1,7 @@
 import { KnowledgeBaseFormData } from '@/api';
 import {
-  postApiV1KnowledgeBase,
   getApiV1KnowledgeBaseList,
+  postApiV1KnowledgeBase,
 } from '@/request/KnowledgeBase';
 import { DomainCreateKnowledgeBaseReq } from '@/request/types';
 import { useAppDispatch, useAppSelector } from '@/store';
@@ -20,7 +20,7 @@ const VALIDATION_RULES = {
   name: {
     required: {
       value: true,
-      message: '知识库名称不能为空',
+      message: 'Wiki 站名称不能为空',
     },
   },
   port: {

@@ -62,7 +62,6 @@ const EditorFolder = ({ edited, save }: EditorFolderProps) => {
       <Stack
         gap={1.5}
         key={item.id}
-        ml={item.level * 2.5}
         sx={{ position: 'relative' }}
       >
         <Stack
@@ -115,7 +114,7 @@ const EditorFolder = ({ edited, save }: EditorFolderProps) => {
         {item.children &&
           item.children.length > 0 &&
           expandedFolders.has(item.id) && (
-            <Stack gap={1.5}>{renderTree(item.children)}</Stack>
+            <Stack gap={1.5} sx={{ ml: 2.5 }}>{renderTree(item.children)}</Stack>
           )}
       </Stack>
     ));
