@@ -116,6 +116,8 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
   const userInfoUrl = watch('user_info_url');
   const enabled = watch('enabled');
 
+  const tips = '(联创版/企业版可用)';
+
   const onSubmit = handleSubmit(value => {
     Promise.all([
       putApiV1KnowledgeBaseDetail({
@@ -137,7 +139,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
           is_forbidden: value.enabled === '3',
         },
       }),
-      value.enabled === '2' && isEnterprise
+      value.enabled === '2' && isPro
         ? postApiProV1AuthSet({
             kb_id,
             source_type: value.source_type as ConstsSourceType,
@@ -172,19 +174,19 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
     });
   });
 
-  const isEnterprise = useMemo(() => {
-    return license.edition === 2;
+  const isPro = useMemo(() => {
+    return license.edition === 2 || license.edition === 1;
   }, [license]);
 
   useEffect(() => {
     setValue(
       'source_type',
-      isEnterprise
+      isPro
         ? kb.access_settings?.source_type ||
             EXTEND_CONSTS_SOURCE_TYPE.SourceTypePassword
         : EXTEND_CONSTS_SOURCE_TYPE.SourceTypePassword,
     );
-  }, [kb, isEnterprise]);
+  }, [kb, isPro]);
 
   useEffect(() => {
     if (kb.access_settings?.simple_auth) {
@@ -200,7 +202,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
   }, [kb]);
 
   useEffect(() => {
-    if (!isEnterprise || !kb_id || enabled !== '2') return;
+    if (!isPro || !kb_id || enabled !== '2') return;
 
     getApiProV1AuthGet({
       kb_id,
@@ -227,7 +229,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
       setValue('user_base_dn', res.user_base_dn!);
       setValue('user_filter', res.user_filter!);
     });
-  }, [kb_id, isEnterprise, source_type, enabled]);
+  }, [kb_id, isPro, source_type, enabled]);
 
   const columns = [
     {
@@ -265,6 +267,57 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
       },
     },
   ];
+
+  const githubForm = () => {
+    return (
+      <>
+        <FormItem label='Client ID' required>
+          <Controller
+            control={control}
+            name='client_id'
+            rules={{
+              required: 'Client ID 不能为空',
+            }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                fullWidth
+                placeholder='请输入'
+                error={!!errors.client_id}
+                helperText={errors.client_id?.message}
+                onChange={e => {
+                  field.onChange(e.target.value);
+                  setIsEdit(true);
+                }}
+              />
+            )}
+          />
+        </FormItem>
+        <FormItem label='Client Secret' required>
+          <Controller
+            control={control}
+            name='client_secret'
+            rules={{
+              required: 'Client Secret 不能为空',
+            }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                fullWidth
+                placeholder='请输入'
+                error={!!errors.client_secret}
+                helperText={errors.client_secret?.message}
+                onChange={e => {
+                  field.onChange(e.target.value);
+                  setIsEdit(true);
+                }}
+              />
+            )}
+          />
+        </FormItem>
+      </>
+    );
+  };
 
   const oauthForm = () => {
     return (
@@ -853,39 +906,45 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
                   </MenuItem>
                   <MenuItem
                     value={EXTEND_CONSTS_SOURCE_TYPE.SourceTypeDingTalk}
-                    disabled={!isEnterprise}
+                    disabled={!isPro}
                   >
-                    钉钉登录 {isEnterprise ? '' : '(企业版可用)'}
+                    钉钉登录 {isPro ? '' : tips}
                   </MenuItem>
                   <MenuItem
                     value={EXTEND_CONSTS_SOURCE_TYPE.SourceTypeFeishu}
-                    disabled={!isEnterprise}
+                    disabled={!isPro}
                   >
-                    飞书登录 {isEnterprise ? '' : '(企业版可用)'}
+                    飞书登录 {isPro ? '' : tips}
                   </MenuItem>
                   <MenuItem
                     value={EXTEND_CONSTS_SOURCE_TYPE.SourceTypeWeCom}
-                    disabled={!isEnterprise}
+                    disabled={!isPro}
                   >
-                    企业微信登录 {isEnterprise ? '' : '(企业版可用)'}
+                    企业微信登录 {isPro ? '' : tips}
                   </MenuItem>
                   <MenuItem
                     value={EXTEND_CONSTS_SOURCE_TYPE.SourceTypeOAuth}
-                    disabled={!isEnterprise}
+                    disabled={!isPro}
                   >
-                    OAuth 登录 {isEnterprise ? '' : '(企业版可用)'}
+                    OAuth 登录 {isPro ? '' : tips}
                   </MenuItem>
                   <MenuItem
                     value={EXTEND_CONSTS_SOURCE_TYPE.SourceTypeCAS}
-                    disabled={!isEnterprise}
+                    disabled={!isPro}
                   >
-                    CAS 登录 {isEnterprise ? '' : '(企业版可用)'}
+                    CAS 登录 {isPro ? '' : tips}
                   </MenuItem>
                   <MenuItem
                     value={EXTEND_CONSTS_SOURCE_TYPE.SourceTypeLDAP}
-                    disabled={!isEnterprise}
+                    disabled={!isPro}
                   >
-                    LDAP 登录 {isEnterprise ? '' : '(企业版可用)'}
+                    LDAP 登录 {isPro ? '' : tips}
+                  </MenuItem>
+                  <MenuItem
+                    value={EXTEND_CONSTS_SOURCE_TYPE.SourceTypeGitHub}
+                    disabled={!isPro}
+                  >
+                    GitHub 登录 {isPro ? '' : tips}
                   </MenuItem>
                 </Select>
               )}
@@ -985,6 +1044,8 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
             ldapForm()}
           {source_type === EXTEND_CONSTS_SOURCE_TYPE.SourceTypePassword &&
             passwordForm()}
+          {source_type === EXTEND_CONSTS_SOURCE_TYPE.SourceTypeGitHub &&
+            githubForm()}
 
           {source_type !== EXTEND_CONSTS_SOURCE_TYPE.SourceTypePassword && (
             <>

@@ -126,6 +126,7 @@ export enum ConstsSourceType {
   SourceTypeFeishu = "feishu",
   SourceTypeWeCom = "wecom",
   SourceTypeOAuth = "oauth",
+  SourceTypeGitHub = "github",
   SourceTypeCAS = "cas",
   SourceTypeLDAP = "ldap",
 }

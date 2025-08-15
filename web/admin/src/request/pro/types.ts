@@ -22,6 +22,7 @@ export enum ConstsSourceType {
   SourceTypeFeishu = "feishu",
   SourceTypeWeCom = "wecom",
   SourceTypeOAuth = "oauth",
+  SourceTypeGitHub = "github",
   SourceTypeCAS = "cas",
   SourceTypeLDAP = "ldap",
 }
@@ -49,9 +50,15 @@ export interface DomainDeleteDocumentFeedbackReq {
 }
 
 export interface DomainDocumentFeedbackInfo {
+  /** user */
+  auth_user_id?: number;
+  /** avatar */
+  avatar?: string;
+  email?: string;
   /** ip */
   remote_ip?: string;
   screen_shot?: string;
+  user_name?: string;
 }
 
 export interface DomainDocumentFeedbackListItem {
@@ -209,6 +216,15 @@ export interface GithubComChaitinPandaWikiProApiShareV1AuthFeishuResp {
   url?: string;
 }
 
+export interface GithubComChaitinPandaWikiProApiShareV1AuthGitHubReq {
+  kb_id?: string;
+  redirect_url?: string;
+}
+
+export interface GithubComChaitinPandaWikiProApiShareV1AuthGitHubResp {
+  url?: string;
+}
+
 export interface GithubComChaitinPandaWikiProApiShareV1AuthLDAPReq {
   kb_id?: string;
   password: string;
@@ -253,6 +269,11 @@ export type GithubComChaitinPandaWikiProApiShareV1FeishuCallbackResp = Record<
   any
 >;
 
+export type GithubComChaitinPandaWikiProApiShareV1GitHubCallbackResp = Record<
+  string,
+  any
+>;
+
 export type GithubComChaitinPandaWikiProApiShareV1OAuthCallbackResp = Record<
   string,
   any
@@ -277,9 +298,21 @@ export interface HandlerV1DocFeedBackLists {
   total?: number;
 }
 
+export interface DeleteApiProV1AuthDeleteParams {
+  id?: number;
+  kb_id?: string;
+}
+
 export interface GetApiProV1AuthGetParams {
   kb_id?: string;
-  source_type?: "dingtalk" | "feishu" | "wecom" | "oauth" | "cas" | "ldap";
+  source_type?:
+    | "dingtalk"
+    | "feishu"
+    | "wecom"
+    | "oauth"
+    | "github"
+    | "cas"
+    | "ldap";
 }
 
 export interface GetApiProV1BlockParams {
@@ -348,6 +381,11 @@ export interface GetShareProV1OpenapiDingtalkCallbackParams {
 }
 
 export interface GetShareProV1OpenapiFeishuCallbackParams {
+  code?: string;
+  state?: string;
+}
+
+export interface GetShareProV1OpenapiGithubCallbackParams {
   code?: string;
   state?: string;
 }
