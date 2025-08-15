@@ -16,11 +16,13 @@ import {
   GetShareProV1OpenapiCasCallbackParams,
   GetShareProV1OpenapiDingtalkCallbackParams,
   GetShareProV1OpenapiFeishuCallbackParams,
+  GetShareProV1OpenapiGithubCallbackParams,
   GetShareProV1OpenapiOauthCallbackParams,
   GetShareProV1OpenapiWecomCallbackParams,
   GithubComChaitinPandaWikiProApiShareV1CASCallbackResp,
   GithubComChaitinPandaWikiProApiShareV1DingtalkCallbackResp,
   GithubComChaitinPandaWikiProApiShareV1FeishuCallbackResp,
+  GithubComChaitinPandaWikiProApiShareV1GitHubCallbackResp,
   GithubComChaitinPandaWikiProApiShareV1OAuthCallbackResp,
   GithubComChaitinPandaWikiProApiShareV1WecomCallbackResp,
 } from "./types";
@@ -108,6 +110,36 @@ export const getShareProV1OpenapiFeishuCallback = (
     }
   >({
     path: `/share/pro/v1/openapi/feishu/callback`,
+    method: "GET",
+    query: query,
+    type: ContentType.Json,
+    format: "json",
+    ...params,
+  });
+
+/**
+ * @description GitHub回调
+ *
+ * @tags ShareOpenapi
+ * @name GetShareProV1OpenapiGithubCallback
+ * @summary GitHub回调
+ * @request GET:/share/pro/v1/openapi/github/callback
+ * @response `200` `(DomainResponse & {
+    data?: GithubComChaitinPandaWikiProApiShareV1GitHubCallbackResp,
+
+})` OK
+ */
+
+export const getShareProV1OpenapiGithubCallback = (
+  query: GetShareProV1OpenapiGithubCallbackParams,
+  params: RequestParams = {},
+) =>
+  httpRequest<
+    DomainResponse & {
+      data?: GithubComChaitinPandaWikiProApiShareV1GitHubCallbackResp;
+    }
+  >({
+    path: `/share/pro/v1/openapi/github/callback`,
     method: "GET",
     query: query,
     type: ContentType.Json,

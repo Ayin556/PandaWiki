@@ -4,6 +4,7 @@ import {
   postShareProV1AuthCas,
   postShareProV1AuthDingtalk,
   postShareProV1AuthFeishu,
+  postShareProV1AuthGithub,
   postShareProV1AuthLdap,
   postShareProV1AuthOauth,
   postShareProV1AuthWecom,
@@ -24,6 +25,7 @@ import {
   IconLDAP,
   IconLock,
   IconOAuth,
+  IconGitHub,
   IconPassword,
   IconQiyeweixin,
   IconUser,
@@ -122,6 +124,15 @@ export default function Login() {
   const handleOAuthLogin = () => {
     clearCookie();
     postShareProV1AuthOauth({
+      redirect_url: window.location.origin,
+    }).then(res => {
+      window.location.href = res.url || '/';
+    });
+  };
+
+  const handleGitHubLogin = () => {
+    clearCookie();
+    postShareProV1AuthGithub({
       redirect_url: window.location.origin,
     }).then(res => {
       window.location.href = res.url || '/';
@@ -286,6 +297,17 @@ export default function Login() {
                     fullWidth
                     variant='contained'
                     onClick={handleOAuthLogin}
+                    sx={{ height: '50px', fontSize: 16 }}
+                  >
+                    登录
+                  </Button>
+                )}
+                {sourceType === ConstsSourceType.SourceTypeGitHub && (
+                  <Button
+                    fullWidth
+                    variant='contained'
+                    onClick={handleGitHubLogin}
+                    startIcon={<IconGitHub/>}
                     sx={{ height: '50px', fontSize: 16 }}
                   >
                     登录
