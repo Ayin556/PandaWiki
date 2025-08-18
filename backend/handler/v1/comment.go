@@ -43,8 +43,8 @@ type CommentLists = domain.PaginatedResult[[]*domain.CommentListItem]
 //	@Tags			comment
 //	@Accept			json
 //	@Produce		json
-//	@Param			req	query		domain.CommentListReq				true	"CommentListReq"
-//	@Success		200	{object}	domain.Response{data=CommentLists}	"conversationList"
+//	@Param			req	query		domain.CommentListReq					true	"CommentListReq"
+//	@Success		200	{object}	domain.PWResponse{data=CommentLists}	"conversationList"
 //	@Router			/api/v1/comment [get]
 func (h *CommentHandler) GetCommentModeratedList(c echo.Context) error {
 	var req domain.CommentListReq

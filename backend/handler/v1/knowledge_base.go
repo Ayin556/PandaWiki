@@ -124,7 +124,7 @@ func (h *KnowledgeBaseHandler) CreateKnowledgeBase(c echo.Context) error {
 //	@Tags			knowledge_base
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{object}	domain.Response{data=[]domain.KnowledgeBaseListItem}
+//	@Success		200	{object}	domain.PWResponse{data=[]domain.KnowledgeBaseListItem}
 //	@Router			/api/v1/knowledge_base/list [get]
 func (h *KnowledgeBaseHandler) GetKnowledgeBaseList(c echo.Context) error {
 
@@ -184,7 +184,7 @@ func (h *KnowledgeBaseHandler) UpdateKnowledgeBase(c echo.Context) error {
 //	@Produce		json
 //	@Security		bearerAuth
 //	@Param			id	query		string	true	"Knowledge Base ID"
-//	@Success		200	{object}	domain.Response{data=domain.KnowledgeBaseDetail}
+//	@Success		200	{object}	domain.PWResponse{data=domain.KnowledgeBaseDetail}
 //	@Router			/api/v1/knowledge_base/detail [get]
 func (h *KnowledgeBaseHandler) GetKnowledgeBaseDetail(c echo.Context) error {
 	kbID := c.QueryParam("id")
@@ -279,7 +279,7 @@ func (h *KnowledgeBaseHandler) CreateKBRelease(c echo.Context) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			kb_id	query		string	true	"Knowledge Base ID"
-//	@Success		200		{object}	domain.Response{data=domain.GetKBReleaseListResp}
+//	@Success		200		{object}	domain.PWResponse{data=domain.GetKBReleaseListResp}
 //	@Router			/api/v1/knowledge_base/release/list [get]
 func (h *KnowledgeBaseHandler) GetKBReleaseList(c echo.Context) error {
 	var req domain.GetKBReleaseListReq

@@ -140,7 +140,7 @@ func (h *UserHandler) GetUserInfo(c echo.Context) error {
 //	@Tags			user
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{object}	domain.Response{data=v1.UserListResp}
+//	@Success		200	{object}	domain.PWResponse{data=v1.UserListResp}
 //	@Router			/api/v1/user/list [get]
 func (h *UserHandler) ListUsers(c echo.Context) error {
 	var req v1.UserListReq

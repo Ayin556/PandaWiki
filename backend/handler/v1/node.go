@@ -57,7 +57,7 @@ func NewNodeHandler(
 //	@Accept			json
 //	@Produce		json
 //	@Param			body	body		domain.CreateNodeReq	true	"Node"
-//	@Success		200		{object}	domain.Response{data=map[string]string}
+//	@Success		200		{object}	domain.PWResponse{data=map[string]string}
 //	@Router			/api/v1/node [post]
 func (h *NodeHandler) CreateNode(c echo.Context) error {
 	req := &domain.CreateNodeReq{}
@@ -88,7 +88,7 @@ func (h *NodeHandler) CreateNode(c echo.Context) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			params	query		domain.GetNodeListReq	true	"Params"
-//	@Success		200		{object}	domain.Response{data=[]domain.NodeListItemResp}
+//	@Success		200		{object}	domain.PWResponse{data=[]domain.NodeListItemResp}
 //	@Router			/api/v1/node/list [get]
 func (h *NodeHandler) GetNodeList(c echo.Context) error {
 	var req domain.GetNodeListReq
@@ -114,7 +114,7 @@ func (h *NodeHandler) GetNodeList(c echo.Context) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			param	query		v1.GetNodeDetailReq	true	"conversation id"
-//	@Success		200		{object}	domain.Response{data=domain.NodeDetailResp}
+//	@Success		200		{object}	domain.PWResponse{data=domain.NodeDetailResp}
 //	@Router			/api/v1/node/detail [get]
 func (h *NodeHandler) GetNodeDetail(c echo.Context) error {
 
@@ -141,7 +141,7 @@ func (h *NodeHandler) GetNodeDetail(c echo.Context) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			action	body		domain.NodeActionReq	true	"Action"
-//	@Success		200		{object}	domain.Response{data=map[string]string}
+//	@Success		200		{object}	domain.PWResponse{data=map[string]string}
 //	@Router			/api/v1/node/action [post]
 func (h *NodeHandler) NodeAction(c echo.Context) error {
 	req := &domain.NodeActionReq{}
@@ -250,7 +250,7 @@ func (h *NodeHandler) SummaryNode(c echo.Context) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			query	query		domain.GetRecommendNodeListReq	true	"Recommend Nodes"
-//	@Success		200		{object}	domain.Response{data=[]domain.RecommendNodeListResp}
+//	@Success		200		{object}	domain.PWResponse{data=[]domain.RecommendNodeListResp}
 //	@Router			/api/v1/node/recommend_nodes [get]
 func (h *NodeHandler) RecommendNodes(c echo.Context) error {
 	var req domain.GetRecommendNodeListReq

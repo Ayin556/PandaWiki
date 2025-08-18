@@ -45,7 +45,7 @@ type ConversationListItems = domain.PaginatedResult[[]domain.ConversationListIte
 //	@Accept			json
 //	@Produce		json
 //	@Param			req	query		domain.ConversationListReq	true	"conversation list request"
-//	@Success		200	{object}	domain.Response{data=ConversationListItems}
+//	@Success		200	{object}	domain.PWResponse{data=ConversationListItems}
 //	@Router			/api/v1/conversation [get]
 func (h *ConversationHandler) GetConversationList(c echo.Context) error {
 	var request domain.ConversationListReq
@@ -71,7 +71,7 @@ func (h *ConversationHandler) GetConversationList(c echo.Context) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			param	query		v1.GetConversationDetailReq	true	"conversation id"
-//	@Success		200		{object}	domain.Response{data=domain.ConversationDetailResp}
+//	@Success		200		{object}	domain.PWResponse{data=domain.ConversationDetailResp}
 //	@Router			/api/v1/conversation/detail [get]
 func (h *ConversationHandler) GetConversationDetail(c echo.Context) error {
 
@@ -98,9 +98,9 @@ func (h *ConversationHandler) GetConversationDetail(c echo.Context) error {
 //	@Tags			Message
 //	@Accept			json
 //	@Produce		json
-//	@Param			req	query		domain.MessageListReq																true	"message list request"
+//	@Param			req	query		domain.MessageListReq																	true	"message list request"
 //
-//	@Success		200	{object}	domain.Response{data=domain.PaginatedResult[[]domain.ConversationMessageListItem]}	"MessageList"
+//	@Success		200	{object}	domain.PWResponse{data=domain.PaginatedResult[[]domain.ConversationMessageListItem]}	"MessageList"
 //	@Router			/api/v1/conversation/message/list [get]
 func (h *ConversationHandler) GetMessageFeedBackList(c echo.Context) error {
 	var request domain.MessageListReq
@@ -124,7 +124,7 @@ func (h *ConversationHandler) GetMessageFeedBackList(c echo.Context) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			id	query		v1.GetMessageDetailReq	true	"message id"
-//	@Success		200	{object}	domain.Response{data=domain.ConversationMessage}
+//	@Success		200	{object}	domain.PWResponse{data=domain.ConversationMessage}
 //	@Router			/api/v1/conversation/message/detail [get]
 func (h *ConversationHandler) GetMessageDetail(c echo.Context) error {
 	var req v1.GetMessageDetailReq

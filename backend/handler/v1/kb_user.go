@@ -17,7 +17,7 @@ import (
 //	@Produce		json
 //	@Security		bearerAuth
 //	@Param			kb_id	query		string	true	"Knowledge Base ID"
-//	@Success		200		{object}	domain.Response{data=[]v1.KBUserListItemResp}
+//	@Success		200		{object}	domain.PWResponse{data=[]v1.KBUserListItemResp}
 //	@Router			/api/v1/knowledge_base/user/list [get]
 func (h *KnowledgeBaseHandler) KBUserList(c echo.Context) error {
 	var req v1.KBUserListReq
