@@ -49,7 +49,7 @@ func NewSessionMiddleware(logger *log.Logger, config *config.Config, cache *cach
 
 	store.Options = &sessions.Options{
 		Path:     "/",
-		MaxAge:   int((1 * 24 * time.Hour).Seconds()),
+		MaxAge:   30 * 86400,
 		SameSite: http.SameSiteLaxMode,
 		HttpOnly: true,
 	}

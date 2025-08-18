@@ -119,7 +119,7 @@ func (h *ShareAuthHandler) AuthLoginSimple(c echo.Context) error {
 
 	newSess.Options = &sessions.Options{
 		Path:     "/",
-		MaxAge:   86400 * 1,
+		MaxAge:   86400 * 30,
 		HttpOnly: true,
 	}
 
