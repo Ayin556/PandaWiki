@@ -59,7 +59,7 @@ func NewShareCommentHandler(
 //	@Accept			json
 //	@Produce		json
 //	@Param			comment	body		domain.CommentReq				true	"Comment"
-//	@Success		200		{object}	domain.Response{data=string}	"CommentID"
+//	@Success		200		{object}	domain.PWResponse{data=string}	"CommentID"
 //	@Router			/share/v1/comment [post]
 func (h *ShareCommentHandler) CreateComment(c echo.Context) error {
 	ctx := c.Request().Context()
@@ -122,8 +122,8 @@ type ShareCommentLists = *domain.PaginatedResult[[]*domain.ShareCommentListItem]
 //	@Tags			share_comment
 //	@Accept			json
 //	@Produce		json
-//	@Param			id	query		string									true	"nodeID"
-//	@Success		200	{object}	domain.Response{data=ShareCommentLists}	"CommentList
+//	@Param			id	query		string										true	"nodeID"
+//	@Success		200	{object}	domain.PWResponse{data=ShareCommentLists}	"CommentList
 //	@Router			/share/v1/comment/list [get]
 func (h *ShareCommentHandler) GetCommentList(c echo.Context) error {
 	ctx := c.Request().Context()

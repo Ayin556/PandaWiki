@@ -35,7 +35,7 @@ func NewBaseHandler(echo *echo.Echo, logger *log.Logger, config *config.Config, 
 }
 
 func (h *BaseHandler) NewResponseWithData(c echo.Context, data any) error {
-	return c.JSON(http.StatusOK, domain.Response{
+	return c.JSON(http.StatusOK, domain.PWResponse{
 		Success: true,
 		Data:    data,
 	})
@@ -51,7 +51,7 @@ func (h *BaseHandler) NewResponseWithError(c echo.Context, msg string, err error
 		traceID = uuid.New().String()
 	}
 	h.baseLogger.LogAttrs(c.Request().Context(), slog.LevelError, msg, slog.String("trace_id", traceID), slog.Any("error", err))
-	return c.JSON(http.StatusOK, domain.Response{
+	return c.JSON(http.StatusOK, domain.PWResponse{
 		Success: false,
 		Message: fmt.Sprintf("%s [trace_id: %s]", msg, traceID),
 	})

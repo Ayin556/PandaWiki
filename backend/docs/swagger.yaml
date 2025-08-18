@@ -471,56 +471,6 @@ definitions:
     - app_type
     - message
     type: object
-  domain.CheckModelReq:
-    properties:
-      api_header:
-        type: string
-      api_key:
-        type: string
-      api_version:
-        description: for azure openai
-        type: string
-      base_url:
-        type: string
-      model:
-        type: string
-      provider:
-        allOf:
-        - $ref: '#/definitions/domain.ModelProvider'
-        enum:
-        - OpenAI
-        - Ollama
-        - DeepSeek
-        - SiliconFlow
-        - Moonshot
-        - Other
-        - AzureOpenAI
-        - BaiZhiCloud
-        - Hunyuan
-        - BaiLian
-        - Volcengine
-        - Gemini
-        - ZhiPu
-      type:
-        allOf:
-        - $ref: '#/definitions/domain.ModelType'
-        enum:
-        - chat
-        - embedding
-        - rerank
-    required:
-    - base_url
-    - model
-    - provider
-    - type
-    type: object
-  domain.CheckModelResp:
-    properties:
-      content:
-        type: string
-      error:
-        type: string
-    type: object
   domain.CommentInfo:
     properties:
       auth_user_id:
@@ -672,7 +622,7 @@ definitions:
         type: integer
       provider:
         allOf:
-        - $ref: '#/definitions/domain.ModelProvider'
+        - $ref: '#/definitions/github_com_chaitin_panda-wiki_domain.ModelProvider'
         description: model
       remote_ip:
         description: stats
@@ -779,7 +729,7 @@ definitions:
         type: string
       provider:
         allOf:
-        - $ref: '#/definitions/domain.ModelProvider'
+        - $ref: '#/definitions/github_com_chaitin_panda-wiki_domain.ModelProvider'
         enum:
         - OpenAI
         - Ollama
@@ -1059,7 +1009,7 @@ definitions:
       prompt_tokens:
         type: integer
       provider:
-        $ref: '#/definitions/domain.ModelProvider'
+        $ref: '#/definitions/github_com_chaitin_panda-wiki_domain.ModelProvider'
       total_tokens:
         type: integer
       type:
@@ -1067,66 +1017,6 @@ definitions:
       updated_at:
         type: string
     type: object
-  domain.ModelListItem:
-    properties:
-      api_header:
-        type: string
-      api_key:
-        type: string
-      api_version:
-        description: for azure openai
-        type: string
-      base_url:
-        type: string
-      completion_tokens:
-        type: integer
-      id:
-        type: string
-      model:
-        type: string
-      prompt_tokens:
-        type: integer
-      provider:
-        $ref: '#/definitions/domain.ModelProvider'
-      total_tokens:
-        type: integer
-      type:
-        $ref: '#/definitions/domain.ModelType'
-    type: object
-  domain.ModelProvider:
-    enum:
-    - OpenAI
-    - Ollama
-    - DeepSeek
-    - Moonshot
-    - SiliconFlow
-    - AzureOpenAI
-    - BaiZhiCloud
-    - Hunyuan
-    - BaiLian
-    - Volcengine
-    - Gemini
-    - ZhiPu
-    - Other
-    type: string
-    x-enum-comments:
-      ModelProviderBrandZhiPu: 智谱
-    x-enum-descriptions:
-    - 智谱
-    x-enum-varnames:
-    - ModelProviderBrandOpenAI
-    - ModelProviderBrandOllama
-    - ModelProviderBrandDeepSeek
-    - ModelProviderBrandMoonshot
-    - ModelProviderBrandSiliconFlow
-    - ModelProviderBrandAzureOpenAI
-    - ModelProviderBrandBaiZhiCloud
-    - ModelProviderBrandHunyuan
-    - ModelProviderBrandBaiLian
-    - ModelProviderBrandVolcengine
-    - ModelProviderBrandGemini
-    - ModelProviderBrandZhiPu
-    - ModelProviderBrandOther
   domain.ModelType:
     enum:
     - chat
@@ -1276,6 +1166,14 @@ definitions:
     properties:
       key:
         type: string
+    type: object
+  domain.PWResponse:
+    properties:
+      data: {}
+      message:
+        type: string
+      success:
+        type: boolean
     type: object
   domain.Page:
     properties:
@@ -1580,7 +1478,7 @@ definitions:
         type: string
       provider:
         allOf:
-        - $ref: '#/definitions/domain.ModelProvider'
+        - $ref: '#/definitions/github_com_chaitin_panda-wiki_domain.ModelProvider'
         enum:
         - OpenAI
         - Ollama
@@ -1683,6 +1581,128 @@ definitions:
       title:
         type: string
     type: object
+  github_com_chaitin_panda-wiki_domain.CheckModelReq:
+    properties:
+      api_header:
+        type: string
+      api_key:
+        type: string
+      api_version:
+        description: for azure openai
+        type: string
+      base_url:
+        type: string
+      model:
+        type: string
+      provider:
+        allOf:
+        - $ref: '#/definitions/github_com_chaitin_panda-wiki_domain.ModelProvider'
+        enum:
+        - OpenAI
+        - Ollama
+        - DeepSeek
+        - SiliconFlow
+        - Moonshot
+        - Other
+        - AzureOpenAI
+        - BaiZhiCloud
+        - Hunyuan
+        - BaiLian
+        - Volcengine
+        - Gemini
+        - ZhiPu
+      type:
+        allOf:
+        - $ref: '#/definitions/domain.ModelType'
+        enum:
+        - chat
+        - embedding
+        - rerank
+    required:
+    - base_url
+    - model
+    - provider
+    - type
+    type: object
+  github_com_chaitin_panda-wiki_domain.CheckModelResp:
+    properties:
+      content:
+        type: string
+      error:
+        type: string
+    type: object
+  github_com_chaitin_panda-wiki_domain.ModelListItem:
+    properties:
+      api_header:
+        type: string
+      api_key:
+        type: string
+      api_version:
+        description: for azure openai
+        type: string
+      base_url:
+        type: string
+      completion_tokens:
+        type: integer
+      id:
+        type: string
+      model:
+        type: string
+      prompt_tokens:
+        type: integer
+      provider:
+        $ref: '#/definitions/github_com_chaitin_panda-wiki_domain.ModelProvider'
+      total_tokens:
+        type: integer
+      type:
+        $ref: '#/definitions/domain.ModelType'
+    type: object
+  github_com_chaitin_panda-wiki_domain.ModelProvider:
+    enum:
+    - OpenAI
+    - Ollama
+    - DeepSeek
+    - Moonshot
+    - SiliconFlow
+    - AzureOpenAI
+    - BaiZhiCloud
+    - Hunyuan
+    - BaiLian
+    - Volcengine
+    - Gemini
+    - ZhiPu
+    - Other
+    type: string
+    x-enum-comments:
+      ModelProviderBrandZhiPu: 智谱
+    x-enum-descriptions:
+    - ""
+    - ""
+    - ""
+    - ""
+    - ""
+    - ""
+    - ""
+    - ""
+    - ""
+    - ""
+    - ""
+    - 智谱
+    - ""
+    x-enum-varnames:
+    - ModelProviderBrandOpenAI
+    - ModelProviderBrandOllama
+    - ModelProviderBrandDeepSeek
+    - ModelProviderBrandMoonshot
+    - ModelProviderBrandSiliconFlow
+    - ModelProviderBrandAzureOpenAI
+    - ModelProviderBrandBaiZhiCloud
+    - ModelProviderBrandHunyuan
+    - ModelProviderBrandBaiLian
+    - ModelProviderBrandVolcengine
+    - ModelProviderBrandGemini
+    - ModelProviderBrandZhiPu
+    - ModelProviderBrandOther
   schema.RoleType:
     enum:
     - assistant
@@ -1922,7 +1942,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
                   $ref: '#/definitions/domain.AppDetailResp'
@@ -1969,7 +1989,7 @@ paths:
           description: conversationList
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
                   $ref: '#/definitions/v1.CommentLists'
@@ -2035,7 +2055,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
                   $ref: '#/definitions/v1.ConversationListItems'
@@ -2064,7 +2084,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
                   $ref: '#/definitions/domain.ConversationDetailResp'
@@ -2093,7 +2113,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
                   $ref: '#/definitions/domain.ConversationMessage'
@@ -2128,7 +2148,7 @@ paths:
           description: MessageList
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
                   $ref: '#/definitions/domain.PaginatedResult-array_domain_ConversationMessageListItem'
@@ -2159,7 +2179,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
                   items:
@@ -2192,7 +2212,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
                   $ref: '#/definitions/domain.EpubResp'
@@ -2219,7 +2239,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
                   items:
@@ -2248,7 +2268,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
                   items:
@@ -2277,7 +2297,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
                   items:
@@ -2306,7 +2326,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
                   items:
@@ -2335,7 +2355,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
                   items:
@@ -2364,7 +2384,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
                   items:
@@ -2393,7 +2413,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
                   $ref: '#/definitions/domain.ParseURLResp'
@@ -2420,7 +2440,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
                   $ref: '#/definitions/domain.ParseURLResp'
@@ -2447,7 +2467,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
                   $ref: '#/definitions/domain.ScrapeResp'
@@ -2478,7 +2498,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
                   items:
@@ -2511,7 +2531,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
                   items:
@@ -2544,7 +2564,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
                   items:
@@ -2659,7 +2679,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
                   $ref: '#/definitions/domain.KnowledgeBaseDetail'
@@ -2702,7 +2722,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
                   items:
@@ -2752,7 +2772,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
                   $ref: '#/definitions/domain.GetKBReleaseListResp'
@@ -2828,7 +2848,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
                   items:
@@ -2917,7 +2937,7 @@ paths:
         name: model
         required: true
         schema:
-          $ref: '#/definitions/domain.CheckModelReq'
+          $ref: '#/definitions/github_com_chaitin_panda-wiki_domain.CheckModelReq'
       produces:
       - application/json
       responses:
@@ -2925,10 +2945,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/domain.CheckModelResp'
+                  $ref: '#/definitions/github_com_chaitin_panda-wiki_domain.CheckModelResp'
               type: object
       summary: check model
       tags:
@@ -2951,7 +2971,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
                   $ref: '#/definitions/domain.ModelDetailResp'
@@ -2971,10 +2991,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/domain.ModelListItem'
+                  $ref: '#/definitions/github_com_chaitin_panda-wiki_domain.ModelListItem'
               type: object
       summary: get model list
       tags:
@@ -3031,7 +3051,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
                   $ref: '#/definitions/domain.GetProviderModelListResp'
@@ -3058,7 +3078,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
                   additionalProperties:
@@ -3087,7 +3107,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
                   additionalProperties:
@@ -3140,7 +3160,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
                   $ref: '#/definitions/domain.NodeDetailResp'
@@ -3189,7 +3209,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
                   items:
@@ -3245,7 +3265,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
                   items:
@@ -3514,7 +3534,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
                   $ref: '#/definitions/v1.UserListResp'
@@ -3627,7 +3647,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
                   $ref: '#/definitions/domain.AuthGetResp'
@@ -3758,7 +3778,7 @@ paths:
           description: CommentID
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
                   type: string
@@ -3784,7 +3804,7 @@ paths:
           description: CommentList
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
                   $ref: '#/definitions/share.ShareCommentLists'
@@ -3815,7 +3835,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/domain.Response'
+            - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
                   $ref: '#/definitions/domain.ShareConversationDetailResp'

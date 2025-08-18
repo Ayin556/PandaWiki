@@ -89,7 +89,7 @@ func NewCrawlerHandler(echo *echo.Echo,
 //	@Accept			json
 //	@Produce		json
 //	@Param			body	body		domain.NotnionGetListReq	true	"Notion Get List"
-//	@Success		200		{object}	domain.Response{data=[]domain.PageInfo}
+//	@Success		200		{object}	domain.PWResponse{data=[]domain.PageInfo}
 //	@Router			/api/v1/crawler/notion/get_list [post]
 func (h *CrawlerHandler) NotionGetList(c echo.Context) error {
 	var req domain.NotnionGetListReq
@@ -116,7 +116,7 @@ func (h *CrawlerHandler) NotionGetList(c echo.Context) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			body	body		domain.GetDocsReq	true	"Get Docs"
-//	@Success		200		{object}	domain.Response{data=[]domain.Page}
+//	@Success		200		{object}	domain.PWResponse{data=[]domain.Page}
 //	@Router			/api/v1/crawler/notion/get_doc [post]
 func (h *CrawlerHandler) GetDocs(c echo.Context) error {
 	var req domain.GetDocsReq
@@ -142,7 +142,7 @@ func (h *CrawlerHandler) GetDocs(c echo.Context) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			body	body		domain.ParseURLReq	true	"Parse URL"
-//	@Success		200		{object}	domain.Response{data=domain.ParseURLResp}
+//	@Success		200		{object}	domain.PWResponse{data=domain.ParseURLResp}
 //	@Router			/api/v1/crawler/parse_rss [post]
 func (h *CrawlerHandler) ParseRSS(c echo.Context) error {
 	var req domain.ParseURLReq
@@ -179,7 +179,7 @@ func (h *CrawlerHandler) ParseRSS(c echo.Context) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			body	body		domain.ParseURLReq	true	"Parse URL"
-//	@Success		200		{object}	domain.Response{data=domain.ParseURLResp}
+//	@Success		200		{object}	domain.PWResponse{data=domain.ParseURLResp}
 //	@Router			/api/v1/crawler/parse_sitemap [post]
 func (h *CrawlerHandler) ParseSitemap(c echo.Context) error {
 	var req domain.ParseURLReq
@@ -213,7 +213,7 @@ func (h *CrawlerHandler) ParseSitemap(c echo.Context) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			body	body		domain.ScrapeReq	true	"Scrape"
-//	@Success		200		{object}	domain.Response{data=domain.ScrapeResp}
+//	@Success		200		{object}	domain.PWResponse{data=domain.ScrapeResp}
 //	@Router			/api/v1/crawler/scrape [post]
 func (h *CrawlerHandler) Scrape(c echo.Context) error {
 	var req domain.ScrapeReq
@@ -239,7 +239,7 @@ func (h *CrawlerHandler) Scrape(c echo.Context) error {
 //	@Produce		json
 //	@Param			file	formData	file	true	"file"
 //	@Param			kb_id	formData	string	true	"kb_id"
-//	@Success		200		{object}	domain.Response{data=domain.EpubResp}
+//	@Success		200		{object}	domain.PWResponse{data=domain.EpubResp}
 //	@Router			/api/v1/crawler/epub/convert [post]
 func (h *CrawlerHandler) QpubConvert(c echo.Context) error {
 	// upload a file
@@ -269,7 +269,7 @@ func (h *CrawlerHandler) QpubConvert(c echo.Context) error {
 //	@Produce		json
 //	@Param			file	formData	file	true	"file"
 //	@Param			kb_id	formData	string	true	"kb_id"
-//	@Success		200		{object}	domain.Response{data=[]domain.WikiJSResp}
+//	@Success		200		{object}	domain.PWResponse{data=[]domain.WikiJSResp}
 //	@Router			/api/v1/crawler/wikijs/analysis_export_file [post]
 func (h *CrawlerHandler) AnalysisWikijsExportFile(c echo.Context) error {
 	f, err := c.FormFile("file")
@@ -296,7 +296,7 @@ func (h *CrawlerHandler) AnalysisWikijsExportFile(c echo.Context) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			body	body		domain.GetSpaceListReq	true	"List Spaces"
-//	@Success		200		{object}	domain.Response{data=[]domain.GetSpaceListResp}
+//	@Success		200		{object}	domain.PWResponse{data=[]domain.GetSpaceListResp}
 //	@Router			/api/v1/crawler/feishu/list_spaces [post]
 func (h *CrawlerHandler) FeishuListSpaces(c echo.Context) error {
 	var req *domain.GetSpaceListReq
@@ -321,7 +321,7 @@ func (h *CrawlerHandler) FeishuListSpaces(c echo.Context) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			body	body		domain.SearchDocxReq	true	"Search Docx"
-//	@Success		200		{object}	domain.Response{data=[]domain.SearchDocxResp}
+//	@Success		200		{object}	domain.PWResponse{data=[]domain.SearchDocxResp}
 //	@Router			/api/v1/crawler/feishu/list_doc [post]
 func (h *CrawlerHandler) FeishuListDoc(c echo.Context) error {
 	var req *domain.SearchDocxReq
@@ -346,7 +346,7 @@ func (h *CrawlerHandler) FeishuListDoc(c echo.Context) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			body	body		domain.SearchWikiReq	true	"Search Wiki"
-//	@Success		200		{object}	domain.Response{data=[]domain.SearchWikiResp}
+//	@Success		200		{object}	domain.PWResponse{data=[]domain.SearchWikiResp}
 //	@Router			/api/v1/crawler/feishu/search_wiki [post]
 func (h *CrawlerHandler) FeishuSearchWiki(c echo.Context) error {
 	var req *domain.SearchWikiReq
@@ -368,7 +368,7 @@ func (h *CrawlerHandler) FeishuSearchWiki(c echo.Context) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			body	body		domain.GetDocxReq	true	"Get Docx"
-//	@Success		200		{object}	domain.Response{data=[]domain.GetDocxResp}
+//	@Success		200		{object}	domain.PWResponse{data=[]domain.GetDocxResp}
 //	@Router			/api/v1/crawler/feishu/get_doc [post]
 func (h *CrawlerHandler) FeishuGetDoc(c echo.Context) error {
 	var req *domain.GetDocxReq
@@ -394,7 +394,7 @@ func (h *CrawlerHandler) FeishuGetDoc(c echo.Context) error {
 //	@Produce		json
 //	@Param			file	formData	file	true	"file"
 //	@Param			kb_id	formData	string	true	"kb_id"
-//	@Success		200		{object}	domain.Response{data=[]domain.AnalysisConfluenceResp}
+//	@Success		200		{object}	domain.PWResponse{data=[]domain.AnalysisConfluenceResp}
 //	@Router			/api/v1/crawler/confluence/analysis_export_file [post]
 func (h *CrawlerHandler) AnalysisConfluenceExportFile(c echo.Context) error {
 	f, err := c.FormFile("file")
@@ -431,7 +431,7 @@ func (h *CrawlerHandler) AnalysisConfluenceExportFile(c echo.Context) error {
 //	@Produce		json
 //	@Param			file	formData	file	true	"file"
 //	@Param			kb_id	formData	string	true	"kb_id"
-//	@Success		200		{object}	domain.Response{data=[]domain.YuqueResp}
+//	@Success		200		{object}	domain.PWResponse{data=[]domain.YuqueResp}
 //	@Router			/api/v1/crawler/yuque/analysis_export_file [post]
 func (h *CrawlerHandler) AnalysisYuqueExportFile(c echo.Context) error {
 	f, err := c.FormFile("file")
@@ -459,7 +459,7 @@ func (h *CrawlerHandler) AnalysisYuqueExportFile(c echo.Context) error {
 //	@Produce		json
 //	@Param			file	formData	file	true	"file"
 //	@Param			kb_id	formData	string	true	"kb_id"
-//	@Success		200		{object}	domain.Response{data=[]domain.SiYuanResp}
+//	@Success		200		{object}	domain.PWResponse{data=[]domain.SiYuanResp}
 //	@Router			/api/v1/crawler/siyuan/analysis_export_file [post]
 func (h *CrawlerHandler) AnalysisSiyuanExportFile(c echo.Context) error {
 	f, err := c.FormFile("file")

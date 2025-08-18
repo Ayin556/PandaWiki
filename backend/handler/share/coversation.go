@@ -43,7 +43,7 @@ func NewShareConversationHandler(
 //	@Produce		json
 //	@Param			X-KB-ID	header		string	true	"kb id"
 //	@Param			id		query		string	true	"conversation id"
-//	@Success		200		{object}	domain.Response{data=domain.ShareConversationDetailResp}
+//	@Success		200		{object}	domain.PWResponse{data=domain.ShareConversationDetailResp}
 //	@Router			/share/v1/conversation/detail [get]
 func (h *ShareConversationHandler) GetConversationDetail(c echo.Context) error {
 	kbID := c.Request().Header.Get("X-KB-ID")

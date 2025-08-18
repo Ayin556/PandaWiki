@@ -51,7 +51,7 @@ func NewAppHandler(e *echo.Echo, baseHandler *handler.BaseHandler, logger *log.L
 //	@Produce		json
 //	@Param			kb_id	query		string	true	"kb id"
 //	@Param			type	query		string	true	"app type"
-//	@Success		200		{object}	domain.Response{data=domain.AppDetailResp}
+//	@Success		200		{object}	domain.PWResponse{data=domain.AppDetailResp}
 //	@Router			/api/v1/app/detail [get]
 func (h *AppHandler) GetAppDetail(c echo.Context) error {
 	kbID := c.QueryParam("kb_id")

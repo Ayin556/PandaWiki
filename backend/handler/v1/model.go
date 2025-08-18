@@ -48,7 +48,7 @@ func NewModelHandler(echo *echo.Echo, baseHandler *handler.BaseHandler, logger *
 //	@Tags			model
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{object}	domain.Response{data=domain.ModelListItem}
+//	@Success		200	{object}	domain.PWResponse{data=domain.ModelListItem}
 //	@Router			/api/v1/model/list [get]
 func (h *ModelHandler) GetModelList(c echo.Context) error {
 	ctx := c.Request().Context()
@@ -69,7 +69,7 @@ func (h *ModelHandler) GetModelList(c echo.Context) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			id	query		string	true	"model id"
-//	@Success		200	{object}	domain.Response{data=domain.ModelDetailResp}
+//	@Success		200	{object}	domain.PWResponse{data=domain.ModelDetailResp}
 //	@Router			/api/v1/model/detail [get]
 func (h *ModelHandler) GetModelDetail(c echo.Context) error {
 	id := c.QueryParam("id")
@@ -160,7 +160,7 @@ func (h *ModelHandler) UpdateModel(c echo.Context) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			model	body		domain.CheckModelReq	true	"check model request"
-//	@Success		200		{object}	domain.Response{data=domain.CheckModelResp}
+//	@Success		200		{object}	domain.PWResponse{data=domain.CheckModelResp}
 //	@Router			/api/v1/model/check [post]
 func (h *ModelHandler) CheckModel(c echo.Context) error {
 	var req domain.CheckModelReq
@@ -172,13 +172,13 @@ func (h *ModelHandler) CheckModel(c echo.Context) error {
 	}
 	ctx := c.Request().Context()
 	model, err := modelkit.CheckModel(ctx, &modelkitDomain.CheckModelReq{
-		Provider: string(req.Provider),
-		Model:    req.Model,
-		BaseURL:  req.BaseURL,
-		APIKey:   req.APIKey,
-		APIHeader: req.APIHeader,
+		Provider:   string(req.Provider),
+		Model:      req.Model,
+		BaseURL:    req.BaseURL,
+		APIKey:     req.APIKey,
+		APIHeader:  req.APIHeader,
 		APIVersion: req.APIVersion,
-		Type:      string(req.Type),
+		Type:       string(req.Type),
 	})
 	if err != nil {
 		return h.NewResponseWithError(c, "get model failed", err)
@@ -194,7 +194,7 @@ func (h *ModelHandler) CheckModel(c echo.Context) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			params	query		domain.GetProviderModelListReq	true	"get supported model list request"
-//	@Success		200		{object}	domain.Response{data=domain.GetProviderModelListResp}
+//	@Success		200		{object}	domain.PWResponse{data=domain.GetProviderModelListResp}
 //	@Router			/api/v1/model/provider/supported [get]
 func (h *ModelHandler) GetProviderSupportedModelList(c echo.Context) error {
 	var req domain.GetProviderModelListReq
@@ -207,9 +207,9 @@ func (h *ModelHandler) GetProviderSupportedModelList(c echo.Context) error {
 	ctx := c.Request().Context()
 
 	models, err := modelkit.ModelList(ctx, &modelkitDomain.ModelListReq{
-		Provider: req.Provider,
-		BaseURL:  req.BaseURL,
-		APIKey:   req.APIKey,
+		Provider:  req.Provider,
+		BaseURL:   req.BaseURL,
+		APIKey:    req.APIKey,
 		APIHeader: req.APIHeader,
 		Type:      string(req.Type),
 	})

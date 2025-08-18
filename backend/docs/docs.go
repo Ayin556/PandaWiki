@@ -111,7 +111,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
@@ -184,7 +184,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
@@ -290,7 +290,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
@@ -339,7 +339,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
@@ -388,7 +388,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
@@ -445,7 +445,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
@@ -496,7 +496,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
@@ -550,7 +550,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
@@ -596,7 +596,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
@@ -645,7 +645,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
@@ -694,7 +694,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
@@ -743,7 +743,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
@@ -792,7 +792,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
@@ -841,7 +841,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
@@ -890,7 +890,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
@@ -936,7 +936,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
@@ -982,7 +982,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
@@ -1033,7 +1033,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
@@ -1087,7 +1087,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
@@ -1141,7 +1141,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
@@ -1296,7 +1296,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
@@ -1393,7 +1393,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
@@ -1474,7 +1474,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
@@ -1604,7 +1604,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
@@ -1747,7 +1747,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.CheckModelReq"
+                            "$ref": "#/definitions/github_com_chaitin_panda-wiki_domain.CheckModelReq"
                         }
                     }
                 ],
@@ -1757,13 +1757,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/domain.CheckModelResp"
+                                            "$ref": "#/definitions/github_com_chaitin_panda-wiki_domain.CheckModelResp"
                                         }
                                     }
                                 }
@@ -1801,7 +1801,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
@@ -1836,13 +1836,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/domain.ModelListItem"
+                                            "$ref": "#/definitions/github_com_chaitin_panda-wiki_domain.ModelListItem"
                                         }
                                     }
                                 }
@@ -1925,7 +1925,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
@@ -1971,7 +1971,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
@@ -2020,7 +2020,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
@@ -2106,7 +2106,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
@@ -2186,7 +2186,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
@@ -2276,7 +2276,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
@@ -2692,7 +2692,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
@@ -2869,7 +2869,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
@@ -3073,7 +3073,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
@@ -3117,7 +3117,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
@@ -3168,7 +3168,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.Response"
+                                    "$ref": "#/definitions/domain.PWResponse"
                                 },
                                 {
                                     "type": "object",
@@ -3986,78 +3986,6 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.CheckModelReq": {
-            "type": "object",
-            "required": [
-                "base_url",
-                "model",
-                "provider",
-                "type"
-            ],
-            "properties": {
-                "api_header": {
-                    "type": "string"
-                },
-                "api_key": {
-                    "type": "string"
-                },
-                "api_version": {
-                    "description": "for azure openai",
-                    "type": "string"
-                },
-                "base_url": {
-                    "type": "string"
-                },
-                "model": {
-                    "type": "string"
-                },
-                "provider": {
-                    "enum": [
-                        "OpenAI",
-                        "Ollama",
-                        "DeepSeek",
-                        "SiliconFlow",
-                        "Moonshot",
-                        "Other",
-                        "AzureOpenAI",
-                        "BaiZhiCloud",
-                        "Hunyuan",
-                        "BaiLian",
-                        "Volcengine",
-                        "Gemini",
-                        "ZhiPu"
-                    ],
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/domain.ModelProvider"
-                        }
-                    ]
-                },
-                "type": {
-                    "enum": [
-                        "chat",
-                        "embedding",
-                        "rerank"
-                    ],
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/domain.ModelType"
-                        }
-                    ]
-                }
-            }
-        },
-        "domain.CheckModelResp": {
-            "type": "object",
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "error": {
-                    "type": "string"
-                }
-            }
-        },
         "domain.CommentInfo": {
             "type": "object",
             "properties": {
@@ -4294,7 +4222,7 @@ const docTemplate = `{
                     "description": "model",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/domain.ModelProvider"
+                            "$ref": "#/definitions/github_com_chaitin_panda-wiki_domain.ModelProvider"
                         }
                     ]
                 },
@@ -4480,7 +4408,7 @@ const docTemplate = `{
                     ],
                     "allOf": [
                         {
-                            "$ref": "#/definitions/domain.ModelProvider"
+                            "$ref": "#/definitions/github_com_chaitin_panda-wiki_domain.ModelProvider"
                         }
                     ]
                 },
@@ -4886,7 +4814,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "provider": {
-                    "$ref": "#/definitions/domain.ModelProvider"
+                    "$ref": "#/definitions/github_com_chaitin_panda-wiki_domain.ModelProvider"
                 },
                 "total_tokens": {
                     "type": "integer"
@@ -4898,84 +4826,6 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
-        },
-        "domain.ModelListItem": {
-            "type": "object",
-            "properties": {
-                "api_header": {
-                    "type": "string"
-                },
-                "api_key": {
-                    "type": "string"
-                },
-                "api_version": {
-                    "description": "for azure openai",
-                    "type": "string"
-                },
-                "base_url": {
-                    "type": "string"
-                },
-                "completion_tokens": {
-                    "type": "integer"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "model": {
-                    "type": "string"
-                },
-                "prompt_tokens": {
-                    "type": "integer"
-                },
-                "provider": {
-                    "$ref": "#/definitions/domain.ModelProvider"
-                },
-                "total_tokens": {
-                    "type": "integer"
-                },
-                "type": {
-                    "$ref": "#/definitions/domain.ModelType"
-                }
-            }
-        },
-        "domain.ModelProvider": {
-            "type": "string",
-            "enum": [
-                "OpenAI",
-                "Ollama",
-                "DeepSeek",
-                "Moonshot",
-                "SiliconFlow",
-                "AzureOpenAI",
-                "BaiZhiCloud",
-                "Hunyuan",
-                "BaiLian",
-                "Volcengine",
-                "Gemini",
-                "ZhiPu",
-                "Other"
-            ],
-            "x-enum-comments": {
-                "ModelProviderBrandZhiPu": "智谱"
-            },
-            "x-enum-descriptions": [
-                "智谱"
-            ],
-            "x-enum-varnames": [
-                "ModelProviderBrandOpenAI",
-                "ModelProviderBrandOllama",
-                "ModelProviderBrandDeepSeek",
-                "ModelProviderBrandMoonshot",
-                "ModelProviderBrandSiliconFlow",
-                "ModelProviderBrandAzureOpenAI",
-                "ModelProviderBrandBaiZhiCloud",
-                "ModelProviderBrandHunyuan",
-                "ModelProviderBrandBaiLian",
-                "ModelProviderBrandVolcengine",
-                "ModelProviderBrandGemini",
-                "ModelProviderBrandZhiPu",
-                "ModelProviderBrandOther"
-            ]
         },
         "domain.ModelType": {
             "type": "string",
@@ -5194,6 +5044,18 @@ const docTemplate = `{
             "properties": {
                 "key": {
                     "type": "string"
+                }
+            }
+        },
+        "domain.PWResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "message": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
                 }
             }
         },
@@ -5684,7 +5546,7 @@ const docTemplate = `{
                     ],
                     "allOf": [
                         {
-                            "$ref": "#/definitions/domain.ModelProvider"
+                            "$ref": "#/definitions/github_com_chaitin_panda-wiki_domain.ModelProvider"
                         }
                     ]
                 },
@@ -5814,6 +5676,168 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "github_com_chaitin_panda-wiki_domain.CheckModelReq": {
+            "type": "object",
+            "required": [
+                "base_url",
+                "model",
+                "provider",
+                "type"
+            ],
+            "properties": {
+                "api_header": {
+                    "type": "string"
+                },
+                "api_key": {
+                    "type": "string"
+                },
+                "api_version": {
+                    "description": "for azure openai",
+                    "type": "string"
+                },
+                "base_url": {
+                    "type": "string"
+                },
+                "model": {
+                    "type": "string"
+                },
+                "provider": {
+                    "enum": [
+                        "OpenAI",
+                        "Ollama",
+                        "DeepSeek",
+                        "SiliconFlow",
+                        "Moonshot",
+                        "Other",
+                        "AzureOpenAI",
+                        "BaiZhiCloud",
+                        "Hunyuan",
+                        "BaiLian",
+                        "Volcengine",
+                        "Gemini",
+                        "ZhiPu"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_chaitin_panda-wiki_domain.ModelProvider"
+                        }
+                    ]
+                },
+                "type": {
+                    "enum": [
+                        "chat",
+                        "embedding",
+                        "rerank"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.ModelType"
+                        }
+                    ]
+                }
+            }
+        },
+        "github_com_chaitin_panda-wiki_domain.CheckModelResp": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_chaitin_panda-wiki_domain.ModelListItem": {
+            "type": "object",
+            "properties": {
+                "api_header": {
+                    "type": "string"
+                },
+                "api_key": {
+                    "type": "string"
+                },
+                "api_version": {
+                    "description": "for azure openai",
+                    "type": "string"
+                },
+                "base_url": {
+                    "type": "string"
+                },
+                "completion_tokens": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "model": {
+                    "type": "string"
+                },
+                "prompt_tokens": {
+                    "type": "integer"
+                },
+                "provider": {
+                    "$ref": "#/definitions/github_com_chaitin_panda-wiki_domain.ModelProvider"
+                },
+                "total_tokens": {
+                    "type": "integer"
+                },
+                "type": {
+                    "$ref": "#/definitions/domain.ModelType"
+                }
+            }
+        },
+        "github_com_chaitin_panda-wiki_domain.ModelProvider": {
+            "type": "string",
+            "enum": [
+                "OpenAI",
+                "Ollama",
+                "DeepSeek",
+                "Moonshot",
+                "SiliconFlow",
+                "AzureOpenAI",
+                "BaiZhiCloud",
+                "Hunyuan",
+                "BaiLian",
+                "Volcengine",
+                "Gemini",
+                "ZhiPu",
+                "Other"
+            ],
+            "x-enum-comments": {
+                "ModelProviderBrandZhiPu": "智谱"
+            },
+            "x-enum-descriptions": [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "智谱",
+                ""
+            ],
+            "x-enum-varnames": [
+                "ModelProviderBrandOpenAI",
+                "ModelProviderBrandOllama",
+                "ModelProviderBrandDeepSeek",
+                "ModelProviderBrandMoonshot",
+                "ModelProviderBrandSiliconFlow",
+                "ModelProviderBrandAzureOpenAI",
+                "ModelProviderBrandBaiZhiCloud",
+                "ModelProviderBrandHunyuan",
+                "ModelProviderBrandBaiLian",
+                "ModelProviderBrandVolcengine",
+                "ModelProviderBrandGemini",
+                "ModelProviderBrandZhiPu",
+                "ModelProviderBrandOther"
+            ]
         },
         "schema.RoleType": {
             "type": "string",

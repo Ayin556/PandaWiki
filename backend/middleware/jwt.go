@@ -30,7 +30,7 @@ func NewJWTMiddleware(config *config.Config, logger *log.Logger, userAccessRepo 
 		SigningKey: []byte(config.Auth.JWT.Secret),
 		ErrorHandler: func(c echo.Context, err error) error {
 			logger.Error("jwt auth failed", log.Error(err))
-			return c.JSON(http.StatusUnauthorized, domain.Response{
+			return c.JSON(http.StatusUnauthorized, domain.PWResponse{
 				Success: false,
 				Message: "Unauthorized",
 			})
@@ -64,7 +64,7 @@ func (m *JWTMiddleware) ValidateUserRole(role consts.UserRole) echo.MiddlewareFu
 
 			if err != nil || !valid {
 				m.logger.Error("ValidateRole check", log.Any("user_id", userID), log.Any("valid", valid))
-				return c.JSON(http.StatusForbidden, domain.Response{
+				return c.JSON(http.StatusForbidden, domain.PWResponse{
 					Success: false,
 					Message: "StatusForbidden ValidateRole",
 				})
@@ -90,7 +90,7 @@ func (m *JWTMiddleware) ValidateKBUserPerm(perm consts.UserKBPermission) echo.Mi
 				} else {
 					m.logger.Info("ValidateKBUserPerm ValidateKBPerm failed", log.String("kb_id", kbId), log.String("user_id", userID))
 				}
-				return c.JSON(http.StatusForbidden, domain.Response{
+				return c.JSON(http.StatusForbidden, domain.PWResponse{
 					Success: false,
 					Message: "Unauthorized ValidateKBPerm",
 				})

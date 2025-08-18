@@ -47,7 +47,7 @@ func NewShareAuthHandler(
 //	@Produce		json
 //	@Param			X-KB-ID	header		string				true	"kb_id"
 //	@Param			param	query		domain.AuthGetReq	true	"para"
-//	@Success		200		{object}	domain.Response{data=domain.AuthGetResp}
+//	@Success		200		{object}	domain.PWResponse{data=domain.AuthGetResp}
 //	@Router			/share/v1/auth/get [get]
 func (h *ShareAuthHandler) AuthGet(c echo.Context) error {
 	ctx := c.Request().Context()
