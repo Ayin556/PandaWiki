@@ -177,6 +177,8 @@ func (h *ModelHandler) CheckModel(c echo.Context) error {
 		BaseURL:  req.BaseURL,
 		APIKey:   req.APIKey,
 		APIHeader: req.APIHeader,
+		APIVersion: req.APIVersion,
+		Type:      string(req.Type),
 	})
 	if err != nil {
 		return h.NewResponseWithError(c, "get model failed", err)
