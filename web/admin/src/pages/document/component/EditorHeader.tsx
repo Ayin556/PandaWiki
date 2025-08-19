@@ -1,13 +1,12 @@
-import {
-  createNode,
-  NodeDetail,
-  NodeListItem,
-  updateNode
-} from '@/api';
+import { NodeDetail, NodeListItem } from '@/api';
+import { putApiV1NodeDetail, postApiV1Node } from '@/request/Node';
 import Emoji from '@/components/Emoji';
 import DocAddByCustomText from '@/pages/document/component/DocAddByCustomText';
 import DocDelete from '@/pages/document/component/DocDelete';
-import { DomainGetNodeReleaseDetailResp, DomainNodeReleaseListItem } from '@/request/pro/types';
+import {
+  DomainGetNodeReleaseDetailResp,
+  DomainNodeReleaseListItem,
+} from '@/request/pro/types';
 import { useAppSelector } from '@/store';
 import { addOpacityToColor, getShortcutKeyText } from '@/utils';
 import InfoIcon from '@mui/icons-material/Info';
@@ -57,7 +56,9 @@ interface EditorHeaderProps {
   setShowVersion: (show: boolean) => void;
   showVersion: boolean;
   setDocContent: (content: string) => void;
-  curVersion: (DomainGetNodeReleaseDetailResp & { release: DomainNodeReleaseListItem }) | null;
+  curVersion:
+    | (DomainGetNodeReleaseDetailResp & { release: DomainNodeReleaseListItem })
+    | null;
 }
 
 const EditorHeader = ({
@@ -125,7 +126,7 @@ const EditorHeader = ({
       Message.success('导出成功');
     }
     if (type === 'md') {
-      const markdown = editorRef.getMarkdownByJSON()
+      const markdown = editorRef.getMarkdownByJSON();
       if (!markdown) return;
       const blob = new Blob([markdown], { type: 'text/markdown' });
       const url = URL.createObjectURL(blob);
@@ -217,7 +218,11 @@ const EditorHeader = ({
                 value={detail?.meta?.emoji}
                 onChange={value => {
                   cancelTimer?.();
-                  updateNode({ id: detail.id, kb_id: kb_id, emoji: value })
+                  putApiV1NodeDetail({
+                    id: detail.id,
+                    kb_id: kb_id,
+                    emoji: value,
+                  })
                     .then(() => {
                       Message.success('修改成功');
                       setDetail?.({
@@ -260,11 +265,11 @@ const EditorHeader = ({
                     label: <StyledMenuSelect>复制</StyledMenuSelect>,
                     onClick: () => {
                       if (kb_id) {
-                        createNode({
+                        postApiV1Node({
                           name: detail.name + ' [副本]',
                           content: detail.content,
                           kb_id: detail.kb_id,
-                          parent_id: detail.parent_id || null,
+                          parent_id: detail.parent_id || undefined,
                           type: detail.type,
                           emoji: detail.meta.emoji,
                         }).then(res => {

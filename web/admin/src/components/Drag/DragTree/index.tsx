@@ -1,4 +1,5 @@
-import { ITreeItem, moveNode } from '@/api';
+import { ITreeItem } from '@/api';
+import { postApiV1NodeMove } from '@/request/Node';
 import { AppContext, DragTreeProps, getSiblingItemIds } from '@/utils/drag';
 import { DndContext } from '@dnd-kit/core';
 import { SortableTree, TreeItems } from 'dnd-kit-sortable-tree';
@@ -48,13 +49,13 @@ const DragTree = ({
           ) => {
             if (reason.type === 'dropped') {
               const { draggedItem } = reason;
-              const { parentId = null, id } = draggedItem;
+              const { parentId, id } = draggedItem;
               const { prevItemId, nextItemId } = getSiblingItemIds(items, id);
-              moveNode({
+              postApiV1NodeMove({
                 id,
                 parent_id: parentId,
-                next_id: nextItemId,
-                prev_id: prevItemId,
+                next_id: nextItemId as string,
+                prev_id: prevItemId as string,
               }).then(() => {
                 refresh?.();
               });

@@ -1,11 +1,12 @@
-import { createNodeSummary, updateNode } from '@/api';
+import { postApiV1NodeSummary, putApiV1NodeDetail } from '@/request/Node';
+import { DomainNodeListItemResp } from '@/request/types';
 import { Button, Stack, TextField } from '@mui/material';
 import { Icon, Message, Modal } from 'ct-mui';
 import { useEffect, useState } from 'react';
 
 interface SummaryProps {
   kb_id: string;
-  data: { id: string; summary: string; name: string };
+  data: DomainNodeListItemResp;
   open: boolean;
   refresh?: (value?: string) => void;
   onClose: () => void;
@@ -17,8 +18,9 @@ const Summary = ({ open, data, kb_id, onClose, refresh }: SummaryProps) => {
 
   const createSummary = () => {
     setLoading(true);
-    createNodeSummary({ kb_id, ids: [data.id] })
+    postApiV1NodeSummary({ kb_id, ids: [data.id!] })
       .then(res => {
+        // @ts-expect-error 类型错误
         setSummary(res.summary);
       })
       .finally(() => {
@@ -27,7 +29,7 @@ const Summary = ({ open, data, kb_id, onClose, refresh }: SummaryProps) => {
   };
 
   const handleOk = () => {
-    updateNode({ id: data.id, kb_id, summary }).then(() => {
+    putApiV1NodeDetail({ id: data.id!, kb_id, summary }).then(() => {
       Message.success('保存成功');
       refresh?.(summary);
       onClose();

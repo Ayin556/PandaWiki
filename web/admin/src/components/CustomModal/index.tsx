@@ -5,7 +5,9 @@ import {
   DomainKnowledgeBaseDetail,
   getApiV1KnowledgeBaseDetail,
 } from '@/request';
-import { AppDetail, getAppDetail, updateAppDetail } from '@/api';
+import { updateAppDetail } from '@/api';
+import { DomainAppDetailResp } from '@/request/types';
+import { getApiV1AppDetail, putApiV1App } from '@/request/App';
 import { useAppSelector, useAppDispatch } from '@/store';
 import { setAppPreviewData } from '@/store/slices/config';
 import ComponentBar from './components/ComponentBar';
@@ -29,7 +31,7 @@ const CustomModal = ({ open, onCancel }: CustomModalProps) => {
   const dispatch = useAppDispatch();
   const { kb_id } = useAppSelector(state => state.config);
   const [kb, setKb] = useState<DomainKnowledgeBaseDetail | null>(null);
-  const [info, setInfo] = useState<AppDetail | null>(null);
+  const [info, setInfo] = useState<DomainAppDetailResp>();
   const [renderMode, setRenderMode] = useState<'pc' | 'mobile'>('pc');
   const [components, setComponents] = useState<Component[]>([
     {
@@ -51,7 +53,7 @@ const CustomModal = ({ open, onCancel }: CustomModalProps) => {
   const [scale, setScale] = useState(1);
   const appPreviewData = useAppSelector(state => state.config.appPreviewData);
 
-  const refresh = (value: AppDetail) => {
+  const refresh = (value: DomainAppDetailResp) => {
     if (!info) return;
     const newInfo = {
       ...info,
@@ -65,14 +67,15 @@ const CustomModal = ({ open, onCancel }: CustomModalProps) => {
   };
   const getInfo = async () => {
     if (!kb) return;
-    const res = await getAppDetail({ kb_id: kb.id!, type: 1 });
+    const res = await getApiV1AppDetail({ kb_id: kb.id!, type: '1' });
     setInfo(res);
     setAppPreviewData(res);
   };
   const onSubmit = () => {
     if (!info || !appPreviewData) return;
     updateAppDetail(
-      { id: info.id },
+      { id: info.id! },
+      // @ts-expect-error 类型不匹配
       { settings: { ...info.settings, ...appPreviewData.settings } },
     ).then(() => {
       refresh(appPreviewData);

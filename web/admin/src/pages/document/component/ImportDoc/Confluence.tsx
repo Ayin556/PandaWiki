@@ -1,9 +1,6 @@
-import {
-  createNode,
-  ImportDocListItem,
-  ImportDocProps,
-  parseConfluence,
-} from '@/api';
+import { ImportDocListItem, ImportDocProps } from '@/api';
+import { postApiV1Node } from '@/request/Node';
+import { postApiV1CrawlerConfluenceAnalysisExportFile } from '@/request/Crawler';
 import Upload from '@/components/UploadFile/Drag';
 import { useAppSelector } from '@/store';
 import { formatByte } from '@/utils';
@@ -98,16 +95,16 @@ const ImportDocConfluence = ({
     setCurrentFileIndex(0);
     try {
       for (let i = 0; i < acceptedFiles.length; i++) {
-        const formData = new FormData();
-        formData.append('file', acceptedFiles[i]);
-        formData.append('kb_id', kb_id);
-        const pages = await parseConfluence(formData);
+        const pages = await postApiV1CrawlerConfluenceAnalysisExportFile({
+          file: acceptedFiles[i],
+          kb_id,
+        });
         for (const page of pages) {
           setItems(prev => [
             {
-              url: page.id,
-              title: page.title,
-              content: page.content,
+              url: page.id! as unknown as string,
+              title: page.title!,
+              content: page.content!,
               success: -1,
               id: '',
             },
@@ -142,10 +139,10 @@ const ImportDocConfluence = ({
           if (!curItem || (curItem.id !== '' && curItem.id !== '-1')) {
             continue;
           }
-          const res = await createNode({
+          const res = await postApiV1Node({
             name: curItem?.title || '',
             content: curItem?.content || '',
-            parent_id: parentId,
+            parent_id: parentId || undefined,
             type: 2,
             kb_id,
           });
@@ -447,10 +444,10 @@ const ImportDocConfluence = ({
                             : it,
                         ),
                       );
-                      createNode({
+                      postApiV1Node({
                         name: item.title,
                         content: item.content,
-                        parent_id: parentId,
+                        parent_id: parentId || undefined,
                         type: 2,
                         kb_id,
                       })

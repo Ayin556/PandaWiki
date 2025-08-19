@@ -1,4 +1,5 @@
-import { getNodeList, ITreeItem, NodeListFilterData } from '@/api';
+import { ITreeItem, NodeListFilterData } from '@/api';
+import { getApiV1NodeList } from '@/request/Node';
 import { useAppSelector } from '@/store';
 import { convertToTree } from '@/utils/drag';
 import { Box, Stack } from '@mui/material';
@@ -22,7 +23,7 @@ const EditorFolder = ({ edited, save }: EditorFolderProps) => {
 
   const getData = useCallback(() => {
     const params: NodeListFilterData = { kb_id };
-    getNodeList(params).then(res => {
+    getApiV1NodeList(params).then(res => {
       const v = convertToTree(res || []);
       setData(v);
       // 获取所有文件夹的 ID
@@ -59,11 +60,7 @@ const EditorFolder = ({ edited, save }: EditorFolderProps) => {
       (a, b) => (a.order ?? 0) - (b.order ?? 0),
     );
     return sortedItems.map(item => (
-      <Stack
-        gap={1.5}
-        key={item.id}
-        sx={{ position: 'relative' }}
-      >
+      <Stack gap={1.5} key={item.id} sx={{ position: 'relative' }}>
         <Stack
           direction={'row'}
           alignItems={'center'}
@@ -114,7 +111,9 @@ const EditorFolder = ({ edited, save }: EditorFolderProps) => {
         {item.children &&
           item.children.length > 0 &&
           expandedFolders.has(item.id) && (
-            <Stack gap={1.5} sx={{ ml: 2.5 }}>{renderTree(item.children)}</Stack>
+            <Stack gap={1.5} sx={{ ml: 2.5 }}>
+              {renderTree(item.children)}
+            </Stack>
           )}
       </Stack>
     ));

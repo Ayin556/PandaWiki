@@ -1,10 +1,6 @@
-import {
-  createNode,
-  ImportDocListItem,
-  ImportDocProps,
-  scrapeCrawler,
-  uploadFile,
-} from '@/api';
+import { ImportDocListItem, ImportDocProps, uploadFile } from '@/api';
+import { postApiV1Node } from '@/request/Node';
+import { postApiV1CrawlerScrape } from '@/request/Crawler';
 import Upload from '@/components/UploadFile/Drag';
 import { useAppSelector } from '@/store';
 import { formatByte } from '@/utils';
@@ -131,9 +127,16 @@ const OfflineFileImport = ({
       setStep('pull-done');
       setTimeout(async () => {
         for (const { url, title } of urls) {
-          const res = await scrapeCrawler({ url, kb_id });
+          const res = await postApiV1CrawlerScrape({ url, kb_id });
           setItems(prev => [
-            { ...res, url, title: title || res.title, success: -1, id: '' },
+            {
+              ...res,
+              content: res.content!,
+              url,
+              title: title || res.title!,
+              success: -1,
+              id: '',
+            },
             ...prev,
           ]);
         }
@@ -166,10 +169,10 @@ const OfflineFileImport = ({
           if (!curItem || (curItem.id !== '' && curItem.id !== '-1')) {
             continue;
           }
-          const res = await createNode({
+          const res = await postApiV1Node({
             name: curItem?.title || '',
             content: curItem?.content || '',
-            parent_id: parentId,
+            parent_id: parentId || undefined,
             type: 2,
             kb_id,
           });
@@ -456,10 +459,10 @@ const OfflineFileImport = ({
                             : it,
                         ),
                       );
-                      createNode({
+                      postApiV1Node({
                         name: item.title,
                         content: item.content,
-                        parent_id: parentId,
+                        parent_id: parentId || undefined,
                         type: 2,
                         kb_id,
                       })

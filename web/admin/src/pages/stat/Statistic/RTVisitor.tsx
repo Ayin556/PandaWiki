@@ -158,7 +158,13 @@ const RTVisitor = ({ isWideScreen }: { isWideScreen: boolean }) => {
                         gap={0.5}
                         sx={{ cursor: 'pointer' }}
                       >
-                        <img src={it?.info?.avatar_url || Logo} width={14} />
+                        <img
+                          src={it?.info?.avatar_url || Logo}
+                          width={14}
+                          style={{
+                            borderRadius: '50%',
+                          }}
+                        />
                         <Box>{it?.info?.username || '匿名用户'}</Box>
                       </Stack>
 

@@ -1,5 +1,5 @@
-import { createNodeSummary } from '@/api';
-import { NodeListItem } from '@/api/type';
+import { postApiV1NodeSummary } from '@/request/Node';
+import { DomainNodeListItemResp } from '@/request/types';
 import Card from '@/components/Card';
 import DragTree from '@/components/Drag/DragTree';
 import { convertToTree } from '@/utils/drag';
@@ -12,13 +12,13 @@ interface DocSummaryProps {
   open: boolean;
   kb_id: string;
   onClose: () => void;
-  data: NodeListItem[];
+  data: DomainNodeListItemResp[];
   refresh?: () => void;
 }
 
 const DocSummary = ({ open, kb_id, onClose, data }: DocSummaryProps) => {
   const submit = () => {
-    createNodeSummary({ kb_id, ids: data.map(it => it.id) }).then(() => {
+    postApiV1NodeSummary({ kb_id, ids: data.map(it => it.id!) }).then(() => {
       Message.success('正在后台生成文档摘要');
       onClose();
     });

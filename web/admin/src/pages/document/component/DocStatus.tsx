@@ -1,5 +1,5 @@
-import { updateNodeAction } from '@/api';
-import { NodeListItem } from '@/api/type';
+import { postApiV1NodeAction } from '@/request/Node';
+import { DomainNodeListItemResp } from '@/request/types';
 import Card from '@/components/Card';
 import DragTree from '@/components/Drag/DragTree';
 import { convertToTree } from '@/utils/drag';
@@ -13,7 +13,7 @@ interface DocStatusProps {
   status: 'public' | 'private';
   kb_id: string;
   onClose: () => void;
-  data: NodeListItem[];
+  data: DomainNodeListItemResp[];
   refresh?: () => void;
 }
 
@@ -39,8 +39,8 @@ const DocStatus = ({
   refresh,
 }: DocStatusProps) => {
   const submit = () => {
-    updateNodeAction({
-      ids: data.map(it => it.id),
+    postApiV1NodeAction({
+      ids: data.map(it => it.id!),
       kb_id,
       action: status,
     }).then(() => {

@@ -1,5 +1,5 @@
-import { UserInfo } from '@/api';
 import { putApiV1UserResetPassword } from '@/request/User';
+import { V1UserListItemResp } from '@/request/types';
 import Card from '@/components/Card';
 import { copyText, generatePassword } from '@/utils';
 import { CheckCircle } from '@mui/icons-material';
@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 type UpdateMemberProps = {
-  user: UserInfo;
+  user: V1UserListItemResp;
   refresh: () => void;
   type: 'reset' | 'update';
 };
@@ -46,7 +46,7 @@ const MemberUpdate = ({ user, refresh, type }: UpdateMemberProps) => {
 
   const onSumbit = (data: { password: string }) => {
     setLoading(true);
-    putApiV1UserResetPassword({ id: user.id, new_password: data.password })
+    putApiV1UserResetPassword({ id: user.id!, new_password: data.password })
       .then(() => {
         setPassword(data.password);
         setUpdateOpen(false);

@@ -3,6 +3,7 @@ import {
   TreeMenuItem,
   TreeMenuOptions,
 } from '@/components/Drag/DragTree/TreeMenu';
+import { DomainNodeListItemResp } from '@/request/types';
 import { TreeItems } from 'dnd-kit-sortable-tree';
 import { createContext } from 'react';
 
@@ -89,29 +90,30 @@ export const updateTree = (
   }
 };
 
-export function convertToTree(data: NodeListItem[]) {
+export function convertToTree(data: DomainNodeListItemResp[]) {
   const nodeMap = new Map<string, ITreeItem>();
   const rootNodes: ITreeItem[] = [];
 
   // 第一次遍历：创建所有节点
   data.forEach(item => {
     const node: ITreeItem = {
-      id: item.id,
+      id: item.id!,
       summary: item.summary,
-      name: item.name,
+      name: item.name!,
       level: 0,
       status: item.status,
       visibility: item.visibility,
       order: item.position,
       emoji: item.emoji,
-      type: item.type,
-      parentId: item.parent_id || null,
+      type: item.type!,
+      parentId: item.parent_id,
       children: [],
       canHaveChildren: item.type === 1,
       updated_at: item.updated_at || item.created_at,
+      permissions: item.permissions,
     };
 
-    nodeMap.set(item.id, node);
+    nodeMap.set(item.id!, node);
   });
 
   // 第二次遍历：构建树结构

@@ -5,11 +5,12 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { Box, Stack } from '@mui/material';
 import { Ellipsis, Message, Modal } from 'ct-mui';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import { V1UserListItemResp } from '@/request/types';
 
 interface MemberDeleteProps {
   open: boolean;
   onClose: () => void;
-  user: UserInfo | null;
+  user: V1UserListItemResp | null;
   refresh: () => void;
 }
 

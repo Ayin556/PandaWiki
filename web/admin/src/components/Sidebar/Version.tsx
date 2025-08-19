@@ -58,7 +58,7 @@ const Version = () => {
         <Stack direction={'row'} alignItems='center' gap={0.5}>
           <Box sx={{ width: 30, color: 'text.auxiliary' }}>型号</Box>
           <img
-            src={versionMap[license.edition]}
+            src={versionMap[license.edition!]}
             style={{ height: 13, marginTop: -1 }}
           />
           {EditionType[license.edition as keyof typeof EditionType].text}

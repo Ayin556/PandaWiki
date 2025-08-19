@@ -1,6 +1,7 @@
 import { DomainKnowledgeBaseDetail, V1UserInfoResp } from '@/request/types';
 import { DomainLicenseResp } from '@/request/pro/types';
-import { AppDetail, KnowledgeBaseListItem, LicenseInfo, UserInfo } from '@/api';
+import { KnowledgeBaseListItem } from '@/api';
+import { DomainAppDetailResp } from '@/request/types';
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface config {
@@ -11,7 +12,7 @@ export interface config {
   kb_c: boolean;
   modelStatus: boolean;
   kbDetail: DomainKnowledgeBaseDetail;
-  appPreviewData: AppDetail | null;
+  appPreviewData: DomainAppDetailResp | null;
 }
 const initialState: config = {
   user: {

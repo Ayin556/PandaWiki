@@ -1,4 +1,3 @@
-import { Divider } from '@mui/material';
 import { useEffect, useState } from 'react';
 import CardAuth from './CardAuth';
 import CardCatalog from './CardCatalog';
@@ -44,9 +43,7 @@ const CardWeb = ({ kb, refresh }: CardWebProps) => {
       <CardProxy kb={kb} refresh={refresh} />
       <CardBasicInfo kb={kb} refresh={refresh} />
       <CardCustom></CardCustom>
-      <Divider sx={{ my: 2 }} />
       <CardAuth kb={kb} refresh={refresh} />
-      <Divider sx={{ my: 2 }} />
       <CardStyle
         id={info.id}
         data={info}
@@ -122,7 +119,6 @@ const CardWeb = ({ kb, refresh }: CardWebProps) => {
           });
         }}
       />
-      <Divider sx={{ my: 2 }} />
       <CardWebSEO
         id={info.id}
         data={info}
@@ -136,7 +132,7 @@ const CardWeb = ({ kb, refresh }: CardWebProps) => {
           });
         }}
       />
-      <Divider sx={{ my: 2 }} />
+
       <CardWebCustomCode
         id={info.id}
         data={info}

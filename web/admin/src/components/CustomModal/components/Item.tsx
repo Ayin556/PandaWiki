@@ -124,9 +124,11 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(
                         label='按钮样式'
                         onChange={e => {
                           const newBtns = [
+                            // @ts-expect-error 类型不匹配
                             ...(appPreviewData?.settings.btns || []),
                           ];
                           const index = newBtns.findIndex(
+                            // @ts-expect-error 类型不匹配
                             (btn: CardWebHeaderBtn) => btn.id === curBtn.id,
                           );
                           newBtns[index] = {
@@ -164,9 +166,11 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(
                         label='打开方式'
                         onChange={e => {
                           const newBtns = [
+                            // @ts-expect-error 类型不匹配
                             ...(appPreviewData?.settings.btns || []),
                           ];
                           const index = newBtns.findIndex(
+                            // @ts-expect-error 类型不匹配
                             (btn: CardWebHeaderBtn) => btn.id === curBtn.id,
                           );
                           newBtns[index] = {
@@ -194,9 +198,11 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(
                         checked={curBtn.showIcon}
                         onChange={e => {
                           const newBtns = [
+                            // @ts-expect-error 类型不匹配
                             ...(appPreviewData?.settings.btns || []),
                           ];
                           const index = newBtns.findIndex(
+                            // @ts-expect-error 类型不匹配
                             (btn: CardWebHeaderBtn) => btn.id === curBtn.id,
                           );
                           newBtns[index] = {
@@ -222,9 +228,11 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(
                       onChange={(url: string) => {
                         console.log(url);
                         const newBtns = [
+                          // @ts-expect-error 类型不匹配
                           ...(appPreviewData?.settings.btns || []),
                         ];
                         const index = newBtns.findIndex(
+                          // @ts-expect-error 类型不匹配
                           (btn: CardWebHeaderBtn) => btn.id === curBtn.id,
                         );
                         newBtns[index] = { ...curBtn, icon: url };
@@ -251,9 +259,11 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(
                     value={curBtn.text}
                     onChange={e => {
                       const newBtns = [
+                        // @ts-expect-error 类型不匹配
                         ...(appPreviewData?.settings.btns || []),
                       ];
                       const index = newBtns.findIndex(
+                        // @ts-expect-error 类型不匹配
                         (btn: CardWebHeaderBtn) => btn.id === curBtn.id,
                       );
                       newBtns[index] = { ...curBtn, text: e.target.value };
@@ -279,9 +289,11 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(
                     variant='outlined'
                     onChange={e => {
                       const newBtns = [
+                        // @ts-expect-error 类型不匹配
                         ...(appPreviewData?.settings.btns || []),
                       ];
                       const index = newBtns.findIndex(
+                        // @ts-expect-error 类型不匹配
                         (btn: CardWebHeaderBtn) => btn.id === curBtn.id,
                       );
                       newBtns[index] = { ...curBtn, url: e.target.value };

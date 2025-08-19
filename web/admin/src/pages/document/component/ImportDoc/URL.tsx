@@ -1,9 +1,6 @@
-import {
-  createNode,
-  ImportDocListItem,
-  ImportDocProps,
-  scrapeCrawler,
-} from '@/api';
+import { ImportDocListItem, ImportDocProps } from '@/api';
+import { postApiV1Node } from '@/request/Node';
+import { postApiV1CrawlerScrape } from '@/request/Crawler';
 import { useAppSelector } from '@/store';
 import {
   Box,
@@ -67,9 +64,9 @@ const URLImport = ({
     const urls = url.split('\n');
     for (const url of urls) {
       newQueue.push(async () => {
-        const { title, content } = await scrapeCrawler({ url, kb_id });
+        const { title, content } = await postApiV1CrawlerScrape({ url, kb_id });
         setItems(prev => [
-          { title: title || url, content, url, success: -1, id: '' },
+          { title: title || url, content: content!, url, success: -1, id: '' },
           ...prev,
         ]);
       });
@@ -99,10 +96,10 @@ const URLImport = ({
           if (!curItem || (curItem.id !== '' && curItem.id !== '-1')) {
             continue;
           }
-          const res = await createNode({
+          const res = await postApiV1Node({
             name: curItem?.title || '',
             content: curItem?.content || '',
-            parent_id: parentId,
+            parent_id: parentId || undefined,
             type: 2,
             kb_id,
           });
@@ -369,10 +366,10 @@ const URLImport = ({
                             : it,
                         ),
                       );
-                      createNode({
+                      postApiV1Node({
                         name: item.title,
                         content: item.content,
-                        parent_id: parentId,
+                        parent_id: parentId || undefined,
                         type: 2,
                         kb_id,
                       })

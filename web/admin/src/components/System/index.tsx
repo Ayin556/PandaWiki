@@ -1,4 +1,5 @@
-import { getModelList, ModelListItem } from '@/api';
+import { ModelListItem } from '@/api';
+import { getApiV1ModelList } from '@/request/Model';
 import ErrorJSON from '@/assets/json/error.json';
 import Card from '@/components/Card';
 import { ModelProvider } from '@/constant/enums';
@@ -34,9 +35,12 @@ const System = () => {
     !chatModelData || !embeddingModelData || !rerankModelData;
 
   const getModel = () => {
-    getModelList().then(res => {
+    getApiV1ModelList().then(res => {
+      // @ts-expect-error 类型不匹配
       const chat = res.find(it => it.type === 'chat') || null;
+      // @ts-expect-error 类型不匹配
       const embedding = res.find(it => it.type === 'embedding') || null;
+      // @ts-expect-error 类型不匹配
       const rerank = res.find(it => it.type === 'rerank') || null;
       setChatModelData(chat);
       setEmbeddingModelData(embedding);

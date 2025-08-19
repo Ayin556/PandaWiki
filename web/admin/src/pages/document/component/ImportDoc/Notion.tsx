@@ -1,4 +1,5 @@
-import { createNode, ImportDocListItem, ImportDocProps } from '@/api';
+import { ImportDocListItem, ImportDocProps } from '@/api';
+import { postApiV1Node } from '@/request/Node';
 import {
   postApiV1CrawlerNotionGetDoc,
   postApiV1CrawlerNotionGetList,
@@ -122,10 +123,10 @@ const NotionImport = ({
           if (!curItem || (curItem.id !== '' && curItem.id !== '-1')) {
             continue;
           }
-          const res = await createNode({
+          const res = await postApiV1Node({
             name: curItem?.title || '',
             content: curItem?.content || '',
-            parent_id: parentId,
+            parent_id: parentId || undefined,
             type: 2,
             kb_id,
           });
@@ -400,10 +401,10 @@ const NotionImport = ({
                             : it,
                         ),
                       );
-                      createNode({
+                      postApiV1Node({
                         name: item.title,
                         content: item.content,
-                        parent_id: parentId,
+                        parent_id: parentId || undefined,
                         type: 2,
                         kb_id,
                       })

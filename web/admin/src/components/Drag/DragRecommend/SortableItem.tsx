@@ -15,7 +15,7 @@ const SortableItem: FC<SortableItemProps> = ({ item, refresh, ...rest }) => {
     setNodeRef,
     transform,
     transition,
-  } = useSortable({ id: item.id });
+  } = useSortable({ id: item.id! });
 
   const style = {
     transform: CSS.Transform.toString(transform),

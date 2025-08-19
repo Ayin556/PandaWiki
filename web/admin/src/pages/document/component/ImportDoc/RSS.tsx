@@ -1,10 +1,9 @@
+import { ImportDocListItem, ImportDocProps } from '@/api';
+import { postApiV1Node } from '@/request/Node';
 import {
-  createNode,
-  ImportDocListItem,
-  ImportDocProps,
-  scrapeCrawler,
-  scrapeRSS,
-} from '@/api';
+  postApiV1CrawlerParseRss,
+  postApiV1CrawlerScrape,
+} from '@/request/Crawler';
 import { useAppSelector } from '@/store';
 import {
   Box,
@@ -64,12 +63,12 @@ const RSSImport = ({
   };
 
   const handleURL = async () => {
-    const { items = [] } = await scrapeRSS({ url });
+    const { items = [] } = await postApiV1CrawlerParseRss({ url });
     setItems(
       items.map(item => ({
-        title: item.title,
-        content: item.desc,
-        url: item.url,
+        title: item.title!,
+        content: item.desc!,
+        url: item.url!,
         success: -1,
         id: '',
       })),
@@ -83,7 +82,7 @@ const RSSImport = ({
     const rssData = items.filter(item => selectIds.includes(item.url));
     for (const item of rssData) {
       newQueue.push(async () => {
-        const res = await scrapeCrawler({ url: item.url, kb_id });
+        const res = await postApiV1CrawlerScrape({ url: item.url, kb_id });
         setItems(prev => [
           {
             ...item,
@@ -126,10 +125,10 @@ const RSSImport = ({
           if (!curItem || (curItem.id !== '' && curItem.id !== '-1')) {
             continue;
           }
-          const res = await createNode({
+          const res = await postApiV1Node({
             name: curItem?.title || '',
             content: curItem?.content || '',
-            parent_id: parentId,
+            parent_id: parentId || undefined,
             type: 2,
             kb_id,
           });
@@ -396,10 +395,10 @@ const RSSImport = ({
                             : it,
                         ),
                       );
-                      createNode({
+                      postApiV1Node({
                         name: item.title,
                         content: item.content,
-                        parent_id: parentId,
+                        parent_id: parentId || undefined,
                         type: 2,
                         kb_id,
                       })

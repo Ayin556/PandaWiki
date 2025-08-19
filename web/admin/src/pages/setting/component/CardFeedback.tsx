@@ -28,57 +28,8 @@ interface CardCommentProps {
   kb: DomainKnowledgeBaseDetail;
 }
 
-// 样式封装
-const StyledCardTitle = styled(Box)(({ theme }) => ({
-  fontWeight: 'bold',
-  padding: `${theme.spacing(1.5)} ${theme.spacing(2)}`,
-  backgroundColor: theme.palette.background.paper2,
-}));
-
-const StyledRow = styled(Stack)(({ theme }) => ({
-  flexDirection: 'row',
-  alignItems: 'center',
-  gap: theme.spacing(2),
-}));
-
-const StyledLabel = styled(Box)(({ theme }) => ({
-  width: 156,
-  fontSize: 14,
-  lineHeight: '32px',
-}));
-
 const StyledRadioLabel = styled(Box)(({ theme }) => ({
   width: 100,
-}));
-
-const StyledHeader = styled(Stack)(({ theme }) => ({
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  margin: theme.spacing(2),
-  height: 32,
-  fontWeight: 'bold',
-}));
-
-const StyledHeaderTitle = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  fontWeight: 'bold',
-  height: 32,
-  '&::before': {
-    content: '""',
-    display: 'inline-block',
-    width: 4,
-    height: 12,
-    backgroundColor: theme.palette.common.black,
-    borderRadius: '2px',
-    marginRight: theme.spacing(1),
-  },
-}));
-
-const StyledContentStack = styled(Stack)(({ theme }) => ({
-  padding: '0 16px 16px 16px',
-  gap: theme.spacing(1),
 }));
 
 const DocumentComments = ({
@@ -112,13 +63,12 @@ const DocumentComments = ({
 
   const onSubmit = handleSubmit(formData => {
     updateAppDetail(
-      { id: data.id },
+      { id: data.id! },
       {
         settings: {
           ...data.settings,
           // @ts-expect-error 忽略类型错误
           web_app_comment_settings: {
-            // @ts-expect-error 忽略类型错误
             ...data.settings?.web_app_comment_settings,
             is_enable: Boolean(formData.is_open),
             moderation_enable: Boolean(formData.moderation_enable),
@@ -212,7 +162,7 @@ const AIQuestion = ({
 
   const onSubmit = handleSubmit(formData => {
     updateAppDetail(
-      { id: data.id },
+      { id: data.id! },
       {
         settings: {
           ...data.settings,
@@ -232,7 +182,6 @@ const AIQuestion = ({
   useEffect(() => {
     setValue(
       'is_enabled',
-      // @ts-expect-error 忽略类型错误
       data.settings?.ai_feedback_settings?.is_enabled ?? true,
     );
 

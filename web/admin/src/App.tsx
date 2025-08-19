@@ -8,7 +8,7 @@ import { Box } from '@mui/material';
 import { ThemeProvider } from 'ct-mui';
 import { useEffect } from 'react';
 import { useLocation, useRoutes } from 'react-router-dom';
-import { getUser } from './api';
+import { getApiV1User } from './request/User';
 import { getApiV1License } from './request/pro/License';
 import KBCreate from './components/KB/KBCreate';
 import { setLicense, setUser } from './store/slices/config';
@@ -29,7 +29,7 @@ function App() {
 
   useEffect(() => {
     if (onlyAllowShareApi) return;
-    getUser().then(res => {
+    getApiV1User().then(res => {
       dispatch(setUser(res));
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps

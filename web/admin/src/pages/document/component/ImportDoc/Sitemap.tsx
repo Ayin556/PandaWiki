@@ -1,10 +1,9 @@
+import { ImportDocListItem, ImportDocProps } from '@/api';
+import { postApiV1Node } from '@/request/Node';
 import {
-  createNode,
-  ImportDocListItem,
-  ImportDocProps,
-  scrapeCrawler,
-  scrapeSitemap,
-} from '@/api';
+  postApiV1CrawlerParseSitemap,
+  postApiV1CrawlerScrape,
+} from '@/request/Crawler';
 import { useAppSelector } from '@/store';
 import {
   Box,
@@ -65,12 +64,22 @@ const SitemapImport = ({
 
   const handleURL = async () => {
     const newQueue: (() => Promise<any>)[] = [];
-    const res = await scrapeSitemap({ url });
-    const urls = res.items.map(item => item.url);
+    const res = await postApiV1CrawlerParseSitemap({ url });
+    const urls = res.items?.map(item => item.url) || [];
     for (const url of urls) {
       newQueue.push(async () => {
-        const res = await scrapeCrawler({ url, kb_id });
-        setItems(prev => [{ ...res, url, success: -1, id: '' }, ...prev]);
+        const res = await postApiV1CrawlerScrape({ url: url!, kb_id });
+        setItems(prev => [
+          {
+            ...res,
+            content: res.content!,
+            title: res.title!,
+            url: url!,
+            success: -1,
+            id: '',
+          },
+          ...prev,
+        ]);
       });
     }
     setStep('import');
@@ -98,10 +107,10 @@ const SitemapImport = ({
           if (!curItem || (curItem.id !== '' && curItem.id !== '-1')) {
             continue;
           }
-          const res = await createNode({
+          const res = await postApiV1Node({
             name: curItem?.title || '',
             content: curItem?.content || '',
-            parent_id: parentId,
+            parent_id: parentId || undefined,
             type: 2,
             kb_id,
           });
@@ -368,10 +377,10 @@ const SitemapImport = ({
                             : it,
                         ),
                       );
-                      createNode({
+                      postApiV1Node({
                         name: item.title,
                         content: item.content,
-                        parent_id: parentId,
+                        parent_id: parentId || undefined,
                         type: 2,
                         kb_id,
                       })

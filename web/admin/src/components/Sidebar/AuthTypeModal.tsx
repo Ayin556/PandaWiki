@@ -12,7 +12,6 @@ import {
   Button,
   IconButton,
   MenuItem,
-  Select,
   Stack,
   TextField,
 } from '@mui/material';
@@ -192,15 +191,19 @@ const AuthTypeModal = ({
               )}
             </Stack>
           </Stack>
-          {license.edition > 0 && (
+          {license.edition! > 0 && (
             <Box>
               <Stack direction={'row'} alignItems={'center'}>
                 <Box sx={{ width: 120, flexShrink: 0 }}>授权时间</Box>
-                <Box>{dayjs.unix(license.started_at).format('YYYY-MM-DD')}</Box>
+                <Box>
+                  {dayjs.unix(license.started_at!).format('YYYY-MM-DD')}
+                </Box>
                 <Box sx={{ mx: 1 }}>~</Box>
-                <Box>{dayjs.unix(license.expired_at).format('YYYY-MM-DD')}</Box>
+                <Box>
+                  {dayjs.unix(license.expired_at!).format('YYYY-MM-DD')}
+                </Box>
               </Stack>
-              {dayjs.unix(license.expired_at).diff(dayjs(), 'day') < 0 && (
+              {dayjs.unix(license.expired_at!).diff(dayjs(), 'day') < 0 && (
                 <Box
                   sx={{
                     color: 'error.main',

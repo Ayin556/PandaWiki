@@ -1,16 +1,26 @@
-import { Button, Stack, styled, Tooltip } from '@mui/material';
+import { createContext, useContext } from 'react';
+import { Button, Stack, styled, Tooltip, SxProps } from '@mui/material';
 import Card from '@/components/Card';
 import InfoIcon from '@mui/icons-material/Info';
 
-const StyledFormLabelWrapper = styled('div')<{ vertical?: boolean }>(
-  ({ vertical, theme }) => ({
-    width: vertical ? '100%' : 156,
-    flexShrink: 0,
+const StyledForm = styled('form')<{ gap?: number | string }>(
+  ({ theme, gap = 2 }) => ({
     display: 'flex',
-    alignItems: 'center',
-    marginBottom: vertical ? theme.spacing(1) : 0,
+    flexDirection: 'column',
+    gap: typeof gap === 'number' ? theme.spacing(gap) : gap,
   }),
 );
+
+const StyledFormLabelWrapper = styled('div')<{
+  vertical?: boolean;
+  labelWidth?: number;
+}>(({ vertical, theme, labelWidth }) => ({
+  width: vertical ? '100%' : labelWidth || 156,
+  flexShrink: 0,
+  display: 'flex',
+  alignItems: 'center',
+  marginBottom: vertical ? theme.spacing(1) : 0,
+}));
 
 const StyledFormLabel = styled('span')<{ required?: boolean }>(
   ({ theme, required }) => ({
@@ -37,24 +47,58 @@ export const StyledFormItem = styled('div')<{ vertical?: boolean }>(
   }),
 );
 
+const FormContext = createContext<{
+  vertical?: boolean;
+  labelWidth?: number;
+}>({});
+
+export const Form = ({
+  children,
+  vertical,
+  labelWidth,
+  gap,
+}: {
+  children: React.ReactNode;
+  vertical?: boolean;
+  labelWidth?: number;
+  gap?: number | string;
+}) => {
+  return (
+    <StyledForm gap={gap}>
+      <FormContext.Provider value={{ vertical, labelWidth }}>
+        {children}
+      </FormContext.Provider>
+    </StyledForm>
+  );
+};
+
 export const FormItem = ({
   label,
   children,
   required,
   vertical = false,
+  labelWidth,
   tooltip,
   extra,
+  sx,
 }: {
   label?: string | React.ReactNode;
   children?: React.ReactNode;
   required?: boolean;
   vertical?: boolean;
+  labelWidth?: number;
   tooltip?: React.ReactNode;
   extra?: React.ReactNode;
+  sx?: SxProps;
 }) => {
+  const { vertical: verticalContext, labelWidth: labelWidthContext } =
+    useContext(FormContext);
   return (
-    <StyledFormItem vertical={vertical}>
-      <StyledFormLabelWrapper vertical={vertical}>
+    <StyledFormItem vertical={vertical || verticalContext} sx={sx}>
+      <StyledFormLabelWrapper
+        vertical={vertical || verticalContext}
+        labelWidth={labelWidth || labelWidthContext}
+      >
         <Stack direction='row' alignItems='center' flex={1}>
           <StyledFormLabel required={required}>{label}</StyledFormLabel>
           {tooltip && typeof tooltip === 'string' ? (
@@ -115,7 +159,6 @@ const StyledSettingCardItemTitle = styled('div')(({ theme }) => ({
   alignItems: 'center',
   '&::before': {
     content: '""',
-    display: 'inline-block',
     width: 4,
     height: 12,
     backgroundColor: theme.palette.common.black,
@@ -157,6 +200,7 @@ export const SettingCardItem = ({
   onSubmit,
   extra,
   more,
+  sx,
 }: {
   children?: React.ReactNode;
   title?: React.ReactNode;
@@ -164,6 +208,7 @@ export const SettingCardItem = ({
   onSubmit?: () => void;
   extra?: React.ReactNode;
   more?: SettingCardItemMore;
+  sx?: SxProps;
 }) => {
   const renderMore = (more: SettingCardItemMore) => {
     if (more && typeof more === 'object' && 'type' in more) {
@@ -190,7 +235,7 @@ export const SettingCardItem = ({
     }
   };
   return (
-    <StyledSettingCardItem>
+    <StyledSettingCardItem sx={sx}>
       <StyledSettingCardItemTitleWrapper>
         <StyledSettingCardItemTitle>
           {title} {renderMore(more)}

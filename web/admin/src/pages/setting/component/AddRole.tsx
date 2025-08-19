@@ -1,12 +1,15 @@
 import { Box, Tooltip, Stack, Select, MenuItem, Radio } from '@mui/material';
 import { getApiV1UserList } from '@/request/User';
 import { postApiV1KnowledgeBaseUserInvite } from '@/request/KnowledgeBase';
-import { ConstsUserKBPermission, V1UserListItemResp } from '@/request/types';
+import {
+  ConstsUserKBPermission,
+  V1KBUserInviteReq,
+  V1UserListItemResp,
+} from '@/request/types';
 import { FormItem } from '@/components/Form';
 import NoData from '@/assets/images/nodata.png';
 import Card from '@/components/Card';
 import { Message, Modal, Table } from 'ct-mui';
-import InfoIcon from '@mui/icons-material/Info';
 import dayjs from 'dayjs';
 import { ColumnType } from 'ct-mui/dist/Table';
 import { useEffect, useMemo, useState } from 'react';
@@ -24,10 +27,7 @@ const AddRole = ({ open, onCancel, onOk, selectedIds }: AddRoleProps) => {
   const [list, setList] = useState<V1UserListItemResp[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<string>('');
-  const [selectedUser, setSelectedUser] = useState<V1UserListItemResp | null>(
-    null,
-  );
-  const [perm, setPerm] = useState<ConstsUserKBPermission>(
+  const [perm, setPerm] = useState<V1KBUserInviteReq['perm']>(
     ConstsUserKBPermission.UserKBPermissionFullControl,
   );
 
@@ -40,7 +40,7 @@ const AddRole = ({ open, onCancel, onOk, selectedIds }: AddRoleProps) => {
       title: '',
       dataIndex: 'id',
       width: 80,
-      render: (text: string, record) => (
+      render: (text: string) => (
         <Tooltip
           arrow
           placement='top'
@@ -54,7 +54,6 @@ const AddRole = ({ open, onCancel, onOk, selectedIds }: AddRoleProps) => {
               checked={selectedRowKeys === text}
               onChange={() => {
                 setSelectedRowKeys(text);
-                setSelectedUser(record);
               }}
               sx={{
                 '.MuiTouchRipple-root': {
@@ -113,9 +112,10 @@ const AddRole = ({ open, onCancel, onOk, selectedIds }: AddRoleProps) => {
     if (open) {
       getData();
     } else {
-      setSelectedUser(null);
       setSelectedRowKeys('');
-      setPerm(ConstsUserKBPermission.UserKBPermissionFullControl);
+      setPerm(
+        ConstsUserKBPermission.UserKBPermissionFullControl as V1KBUserInviteReq['perm'],
+      );
     }
   }, [open]);
 
@@ -130,11 +130,8 @@ const AddRole = ({ open, onCancel, onOk, selectedIds }: AddRoleProps) => {
       <Card
         sx={{
           py: 2,
-          overflow: 'hidden',
-          overflowY: 'auto',
           border: '1px solid',
           borderColor: 'divider',
-          maxHeight: 'calc(100vh - 200px)',
         }}
       >
         <Table
@@ -144,6 +141,10 @@ const AddRole = ({ open, onCancel, onOk, selectedIds }: AddRoleProps) => {
           size='small'
           updateScrollTop={false}
           sx={{
+            '.MuiTableContainer-root': {
+              maxHeight: 'calc(100vh - 370px)',
+              minHeight: 200,
+            },
             '& .MuiTableCell-root': {
               height: 40,
               '&:first-of-type': {
@@ -208,7 +209,7 @@ const AddRole = ({ open, onCancel, onOk, selectedIds }: AddRoleProps) => {
           fullWidth
           sx={{ height: 52 }}
           value={perm}
-          onChange={e => setPerm(e.target.value as ConstsUserKBPermission)}
+          onChange={e => setPerm(e.target.value as V1KBUserInviteReq['perm'])}
         >
           <MenuItem value={ConstsUserKBPermission.UserKBPermissionFullControl}>
             完全控制
