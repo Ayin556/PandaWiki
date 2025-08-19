@@ -25,3 +25,10 @@ export async function getServerPathname(): Promise<string> {
 
   return pathname;
 }
+
+export async function getServerSearch(): Promise<string> {
+  const { headers } = await import('next/headers');
+  const headersList = await headers();
+  const search = headersList.get('x-current-search') || '';
+  return search;
+}

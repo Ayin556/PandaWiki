@@ -4,7 +4,7 @@ const { apiConfig, generateResponses, config } = it;
 
 import { message as alert } from "ct-mui";
 import { notFound, redirect } from 'next/navigation';
-import { getServerHeader, getServerPathname } from '@/utils/getServerHeader';
+import { getServerHeader, getServerPathname, getServerSearch } from '@/utils/getServerHeader';
 export type QueryParamsType = Record<string | number, any>;
 export type ResponseFormat = keyof Omit<Body, "body" | "bodyUsed">;
 
@@ -108,7 +108,7 @@ export class HttpClient<SecurityDataType = unknown> {
     }
 
     protected toQueryString(rawQuery?: QueryParamsType): string {
-        const query = rawQuery || {};
+        const query = rawQuery || {};  
         const keys = Object.keys(query).filter((key) => "undefined" !== typeof query[key]);
         return keys
                 .map((key) =>
@@ -224,7 +224,8 @@ export class HttpClient<SecurityDataType = unknown> {
                 if (typeof window === 'undefined') {
                     const pathname = await getServerPathname();
                     if (!pathnameWhiteList.includes(pathname)) {
-                        redirect('/auth/login');
+                        const search = await getServerSearch();
+                        redirect(`/auth/login?redirect=${encodeURIComponent(pathname +search)}`);
                     }
                     return
                 }
