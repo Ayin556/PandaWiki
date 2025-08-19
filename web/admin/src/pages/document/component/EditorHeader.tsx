@@ -150,7 +150,7 @@ const EditorHeader = ({
         gap={3}
         justifyContent={'space-between'}
         sx={{
-          width: 876,
+          width: 920,
           margin: 'auto',
         }}
       >
