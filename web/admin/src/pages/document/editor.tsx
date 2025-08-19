@@ -1,10 +1,10 @@
 import { NodeDetail, updateNode, uploadFile } from '@/api';
 import { getApiV1NodeDetail } from '@/request/Node';
-import { DomainNodeDetailResp } from '@/request/types';
 import {
   DomainGetNodeReleaseDetailResp,
   DomainNodeReleaseListItem,
 } from '@/request/pro';
+import { DomainNodeDetailResp } from '@/request/types';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { setKbId } from '@/store/slices/config';
 import light from '@/themes/light';
@@ -241,7 +241,7 @@ const DocEditor = () => {
             {!showVersion && (
               <Box
                 sx={{
-                  width: 900,
+                  width: 960,
                   margin: 'auto',
                 }}
               >
