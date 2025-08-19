@@ -17,6 +17,7 @@ import {
 } from '@/request/types';
 import { getApiV1AppDetail } from '@/request/App';
 import { SettingCard } from './Common';
+import CardCustom from './CardCustom';
 
 interface CardWebProps {
   kb: DomainKnowledgeBaseDetail;
@@ -42,6 +43,7 @@ const CardWeb = ({ kb, refresh }: CardWebProps) => {
       <CardListen kb={kb} refresh={refresh} />
       <CardProxy kb={kb} refresh={refresh} />
       <CardBasicInfo kb={kb} refresh={refresh} />
+      <CardCustom></CardCustom>
       <CardAuth kb={kb} refresh={refresh} />
       <Divider sx={{ my: 2 }} />
       <CardStyle
@@ -61,7 +63,7 @@ const CardWeb = ({ kb, refresh }: CardWebProps) => {
           });
         }}
       />
-      <CardWebHeader
+      {/* <CardWebHeader
         id={info.id}
         data={info}
         refresh={value => {
@@ -73,7 +75,7 @@ const CardWeb = ({ kb, refresh }: CardWebProps) => {
             },
           });
         }}
-      />
+      /> */}
       <CardCatalog
         id={info.id}
         data={info}
@@ -106,7 +108,6 @@ const CardWeb = ({ kb, refresh }: CardWebProps) => {
           });
         }}
       />
-      <Divider sx={{ my: 2 }} />
       <CardWebWelcome
         id={info.id}
         data={info}

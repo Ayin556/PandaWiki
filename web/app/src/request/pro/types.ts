@@ -320,6 +320,11 @@ export interface GetApiProV1BlockParams {
   kb_id: string;
 }
 
+export interface GetApiProV1BlockParams {
+  /** knowledge base ID */
+  kb_id: string;
+}
+
 export interface GetApiProV1DocumentListParams {
   kb_id: string;
   /** @min 1 */

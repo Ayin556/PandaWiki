@@ -1,6 +1,6 @@
-import { KnowledgeBaseListItem } from '@/api';
 import { DomainKnowledgeBaseDetail, V1UserInfoResp } from '@/request/types';
 import { DomainLicenseResp } from '@/request/pro/types';
+import { AppDetail, KnowledgeBaseListItem, LicenseInfo, UserInfo } from '@/api';
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface config {
@@ -11,6 +11,7 @@ export interface config {
   kb_c: boolean;
   modelStatus: boolean;
   kbDetail: DomainKnowledgeBaseDetail;
+  appPreviewData: AppDetail | null;
 }
 const initialState: config = {
   user: {
@@ -28,6 +29,7 @@ const initialState: config = {
   kb_c: false,
   modelStatus: false,
   kbDetail: {} as DomainKnowledgeBaseDetail,
+  appPreviewData: null,
 };
 
 const configSlice = createSlice({
@@ -53,6 +55,9 @@ const configSlice = createSlice({
     setLicense(state, { payload }) {
       state.license = payload;
     },
+    setAppPreviewData(state, { payload }) {
+      state.appPreviewData = payload;
+    },
     setKbDetail(state, { payload }) {
       state.kbDetail = payload;
     },
@@ -66,6 +71,7 @@ export const {
   setKbC,
   setModelStatus,
   setLicense,
+  setAppPreviewData,
   setKbDetail,
 } = configSlice.actions;
 export default configSlice.reducer;

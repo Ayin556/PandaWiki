@@ -211,7 +211,11 @@ export const uploadFile = (
   });
 
 // =============================================》app
-
+export const getAppDetail = (params: {
+  kb_id: string;
+  type: number;
+}): Promise<AppDetail> =>
+  request({ url: 'api/v1/app/detail', method: 'get', params });
 export const updateAppDetail = (
   params: { id: string },
   app: UpdateAppDetailData,
