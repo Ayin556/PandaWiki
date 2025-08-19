@@ -42,17 +42,20 @@ import {
 } from '@mui/material';
 import { message } from 'ct-mui';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export default function Login() {
+  const searchParams = useSearchParams();
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(false);
   const [authType, setAuthType] = useState<DomainAuthType>();
   const [sourceType, setSourceType] = useState<ConstsSourceType>();
-  const router = useRouter();
   const { kbDetail, themeMode, mobile = false, setNodeList } = useStore();
+  const redirectUrl =
+    window.location.origin +
+    decodeURIComponent(searchParams.get('redirect') || '');
 
   const handleLogin = async () => {
     if (!password.trim()) {
@@ -68,7 +71,7 @@ export default function Login() {
         getShareV1NodeList().then(res => {
           setNodeList?.((res as any) ?? []);
           message.success('认证成功');
-          router.push('/');
+          window.open(redirectUrl, '_self');
         });
       });
     } catch (error) {
@@ -97,7 +100,7 @@ export default function Login() {
   const handleDingTalkLogin = () => {
     clearCookie();
     postShareProV1AuthDingtalk({
-      redirect_url: window.location.origin,
+      redirect_url: redirectUrl,
     }).then(res => {
       window.location.href = res.url || '/';
     });
@@ -106,7 +109,7 @@ export default function Login() {
   const handleFeishuLogin = () => {
     clearCookie();
     postShareProV1AuthFeishu({
-      redirect_url: window.location.origin,
+      redirect_url: redirectUrl,
     }).then(res => {
       window.location.href = res.url || '/';
     });
@@ -115,7 +118,7 @@ export default function Login() {
   const handleQiyeweixinLogin = () => {
     clearCookie();
     postShareProV1AuthWecom({
-      redirect_url: window.location.origin,
+      redirect_url: redirectUrl,
     }).then(res => {
       window.location.href = res.url || '/';
     });
@@ -124,7 +127,7 @@ export default function Login() {
   const handleOAuthLogin = () => {
     clearCookie();
     postShareProV1AuthOauth({
-      redirect_url: window.location.origin,
+      redirect_url: redirectUrl,
     }).then(res => {
       window.location.href = res.url || '/';
     });
@@ -133,7 +136,7 @@ export default function Login() {
   const handleGitHubLogin = () => {
     clearCookie();
     postShareProV1AuthGithub({
-      redirect_url: window.location.origin,
+      redirect_url: redirectUrl,
     }).then(res => {
       window.location.href = res.url || '/';
     });
@@ -141,7 +144,7 @@ export default function Login() {
 
   const handleCASLogin = () => {
     postShareProV1AuthCas({
-      redirect_url: window.location.origin,
+      redirect_url: redirectUrl,
     }).then(res => {
       window.location.href = res.url || '/';
     });
@@ -157,7 +160,7 @@ export default function Login() {
         getShareV1NodeList().then(res => {
           setNodeList?.((res as any) ?? []);
           message.success('认证成功');
-          router.push('/');
+          window.open(redirectUrl, '_self');
         });
       });
     } catch (error) {
@@ -172,7 +175,7 @@ export default function Login() {
       setAuthType(res?.auth_type);
       setSourceType(res?.source_type);
       if (res?.auth_type === DomainAuthType.AuthTypeNull) {
-        router.push('/');
+        window.open(redirectUrl, '_self');
       }
     });
   }, []);
@@ -307,7 +310,7 @@ export default function Login() {
                     fullWidth
                     variant='contained'
                     onClick={handleGitHubLogin}
-                    startIcon={<IconGitHub/>}
+                    startIcon={<IconGitHub />}
                     sx={{ height: '50px', fontSize: 16 }}
                   >
                     登录

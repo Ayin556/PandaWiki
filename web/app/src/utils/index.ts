@@ -241,3 +241,8 @@ export function base64ToFile(base64Data: string, filename: string) {
   // 创建并返回File对象
   return new File([u8arr], filename, { type: mime });
 }
+
+export const isValidUrl = (url: string) => {
+  const regex = /^(https?):\/\/[^\s/$.?#].[^\s]*$/i;
+  return regex.test(url);
+};

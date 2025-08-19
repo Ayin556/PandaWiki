@@ -2,7 +2,6 @@ import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
 import { getShareV1AppWidgetInfo } from './request/ShareApp';
-// import { middleware as clientMiddleware } from './middleware/client';
 import { middleware as homeMiddleware } from './middleware/home';
 
 const proxyShare = async (request: NextRequest) => {
@@ -16,8 +15,6 @@ const proxyShare = async (request: NextRequest) => {
   );
   // 构造 fetch 选项
   const fetchHeaders = new Headers(request.headers);
-  // 可选：移除 host 头，避免冲突
-  fetchHeaders.delete('host');
   fetchHeaders.set('x-kb-id', kb_id);
 
   const fetchOptions: RequestInit = {
@@ -63,9 +60,6 @@ export async function middleware(request: NextRequest) {
 
   let response: NextResponse;
 
-  // if (pathname.startsWith('/client/')) {
-  //   response = await clientMiddleware(request);
-  // } else
   if (pathname.startsWith('/share/')) {
     response = await proxyShare(request);
   } else {
@@ -78,8 +72,10 @@ export async function middleware(request: NextRequest) {
       maxAge: 60 * 60 * 24 * 365, // 1 年
     });
   }
-
-  response.headers.set('x-current-path', pathname);
+  if (!pathname.startsWith('/share')) {
+    response.headers.set('x-current-path', pathname);
+    response.headers.set('x-current-search', url.search);
+  }
   return response;
 }
 
@@ -87,7 +83,7 @@ export const config = {
   matcher: [
     '/',
     '/share/:path*',
-    '/chat',
+    '/chat/:path*',
     '/widget',
     '/welcome',
     '/auth/login',
