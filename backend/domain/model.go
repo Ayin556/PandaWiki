@@ -55,10 +55,7 @@ type Model struct {
 
 // ToModelkitModel converts domain.Model to modelkitDomain.PandaModel
 func (m *Model) ToModelkitModel() (*modelkitDomain.ModelMetadata, error) {
-	provider, err := modelkitConsts.ParseModelProvider(string(m.Provider))
-	if err != nil {
-		return nil, err
-	}
+	provider := modelkitConsts.ParseModelProvider(string(m.Provider))
 	modelType, err := modelkitConsts.ParseModelType(string(m.Type))
 	if err != nil {
 		return nil, err
