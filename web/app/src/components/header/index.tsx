@@ -66,12 +66,7 @@ const Header = () => {
           }}
         >
           {kbDetail?.settings?.icon ? (
-            <img
-              src={kbDetail?.settings?.icon}
-              alt='logo'
-              width={32}
-              height={32}
-            />
+            <img src={kbDetail?.settings?.icon} alt='logo' width={32} />
           ) : (
             <Image src={Logo.src} width={32} height={32} alt='logo' />
           )}
@@ -99,7 +94,10 @@ const Header = () => {
               value={searchValue}
               onChange={e => setSearchValue(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder='搜索...'
+              placeholder={
+                kbDetail?.settings?.web_app_custom_style
+                  ?.header_search_placeholder || '搜索...'
+              }
               sx={{
                 width: '300px',
                 bgcolor: 'background.default',

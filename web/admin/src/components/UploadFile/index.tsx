@@ -35,6 +35,7 @@ const UploadFile = ({
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
+    event.stopPropagation();
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -51,12 +52,14 @@ const UploadFile = ({
         // 压缩并转换图片为base64
         const compressedBase64 = await compressAndConvertToBase64(file);
         onChange(compressedBase64);
+        clearInputValue();
         URL.revokeObjectURL(previewUrl);
         currentPreviewUrl.current = null;
       } catch (error) {
         console.error(error);
         Message.error('图片处理失败');
         setPreview(value);
+        clearInputValue();
         URL.revokeObjectURL(previewUrl);
         currentPreviewUrl.current = null;
       }
@@ -66,15 +69,24 @@ const UploadFile = ({
         formData.append('file', file);
         const res = await uploadFile(formData);
         onChange('/static-file/' + res.key);
+        clearInputValue();
         URL.revokeObjectURL(previewUrl);
         currentPreviewUrl.current = null;
       } catch (error) {
         console.error(error);
         Message.error('上传失败');
         setPreview(value);
+        clearInputValue();
         URL.revokeObjectURL(previewUrl);
         currentPreviewUrl.current = null;
       }
+    }
+  };
+
+  const clearInputValue = () => {
+    const fileInput = document.getElementById(id || name) as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
     }
   };
 
@@ -148,6 +160,7 @@ const UploadFile = ({
                 event.stopPropagation();
                 event.preventDefault();
                 setPreview('');
+                clearInputValue();
                 onChange('');
               }}
             >
@@ -161,10 +174,10 @@ const UploadFile = ({
           <Stack
             alignItems={'center'}
             gap={0.5}
-            sx={{ color: 'text.disabled', fontSize: 12 }}
+            sx={{ color: 'text.disabled', fontSize: width?(width<40?8:12):12 }}
           >
-            <Icon type='icon-shangchuan' sx={{ fontSize: 18 }} />
-            点击上传
+            <Icon type='icon-shangchuan' sx={{ fontSize: width?(width<40?12:18):18 }} />
+            <Box>点击上传</Box>
           </Stack>
         )}
       </Box>
