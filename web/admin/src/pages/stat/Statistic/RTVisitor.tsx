@@ -161,11 +161,12 @@ const RTVisitor = ({ isWideScreen }: { isWideScreen: boolean }) => {
                         <img src={it?.info?.avatar_url || Logo} width={14} />
                         <Box>{it?.info?.username || '匿名用户'}</Box>
                       </Stack>
-                      {it?.info?.email && (
+
+                      {/* {it?.info?.email && (
                         <Box sx={{ color: 'text.auxiliary' }}>
                           {it?.info?.email}
                         </Box>
-                      )}
+                      )} */}
                     </Box>
                     <Box
                       sx={{
