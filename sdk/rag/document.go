@@ -55,8 +55,8 @@ func (c *Client) UploadDocuments(ctx context.Context, datasetID string, filePath
 		}
 	}
 
-	// 添加 group_ids
-	if len(groupIDs) > 0 {
+	// 添加 group_ids：nil 不写入，空切片 [] 会写入 "[]"
+	if groupIDs != nil {
 		gids, err := json.Marshal(groupIDs)
 		if err != nil {
 			return nil, err
@@ -166,7 +166,10 @@ func (c *Client) UpdateDocument(ctx context.Context, datasetID, documentID strin
 // UpdateDocumentGroupIDs 更新单个文档的权限
 func (c *Client) UpdateDocumentGroupIDs(ctx context.Context, datasetID, documentID string, groupIDs []int) error {
 	urlPath := fmt.Sprintf("datasets/%s/documents/%s/group_ids", datasetID, documentID)
-	body := map[string][]int{"group_ids": groupIDs}
+	body := map[string]interface{}{}
+	if groupIDs != nil {
+		body["group_ids"] = groupIDs
+	}
 	req, err := c.newRequest(ctx, "PUT", urlPath, body)
 	if err != nil {
 		return err
@@ -180,7 +183,9 @@ func (c *Client) UpdateDocumentsGroupIDsBatch(ctx context.Context, datasetID str
 	urlPath := fmt.Sprintf("datasets/%s/documents/batch/group_ids", datasetID)
 	body := map[string]interface{}{
 		"document_ids": documentIDs,
-		"group_ids":    groupIDs,
+	}
+	if groupIDs != nil {
+		body["group_ids"] = groupIDs
 	}
 	req, err := c.newRequest(ctx, "PUT", urlPath, body)
 	if err != nil {
@@ -269,8 +274,8 @@ func (c *Client) UploadDocumentText(ctx context.Context, datasetID string, jsonS
 		return nil, err
 	}
 
-	// 添加 group_ids
-	if len(in.GroupIDs) > 0 {
+	// 添加 group_ids：nil 不写入，空切片 [] 会写入 "[]"
+	if in.GroupIDs != nil {
 		gids, err := json.Marshal(in.GroupIDs)
 		if err != nil {
 			return nil, err
