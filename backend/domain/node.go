@@ -6,6 +6,8 @@ import (
 	"errors"
 	"fmt"
 	"time"
+
+	"github.com/chaitin/panda-wiki/consts"
 )
 
 const (
@@ -52,10 +54,44 @@ type Node struct {
 	ParentID string  `json:"parent_id"`
 	Position float64 `json:"position"`
 
-	DocID string `json:"doc_id"` // DEPRECATED: for rag service
+	DocID     string `json:"doc_id"` // DEPRECATED: for rag service
+	CreatorId string `json:"creator_id"`
+	EditorId  string `json:"editor_id"`
+
+	Permissions NodePermissions `json:"permissions" gorm:"type:jsonb"`
 
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
+}
+
+type NodePermissions struct {
+	Answerable consts.NodeAccessPerm `json:"answerable"` // 可被问答
+	Visitable  consts.NodeAccessPerm `json:"visitable"`  // 可被访问
+	Visible    consts.NodeAccessPerm `json:"visible"`    // 导航内可见
+}
+
+func (s *NodePermissions) Scan(value any) error {
+	bytes, ok := value.([]byte)
+	if !ok {
+		return errors.New(fmt.Sprint("invalid permissions type:", value))
+	}
+	return json.Unmarshal(bytes, s)
+}
+
+func (s *NodePermissions) Value() (driver.Value, error) {
+	return json.Marshal(s)
+}
+
+type NodeAuthGroup struct {
+	ID          uint                `json:"id"`
+	NodeID      string              `json:"node_id" `
+	AuthGroupID int                 `json:"auth_group_id"`
+	Perm        consts.NodePermName `json:"perm"`
+	CreatedAt   time.Time           `json:"created_at"`
+}
+
+func (NodeAuthGroup) TableName() string {
+	return "node_auth_groups"
 }
 
 type NodeMeta struct {
@@ -97,34 +133,22 @@ type GetNodeListReq struct {
 }
 
 type NodeListItemResp struct {
-	ID         string         `json:"id"`
-	Type       NodeType       `json:"type"`
-	Status     NodeStatus     `json:"status"`
-	Visibility NodeVisibility `json:"visibility"`
-	Name       string         `json:"name"`
-	Summary    string         `json:"summary"`
-	Emoji      string         `json:"emoji"`
-	Position   float64        `json:"position"`
-	ParentID   string         `json:"parent_id"`
-	CreatedAt  time.Time      `json:"created_at"`
-	UpdatedAt  time.Time      `json:"updated_at"`
-}
-
-type NodeDetailResp struct {
-	ID   string `json:"id"`
-	KBID string `json:"kb_id"`
-
-	Type       NodeType       `json:"type"`
-	Status     NodeStatus     `json:"status"`
-	Visibility NodeVisibility `json:"visibility"`
-	Name       string         `json:"name"`
-	Content    string         `json:"content"`
-	Meta       NodeMeta       `json:"meta"`
-
-	ParentID string `json:"parent_id"`
-
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID          string          `json:"id"`
+	Type        NodeType        `json:"type"`
+	Status      NodeStatus      `json:"status"`
+	Visibility  NodeVisibility  `json:"visibility"`
+	Name        string          `json:"name"`
+	Summary     string          `json:"summary"`
+	Emoji       string          `json:"emoji"`
+	Position    float64         `json:"position"`
+	ParentID    string          `json:"parent_id"`
+	CreatedAt   time.Time       `json:"created_at"`
+	UpdatedAt   time.Time       `json:"updated_at"`
+	CreatorId   string          `json:"creator_id"`
+	EditorId    string          `json:"editor_id"`
+	Creator     string          `json:"creator"`
+	Editor      string          `json:"editor"`
+	Permissions NodePermissions `json:"permissions" gorm:"type:jsonb"`
 }
 
 type NodeContentChunk struct {
@@ -190,13 +214,14 @@ type UpdateNodeReq struct {
 }
 
 type ShareNodeListItemResp struct {
-	ID        string    `json:"id"`
-	Name      string    `json:"name"`
-	Type      NodeType  `json:"type"`
-	ParentID  string    `json:"parent_id"`
-	Position  float64   `json:"position"`
-	Emoji     string    `json:"emoji"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID          string          `json:"id"`
+	Name        string          `json:"name"`
+	Type        NodeType        `json:"type"`
+	ParentID    string          `json:"parent_id"`
+	Position    float64         `json:"position"`
+	Emoji       string          `json:"emoji"`
+	UpdatedAt   time.Time       `json:"updated_at"`
+	Permissions NodePermissions `json:"permissions" gorm:"type:jsonb"`
 }
 
 func (n *ShareNodeListItemResp) GetURL(baseURL string) string {

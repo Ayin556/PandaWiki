@@ -6,6 +6,7 @@ import (
 
 	modelkitDomain "github.com/chaitin/ModelKit/domain"
 	modelkit "github.com/chaitin/ModelKit/usecase"
+
 	"github.com/chaitin/panda-wiki/consts"
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/handler"
@@ -69,7 +70,7 @@ func (h *ModelHandler) GetModelList(c echo.Context) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			id	query		string	true	"model id"
-//	@Success		200	{object}	domain.PWResponse{data=domain.ModelDetailResp}
+//	@Success		200	{object}	domain.Response{data=domain.ModelDetailResp}
 //	@Router			/api/v1/model/detail [get]
 func (h *ModelHandler) GetModelDetail(c echo.Context) error {
 	id := c.QueryParam("id")
@@ -160,7 +161,7 @@ func (h *ModelHandler) UpdateModel(c echo.Context) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			model	body		domain.CheckModelReq	true	"check model request"
-//	@Success		200		{object}	domain.PWResponse{data=domain.CheckModelResp}
+//	@Success		200		{object}	domain.Response{data=domain.CheckModelResp}
 //	@Router			/api/v1/model/check [post]
 func (h *ModelHandler) CheckModel(c echo.Context) error {
 	var req domain.CheckModelReq
@@ -186,23 +187,23 @@ func (h *ModelHandler) CheckModel(c echo.Context) error {
 	return h.NewResponseWithData(c, model)
 }
 
-// get provider supported model list
+// GetProviderSupportedModelList
 //
 //	@Summary		get provider supported model list
 //	@Description	get provider supported model list
 //	@Tags			model
 //	@Accept			json
 //	@Produce		json
-//	@Param			params	query		domain.GetProviderModelListReq	true	"get supported model list request"
+//	@Param			params	body		domain.GetProviderModelListReq	true	"get supported model list request"
 //	@Success		200		{object}	domain.PWResponse{data=domain.GetProviderModelListResp}
-//	@Router			/api/v1/model/provider/supported [get]
+//	@Router			/api/v1/model/provider/supported [post]
 func (h *ModelHandler) GetProviderSupportedModelList(c echo.Context) error {
 	var req domain.GetProviderModelListReq
 	if err := c.Bind(&req); err != nil {
 		return h.NewResponseWithError(c, "invalid request", err)
 	}
 	if err := c.Validate(&req); err != nil {
-		return h.NewResponseWithError(c, "invalid request", err)
+		return h.NewResponseWithError(c, "validate request failed", err)
 	}
 	ctx := c.Request().Context()
 

@@ -55,13 +55,16 @@ func (s *CTRAG) CreateKnowledgeBase(ctx context.Context) (string, error) {
 	return dataset.ID, nil
 }
 
-func (s *CTRAG) QueryRecords(ctx context.Context, datasetIDs []string, query string) ([]*domain.NodeContentChunk, error) {
+func (s *CTRAG) QueryRecords(ctx context.Context, datasetIDs []string, query string, groupIds []int) ([]*domain.NodeContentChunk, error) {
+
 	chunks, _, err := s.client.RetrieveChunks(ctx, rag.RetrievalRequest{
-		DatasetIDs: datasetIDs,
-		Question:   query,
-		TopK:       10,
+		DatasetIDs:   datasetIDs,
+		Question:     query,
+		TopK:         10,
+		UserGroupIDs: groupIds,
 		// SimilarityThreshold: 0.2,
 	})
+
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +80,7 @@ func (s *CTRAG) QueryRecords(ctx context.Context, datasetIDs []string, query str
 	return nodeChunks, nil
 }
 
-func (s *CTRAG) UpsertRecords(ctx context.Context, datasetID string, nodeRelease *domain.NodeRelease) (string, error) {
+func (s *CTRAG) UpsertRecords(ctx context.Context, datasetID string, nodeRelease *domain.NodeRelease, groupIds []int) (string, error) {
 	// create new doc and return new_doc.doc_id
 	tempFile, err := os.CreateTemp("", fmt.Sprintf("%s-*.md", nodeRelease.ID))
 	if err != nil {
@@ -98,7 +101,7 @@ func (s *CTRAG) UpsertRecords(ctx context.Context, datasetID string, nodeRelease
 		return "", fmt.Errorf("close temp file failed: %w", err)
 	}
 	defer os.Remove(tempFile.Name())
-	docs, err := s.client.UploadDocumentsAndParse(ctx, datasetID, []string{tempFile.Name()})
+	docs, err := s.client.UploadDocumentsAndParse(ctx, datasetID, []string{tempFile.Name()}, groupIds)
 	if err != nil {
 		return "", fmt.Errorf("upload document text failed: %w", err)
 	}
@@ -174,7 +177,7 @@ func (s *CTRAG) DeleteModel(ctx context.Context, model *domain.Model) error {
 }
 
 func (s *CTRAG) GetModelList(ctx context.Context) ([]*domain.Model, error) {
-	modelList, err := s.client.GetModelConfigList(ctx, "")
+	modelList, err := s.client.GetModelConfigList(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -189,4 +192,12 @@ func (s *CTRAG) GetModelList(ctx context.Context) ([]*domain.Model, error) {
 		}
 	}
 	return models, nil
+}
+
+func (s *CTRAG) UpdateDocumentGroupIDs(ctx context.Context, datasetID string, docID string, groupIds []int) error {
+	err := s.client.UpdateDocumentGroupIDs(ctx, datasetID, docID, groupIds)
+	if err != nil {
+		return fmt.Errorf("update document group IDs failed: %w", err)
+	}
+	return nil
 }

@@ -49,13 +49,14 @@ func NewNodeHandler(
 	return h
 }
 
-// Create Node
+// CreateNode
 //
 //	@Summary		Create Node
 //	@Description	Create Node
 //	@Tags			node
 //	@Accept			json
 //	@Produce		json
+//	@Security		bearerAuth
 //	@Param			body	body		domain.CreateNodeReq	true	"Node"
 //	@Success		200		{object}	domain.PWResponse{data=map[string]string}
 //	@Router			/api/v1/node [post]
@@ -71,7 +72,13 @@ func (h *NodeHandler) CreateNode(c echo.Context) error {
 	if maxNode := c.Get("max_node"); maxNode != nil {
 		req.MaxNode = maxNode.(int)
 	}
-	id, err := h.usecase.Create(c.Request().Context(), req)
+
+	userId, ok := h.auth.MustGetUserID(c)
+	if !ok {
+		return h.NewResponseWithError(c, "not found user", nil)
+	}
+
+	id, err := h.usecase.Create(c.Request().Context(), req, userId)
 	if err != nil {
 		return h.NewResponseWithError(c, "create node failed", err)
 	}
@@ -80,13 +87,14 @@ func (h *NodeHandler) CreateNode(c echo.Context) error {
 	})
 }
 
-// Get Node List
+// GetNodeList
 //
 //	@Summary		Get Node List
 //	@Description	Get Node List
 //	@Tags			node
 //	@Accept			json
 //	@Produce		json
+//	@Security		bearerAuth
 //	@Param			params	query		domain.GetNodeListReq	true	"Params"
 //	@Success		200		{object}	domain.PWResponse{data=[]domain.NodeListItemResp}
 //	@Router			/api/v1/node/list [get]
@@ -113,8 +121,9 @@ func (h *NodeHandler) GetNodeList(c echo.Context) error {
 //	@Tags			node
 //	@Accept			json
 //	@Produce		json
+//	@Security		bearerAuth
 //	@Param			param	query		v1.GetNodeDetailReq	true	"conversation id"
-//	@Success		200		{object}	domain.PWResponse{data=domain.NodeDetailResp}
+//	@Success		200		{object}	domain.PWResponse{data=v1.NodeDetailResp}
 //	@Router			/api/v1/node/detail [get]
 func (h *NodeHandler) GetNodeDetail(c echo.Context) error {
 
@@ -140,6 +149,7 @@ func (h *NodeHandler) GetNodeDetail(c echo.Context) error {
 //	@Tags			node
 //	@Accept			json
 //	@Produce		json
+//	@Security		bearerAuth
 //	@Param			action	body		domain.NodeActionReq	true	"Action"
 //	@Success		200		{object}	domain.PWResponse{data=map[string]string}
 //	@Router			/api/v1/node/action [post]
@@ -161,13 +171,14 @@ func (h *NodeHandler) NodeAction(c echo.Context) error {
 	return h.NewResponseWithData(c, nil)
 }
 
-// Update Node Detail
+// UpdateNodeDetail
 //
 //	@Summary		Update Node Detail
 //	@Description	Update Node Detail
 //	@Tags			node
 //	@Accept			json
 //	@Produce		json
+//	@Security		bearerAuth
 //	@Param			body	body		domain.UpdateNodeReq	true	"Node"
 //	@Success		200		{object}	domain.Response
 //	@Router			/api/v1/node/detail [put]
@@ -180,7 +191,13 @@ func (h *NodeHandler) UpdateNodeDetail(c echo.Context) error {
 		return h.NewResponseWithError(c, "validate request body failed", err)
 	}
 	ctx := c.Request().Context()
-	if err := h.usecase.Update(ctx, req); err != nil {
+
+	userId, ok := h.auth.MustGetUserID(c)
+	if !ok {
+		return h.NewResponseWithError(c, "not found user", nil)
+	}
+
+	if err := h.usecase.Update(ctx, req, userId); err != nil {
 		return h.NewResponseWithError(c, "update node detail failed", err)
 	}
 	return h.NewResponseWithData(c, nil)
@@ -193,6 +210,7 @@ func (h *NodeHandler) UpdateNodeDetail(c echo.Context) error {
 //	@Tags			node
 //	@Accept			json
 //	@Produce		json
+//	@Security		bearerAuth
 //	@Param			body	body		domain.MoveNodeReq	true	"Move Node"
 //	@Success		200		{object}	domain.Response
 //	@Router			/api/v1/node/move [post]
@@ -218,6 +236,7 @@ func (h *NodeHandler) MoveNode(c echo.Context) error {
 //	@Tags			node
 //	@Accept			json
 //	@Produce		json
+//	@Security		bearerAuth
 //	@Param			body	body		domain.NodeSummaryReq	true	"Summary Node"
 //	@Success		200		{object}	domain.Response
 //	@Router			/api/v1/node/summary [post]
@@ -249,6 +268,7 @@ func (h *NodeHandler) SummaryNode(c echo.Context) error {
 //	@Tags			node
 //	@Accept			json
 //	@Produce		json
+//	@Security		bearerAuth
 //	@Param			query	query		domain.GetRecommendNodeListReq	true	"Recommend Nodes"
 //	@Success		200		{object}	domain.PWResponse{data=[]domain.RecommendNodeListResp}
 //	@Router			/api/v1/node/recommend_nodes [get]
@@ -268,13 +288,14 @@ func (h *NodeHandler) RecommendNodes(c echo.Context) error {
 	return h.NewResponseWithData(c, nodes)
 }
 
-// Batch Move Node
+// BatchMoveNode
 //
 //	@Summary		Batch Move Node
 //	@Description	Batch Move Node
 //	@Tags			node
 //	@Accept			json
 //	@Produce		json
+//	@Security		bearerAuth
 //	@Param			body	body		domain.BatchMoveReq	true	"Batch Move Node"
 //	@Success		200		{object}	domain.Response
 //	@Router			/api/v1/node/batch_move [post]

@@ -5,7 +5,6 @@ import (
 
 	v1 "github.com/chaitin/panda-wiki/api/kb/v1"
 	"github.com/chaitin/panda-wiki/consts"
-	_ "github.com/chaitin/panda-wiki/domain"
 )
 
 // KBUserList

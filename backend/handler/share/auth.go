@@ -4,6 +4,7 @@ import (
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo/v4"
 
+	v1 "github.com/chaitin/panda-wiki/api/share/v1"
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/handler"
 	"github.com/chaitin/panda-wiki/log"
@@ -45,9 +46,9 @@ func NewShareAuthHandler(
 //	@ID				v1-AuthGet
 //	@Accept			json
 //	@Produce		json
-//	@Param			X-KB-ID	header		string				true	"kb_id"
-//	@Param			param	query		domain.AuthGetReq	true	"para"
-//	@Success		200		{object}	domain.PWResponse{data=domain.AuthGetResp}
+//	@Param			X-KB-ID	header		string			true	"kb_id"
+//	@Param			param	query		v1.AuthGetReq	true	"para"
+//	@Success		200		{object}	domain.PWResponse{data=v1.AuthGetResp}
 //	@Router			/share/v1/auth/get [get]
 func (h *ShareAuthHandler) AuthGet(c echo.Context) error {
 	ctx := c.Request().Context()
@@ -62,7 +63,7 @@ func (h *ShareAuthHandler) AuthGet(c echo.Context) error {
 		return h.NewResponseWithError(c, "failed to get knowledge base detail", err)
 	}
 
-	resp := &domain.AuthGetResp{
+	resp := &v1.AuthGetResp{
 		AuthType:   kb.AccessSettings.GetAuthType(),
 		SourceType: kb.AccessSettings.SourceType,
 	}
@@ -77,8 +78,8 @@ func (h *ShareAuthHandler) AuthGet(c echo.Context) error {
 //	@ID				v1-AuthLoginSimple
 //	@Accept			json
 //	@Produce		json
-//	@Param			X-KB-ID	header		string						true	"kb_id"
-//	@Param			param	body		domain.AuthLoginSimpleReq	true	"para"
+//	@Param			X-KB-ID	header		string					true	"kb_id"
+//	@Param			param	body		v1.AuthLoginSimpleReq	true	"para"
 //	@Success		200		{object}	domain.Response
 //	@Router			/share/v1/auth/login/simple [post]
 func (h *ShareAuthHandler) AuthLoginSimple(c echo.Context) error {
@@ -89,7 +90,7 @@ func (h *ShareAuthHandler) AuthLoginSimple(c echo.Context) error {
 		return h.NewResponseWithError(c, "kb_id is required", nil)
 	}
 
-	var req domain.AuthLoginSimpleReq
+	var req v1.AuthLoginSimpleReq
 	if err := c.Bind(&req); err != nil {
 		h.logger.Error("parse request failed", log.Error(err))
 		return h.NewResponseWithError(c, "AuthGet bind failed", nil)

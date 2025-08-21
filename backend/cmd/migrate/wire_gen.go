@@ -53,7 +53,8 @@ func createApp() (*App, error) {
 	if err != nil {
 		return nil, err
 	}
-	nodeUsecase := usecase.NewNodeUsecase(nodeRepository, ragRepository, knowledgeBaseRepository, llmUsecase, logger, minioClient, modelRepository)
+	authRepo := pg2.NewAuthRepo(db, logger)
+	nodeUsecase := usecase.NewNodeUsecase(nodeRepository, ragRepository, knowledgeBaseRepository, llmUsecase, logger, minioClient, modelRepository, authRepo)
 	userRepository := pg2.NewUserRepository(db, logger)
 	cacheCache, err := cache.NewCache(configConfig)
 	if err != nil {

@@ -40,3 +40,27 @@ func (r *AuthRepo) GetAuthUserinfoByIDs(ctx context.Context, authIDs []uint) (ma
 	}
 	return result, nil
 }
+
+func (r *AuthRepo) GetAuthGroupByAuthId(ctx context.Context, authID uint) ([]domain.AuthGroup, error) {
+	authGroups := make([]domain.AuthGroup, 0)
+	err := r.db.WithContext(ctx).Model(&domain.AuthGroup{}).
+		Where("? = ANY(auth_ids)", authID).
+		Find(&authGroups).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return authGroups, nil
+}
+
+func (r *AuthRepo) GetAuthGroupIdsByAuthId(ctx context.Context, authID uint) ([]int, error) {
+	groupIds := make([]int, 0)
+	err := r.db.WithContext(ctx).Model(&domain.AuthGroup{}).
+		Where("? = ANY(auth_ids)", authID).
+		Pluck("id", &groupIds).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return groupIds, nil
+}

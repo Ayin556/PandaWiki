@@ -47,14 +47,14 @@ type EnterpriseAuth struct {
 	Enabled bool `json:"enabled"`
 }
 
-func (s AccessSettings) GetAuthType() AuthType {
+func (s AccessSettings) GetAuthType() consts.AuthType {
 	if s.EnterpriseAuth.Enabled {
-		return AuthTypeEnterprise
+		return consts.AuthTypeEnterprise
 	}
 	if s.SimpleAuth.Enabled && s.SimpleAuth.Password != "" {
-		return AuthTypeSimple
+		return consts.AuthTypeSimple
 	}
-	return AuthTypeNull
+	return consts.AuthTypeNull
 }
 
 func (s *AccessSettings) Scan(value any) error {

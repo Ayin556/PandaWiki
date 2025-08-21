@@ -1,5 +1,41 @@
 basePath: /
 definitions:
+  consts.AuthType:
+    enum:
+    - ""
+    - simple
+    - enterprise
+    type: string
+    x-enum-comments:
+      AuthTypeEnterprise: 企业认证
+      AuthTypeNull: 无认证
+      AuthTypeSimple: 简单口令
+    x-enum-descriptions:
+    - 无认证
+    - 简单口令
+    - 企业认证
+    x-enum-varnames:
+    - AuthTypeNull
+    - AuthTypeSimple
+    - AuthTypeEnterprise
+  consts.NodeAccessPerm:
+    enum:
+    - open
+    - partial
+    - closed
+    type: string
+    x-enum-comments:
+      NodeAccessPermClosed: 完全禁止
+      NodeAccessPermOpen: 完全开放
+      NodeAccessPermPartial: 部分开放
+    x-enum-descriptions:
+    - 完全开放
+    - 部分开放
+    - 完全禁止
+    x-enum-varnames:
+    - NodeAccessPermOpen
+    - NodeAccessPermPartial
+    - NodeAccessPermClosed
   consts.SourceType:
     enum:
     - dingtalk
@@ -394,38 +430,6 @@ definitions:
     - AppTypeWechatServiceBot
     - AppTypeDisCordBot
     - AppTypeWechatOfficialAccount
-  domain.AuthGetResp:
-    properties:
-      auth_type:
-        $ref: '#/definitions/domain.AuthType'
-      source_type:
-        $ref: '#/definitions/consts.SourceType'
-    type: object
-  domain.AuthLoginSimpleReq:
-    properties:
-      password:
-        type: string
-    required:
-    - password
-    type: object
-  domain.AuthType:
-    enum:
-    - ""
-    - simple
-    - enterprise
-    type: string
-    x-enum-comments:
-      AuthTypeEnterprise: 企业认证
-      AuthTypeNull: 无认证
-      AuthTypeSimple: 简单口令
-    x-enum-descriptions:
-    - 无认证
-    - 简单口令
-    - 企业认证
-    x-enum-varnames:
-    - AuthTypeNull
-    - AuthTypeSimple
-    - AuthTypeEnterprise
   domain.BatchMoveReq:
     properties:
       ids:
@@ -899,6 +903,41 @@ definitions:
       total:
         type: integer
     type: object
+  domain.GetProviderModelListReq:
+    properties:
+      api_header:
+        type: string
+      api_key:
+        type: string
+      base_url:
+        type: string
+      provider:
+        enum:
+        - SiliconFlow
+        - OpenAI
+        - Ollama
+        - DeepSeek
+        - Moonshot
+        - AzureOpenAI
+        - BaiZhiCloud
+        - Hunyuan
+        - BaiLian
+        - Volcengine
+        - Gemini
+        - ZhiPu
+        type: string
+      type:
+        allOf:
+        - $ref: '#/definitions/domain.ModelType'
+        enum:
+        - chat
+        - embedding
+        - rerank
+    required:
+    - base_url
+    - provider
+    - type
+    type: object
   domain.GetProviderModelListResp:
     properties:
       models:
@@ -1067,34 +1106,17 @@ definitions:
     - ids
     - kb_id
     type: object
-  domain.NodeDetailResp:
-    properties:
-      content:
-        type: string
-      created_at:
-        type: string
-      id:
-        type: string
-      kb_id:
-        type: string
-      meta:
-        $ref: '#/definitions/domain.NodeMeta'
-      name:
-        type: string
-      parent_id:
-        type: string
-      status:
-        $ref: '#/definitions/domain.NodeStatus'
-      type:
-        $ref: '#/definitions/domain.NodeType'
-      updated_at:
-        type: string
-      visibility:
-        $ref: '#/definitions/domain.NodeVisibility'
-    type: object
   domain.NodeListItemResp:
     properties:
       created_at:
+        type: string
+      creator:
+        type: string
+      creator_id:
+        type: string
+      editor:
+        type: string
+      editor_id:
         type: string
       emoji:
         type: string
@@ -1104,6 +1126,8 @@ definitions:
         type: string
       parent_id:
         type: string
+      permissions:
+        $ref: '#/definitions/domain.NodePermissions'
       position:
         type: number
       status:
@@ -1123,6 +1147,21 @@ definitions:
         type: string
       summary:
         type: string
+    type: object
+  domain.NodePermissions:
+    properties:
+      answerable:
+        allOf:
+        - $ref: '#/definitions/consts.NodeAccessPerm'
+        description: 可被问答
+      visible:
+        allOf:
+        - $ref: '#/definitions/consts.NodeAccessPerm'
+        description: 导航内可见
+      visitable:
+        allOf:
+        - $ref: '#/definitions/consts.NodeAccessPerm'
+        description: 可被访问
     type: object
   domain.NodeStatus:
     enum:
@@ -1691,19 +1730,7 @@ definitions:
     x-enum-comments:
       ModelProviderBrandZhiPu: 智谱
     x-enum-descriptions:
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
     - 智谱
-    - ""
     x-enum-varnames:
     - ModelProviderBrandOpenAI
     - ModelProviderBrandOllama
@@ -1738,6 +1765,20 @@ definitions:
         type: array
       total:
         type: integer
+    type: object
+  v1.AuthGetResp:
+    properties:
+      auth_type:
+        $ref: '#/definitions/consts.AuthType'
+      source_type:
+        $ref: '#/definitions/consts.SourceType'
+    type: object
+  v1.AuthLoginSimpleReq:
+    properties:
+      password:
+        type: string
+    required:
+    - password
     type: object
   v1.CommentLists:
     properties:
@@ -1843,6 +1884,33 @@ definitions:
     properties:
       token:
         type: string
+    type: object
+  v1.NodeDetailResp:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      kb_id:
+        type: string
+      meta:
+        $ref: '#/definitions/domain.NodeMeta'
+      name:
+        type: string
+      parent_id:
+        type: string
+      permissions:
+        $ref: '#/definitions/domain.NodePermissions'
+      status:
+        $ref: '#/definitions/domain.NodeStatus'
+      type:
+        $ref: '#/definitions/domain.NodeType'
+      updated_at:
+        type: string
+      visibility:
+        $ref: '#/definitions/domain.NodeVisibility'
     type: object
   v1.ResetPasswordReq:
     properties:
@@ -2960,7 +3028,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/domain.PWResponse'
+            - $ref: '#/definitions/domain.Response'
             - properties:
                 data:
                   $ref: '#/definitions/github_com_chaitin_panda-wiki_domain.CheckModelResp'
@@ -2986,7 +3054,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/domain.PWResponse'
+            - $ref: '#/definitions/domain.Response'
             - properties:
                 data:
                   $ref: '#/definitions/domain.ModelDetailResp'
@@ -3015,50 +3083,17 @@ paths:
       tags:
       - model
   /api/v1/model/provider/supported:
-    get:
+    post:
       consumes:
       - application/json
       description: get provider supported model list
       parameters:
-      - in: query
-        name: api_header
-        type: string
-      - in: query
-        name: api_key
-        type: string
-      - in: query
-        name: base_url
+      - description: get supported model list request
+        in: body
+        name: params
         required: true
-        type: string
-      - enum:
-        - SiliconFlow
-        - OpenAI
-        - Ollama
-        - DeepSeek
-        - Moonshot
-        - AzureOpenAI
-        - BaiZhiCloud
-        - Hunyuan
-        - BaiLian
-        - Volcengine
-        - Gemini
-        - ZhiPu
-        in: query
-        name: provider
-        required: true
-        type: string
-      - enum:
-        - chat
-        - embedding
-        - rerank
-        in: query
-        name: type
-        required: true
-        type: string
-        x-enum-varnames:
-        - ModelTypeChat
-        - ModelTypeEmbedding
-        - ModelTypeRerank
+        schema:
+          $ref: '#/definitions/domain.GetProviderModelListReq'
       produces:
       - application/json
       responses:
@@ -3100,6 +3135,8 @@ paths:
                     type: string
                   type: object
               type: object
+      security:
+      - bearerAuth: []
       summary: Create Node
       tags:
       - node
@@ -3129,6 +3166,8 @@ paths:
                     type: string
                   type: object
               type: object
+      security:
+      - bearerAuth: []
       summary: Node Action
       tags:
       - node
@@ -3151,6 +3190,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/domain.Response'
+      security:
+      - bearerAuth: []
       summary: Batch Move Node
       tags:
       - node
@@ -3178,8 +3219,10 @@ paths:
             - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/domain.NodeDetailResp'
+                  $ref: '#/definitions/v1.NodeDetailResp'
               type: object
+      security:
+      - bearerAuth: []
       summary: Get Node Detail
       tags:
       - node
@@ -3201,6 +3244,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/domain.Response'
+      security:
+      - bearerAuth: []
       summary: Update Node Detail
       tags:
       - node
@@ -3231,6 +3276,8 @@ paths:
                     $ref: '#/definitions/domain.NodeListItemResp'
                   type: array
               type: object
+      security:
+      - bearerAuth: []
       summary: Get Node List
       tags:
       - node
@@ -3253,6 +3300,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/domain.Response'
+      security:
+      - bearerAuth: []
       summary: Move Node
       tags:
       - node
@@ -3287,6 +3336,8 @@ paths:
                     $ref: '#/definitions/domain.RecommendNodeListResp'
                   type: array
               type: object
+      security:
+      - bearerAuth: []
       summary: Recommend Nodes
       tags:
       - node
@@ -3309,6 +3360,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/domain.Response'
+      security:
+      - bearerAuth: []
       summary: Summary Node
       tags:
       - node
@@ -3686,7 +3739,7 @@ paths:
             - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/domain.AuthGetResp'
+                  $ref: '#/definitions/v1.AuthGetResp'
               type: object
       summary: AuthGet
       tags:
@@ -3708,7 +3761,7 @@ paths:
         name: param
         required: true
         schema:
-          $ref: '#/definitions/domain.AuthLoginSimpleReq'
+          $ref: '#/definitions/v1.AuthLoginSimpleReq'
       produces:
       - application/json
       responses:
