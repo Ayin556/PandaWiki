@@ -1,13 +1,13 @@
 import { CardWebHeaderBtn } from '@/api';
-import Avatar from '@/components/Avatar';
 import UploadFile from '@/components/UploadFile';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { setAppPreviewData } from '@/store/slices/config';
 import {
   Box,
-  Button,
   Checkbox,
+  FormControl,
   IconButton,
+  InputLabel,
   MenuItem,
   Select,
   Stack,
@@ -88,11 +88,12 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(
           justifyContent={'space-between'}
           gap={0.5}
           sx={{
-            p: 1,
+            px: 1,
+            py: '20px',
             border: '1px solid',
             borderColor: 'divider',
             borderRadius: '10px',
-            height: '184px',
+            height: '244px',
             width: '276px',
           }}
         >
@@ -103,59 +104,87 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(
               const curBtn = btns.find(btn => btn.id === item.id);
               if (!curBtn) return <></>;
               return (
-                <Stack direction={'column'} gap={1}>
+                <Stack direction={'column'} gap={'20px'}>
                   <Stack direction={'row'} gap={1}>
-                    <Select
-                      value={curBtn.variant}
-                      onChange={e => {
-                        const newBtns = [
-                          ...(appPreviewData?.settings.btns || []),
-                        ];
-                        const index = newBtns.findIndex(
-                          (btn: CardWebHeaderBtn) => btn.id === curBtn.id,
-                        );
-                        newBtns[index] = {
-                          ...curBtn,
-                          variant: e.target.value as 'contained' | 'outlined',
-                        };
-                        field.onChange(newBtns);
-                        setIsEdit(true);
-                      }}
-                      sx={{
-                        width: '114px',
-                        height: '36px',
-                        bgcolor: '#ffffff',
-                      }}
-                    >
-                      <MenuItem value={'contained'}>实心</MenuItem>
-                      <MenuItem value={'outlined'}>描边</MenuItem>
-                      <MenuItem value={'text'}>文字</MenuItem>
-                    </Select>
-                    <Select
-                      value={curBtn.target}
-                      onChange={e => {
-                        const newBtns = [
-                          ...(appPreviewData?.settings.btns || []),
-                        ];
-                        const index = newBtns.findIndex(
-                          (btn: CardWebHeaderBtn) => btn.id === curBtn.id,
-                        );
-                        newBtns[index] = {
-                          ...curBtn,
-                          target: e.target.value as '_blank' | '_self',
-                        };
-                        field.onChange(newBtns);
-                        setIsEdit(true);
-                      }}
-                      sx={{
-                        width: '114px',
-                        height: '36px',
-                        bgcolor: '#ffffff',
-                      }}
-                    >
-                      <MenuItem value={'_self'}>当前窗口</MenuItem>
-                      <MenuItem value={'_blank'}>新窗口</MenuItem>
-                    </Select>
+                    <FormControl>
+                      <InputLabel
+                        id={curBtn.id + '_button_style'}
+                        sx={{
+                          '&.Mui-focused': {
+                            color: 'black',
+                          },
+                        }}
+                      >
+                        按钮样式
+                      </InputLabel>
+                      <Select
+                        labelId={curBtn.id + '_button_style'}
+                        id={curBtn.id + '_button_style'}
+                        value={curBtn.variant}
+                        label='按钮样式'
+                        onChange={e => {
+                          const newBtns = [
+                            ...(appPreviewData?.settings.btns || []),
+                          ];
+                          const index = newBtns.findIndex(
+                            (btn: CardWebHeaderBtn) => btn.id === curBtn.id,
+                          );
+                          newBtns[index] = {
+                            ...curBtn,
+                            variant: e.target.value as 'contained' | 'outlined',
+                          };
+                          field.onChange(newBtns);
+                          setIsEdit(true);
+                        }}
+                        sx={{
+                          width: '114px',
+                          height: '36px',
+                        }}
+                      >
+                        <MenuItem value={'contained'}>实心</MenuItem>
+                        <MenuItem value={'outlined'}>描边</MenuItem>
+                        <MenuItem value={'text'}>文字</MenuItem>
+                      </Select>
+                    </FormControl>
+                    <FormControl>
+                      <InputLabel
+                        id={curBtn.id + '_button_target'}
+                        sx={{
+                          '&.Mui-focused': {
+                            color: 'black',
+                          },
+                        }}
+                      >
+                        打开方式
+                      </InputLabel>
+                      <Select
+                        labelId={curBtn.id + '_button_target'}
+                        id={curBtn.id + '_button_target'}
+                        value={curBtn.target}
+                        label='打开方式'
+                        onChange={e => {
+                          const newBtns = [
+                            ...(appPreviewData?.settings.btns || []),
+                          ];
+                          const index = newBtns.findIndex(
+                            (btn: CardWebHeaderBtn) => btn.id === curBtn.id,
+                          );
+                          newBtns[index] = {
+                            ...curBtn,
+                            target: e.target.value as '_blank' | '_self',
+                          };
+                          field.onChange(newBtns);
+                          setIsEdit(true);
+                        }}
+                        sx={{
+                          width: '114px',
+                          height: '36px',
+                        }}
+                      >
+                        <MenuItem value={'_self'}>当前窗口</MenuItem>
+                        <MenuItem value={'_blank'}>新窗口</MenuItem>
+                      </Select>
+                    </FormControl>
                   </Stack>
                   <Stack direction={'row'} gap={2}>
                     <Stack direction={'row'} alignItems={'center'} gap={1}>
@@ -205,11 +234,10 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(
                     />
                   </Stack>
                   <TextField
-                    label='请输入按钮文本'
+                    label='按钮文本'
                     sx={{
                       width: '236px',
                       height: '36px',
-                      bgcolor: '#ffffff',
                       '& .MuiOutlinedInput-root': {
                         height: '36px',
                         padding: '0 12px',
@@ -234,11 +262,10 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(
                     }}
                   />
                   <TextField
-                    label='请输入按钮链接'
+                    label='按钮链接'
                     sx={{
                       width: '236px',
                       height: '36px',
-                      bgcolor: '#ffffff',
                       '& .MuiOutlinedInput-root': {
                         height: '36px',
                         padding: '0 12px',

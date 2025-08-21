@@ -44,6 +44,7 @@ const CardWeb = ({ kb, refresh }: CardWebProps) => {
       <CardProxy kb={kb} refresh={refresh} />
       <CardBasicInfo kb={kb} refresh={refresh} />
       <CardCustom></CardCustom>
+      <Divider sx={{ my: 2 }} />
       <CardAuth kb={kb} refresh={refresh} />
       <Divider sx={{ my: 2 }} />
       <CardStyle
