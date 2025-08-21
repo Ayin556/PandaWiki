@@ -211,11 +211,15 @@ const Content = () => {
         ? [{ label: '重命名', key: 'rename', onClick: renameItem }]
         : []),
       { label: '删除', key: 'delete', onClick: () => handleDelete(item) },
-      {
-        label: '文档属性',
-        key: 'properties',
-        onClick: () => handleProperties(item),
-      },
+      ...(item.type === 2
+        ? [
+            {
+              label: '文档属性',
+              key: 'properties',
+              onClick: () => handleProperties(item),
+            },
+          ]
+        : []),
     ];
   };
 
