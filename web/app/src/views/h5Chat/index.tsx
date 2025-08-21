@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Box, Typography, Paper, Fade, Stack, Fab, Zoom } from '@mui/material';
+import { Box, Paper, Fade, Stack, Fab, Zoom } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import MarkDown2 from '@/components/markdown2';
 import SSEClient from '@/utils/fetch';
@@ -113,7 +113,7 @@ const StyledMessageContent = styled(Paper, {
       },
 }));
 
-const StyledMessageLine = styled(Typography)(() => ({
+const StyledMessageLine = styled('div')(() => ({
   margin: '0 0 8px 0',
   lineHeight: 1.5,
   fontSize: '14px',
@@ -122,7 +122,7 @@ const StyledMessageLine = styled(Typography)(() => ({
   },
 }));
 
-const StyledTyping = styled(Box)(() => ({
+const StyledTyping = styled('div')(() => ({
   display: 'inline-flex',
   alignItems: 'center',
   gap: 4,
@@ -205,13 +205,12 @@ const ChatLoading = ({ onClick }: { onClick: () => void }) => {
 const H5Chat: React.FC = () => {
   const searchParams = useSearchParams();
   const messagesContainerRef = useRef<HTMLDivElement>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
   const sseClientRef = useRef<SSEClient<{
     type: string;
     content: string;
     chunk_result: Message[];
   }> | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [answer, setAnswer] = useState('');
   const [question, setQuestion] = useState('');
 
@@ -328,46 +327,46 @@ const H5Chat: React.FC = () => {
               </StyledMessageContent>
             </StyledMessage>
           </Fade>
-          <Fade in={true} timeout={300}>
-            <StyledMessage isUser={false}>
-              <StyledMessageContent isUser={false} elevation={1}>
-                <MarkDown2 content={answer} />
-                {!loading && (
-                  <Stack
-                    direction='column'
-                    alignItems='flex-start'
-                    justifyContent='space-between'
-                    gap={1}
-                    sx={{
-                      fontSize: 12,
-                      color: 'text.tertiary',
-                      mt: 1,
-                    }}
-                  >
-                    本回答由 PandaWiki 基于 AI 生成，仅供参考。
+          {answer && (
+            <Fade in={true} timeout={300}>
+              <StyledMessage isUser={false}>
+                <StyledMessageContent isUser={false} elevation={1}>
+                  <MarkDown2 content={answer} />
+                  {!loading && (
                     <Stack
-                      direction='row'
-                      alignItems='center'
+                      direction='column'
+                      alignItems='flex-start'
+                      justifyContent='space-between'
+                      gap={1}
                       sx={{
-                        borderRadius: 2,
-                        p: 0.5,
-                        border: '1px solid #EEEEEE',
+                        fontSize: 12,
+                        color: 'text.tertiary',
+                        mt: 1,
                       }}
                     >
-                      <IconCopy
-                        sx={{ cursor: 'pointer', color: '#000' }}
-                        onClick={() => {
-                          copyText(answer);
+                      本回答由 PandaWiki 基于 AI 生成，仅供参考。
+                      <Stack
+                        direction='row'
+                        alignItems='center'
+                        sx={{
+                          borderRadius: 2,
+                          p: 0.5,
+                          border: '1px solid #EEEEEE',
                         }}
-                      />
+                      >
+                        <IconCopy
+                          sx={{ cursor: 'pointer', color: '#000' }}
+                          onClick={() => {
+                            copyText(answer);
+                          }}
+                        />
+                      </Stack>
                     </Stack>
-                  </Stack>
-                )}
-              </StyledMessageContent>
-            </StyledMessage>
-          </Fade>
-
-          <div ref={messagesEndRef} />
+                  )}
+                </StyledMessageContent>
+              </StyledMessage>
+            </Fade>
+          )}
         </StyledMessages>
       </StyledMessagesContainer>
       {loading && <ChatLoading onClick={handleSearchAbort} />}
