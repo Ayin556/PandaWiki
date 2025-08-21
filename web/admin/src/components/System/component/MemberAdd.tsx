@@ -64,7 +64,7 @@ const MemberAdd = ({ refresh }: { refresh: () => void }) => {
         variant='outlined'
         onClick={() => setAddMember(true)}
       >
-        添加新用户
+        添加新管理员
       </Button>
       <Modal
         title={
@@ -98,7 +98,7 @@ const MemberAdd = ({ refresh }: { refresh: () => void }) => {
         </Card>
       </Modal>
       <Modal
-        title='添加新用户'
+        title='添加新管理员'
         open={addMember}
         onCancel={() => {
           setAddMember(false);
@@ -147,7 +147,7 @@ const MemberAdd = ({ refresh }: { refresh: () => void }) => {
                   },
                 }}
               >
-                <MenuItem value='user'>普通用户</MenuItem>
+                <MenuItem value='user'>普通管理员</MenuItem>
                 <MenuItem value='admin'>超级管理员</MenuItem>
               </TextField>
             )}

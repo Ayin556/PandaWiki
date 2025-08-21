@@ -9,8 +9,7 @@ declare module '@mui/material/styles' {
   }
 }
 
-
-const lightTheme = createTheme(
+const lightThemeOptions = [
   {
     cssVariables: true,
     palette: {
@@ -39,9 +38,9 @@ const lightTheme = createTheme(
       },
       background: {
         default: '#FFFFFF',
-        paper0: "#F1F2F8",
-        paper: "#FFFFFF",
-        paper2: "#F8F9FA",
+        paper0: '#F1F2F8',
+        paper: '#FFFFFF',
+        paper2: '#F8F9FA',
       },
       text: {
         primary: '#21222D',
@@ -195,9 +194,9 @@ const lightTheme = createTheme(
   },
   zhCN,
   CuiZhCN,
-);
+];
 
-const darkTheme = createTheme(
+const darkThemeOptions = [
   {
     cssVariables: true,
     breakpoints: {
@@ -236,9 +235,9 @@ const darkTheme = createTheme(
       },
       background: {
         default: '#141923',
-        paper0: "#141923",
+        paper0: '#141923',
         paper: '#141923',
-        paper2: "#202531",
+        paper2: '#202531',
       },
       text: {
         primary: '#FFFFFF',
@@ -373,6 +372,39 @@ const darkTheme = createTheme(
   },
   zhCN,
   CuiZhCN,
+];
+
+const lightTheme = createTheme(...(lightThemeOptions as any));
+
+const darkTheme = createTheme(...(darkThemeOptions as any));
+
+const lightThemeWidget = createTheme(
+  // @ts-ignore
+  {
+    ...lightThemeOptions[0],
+    cssVariables: {
+      cssVarPrefix: 'widget',
+    },
+  },
+  ...lightThemeOptions.slice(1),
 );
 
-export { darkTheme, lightTheme };
+const darkThemeWidget = createTheme(
+  // @ts-ignore
+  {
+    ...darkThemeOptions[0],
+    cssVariables: {
+      cssVarPrefix: 'widget',
+    },
+  },
+  ...darkThemeOptions.slice(1),
+);
+
+export {
+  darkTheme,
+  lightTheme,
+  darkThemeOptions,
+  lightThemeOptions,
+  lightThemeWidget,
+  darkThemeWidget,
+};

@@ -15,7 +15,7 @@ import MemberUpdate from './MemberUpdate';
 
 const ConstsUserRoleMap = {
   [ConstsUserRole.UserRoleAdmin]: '超级管理员',
-  [ConstsUserRole.UserRoleUser]: '普通用户',
+  [ConstsUserRole.UserRoleUser]: '普通管理员',
 };
 
 const Member = () => {

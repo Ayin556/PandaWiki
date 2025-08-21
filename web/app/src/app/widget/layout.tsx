@@ -1,5 +1,5 @@
 import StoreProvider from '@/provider';
-import { darkTheme, lightTheme } from '@/theme';
+import { darkThemeWidget, lightThemeWidget } from '@/theme';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import { getShareV1AppWidgetInfo } from '@/request/ShareApp';
 import { ThemeProvider } from 'ct-mui';
@@ -17,7 +17,9 @@ const Layout = async ({
     widgetDetail?.settings?.widget_bot_settings?.theme_mode || 'light';
 
   return (
-    <ThemeProvider theme={themeMode === 'dark' ? darkTheme : lightTheme}>
+    <ThemeProvider
+      theme={themeMode === 'dark' ? darkThemeWidget : lightThemeWidget}
+    >
       <AppRouterCacheProvider>
         <StoreProvider widget={widgetDetail} themeMode={themeMode || 'light'}>
           {children}
