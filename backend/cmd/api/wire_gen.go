@@ -156,6 +156,9 @@ func createApp() (*App, error) {
 	shareCommentHandler := share.NewShareCommentHandler(echo, baseHandler, logger, commentUsecase, appUsecase)
 	shareAuthHandler := share.NewShareAuthHandler(echo, baseHandler, logger, knowledgeBaseUsecase)
 	shareConversationHandler := share.NewShareConversationHandler(baseHandler, echo, conversationUsecase, logger)
+	wechatRepository := pg2.NewWechatRepository(db, logger)
+	wechatUsecase := usecase.NewWechatUsecase(logger, appUsecase, chatUsecase, wechatRepository)
+	shareWechatHandler := share.NewShareWechatHandler(echo, baseHandler, logger, appUsecase, conversationUsecase, wechatUsecase)
 	shareHandler := &share.ShareHandler{
 		ShareNodeHandler:         shareNodeHandler,
 		ShareAppHandler:          shareAppHandler,
@@ -165,6 +168,7 @@ func createApp() (*App, error) {
 		ShareCommentHandler:      shareCommentHandler,
 		ShareAuthHandler:         shareAuthHandler,
 		ShareConversationHandler: shareConversationHandler,
+		ShareWechatHandler:       shareWechatHandler,
 	}
 	client, err := telemetry.NewClient(logger, knowledgeBaseRepository)
 	if err != nil {

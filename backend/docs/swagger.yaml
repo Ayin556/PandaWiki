@@ -3622,6 +3622,27 @@ paths:
       summary: GetAppInfo
       tags:
       - share_app
+  /share/v1/app/wechat/service/answer:
+    get:
+      consumes:
+      - application/json
+      description: GetWechatAnswer
+      parameters:
+      - description: conversation id
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Response'
+      summary: GetWechatAnswer
+      tags:
+      - Wechat
   /share/v1/app/widget/info:
     get:
       consumes:

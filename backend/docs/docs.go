@@ -2808,6 +2808,38 @@ const docTemplate = `{
                 }
             }
         },
+        "/share/v1/app/wechat/service/answer": {
+            "get": {
+                "description": "GetWechatAnswer",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Wechat"
+                ],
+                "summary": "GetWechatAnswer",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "conversation id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/share/v1/app/widget/info": {
             "get": {
                 "description": "GetWidgetAppInfo",

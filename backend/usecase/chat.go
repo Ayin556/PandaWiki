@@ -93,7 +93,26 @@ func (u *ChatUsecase) Chat(ctx context.Context, req *domain.ChatRequest) (<-chan
 		}
 		req.ModelInfo = model
 		// 3. conversation management
-		if req.ConversationID == "" {
+		if req.AppType == domain.AppTypeWechatServiceBot { // wechat service has its own id
+			nonce := uuid.New().String()
+			eventCh <- domain.SSEEvent{Type: "conversation_id", Content: req.ConversationID}
+			eventCh <- domain.SSEEvent{Type: "nonce", Content: nonce}
+			err = u.conversationUsecase.CreateConversation(ctx, &domain.Conversation{
+				ID:        req.ConversationID,
+				Nonce:     nonce,
+				AppID:     req.AppID,
+				KBID:      req.KBID,
+				Subject:   req.Message,
+				RemoteIP:  req.RemoteIP,
+				Info:      req.Info,
+				CreatedAt: time.Now(),
+			})
+			if err != nil {
+				u.logger.Error("failed to create chat conversation", log.Error(err))
+				eventCh <- domain.SSEEvent{Type: "error", Content: "failed to create chat conversation"}
+				return
+			}
+		} else if req.ConversationID == "" {
 			id, err := uuid.NewV7()
 			if err != nil {
 				u.logger.Error("failed to generate conversation uuid", log.Error(err))
