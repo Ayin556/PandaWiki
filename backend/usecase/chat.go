@@ -200,14 +200,22 @@ func (u *ChatUsecase) Chat(ctx context.Context, req *domain.ChatRequest) (<-chan
 				return
 			}
 		}
+		groupIds, err := u.AuthRepo.GetAuthGroupIdsByAuthId(ctx, req.Info.UserInfo.AuthUserID)
+		if err != nil {
+			u.logger.Error("failed to get auth groupIds", log.Error(err))
+			eventCh <- domain.SSEEvent{Type: "error", Content: "failed to get auth groupIds"}
+			return
+		}
 
 		// 4. retrieve documents and format prompt
-		messages, rankedNodes, err := u.llmUsecase.FormatConversationMessages(ctx, req.ConversationID, req.KBID)
+		messages, rankedNodes, err := u.llmUsecase.FormatConversationMessages(ctx, req.ConversationID, req.KBID, groupIds)
 		if err != nil {
 			u.logger.Error("failed to format chat messages", log.Error(err))
 			eventCh <- domain.SSEEvent{Type: "error", Content: "failed to format chat messages"}
 			return
 		}
+
+		u.logger.Debug("message:", log.Any("schema", messages))
 		for _, node := range rankedNodes {
 			chunkResult := domain.NodeContentChunkSSE{
 				NodeID:  node.NodeID,
@@ -235,6 +243,7 @@ func (u *ChatUsecase) Chat(ctx context.Context, req *domain.ChatRequest) (<-chan
 		}
 		// get words
 		onChunkAC, flushBuffer := u.CreateAcOnChunk(ctx, req.KBID, &answer, eventCh, blockWords)
+
 		chatErr := u.llmUsecase.ChatWithAgent(ctx, chatModel, messages, &usage, onChunkAC)
 
 		// 处理缓冲区中剩余的内容

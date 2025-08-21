@@ -5,34 +5,28 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"time"
 
-	"github.com/chaitin/panda-wiki/consts"
+	"github.com/labstack/echo/v4"
+	"github.com/lib/pq"
 )
-
-type AuthType string
 
 const (
 	SessionCacheKey = "_session_store"
 	SessionName     = "_pw_auth_session"
-
-	AuthTypeNull       AuthType = ""           // 无认证
-	AuthTypeSimple     AuthType = "simple"     // 简单口令
-	AuthTypeEnterprise AuthType = "enterprise" // 企业认证
 )
 
-type AuthGetReq struct {
+type AuthGroup struct {
+	ID        uint          `json:"id" gorm:"primaryKey;autoIncrement"`
+	Name      string        `json:"name" gorm:"uniqueIndex;size:100;not null"`
+	KbID      string        `gorm:"column:kb_id;not null" json:"kb_id,omitempty"`
+	AuthIDs   pq.Int64Array `json:"auth_ids" gorm:"type:int[]"`
+	CreatedAt time.Time     `json:"created_at"`
+	UpdatedAt time.Time     `json:"updated_at"`
 }
 
-type AuthGetResp struct {
-	AuthType   AuthType          `json:"auth_type"`
-	SourceType consts.SourceType `json:"source_type"`
-}
-
-type AuthLoginSimpleReq struct {
-	Password string `json:"password" validate:"required"`
-}
-
-type AuthLoginSimpleResp struct {
+func (AuthGroup) TableName() string {
+	return "auth_groups"
 }
 
 type AuthInfo struct {
@@ -56,4 +50,12 @@ func (s *AuthUserInfo) Scan(value any) error {
 
 func (s *AuthUserInfo) Value() (driver.Value, error) {
 	return json.Marshal(s)
+}
+
+func GetAuthID(c echo.Context) uint {
+	userId, ok := c.Get("user_id").(uint)
+	if !ok {
+		return 0
+	}
+	return userId
 }

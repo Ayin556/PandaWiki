@@ -14,7 +14,7 @@ require (
 	github.com/boj/redistore v1.4.1
 	github.com/bwmarrin/discordgo v0.29.0
 	github.com/chaitin/ModelKit v1.4.3
-	github.com/chaitin/pandawiki/sdk/rag v0.0.0-20250603120336-22cceff60479
+	github.com/chaitin/pandawiki/sdk/rag v0.0.0-20250821111634-e0b93366d1c0
 	github.com/cloudwego/eino v0.3.51
 	github.com/cloudwego/eino-ext/components/model/deepseek v0.0.0-20250522060253-ddb617598b09
 	github.com/go-ldap/ldap/v3 v3.4.11
@@ -26,11 +26,13 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/google/wire v0.6.0
 	github.com/gorilla/sessions v1.4.0
+	github.com/jinzhu/copier v0.4.0
 	github.com/jomei/notionapi v1.13.3
 	github.com/labstack/echo-contrib v0.17.4
 	github.com/labstack/echo-jwt/v4 v4.3.1
 	github.com/labstack/echo/v4 v4.13.4
 	github.com/larksuite/oapi-sdk-go/v3 v3.4.20
+	github.com/lib/pq v1.10.9
 	github.com/lionsoul2014/ip2region/binding/golang v0.0.0-20250508043914-ed57fa5c5274
 	github.com/microcosm-cc/bluemonday v1.0.27
 	github.com/mileusna/useragent v1.3.5
@@ -148,7 +150,6 @@ require (
 	github.com/klauspost/cpuid/v2 v2.3.0 // indirect
 	github.com/labstack/gommon v0.4.2 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
-	github.com/lib/pq v1.10.9 // indirect
 	github.com/mailru/easyjson v0.9.0 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect

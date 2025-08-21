@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"slices"
 	"strings"
 
 	"github.com/gomarkdown/markdown"
@@ -13,6 +14,8 @@ import (
 	"github.com/samber/lo"
 	"gorm.io/gorm"
 
+	v1 "github.com/chaitin/panda-wiki/api/node/v1"
+	"github.com/chaitin/panda-wiki/consts"
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/log"
 	"github.com/chaitin/panda-wiki/repo/mq"
@@ -25,16 +28,20 @@ type NodeUsecase struct {
 	ragRepo    *mq.RAGRepository
 	kbRepo     *pg.KnowledgeBaseRepository
 	modelRepo  *pg.ModelRepository
+	authRepo   *pg.AuthRepo
 	llmUsecase *LLMUsecase
 	logger     *log.Logger
 	s3Client   *s3.MinioClient
 }
 
-func NewNodeUsecase(nodeRepo *pg.NodeRepository, ragRepo *mq.RAGRepository, kbRepo *pg.KnowledgeBaseRepository, llmUsecase *LLMUsecase, logger *log.Logger, s3Client *s3.MinioClient, modelRepo *pg.ModelRepository) *NodeUsecase {
+func NewNodeUsecase(nodeRepo *pg.NodeRepository, ragRepo *mq.RAGRepository, kbRepo *pg.KnowledgeBaseRepository, llmUsecase *LLMUsecase, logger *log.Logger, s3Client *s3.MinioClient, modelRepo *pg.ModelRepository,
+	authRepo *pg.AuthRepo,
+) *NodeUsecase {
 	return &NodeUsecase{
 		nodeRepo:   nodeRepo,
 		ragRepo:    ragRepo,
 		kbRepo:     kbRepo,
+		authRepo:   authRepo,
 		llmUsecase: llmUsecase,
 		modelRepo:  modelRepo,
 		logger:     logger.WithModule("usecase.node"),
@@ -42,8 +49,8 @@ func NewNodeUsecase(nodeRepo *pg.NodeRepository, ragRepo *mq.RAGRepository, kbRe
 	}
 }
 
-func (u *NodeUsecase) Create(ctx context.Context, req *domain.CreateNodeReq) (string, error) {
-	nodeID, err := u.nodeRepo.Create(ctx, req)
+func (u *NodeUsecase) Create(ctx context.Context, req *domain.CreateNodeReq, userId string) (string, error) {
+	nodeID, err := u.nodeRepo.Create(ctx, req, userId)
 	if err != nil {
 		return "", err
 	}
@@ -58,7 +65,7 @@ func (u *NodeUsecase) GetList(ctx context.Context, req *domain.GetNodeListReq) (
 	return nodes, nil
 }
 
-func (u *NodeUsecase) GetNodeByKBID(ctx context.Context, id, kbId string) (*domain.NodeDetailResp, error) {
+func (u *NodeUsecase) GetNodeByKBID(ctx context.Context, id, kbId string) (*v1.NodeDetailResp, error) {
 	node, err := u.nodeRepo.GetByID(ctx, id, kbId)
 	if err != nil {
 		return nil, err
@@ -125,8 +132,8 @@ func (u *NodeUsecase) NodeAction(ctx context.Context, req *domain.NodeActionReq)
 	return nil
 }
 
-func (u *NodeUsecase) Update(ctx context.Context, req *domain.UpdateNodeReq) error {
-	err := u.nodeRepo.UpdateNodeContent(ctx, req)
+func (u *NodeUsecase) Update(ctx context.Context, req *domain.UpdateNodeReq, userId string) error {
+	err := u.nodeRepo.UpdateNodeContent(ctx, req, userId)
 	if err != nil {
 		return err
 	}
@@ -151,12 +158,49 @@ func (u *NodeUsecase) Update(ctx context.Context, req *domain.UpdateNodeReq) err
 	return nil
 }
 
-func (u *NodeUsecase) GetNodeReleaseListByKBID(ctx context.Context, kbID string) ([]*domain.ShareNodeListItemResp, error) {
-	return u.nodeRepo.GetNodeReleaseListByKBID(ctx, kbID)
+func (u *NodeUsecase) ValidateNodePerm(ctx context.Context, kbID, nodeId string, authId uint) error {
+	node, err := u.nodeRepo.GetNodeReleaseDetailByKBIDAndID(ctx, kbID, nodeId)
+	if err != nil {
+		return err
+	}
+	switch node.Permissions.Visitable {
+	case consts.NodeAccessPermOpen:
+		return nil
+	case consts.NodeAccessPermClosed:
+		return domain.ErrPermissionDenied
+	case consts.NodeAccessPermPartial:
+		authGroups, err := u.authRepo.GetAuthGroupByAuthId(ctx, authId)
+		if err != nil {
+			return err
+		}
+
+		authGroupIds := lo.Map(authGroups, func(v domain.AuthGroup, i int) uint {
+			return v.ID
+		})
+
+		nodeGroupIds := make([]string, 0)
+		if len(authGroupIds) != 0 {
+			nodeGroups, err := u.nodeRepo.GetNodeGroupsByGroupIdsPerm(ctx, authGroupIds, consts.NodePermNameVisitable)
+			if err != nil {
+				return err
+			}
+
+			nodeGroupIds = lo.Map(nodeGroups, func(v domain.NodeAuthGroup, i int) string {
+				return v.NodeID
+			})
+		}
+		if !slices.Contains(nodeGroupIds, nodeId) {
+			u.logger.Error("ValidateNodePerm failed", log.Any("node_group_ids", nodeGroupIds), log.Any("node_id", nodeId))
+			return domain.ErrPermissionDenied
+		}
+	default:
+		return domain.ErrInternalServerError
+	}
+	return nil
 }
 
-func (u *NodeUsecase) GetNodeReleaseDetailByKBIDAndID(ctx context.Context, kbID, id string) (*domain.NodeDetailResp, error) {
-	node, err := u.nodeRepo.GetNodeReleaseDetailByKBIDAndID(ctx, kbID, id)
+func (u *NodeUsecase) GetNodeReleaseDetailByKBIDAndID(ctx context.Context, kbID, nodeId string) (*v1.NodeDetailResp, error) {
+	node, err := u.nodeRepo.GetNodeReleaseDetailByKBIDAndID(ctx, kbID, nodeId)
 	if err != nil {
 		return nil, err
 	}
@@ -268,4 +312,58 @@ func (u *NodeUsecase) convertMDToHTML(mdStr string) string {
 	maybeUnsafeHTML := markdown.Render(doc, renderer)
 	html := bluemonday.UGCPolicy().SanitizeBytes(maybeUnsafeHTML)
 	return string(html)
+}
+
+func (u *NodeUsecase) GetNodeReleaseListByKBID(ctx context.Context, kbID string, authId uint) ([]*domain.ShareNodeListItemResp, error) {
+
+	nodes, err := u.nodeRepo.GetNodeReleaseListByKBID(ctx, kbID)
+	if err != nil {
+		return nil, err
+	}
+
+	nodeGroupIds, err := u.GetNodeIdsByAuthId(ctx, authId)
+	if err != nil {
+		return nil, err
+	}
+
+	items := make([]*domain.ShareNodeListItemResp, 0)
+
+	for i, node := range nodes {
+		switch node.Permissions.Visible {
+		case consts.NodeAccessPermOpen:
+			items = append(items, nodes[i])
+		case consts.NodeAccessPermPartial:
+			if slices.Contains(nodeGroupIds, node.ID) {
+				items = append(items, nodes[i])
+			}
+		}
+	}
+
+	return items, nil
+}
+
+func (u *NodeUsecase) GetNodeIdsByAuthId(ctx context.Context, authId uint) ([]string, error) {
+
+	authGroups, err := u.authRepo.GetAuthGroupByAuthId(ctx, authId)
+	if err != nil {
+		return nil, err
+	}
+
+	authGroupIds := lo.Map(authGroups, func(v domain.AuthGroup, i int) uint {
+		return v.ID
+	})
+
+	nodeGroupIds := make([]string, 0)
+	if len(authGroupIds) != 0 {
+		nodeGroups, err := u.nodeRepo.GetNodeGroupsByGroupIdsPerm(ctx, authGroupIds, consts.NodePermNameVisible)
+		if err != nil {
+			return nil, err
+		}
+
+		nodeGroupIds = lo.Map(nodeGroups, func(v domain.NodeAuthGroup, i int) string {
+			return v.NodeID
+		})
+	}
+
+	return nodeGroupIds, nil
 }

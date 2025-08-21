@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	modelkit "github.com/chaitin/ModelKit/usecase"
 	"github.com/cloudwego/eino-ext/components/model/deepseek"
 	"github.com/cloudwego/eino/components/model"
 	"github.com/cloudwego/eino/components/prompt"
@@ -18,7 +19,6 @@ import (
 	"github.com/samber/lo/parallel"
 	"golang.org/x/sync/semaphore"
 
-	modelkit "github.com/chaitin/ModelKit/usecase"
 	"github.com/chaitin/panda-wiki/config"
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/log"
@@ -56,6 +56,7 @@ func (u *LLMUsecase) FormatConversationMessages(
 	ctx context.Context,
 	conversationID string,
 	kbID string,
+	groupIDs []int,
 ) ([]*schema.Message, []*domain.RankedNodeChunks, error) {
 	messages := make([]*schema.Message, 0)
 	rankedNodes := make([]*domain.RankedNodeChunks, 0)
@@ -98,7 +99,7 @@ func (u *LLMUsecase) FormatConversationMessages(
 				return nil, nil, fmt.Errorf("get kb failed: %w", err)
 			}
 			// get related documents from raglite
-			records, err := u.rag.QueryRecords(ctx, []string{kb.DatasetID}, question)
+			records, err := u.rag.QueryRecords(ctx, []string{kb.DatasetID}, question, groupIDs)
 			if err != nil {
 				return nil, nil, fmt.Errorf("get records from raglite failed: %w", err)
 			}

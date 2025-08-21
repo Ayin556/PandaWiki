@@ -1757,7 +1757,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.PWResponse"
+                                    "$ref": "#/definitions/domain.Response"
                                 },
                                 {
                                     "type": "object",
@@ -1801,7 +1801,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/domain.PWResponse"
+                                    "$ref": "#/definitions/domain.Response"
                                 },
                                 {
                                     "type": "object",
@@ -1853,7 +1853,7 @@ const docTemplate = `{
             }
         },
         "/api/v1/model/provider/supported": {
-            "get": {
+            "post": {
                 "description": "get provider supported model list",
                 "consumes": [
                     "application/json"
@@ -1867,56 +1867,13 @@ const docTemplate = `{
                 "summary": "get provider supported model list",
                 "parameters": [
                     {
-                        "type": "string",
-                        "name": "api_header",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "api_key",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "base_url",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "enum": [
-                            "SiliconFlow",
-                            "OpenAI",
-                            "Ollama",
-                            "DeepSeek",
-                            "Moonshot",
-                            "AzureOpenAI",
-                            "BaiZhiCloud",
-                            "Hunyuan",
-                            "BaiLian",
-                            "Volcengine",
-                            "Gemini",
-                            "ZhiPu"
-                        ],
-                        "type": "string",
-                        "name": "provider",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "enum": [
-                            "chat",
-                            "embedding",
-                            "rerank"
-                        ],
-                        "type": "string",
-                        "x-enum-varnames": [
-                            "ModelTypeChat",
-                            "ModelTypeEmbedding",
-                            "ModelTypeRerank"
-                        ],
-                        "name": "type",
-                        "in": "query",
-                        "required": true
+                        "description": "get supported model list request",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.GetProviderModelListReq"
+                        }
                     }
                 ],
                 "responses": {
@@ -1943,6 +1900,11 @@ const docTemplate = `{
         },
         "/api/v1/node": {
             "post": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "description": "Create Node",
                 "consumes": [
                     "application/json"
@@ -1992,6 +1954,11 @@ const docTemplate = `{
         },
         "/api/v1/node/action": {
             "post": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "description": "Node Action",
                 "consumes": [
                     "application/json"
@@ -2041,6 +2008,11 @@ const docTemplate = `{
         },
         "/api/v1/node/batch_move": {
             "post": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "description": "Batch Move Node",
                 "consumes": [
                     "application/json"
@@ -2075,6 +2047,11 @@ const docTemplate = `{
         },
         "/api/v1/node/detail": {
             "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "description": "Get Node Detail",
                 "consumes": [
                     "application/json"
@@ -2112,7 +2089,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/domain.NodeDetailResp"
+                                            "$ref": "#/definitions/v1.NodeDetailResp"
                                         }
                                     }
                                 }
@@ -2122,6 +2099,11 @@ const docTemplate = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "description": "Update Node Detail",
                 "consumes": [
                     "application/json"
@@ -2156,6 +2138,11 @@ const docTemplate = `{
         },
         "/api/v1/node/list": {
             "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "description": "Get Node List",
                 "consumes": [
                     "application/json"
@@ -2207,6 +2194,11 @@ const docTemplate = `{
         },
         "/api/v1/node/move": {
             "post": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "description": "Move Node",
                 "consumes": [
                     "application/json"
@@ -2241,6 +2233,11 @@ const docTemplate = `{
         },
         "/api/v1/node/recommend_nodes": {
             "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "description": "Recommend Nodes",
                 "consumes": [
                     "application/json"
@@ -2297,6 +2294,11 @@ const docTemplate = `{
         },
         "/api/v1/node/summary": {
             "post": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "description": "Summary Node",
                 "consumes": [
                     "application/json"
@@ -2907,7 +2909,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/domain.AuthGetResp"
+                                            "$ref": "#/definitions/v1.AuthGetResp"
                                         }
                                     }
                                 }
@@ -2945,7 +2947,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.AuthLoginSimpleReq"
+                            "$ref": "#/definitions/v1.AuthLoginSimpleReq"
                         }
                     }
                 ],
@@ -3323,6 +3325,52 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "consts.AuthType": {
+            "type": "string",
+            "enum": [
+                "",
+                "simple",
+                "enterprise"
+            ],
+            "x-enum-comments": {
+                "AuthTypeEnterprise": "企业认证",
+                "AuthTypeNull": "无认证",
+                "AuthTypeSimple": "简单口令"
+            },
+            "x-enum-descriptions": [
+                "无认证",
+                "简单口令",
+                "企业认证"
+            ],
+            "x-enum-varnames": [
+                "AuthTypeNull",
+                "AuthTypeSimple",
+                "AuthTypeEnterprise"
+            ]
+        },
+        "consts.NodeAccessPerm": {
+            "type": "string",
+            "enum": [
+                "open",
+                "partial",
+                "closed"
+            ],
+            "x-enum-comments": {
+                "NodeAccessPermClosed": "完全禁止",
+                "NodeAccessPermOpen": "完全开放",
+                "NodeAccessPermPartial": "部分开放"
+            },
+            "x-enum-descriptions": [
+                "完全开放",
+                "部分开放",
+                "完全禁止"
+            ],
+            "x-enum-varnames": [
+                "NodeAccessPermOpen",
+                "NodeAccessPermPartial",
+                "NodeAccessPermClosed"
+            ]
+        },
         "consts.SourceType": {
             "type": "string",
             "enum": [
@@ -3906,51 +3954,6 @@ const docTemplate = `{
                 "AppTypeWechatServiceBot",
                 "AppTypeDisCordBot",
                 "AppTypeWechatOfficialAccount"
-            ]
-        },
-        "domain.AuthGetResp": {
-            "type": "object",
-            "properties": {
-                "auth_type": {
-                    "$ref": "#/definitions/domain.AuthType"
-                },
-                "source_type": {
-                    "$ref": "#/definitions/consts.SourceType"
-                }
-            }
-        },
-        "domain.AuthLoginSimpleReq": {
-            "type": "object",
-            "required": [
-                "password"
-            ],
-            "properties": {
-                "password": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.AuthType": {
-            "type": "string",
-            "enum": [
-                "",
-                "simple",
-                "enterprise"
-            ],
-            "x-enum-comments": {
-                "AuthTypeEnterprise": "企业认证",
-                "AuthTypeNull": "无认证",
-                "AuthTypeSimple": "简单口令"
-            },
-            "x-enum-descriptions": [
-                "无认证",
-                "简单口令",
-                "企业认证"
-            ],
-            "x-enum-varnames": [
-                "AuthTypeNull",
-                "AuthTypeSimple",
-                "AuthTypeEnterprise"
             ]
         },
         "domain.BatchMoveReq": {
@@ -4681,6 +4684,54 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.GetProviderModelListReq": {
+            "type": "object",
+            "required": [
+                "base_url",
+                "provider",
+                "type"
+            ],
+            "properties": {
+                "api_header": {
+                    "type": "string"
+                },
+                "api_key": {
+                    "type": "string"
+                },
+                "base_url": {
+                    "type": "string"
+                },
+                "provider": {
+                    "type": "string",
+                    "enum": [
+                        "SiliconFlow",
+                        "OpenAI",
+                        "Ollama",
+                        "DeepSeek",
+                        "Moonshot",
+                        "AzureOpenAI",
+                        "BaiZhiCloud",
+                        "Hunyuan",
+                        "BaiLian",
+                        "Volcengine",
+                        "Gemini",
+                        "ZhiPu"
+                    ]
+                },
+                "type": {
+                    "enum": [
+                        "chat",
+                        "embedding",
+                        "rerank"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.ModelType"
+                        }
+                    ]
+                }
+            }
+        },
         "domain.GetProviderModelListResp": {
             "type": "object",
             "properties": {
@@ -4935,48 +4986,22 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.NodeDetailResp": {
-            "type": "object",
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "kb_id": {
-                    "type": "string"
-                },
-                "meta": {
-                    "$ref": "#/definitions/domain.NodeMeta"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "parent_id": {
-                    "type": "string"
-                },
-                "status": {
-                    "$ref": "#/definitions/domain.NodeStatus"
-                },
-                "type": {
-                    "$ref": "#/definitions/domain.NodeType"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "visibility": {
-                    "$ref": "#/definitions/domain.NodeVisibility"
-                }
-            }
-        },
         "domain.NodeListItemResp": {
             "type": "object",
             "properties": {
                 "created_at": {
+                    "type": "string"
+                },
+                "creator": {
+                    "type": "string"
+                },
+                "creator_id": {
+                    "type": "string"
+                },
+                "editor": {
+                    "type": "string"
+                },
+                "editor_id": {
                     "type": "string"
                 },
                 "emoji": {
@@ -4990,6 +5015,9 @@ const docTemplate = `{
                 },
                 "parent_id": {
                     "type": "string"
+                },
+                "permissions": {
+                    "$ref": "#/definitions/domain.NodePermissions"
                 },
                 "position": {
                     "type": "number"
@@ -5019,6 +5047,35 @@ const docTemplate = `{
                 },
                 "summary": {
                     "type": "string"
+                }
+            }
+        },
+        "domain.NodePermissions": {
+            "type": "object",
+            "properties": {
+                "answerable": {
+                    "description": "可被问答",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/consts.NodeAccessPerm"
+                        }
+                    ]
+                },
+                "visible": {
+                    "description": "导航内可见",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/consts.NodeAccessPerm"
+                        }
+                    ]
+                },
+                "visitable": {
+                    "description": "可被访问",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/consts.NodeAccessPerm"
+                        }
+                    ]
                 }
             }
         },
@@ -5868,19 +5925,7 @@ const docTemplate = `{
                 "ModelProviderBrandZhiPu": "智谱"
             },
             "x-enum-descriptions": [
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "智谱",
-                ""
+                "智谱"
             ],
             "x-enum-varnames": [
                 "ModelProviderBrandOpenAI",
@@ -5924,6 +5969,28 @@ const docTemplate = `{
                 },
                 "total": {
                     "type": "integer"
+                }
+            }
+        },
+        "v1.AuthGetResp": {
+            "type": "object",
+            "properties": {
+                "auth_type": {
+                    "$ref": "#/definitions/consts.AuthType"
+                },
+                "source_type": {
+                    "$ref": "#/definitions/consts.SourceType"
+                }
+            }
+        },
+        "v1.AuthLoginSimpleReq": {
+            "type": "object",
+            "required": [
+                "password"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string"
                 }
             }
         },
@@ -6087,6 +6154,47 @@ const docTemplate = `{
             "properties": {
                 "token": {
                     "type": "string"
+                }
+            }
+        },
+        "v1.NodeDetailResp": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "kb_id": {
+                    "type": "string"
+                },
+                "meta": {
+                    "$ref": "#/definitions/domain.NodeMeta"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "parent_id": {
+                    "type": "string"
+                },
+                "permissions": {
+                    "$ref": "#/definitions/domain.NodePermissions"
+                },
+                "status": {
+                    "$ref": "#/definitions/domain.NodeStatus"
+                },
+                "type": {
+                    "$ref": "#/definitions/domain.NodeType"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "visibility": {
+                    "$ref": "#/definitions/domain.NodeVisibility"
                 }
             }
         },

@@ -91,7 +91,8 @@ func createApp() (*App, error) {
 	if err != nil {
 		return nil, err
 	}
-	nodeUsecase := usecase.NewNodeUsecase(nodeRepository, ragRepository, knowledgeBaseRepository, llmUsecase, logger, minioClient, modelRepository)
+	authRepo := pg2.NewAuthRepo(db, logger)
+	nodeUsecase := usecase.NewNodeUsecase(nodeRepository, ragRepository, knowledgeBaseRepository, llmUsecase, logger, minioClient, modelRepository, authRepo)
 	nodeHandler := v1.NewNodeHandler(baseHandler, echo, nodeUsecase, authMiddleware, logger)
 	appRepository := pg2.NewAppRepository(db, logger)
 	geoRepo := cache2.NewGeoCache(cacheCache, logger)
@@ -100,7 +101,6 @@ func createApp() (*App, error) {
 		return nil, err
 	}
 	ipAddressRepo := ipdb2.NewIPAddressRepo(ipdbIPDB, logger)
-	authRepo := pg2.NewAuthRepo(db, logger)
 	conversationUsecase := usecase.NewConversationUsecase(conversationRepository, nodeRepository, geoRepo, logger, ipAddressRepo, authRepo)
 	modelUsecase := usecase.NewModelUsecase(modelRepository, nodeRepository, ragRepository, ragService, logger, configConfig, knowledgeBaseRepository)
 	blockWordRepo := pg2.NewBlockWordRepo(db, logger)
