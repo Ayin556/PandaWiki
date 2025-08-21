@@ -1,4 +1,7 @@
-import { addRelease, getNodeList, ITreeItem, NodeListItem } from '@/api';
+import { ITreeItem } from '@/api';
+import { getApiV1NodeList } from '@/request/Node';
+import { DomainNodeListItemResp } from '@/request/types';
+import { postApiV1KnowledgeBaseRelease } from '@/request/KnowledgeBase';
 import Card from '@/components/Card';
 import DragTree from '@/components/Drag/DragTree';
 import { useAppSelector } from '@/store';
@@ -28,7 +31,7 @@ const VersionPublish = ({
   const [folderIds, setFolderIds] = useState<string[]>([]);
   const [treeList, setTreeList] = useState<ITreeItem[]>([]);
   const [total, setTotal] = useState(0);
-  const [list, setList] = useState<NodeListItem[]>([]);
+  const [list, setList] = useState<DomainNodeListItemResp[]>([]);
 
   const {
     handleSubmit,
@@ -44,23 +47,23 @@ const VersionPublish = ({
   });
 
   const getData = () => {
-    getNodeList({ kb_id }).then(res => {
+    getApiV1NodeList({ kb_id }).then(res => {
       const unPublishedData = res?.filter(item => item.status === 1) || [];
       setList(unPublishedData);
       setSelected(
         defaultSelected.length > 0
           ? defaultSelected
-          : unPublishedData.map(it => it.id),
+          : unPublishedData.map(it => it.id!),
       );
       const showTreeData = convertToTree(unPublishedData || []);
       setTreeList(showTreeData);
-      setFolderIds(res.filter(item => item.type === 1).map(item => item.id));
+      setFolderIds(res.filter(item => item.type === 1).map(item => item.id!));
     });
   };
 
-  const onSubmit = (data: any) => {
+  const onSubmit = handleSubmit(data => {
     if (selected.length > 0) {
-      addRelease({
+      postApiV1KnowledgeBaseRelease({
         kb_id,
         ...data,
         node_ids: [...selected, ...folderIds],
@@ -74,7 +77,7 @@ const VersionPublish = ({
     } else {
       Message.error(total > 0 ? '请选择要发布的文档' : '暂无未发布文档');
     }
-  };
+  });
 
   useEffect(() => {
     if (open) {
@@ -91,16 +94,11 @@ const VersionPublish = ({
   }, [open, kb_id]);
 
   const selectedTotal = useMemo(() => {
-    return list.filter(item => selected.includes(item.id)).length;
+    return list.filter(item => selected.includes(item.id!)).length;
   }, [selected, list]);
 
   return (
-    <Modal
-      title='发布新版本'
-      open={open}
-      onCancel={onClose}
-      onOk={handleSubmit(onSubmit)}
-    >
+    <Modal title='发布新版本' open={open} onCancel={onClose} onOk={onSubmit}>
       <>
         <Box sx={{ fontSize: 14, lineHeight: '32px' }}>
           版本号
@@ -185,7 +183,7 @@ const VersionPublish = ({
                 setSelected(
                   selectedTotal === list.length
                     ? []
-                    : list.map(item => item.id),
+                    : list.map(item => item.id!),
                 );
               }}
             />

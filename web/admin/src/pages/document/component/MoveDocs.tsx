@@ -1,4 +1,6 @@
-import { batchMoveNode, ITreeItem, NodeListItem } from '@/api';
+import { ITreeItem } from '@/api';
+import { postApiV1NodeBatchMove } from '@/request/Node';
+import { DomainNodeListItemResp } from '@/request/types';
 import Card from '@/components/Card';
 import DragTree from '@/components/Drag/DragTree';
 import { useAppSelector } from '@/store';
@@ -10,8 +12,8 @@ import { useEffect, useState } from 'react';
 interface DocDeleteProps {
   open: boolean;
   onClose: () => void;
-  data: NodeListItem[];
-  selected: NodeListItem[];
+  data: DomainNodeListItemResp[];
+  selected: DomainNodeListItemResp[];
   refresh?: () => void;
 }
 
@@ -31,16 +33,16 @@ const MoveDocs = ({
       Message.error('请选择移动路径');
       return;
     }
-    let ids = selected.filter(it => it.type === 1).map(it => it.id);
+    const ids = selected.filter(it => it.type === 1).map(it => it.id!);
     selected
       .filter(it => it.type === 2)
       .forEach(it => {
-        if (!ids.includes(it.parent_id)) {
-          ids.push(it.id);
+        if (!ids.includes(it.parent_id!)) {
+          ids.push(it.id!);
         }
       });
     const parent_id = folderIds.includes('root') ? '' : folderIds[0];
-    batchMoveNode({ ids, parent_id, kb_id }).then(() => {
+    postApiV1NodeBatchMove({ ids, parent_id, kb_id }).then(() => {
       Message.success('移动成功');
       onClose();
       refresh?.();

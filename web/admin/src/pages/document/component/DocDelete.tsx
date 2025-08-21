@@ -1,4 +1,5 @@
-import { NodeListItem, updateNodeAction } from '@/api';
+import { postApiV1NodeAction } from '@/request/Node';
+import { DomainNodeListItemResp } from '@/request/types';
 import Card from '@/components/Card';
 import DragTree from '@/components/Drag/DragTree';
 import { useAppSelector } from '@/store';
@@ -10,7 +11,7 @@ import { Message, Modal } from 'ct-mui';
 interface DocDeleteProps {
   open: boolean;
   onClose: () => void;
-  data: NodeListItem[];
+  data: DomainNodeListItemResp[];
   refresh?: () => void;
 }
 
@@ -19,8 +20,8 @@ const DocDelete = ({ open, onClose, data, refresh }: DocDeleteProps) => {
   if (!data) return null;
 
   const submit = () => {
-    updateNodeAction({
-      ids: data.map(item => item.id),
+    postApiV1NodeAction({
+      ids: data.map(item => item.id!),
       kb_id,
       action: 'delete',
     }).then(() => {

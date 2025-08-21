@@ -1,10 +1,4 @@
-import {
-  getNodeList,
-  ImportDocType,
-  ITreeItem,
-  NodeListFilterData,
-  NodeListItem,
-} from '@/api';
+import { ImportDocType, ITreeItem, NodeListFilterData } from '@/api';
 import Card from '@/components/Card';
 import DragTree from '@/components/Drag/DragTree';
 import {
@@ -24,6 +18,8 @@ import {
   useTheme,
 } from '@mui/material';
 import { Icon, MenuSelect } from 'ct-mui';
+import { getApiV1NodeList } from '@/request/Node';
+import { DomainNodeListItemResp } from '@/request/types';
 import { useCallback, useEffect, useState } from 'react';
 import VersionPublish from '../release/components/VersionPublish';
 import DocAdd from './component/DocAdd';
@@ -34,6 +30,7 @@ import DocSummary from './component/DocSummary';
 import ImportDoc from './component/ImportDoc';
 import MoveDocs from './component/MoveDocs';
 import Summary from './component/Summary';
+import DocPropertiesModal from './component/DocPropertiesModal';
 
 const Content = () => {
   const { kb_id } = useAppSelector(state => state.config);
@@ -47,10 +44,10 @@ const Content = () => {
     published: 0,
     unpublished: 0,
   });
-  const [list, setList] = useState<NodeListItem[]>([]);
+  const [list, setList] = useState<DomainNodeListItemResp[]>([]);
   const [selected, setSelected] = useState<string[]>([]);
   const [data, setData] = useState<ITreeItem[]>([]);
-  const [opraData, setOpraData] = useState<NodeListItem[]>([]);
+  const [opraData, setOpraData] = useState<DomainNodeListItemResp[]>([]);
   const [statusOpen, setStatusOpen] = useState<'private' | 'public' | null>(
     null,
   );
@@ -62,6 +59,7 @@ const Content = () => {
   const [publishIds, setPublishIds] = useState<string[]>([]);
   const [publishOpen, setPublishOpen] = useState(false);
   const [key, setKey] = useState<ImportDocType>('URL');
+  const [propertiesOpen, setPropertiesOpen] = useState(false);
 
   const handleUrl = (item: ITreeItem, key: ImportDocType) => {
     setKey(key);
@@ -87,6 +85,11 @@ const Content = () => {
   const handlePublish = (item: ITreeItem) => {
     setPublishOpen(true);
     setPublishIds([item.id]);
+  };
+
+  const handleProperties = (item: ITreeItem) => {
+    setPropertiesOpen(true);
+    setOpraData(list.filter(it => it.id === item.id));
   };
 
   const menu = (opra: TreeMenuOptions): TreeMenuItem[] => {
@@ -208,13 +211,22 @@ const Content = () => {
         ? [{ label: '重命名', key: 'rename', onClick: renameItem }]
         : []),
       { label: '删除', key: 'delete', onClick: () => handleDelete(item) },
+      ...(item.type === 2
+        ? [
+            {
+              label: '文档属性',
+              key: 'properties',
+              onClick: () => handleProperties(item),
+            },
+          ]
+        : []),
     ];
   };
 
   const getData = useCallback(() => {
     const params: NodeListFilterData = { kb_id };
     if (search) params.search = search;
-    getNodeList(params).then(res => {
+    getApiV1NodeList(params).then(res => {
       setList(res || []);
       setPublish({
         unpublished: res.filter(it => it.status === 1).length,
@@ -342,7 +354,7 @@ const Content = () => {
                   setSelected([]);
                   setOpraData([]);
                 } else {
-                  setSelected(list.map(item => item.id));
+                  setSelected(list.map(item => item.id!));
                   setOpraData(list);
                 }
               }}
@@ -359,7 +371,7 @@ const Content = () => {
                     onClick={() => {
                       setStatusOpen('public');
                       setOpraData(
-                        list.filter(item => selected.includes(item.id)),
+                        list.filter(item => selected.includes(item.id!)),
                       );
                     }}
                   >
@@ -371,7 +383,7 @@ const Content = () => {
                     onClick={() => {
                       setStatusOpen('private');
                       setOpraData(
-                        list.filter(item => selected.includes(item.id)),
+                        list.filter(item => selected.includes(item.id!)),
                       );
                     }}
                   >
@@ -383,7 +395,7 @@ const Content = () => {
                     onClick={() => {
                       setMoreSummaryOpen(true);
                       setOpraData(
-                        list.filter(item => selected.includes(item.id)),
+                        list.filter(item => selected.includes(item.id!)),
                       );
                     }}
                   >
@@ -395,7 +407,7 @@ const Content = () => {
                     onClick={() => {
                       setMoveOpen(true);
                       setOpraData(
-                        list.filter(item => selected.includes(item.id)),
+                        list.filter(item => selected.includes(item.id!)),
                       );
                     }}
                   >
@@ -407,7 +419,7 @@ const Content = () => {
                     onClick={() => {
                       setDeleteOpen(true);
                       setOpraData(
-                        list.filter(item => selected.includes(item.id)),
+                        list.filter(item => selected.includes(item.id!)),
                       );
                     }}
                   >
@@ -521,6 +533,19 @@ const Content = () => {
           setMoveOpen(false);
           setOpraData([]);
         }}
+      />
+      <DocPropertiesModal
+        open={propertiesOpen}
+        onCancel={() => {
+          setPropertiesOpen(false);
+          setOpraData([]);
+        }}
+        onOk={() => {
+          getData();
+          setPropertiesOpen(false);
+          setOpraData([]);
+        }}
+        data={opraData[0]}
       />
     </>
   );

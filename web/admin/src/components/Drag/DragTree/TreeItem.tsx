@@ -1,8 +1,8 @@
-import { createNode, ITreeItem, updateNode } from '@/api';
+import { ITreeItem } from '@/api';
+import { putApiV1NodeDetail, postApiV1Node } from '@/request/Node';
 import Emoji from '@/components/Emoji';
 import { treeSx } from '@/constant/styles';
 import { useAppSelector } from '@/store';
-import { addOpacityToColor } from '@/utils';
 import { AppContext, updateTree } from '@/utils/drag';
 import { handleMultiSelect, updateAllParentStatus } from '@/utils/tree';
 import {
@@ -11,7 +11,10 @@ import {
   Checkbox,
   Stack,
   TextField,
-  useTheme,
+  styled,
+  Theme,
+  PaletteColor,
+  alpha,
 } from '@mui/material';
 import { Ellipsis, Message } from 'ct-mui';
 import dayjs from 'dayjs';
@@ -28,12 +31,23 @@ import React, {
   useState,
 } from 'react';
 import TreeMenu from './TreeMenu';
+import { ConstsNodeAccessPerm } from '@/request/types';
+
+const StyledTag = styled('div')<{ color: keyof Theme['palette'] }>(
+  ({ theme, color }) => ({
+    color: (theme.palette[color] as PaletteColor).main,
+    border: '1px solid',
+    borderColor: (theme.palette[color] as PaletteColor).main,
+    borderRadius: '10px',
+    padding: theme.spacing(0, 1),
+    bgcolor: alpha((theme.palette[color] as PaletteColor).main, 0.1),
+  }),
+);
 
 const TreeItem = React.forwardRef<
   HTMLDivElement,
   TreeItemComponentProps<ITreeItem>
 >((props, ref) => {
-  const theme = useTheme();
   const { kb_id: id } = useAppSelector(state => state.config);
   const { item, collapsed } = props;
   const context = useContext(AppContext);
@@ -168,6 +182,13 @@ const TreeItem = React.forwardRef<
     return [];
   }, [item, isEditting, createItem, renameItem, removeItem]);
 
+  const permissions = useMemo(() => {
+    if (item.permissions) {
+      return item.permissions;
+    }
+    return null;
+  }, [item.permissions]);
+
   return (
     <Box
       sx={[
@@ -263,7 +284,7 @@ const TreeItem = React.forwardRef<
                     onClick={e => {
                       e.stopPropagation();
                       if (item.name) {
-                        updateNode({
+                        putApiV1NodeDetail({
                           id: item.id,
                           kb_id: id,
                           name: value,
@@ -286,7 +307,7 @@ const TreeItem = React.forwardRef<
                           Message.error('文档名称不能为空');
                           return;
                         }
-                        createNode({
+                        postApiV1Node({
                           name: value,
                           content: '',
                           kb_id: id,
@@ -359,7 +380,7 @@ const TreeItem = React.forwardRef<
                       value={item.emoji}
                       onChange={async value => {
                         try {
-                          await updateNode({
+                          await putApiV1NodeDetail({
                             id: item.id,
                             kb_id: id,
                             emoji: value,
@@ -411,56 +432,26 @@ const TreeItem = React.forwardRef<
                       sx={{ flexShrink: 0, fontSize: 12 }}
                     >
                       {item.status === 1 && (
-                        <Box
-                          sx={{
-                            color: 'error.main',
-                            border: '1px solid',
-                            borderColor: 'error.main',
-                            borderRadius: '10px',
-                            px: 1,
-                            bgcolor: addOpacityToColor(
-                              theme.palette.error.main,
-                              0.1,
-                            ),
-                          }}
-                        >
-                          更新未发布
-                        </Box>
+                        <StyledTag color='error'>更新未发布</StyledTag>
                       )}
                       {item.type === 2 &&
                         (item.visibility === 1 ? (
-                          <Box
-                            sx={{
-                              color: 'warning.main',
-                              border: '1px solid',
-                              borderColor: 'warning.main',
-                              borderRadius: '10px',
-                              px: 1,
-                              bgcolor: addOpacityToColor(
-                                theme.palette.warning.main,
-                                0.1,
-                              ),
-                            }}
-                          >
-                            私有
-                          </Box>
+                          <StyledTag color='warning'>私有</StyledTag>
                         ) : (
-                          <Box
-                            sx={{
-                              color: 'success.main',
-                              border: '1px solid',
-                              borderColor: 'success.main',
-                              borderRadius: '10px',
-                              px: 1,
-                              bgcolor: addOpacityToColor(
-                                theme.palette.success.main,
-                                0.1,
-                              ),
-                            }}
-                          >
-                            公开
-                          </Box>
+                          <StyledTag color='success'>公开</StyledTag>
                         ))}
+                      {permissions?.answerable ===
+                        ConstsNodeAccessPerm.NodeAccessPermClosed && (
+                        <StyledTag color='warning'>不可被问答</StyledTag>
+                      )}
+                      {permissions?.visitable ===
+                        ConstsNodeAccessPerm.NodeAccessPermClosed && (
+                        <StyledTag color='warning'>不可被访问</StyledTag>
+                      )}
+                      {permissions?.visible ===
+                        ConstsNodeAccessPerm.NodeAccessPermClosed && (
+                        <StyledTag color='warning'>导航内不可见</StyledTag>
+                      )}
                     </Stack>
                     <Box
                       sx={{

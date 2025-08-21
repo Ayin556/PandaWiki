@@ -1,4 +1,5 @@
-import { getNodeList, ITreeItem, NodeListFilterData } from '@/api';
+import { ITreeItem, NodeListFilterData } from '@/api';
+import { getApiV1NodeList } from '@/request/Node';
 import Nodata from '@/assets/images/nodata.png';
 import DragTree from '@/components/Drag/DragTree';
 import { useAppSelector } from '@/store';
@@ -29,7 +30,7 @@ const AddRecommendContent = ({
   const getData = useCallback(() => {
     setLoading(true);
     const params: NodeListFilterData = { kb_id };
-    getNodeList(params)
+    getApiV1NodeList(params)
       .then(res => {
         const filterData =
           res?.filter(

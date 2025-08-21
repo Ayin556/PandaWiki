@@ -1,4 +1,5 @@
-import { createNode, NodeDetail, updateNode } from '@/api';
+import { NodeDetail } from '@/api';
+import { putApiV1NodeDetail, postApiV1Node } from '@/request/Node';
 import Emoji from '@/components/Emoji';
 import { useAppSelector } from '@/store';
 import { Box, TextField } from '@mui/material';
@@ -44,7 +45,7 @@ const DocAddByCustomText = ({
 
   const submit = (value: { name: string; emoji: string }) => {
     if (data) {
-      updateNode({
+      putApiV1NodeDetail({
         id: data.id,
         kb_id: id,
         name: value.name,
@@ -63,11 +64,10 @@ const DocAddByCustomText = ({
       });
     } else {
       if (!id) return;
-      createNode({
+      postApiV1Node({
         name: value.name,
         content: '',
         kb_id: id,
-        parent_id: null,
         type,
         emoji: value.emoji,
       }).then(({ id }) => {

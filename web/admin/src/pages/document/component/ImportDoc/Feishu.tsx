@@ -1,9 +1,9 @@
 import {
-  createNode,
   ImportDocByFeishuFormData,
   ImportDocListItem,
   ImportDocProps,
 } from '@/api';
+import { postApiV1Node } from '@/request/Node';
 import {
   postApiV1CrawlerFeishuListDoc,
   postApiV1CrawlerFeishuGetDoc,
@@ -112,10 +112,10 @@ const FeishuImport = ({
               kb_id,
               ...getValues(),
             });
-            const nodeRes = await createNode({
+            const nodeRes = await postApiV1Node({
               name: res[0].title || item.url.toString() || '',
               content: res[0].content || '',
-              parent_id: parentId,
+              parent_id: parentId || undefined,
               type: 2,
               kb_id,
             });
@@ -280,10 +280,10 @@ const FeishuImport = ({
                   it.url === item.url ? { ...it, success: 0, id: '' } : it,
                 ),
               );
-              createNode({
+              postApiV1Node({
                 name: item.title,
                 content: item.content,
-                parent_id: parentId,
+                parent_id: parentId || undefined,
                 type: 2,
                 kb_id,
               })

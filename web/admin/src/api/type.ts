@@ -1,4 +1,5 @@
 import { AppType, IconMap, ModelProvider } from '@/constant/enums';
+import { DomainNodePermissions } from '@/request/types';
 
 export type Paging = {
   page?: number;
@@ -191,7 +192,7 @@ export interface ITreeItem {
   level: number;
   order?: number;
   emoji?: string;
-  parentId?: string | null;
+  parentId?: string;
   summary?: string;
   children?: ITreeItem[];
   type: 1 | 2;
@@ -200,6 +201,7 @@ export interface ITreeItem {
   updated_at?: string;
   status?: 1 | 2;
   visibility?: 1 | 2;
+  permissions?: DomainNodePermissions;
 }
 
 export interface NodeReleaseItem {

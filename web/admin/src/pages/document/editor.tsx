@@ -1,10 +1,10 @@
-import { NodeDetail, updateNode, uploadFile } from '@/api';
-import { getApiV1NodeDetail } from '@/request/Node';
+import { NodeDetail, uploadFile } from '@/api';
+import { getApiV1NodeDetail, putApiV1NodeDetail } from '@/request/Node';
 import {
   DomainGetNodeReleaseDetailResp,
   DomainNodeReleaseListItem,
 } from '@/request/pro';
-import { DomainNodeDetailResp } from '@/request/types';
+import { V1NodeDetailResp } from '@/request/types';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { setKbId } from '@/store/slices/config';
 import light from '@/themes/light';
@@ -36,7 +36,7 @@ const DocEditor = () => {
   const { kb_id = '' } = useAppSelector(state => state.config);
   const timer = useRef<NodeJS.Timeout | null>(null);
 
-  const [detail, setDetail] = useState<DomainNodeDetailResp | null>(null);
+  const [detail, setDetail] = useState<V1NodeDetailResp | null>(null);
   const [edited, setEdited] = useState(false);
   const [headings, setHeadings] = useState<TocList>([]);
   const [docContent, setDocContent] = useState('');
@@ -78,7 +78,7 @@ const DocEditor = () => {
     cancelTimer();
     try {
       const newDetail = nodeDetail ?? detail;
-      await updateNode({
+      await putApiV1NodeDetail({
         id,
         content,
         kb_id: newDetail.kb_id!,

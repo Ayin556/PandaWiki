@@ -31,6 +31,7 @@ const ShowContent = ({
     setKey(prev => prev + 1);
   }, [appPreviewData?.settings?.theme_mode]);
 
+  // @ts-expect-error 类型错误
   const settings: Partial<AppSetting> = useMemo(() => {
     return (
       appPreviewData?.settings || {
@@ -94,7 +95,7 @@ const ShowContent = ({
     <ThemeProvider
       key={key} // 强制刷新主题
       colors={{ light, dark }}
-      mode={appPreviewData?.settings.theme_mode || 'light'}
+      mode={appPreviewData?.settings!.theme_mode || 'light'}
       theme={{
         components: componentStyleOverrides,
       }}

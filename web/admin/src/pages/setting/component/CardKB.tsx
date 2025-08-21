@@ -8,6 +8,7 @@ import {
   ConstsUserKBPermission,
   DomainKnowledgeBaseDetail,
   V1KBUserListItemResp,
+  V1KBUserUpdateReq,
 } from '@/request/types';
 import { useAppSelector } from '@/store';
 import { setKbList } from '@/store/slices/config';
@@ -19,7 +20,7 @@ import {
   Select,
   Stack,
   TextField,
-  Tooltip
+  Tooltip,
 } from '@mui/material';
 import { Ellipsis, Icon, Message, Modal } from 'ct-mui';
 import { useEffect, useMemo, useState } from 'react';
@@ -90,7 +91,10 @@ const CardKB = ({ kb }: CardKBProps) => {
     });
   };
 
-  const onUpdateUserPermission = (id: string, perm: ConstsUserKBPermission) => {
+  const onUpdateUserPermission = (
+    id: string,
+    perm: V1KBUserUpdateReq['perm'],
+  ) => {
     patchApiV1KnowledgeBaseUserUpdate({
       kb_id,
       user_id: id,
@@ -107,7 +111,11 @@ const CardKB = ({ kb }: CardKBProps) => {
 
   return (
     <SettingCard title='后台信息'>
-      <SettingCardItem title='Wiki 站名称' isEdit={isEdit} onSubmit={handleSave}>
+      <SettingCardItem
+        title='Wiki 站名称'
+        isEdit={isEdit}
+        onSubmit={handleSave}
+      >
         <TextField
           fullWidth
           value={kbName}
@@ -175,7 +183,7 @@ const CardKB = ({ kb }: CardKBProps) => {
                   onChange={e =>
                     onUpdateUserPermission(
                       it.id!,
-                      e.target.value as ConstsUserKBPermission,
+                      e.target.value as V1KBUserUpdateReq['perm'],
                     )
                   }
                 >

@@ -56,7 +56,7 @@ const ComponentBar = ({
           </Stack>
           <Stack sx={{ paddingX: '20px', marginTop: '15px' }}>
             <Select
-              value={appPreviewData.settings.theme_mode}
+              value={appPreviewData.settings?.theme_mode}
               sx={{
                 width: '100%',
                 height: '40px',

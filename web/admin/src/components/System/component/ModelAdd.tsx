@@ -1,10 +1,10 @@
+import { ModelListItem } from '@/api';
 import {
-  createModel,
-  getModelNameList,
-  ModelListItem,
-  testModel,
-  updateModel,
-} from '@/api';
+  postApiV1ModelProviderSupported,
+  postApiV1ModelCheck,
+  postApiV1Model,
+  putApiV1Model,
+} from '@/request/Model';
 import Card from '@/components/Card';
 import { ModelProvider } from '@/constant/enums';
 import { addOpacityToColor } from '@/utils';
@@ -83,7 +83,7 @@ const ModelAdd = ({
 
   const providerBrand = watch('provider');
 
-  const [modelUserList, setModelUserList] = useState<{ model: string }[]>([]);
+  const [modelUserList, setModelUserList] = useState<{ model?: string }[]>([]);
 
   const [loading, setLoading] = useState(false);
   const [modelLoading, setModelLoading] = useState(false);
@@ -116,16 +116,18 @@ const ModelAdd = ({
       header = value.api_header_key + '=' + value.api_header_value;
     }
     setModelLoading(true);
-    getModelNameList({
+    postApiV1ModelProviderSupported({
       type,
       api_key: value.api_key,
       base_url: value.base_url,
-      provider: value.provider,
+      provider: value.provider as Exclude<keyof typeof ModelProvider, 'Other'>,
       api_header: header,
     })
       .then(res => {
         setModelUserList(
-          (res.models || []).sort((a, b) => a.model.localeCompare(b.model)),
+          (res.models || []).sort((a, b) =>
+            (a.model || '').localeCompare(b.model || ''),
+          ),
         );
         if (data && (res.models || []).find(it => it.model === data.model)) {
           setValue('model', data.model);
@@ -146,7 +148,7 @@ const ModelAdd = ({
     }
     setError('');
     setLoading(true);
-    testModel({
+    postApiV1ModelCheck({
       type,
       api_key: value.api_key,
       base_url: value.base_url,
@@ -161,7 +163,7 @@ const ModelAdd = ({
           setLoading(false);
         } else {
           if (data) {
-            updateModel({
+            putApiV1Model({
               type,
               api_key: value.api_key,
               base_url: value.base_url,
@@ -179,7 +181,7 @@ const ModelAdd = ({
                 setLoading(false);
               });
           } else {
-            createModel({
+            postApiV1Model({
               type,
               api_key: value.api_key,
               base_url: value.base_url,

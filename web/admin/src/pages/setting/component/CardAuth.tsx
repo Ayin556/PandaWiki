@@ -1,5 +1,8 @@
 import { AuthSetting } from '@/api/type';
-import { ConstsSourceType } from '@/request/pro/types';
+import {
+  ConstsSourceType,
+  GithubComChaitinPandaWikiProApiAuthV1AuthGroupListItem,
+} from '@/request/pro/types';
 import dayjs from 'dayjs';
 import {
   Box,
@@ -13,6 +16,7 @@ import {
   MenuItem,
   Link,
   styled,
+  IconButton,
   Autocomplete,
   Chip,
 } from '@mui/material';
@@ -20,12 +24,22 @@ import NoData from '@/assets/images/nodata.png';
 import { putApiV1KnowledgeBaseDetail } from '@/request/KnowledgeBase';
 import { DomainKnowledgeBaseDetail } from '@/request/types';
 import { GithubComChaitinPandaWikiProApiAuthV1AuthItem } from '@/request/pro/types';
-import { getApiProV1AuthGet, postApiProV1AuthSet } from '@/request/pro/Auth';
-import { StyledFormLabel } from '@/components/Form';
-import { Message, Table, Icon } from 'ct-mui';
-import { useEffect, useMemo, useState } from 'react';
+import {
+  getApiProV1AuthGet,
+  postApiProV1AuthSet,
+  deleteApiProV1AuthDelete,
+} from '@/request/pro/Auth';
+import {
+  deleteApiProV1AuthGroupDelete,
+  getApiProV1AuthGroupList,
+} from '@/request/pro/AuthGroup';
+import UserGroupModal from './UserGroupModal';
+import { Message, Table, Icon, Modal } from 'ct-mui';
+import { ColumnType } from 'ct-mui/dist/Table';
+import { useEffect, useMemo, useState, useRef } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useAppSelector } from '@/store';
+import { SettingCardItem, FormItem } from './Common';
 
 interface CardAuthProps {
   kb: DomainKnowledgeBaseDetail;
@@ -46,32 +60,6 @@ const sourceTypeIcon = {
   [ConstsSourceType.SourceTypeWeCom]: 'icon-qiyeweixinjiqiren',
 };
 
-const StyledFormItem = styled('div')(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  gap: theme.spacing(2),
-  margin: theme.spacing(2, 2, 0),
-}));
-
-export const FormItem = ({
-  label,
-  children,
-  required,
-}: {
-  label: string | React.ReactNode;
-  children: React.ReactNode;
-  required?: boolean;
-}) => {
-  return (
-    <StyledFormItem>
-      <StyledFormLabel required={required} sx={{ width: 156, flexShrink: 0 }}>
-        {label}
-      </StyledFormLabel>
-      {children}
-    </StyledFormItem>
-  );
-};
-
 const CardAuth = ({ kb, refresh }: CardAuthProps) => {
   const { license, kb_id } = useAppSelector(state => state.config);
   const [isEdit, setIsEdit] = useState(false);
@@ -79,6 +67,12 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
   const [memberList, setMemberList] = useState<
     GithubComChaitinPandaWikiProApiAuthV1AuthItem[]
   >([]);
+  const [userGroupList, setUserGroupList] = useState<
+    GithubComChaitinPandaWikiProApiAuthV1AuthGroupListItem[]
+  >([]);
+  const [userGroupModalData, setUserGroupModalData] =
+    useState<GithubComChaitinPandaWikiProApiAuthV1AuthGroupListItem>();
+  const [userGroupModalOpen, setUserGroupModalOpen] = useState(false);
   const {
     control,
     handleSubmit,
@@ -111,7 +105,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
       user_filter: '',
     },
   });
-
+  const sourceTypeRef = useRef(watch('source_type'));
   const source_type = watch('source_type');
   const userInfoUrl = watch('user_info_url');
   const enabled = watch('enabled');
@@ -175,17 +169,16 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
   });
 
   const isPro = useMemo(() => {
-    return license.edition === 2 || license.edition === 1;
+    return license.edition === 1 || license.edition === 2;
   }, [license]);
 
   useEffect(() => {
-    setValue(
-      'source_type',
-      isPro
-        ? kb.access_settings?.source_type ||
-            EXTEND_CONSTS_SOURCE_TYPE.SourceTypePassword
-        : EXTEND_CONSTS_SOURCE_TYPE.SourceTypePassword,
-    );
+    const source_type = isPro
+      ? kb.access_settings?.source_type ||
+        EXTEND_CONSTS_SOURCE_TYPE.SourceTypePassword
+      : EXTEND_CONSTS_SOURCE_TYPE.SourceTypePassword;
+    setValue('source_type', source_type);
+    sourceTypeRef.current = source_type;
   }, [kb, isPro]);
 
   useEffect(() => {
@@ -201,9 +194,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
     }
   }, [kb]);
 
-  useEffect(() => {
-    if (!isPro || !kb_id || enabled !== '2') return;
-
+  const getAuth = () => {
     getApiProV1AuthGet({
       kb_id,
       source_type: source_type as ConstsSourceType,
@@ -229,9 +220,126 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
       setValue('user_base_dn', res.user_base_dn!);
       setValue('user_filter', res.user_filter!);
     });
+  };
+
+  useEffect(() => {
+    if (!isPro || !kb_id || enabled !== '2') return;
+    getAuth();
   }, [kb_id, isPro, source_type, enabled]);
 
-  const columns = [
+  const getUserGroup = () => {
+    getApiProV1AuthGroupList({
+      kb_id,
+      page: 1,
+      per_page: 9999,
+    }).then(res => {
+      setUserGroupList(res?.list || []);
+    });
+  };
+  useEffect(() => {
+    if (!kb_id || enabled !== '2') return;
+    getUserGroup();
+  }, [kb_id, enabled]);
+
+  const onDeleteUser = (id: number) => {
+    Modal.confirm({
+      title: '删除用户',
+      content: '确定要删除该用户吗？',
+      okButtonProps: {
+        color: 'error',
+      },
+      onOk: () => {
+        deleteApiProV1AuthDelete({
+          id,
+        }).then(() => {
+          Message.success('删除成功');
+          setMemberList(memberList.filter(item => item.id !== id));
+        });
+      },
+    });
+  };
+
+  const onDeleteUserGroup = (id: number) => {
+    Modal.confirm({
+      title: '删除用户组',
+      content: '确定要删除该用户组吗？',
+      okButtonProps: {
+        color: 'error',
+      },
+      onOk: () => {
+        deleteApiProV1AuthGroupDelete({
+          id,
+          kb_id,
+        }).then(() => {
+          Message.success('删除成功');
+          getUserGroup();
+        });
+      },
+    });
+  };
+
+  const userGroupColumns: ColumnType<GithubComChaitinPandaWikiProApiAuthV1AuthGroupListItem>[] =
+    [
+      {
+        title: '用户组名',
+        dataIndex: 'name',
+      },
+      {
+        title: '成员',
+        dataIndex: 'auth_ids',
+        render: (text: string, record) => {
+          return (
+            <Box
+              sx={{
+                color: 'info.main',
+                cursor: 'pointer',
+              }}
+              onClick={() => {
+                setUserGroupModalData({
+                  ...record,
+                  auth_ids:
+                    sourceTypeRef.current !== source_type
+                      ? []
+                      : record.auth_ids,
+                });
+                setUserGroupModalOpen(true);
+              }}
+            >
+              共{' '}
+              {sourceTypeRef.current !== source_type
+                ? 0
+                : record.auth_ids?.length}{' '}
+              个成员
+            </Box>
+          );
+        },
+      },
+      {
+        title: '操作',
+        dataIndex: 'action',
+        width: 60,
+        render: (text: string, record) => {
+          return (
+            <IconButton
+              size='small'
+              sx={{ p: '2px' }}
+              onClick={() => {
+                onDeleteUserGroup(record.id!);
+              }}
+            >
+              <Icon
+                type='icon-icon_tool_close'
+                sx={{
+                  color: 'error.main',
+                }}
+              />
+            </IconButton>
+          );
+        },
+      },
+    ];
+
+  const columns: ColumnType<GithubComChaitinPandaWikiProApiAuthV1AuthItem>[] = [
     {
       title: '用户名',
       dataIndex: 'username',
@@ -254,10 +362,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
     {
       title: 'created_at',
       dataIndex: 'created_at',
-      render: (
-        text: string,
-        record: GithubComChaitinPandaWikiProApiAuthV1AuthItem,
-      ) => {
+      render: (text: string, record) => {
         return (
           <Box sx={{ color: 'text.secondary' }}>
             {dayjs(text).fromNow()}加入，
@@ -266,6 +371,31 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
         );
       },
     },
+
+    // {
+    //   title: '',
+    //   dataIndex: 'action',
+    //   width: 60,
+    //   render: (text: string, record) => {
+    //     return (
+    //       <IconButton
+    //         size='small'
+    //         sx={{ p: '2px' }}
+    //         onClick={() => {
+    //           onDeleteUser(record.id!);
+    //         }}
+    //       >
+    //         <Icon
+    //           type='icon-icon_tool_close'
+    //           sx={{
+    //             cursor: 'pointer',
+    //             color: 'error.main',
+    //           }}
+    //         />
+    //       </IconButton>
+    //     );
+    //   },
+    // },
   ];
 
   const githubForm = () => {
@@ -774,248 +904,157 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
 
   return (
     <>
-      <Stack
-        direction='row'
-        alignItems={'center'}
-        justifyContent={'space-between'}
-        sx={{
-          m: 2,
-          height: 32,
-          fontWeight: 'bold',
+      <SettingCardItem
+        title='访问认证'
+        isEdit={isEdit}
+        onSubmit={onSubmit}
+        more={{
+          type: 'link',
+          href: 'https://pandawiki.docs.baizhi.cloud/node/01986040-602c-736c-b99f-0b3cb9bb89e5',
+          target: '_blank',
+          text: '使用方法',
         }}
       >
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            '&::before': {
-              content: '""',
-              display: 'inline-block',
-              width: 4,
-              height: 12,
-              bgcolor: 'common.black',
-              borderRadius: '2px',
-              mr: 1,
-            },
-          }}
-        >
-          访问认证{' '}
-        </Box>
-        <Box sx={{ flexGrow: 1, ml: 1 }}>
-          <Link
-            component='a'
-            href='https://pandawiki.docs.baizhi.cloud/node/01986040-602c-736c-b99f-0b3cb9bb89e5'
-            target='_blank'
-            sx={{
-              fontSize: 14,
-              textDecoration: 'none',
-              fontWeight: 'normal',
-              '&:hover': {
-                fontWeight: 'bold',
-              },
-            }}
-          >
-            使用方法
-          </Link>
-        </Box>
-        {isEdit && (
-          <Button variant='contained' size='small' onClick={onSubmit}>
-            保存
-          </Button>
-        )}
-      </Stack>
-      <Stack direction={'row'} gap={2} sx={{ mx: 2, mb: 2 }}>
-        <Box
-          sx={{ width: 156, fontSize: 14, lineHeight: '32px', flexShrink: 0 }}
-        >
-          访问控制
-        </Box>
-        <Controller
-          control={control}
-          name='enabled'
-          render={({ field }) => (
-            <RadioGroup
-              row
-              {...field}
-              value={field.value}
-              onChange={e => {
-                field.onChange(e.target.value);
-                setIsEdit(true);
-              }}
-            >
-              <FormControlLabel
-                value={'1'}
-                control={<Radio size='small' />}
-                label={<Box sx={{ width: 65 }}>完全公开</Box>}
-              />
-              <FormControlLabel
-                value={'2'}
-                control={<Radio size='small' />}
-                label={<Box sx={{ width: 65 }}>需要认证</Box>}
-              />
-              {/* <FormControlLabel
-                value={'3'}
-                control={<Radio size='small' disabled={!isEnterprise} />}
-                label={
-                  <Stack
-                    direction='row'
-                    alignItems='center'
-                    gap={0.5}
-                    sx={{ width: 135 }}
-                  >
-                    企业级身份认证
-                    {!isEnterprise && (
-                      <Tooltip title='企业版可用' placement='top' arrow>
-                        <InfoIcon
-                          sx={{ color: 'text.secondary', fontSize: 14 }}
-                        />
-                      </Tooltip>
-                    )}
-                  </Stack>
-                }
-              /> */}
-              <FormControlLabel
-                value={'3'}
-                control={<Radio size='small' />}
-                label={<Box sx={{ width: 65 }}>禁止访问</Box>}
-              />
-            </RadioGroup>
-          )}
-        />
-      </Stack>
-      {enabled === '2' && (
-        <>
-          <FormItem label='登录方式'>
-            <Controller
-              control={control}
-              name='source_type'
-              render={({ field }) => (
-                <Select
-                  {...field}
-                  onChange={e => {
-                    field.onChange(e.target.value);
-                    setIsEdit(true);
-                  }}
-                  fullWidth
-                  sx={{ height: 52 }}
-                >
-                  <MenuItem
-                    value={EXTEND_CONSTS_SOURCE_TYPE.SourceTypePassword}
-                  >
-                    密码认证
-                  </MenuItem>
-                  <MenuItem
-                    value={EXTEND_CONSTS_SOURCE_TYPE.SourceTypeDingTalk}
-                    disabled={!isPro}
-                  >
-                    钉钉登录 {isPro ? '' : tips}
-                  </MenuItem>
-                  <MenuItem
-                    value={EXTEND_CONSTS_SOURCE_TYPE.SourceTypeFeishu}
-                    disabled={!isPro}
-                  >
-                    飞书登录 {isPro ? '' : tips}
-                  </MenuItem>
-                  <MenuItem
-                    value={EXTEND_CONSTS_SOURCE_TYPE.SourceTypeWeCom}
-                    disabled={!isPro}
-                  >
-                    企业微信登录 {isPro ? '' : tips}
-                  </MenuItem>
-                  <MenuItem
-                    value={EXTEND_CONSTS_SOURCE_TYPE.SourceTypeOAuth}
-                    disabled={!isPro}
-                  >
-                    OAuth 登录 {isPro ? '' : tips}
-                  </MenuItem>
-                  <MenuItem
-                    value={EXTEND_CONSTS_SOURCE_TYPE.SourceTypeCAS}
-                    disabled={!isPro}
-                  >
-                    CAS 登录 {isPro ? '' : tips}
-                  </MenuItem>
-                  <MenuItem
-                    value={EXTEND_CONSTS_SOURCE_TYPE.SourceTypeLDAP}
-                    disabled={!isPro}
-                  >
-                    LDAP 登录 {isPro ? '' : tips}
-                  </MenuItem>
-                  <MenuItem
-                    value={EXTEND_CONSTS_SOURCE_TYPE.SourceTypeGitHub}
-                    disabled={!isPro}
-                  >
-                    GitHub 登录 {isPro ? '' : tips}
-                  </MenuItem>
-                </Select>
-              )}
-            />
-          </FormItem>
+        <FormItem label='访问控制'>
+          <Controller
+            control={control}
+            name='enabled'
+            render={({ field }) => (
+              <RadioGroup
+                row
+                {...field}
+                value={field.value}
+                onChange={e => {
+                  field.onChange(e.target.value);
+                  setIsEdit(true);
+                }}
+              >
+                <FormControlLabel
+                  value={'1'}
+                  control={<Radio size='small' />}
+                  label={<Box sx={{ width: 65 }}>完全公开</Box>}
+                />
+                <FormControlLabel
+                  value={'2'}
+                  control={<Radio size='small' />}
+                  label={<Box sx={{ width: 65 }}>需要认证</Box>}
+                />
+                <FormControlLabel
+                  value={'3'}
+                  control={<Radio size='small' />}
+                  label={<Box sx={{ width: 65 }}>禁止访问</Box>}
+                />
+              </RadioGroup>
+            )}
+          />
+        </FormItem>
 
-          {[
-            ConstsSourceType.SourceTypeDingTalk,
-            ConstsSourceType.SourceTypeFeishu,
-            ConstsSourceType.SourceTypeWeCom,
-          ].includes(source_type as ConstsSourceType) && (
-            <>
-              <FormItem label='Client ID' required>
-                <Controller
-                  control={control}
-                  name='client_id'
-                  rules={{
-                    required: {
-                      value: true,
-                      message: 'Client Id 不能为空',
-                    },
-                  }}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      onChange={e => {
-                        field.onChange(e.target.value);
-                        setIsEdit(true);
-                      }}
-                      fullWidth
-                      placeholder='请输入'
-                      error={!!errors.client_id}
-                      helperText={errors.client_id?.message}
-                    />
-                  )}
-                />
-              </FormItem>
-              <FormItem label='Client Secret' required>
-                <Controller
-                  control={control}
-                  name='client_secret'
-                  rules={{
-                    required: {
-                      value: true,
-                      message: ' Client Secret 不能为空',
-                    },
-                  }}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      fullWidth
-                      onChange={e => {
-                        field.onChange(e.target.value);
-                        setIsEdit(true);
-                      }}
-                      placeholder='请输入'
-                      error={!!errors.client_secret}
-                      helperText={errors.client_secret?.message}
-                    />
-                  )}
-                />
-              </FormItem>
-              {source_type === ConstsSourceType.SourceTypeWeCom && (
-                <FormItem label='Agent ID' required>
+        {enabled === '2' && (
+          <>
+            <FormItem label='登录方式'>
+              <Controller
+                control={control}
+                name='source_type'
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    onChange={e => {
+                      field.onChange(e.target.value);
+                      setIsEdit(true);
+                    }}
+                    fullWidth
+                    sx={{ height: 52 }}
+                  >
+                    <MenuItem
+                      value={EXTEND_CONSTS_SOURCE_TYPE.SourceTypePassword}
+                    >
+                      密码认证
+                    </MenuItem>
+                    <MenuItem
+                      value={EXTEND_CONSTS_SOURCE_TYPE.SourceTypeDingTalk}
+                      disabled={!isPro}
+                    >
+                      钉钉登录 {isPro ? '' : tips}
+                    </MenuItem>
+                    <MenuItem
+                      value={EXTEND_CONSTS_SOURCE_TYPE.SourceTypeFeishu}
+                      disabled={!isPro}
+                    >
+                      飞书登录 {isPro ? '' : tips}
+                    </MenuItem>
+                    <MenuItem
+                      value={EXTEND_CONSTS_SOURCE_TYPE.SourceTypeWeCom}
+                      disabled={!isPro}
+                    >
+                      企业微信登录 {isPro ? '' : tips}
+                    </MenuItem>
+                    <MenuItem
+                      value={EXTEND_CONSTS_SOURCE_TYPE.SourceTypeOAuth}
+                      disabled={!isPro}
+                    >
+                      OAuth 登录 {isPro ? '' : tips}
+                    </MenuItem>
+                    <MenuItem
+                      value={EXTEND_CONSTS_SOURCE_TYPE.SourceTypeCAS}
+                      disabled={!isPro}
+                    >
+                      CAS 登录 {isPro ? '' : tips}
+                    </MenuItem>
+                    <MenuItem
+                      value={EXTEND_CONSTS_SOURCE_TYPE.SourceTypeLDAP}
+                      disabled={!isPro}
+                    >
+                      LDAP 登录 {isPro ? '' : tips}
+                    </MenuItem>
+                    <MenuItem
+                      value={EXTEND_CONSTS_SOURCE_TYPE.SourceTypeGitHub}
+                    >
+                      GitHub 登录
+                    </MenuItem>
+                  </Select>
+                )}
+              />
+            </FormItem>
+
+            {[
+              ConstsSourceType.SourceTypeDingTalk,
+              ConstsSourceType.SourceTypeFeishu,
+              ConstsSourceType.SourceTypeWeCom,
+            ].includes(source_type as ConstsSourceType) && (
+              <>
+                <FormItem label='Client ID' required>
                   <Controller
                     control={control}
-                    name='agent_id'
+                    name='client_id'
                     rules={{
                       required: {
                         value: true,
-                        message: 'Agent ID  不能为空',
+                        message: 'Client Id 不能为空',
+                      },
+                    }}
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        onChange={e => {
+                          field.onChange(e.target.value);
+                          setIsEdit(true);
+                        }}
+                        fullWidth
+                        placeholder='请输入'
+                        error={!!errors.client_id}
+                        helperText={errors.client_id?.message}
+                      />
+                    )}
+                  />
+                </FormItem>
+                <FormItem label='Client Secret' required>
+                  <Controller
+                    control={control}
+                    name='client_secret'
+                    rules={{
+                      required: {
+                        value: true,
+                        message: ' Client Secret 不能为空',
                       },
                     }}
                     render={({ field }) => (
@@ -1027,56 +1066,76 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
                           setIsEdit(true);
                         }}
                         placeholder='请输入'
-                        error={!!errors.agent_id}
-                        helperText={errors.agent_id?.message}
+                        error={!!errors.client_secret}
+                        helperText={errors.client_secret?.message}
                       />
                     )}
                   />
                 </FormItem>
-              )}
-            </>
-          )}
+                {source_type === ConstsSourceType.SourceTypeWeCom && (
+                  <FormItem label='Agent ID' required>
+                    <Controller
+                      control={control}
+                      name='agent_id'
+                      rules={{
+                        required: {
+                          value: true,
+                          message: 'Agent ID  不能为空',
+                        },
+                      }}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          fullWidth
+                          onChange={e => {
+                            field.onChange(e.target.value);
+                            setIsEdit(true);
+                          }}
+                          placeholder='请输入'
+                          error={!!errors.agent_id}
+                          helperText={errors.agent_id?.message}
+                        />
+                      )}
+                    />
+                  </FormItem>
+                )}
+              </>
+            )}
 
-          {source_type === EXTEND_CONSTS_SOURCE_TYPE.SourceTypeOAuth &&
-            oauthForm()}
-          {source_type === EXTEND_CONSTS_SOURCE_TYPE.SourceTypeCAS && casForm()}
-          {source_type === EXTEND_CONSTS_SOURCE_TYPE.SourceTypeLDAP &&
-            ldapForm()}
-          {source_type === EXTEND_CONSTS_SOURCE_TYPE.SourceTypePassword &&
-            passwordForm()}
-          {source_type === EXTEND_CONSTS_SOURCE_TYPE.SourceTypeGitHub &&
-            githubForm()}
-
-          {source_type !== EXTEND_CONSTS_SOURCE_TYPE.SourceTypePassword && (
-            <>
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  m: 2,
-                  height: 32,
-                  fontWeight: 'bold',
-                  '&::before': {
-                    content: '""',
-                    display: 'inline-block',
-                    width: 4,
-                    height: 12,
-                    bgcolor: 'common.black',
-                    borderRadius: '2px',
-                    mr: 1,
-                  },
-                }}
-              >
-                成员{' '}
-              </Box>
+            {source_type === EXTEND_CONSTS_SOURCE_TYPE.SourceTypeOAuth &&
+              oauthForm()}
+            {source_type === EXTEND_CONSTS_SOURCE_TYPE.SourceTypeCAS &&
+              casForm()}
+            {source_type === EXTEND_CONSTS_SOURCE_TYPE.SourceTypeLDAP &&
+              ldapForm()}
+            {source_type === EXTEND_CONSTS_SOURCE_TYPE.SourceTypePassword &&
+              passwordForm()}
+            {source_type === EXTEND_CONSTS_SOURCE_TYPE.SourceTypeGitHub &&
+              githubForm()}
+          </>
+        )}
+      </SettingCardItem>{' '}
+      {enabled === '2' &&
+        source_type !== EXTEND_CONSTS_SOURCE_TYPE.SourceTypePassword && (
+          <>
+            <SettingCardItem
+              title='用户组'
+              extra={
+                <Button
+                  size='small'
+                  onClick={() => setUserGroupModalOpen(true)}
+                >
+                  添加用户组
+                </Button>
+              }
+            >
               <Table
-                columns={columns}
-                dataSource={memberList}
+                columns={userGroupColumns}
+                dataSource={userGroupList}
                 showHeader={false}
                 rowKey='id'
                 size='small'
                 sx={{
-                  mx: 2,
                   '.MuiTableContainer-root': {
                     maxHeight: 400,
                     border: '1px dashed',
@@ -1104,10 +1163,59 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
                   </Stack>
                 }
               />
-            </>
-          )}
-        </>
-      )}
+            </SettingCardItem>
+            <SettingCardItem title='成员'>
+              <Table
+                columns={columns}
+                dataSource={memberList}
+                showHeader={false}
+                rowKey='id'
+                size='small'
+                sx={{
+                  '.MuiTableContainer-root': {
+                    maxHeight: 400,
+                    border: '1px dashed',
+                    borderColor: 'divider',
+                    borderRadius: '10px',
+                    borderBottom: 'none',
+                  },
+
+                  '.MuiTableCell-root': {
+                    px: '16px !important',
+                    height: 'auto !important',
+                  },
+                  '.MuiTableRow-root': {
+                    '&:hover': {
+                      '.MuiTableCell-root': {
+                        backgroundColor: 'transparent !important',
+                      },
+                    },
+                  },
+                }}
+                renderEmpty={
+                  <Stack alignItems={'center'}>
+                    <img src={NoData} width={124} />
+                    <Box>暂无数据</Box>
+                  </Stack>
+                }
+              />
+            </SettingCardItem>
+          </>
+        )}
+      <UserGroupModal
+        open={userGroupModalOpen}
+        onCancel={() => {
+          setUserGroupModalOpen(false);
+          setUserGroupModalData(undefined);
+        }}
+        onOk={() => {
+          getUserGroup();
+          setUserGroupModalOpen(false);
+          setUserGroupModalData(undefined);
+        }}
+        userList={memberList}
+        data={userGroupModalData}
+      />
     </>
   );
 };

@@ -4,37 +4,18 @@ import { Box, Button, Stack, TextField } from '@mui/material';
 import { Message } from 'ct-mui';
 import { useEffect, useState } from 'react';
 import CustomModal from '@/components/CustomModal';
+import { SettingCardItem } from './Common';
 
 const CardCustom = () => {
   const [customModalOpen, setCustomModalOpen] = useState(false);
 
   return (
-    <>
-      <Stack
-        direction='row'
-        alignItems={'center'}
-        justifyContent={'space-between'}
-        sx={{
-          m: 2,
-          height: 32,
-          fontWeight: 'bold',
-        }}
-      >
-        <Box
-          sx={{
-            '&::before': {
-              content: '""',
-              display: 'inline-block',
-              width: 4,
-              height: 12,
-              bgcolor: 'common.black',
-              borderRadius: '2px',
-              mr: 1,
-            },
-          }}
-        >
-          前台网站样式个性化
-        </Box>
+    <SettingCardItem
+      sx={{
+        pb: '0 !important',
+      }}
+      title='前台网站样式个性化'
+      extra={
         <Button
           size='small'
           variant='outlined'
@@ -44,12 +25,13 @@ const CardCustom = () => {
         >
           定制页面
         </Button>
-      </Stack>
+      }
+    >
       <CustomModal
         open={customModalOpen}
         onCancel={() => setCustomModalOpen(false)}
-      ></CustomModal>
-    </>
+      />
+    </SettingCardItem>
   );
 };
 

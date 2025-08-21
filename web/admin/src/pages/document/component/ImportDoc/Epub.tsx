@@ -1,9 +1,6 @@
-import {
-  convertEpub,
-  createNode,
-  ImportDocListItem,
-  ImportDocProps,
-} from '@/api';
+import { ImportDocListItem, ImportDocProps } from '@/api';
+import { postApiV1Node } from '@/request/Node';
+import { postApiV1CrawlerEpubConvert } from '@/request/Crawler';
 import Upload from '@/components/UploadFile/Drag';
 import { useAppSelector } from '@/store';
 import { formatByte } from '@/utils';
@@ -102,13 +99,13 @@ const EpubImport = ({
         setCurrentFileIndex(i);
         setUploadProgress(0);
         try {
-          const formData = new FormData();
-          formData.append('file', acceptedFiles[i]);
-          formData.append('kb_id', kb_id);
-          const { content } = await convertEpub(formData);
+          const { content } = await postApiV1CrawlerEpubConvert({
+            file: acceptedFiles[i],
+            kb_id,
+          });
           const title = acceptedFiles[i].name.split('.')[0];
           setItems(prev => [
-            { title, content, url: title + i, success: -1, id: '' },
+            { title, content: content!, url: title + i, success: -1, id: '' },
             ...prev,
           ]);
         } catch (error) {
@@ -143,10 +140,10 @@ const EpubImport = ({
           if (!curItem || (curItem.id !== '' && curItem.id !== '-1')) {
             continue;
           }
-          const res = await createNode({
+          const res = await postApiV1Node({
             name: curItem?.title || '',
             content: curItem?.content || '',
-            parent_id: parentId,
+            parent_id: parentId || undefined,
             type: 2,
             kb_id,
           });
@@ -433,10 +430,10 @@ const EpubImport = ({
                             : it,
                         ),
                       );
-                      createNode({
+                      postApiV1Node({
                         name: item.title,
                         content: item.content,
-                        parent_id: parentId,
+                        parent_id: parentId || undefined,
                         type: 2,
                         kb_id,
                       })

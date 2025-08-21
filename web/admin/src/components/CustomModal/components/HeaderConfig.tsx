@@ -51,7 +51,7 @@ const HeaderConfig = ({ data, setIsEdit }: CardWebHeaderProps) => {
       target: '_self' as const,
     };
 
-    const currentBtns = appPreviewData?.settings.btns || [];
+    const currentBtns = appPreviewData?.settings!.btns || [];
     const newBtns = [...currentBtns, newBtn];
     setValue('btns', newBtns);
     setIsEdit(true);

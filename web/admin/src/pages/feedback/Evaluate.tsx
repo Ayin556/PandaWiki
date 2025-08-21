@@ -69,13 +69,13 @@ const Evaluate = () => {
         return (
           <Tooltip
             title={
-              (value!.feedback_content || value!.feedback_type! > 0) && (
+              (value!.feedback_content || +value!.feedback_type! > 0) && (
                 <Box>
-                  {value!.feedback_type! > 0 && (
+                  {+value!.feedback_type! > 0 && (
                     <Box>
                       {
                         FeedbackType[
-                          value?.feedback_type as keyof typeof FeedbackType
+                          value?.feedback_type as unknown as keyof typeof FeedbackType
                         ]
                       }
                     </Box>
