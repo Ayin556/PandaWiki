@@ -14,8 +14,7 @@ import {
   TextField,
   Select,
   MenuItem,
-  Link,
-  styled,
+  Tooltip,
   IconButton,
   Autocomplete,
   Chip,
@@ -40,6 +39,7 @@ import { useEffect, useMemo, useState, useRef } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useAppSelector } from '@/store';
 import { SettingCardItem, FormItem } from './Common';
+import InfoIcon from '@mui/icons-material/Info';
 
 interface CardAuthProps {
   kb: DomainKnowledgeBaseDetail;
@@ -237,9 +237,9 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
     });
   };
   useEffect(() => {
-    if (!kb_id || enabled !== '2') return;
+    if (!kb_id || enabled !== '2' || !isPro) return;
     getUserGroup();
-  }, [kb_id, enabled]);
+  }, [kb_id, enabled, isPro]);
 
   const onDeleteUser = (id: number) => {
     Modal.confirm({
@@ -1120,12 +1120,22 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
           <>
             <SettingCardItem
               title='用户组'
+              more={
+                !isPro && (
+                  <Tooltip title='联创版/企业版可用' placement='top' arrow>
+                    <InfoIcon
+                      sx={{ color: 'text.secondary', fontSize: 14, ml: 1 }}
+                    />
+                  </Tooltip>
+                )
+              }
               extra={
                 <Button
                   size='small'
                   onClick={() => setUserGroupModalOpen(true)}
+                  disabled={!isPro}
                 >
-                  添加用户组
+                  添加用户组 {!isPro ? tips : ''}
                 </Button>
               }
             >
