@@ -44,6 +44,51 @@ const StyledTag = styled('div')<{ color: keyof Theme['palette'] }>(
   }),
 );
 
+const ANSWERABLE_PERMISSIONS_MAP = {
+  [ConstsNodeAccessPerm.NodeAccessPermClosed]: {
+    label: '不可被问答',
+    color: 'warning',
+  },
+  [ConstsNodeAccessPerm.NodeAccessPermPartial]: {
+    label: '部分可被问答',
+    color: 'warning',
+  },
+  [ConstsNodeAccessPerm.NodeAccessPermOpen]: {
+    label: '可被问答',
+    color: 'success',
+  },
+} as const;
+
+const VISITABLE_PERMISSIONS_MAP = {
+  [ConstsNodeAccessPerm.NodeAccessPermClosed]: {
+    label: '不可被访问',
+    color: 'warning',
+  },
+  [ConstsNodeAccessPerm.NodeAccessPermPartial]: {
+    label: '部分可被访问',
+    color: 'warning',
+  },
+  [ConstsNodeAccessPerm.NodeAccessPermOpen]: {
+    label: '可被访问',
+    color: 'success',
+  },
+} as const;
+
+const VISIBLE_PERMISSIONS_MAP = {
+  [ConstsNodeAccessPerm.NodeAccessPermClosed]: {
+    label: '导航内不可见',
+    color: 'warning',
+  },
+  [ConstsNodeAccessPerm.NodeAccessPermPartial]: {
+    label: '部分导航内可见',
+    color: 'warning',
+  },
+  [ConstsNodeAccessPerm.NodeAccessPermOpen]: {
+    label: '导航内可见',
+    color: 'success',
+  },
+} as const;
+
 const TreeItem = React.forwardRef<
   HTMLDivElement,
   TreeItemComponentProps<ITreeItem>
@@ -86,7 +131,6 @@ const TreeItem = React.forwardRef<
             type,
             emoji: '',
             status: 1,
-            visibility: 2,
             isEditting: true,
             parentId: item.id,
           },
@@ -434,23 +478,59 @@ const TreeItem = React.forwardRef<
                       {item.status === 1 && (
                         <StyledTag color='error'>更新未发布</StyledTag>
                       )}
-                      {item.type === 2 &&
-                        (item.visibility === 1 ? (
-                          <StyledTag color='warning'>私有</StyledTag>
-                        ) : (
-                          <StyledTag color='success'>公开</StyledTag>
-                        ))}
-                      {permissions?.answerable ===
-                        ConstsNodeAccessPerm.NodeAccessPermClosed && (
-                        <StyledTag color='warning'>不可被问答</StyledTag>
-                      )}
-                      {permissions?.visitable ===
-                        ConstsNodeAccessPerm.NodeAccessPermClosed && (
-                        <StyledTag color='warning'>不可被访问</StyledTag>
-                      )}
-                      {permissions?.visible ===
-                        ConstsNodeAccessPerm.NodeAccessPermClosed && (
-                        <StyledTag color='warning'>导航内不可见</StyledTag>
+                      {item.type === 2 && (
+                        <>
+                          {permissions?.answerable &&
+                            ANSWERABLE_PERMISSIONS_MAP[
+                              permissions.answerable
+                            ] && (
+                              <StyledTag
+                                color={
+                                  ANSWERABLE_PERMISSIONS_MAP[
+                                    permissions.answerable
+                                  ].color
+                                }
+                              >
+                                {
+                                  ANSWERABLE_PERMISSIONS_MAP[
+                                    permissions.answerable
+                                  ].label
+                                }
+                              </StyledTag>
+                            )}
+                          {permissions?.visitable &&
+                            VISITABLE_PERMISSIONS_MAP[
+                              permissions.visitable
+                            ] && (
+                              <StyledTag
+                                color={
+                                  VISITABLE_PERMISSIONS_MAP[
+                                    permissions.visitable
+                                  ].color
+                                }
+                              >
+                                {
+                                  VISITABLE_PERMISSIONS_MAP[
+                                    permissions.visitable
+                                  ].label
+                                }
+                              </StyledTag>
+                            )}
+                          {permissions?.visible &&
+                            VISIBLE_PERMISSIONS_MAP[permissions.visible] && (
+                              <StyledTag
+                                color={
+                                  VISIBLE_PERMISSIONS_MAP[permissions.visible]
+                                    .color
+                                }
+                              >
+                                {
+                                  VISIBLE_PERMISSIONS_MAP[permissions.visible]
+                                    .label
+                                }
+                              </StyledTag>
+                            )}
+                        </>
                       )}
                     </Stack>
                     <Box

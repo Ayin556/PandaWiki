@@ -111,6 +111,13 @@ export interface DomainNodeReleaseListItem {
   updated_at?: string;
 }
 
+export interface DomainPWResponse {
+  code?: number;
+  data?: unknown;
+  message?: string;
+  success?: boolean;
+}
+
 export interface DomainPrompt {
   content?: string;
 }
@@ -148,6 +155,48 @@ export interface GithubComChaitinPandaWikiProApiAuthV1AuthGetResp {
   /** 用户查询过滤器 */
   user_filter?: string;
   user_info_url?: string;
+}
+
+export interface GithubComChaitinPandaWikiProApiAuthV1AuthGroupCreateReq {
+  ids: number[];
+  kb_id: string;
+  /**
+   * @minLength 1
+   * @maxLength 100
+   */
+  name: string;
+}
+
+export type GithubComChaitinPandaWikiProApiAuthV1AuthGroupCreateResp = Record<
+  string,
+  any
+>;
+
+export interface GithubComChaitinPandaWikiProApiAuthV1AuthGroupDetailResp {
+  auth_ids?: number[];
+  auths?: GithubComChaitinPandaWikiProApiAuthV1AuthItem[];
+  created_at?: string;
+  id?: number;
+  name?: string;
+}
+
+export interface GithubComChaitinPandaWikiProApiAuthV1AuthGroupListItem {
+  auth_ids?: number[];
+  created_at?: string;
+  id?: number;
+  name?: string;
+}
+
+export interface GithubComChaitinPandaWikiProApiAuthV1AuthGroupListResp {
+  list?: GithubComChaitinPandaWikiProApiAuthV1AuthGroupListItem[];
+  total?: number;
+}
+
+export interface GithubComChaitinPandaWikiProApiAuthV1AuthGroupUpdateReq {
+  auth_ids?: number[];
+  id: number;
+  kb_id: string;
+  name?: string;
 }
 
 export interface GithubComChaitinPandaWikiProApiAuthV1AuthItem {
@@ -315,9 +364,22 @@ export interface GetApiProV1AuthGetParams {
     | "ldap";
 }
 
-export interface GetApiProV1BlockParams {
-  /** knowledge base ID */
+export interface DeleteApiProV1AuthGroupDeleteParams {
+  id: number;
   kb_id: string;
+}
+
+export interface GetApiProV1AuthGroupDetailParams {
+  id: number;
+  kb_id: string;
+}
+
+export interface GetApiProV1AuthGroupListParams {
+  kb_id: string;
+  /** @min 1 */
+  page: number;
+  /** @min 1 */
+  per_page: number;
 }
 
 export interface GetApiProV1BlockParams {

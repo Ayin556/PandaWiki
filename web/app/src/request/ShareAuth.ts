@@ -12,9 +12,10 @@
 
 import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
-  DomainAuthGetResp,
-  DomainAuthLoginSimpleReq,
+  DomainPWResponse,
   DomainResponse,
+  V1AuthGetResp,
+  V1AuthLoginSimpleReq,
 } from "./types";
 
 /**
@@ -24,16 +25,16 @@ import {
  * @name GetShareV1AuthGet
  * @summary AuthGet
  * @request GET:/share/v1/auth/get
- * @response `200` `(DomainResponse & {
-    data?: DomainAuthGetResp,
+ * @response `200` `(DomainPWResponse & {
+    data?: V1AuthGetResp,
 
 })` OK
  */
 
 export const getShareV1AuthGet = (params: RequestParams = {}) =>
   httpRequest<
-    DomainResponse & {
-      data?: DomainAuthGetResp;
+    DomainPWResponse & {
+      data?: V1AuthGetResp;
     }
   >({
     path: `/share/v1/auth/get`,
@@ -54,7 +55,7 @@ export const getShareV1AuthGet = (params: RequestParams = {}) =>
  */
 
 export const postShareV1AuthLoginSimple = (
-  param: DomainAuthLoginSimpleReq,
+  param: V1AuthLoginSimpleReq,
   params: RequestParams = {},
 ) =>
   httpRequest<DomainResponse>({

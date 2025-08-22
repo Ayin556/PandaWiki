@@ -10,7 +10,7 @@ import { Message, Modal } from 'ct-mui';
 
 interface DocStatusProps {
   open: boolean;
-  status: 'public' | 'private';
+  status: 'delete';
   kb_id: string;
   onClose: () => void;
   data: DomainNodeListItemResp[];
@@ -53,11 +53,7 @@ const DocStatus = ({
   if (!open) return <></>;
 
   const tree = filterEmptyFolders(
-    convertToTree(
-      data.filter(
-        it => it.visibility === (status === 'public' ? 1 : 2) || it.type === 1,
-      ),
-    ),
+    convertToTree(data.filter(it => it.type === 1)),
   );
 
   return (

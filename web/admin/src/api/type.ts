@@ -124,7 +124,6 @@ export type NodeListItem = {
   created_at: string;
   updated_at: string;
   status: 1 | 2; // 1 草稿 2 发布
-  visibility: 1 | 2; // 1 私有 2 公开
 };
 
 export type GetNodeRecommendData = {
@@ -182,7 +181,6 @@ export type UpdateNodeData = {
   name?: string;
   emoji?: string;
   status?: 1 | 2;
-  visibility?: 1 | 2;
   summary?: string;
 };
 
@@ -200,7 +198,6 @@ export interface ITreeItem {
   canHaveChildren?: boolean;
   updated_at?: string;
   status?: 1 | 2;
-  visibility?: 1 | 2;
   permissions?: DomainNodePermissions;
 }
 

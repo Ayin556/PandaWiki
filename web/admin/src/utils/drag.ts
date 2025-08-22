@@ -102,7 +102,6 @@ export function convertToTree(data: DomainNodeListItemResp[]) {
       name: item.name!,
       level: 0,
       status: item.status,
-      visibility: item.visibility,
       order: item.position,
       emoji: item.emoji,
       type: item.type!,

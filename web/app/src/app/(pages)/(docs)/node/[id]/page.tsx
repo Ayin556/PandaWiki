@@ -13,7 +13,18 @@ export async function generateMetadata(
   parent: ResolvingMetadata,
 ) {
   const { id } = await params;
-  const node: any = await getShareV1NodeDetail({ id });
+  let node = {
+    name: '无权访问',
+    meta: {
+      summary: '无权访问',
+    },
+  };
+  try {
+    node = (await getShareV1NodeDetail({ id })) as any;
+  } catch (error) {
+    console.log(error);
+  }
+
   return await formatMeta(
     { title: node?.name, description: node?.meta?.summary },
     parent,
@@ -22,12 +33,13 @@ export async function generateMetadata(
 
 const DocPage = async ({ params }: PageProps) => {
   const { id = '' } = await params;
-
-  const [kbInfo, node]: any = await Promise.all([
-    getShareV1AppWebInfo(),
-    getShareV1NodeDetail({ id }),
-  ]);
-
+  const kbInfo: any = await getShareV1AppWebInfo();
+  let node: any = {};
+  try {
+    node = (await getShareV1NodeDetail({ id })) as any;
+  } catch (error: any) {
+    node = error.data;
+  }
   return <Doc node={node} kbInfo={kbInfo} commentList={[]} />;
 };
 

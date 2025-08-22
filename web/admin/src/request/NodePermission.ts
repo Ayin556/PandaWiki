@@ -13,36 +13,36 @@
 import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
   DomainResponse,
-  GetApiProV1NodePermissionParams,
-  GithubComChaitinPandaWikiProApiNodeV1NodePermissionEditReq,
-  GithubComChaitinPandaWikiProApiNodeV1NodePermissionEditResp,
-  GithubComChaitinPandaWikiProApiNodeV1NodePermissionResp,
+  GetApiV1NodePermissionParams,
+  V1NodePermissionEditReq,
+  V1NodePermissionEditResp,
+  V1NodePermissionResp,
 } from "./types";
 
 /**
  * @description 文档授权信息获取
  *
  * @tags NodePermission
- * @name GetApiProV1NodePermission
+ * @name GetApiV1NodePermission
  * @summary 文档授权信息获取
- * @request GET:/api/pro/v1/node/permission
+ * @request GET:/api/v1/node/permission
  * @secure
  * @response `200` `(DomainResponse & {
-    data?: GithubComChaitinPandaWikiProApiNodeV1NodePermissionResp,
+    data?: V1NodePermissionResp,
 
 })` OK
  */
 
-export const getApiProV1NodePermission = (
-  query: GetApiProV1NodePermissionParams,
+export const getApiV1NodePermission = (
+  query: GetApiV1NodePermissionParams,
   params: RequestParams = {},
 ) =>
   httpRequest<
     DomainResponse & {
-      data?: GithubComChaitinPandaWikiProApiNodeV1NodePermissionResp;
+      data?: V1NodePermissionResp;
     }
   >({
-    path: `/api/pro/v1/node/permission`,
+    path: `/api/v1/node/permission`,
     method: "GET",
     query: query,
     secure: true,
@@ -55,26 +55,26 @@ export const getApiProV1NodePermission = (
  * @description 文档授权信息更新
  *
  * @tags NodePermission
- * @name PatchApiProV1NodePermissionEdit
+ * @name PatchApiV1NodePermissionEdit
  * @summary 文档授权信息更新
- * @request PATCH:/api/pro/v1/node/permission/edit
+ * @request PATCH:/api/v1/node/permission/edit
  * @secure
  * @response `200` `(DomainResponse & {
-    data?: GithubComChaitinPandaWikiProApiNodeV1NodePermissionEditResp,
+    data?: V1NodePermissionEditResp,
 
 })` OK
  */
 
-export const patchApiProV1NodePermissionEdit = (
-  param: GithubComChaitinPandaWikiProApiNodeV1NodePermissionEditReq,
+export const patchApiV1NodePermissionEdit = (
+  param: V1NodePermissionEditReq,
   params: RequestParams = {},
 ) =>
   httpRequest<
     DomainResponse & {
-      data?: GithubComChaitinPandaWikiProApiNodeV1NodePermissionEditResp;
+      data?: V1NodePermissionEditResp;
     }
   >({
-    path: `/api/pro/v1/node/permission/edit`,
+    path: `/api/v1/node/permission/edit`,
     method: "PATCH",
     body: param,
     secure: true,
