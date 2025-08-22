@@ -157,9 +157,27 @@ const DocPropertiesModal = ({
           setValue('visitable', permissions.visitable!);
           setValue('visible', permissions.visible!);
         }
-        setValue('answerable_groups', res.answerable_groups || []);
-        setValue('visitable_groups', res.visitable_groups || []);
-        setValue('visible_groups', res.visible_groups || []);
+        setValue(
+          'answerable_groups',
+          (res.answerable_groups || []).map(item => ({
+            id: item.auth_group_id,
+            name: item.name,
+          })),
+        );
+        setValue(
+          'visitable_groups',
+          (res.visitable_groups || []).map(item => ({
+            id: item.auth_group_id,
+            name: item.name,
+          })),
+        );
+        setValue(
+          'visible_groups',
+          (res.visible_groups || []).map(item => ({
+            id: item.auth_group_id,
+            name: item.name,
+          })),
+        );
       });
       if (isEnterprise) {
         getApiProV1AuthGroupList({
