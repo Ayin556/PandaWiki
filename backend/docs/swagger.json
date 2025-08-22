@@ -4636,9 +4636,6 @@
                             "$ref": "#/definitions/domain.NodeType"
                         }
                     ]
-                },
-                "visibility": {
-                    "$ref": "#/definitions/domain.NodeVisibility"
                 }
             }
         },
@@ -5093,9 +5090,7 @@
                 "action": {
                     "type": "string",
                     "enum": [
-                        "delete",
-                        "private",
-                        "public"
+                        "delete"
                     ]
                 },
                 "ids": {
@@ -5182,9 +5177,6 @@
                 },
                 "updated_at": {
                     "type": "string"
-                },
-                "visibility": {
-                    "$ref": "#/definitions/domain.NodeVisibility"
                 }
             }
         },
@@ -5268,18 +5260,6 @@
             "x-enum-varnames": [
                 "NodeTypeFolder",
                 "NodeTypeDocument"
-            ]
-        },
-        "domain.NodeVisibility": {
-            "type": "integer",
-            "format": "int32",
-            "enum": [
-                1,
-                2
-            ],
-            "x-enum-varnames": [
-                "NodeVisibilityPrivate",
-                "NodeVisibilityPublic"
             ]
         },
         "domain.NotnionGetListReq": {
@@ -5848,9 +5828,6 @@
                 },
                 "summary": {
                     "type": "string"
-                },
-                "visibility": {
-                    "$ref": "#/definitions/domain.NodeVisibility"
                 }
             }
         },
@@ -6344,9 +6321,6 @@
                 },
                 "updated_at": {
                     "type": "string"
-                },
-                "visibility": {
-                    "$ref": "#/definitions/domain.NodeVisibility"
                 }
             }
         },

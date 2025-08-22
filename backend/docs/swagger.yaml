@@ -807,8 +807,6 @@ definitions:
         enum:
         - 1
         - 2
-      visibility:
-        $ref: '#/definitions/domain.NodeVisibility'
     required:
     - kb_id
     - name
@@ -1110,8 +1108,6 @@ definitions:
       action:
         enum:
         - delete
-        - private
-        - public
         type: string
       ids:
         items:
@@ -1173,8 +1169,6 @@ definitions:
         $ref: '#/definitions/domain.NodeType'
       updated_at:
         type: string
-      visibility:
-        $ref: '#/definitions/domain.NodeVisibility'
     type: object
   domain.NodeMeta:
     properties:
@@ -1228,15 +1222,6 @@ definitions:
     x-enum-varnames:
     - NodeTypeFolder
     - NodeTypeDocument
-  domain.NodeVisibility:
-    enum:
-    - 1
-    - 2
-    format: int32
-    type: integer
-    x-enum-varnames:
-    - NodeVisibilityPrivate
-    - NodeVisibilityPublic
   domain.NotnionGetListReq:
     properties:
       cation_title:
@@ -1607,8 +1592,6 @@ definitions:
         type: number
       summary:
         type: string
-      visibility:
-        $ref: '#/definitions/domain.NodeVisibility'
     required:
     - id
     - kb_id
@@ -1946,8 +1929,6 @@ definitions:
         $ref: '#/definitions/domain.NodeType'
       updated_at:
         type: string
-      visibility:
-        $ref: '#/definitions/domain.NodeVisibility'
     type: object
   v1.NodePermissionEditReq:
     properties:

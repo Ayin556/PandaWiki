@@ -31,13 +31,6 @@ const (
 	NodeStatusReleased NodeStatus = 2
 )
 
-type NodeVisibility uint16
-
-const (
-	NodeVisibilityPrivate NodeVisibility = 1
-	NodeVisibilityPublic  NodeVisibility = 2
-)
-
 // table: nodes
 type Node struct {
 	ID string `json:"id" gorm:"primaryKey"`
@@ -46,8 +39,7 @@ type Node struct {
 
 	Type NodeType `json:"type"`
 
-	Status     NodeStatus     `json:"status"`
-	Visibility NodeVisibility `json:"visibility"`
+	Status NodeStatus `json:"status"`
 
 	Name    string   `json:"name"`
 	Content string   `json:"content"`
@@ -130,8 +122,7 @@ type CreateNodeReq struct {
 	Name    string `json:"name" validate:"required"`
 	Content string `json:"content"`
 
-	Emoji      string          `json:"emoji"`
-	Visibility *NodeVisibility `json:"visibility"`
+	Emoji string `json:"emoji"`
 
 	MaxNode int `json:"-"`
 
@@ -147,7 +138,6 @@ type NodeListItemResp struct {
 	ID          string          `json:"id"`
 	Type        NodeType        `json:"type"`
 	Status      NodeStatus      `json:"status"`
-	Visibility  NodeVisibility  `json:"visibility"`
 	Name        string          `json:"name"`
 	Summary     string          `json:"summary"`
 	Emoji       string          `json:"emoji"`
@@ -210,18 +200,17 @@ type RecommendNodeListResp struct {
 type NodeActionReq struct {
 	IDs    []string `json:"ids" validate:"required"`
 	KBID   string   `json:"kb_id" validate:"required"`
-	Action string   `json:"action" validate:"required,oneof=delete private public"`
+	Action string   `json:"action" validate:"required,oneof=delete"`
 }
 
 type UpdateNodeReq struct {
-	ID         string          `json:"id" validate:"required"`
-	KBID       string          `json:"kb_id" validate:"required"`
-	Name       *string         `json:"name"`
-	Content    *string         `json:"content"`
-	Emoji      *string         `json:"emoji"`
-	Visibility *NodeVisibility `json:"visibility"`
-	Summary    *string         `json:"summary"`
-	Position   *float64        `json:"position"`
+	ID       string   `json:"id" validate:"required"`
+	KBID     string   `json:"kb_id" validate:"required"`
+	Name     *string  `json:"name"`
+	Content  *string  `json:"content"`
+	Emoji    *string  `json:"emoji"`
+	Summary  *string  `json:"summary"`
+	Position *float64 `json:"position"`
 }
 
 type ShareNodeListItemResp struct {
@@ -263,8 +252,7 @@ type NodeRelease struct {
 	NodeID string `json:"node_id" gorm:"index"`
 	DocID  string `json:"doc_id" gorm:"index"` // for rag service
 
-	Type       NodeType       `json:"type"`
-	Visibility NodeVisibility `json:"visibility"`
+	Type NodeType `json:"type"`
 
 	Name    string   `json:"name"`
 	Meta    NodeMeta `json:"meta" gorm:"type:jsonb"`

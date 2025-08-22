@@ -16,7 +16,6 @@ type NodeDetailResp struct {
 	KbID        string                 `json:"kb_id"`
 	Type        domain.NodeType        `json:"type"`
 	Status      domain.NodeStatus      `json:"status"`
-	Visibility  domain.NodeVisibility  `json:"visibility"`
 	Name        string                 `json:"name"`
 	Content     string                 `json:"content"`
 	Meta        domain.NodeMeta        `json:"meta"`

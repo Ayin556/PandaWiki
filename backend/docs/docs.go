@@ -4643,9 +4643,6 @@ const docTemplate = `{
                             "$ref": "#/definitions/domain.NodeType"
                         }
                     ]
-                },
-                "visibility": {
-                    "$ref": "#/definitions/domain.NodeVisibility"
                 }
             }
         },
@@ -5100,9 +5097,7 @@ const docTemplate = `{
                 "action": {
                     "type": "string",
                     "enum": [
-                        "delete",
-                        "private",
-                        "public"
+                        "delete"
                     ]
                 },
                 "ids": {
@@ -5189,9 +5184,6 @@ const docTemplate = `{
                 },
                 "updated_at": {
                     "type": "string"
-                },
-                "visibility": {
-                    "$ref": "#/definitions/domain.NodeVisibility"
                 }
             }
         },
@@ -5275,18 +5267,6 @@ const docTemplate = `{
             "x-enum-varnames": [
                 "NodeTypeFolder",
                 "NodeTypeDocument"
-            ]
-        },
-        "domain.NodeVisibility": {
-            "type": "integer",
-            "format": "int32",
-            "enum": [
-                1,
-                2
-            ],
-            "x-enum-varnames": [
-                "NodeVisibilityPrivate",
-                "NodeVisibilityPublic"
             ]
         },
         "domain.NotnionGetListReq": {
@@ -5855,9 +5835,6 @@ const docTemplate = `{
                 },
                 "summary": {
                     "type": "string"
-                },
-                "visibility": {
-                    "$ref": "#/definitions/domain.NodeVisibility"
                 }
             }
         },
@@ -6351,9 +6328,6 @@ const docTemplate = `{
                 },
                 "updated_at": {
                     "type": "string"
-                },
-                "visibility": {
-                    "$ref": "#/definitions/domain.NodeVisibility"
                 }
             }
         },
