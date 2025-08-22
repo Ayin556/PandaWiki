@@ -103,21 +103,6 @@ func (u *NodeUsecase) Update(ctx context.Context, req *domain.UpdateNodeReq, use
 	if err != nil {
 		return err
 	}
-	nodeRelease, err := u.nodeRepo.GetLatestNodeReleaseByNodeID(ctx, req.ID)
-	if err != nil {
-		return err
-	}
-	if nodeRelease.DocID != "" {
-		if err := u.ragRepo.AsyncUpdateNodeReleaseVector(ctx, []*domain.NodeReleaseVectorRequest{
-			{
-				KBID:   req.KBID,
-				DocID:  nodeRelease.DocID,
-				Action: "delete",
-			},
-		}); err != nil {
-			return err
-		}
-	}
 	return nil
 }
 

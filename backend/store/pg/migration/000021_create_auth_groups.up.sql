@@ -31,3 +31,7 @@ ALTER TABLE "public"."nodes" ADD COLUMN "editor_id" TEXT NOT NULL DEFAULT '';
 UPDATE nodes SET creator_id = u.id, editor_id = u.id FROM "users" u WHERE u.account = 'admin';
 
 UPDATE nodes set "permissions"='{"answerable":"closed","visitable":"closed","visible":"closed"}'::jsonb, "status"=1 where "visibility"=1;
+
+ALTER TABLE nodes ADD COLUMN edit_time TIMESTAMP;
+
+UPDATE nodes SET edit_time=updated_at ;

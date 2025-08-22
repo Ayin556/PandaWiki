@@ -48,9 +48,10 @@ type Node struct {
 	ParentID string  `json:"parent_id"`
 	Position float64 `json:"position"`
 
-	DocID     string `json:"doc_id"` // DEPRECATED: for rag service
-	CreatorId string `json:"creator_id"`
-	EditorId  string `json:"editor_id"`
+	DocID     string    `json:"doc_id"` // DEPRECATED: for rag service
+	CreatorId string    `json:"creator_id"`
+	EditorId  string    `json:"editor_id"`
+	EditTime  time.Time `json:"edit_time"`
 
 	Permissions NodePermissions `json:"permissions" gorm:"type:jsonb"`
 

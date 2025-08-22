@@ -99,6 +99,7 @@ func (r *NodeRepository) Create(ctx context.Context, req *domain.CreateNodeReq, 
 			EditorId:  userId,
 			CreatedAt: now,
 			UpdatedAt: now,
+			EditTime:  now,
 		}
 
 		return tx.Create(node).Error
@@ -117,7 +118,7 @@ func (r *NodeRepository) GetList(ctx context.Context, req *domain.GetNodeListReq
 		Joins("LEFT JOIN users cu ON nodes.creator_id = cu.id").
 		Joins("LEFT JOIN users eu ON nodes.editor_id = eu.id").
 		Where("nodes.kb_id = ?", req.KBID).
-		Select("cu.account AS creator, eu.account AS editor, nodes.editor_id, nodes.creator_id, nodes.id, nodes.permissions, nodes.type, nodes.status, nodes.name, nodes.parent_id, nodes.position, nodes.created_at, nodes.updated_at, nodes.meta->>'summary' as summary, nodes.meta->>'emoji' as emoji")
+		Select("cu.account AS creator, eu.account AS editor, nodes.editor_id, nodes.creator_id, nodes.id, nodes.permissions, nodes.type, nodes.status, nodes.name, nodes.parent_id, nodes.position, nodes.created_at, nodes.edit_time as updated_at, nodes.meta->>'summary' as summary, nodes.meta->>'emoji' as emoji")
 	if req.Search != "" {
 		searchPattern := "%" + req.Search + "%"
 		query = query.Where("name LIKE ? OR content LIKE ?", searchPattern, searchPattern)
@@ -212,6 +213,7 @@ func (r *NodeRepository) UpdateNodeContent(ctx context.Context, req *domain.Upda
 		// If any field is updated, set status to draft
 		if updateStatus {
 			updateMap["status"] = domain.NodeStatusDraft
+			updateMap["edit_time"] = time.Now()
 		}
 
 		// Perform update if there are changes
