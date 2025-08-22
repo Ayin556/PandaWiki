@@ -65,13 +65,15 @@ func (u *NodeUsecase) GetList(ctx context.Context, req *domain.GetNodeListReq) (
 	return nodes, nil
 }
 
-func (u *NodeUsecase) GetNodeByKBID(ctx context.Context, id, kbId string) (*v1.NodeDetailResp, error) {
+func (u *NodeUsecase) GetNodeByKBID(ctx context.Context, id, kbId, format string) (*v1.NodeDetailResp, error) {
 	node, err := u.nodeRepo.GetByID(ctx, id, kbId)
 	if err != nil {
 		return nil, err
 	}
-	if !strings.HasPrefix(node.Content, "<") {
-		node.Content = u.convertMDToHTML(node.Content)
+	if format != "raw" {
+		if !strings.HasPrefix(node.Content, "<") {
+			node.Content = u.convertMDToHTML(node.Content)
+		}
 	}
 	return node, nil
 }
@@ -147,13 +149,16 @@ func (u *NodeUsecase) ValidateNodePerm(ctx context.Context, kbID, nodeId string,
 	return nil
 }
 
-func (u *NodeUsecase) GetNodeReleaseDetailByKBIDAndID(ctx context.Context, kbID, nodeId string) (*v1.NodeDetailResp, error) {
+func (u *NodeUsecase) GetNodeReleaseDetailByKBIDAndID(ctx context.Context, kbID, nodeId, format string) (*v1.NodeDetailResp, error) {
 	node, err := u.nodeRepo.GetNodeReleaseDetailByKBIDAndID(ctx, kbID, nodeId)
 	if err != nil {
 		return nil, err
 	}
-	if !strings.HasPrefix(node.Content, "<") {
-		node.Content = u.convertMDToHTML(node.Content)
+	// just for info
+	if format != "raw" {
+		if !strings.HasPrefix(node.Content, "<") {
+			node.Content = u.convertMDToHTML(node.Content)
+		}
 	}
 	return node, nil
 }

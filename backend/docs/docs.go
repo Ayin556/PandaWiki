@@ -2066,6 +2066,11 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "name": "format",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "id",
                         "in": "query",
                         "required": true
@@ -3350,6 +3355,13 @@ const docTemplate = `{
                         "type": "string",
                         "description": "node id",
                         "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "format",
+                        "name": "format",
                         "in": "query",
                         "required": true
                     }

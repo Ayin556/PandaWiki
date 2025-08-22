@@ -69,6 +69,7 @@ func (h *ShareNodeHandler) GetNodeList(c echo.Context) error {
 //	@Produce		json
 //	@Param			X-KB-ID	header		string	true	"kb id"
 //	@Param			id		query		string	true	"node id"
+//	@Param			format	query		string	true	"format"
 //	@Success		200		{object}	domain.Response
 //	@Router			/share/v1/node/detail [get]
 func (h *ShareNodeHandler) GetNodeDetail(c echo.Context) error {
@@ -85,7 +86,7 @@ func (h *ShareNodeHandler) GetNodeDetail(c echo.Context) error {
 		return h.NewResponseWithErrCode(c, domain.ErrCodePermissionDenied)
 	}
 
-	node, err := h.usecase.GetNodeReleaseDetailByKBIDAndID(c.Request().Context(), kbID, id)
+	node, err := h.usecase.GetNodeReleaseDetailByKBIDAndID(c.Request().Context(), kbID, id, c.QueryParam("format"))
 	if err != nil {
 		return h.NewResponseWithError(c, "failed to get node detail", err)
 	}
