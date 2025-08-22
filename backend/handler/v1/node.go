@@ -139,7 +139,7 @@ func (h *NodeHandler) GetNodeDetail(c echo.Context) error {
 		return h.NewResponseWithError(c, "validate request failed", err)
 	}
 
-	node, err := h.usecase.GetNodeByKBID(c.Request().Context(), req.ID, req.KbId)
+	node, err := h.usecase.GetNodeByKBID(c.Request().Context(), req.ID, req.KbId, req.Format)
 	if err != nil {
 		return h.NewResponseWithError(c, "get node detail failed", err)
 	}

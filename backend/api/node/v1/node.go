@@ -7,8 +7,9 @@ import (
 )
 
 type GetNodeDetailReq struct {
-	KbId string `query:"kb_id" json:"kb_id" validate:"required"`
-	ID   string `query:"id" json:"id" validate:"required"`
+	KbId   string `query:"kb_id" json:"kb_id" validate:"required"`
+	ID     string `query:"id" json:"id" validate:"required"`
+	Format string `query:"format" json:"format"`
 }
 
 type NodeDetailResp struct {
