@@ -1,7 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { Form, FormItem } from '@/pages/setting/component/Common';
 import { Modal, Icon, Message } from 'ct-mui';
-import InfoIcon from '@mui/icons-material/Info';
 import { GithubComChaitinPandaWikiProApiAuthV1AuthGroupListItem } from '@/request/pro/types';
 import { DomainNodeListItemResp } from '@/request/types';
 import dayjs from 'dayjs';
@@ -12,9 +11,6 @@ import {
   styled,
   Stack,
   Button,
-  MenuItem,
-  Box,
-  Tooltip,
   Autocomplete,
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
@@ -82,9 +78,12 @@ const DocPropertiesModal = ({
       visitable: null as ConstsNodeAccessPerm | null,
       visible: null as ConstsNodeAccessPerm | null,
       summary: '',
-      answerable_groups: [] as number[],
-      visitable_groups: [] as number[],
-      visible_groups: [] as number[],
+      answerable_groups:
+        [] as GithubComChaitinPandaWikiProApiAuthV1AuthGroupListItem[],
+      visitable_groups:
+        [] as GithubComChaitinPandaWikiProApiAuthV1AuthGroupListItem[],
+      visible_groups:
+        [] as GithubComChaitinPandaWikiProApiAuthV1AuthGroupListItem[],
     },
   });
 
@@ -117,9 +116,15 @@ const DocPropertiesModal = ({
           visitable: values.visitable as ConstsNodeAccessPerm,
           visible: values.visible as ConstsNodeAccessPerm,
         },
-        answerable_groups: isEnterprise ? values.answerable_groups : undefined,
-        visitable_groups: isEnterprise ? values.visitable_groups : undefined,
-        visible_groups: isEnterprise ? values.visible_groups : undefined,
+        answerable_groups: isEnterprise
+          ? values.answerable_groups.map(item => item.id!)
+          : undefined,
+        visitable_groups: isEnterprise
+          ? values.visitable_groups.map(item => item.id!)
+          : undefined,
+        visible_groups: isEnterprise
+          ? values.visible_groups.map(item => item.id!)
+          : undefined,
       }),
 
       putApiV1NodeDetail({
@@ -152,18 +157,9 @@ const DocPropertiesModal = ({
           setValue('visitable', permissions.visitable!);
           setValue('visible', permissions.visible!);
         }
-        setValue(
-          'answerable_groups',
-          res.answerable_groups?.map(item => item.auth_group_id!) || [],
-        );
-        setValue(
-          'visitable_groups',
-          res.visitable_groups?.map(item => item.auth_group_id!) || [],
-        );
-        setValue(
-          'visible_groups',
-          res.visible_groups?.map(item => item.auth_group_id!) || [],
-        );
+        setValue('answerable_groups', res.answerable_groups || []);
+        setValue('visitable_groups', res.visitable_groups || []);
+        setValue('visible_groups', res.visible_groups || []);
       });
       if (isEnterprise) {
         getApiProV1AuthGroupList({
@@ -266,23 +262,22 @@ const DocPropertiesModal = ({
               name='answerable_groups'
               control={control}
               render={({ field }) => (
-                <TextField
-                  select
+                <Autocomplete
                   {...field}
                   fullWidth
-                  slotProps={{
-                    select: {
-                      multiple: true,
-                    },
+                  multiple
+                  options={userGroups}
+                  getOptionLabel={option => option.name!}
+                  onChange={(_, value) => {
+                    field.onChange(value);
                   }}
-                  label='可被问答的用户组'
-                >
-                  {userGroups.map(option => (
-                    <MenuItem key={option.id} value={option.id}>
-                      {option.name}
-                    </MenuItem>
-                  ))}
-                </TextField>
+                  isOptionEqualToValue={(option, value) =>
+                    option.id === value.id
+                  }
+                  renderInput={params => (
+                    <TextField {...params} placeholder='可被问答的用户组' />
+                  )}
+                />
               )}
             />
           </FormItem>
@@ -324,23 +319,22 @@ const DocPropertiesModal = ({
               name='visitable_groups'
               control={control}
               render={({ field }) => (
-                <TextField
-                  select
+                <Autocomplete
                   {...field}
                   fullWidth
-                  slotProps={{
-                    select: {
-                      multiple: true,
-                    },
+                  multiple
+                  options={userGroups}
+                  getOptionLabel={option => option.name!}
+                  onChange={(_, value) => {
+                    field.onChange(value);
                   }}
-                  label='可被访问的用户组'
-                >
-                  {userGroups.map(option => (
-                    <MenuItem key={option.id} value={option.id}>
-                      {option.name}
-                    </MenuItem>
-                  ))}
-                </TextField>
+                  isOptionEqualToValue={(option, value) =>
+                    option.id === value.id
+                  }
+                  renderInput={params => (
+                    <TextField {...params} placeholder='可被访问的用户组' />
+                  )}
+                />
               )}
             />
           </FormItem>
@@ -382,23 +376,22 @@ const DocPropertiesModal = ({
               name='visible_groups'
               control={control}
               render={({ field }) => (
-                <TextField
-                  select
+                <Autocomplete
                   {...field}
                   fullWidth
-                  slotProps={{
-                    select: {
-                      multiple: true,
-                    },
+                  multiple
+                  options={userGroups}
+                  getOptionLabel={option => option.name!}
+                  onChange={(_, value) => {
+                    field.onChange(value);
                   }}
-                  label='导航内可见的用户组'
-                >
-                  {userGroups.map(option => (
-                    <MenuItem key={option.id} value={option.id}>
-                      {option.name}
-                    </MenuItem>
-                  ))}
-                </TextField>
+                  isOptionEqualToValue={(option, value) =>
+                    option.id === value.id
+                  }
+                  renderInput={params => (
+                    <TextField {...params} placeholder='导航内可见的用户组' />
+                  )}
+                />
               )}
             />
           </FormItem>

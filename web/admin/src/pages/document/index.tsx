@@ -175,11 +175,11 @@ const Content = () => {
                   },
                 ]
               : []),
-            {
-              label: item.summary ? '查看摘要' : '生成摘要',
-              key: 'summary',
-              onClick: () => handleSummary(item),
-            },
+            // {
+            //   label: item.summary ? '查看摘要' : '生成摘要',
+            //   key: 'summary',
+            //   onClick: () => handleSummary(item),
+            // },
           ]
         : []),
       ...(!isEditing
