@@ -33,10 +33,7 @@ const AddRecommendContent = ({
     getApiV1NodeList(params)
       .then(res => {
         const filterData =
-          res?.filter(
-            item =>
-              item.type === 1 || (item.visibility === 2 && item.status === 2),
-          ) || [];
+          res?.filter(item => item.type === 1 || item.status === 2) || [];
         const filterTreeData = convertToTree(filterData);
         const showTreeData = filterEmptyFolders(filterTreeData);
         setList(showTreeData);

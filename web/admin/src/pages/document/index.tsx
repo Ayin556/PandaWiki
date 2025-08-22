@@ -48,9 +48,7 @@ const Content = () => {
   const [selected, setSelected] = useState<string[]>([]);
   const [data, setData] = useState<ITreeItem[]>([]);
   const [opraData, setOpraData] = useState<DomainNodeListItemResp[]>([]);
-  const [statusOpen, setStatusOpen] = useState<'private' | 'public' | null>(
-    null,
-  );
+  const [statusOpen, setStatusOpen] = useState<'delete' | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [moreSummaryOpen, setMoreSummaryOpen] = useState(false);
@@ -74,11 +72,6 @@ const Content = () => {
 
   const handleSummary = (item: ITreeItem) => {
     setSummaryOpen(true);
-    setOpraData(list.filter(it => it.id === item.id));
-  };
-
-  const handleStatus = (item: ITreeItem, status: 'public' | 'private') => {
-    setStatusOpen(status);
     setOpraData(list.filter(it => it.id === item.id));
   };
 
@@ -173,24 +166,6 @@ const Content = () => {
         : []),
       ...(item.type === 2
         ? [
-            ...(item.visibility === 1
-              ? [
-                  {
-                    label: '设为公开',
-                    key: 'public',
-                    onClick: () => handleStatus(item, 'public'),
-                  },
-                ]
-              : []),
-            ...(item.visibility === 2
-              ? [
-                  {
-                    label: '设为私有',
-                    key: 'private',
-                    onClick: () => handleStatus(item, 'private'),
-                  },
-                ]
-              : []),
             ...(item.status === 1
               ? [
                   {
@@ -200,11 +175,11 @@ const Content = () => {
                   },
                 ]
               : []),
-            {
-              label: item.summary ? '查看摘要' : '生成摘要',
-              key: 'summary',
-              onClick: () => handleSummary(item),
-            },
+            // {
+            //   label: item.summary ? '查看摘要' : '生成摘要',
+            //   key: 'summary',
+            //   onClick: () => handleSummary(item),
+            // },
           ]
         : []),
       ...(!isEditing
@@ -369,30 +344,6 @@ const Content = () => {
                     size='small'
                     sx={{ minWidth: 0, p: 0 }}
                     onClick={() => {
-                      setStatusOpen('public');
-                      setOpraData(
-                        list.filter(item => selected.includes(item.id!)),
-                      );
-                    }}
-                  >
-                    设为公开
-                  </Button>
-                  <Button
-                    size='small'
-                    sx={{ minWidth: 0, p: 0 }}
-                    onClick={() => {
-                      setStatusOpen('private');
-                      setOpraData(
-                        list.filter(item => selected.includes(item.id!)),
-                      );
-                    }}
-                  >
-                    设为私有
-                  </Button>
-                  <Button
-                    size='small'
-                    sx={{ minWidth: 0, p: 0 }}
-                    onClick={() => {
                       setMoreSummaryOpen(true);
                       setOpraData(
                         list.filter(item => selected.includes(item.id!)),
@@ -505,7 +456,7 @@ const Content = () => {
         }}
       />
       <DocStatus
-        status={statusOpen || 'public'}
+        status={statusOpen || 'delete'}
         data={opraData}
         kb_id={kb_id}
         open={!!statusOpen}

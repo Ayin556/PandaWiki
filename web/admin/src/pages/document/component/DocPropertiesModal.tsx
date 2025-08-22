@@ -1,11 +1,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { Form, FormItem } from '@/pages/setting/component/Common';
 import { Modal, Icon, Message } from 'ct-mui';
-import InfoIcon from '@mui/icons-material/Info';
-import {
-  ConstsNodeAccessPerm,
-  GithubComChaitinPandaWikiProApiAuthV1AuthGroupListItem,
-} from '@/request/pro/types';
+import { GithubComChaitinPandaWikiProApiAuthV1AuthGroupListItem } from '@/request/pro/types';
 import { DomainNodeListItemResp } from '@/request/types';
 import dayjs from 'dayjs';
 import {
@@ -15,19 +11,17 @@ import {
   styled,
   Stack,
   Button,
-  Select,
-  MenuItem,
-  Box,
-  Tooltip,
+  Autocomplete,
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import { FormControlLabel } from '@mui/material';
+import { ConstsNodeAccessPerm } from '@/request/types';
 import { postApiV1NodeSummary, putApiV1NodeDetail } from '@/request/Node';
 import { getApiProV1AuthGroupList } from '@/request/pro/AuthGroup';
 import {
-  getApiProV1NodePermission,
-  patchApiProV1NodePermissionEdit,
-} from '@/request/pro/NodePermission';
+  getApiV1NodePermission,
+  patchApiV1NodePermissionEdit,
+} from '@/request/NodePermission';
 import { useAppSelector } from '@/store';
 
 interface DocPropertiesModalProps {
@@ -37,7 +31,7 @@ interface DocPropertiesModalProps {
   data: DomainNodeListItemResp;
 }
 
-const tips = '联创版/企业版可用';
+const tips = '(企业版可用)';
 
 const StyledText = styled('div')(({ theme }) => ({
   color: theme.palette.text.secondary,
@@ -84,9 +78,12 @@ const DocPropertiesModal = ({
       visitable: null as ConstsNodeAccessPerm | null,
       visible: null as ConstsNodeAccessPerm | null,
       summary: '',
-      answerable_groups: [] as number[],
-      visitable_groups: [] as number[],
-      visible_groups: [] as number[],
+      answerable_groups:
+        [] as GithubComChaitinPandaWikiProApiAuthV1AuthGroupListItem[],
+      visitable_groups:
+        [] as GithubComChaitinPandaWikiProApiAuthV1AuthGroupListItem[],
+      visible_groups:
+        [] as GithubComChaitinPandaWikiProApiAuthV1AuthGroupListItem[],
     },
   });
 
@@ -101,7 +98,6 @@ const DocPropertiesModal = ({
       kb_id: kb_id!,
     })
       .then(res => {
-        console.log(res);
         // @ts-expect-error 类型不匹配
         setValue('summary', res.summary);
       })
@@ -112,20 +108,25 @@ const DocPropertiesModal = ({
 
   const onSubmit = handleSubmit(values => {
     Promise.all([
-      isPro
-        ? patchApiProV1NodePermissionEdit({
-            kb_id: kb_id!,
-            id: data.id!,
-            permissions: {
-              answerable: values.answerable as ConstsNodeAccessPerm,
-              visitable: values.visitable as ConstsNodeAccessPerm,
-              visible: values.visible as ConstsNodeAccessPerm,
-            },
-            answerable_groups: values.answerable_groups,
-            visitable_groups: values.visitable_groups,
-            visible_groups: values.visible_groups,
-          })
-        : Promise.resolve(),
+      patchApiV1NodePermissionEdit({
+        kb_id: kb_id!,
+        id: data.id!,
+        permissions: {
+          answerable: values.answerable as ConstsNodeAccessPerm,
+          visitable: values.visitable as ConstsNodeAccessPerm,
+          visible: values.visible as ConstsNodeAccessPerm,
+        },
+        answerable_groups: isEnterprise
+          ? values.answerable_groups.map(item => item.id!)
+          : undefined,
+        visitable_groups: isEnterprise
+          ? values.visitable_groups.map(item => item.id!)
+          : undefined,
+        visible_groups: isEnterprise
+          ? values.visible_groups.map(item => item.id!)
+          : undefined,
+      }),
+
       putApiV1NodeDetail({
         id: data.id!,
         name: values.name,
@@ -138,38 +139,47 @@ const DocPropertiesModal = ({
     });
   });
 
-  const isPro = useMemo(() => {
-    return license.edition === 1 || license.edition === 2;
+  const isEnterprise = useMemo(() => {
+    return license.edition === 2;
   }, [license]);
 
   useEffect(() => {
     if (open && data) {
       setValue('name', data.name!);
       setValue('summary', data.summary!);
-      if (isPro) {
-        getApiProV1NodePermission({
-          kb_id: kb_id!,
-          id: data.id!,
-        }).then(res => {
-          const permissions = res.permissions!;
-          if (permissions) {
-            setValue('answerable', permissions.answerable!);
-            setValue('visitable', permissions.visitable!);
-            setValue('visible', permissions.visible!);
-          }
-          setValue(
-            'answerable_groups',
-            res.answerable_groups?.map(item => item.auth_group_id!) || [],
-          );
-          setValue(
-            'visitable_groups',
-            res.visitable_groups?.map(item => item.auth_group_id!) || [],
-          );
-          setValue(
-            'visible_groups',
-            res.visible_groups?.map(item => item.auth_group_id!) || [],
-          );
-        });
+      getApiV1NodePermission({
+        kb_id: kb_id!,
+        id: data.id!,
+      }).then(res => {
+        const permissions = res.permissions!;
+        if (permissions) {
+          setValue('answerable', permissions.answerable!);
+          setValue('visitable', permissions.visitable!);
+          setValue('visible', permissions.visible!);
+        }
+        setValue(
+          'answerable_groups',
+          (res.answerable_groups || []).map(item => ({
+            id: item.auth_group_id,
+            name: item.name,
+          })),
+        );
+        setValue(
+          'visitable_groups',
+          (res.visitable_groups || []).map(item => ({
+            id: item.auth_group_id,
+            name: item.name,
+          })),
+        );
+        setValue(
+          'visible_groups',
+          (res.visible_groups || []).map(item => ({
+            id: item.auth_group_id,
+            name: item.name,
+          })),
+        );
+      });
+      if (isEnterprise) {
         getApiProV1AuthGroupList({
           kb_id: kb_id!,
           page: 1,
@@ -179,7 +189,7 @@ const DocPropertiesModal = ({
         });
       }
     }
-  }, [open, data, isPro]);
+  }, [open, data, isEnterprise]);
 
   useEffect(() => {
     if (!open) {
@@ -234,18 +244,7 @@ const DocPropertiesModal = ({
         <FormItem label='修改者'>
           <StyledText>{data?.editor}</StyledText>
         </FormItem>
-        <FormItem
-          label={
-            <Stack direction='row' alignItems='center' gap={0.5}>
-              <Box>可被问答</Box>
-              {!isPro && (
-                <Tooltip title={tips} placement='top' arrow>
-                  <InfoIcon sx={{ color: 'text.secondary', fontSize: 14 }} />
-                </Tooltip>
-              )}
-            </Stack>
-          }
-        >
+        <FormItem label='可被问答'>
           <Controller
             name='answerable'
             control={control}
@@ -256,8 +255,19 @@ const DocPropertiesModal = ({
                     key={option.value}
                     value={option.value}
                     control={<Radio size='small' />}
-                    label={option.label}
-                    disabled={!isPro}
+                    label={
+                      option.label +
+                      (!isEnterprise &&
+                      option.value ===
+                        ConstsNodeAccessPerm.NodeAccessPermPartial
+                        ? tips
+                        : '')
+                    }
+                    disabled={
+                      !isEnterprise &&
+                      option.value ===
+                        ConstsNodeAccessPerm.NodeAccessPermPartial
+                    }
                   />
                 ))}
               </RadioGroup>
@@ -270,40 +280,28 @@ const DocPropertiesModal = ({
               name='answerable_groups'
               control={control}
               render={({ field }) => (
-                <TextField
-                  select
+                <Autocomplete
                   {...field}
                   fullWidth
-                  slotProps={{
-                    select: {
-                      multiple: true,
-                    },
+                  multiple
+                  options={userGroups}
+                  getOptionLabel={option => option.name!}
+                  onChange={(_, value) => {
+                    field.onChange(value);
                   }}
-                  placeholder='请选择可被问答的组'
-                >
-                  {userGroups.map(option => (
-                    <MenuItem key={option.id} value={option.id}>
-                      {option.name}
-                    </MenuItem>
-                  ))}
-                </TextField>
+                  isOptionEqualToValue={(option, value) =>
+                    option.id === value.id
+                  }
+                  renderInput={params => (
+                    <TextField {...params} placeholder='可被问答的用户组' />
+                  )}
+                />
               )}
             />
           </FormItem>
         )}
 
-        <FormItem
-          label={
-            <Stack direction='row' alignItems='center' gap={0.5}>
-              <Box>可被访问</Box>
-              {!isPro && (
-                <Tooltip title={tips} placement='top' arrow>
-                  <InfoIcon sx={{ color: 'text.secondary', fontSize: 14 }} />
-                </Tooltip>
-              )}
-            </Stack>
-          }
-        >
+        <FormItem label='可被访问'>
           <Controller
             name='visitable'
             control={control}
@@ -314,8 +312,19 @@ const DocPropertiesModal = ({
                     key={option.value}
                     value={option.value}
                     control={<Radio size='small' />}
-                    label={option.label}
-                    disabled={!isPro}
+                    label={
+                      option.label +
+                      (!isEnterprise &&
+                      option.value ===
+                        ConstsNodeAccessPerm.NodeAccessPermPartial
+                        ? tips
+                        : '')
+                    }
+                    disabled={
+                      !isEnterprise &&
+                      option.value ===
+                        ConstsNodeAccessPerm.NodeAccessPermPartial
+                    }
                   />
                 ))}
               </RadioGroup>
@@ -328,39 +337,28 @@ const DocPropertiesModal = ({
               name='visitable_groups'
               control={control}
               render={({ field }) => (
-                <TextField
-                  select
+                <Autocomplete
                   {...field}
                   fullWidth
-                  slotProps={{
-                    select: {
-                      multiple: true,
-                    },
+                  multiple
+                  options={userGroups}
+                  getOptionLabel={option => option.name!}
+                  onChange={(_, value) => {
+                    field.onChange(value);
                   }}
-                >
-                  {userGroups.map(option => (
-                    <MenuItem key={option.id} value={option.id}>
-                      {option.name}
-                    </MenuItem>
-                  ))}
-                </TextField>
+                  isOptionEqualToValue={(option, value) =>
+                    option.id === value.id
+                  }
+                  renderInput={params => (
+                    <TextField {...params} placeholder='可被访问的用户组' />
+                  )}
+                />
               )}
             />
           </FormItem>
         )}
 
-        <FormItem
-          label={
-            <Stack direction='row' alignItems='center' gap={0.5}>
-              <Box>可被问答</Box>
-              {!isPro && (
-                <Tooltip title={tips} placement='top' arrow>
-                  <InfoIcon sx={{ color: 'text.secondary', fontSize: 14 }} />
-                </Tooltip>
-              )}
-            </Stack>
-          }
-        >
+        <FormItem label='导航内可见'>
           <Controller
             name='visible'
             control={control}
@@ -371,8 +369,19 @@ const DocPropertiesModal = ({
                     key={option.value}
                     value={option.value}
                     control={<Radio size='small' />}
-                    label={option.label}
-                    disabled={!isPro}
+                    label={
+                      option.label +
+                      (!isEnterprise &&
+                      option.value ===
+                        ConstsNodeAccessPerm.NodeAccessPermPartial
+                        ? tips
+                        : '')
+                    }
+                    disabled={
+                      !isEnterprise &&
+                      option.value ===
+                        ConstsNodeAccessPerm.NodeAccessPermPartial
+                    }
                   />
                 ))}
               </RadioGroup>
@@ -385,22 +394,22 @@ const DocPropertiesModal = ({
               name='visible_groups'
               control={control}
               render={({ field }) => (
-                <TextField
-                  select
+                <Autocomplete
                   {...field}
                   fullWidth
-                  slotProps={{
-                    select: {
-                      multiple: true,
-                    },
+                  multiple
+                  options={userGroups}
+                  getOptionLabel={option => option.name!}
+                  onChange={(_, value) => {
+                    field.onChange(value);
                   }}
-                >
-                  {userGroups.map(option => (
-                    <MenuItem key={option.id} value={option.id}>
-                      {option.name}
-                    </MenuItem>
-                  ))}
-                </TextField>
+                  isOptionEqualToValue={(option, value) =>
+                    option.id === value.id
+                  }
+                  renderInput={params => (
+                    <TextField {...params} placeholder='导航内可见的用户组' />
+                  )}
+                />
               )}
             />
           </FormItem>

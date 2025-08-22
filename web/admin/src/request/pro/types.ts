@@ -27,24 +27,6 @@ export enum ConstsSourceType {
   SourceTypeLDAP = "ldap",
 }
 
-export enum ConstsNodePermName {
-  /** 导航内可见 */
-  NodePermNameVisible = "visible",
-  /** 可被访问 */
-  NodePermNameVisitable = "visitable",
-  /** 可被问答 */
-  NodePermNameAnswerable = "answerable",
-}
-
-export enum ConstsNodeAccessPerm {
-  /** 完全开放 */
-  NodeAccessPermOpen = "open",
-  /** 部分开放 */
-  NodeAccessPermPartial = "partial",
-  /** 完全禁止 */
-  NodeAccessPermClosed = "closed",
-}
-
 /** @format int32 */
 export enum ConstsLicenseEdition {
   LicenseEditionFree = 0,
@@ -117,15 +99,6 @@ export interface DomainNodeMeta {
   summary?: string;
 }
 
-export interface DomainNodePermissions {
-  /** 可被问答 */
-  answerable?: ConstsNodeAccessPerm;
-  /** 导航内可见 */
-  visible?: ConstsNodeAccessPerm;
-  /** 可被访问 */
-  visitable?: ConstsNodeAccessPerm;
-}
-
 export interface DomainNodeReleaseListItem {
   id?: string;
   meta?: DomainNodeMeta;
@@ -139,6 +112,7 @@ export interface DomainNodeReleaseListItem {
 }
 
 export interface DomainPWResponse {
+  code?: number;
   data?: unknown;
   message?: string;
   success?: boolean;
@@ -264,32 +238,6 @@ export interface GithubComChaitinPandaWikiProApiAuthV1AuthSetReq {
   user_info_url?: string;
 }
 
-export interface GithubComChaitinPandaWikiProApiNodeV1NodePermissionEditReq {
-  /** 可被问答 */
-  answerable_groups?: number[];
-  id: string;
-  kb_id: string;
-  permissions?: DomainNodePermissions;
-  /** 导航内可见 */
-  visible_groups?: number[];
-  /** 可被访问 */
-  visitable_groups?: number[];
-}
-
-export type GithubComChaitinPandaWikiProApiNodeV1NodePermissionEditResp =
-  Record<string, any>;
-
-export interface GithubComChaitinPandaWikiProApiNodeV1NodePermissionResp {
-  /** 可被问答 */
-  answerable_groups?: GithubComChaitinPandaWikiProDomainNodeGroupDetail[];
-  id?: string;
-  permissions?: DomainNodePermissions;
-  /** 导航内可见 */
-  visible_groups?: GithubComChaitinPandaWikiProDomainNodeGroupDetail[];
-  /** 可被访问 */
-  visitable_groups?: GithubComChaitinPandaWikiProDomainNodeGroupDetail[];
-}
-
 export interface GithubComChaitinPandaWikiProApiShareV1AuthCASReq {
   kb_id?: string;
   redirect_url?: string;
@@ -394,15 +342,6 @@ export interface GithubComChaitinPandaWikiProDomainCreateBlockWordsReq {
   kb_id: string;
 }
 
-export interface GithubComChaitinPandaWikiProDomainNodeGroupDetail {
-  auth_group_id?: number;
-  auth_ids?: number[];
-  kb_id?: string;
-  name?: string;
-  node_id?: string;
-  perm?: ConstsNodePermName;
-}
-
 export interface HandlerV1DocFeedBackLists {
   data?: DomainDocumentFeedbackListItem[];
   total?: number;
@@ -454,11 +393,6 @@ export interface GetApiProV1DocumentListParams {
   page: number;
   /** @min 1 */
   per_page: number;
-}
-
-export interface GetApiProV1NodePermissionParams {
-  id: string;
-  kb_id: string;
 }
 
 export interface GetApiProV1NodeReleaseDetailParams {

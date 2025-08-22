@@ -31,7 +31,7 @@ import {
   IconUser,
 } from '@/components/icons';
 import { useStore } from '@/provider';
-import { ConstsSourceType, DomainAuthType } from '@/request/types';
+import { ConstsSourceType, ConstsAuthType } from '@/request/types';
 import {
   Box,
   Button,
@@ -50,7 +50,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(false);
-  const [authType, setAuthType] = useState<DomainAuthType>();
+  const [authType, setAuthType] = useState<ConstsAuthType>();
   const [sourceType, setSourceType] = useState<ConstsSourceType>();
   const { kbDetail, themeMode, mobile = false, setNodeList } = useStore();
   const redirectUrl =
@@ -84,7 +84,7 @@ export default function Login() {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       if (
-        authType === DomainAuthType.AuthTypeEnterprise &&
+        authType === ConstsAuthType.AuthTypeEnterprise &&
         sourceType === ConstsSourceType.SourceTypeLDAP
       ) {
         // For LDAP auth, check if both username and password are filled before submitting
@@ -174,7 +174,7 @@ export default function Login() {
     getShareV1AuthGet({}).then(res => {
       setAuthType(res?.auth_type);
       setSourceType(res?.source_type);
-      if (res?.auth_type === DomainAuthType.AuthTypeNull) {
+      if (res?.auth_type === ConstsAuthType.AuthTypeNull) {
         window.open(redirectUrl, '_self');
       }
     });
@@ -224,7 +224,7 @@ export default function Login() {
                 {kbDetail?.settings?.title}
               </Box>
             </Stack>
-            {authType === DomainAuthType.AuthTypeSimple && (
+            {authType === ConstsAuthType.AuthTypeSimple && (
               <>
                 <TextField
                   fullWidth
@@ -278,7 +278,7 @@ export default function Login() {
               </>
             )}
 
-            {authType === DomainAuthType.AuthTypeEnterprise && (
+            {authType === ConstsAuthType.AuthTypeEnterprise && (
               <>
                 {sourceType === ConstsSourceType.SourceTypeDingTalk && (
                   <IconButton onClick={handleDingTalkLogin}>

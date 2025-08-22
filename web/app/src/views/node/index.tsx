@@ -18,6 +18,7 @@ import Catalog from './Catalog';
 import CatalogH5 from './CatalogH5';
 import DocAnchor from './DocAnchor';
 import DocContent from './DocContent';
+import NoPermission from './NoPermission';
 
 const Doc = ({
   node: defaultNode,
@@ -99,14 +100,14 @@ const Doc = ({
       const result: any = await getShareV1NodeDetail({ id });
       setNode(result);
       document.title = kbDetail?.name + ' - ' + result?.name;
-    } catch (error) {
-      console.error('page Error fetching document content:', error);
+    } catch (error: any) {
+      setNode(error.data);
     }
   };
 
   useEffect(() => {
     if (node && editorRef && editorRef.editor) {
-      editorRef.editor.commands.setContent(node?.content || '')
+      editorRef.editor.commands.setContent(node?.content || '');
     }
   }, [node, firstRequest]);
 
@@ -130,13 +131,18 @@ const Doc = ({
           {nodeList && <CatalogH5 nodes={nodeList} />}
           <Box sx={{ height: 24 }} />
           {node ? (
-            <DocContent
-              info={node}
-              editorRef={editorRef}
-              docId={docId}
-              kbInfo={kbInfo}
-              commentList={commentList}
-            />
+            // @ts-ignore
+            node.code === 40003 ? (
+              <NoPermission catalogShow={!!catalogShow} />
+            ) : (
+              <DocContent
+                info={node}
+                editorRef={editorRef}
+                docId={docId}
+                kbInfo={kbInfo}
+                commentList={commentList}
+              />
+            )
           ) : (
             <Stack
               direction='column'
@@ -218,12 +224,17 @@ const Doc = ({
               bgcolor: 'background.default',
             }}
           >
-            <DocContent
-              info={node}
-              editorRef={editorRef}
-              docId={docId}
-              kbInfo={kbInfo}
-            />
+            {/* @ts-ignore */}
+            {node.code === 40003 ? (
+              <NoPermission catalogShow={!!catalogShow} />
+            ) : (
+              <DocContent
+                info={node}
+                editorRef={editorRef}
+                docId={docId}
+                kbInfo={kbInfo}
+              />
+            )}
           </Box>
           {!!editorRef && (
             <DocAnchor

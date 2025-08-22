@@ -13,6 +13,7 @@
 import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
   DomainDeleteDocumentFeedbackReq,
+  DomainPWResponse,
   DomainResponse,
   GetApiProV1DocumentListParams,
   HandlerV1DocFeedBackLists,
@@ -49,7 +50,7 @@ export const deleteApiProV1DocumentFeedback = (
  * @name GetApiProV1DocumentList
  * @summary GetDocumentFeedbacks
  * @request GET:/api/pro/v1/document/list
- * @response `200` `(DomainResponse & {
+ * @response `200` `(DomainPWResponse & {
     data?: HandlerV1DocFeedBackLists,
 
 })` OK
@@ -60,7 +61,7 @@ export const getApiProV1DocumentList = (
   params: RequestParams = {},
 ) =>
   httpRequest<
-    DomainResponse & {
+    DomainPWResponse & {
       data?: HandlerV1DocFeedBackLists;
     }
   >({

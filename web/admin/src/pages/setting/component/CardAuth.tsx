@@ -172,6 +172,10 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
     return license.edition === 1 || license.edition === 2;
   }, [license]);
 
+  const isEnterprise = useMemo(() => {
+    return license.edition === 2;
+  }, [license]);
+
   useEffect(() => {
     const source_type = isPro
       ? kb.access_settings?.source_type ||
@@ -237,7 +241,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
     });
   };
   useEffect(() => {
-    if (!kb_id || enabled !== '2' || !isPro) return;
+    if (!kb_id || enabled !== '2' || !isEnterprise) return;
     getUserGroup();
   }, [kb_id, enabled, isPro]);
 
@@ -1121,8 +1125,8 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
             <SettingCardItem
               title='用户组'
               more={
-                !isPro && (
-                  <Tooltip title='联创版/企业版可用' placement='top' arrow>
+                !isEnterprise && (
+                  <Tooltip title='企业版可用' placement='top' arrow>
                     <InfoIcon
                       sx={{ color: 'text.secondary', fontSize: 14, ml: 1 }}
                     />
@@ -1133,9 +1137,9 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
                 <Button
                   size='small'
                   onClick={() => setUserGroupModalOpen(true)}
-                  disabled={!isPro}
+                  disabled={!isEnterprise}
                 >
-                  添加用户组 {!isPro ? tips : ''}
+                  添加用户组 {!isEnterprise ? ' (企业版可用)' : ''}
                 </Button>
               }
             >

@@ -492,7 +492,6 @@ const EditorHeader = ({
             summary: detail.meta?.summary || '',
             position: 0,
             status: 1,
-            visibility: 2,
           } as NodeListItem,
         ]}
         refresh={() => {

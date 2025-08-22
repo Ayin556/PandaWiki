@@ -47,12 +47,6 @@ export enum DomainScoreType {
 }
 
 /** @format int32 */
-export enum DomainNodeVisibility {
-  NodeVisibilityPrivate = 1,
-  NodeVisibilityPublic = 2,
-}
-
-/** @format int32 */
 export enum DomainNodeType {
   NodeTypeFolder = 1,
   NodeTypeDocument = 2,
@@ -120,6 +114,15 @@ export enum ConstsSourceType {
   SourceTypeGitHub = "github",
   SourceTypeCAS = "cas",
   SourceTypeLDAP = "ldap",
+}
+
+export enum ConstsNodePermName {
+  /** 导航内可见 */
+  NodePermNameVisible = "visible",
+  /** 可被访问 */
+  NodePermNameVisitable = "visitable",
+  /** 可被问答 */
+  NodePermNameAnswerable = "answerable",
 }
 
 export enum ConstsNodeAccessPerm {
@@ -216,6 +219,8 @@ export interface DomainAppSettings {
   title?: string;
   /** webapp comment settings */
   web_app_comment_settings?: DomainWebAppCommentSettings;
+  /** WebAppCustomStyle */
+  web_app_custom_style?: DomainWebAppCustomSettings;
   wechat_app_agent_id?: string;
   wechat_app_corpid?: string;
   wechat_app_encodingaeskey?: string;
@@ -281,6 +286,8 @@ export interface DomainAppSettingsResp {
   title?: string;
   /** webapp comment settings */
   web_app_comment_settings?: DomainWebAppCommentSettings;
+  /** WebAppCustomStyle */
+  web_app_custom_style?: DomainWebAppCustomSettings;
   wechat_app_agent_id?: string;
   wechat_app_corpid?: string;
   wechat_app_encodingaeskey?: string;
@@ -490,7 +497,6 @@ export interface DomainCreateNodeReq {
   parent_id?: string;
   position?: number;
   type: 1 | 2;
-  visibility?: DomainNodeVisibility;
 }
 
 export interface DomainEnterpriseAuth {
@@ -656,9 +662,18 @@ export interface DomainMoveNodeReq {
 }
 
 export interface DomainNodeActionReq {
-  action: "delete" | "private" | "public";
+  action: "delete";
   ids: string[];
   kb_id: string;
+}
+
+export interface DomainNodeGroupDetail {
+  auth_group_id?: number;
+  auth_ids?: number[];
+  kb_id?: string;
+  name?: string;
+  node_id?: string;
+  perm?: ConstsNodePermName;
 }
 
 export interface DomainNodeListItemResp {
@@ -677,7 +692,6 @@ export interface DomainNodeListItemResp {
   summary?: string;
   type?: DomainNodeType;
   updated_at?: string;
-  visibility?: DomainNodeVisibility;
 }
 
 export interface DomainNodeMeta {
@@ -709,6 +723,7 @@ export interface DomainObjectUploadResp {
 }
 
 export interface DomainPWResponse {
+  code?: number;
   data?: unknown;
   message?: string;
   success?: boolean;
@@ -908,7 +923,6 @@ export interface DomainUpdateNodeReq {
   name?: string;
   position?: number;
   summary?: string;
-  visibility?: DomainNodeVisibility;
 }
 
 export interface DomainUserInfo {
@@ -925,6 +939,11 @@ export interface DomainUserInfo {
 export interface DomainWebAppCommentSettings {
   is_enable?: boolean;
   moderation_enable?: boolean;
+}
+
+export interface DomainWebAppCustomSettings {
+  allow_theme_switching?: boolean;
+  header_search_placeholder?: string;
 }
 
 export interface DomainWidgetBotSettings {
@@ -1064,7 +1083,31 @@ export interface V1NodeDetailResp {
   status?: DomainNodeStatus;
   type?: DomainNodeType;
   updated_at?: string;
-  visibility?: DomainNodeVisibility;
+}
+
+export interface V1NodePermissionEditReq {
+  /** 可被问答 */
+  answerable_groups?: number[];
+  id: string;
+  kb_id: string;
+  permissions?: DomainNodePermissions;
+  /** 导航内可见 */
+  visible_groups?: number[];
+  /** 可被访问 */
+  visitable_groups?: number[];
+}
+
+export type V1NodePermissionEditResp = Record<string, any>;
+
+export interface V1NodePermissionResp {
+  /** 可被问答 */
+  answerable_groups?: DomainNodeGroupDetail[];
+  id?: string;
+  permissions?: DomainNodePermissions;
+  /** 导航内可见 */
+  visible_groups?: DomainNodeGroupDetail[];
+  /** 可被访问 */
+  visitable_groups?: DomainNodeGroupDetail[];
 }
 
 export interface V1ResetPasswordReq {
@@ -1248,6 +1291,11 @@ export interface GetApiV1NodeListParams {
   search?: string;
 }
 
+export interface GetApiV1NodePermissionParams {
+  id: string;
+  kb_id: string;
+}
+
 export interface GetApiV1NodeRecommendNodesParams {
   kb_id: string;
   node_ids: string[];
@@ -1291,6 +1339,11 @@ export interface GetApiV1StatInstantPagesParams {
 export interface GetApiV1StatRefererHostsParams {
   /** kb_id */
   kb_id: string;
+}
+
+export interface GetShareV1AppWechatServiceAnswerParams {
+  /** conversation id */
+  id: string;
 }
 
 export interface PostShareV1ChatMessageParams {

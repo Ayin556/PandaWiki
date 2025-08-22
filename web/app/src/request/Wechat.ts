@@ -12,34 +12,26 @@
 
 import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
-  DomainPWResponse,
-  DomainShareConversationDetailResp,
-  GetShareV1ConversationDetailParams,
+  DomainResponse,
+  GetShareV1AppWechatServiceAnswerParams,
 } from "./types";
 
 /**
- * @description GetConversationDetail
+ * @description GetWechatAnswer
  *
- * @tags share_conversation
- * @name GetShareV1ConversationDetail
- * @summary GetConversationDetail
- * @request GET:/share/v1/conversation/detail
- * @response `200` `(DomainPWResponse & {
-    data?: DomainShareConversationDetailResp,
-
-})` OK
+ * @tags Wechat
+ * @name GetShareV1AppWechatServiceAnswer
+ * @summary GetWechatAnswer
+ * @request GET:/share/v1/app/wechat/service/answer
+ * @response `200` `DomainResponse` OK
  */
 
-export const getShareV1ConversationDetail = (
-  query: GetShareV1ConversationDetailParams,
+export const getShareV1AppWechatServiceAnswer = (
+  query: GetShareV1AppWechatServiceAnswerParams,
   params: RequestParams = {},
 ) =>
-  httpRequest<
-    DomainPWResponse & {
-      data?: DomainShareConversationDetailResp;
-    }
-  >({
-    path: `/share/v1/conversation/detail`,
+  httpRequest<DomainResponse>({
+    path: `/share/v1/app/wechat/service/answer`,
     method: "GET",
     query: query,
     type: ContentType.Json,
