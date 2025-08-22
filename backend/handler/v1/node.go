@@ -46,6 +46,10 @@ func NewNodeHandler(
 
 	group.GET("/recommend_nodes", h.RecommendNodes)
 
+	// node permission
+	group.GET("/permission", h.NodePermission)
+	group.PATCH("/permission/edit", h.NodePermissionEdit)
+
 	return h
 }
 
@@ -310,6 +314,70 @@ func (h *NodeHandler) BatchMoveNode(c echo.Context) error {
 	ctx := c.Request().Context()
 	if err := h.usecase.BatchMoveNode(ctx, req); err != nil {
 		return h.NewResponseWithError(c, "batch move node failed", err)
+	}
+	return h.NewResponseWithData(c, nil)
+}
+
+// NodePermission 文档授权信息获取
+//
+//	@Tags			NodePermission
+//	@Summary		文档授权信息获取
+//	@Description	文档授权信息获取
+//	@ID				v1-NodePermission
+//	@Accept			json
+//	@Produce		json
+//	@Security		bearerAuth
+//	@Param			param	query		v1.NodePermissionReq	true	"para"
+//	@Success		200		{object}	domain.Response{data=v1.NodePermissionResp}
+//	@Router			/api/v1/node/permission [get]
+func (h *NodeHandler) NodePermission(c echo.Context) error {
+	var req v1.NodePermissionReq
+	if err := c.Bind(&req); err != nil {
+		return h.NewResponseWithError(c, "request params is invalid", err)
+	}
+
+	if err := c.Validate(req); err != nil {
+		return h.NewResponseWithError(c, "validate request params failed", err)
+	}
+
+	ctx := c.Request().Context()
+	release, err := h.usecase.GetNodePermissionsByID(ctx, req.ID, req.KbId)
+	if err != nil {
+		return h.NewResponseWithError(c, "get node permission detail failed", err)
+	}
+	return h.NewResponseWithData(c, release)
+}
+
+// NodePermissionEdit 文档授权信息更新
+//
+//	@Tags			NodePermission
+//	@Summary		文档授权信息更新
+//	@Description	文档授权信息更新
+//	@ID				v1-NodePermissionEdit
+//	@Accept			json
+//	@Produce		json
+//	@Security		bearerAuth
+//	@Param			param	body		v1.NodePermissionEditReq	true	"para"
+//	@Success		200		{object}	domain.Response{data=v1.NodePermissionEditResp}
+//	@Router			/api/v1/node/permission/edit [patch]
+func (h *NodeHandler) NodePermissionEdit(c echo.Context) error {
+	var req v1.NodePermissionEditReq
+	if err := c.Bind(&req); err != nil {
+		return h.NewResponseWithError(c, "request params is invalid", err)
+	}
+
+	if err := c.Validate(req); err != nil {
+		return h.NewResponseWithError(c, "validate request params failed", err)
+	}
+
+	if err := h.usecase.ValidateNodePermissionsEdit(req, consts.GetLicenseEdition(c)); err != nil {
+		return h.NewResponseWithError(c, "validate node permission failed", err)
+	}
+
+	ctx := c.Request().Context()
+	err := h.usecase.NodePermissionsEdit(ctx, req)
+	if err != nil {
+		return h.NewResponseWithError(c, "update node permission failed", err)
 	}
 	return h.NewResponseWithData(c, nil)
 }

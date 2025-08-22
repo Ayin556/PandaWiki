@@ -761,3 +761,55 @@ func (r *NodeRepository) GetNodeIDsByReleaseID(ctx context.Context, releaseID st
 	}
 	return nodeIDs, nil
 }
+func (r *NodeRepository) UpdateNodeByKbID(ctx context.Context, id, kbId string, updateMap map[string]interface{}) error {
+	return r.db.WithContext(ctx).
+		Model(&domain.Node{}).
+		Where("id = ?", id).
+		Where("kb_id = ?", kbId).
+		Updates(updateMap).Error
+}
+
+func (r *NodeRepository) UpdateNodeGroupByKbID(ctx context.Context, nodeId string, groupIds []int, perm consts.NodePermName) error {
+	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		// 先根据 nodeId 和 perm 删除 node_group 表中的数据
+		if err := tx.Model(&domain.NodeAuthGroup{}).
+			Where("node_id = ? AND perm = ?", nodeId, perm).
+			Delete(&domain.NodeAuthGroup{}).Error; err != nil {
+			return err
+		}
+
+		// 如果 groupIds 为空，则只执行删除操作
+		if len(groupIds) == 0 {
+			return nil
+		}
+
+		// 批量插入新的数据
+		nodeGroups := make([]domain.NodeAuthGroup, 0)
+		for _, id := range groupIds {
+			nodeGroups = append(nodeGroups, domain.NodeAuthGroup{
+				NodeID:      nodeId,
+				AuthGroupID: id,
+				Perm:        perm,
+			})
+		}
+
+		if err := tx.Model(&domain.NodeAuthGroup{}).Create(&nodeGroups).Error; err != nil {
+			return err
+		}
+
+		return nil
+	})
+}
+
+func (r *NodeRepository) GetNodeGroupByNodeId(ctx context.Context, nodeId string) ([]domain.NodeGroupDetail, error) {
+	nodeGroup := make([]domain.NodeGroupDetail, 0)
+	if err := r.db.WithContext(ctx).
+		Model(&domain.NodeAuthGroup{}).
+		Select("node_auth_groups.node_id, node_auth_groups.auth_group_id, node_auth_groups.perm, auth_groups.name, auth_groups.kb_id, auth_groups.auth_ids").
+		Joins("left join auth_groups on auth_groups.id = node_auth_groups.auth_group_id").
+		Where("node_auth_groups.node_id = ?", nodeId).
+		Scan(&nodeGroup).Error; err != nil {
+		return nil, err
+	}
+	return nodeGroup, nil
+}

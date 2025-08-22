@@ -36,6 +36,24 @@ definitions:
     - NodeAccessPermOpen
     - NodeAccessPermPartial
     - NodeAccessPermClosed
+  consts.NodePermName:
+    enum:
+    - visible
+    - visitable
+    - answerable
+    type: string
+    x-enum-comments:
+      NodePermNameAnswerable: 可被问答
+      NodePermNameVisible: 导航内可见
+      NodePermNameVisitable: 可被访问
+    x-enum-descriptions:
+    - 导航内可见
+    - 可被访问
+    - 可被问答
+    x-enum-varnames:
+    - NodePermNameVisible
+    - NodePermNameVisitable
+    - NodePermNameAnswerable
   consts.SourceType:
     enum:
     - dingtalk
@@ -1106,6 +1124,23 @@ definitions:
     - ids
     - kb_id
     type: object
+  domain.NodeGroupDetail:
+    properties:
+      auth_group_id:
+        type: integer
+      auth_ids:
+        items:
+          type: integer
+        type: array
+      kb_id:
+        type: string
+      name:
+        type: string
+      node_id:
+        type: string
+      perm:
+        $ref: '#/definitions/consts.NodePermName'
+    type: object
   domain.NodeListItemResp:
     properties:
       created_at:
@@ -1911,6 +1946,57 @@ definitions:
         type: string
       visibility:
         $ref: '#/definitions/domain.NodeVisibility'
+    type: object
+  v1.NodePermissionEditReq:
+    properties:
+      answerable_groups:
+        description: 可被问答
+        items:
+          type: integer
+        type: array
+      id:
+        type: string
+      kb_id:
+        type: string
+      permissions:
+        $ref: '#/definitions/domain.NodePermissions'
+      visible_groups:
+        description: 导航内可见
+        items:
+          type: integer
+        type: array
+      visitable_groups:
+        description: 可被访问
+        items:
+          type: integer
+        type: array
+    required:
+    - id
+    - kb_id
+    type: object
+  v1.NodePermissionEditResp:
+    type: object
+  v1.NodePermissionResp:
+    properties:
+      answerable_groups:
+        description: 可被问答
+        items:
+          $ref: '#/definitions/domain.NodeGroupDetail'
+        type: array
+      id:
+        type: string
+      permissions:
+        $ref: '#/definitions/domain.NodePermissions'
+      visible_groups:
+        description: 导航内可见
+        items:
+          $ref: '#/definitions/domain.NodeGroupDetail'
+        type: array
+      visitable_groups:
+        description: 可被访问
+        items:
+          $ref: '#/definitions/domain.NodeGroupDetail'
+        type: array
     type: object
   v1.ResetPasswordReq:
     properties:
@@ -3305,6 +3391,68 @@ paths:
       summary: Move Node
       tags:
       - node
+  /api/v1/node/permission:
+    get:
+      consumes:
+      - application/json
+      description: 文档授权信息获取
+      operationId: v1-NodePermission
+      parameters:
+      - in: query
+        name: id
+        required: true
+        type: string
+      - in: query
+        name: kb_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/v1.NodePermissionResp'
+              type: object
+      security:
+      - bearerAuth: []
+      summary: 文档授权信息获取
+      tags:
+      - NodePermission
+  /api/v1/node/permission/edit:
+    patch:
+      consumes:
+      - application/json
+      description: 文档授权信息更新
+      operationId: v1-NodePermissionEdit
+      parameters:
+      - description: para
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/v1.NodePermissionEditReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/v1.NodePermissionEditResp'
+              type: object
+      security:
+      - bearerAuth: []
+      summary: 文档授权信息更新
+      tags:
+      - NodePermission
   /api/v1/node/recommend_nodes:
     get:
       consumes:

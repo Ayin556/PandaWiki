@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/lib/pq"
+
 	"github.com/chaitin/panda-wiki/consts"
 )
 
@@ -92,6 +94,15 @@ type NodeAuthGroup struct {
 
 func (NodeAuthGroup) TableName() string {
 	return "node_auth_groups"
+}
+
+type NodeGroupDetail struct {
+	NodeID      string              `json:"node_id" `
+	AuthGroupId int                 `json:"auth_group_id"`
+	Perm        consts.NodePermName `json:"perm"`
+	Name        string              `json:"name" gorm:"uniqueIndex;size:100;not null"`
+	KbID        string              `gorm:"column:kb_id;not null" json:"kb_id,omitempty"`
+	AuthIDs     pq.Int64Array       `json:"auth_ids" gorm:"type:int[]"`
 }
 
 type NodeMeta struct {

@@ -2231,6 +2231,113 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/node/permission": {
+            "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "文档授权信息获取",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "NodePermission"
+                ],
+                "summary": "文档授权信息获取",
+                "operationId": "v1-NodePermission",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "kb_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/v1.NodePermissionResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/node/permission/edit": {
+            "patch": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "文档授权信息更新",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "NodePermission"
+                ],
+                "summary": "文档授权信息更新",
+                "operationId": "v1-NodePermissionEdit",
+                "parameters": [
+                    {
+                        "description": "para",
+                        "name": "param",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.NodePermissionEditReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/v1.NodePermissionEditResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/node/recommend_nodes": {
             "get": {
                 "security": [
@@ -3369,6 +3476,29 @@ const docTemplate = `{
                 "NodeAccessPermOpen",
                 "NodeAccessPermPartial",
                 "NodeAccessPermClosed"
+            ]
+        },
+        "consts.NodePermName": {
+            "type": "string",
+            "enum": [
+                "visible",
+                "visitable",
+                "answerable"
+            ],
+            "x-enum-comments": {
+                "NodePermNameAnswerable": "可被问答",
+                "NodePermNameVisible": "导航内可见",
+                "NodePermNameVisitable": "可被访问"
+            },
+            "x-enum-descriptions": [
+                "导航内可见",
+                "可被访问",
+                "可被问答"
+            ],
+            "x-enum-varnames": [
+                "NodePermNameVisible",
+                "NodePermNameVisitable",
+                "NodePermNameAnswerable"
             ]
         },
         "consts.SourceType": {
@@ -4986,6 +5116,32 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.NodeGroupDetail": {
+            "type": "object",
+            "properties": {
+                "auth_group_id": {
+                    "type": "integer"
+                },
+                "auth_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "kb_id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "node_id": {
+                    "type": "string"
+                },
+                "perm": {
+                    "$ref": "#/definitions/consts.NodePermName"
+                }
+            }
+        },
         "domain.NodeListItemResp": {
             "type": "object",
             "properties": {
@@ -6195,6 +6351,80 @@ const docTemplate = `{
                 },
                 "visibility": {
                     "$ref": "#/definitions/domain.NodeVisibility"
+                }
+            }
+        },
+        "v1.NodePermissionEditReq": {
+            "type": "object",
+            "required": [
+                "id",
+                "kb_id"
+            ],
+            "properties": {
+                "answerable_groups": {
+                    "description": "可被问答",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "kb_id": {
+                    "type": "string"
+                },
+                "permissions": {
+                    "$ref": "#/definitions/domain.NodePermissions"
+                },
+                "visible_groups": {
+                    "description": "导航内可见",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "visitable_groups": {
+                    "description": "可被访问",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "v1.NodePermissionEditResp": {
+            "type": "object"
+        },
+        "v1.NodePermissionResp": {
+            "type": "object",
+            "properties": {
+                "answerable_groups": {
+                    "description": "可被问答",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.NodeGroupDetail"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "permissions": {
+                    "$ref": "#/definitions/domain.NodePermissions"
+                },
+                "visible_groups": {
+                    "description": "导航内可见",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.NodeGroupDetail"
+                    }
+                },
+                "visitable_groups": {
+                    "description": "可被访问",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.NodeGroupDetail"
+                    }
                 }
             }
         },
