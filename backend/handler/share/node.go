@@ -82,7 +82,7 @@ func (h *ShareNodeHandler) GetNodeDetail(c echo.Context) error {
 	}
 
 	if err := h.usecase.ValidateNodePerm(c.Request().Context(), kbID, id, domain.GetAuthID(c)); err != nil {
-		return h.NewResponseWithError(c, "validate node detail permission failed", err)
+		return h.NewResponseWithErrCode(c, domain.ErrCodePermissionDenied)
 	}
 
 	node, err := h.usecase.GetNodeReleaseDetailByKBIDAndID(c.Request().Context(), kbID, id)

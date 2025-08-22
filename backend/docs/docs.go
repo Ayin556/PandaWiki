@@ -5311,6 +5311,9 @@ const docTemplate = `{
         "domain.PWResponse": {
             "type": "object",
             "properties": {
+                "code": {
+                    "type": "integer"
+                },
                 "data": {},
                 "message": {
                     "type": "string"

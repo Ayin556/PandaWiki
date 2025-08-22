@@ -101,6 +101,30 @@ func (m *JWTMiddleware) ValidateKBUserPerm(perm consts.UserKBPermission) echo.Mi
 	}
 }
 
+func (m *JWTMiddleware) ValidateLicenseEdition(needEdition consts.LicenseEdition) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+
+			edition, ok := c.Get("edition").(consts.LicenseEdition)
+			if !ok {
+				return c.JSON(http.StatusForbidden, domain.PWResponse{
+					Success: false,
+					Message: "Unauthorized ValidateLicenseEdition",
+				})
+			}
+
+			if edition < needEdition {
+				return c.JSON(http.StatusForbidden, domain.PWResponse{
+					Success: false,
+					Message: "Unauthorized ValidateLicenseEdition",
+				})
+			}
+
+			return next(c)
+		}
+	}
+}
+
 func (m *JWTMiddleware) MustGetUserID(c echo.Context) (string, bool) {
 	user, ok := c.Get("user").(*jwt.Token)
 	if !ok || user == nil {
