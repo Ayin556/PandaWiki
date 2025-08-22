@@ -192,7 +192,7 @@ func (cfg *WechatServiceConfig) SendResponseToKfUrl(userId, openkfId, conversati
 		OpenKfid: openkfId,
 		Msgtype:  "link",
 		Link: Link{
-			Url:          fmt.Sprintf("%s/share/v1/app/wechat/service/answer?id=%s", baseUrl, conversationID),
+			Url:          fmt.Sprintf("%s/h5-chat?id=%s", baseUrl, conversationID),
 			Desc:         "PandaWiki AI答案解析",
 			Title:        question,
 			ThumbMediaID: imageId,
