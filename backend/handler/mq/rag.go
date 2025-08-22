@@ -76,7 +76,7 @@ func (h *RAGMQHandler) HandleNodeContentVectorRequest(ctx context.Context, msg t
 
 		groupIds, err := h.nodeRepo.GetNodeAuthGroupIdsByNodeId(ctx, nodeRelease.NodeID, consts.NodePermNameAnswerable)
 		if err != nil {
-			h.logger.Error("get kb failed", log.Error(err), log.String("kb_id", request.KBID))
+			h.logger.Error("get groupIds failed", log.Error(err), log.String("kb_id", request.KBID))
 			return nil
 		}
 

@@ -94,40 +94,6 @@ func (u *NodeUsecase) NodeAction(ctx context.Context, req *domain.NodeActionReq)
 		if err := u.ragRepo.AsyncUpdateNodeReleaseVector(ctx, nodeVectorContentRequests); err != nil {
 			return err
 		}
-	case "private":
-		// update node visibility to private
-		if err := u.nodeRepo.UpdateNodesVisibility(ctx, req.KBID, req.IDs, domain.NodeVisibilityPrivate); err != nil {
-			return err
-		}
-		// get latest node release and delete in vector
-		nodeReleases, err := u.nodeRepo.GetLatestNodeReleaseByNodeIDs(ctx, req.KBID, req.IDs)
-		if err != nil {
-			return fmt.Errorf("get latest node release failed: %w", err)
-		}
-		if len(nodeReleases) > 0 {
-			nodeVectorContentRequests := make([]*domain.NodeReleaseVectorRequest, 0)
-			for _, nodeRelease := range nodeReleases {
-				if nodeRelease.DocID == "" {
-					continue
-				}
-				nodeVectorContentRequests = append(nodeVectorContentRequests, &domain.NodeReleaseVectorRequest{
-					KBID:   req.KBID,
-					DocID:  nodeRelease.DocID,
-					Action: "delete",
-				})
-			}
-			if len(nodeVectorContentRequests) == 0 {
-				return nil
-			}
-			if err := u.ragRepo.AsyncUpdateNodeReleaseVector(ctx, nodeVectorContentRequests); err != nil {
-				return err
-			}
-		}
-	case "public":
-		// update node visibility to public
-		if err := u.nodeRepo.UpdateNodesVisibility(ctx, req.KBID, req.IDs, domain.NodeVisibilityPublic); err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -136,24 +102,6 @@ func (u *NodeUsecase) Update(ctx context.Context, req *domain.UpdateNodeReq, use
 	err := u.nodeRepo.UpdateNodeContent(ctx, req, userId)
 	if err != nil {
 		return err
-	}
-	if req.Visibility != nil && *req.Visibility == domain.NodeVisibilityPrivate {
-		// get latest node release
-		nodeRelease, err := u.nodeRepo.GetLatestNodeReleaseByNodeID(ctx, req.ID)
-		if err != nil {
-			return err
-		}
-		if nodeRelease.DocID != "" {
-			if err := u.ragRepo.AsyncUpdateNodeReleaseVector(ctx, []*domain.NodeReleaseVectorRequest{
-				{
-					KBID:   req.KBID,
-					DocID:  nodeRelease.DocID,
-					Action: "delete",
-				},
-			}); err != nil {
-				return err
-			}
-		}
 	}
 	return nil
 }
@@ -366,4 +314,120 @@ func (u *NodeUsecase) GetNodeIdsByAuthId(ctx context.Context, authId uint) ([]st
 	}
 
 	return nodeGroupIds, nil
+}
+func (u *NodeUsecase) GetNodePermissionsByID(ctx context.Context, id, kbID string) (*v1.NodePermissionResp, error) {
+	node, err := u.nodeRepo.GetByID(ctx, id, kbID)
+	if err != nil {
+		return nil, err
+	}
+	resp := &v1.NodePermissionResp{
+		ID:               node.ID,
+		Permissions:      node.Permissions,
+		AnswerableGroups: make([]domain.NodeGroupDetail, 0),
+		VisitableGroups:  make([]domain.NodeGroupDetail, 0),
+		VisibleGroups:    make([]domain.NodeGroupDetail, 0),
+	}
+
+	nodeGroupList, err := u.nodeRepo.GetNodeGroupByNodeId(ctx, node.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	for i, nodeGroup := range nodeGroupList {
+		switch nodeGroup.Perm {
+		case consts.NodePermNameAnswerable:
+			resp.AnswerableGroups = append(resp.AnswerableGroups, nodeGroupList[i])
+		case consts.NodePermNameVisitable:
+			resp.VisitableGroups = append(resp.VisitableGroups, nodeGroupList[i])
+		case consts.NodePermNameVisible:
+			resp.VisibleGroups = append(resp.VisibleGroups, nodeGroupList[i])
+		}
+	}
+
+	return resp, err
+}
+
+func (u *NodeUsecase) ValidateNodePermissionsEdit(req v1.NodePermissionEditReq, edition consts.LicenseEdition) error {
+	if edition != consts.LicenseEditionEnterprise {
+		if req.Permissions.Answerable == consts.NodeAccessPermPartial || req.Permissions.Visitable == consts.NodeAccessPermPartial || req.Permissions.Visible == consts.NodeAccessPermPartial {
+			return domain.ErrPermissionDenied
+		}
+		if req.AnswerableGroups != nil || req.VisitableGroups != nil || req.VisibleGroups != nil {
+			return domain.ErrPermissionDenied
+		}
+	}
+	return nil
+}
+
+func (u *NodeUsecase) NodePermissionsEdit(ctx context.Context, req v1.NodePermissionEditReq) error {
+	_, err := u.nodeRepo.GetByID(ctx, req.ID, req.KbId)
+	if err != nil {
+		return err
+	}
+
+	if req.Permissions != nil {
+		updateMap := map[string]interface{}{
+			"permissions": req.Permissions,
+		}
+
+		if err := u.nodeRepo.UpdateNodeByKbID(ctx, req.ID, req.KbId, updateMap); err != nil {
+			return err
+		}
+	}
+
+	nodeReleases, err := u.nodeRepo.GetLatestNodeReleaseByNodeIDs(ctx, req.KbId, []string{req.ID})
+	if err != nil {
+		return fmt.Errorf("get latest node release failed: %w", err)
+	}
+
+	if len(nodeReleases) > 0 {
+		nodeVectorContentRequests := make([]*domain.NodeReleaseVectorRequest, 0)
+
+		var groupIds []int
+		switch req.Permissions.Answerable {
+		case consts.NodeAccessPermOpen:
+			groupIds = nil
+		case consts.NodeAccessPermPartial:
+			groupIds = *req.AnswerableGroups
+		case consts.NodeAccessPermClosed:
+			groupIds = make([]int, 0)
+		}
+		for _, nodeRelease := range nodeReleases {
+			if nodeRelease.DocID == "" {
+				continue
+			}
+			nodeVectorContentRequests = append(nodeVectorContentRequests, &domain.NodeReleaseVectorRequest{
+				KBID:     req.KbId,
+				DocID:    nodeRelease.DocID,
+				Action:   "update_group_ids",
+				GroupIds: groupIds,
+			})
+		}
+
+		if len(nodeVectorContentRequests) != 0 {
+			if err := u.ragRepo.AsyncUpdateNodeReleaseVector(ctx, nodeVectorContentRequests); err != nil {
+				return err
+			}
+		}
+	}
+
+	if req.AnswerableGroups != nil {
+		if err := u.nodeRepo.UpdateNodeGroupByKbID(ctx, req.ID, *req.AnswerableGroups, consts.NodePermNameAnswerable); err != nil {
+			return err
+		}
+	}
+
+	if req.VisibleGroups != nil {
+		if err := u.nodeRepo.UpdateNodeGroupByKbID(ctx, req.ID, *req.VisibleGroups, consts.NodePermNameVisible); err != nil {
+			return err
+		}
+	}
+
+	if req.VisitableGroups != nil {
+		if err := u.nodeRepo.UpdateNodeGroupByKbID(ctx, req.ID, *req.VisitableGroups, consts.NodePermNameVisitable); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

@@ -16,7 +16,6 @@ type NodeDetailResp struct {
 	KbID        string                 `json:"kb_id"`
 	Type        domain.NodeType        `json:"type"`
 	Status      domain.NodeStatus      `json:"status"`
-	Visibility  domain.NodeVisibility  `json:"visibility"`
 	Name        string                 `json:"name"`
 	Content     string                 `json:"content"`
 	Meta        domain.NodeMeta        `json:"meta"`
@@ -24,4 +23,29 @@ type NodeDetailResp struct {
 	CreatedAt   time.Time              `json:"created_at"`
 	UpdatedAt   time.Time              `json:"updated_at"`
 	Permissions domain.NodePermissions `json:"permissions"`
+}
+
+type NodePermissionReq struct {
+	KbId string `query:"kb_id" json:"kb_id" validate:"required"`
+	ID   string `query:"id" json:"id" validate:"required"`
+}
+
+type NodePermissionResp struct {
+	ID               string                   `json:"id"`
+	Permissions      domain.NodePermissions   `json:"permissions"`
+	AnswerableGroups []domain.NodeGroupDetail `json:"answerable_groups"` // 可被问答
+	VisitableGroups  []domain.NodeGroupDetail `json:"visitable_groups"`  // 可被访问
+	VisibleGroups    []domain.NodeGroupDetail `json:"visible_groups"`    // 导航内可见
+}
+
+type NodePermissionEditReq struct {
+	KbId             string                  `query:"kb_id" json:"kb_id" validate:"required"`
+	ID               string                  `query:"id" json:"id" validate:"required"`
+	Permissions      *domain.NodePermissions `json:"permissions"`
+	AnswerableGroups *[]int                  `json:"answerable_groups"` // 可被问答
+	VisitableGroups  *[]int                  `json:"visitable_groups"`  // 可被访问
+	VisibleGroups    *[]int                  `json:"visible_groups"`    // 导航内可见
+}
+
+type NodePermissionEditResp struct {
 }

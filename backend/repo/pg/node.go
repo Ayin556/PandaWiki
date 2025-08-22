@@ -80,24 +80,16 @@ func (r *NodeRepository) Create(ctx context.Context, req *domain.CreateNodeReq, 
 
 		now := time.Now()
 
-		visibility := domain.NodeVisibilityPublic
-		if req.Visibility != nil {
-			visibility = *req.Visibility
-		}
-		if req.Type == domain.NodeTypeFolder {
-			visibility = domain.NodeVisibilityPublic
-		}
 		node := &domain.Node{
-			ID:         nodeIDStr,
-			KBID:       req.KBID,
-			Name:       req.Name,
-			Content:    req.Content,
-			Meta:       domain.NodeMeta{Emoji: req.Emoji},
-			Type:       req.Type,
-			ParentID:   req.ParentID,
-			Position:   newPos,
-			Status:     domain.NodeStatusDraft,
-			Visibility: visibility,
+			ID:       nodeIDStr,
+			KBID:     req.KBID,
+			Name:     req.Name,
+			Content:  req.Content,
+			Meta:     domain.NodeMeta{Emoji: req.Emoji},
+			Type:     req.Type,
+			ParentID: req.ParentID,
+			Position: newPos,
+			Status:   domain.NodeStatusDraft,
 			Permissions: domain.NodePermissions{
 				Answerable: consts.NodeAccessPermOpen,
 				Visitable:  consts.NodeAccessPermOpen,
@@ -107,6 +99,7 @@ func (r *NodeRepository) Create(ctx context.Context, req *domain.CreateNodeReq, 
 			EditorId:  userId,
 			CreatedAt: now,
 			UpdatedAt: now,
+			EditTime:  now,
 		}
 
 		return tx.Create(node).Error
@@ -125,7 +118,7 @@ func (r *NodeRepository) GetList(ctx context.Context, req *domain.GetNodeListReq
 		Joins("LEFT JOIN users cu ON nodes.creator_id = cu.id").
 		Joins("LEFT JOIN users eu ON nodes.editor_id = eu.id").
 		Where("nodes.kb_id = ?", req.KBID).
-		Select("cu.account AS creator, eu.account AS editor, nodes.editor_id, nodes.creator_id, nodes.id, nodes.permissions, nodes.type, nodes.status, nodes.visibility, nodes.name, nodes.parent_id, nodes.position, nodes.created_at, nodes.updated_at, nodes.meta->>'summary' as summary, nodes.meta->>'emoji' as emoji")
+		Select("cu.account AS creator, eu.account AS editor, nodes.editor_id, nodes.creator_id, nodes.id, nodes.permissions, nodes.type, nodes.status, nodes.name, nodes.parent_id, nodes.position, nodes.created_at, nodes.edit_time as updated_at, nodes.meta->>'summary' as summary, nodes.meta->>'emoji' as emoji")
 	if req.Search != "" {
 		searchPattern := "%" + req.Search + "%"
 		query = query.Where("name LIKE ? OR content LIKE ?", searchPattern, searchPattern)
@@ -134,17 +127,6 @@ func (r *NodeRepository) GetList(ctx context.Context, req *domain.GetNodeListReq
 		return nil, err
 	}
 	return nodes, nil
-}
-
-func (r *NodeRepository) UpdateNodesVisibility(ctx context.Context, kbID string, ids []string, visibility domain.NodeVisibility) error {
-	return r.db.WithContext(ctx).
-		Model(&domain.Node{}).
-		Where("id IN ?", ids).
-		Where("kb_id = ?", kbID).
-		Updates(map[string]any{
-			"visibility": visibility,
-			"status":     domain.NodeStatusDraft,
-		}).Error
 }
 
 func (r *NodeRepository) GetLatestNodeReleaseByNodeIDs(ctx context.Context, kbID string, ids []string) ([]*domain.NodeRelease, error) {
@@ -228,15 +210,10 @@ func (r *NodeRepository) UpdateNodeContent(ctx context.Context, req *domain.Upda
 			}
 		}
 
-		// Compare and update Visibility
-		if req.Visibility != nil && *req.Visibility != currentNode.Visibility {
-			updateMap["visibility"] = *req.Visibility
-			updateStatus = true
-		}
-
 		// If any field is updated, set status to draft
 		if updateStatus {
 			updateMap["status"] = domain.NodeStatusDraft
+			updateMap["edit_time"] = time.Now()
 		}
 
 		// Perform update if there are changes
@@ -369,7 +346,6 @@ func (r *NodeRepository) GetNodeReleasesByDocIDs(ctx context.Context, ids []stri
 	var nodeReleases []*domain.NodeRelease
 	if err := r.db.WithContext(ctx).
 		Model(&domain.NodeRelease{}).
-		Where("visibility = ?", domain.NodeVisibilityPublic).
 		Where("doc_id IN ?", ids).
 		Find(&nodeReleases).Error; err != nil {
 		return nil, err
@@ -390,7 +366,6 @@ func (r *NodeRepository) GetRecommendNodeListByIDs(ctx context.Context, kbID str
 		Where("node_releases.kb_id = ?", kbID).
 		Where("kb_release_node_releases.release_id = ?", releaseID).
 		Where("node_releases.node_id IN ?", ids).
-		Where("node_releases.visibility = ?", domain.NodeVisibilityPublic).
 		Select("node_releases.node_id as id, node_releases.name, node_releases.type, node_releases.meta->>'summary' as summary, node_releases.meta->>'emoji' as emoji, node_releases.parent_id, node_releases.position").
 		Find(&nodes).Error; err != nil {
 		return nil, err
@@ -407,7 +382,6 @@ func (r *NodeRepository) GetRecommendNodeListByParentIDs(ctx context.Context, kb
 		Where("kb_release_node_releases.release_id = ?", releaseID).
 		Where("node_releases.parent_id IN ?", parentIDs).
 		Where("node_releases.type != ?", domain.NodeTypeFolder).
-		Where("node_releases.visibility = ?", domain.NodeVisibilityPublic).
 		Select("node_releases.node_id as id, node_releases.name, node_releases.type, node_releases.meta->>'summary' as summary, node_releases.meta->>'emoji' as emoji, node_releases.parent_id, node_releases.position").
 		Find(&nodes).Error; err != nil {
 		return nil, err
@@ -444,7 +418,6 @@ func (r *NodeRepository) GetNodeReleaseListByKBID(ctx context.Context, kbID stri
 		Joins("LEFT JOIN nodes ON nodes.id = kb_release_node_releases.node_id").
 		Where("kb_release_node_releases.kb_id = ?", kbID).
 		Where("kb_release_node_releases.release_id = ?", kbRelease.ID).
-		Where("node_releases.visibility = ?", domain.NodeVisibilityPublic).
 		Where("nodes.permissions->>'visible' != ?", consts.NodeAccessPermClosed).
 		Select("node_releases.node_id as id, node_releases.name, node_releases.type, node_releases.parent_id, node_releases.position, node_releases.meta->>'emoji' as emoji, node_releases.updated_at, nodes.permissions").
 		Find(&nodes).Error; err != nil {
@@ -472,7 +445,6 @@ func (r *NodeRepository) GetNodeReleaseDetailByKBIDAndID(ctx context.Context, kb
 		Where("kb_release_node_releases.release_id = ?", kbRelease.ID).
 		Where("node_releases.node_id = ?", id).
 		Where("node_releases.kb_id = ?", kbID).
-		Where("node_releases.visibility = ?", domain.NodeVisibilityPublic).
 		Where("nodes.permissions->>'visitable' != ?", consts.NodeAccessPermClosed).
 		Select("node_releases.*, nodes.permissions").
 		First(&node).Error; err != nil {
@@ -564,7 +536,6 @@ func (r *NodeRepository) UpdateNodeSummary(ctx context.Context, kbID, nodeID, su
 func (r *NodeRepository) TraverseNodesByCursor(ctx context.Context, callback func(*domain.NodeRelease) error) error {
 	rows, err := r.db.WithContext(ctx).
 		Model(&domain.NodeRelease{}).
-		Where("visibility = ?", domain.NodeVisibilityPublic).
 		Select("DISTINCT ON (node_id) id, node_id, kb_id").
 		Order("node_id, updated_at DESC").
 		Rows()
@@ -610,27 +581,22 @@ func (r *NodeRepository) CreateNodeReleases(ctx context.Context, kbID string, no
 		for i, updatedNode := range updatedNodes {
 			// create node release
 			nodeRelease := &domain.NodeRelease{
-				ID:         uuid.New().String(),
-				KBID:       kbID,
-				NodeID:     updatedNode.ID,
-				Type:       updatedNode.Type,
-				Visibility: updatedNode.Visibility,
-				Name:       updatedNode.Name,
-				Meta:       updatedNode.Meta,
-				Content:    updatedNode.Content,
-				ParentID:   updatedNode.ParentID,
-				Position:   updatedNode.Position,
-				CreatedAt:  updatedNode.CreatedAt,
-				UpdatedAt:  time.Now(),
+				ID:        uuid.New().String(),
+				KBID:      kbID,
+				NodeID:    updatedNode.ID,
+				Type:      updatedNode.Type,
+				Name:      updatedNode.Name,
+				Meta:      updatedNode.Meta,
+				Content:   updatedNode.Content,
+				ParentID:  updatedNode.ParentID,
+				Position:  updatedNode.Position,
+				CreatedAt: updatedNode.CreatedAt,
+				UpdatedAt: time.Now(),
 			}
 			nodeReleases[i] = nodeRelease
+			releaseIDs = append(releaseIDs, nodeRelease.ID)
 		}
-		for _, nodeRelease := range nodeReleases {
-			// return public node release ids
-			if nodeRelease.Visibility == domain.NodeVisibilityPublic {
-				releaseIDs = append(releaseIDs, nodeRelease.ID)
-			}
-		}
+
 		if err := tx.CreateInBatches(&nodeReleases, 100).Error; err != nil {
 			return err
 		}
@@ -760,4 +726,59 @@ func (r *NodeRepository) GetNodeIDsByReleaseID(ctx context.Context, releaseID st
 		return nil, err
 	}
 	return nodeIDs, nil
+}
+func (r *NodeRepository) UpdateNodeByKbID(ctx context.Context, id, kbId string, updateMap map[string]interface{}) error {
+	return r.db.WithContext(ctx).
+		Model(&domain.Node{}).
+		Where("id = ?", id).
+		Where("kb_id = ?", kbId).
+		Updates(updateMap).Error
+}
+
+func (r *NodeRepository) UpdateNodeGroupByKbID(ctx context.Context, nodeId string, groupIds []int, perm consts.NodePermName) error {
+	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		// 先根据 nodeId 和 perm 删除 node_group 表中的数据
+		if err := tx.Model(&domain.NodeAuthGroup{}).
+			Where("node_id = ? AND perm = ?", nodeId, perm).
+			Delete(&domain.NodeAuthGroup{}).Error; err != nil {
+			return err
+		}
+
+		// 如果 groupIds 为空，则只执行删除操作
+		if len(groupIds) == 0 {
+			return nil
+		}
+
+		// 批量插入新的数据
+		nodeGroups := make([]domain.NodeAuthGroup, 0)
+		for _, id := range groupIds {
+			if id == 0 {
+				continue
+			}
+			nodeGroups = append(nodeGroups, domain.NodeAuthGroup{
+				NodeID:      nodeId,
+				AuthGroupID: id,
+				Perm:        perm,
+			})
+		}
+		if len(nodeGroups) != 0 {
+			if err := tx.Model(&domain.NodeAuthGroup{}).Create(&nodeGroups).Error; err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+}
+
+func (r *NodeRepository) GetNodeGroupByNodeId(ctx context.Context, nodeId string) ([]domain.NodeGroupDetail, error) {
+	nodeGroup := make([]domain.NodeGroupDetail, 0)
+	if err := r.db.WithContext(ctx).
+		Model(&domain.NodeAuthGroup{}).
+		Select("node_auth_groups.node_id, node_auth_groups.auth_group_id, node_auth_groups.perm, auth_groups.name, auth_groups.kb_id, auth_groups.auth_ids").
+		Joins("left join auth_groups on auth_groups.id = node_auth_groups.auth_group_id").
+		Where("node_auth_groups.node_id = ?", nodeId).
+		Scan(&nodeGroup).Error; err != nil {
+		return nil, err
+	}
+	return nodeGroup, nil
 }

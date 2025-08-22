@@ -41,6 +41,10 @@ func (h *BaseHandler) NewResponseWithData(c echo.Context, data any) error {
 	})
 }
 
+func (h *BaseHandler) NewResponseWithErrCode(c echo.Context, resp domain.PWResponseErrCode) error {
+	return c.JSON(http.StatusOK, resp)
+}
+
 func (h *BaseHandler) NewResponseWithError(c echo.Context, msg string, err error) error {
 	traceID := ""
 	if h.config.GetBool("apm.enabled") {
