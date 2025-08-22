@@ -17,11 +17,21 @@ const NoPermission = ({ catalogShow }: { catalogShow: boolean }) => {
           marginLeft: 0,
         }),
       }}
-      sx={{ mt: 5 }}
+      sx={{
+        height: 'calc(100vh - 220px)',
+      }}
       justifyContent='center'
       alignItems='center'
     >
-      <Image src={NoPermissionImg.src} alt='404' width={380} height={255} />
+      <Image
+        src={NoPermissionImg.src}
+        alt='404'
+        width={380}
+        height={255}
+        style={{
+          ...(mobile && { width: 200, height: 130 }),
+        }}
+      />
       <Stack
         gap={3}
         alignItems='center'
