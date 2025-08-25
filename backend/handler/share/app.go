@@ -2,11 +2,9 @@ package share
 
 import (
 	"context"
-	"io"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
-	"github.com/sbzhu/weworkapi_golang/wxbizmsgcrypt"
 	wechat_v2 "github.com/silenceper/wechat/v2"
 	"github.com/silenceper/wechat/v2/cache"
 	offConfig "github.com/silenceper/wechat/v2/officialaccount/config"
@@ -15,7 +13,6 @@ import (
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/handler"
 	"github.com/chaitin/panda-wiki/log"
-	"github.com/chaitin/panda-wiki/pkg/bot/wechat"
 	"github.com/chaitin/panda-wiki/usecase"
 )
 
@@ -51,9 +48,6 @@ func NewShareAppHandler(
 		})
 	share.GET("/web/info", h.GetWebAppInfo)
 	share.GET("/widget/info", h.GetWidgetAppInfo)
-
-	share.GET("/wechat/app", h.VerifyUrlWechatApp)
-	share.POST("/wechat/app", h.WechatHandlerApp)
 
 	// wechat official account
 	share.GET("/wechat/official_account", h.VerifyUrlWechatOfficialAccount)
@@ -103,104 +97,6 @@ func (h *ShareAppHandler) GetWidgetAppInfo(c echo.Context) error {
 		return h.NewResponseWithError(c, err.Error(), err)
 	}
 	return h.NewResponseWithData(c, appInfo)
-}
-
-func (h *ShareAppHandler) VerifyUrlWechatApp(c echo.Context) error {
-	signature := c.QueryParam("msg_signature")
-	timestamp := c.QueryParam("timestamp")
-	nonce := c.QueryParam("nonce")
-	echoStr := c.QueryParam("echostr")
-
-	kbID := c.Request().Header.Get("X-KB-ID")
-
-	if kbID == "" {
-		return h.NewResponseWithError(c, "kb_id is required", nil)
-	}
-
-	if signature == "" || timestamp == "" || nonce == "" || echoStr == "" {
-		return h.NewResponseWithError(
-			c, "verify wechat params failed", nil,
-		)
-	}
-
-	ctx := c.Request().Context()
-
-	req, err := h.usecase.VerifyUrlWechatAPP(ctx, signature, timestamp, nonce, echoStr, kbID)
-	if err != nil {
-		return h.NewResponseWithError(c, "VerifyURL failed", err)
-	}
-
-	// success
-	return c.String(http.StatusOK, string(req))
-}
-
-func (h *ShareAppHandler) WechatHandlerApp(c echo.Context) error {
-	signature := c.QueryParam("msg_signature")
-	timestamp := c.QueryParam("timestamp")
-	nonce := c.QueryParam("nonce")
-
-	kbID := c.Request().Header.Get("X-KB-ID")
-	if kbID == "" {
-		return h.NewResponseWithError(c, "kb_id is required", nil)
-	}
-
-	remoteIP := ""
-	body, err := io.ReadAll(c.Request().Body)
-	if err != nil {
-		h.logger.Error("get request failed", log.Error(err))
-		return h.NewResponseWithError(c, "Internal Server Error", err)
-	}
-	defer c.Request().Body.Close()
-
-	ctx := c.Request().Context()
-
-	// get appinfo and init wechatConfig
-	// 查找数据库，找到对应的app配置
-	appInfo, err := h.usecase.GetAppDetailByKBIDAndAppType(ctx, kbID, domain.AppTypeWechatBot)
-	if err != nil {
-		return h.NewResponseWithError(c, "GetAppDetailByKBIDAndAppType failed", err)
-	}
-
-	if appInfo.Settings.WeChatAppIsEnabled != nil && !*appInfo.Settings.WeChatAppIsEnabled {
-		return h.NewResponseWithError(c, "wechat app bot is not enabled", nil)
-	}
-
-	wechatConfig, err := h.usecase.NewWechatConfig(context.Background(), appInfo, kbID)
-	if err != nil {
-		return h.NewResponseWithError(c, "wechat app config error", err)
-	}
-
-	// 解密消息
-	wxCrypt := wxbizmsgcrypt.NewWXBizMsgCrypt(wechatConfig.Token, wechatConfig.EncodingAESKey, wechatConfig.CorpID, wxbizmsgcrypt.XmlType)
-	decryptMsg, errCode := wxCrypt.DecryptMsg(signature, timestamp, nonce, body)
-	if errCode != nil {
-		return h.NewResponseWithError(c, "DecryptMsg failed", nil)
-	}
-
-	msg, err := wechatConfig.UnmarshalMsg(decryptMsg)
-	if err != nil {
-		return h.NewResponseWithError(c, "UnmarshalMsg failed", err)
-	}
-	h.logger.Info("wechat app msg", log.Any("user msg", msg))
-
-	if msg.MsgType != "text" { // 用户进入会话，或者其他非提问类型的事件
-		return c.String(http.StatusOK, "")
-	}
-
-	immediateResponse, err := wechatConfig.SendResponse(*msg, "用户稍等,正在思考您的问题,请稍候...")
-	if err != nil {
-		return h.NewResponseWithError(c, "Failed to send immediate response", err)
-	}
-
-	go func(msg *wechat.ReceivedMessage, wechatConfig *wechat.WechatConfig, kbId string, remoteIP string) {
-		ctx := context.Background()
-		err := h.usecase.Wechat(ctx, msg, wechatConfig, kbId, remoteIP)
-		if err != nil {
-			h.logger.Error("wechat async failed")
-		}
-	}(msg, wechatConfig, kbID, remoteIP)
-
-	return c.XMLBlob(http.StatusOK, []byte(immediateResponse))
 }
 
 func (h *ShareAppHandler) VerifyUrlWechatOfficialAccount(c echo.Context) error {
