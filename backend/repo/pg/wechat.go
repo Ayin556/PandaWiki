@@ -28,3 +28,14 @@ func (r *WechatRepository) GetWechatStatic(ctx context.Context, kbID string, app
 	}
 	return &wechatStatic, nil
 }
+
+func (r *WechatRepository) GetWechatBaseURL(ctx context.Context, kbID string) (string, error) {
+	var baseUrl string
+	if err := r.db.WithContext(ctx).Model(&domain.KnowledgeBase{}).
+		Where("id = ?", kbID).
+		Select("access_settings ->>'base_url'").
+		First(&baseUrl).Error; err != nil {
+		return "", err
+	}
+	return baseUrl, nil
+}

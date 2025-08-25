@@ -12,7 +12,6 @@ import (
 	"github.com/chaitin/panda-wiki/pkg/bot/dingtalk"
 	"github.com/chaitin/panda-wiki/pkg/bot/discord"
 	"github.com/chaitin/panda-wiki/pkg/bot/feishu"
-	"github.com/chaitin/panda-wiki/pkg/bot/wechat"
 	"github.com/chaitin/panda-wiki/repo/pg"
 )
 
@@ -138,72 +137,6 @@ func (u *AppUsecase) getQAFunc(kbID string, appType domain.AppType) bot.GetQAFun
 					messageId = event.Content
 				}
 			}
-			// check again
-			// contact --> send
-			if kb != nil && (appinfo.Settings.AIFeedbackSettings.AIFeedbackIsEnabled == nil || *appinfo.Settings.AIFeedbackSettings.AIFeedbackIsEnabled) { // open
-				like := fmt.Sprintf(likeUrl, kb.AccessSettings.BaseURL, messageId)
-				dislike := fmt.Sprintf(dislikeUrl, kb.AccessSettings.BaseURL, messageId)
-				feedback_data := fmt.Sprintf(feedback, like, dislike)
-				contentCh <- feedback_data
-			}
-		}()
-		return contentCh, nil
-	}
-}
-
-func (u *AppUsecase) wechatQAFunc(kbID string, appType domain.AppType, remoteip string, userinfo *wechat.UserInfo) func(ctx context.Context, msg string) (chan string, error) {
-	return func(ctx context.Context, msg string) (chan string, error) {
-		eventCh, err := u.chatUsecase.Chat(ctx, &domain.ChatRequest{
-			Message:  msg,
-			KBID:     kbID,
-			AppType:  appType,
-			RemoteIP: remoteip,
-			Info: domain.ConversationInfo{
-				UserInfo: domain.UserInfo{
-					UserID:   userinfo.UserID,
-					NickName: userinfo.Name,
-					From:     domain.MessageFromPrivate,
-				},
-			},
-		})
-		if err != nil {
-			return nil, err
-		}
-		// check ai feedback. --> default is open
-		appinfo, err := u.GetAppDetailByKBIDAndAppType(ctx, kbID, domain.AppTypeWeb)
-		if err != nil {
-			u.logger.Error("wechat GetAppDetailByKBIDAndAppType failed", log.Error(err))
-		}
-
-		var feedback = "\n\n---  \n\n本回答由 PandaWiki 基于 AI 生成，仅供参考。\n[👍 满意](%s) | [👎 不满意](%s)"
-		var likeUrl = "%s/feedback?score=1&message_id=%s"
-		var dislikeUrl = "%s/feedback?score=-1&message_id=%s"
-		var messageId string
-		var kb *domain.KnowledgeBase
-
-		if appinfo.Settings.AIFeedbackSettings.AIFeedbackIsEnabled == nil || *appinfo.Settings.AIFeedbackSettings.AIFeedbackIsEnabled { // open
-			kb, err = u.chatUsecase.llmUsecase.kbRepo.GetKnowledgeBaseByID(ctx, kbID)
-			if err != nil {
-				u.logger.Error("wechat GetKnowledgeBaseByID failed", log.Error(err))
-			}
-
-		}
-
-		contentCh := make(chan string, 10)
-		go func() {
-			defer close(contentCh)
-			for event := range eventCh { // get content from eventch
-				if event.Type == "done" || event.Type == "error" {
-					break
-				}
-				if event.Type == "data" {
-					contentCh <- event.Content
-				}
-				if event.Type == "message_id" {
-					messageId = event.Content
-				}
-			}
-
 			// check again
 			// contact --> send
 			if kb != nil && (appinfo.Settings.AIFeedbackSettings.AIFeedbackIsEnabled == nil || *appinfo.Settings.AIFeedbackSettings.AIFeedbackIsEnabled) { // open

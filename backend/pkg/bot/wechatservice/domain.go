@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/chaitin/panda-wiki/log"
-	"github.com/chaitin/panda-wiki/store/cache"
+	"github.com/chaitin/panda-wiki/repo/pg"
 )
 
 type WechatServiceConfig struct {
@@ -17,10 +17,8 @@ type WechatServiceConfig struct {
 	kbID           string
 	Secret         string
 	logger         *log.Logger
-	// redis
-	Rdb *cache.Cache
-	// baseUrl  redirect to redis
-	BaseURL string
+	// db
+	WeRepo *pg.WechatRepository
 }
 
 // 存储ai知识库获取的cursor值以客服为标准，方便拉取用户的消息

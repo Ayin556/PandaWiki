@@ -38,14 +38,9 @@ func (u *WechatUsecase) VerifyUrlWechatService(ctx context.Context, signature, t
 
 func (u *WechatUsecase) WechatService(ctx context.Context, msg *wechatservice.WeixinUserAskMsg, kbID string, WechatServiceConfig *wechatservice.WechatServiceConfig) error {
 	getQA := u.getQAFunc(kbID, domain.AppTypeWechatServiceBot)
+	WechatServiceConfig.WeRepo = u.weRepo
 
-	// get baseurl and image path
-	info, err := u.weRepo.GetWechatStatic(ctx, kbID, domain.AppTypeWeb)
-	if err != nil {
-		return err
-	}
-
-	err = WechatServiceConfig.Wechat(msg, getQA, info.BaseUrl, info.ImagePath)
+	err := WechatServiceConfig.Wechat(msg, getQA)
 	if err != nil {
 		u.logger.Error("WechatServiceConf wechat failed", log.Error(err))
 		return err
