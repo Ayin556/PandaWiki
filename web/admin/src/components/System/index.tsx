@@ -628,6 +628,7 @@ const System = () => {
         modelService={modelService}
         language='zh-CN'
         messageComponent={Message}
+        is_close_model_remark={true}
       />
     </>
   );
