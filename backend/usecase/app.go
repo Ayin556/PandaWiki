@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"github.com/chaitin/panda-wiki/config"
+	"github.com/chaitin/panda-wiki/consts"
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/log"
 	"github.com/chaitin/panda-wiki/pkg/bot"
@@ -67,6 +68,26 @@ func NewAppUsecase(
 	}
 
 	return u
+}
+
+func (u *AppUsecase) ValidateUpdateApp(ctx context.Context, id string, req *domain.UpdateAppReq, edition consts.LicenseEdition) error {
+	switch edition {
+	case consts.LicenseEditionEnterprise:
+		return nil
+	case consts.LicenseEditionFree, consts.LicenseEditionContributor:
+		app, err := u.repo.GetAppDetail(ctx, id)
+		if err != nil {
+			return err
+		}
+
+		if app.Settings.WatermarkEnable != req.Settings.WatermarkEnable || app.Settings.WatermarkContent != req.Settings.WatermarkContent {
+			return domain.ErrPermissionDenied
+		}
+	default:
+		return fmt.Errorf("unsupported license type: %d", edition)
+	}
+
+	return nil
 }
 
 func (u *AppUsecase) UpdateApp(ctx context.Context, id string, appRequest *domain.UpdateAppReq) error {
@@ -414,6 +435,9 @@ func (u *AppUsecase) GetAppDetailByKBIDAndAppType(ctx context.Context, kbID stri
 		AIFeedbackSettings: app.Settings.AIFeedbackSettings,
 		// WebApp Custom Settings
 		WebAppCustomSettings: app.Settings.WebAppCustomSettings,
+
+		WatermarkEnable:  app.Settings.WatermarkEnable,
+		WatermarkContent: app.Settings.WatermarkContent,
 	}
 	// init ai feedback string
 	if app.Settings.AIFeedbackSettings.AIFeedbackType == nil {
@@ -468,6 +492,9 @@ func (u *AppUsecase) GetWebAppInfo(ctx context.Context, kbID string) (*domain.Ap
 			AIFeedbackSettings: app.Settings.AIFeedbackSettings,
 			// WebApp Custom Settings
 			WebAppCustomSettings: app.Settings.WebAppCustomSettings,
+
+			WatermarkContent: app.Settings.WatermarkContent,
+			WatermarkEnable:  app.Settings.WatermarkEnable,
 		},
 	}
 	// init ai feedback string

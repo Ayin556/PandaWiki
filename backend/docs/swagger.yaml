@@ -252,6 +252,10 @@ definitions:
       title:
         description: nav
         type: string
+      watermark_content:
+        type: string
+      watermark_enable:
+        type: boolean
       web_app_comment_settings:
         allOf:
         - $ref: '#/definitions/domain.WebAppCommentSettings'
@@ -376,6 +380,10 @@ definitions:
       title:
         description: nav
         type: string
+      watermark_content:
+        type: string
+      watermark_enable:
+        type: boolean
       web_app_comment_settings:
         allOf:
         - $ref: '#/definitions/domain.WebAppCommentSettings'
@@ -757,6 +765,8 @@ definitions:
         type: string
       model:
         type: string
+      param:
+        $ref: '#/definitions/domain.ModelParam'
       provider:
         allOf:
         - $ref: '#/definitions/github_com_chaitin_panda-wiki_domain.ModelProvider'
@@ -1069,6 +1079,8 @@ definitions:
         type: string
       model:
         type: string
+      parameters:
+        $ref: '#/definitions/domain.ModelParam'
       prompt_tokens:
         type: integer
       provider:
@@ -1079,6 +1091,21 @@ definitions:
         $ref: '#/definitions/domain.ModelType'
       updated_at:
         type: string
+    type: object
+  domain.ModelParam:
+    properties:
+      context_window:
+        type: integer
+      max_tokens:
+        type: integer
+      r1_enabled:
+        type: boolean
+      support_computer_use:
+        type: boolean
+      support_images:
+        type: boolean
+      support_prompt_cache:
+        type: boolean
     type: object
   domain.ModelType:
     enum:
@@ -1545,6 +1572,8 @@ definitions:
         type: string
       model:
         type: string
+      param:
+        $ref: '#/definitions/domain.ModelParam'
       provider:
         allOf:
         - $ref: '#/definitions/github_com_chaitin_panda-wiki_domain.ModelProvider'
@@ -1722,6 +1751,8 @@ definitions:
         type: string
       model:
         type: string
+      parameters:
+        $ref: '#/definitions/domain.ModelParam'
       prompt_tokens:
         type: integer
       provider:
@@ -1750,19 +1781,7 @@ definitions:
     x-enum-comments:
       ModelProviderBrandZhiPu: 智谱
     x-enum-descriptions:
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
     - 智谱
-    - ""
     x-enum-varnames:
     - ModelProviderBrandOpenAI
     - ModelProviderBrandOllama
@@ -2059,6 +2078,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/domain.Response'
+      security:
+      - bearerAuth: []
       summary: Delete app
       tags:
       - app
@@ -2067,6 +2088,11 @@ paths:
       - application/json
       description: Update app
       parameters:
+      - description: id
+        in: query
+        name: id
+        required: true
+        type: string
       - description: app
         in: body
         name: app
@@ -2080,6 +2106,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/domain.Response'
+      security:
+      - bearerAuth: []
       summary: Update app
       tags:
       - app
@@ -2111,6 +2139,8 @@ paths:
                 data:
                   $ref: '#/definitions/domain.AppDetailResp'
               type: object
+      security:
+      - bearerAuth: []
       summary: Get app detail
       tags:
       - app

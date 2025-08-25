@@ -17,6 +17,11 @@ const docTemplate = `{
     "paths": {
         "/api/v1/app": {
             "put": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "description": "Update app",
                 "consumes": [
                     "application/json"
@@ -29,6 +34,13 @@ const docTemplate = `{
                 ],
                 "summary": "Update app",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
                     {
                         "description": "app",
                         "name": "app",
@@ -49,6 +61,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "description": "Delete app",
                 "consumes": [
                     "application/json"
@@ -78,6 +95,11 @@ const docTemplate = `{
         },
         "/api/v1/app/detail": {
             "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "description": "Get app detail",
                 "consumes": [
                     "application/json"
@@ -3801,6 +3823,12 @@ const docTemplate = `{
                     "description": "nav",
                     "type": "string"
                 },
+                "watermark_content": {
+                    "type": "string"
+                },
+                "watermark_enable": {
+                    "type": "boolean"
+                },
                 "web_app_comment_settings": {
                     "description": "webapp comment settings",
                     "allOf": [
@@ -3992,6 +4020,12 @@ const docTemplate = `{
                 "title": {
                     "description": "nav",
                     "type": "string"
+                },
+                "watermark_content": {
+                    "type": "string"
+                },
+                "watermark_enable": {
+                    "type": "boolean"
                 },
                 "web_app_comment_settings": {
                     "description": "webapp comment settings",
@@ -4583,6 +4617,9 @@ const docTemplate = `{
                 "model": {
                     "type": "string"
                 },
+                "param": {
+                    "$ref": "#/definitions/domain.ModelParam"
+                },
                 "provider": {
                     "enum": [
                         "OpenAI",
@@ -5048,6 +5085,9 @@ const docTemplate = `{
                 "model": {
                     "type": "string"
                 },
+                "parameters": {
+                    "$ref": "#/definitions/domain.ModelParam"
+                },
                 "prompt_tokens": {
                     "type": "integer"
                 },
@@ -5062,6 +5102,29 @@ const docTemplate = `{
                 },
                 "updated_at": {
                     "type": "string"
+                }
+            }
+        },
+        "domain.ModelParam": {
+            "type": "object",
+            "properties": {
+                "context_window": {
+                    "type": "integer"
+                },
+                "max_tokens": {
+                    "type": "integer"
+                },
+                "r1_enabled": {
+                    "type": "boolean"
+                },
+                "support_computer_use": {
+                    "type": "boolean"
+                },
+                "support_images": {
+                    "type": "boolean"
+                },
+                "support_prompt_cache": {
+                    "type": "boolean"
                 }
             }
         },
@@ -5784,6 +5847,9 @@ const docTemplate = `{
                 "model": {
                     "type": "string"
                 },
+                "param": {
+                    "$ref": "#/definitions/domain.ModelParam"
+                },
                 "provider": {
                     "enum": [
                         "OpenAI",
@@ -6038,6 +6104,9 @@ const docTemplate = `{
                 "model": {
                     "type": "string"
                 },
+                "parameters": {
+                    "$ref": "#/definitions/domain.ModelParam"
+                },
                 "prompt_tokens": {
                     "type": "integer"
                 },
@@ -6073,19 +6142,7 @@ const docTemplate = `{
                 "ModelProviderBrandZhiPu": "智谱"
             },
             "x-enum-descriptions": [
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "智谱",
-                ""
+                "智谱"
             ],
             "x-enum-varnames": [
                 "ModelProviderBrandOpenAI",

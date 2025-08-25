@@ -110,6 +110,9 @@ type AppSettings struct {
 	AIFeedbackSettings AIFeedbackSettings `json:"ai_feedback_settings"`
 	// WebAppCustomStyle
 	WebAppCustomSettings WebAppCustomSettings `json:"web_app_custom_style"`
+
+	WatermarkEnable  bool   `json:"watermark_enable"`
+	WatermarkContent string `json:"watermark_content"`
 }
 
 type WebAppCustomSettings struct {
@@ -253,6 +256,9 @@ type AppSettingsResp struct {
 	AIFeedbackSettings AIFeedbackSettings `json:"ai_feedback_settings"`
 	// WebAppCustomStyle
 	WebAppCustomSettings WebAppCustomSettings `json:"web_app_custom_style"`
+
+	WatermarkEnable  bool   `json:"watermark_enable"`
+	WatermarkContent string `json:"watermark_content"`
 }
 
 func (s *AppSettingsResp) Scan(value any) error {
