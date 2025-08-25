@@ -48,7 +48,7 @@ func (cfg *WechatServiceConfig) VerifyUrlWechatService(signature, timestamp, non
 	return decryptEchoStr, nil
 }
 
-func (cfg *WechatServiceConfig) Wechat(msg *WeixinUserAskMsg, getQA bot.GetQAFun, baseUrl string, image string) error {
+func (cfg *WechatServiceConfig) Wechat(msg *WeixinUserAskMsg, getQA bot.GetQAFun) error {
 	// 获取accesstoken 方便给用户发送消息
 	token, err := cfg.GetAccessToken()
 	if err != nil {
@@ -63,7 +63,7 @@ func (cfg *WechatServiceConfig) Wechat(msg *WeixinUserAskMsg, getQA bot.GetQAFun
 		setCursor(msg.OpenKfId, msgRet.NextCursor)
 	}
 
-	err = cfg.Processmessage(msgRet, msg, getQA, baseUrl, image)
+	err = cfg.Processmessage(msgRet, msg, getQA)
 	if err != nil {
 		cfg.logger.Error("send to ai failed!")
 		return err
@@ -72,7 +72,7 @@ func (cfg *WechatServiceConfig) Wechat(msg *WeixinUserAskMsg, getQA bot.GetQAFun
 }
 
 // forwardToBackend
-func (cfg *WechatServiceConfig) Processmessage(msgRet *MsgRet, Kfmsg *WeixinUserAskMsg, GetQA bot.GetQAFun, baseUrl, image string) error {
+func (cfg *WechatServiceConfig) Processmessage(msgRet *MsgRet, Kfmsg *WeixinUserAskMsg, GetQA bot.GetQAFun) error {
 	// err message
 	cfg.logger.Info("get user message", log.Int("msgRet.Errcode", msgRet.Errcode), log.String("msg.Errmsg", msgRet.Errmsg))
 
@@ -128,17 +128,17 @@ func (cfg *WechatServiceConfig) Processmessage(msgRet *MsgRet, Kfmsg *WeixinUser
 		return cfg.SendResponseToKfTxt(userId, openkfId, "当前没有可用的人工客服", token)
 	}
 
+	// 1. first response to user
+	if err := cfg.SendResponseToKfTxt(userId, openkfId, "正在思考您的问题，请稍等...", token); err != nil {
+		return err
+	}
+
 	// 获取用户的详细信息
 	customer, err := GetUserInfo(userId, token)
 	if err != nil {
 		cfg.logger.Error("get user info failed", log.Error(err))
 	}
 	cfg.logger.Info("customer info", log.Any("customer", customer))
-
-	// 1. first response to user
-	if err := cfg.SendResponseToKfTxt(userId, openkfId, "正在思考您的问题，请稍等...", token); err != nil {
-		return err
-	}
 
 	id, err := uuid.NewV7()
 	if err != nil {
@@ -155,6 +155,11 @@ func (cfg *WechatServiceConfig) Processmessage(msgRet *MsgRet, Kfmsg *WeixinUser
 	if err != nil {
 		return err
 	}
+	//2. get baseurl and image path
+	info, err := cfg.WeRepo.GetWechatStatic(cfg.Ctx, cfg.kbID, domain.AppTypeWeb)
+	if err != nil {
+		return err
+	}
 
 	//2. go send to ai and store in map--> get conversation-id
 	if _, ok := domain.ConversationManager.Load(conversationID); !ok {
@@ -167,8 +172,8 @@ func (cfg *WechatServiceConfig) Processmessage(msgRet *MsgRet, Kfmsg *WeixinUser
 
 		go cfg.SendQuestionToAI(conversationID, wccontent)
 	}
-	// 2. second send url to user
-	return cfg.SendResponseToKfUrl(userId, openkfId, conversationID, token, content, baseUrl, image)
+	// 3. second send url to user
+	return cfg.SendResponseToKfUrl(userId, openkfId, conversationID, token, content, info.BaseUrl, info.ImagePath)
 }
 
 func (cfg *WechatServiceConfig) SendResponseToKfUrl(userId, openkfId, conversationID, token, question, baseUrl, image string) error {
