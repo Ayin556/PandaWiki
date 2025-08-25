@@ -136,7 +136,7 @@ const VerificationForm = ({ data }: { data?: DomainAppDetailResp }) => {
   } = useForm({
     defaultValues: {
       verification_enable: null,
-      verification_content: null,
+      comment_verification_enable: null,
     },
   });
 
@@ -164,8 +164,8 @@ const VerificationForm = ({ data }: { data?: DomainAppDetailResp }) => {
 
   useEffect(() => {
     if (!data) return;
-    setValue('verification_enable', data.settings?.verification_enable ?? null);
-    setValue('verification_content', data.settings?.verification_content ?? '');
+    // setValue('verification_enable', data.settings?.verification_enable ?? null);
+    // setValue('verification_content', data.settings?.verification_content ?? '');
   }, [data]);
 
   return (
