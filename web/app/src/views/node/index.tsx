@@ -19,6 +19,7 @@ import CatalogH5 from './CatalogH5';
 import DocAnchor from './DocAnchor';
 import DocContent from './DocContent';
 import NoPermission from './NoPermission';
+import WaterMarkProvider from '@/components/watermark/WaterMarkProvider';
 
 const Doc = ({
   node: defaultNode,
@@ -97,6 +98,7 @@ const Doc = ({
 
   const getData = async (id: string) => {
     try {
+      // @ts-ignore
       const result: any = await getShareV1NodeDetail({ id });
       setNode(result);
       document.title = kbDetail?.name + ' - ' + result?.name;
@@ -125,64 +127,166 @@ const Doc = ({
 
   if (mobile) {
     return (
-      <Box sx={{ mt: '60px', position: 'relative', zIndex: 1 }}>
-        <Box sx={{ minHeight: `calc(100vh - ${footerHeight + 1}px - 100px)` }}>
-          <Header />
-          {nodeList && <CatalogH5 nodes={nodeList} />}
-          <Box sx={{ height: 24 }} />
-          {node ? (
-            // @ts-ignore
-            node.code === 40003 ? (
-              <NoPermission catalogShow={!!catalogShow} />
+      <WaterMarkProvider>
+        <Box sx={{ mt: '60px', position: 'relative', zIndex: 1 }}>
+          <Box
+            sx={{ minHeight: `calc(100vh - ${footerHeight + 1}px - 100px)` }}
+          >
+            <Header />
+            {nodeList && <CatalogH5 nodes={nodeList} />}
+            <Box sx={{ height: 24 }} />
+            {node ? (
+              // @ts-ignore
+              node.code === 40003 ? (
+                <NoPermission catalogShow={!!catalogShow} />
+              ) : (
+                <DocContent
+                  info={node}
+                  editorRef={editorRef}
+                  docId={docId}
+                  kbInfo={kbInfo}
+                  commentList={commentList}
+                />
+              )
             ) : (
-              <DocContent
-                info={node}
-                editorRef={editorRef}
-                docId={docId}
-                kbInfo={kbInfo}
-                commentList={commentList}
-              />
-            )
-          ) : (
-            <Stack
-              direction='column'
-              alignItems='center'
-              justifyContent='center'
-              sx={{
-                height: 600,
-              }}
-            >
-              <Image
-                src={NotData.src}
-                alt='not data'
-                width={423}
-                height={232}
-              />
-              <Box
+              <Stack
+                direction='column'
+                alignItems='center'
+                justifyContent='center'
                 sx={{
-                  fontSize: 14,
-                  color: 'text.secondary',
-                  textAlign: 'center',
-                  mt: 2,
+                  height: 600,
                 }}
               >
-                文档不存在
-              </Box>
-            </Stack>
-          )}
+                <Image
+                  src={NotData.src}
+                  alt='not data'
+                  width={423}
+                  height={232}
+                />
+                <Box
+                  sx={{
+                    fontSize: 14,
+                    color: 'text.secondary',
+                    textAlign: 'center',
+                    mt: 2,
+                  }}
+                >
+                  文档不存在
+                </Box>
+              </Stack>
+            )}
+          </Box>
+          <Box
+            sx={{
+              mt: 5,
+              bgcolor: 'background.paper2',
+              ...(footerSetting?.footer_style === 'complex' && {
+                borderTop: '1px solid',
+                borderColor: 'divider',
+              }),
+            }}
+          >
+            <FooterProvider />
+          </Box>
+          <Zoom in={showScrollTop}>
+            <Fab
+              size='small'
+              onClick={scrollToTop}
+              sx={{
+                backgroundColor: 'background.paper2',
+                color: 'text.primary',
+                position: 'fixed',
+                bottom: 66,
+                right: 16,
+                zIndex: 1000,
+              }}
+            >
+              <KeyboardArrowUpIcon sx={{ fontSize: 24 }} />
+            </Fab>
+          </Zoom>
         </Box>
-        <Box
-          sx={{
-            mt: 5,
-            bgcolor: 'background.paper2',
-            ...(footerSetting?.footer_style === 'complex' && {
-              borderTop: '1px solid',
-              borderColor: 'divider',
-            }),
-          }}
-        >
-          <FooterProvider />
-        </Box>
+      </WaterMarkProvider>
+    );
+  }
+
+  return (
+    <WaterMarkProvider>
+      <Box
+        sx={{
+          position: 'relative',
+          bgcolor: 'background.default',
+        }}
+      >
+        <Catalog id={docId} setId={setDocId} />
+        <Header />
+        {node ? (
+          <>
+            <Box
+              sx={{
+                pt: '96px',
+                position: 'relative',
+                zIndex: 1,
+                minHeight: `calc(100vh - ${footerHeight + 1}px)`,
+                pb: 10,
+                bgcolor: 'background.default',
+              }}
+            >
+              {/* @ts-ignore */}
+              {node.code === 40003 ? (
+                <NoPermission catalogShow={!!catalogShow} />
+              ) : (
+                <DocContent
+                  info={node}
+                  editorRef={editorRef}
+                  docId={docId}
+                  kbInfo={kbInfo}
+                />
+              )}
+            </Box>
+            {!!editorRef && (
+              <DocAnchor
+                headings={headings}
+                footerHeight={footerHeight}
+                summary={node?.meta?.summary || ''}
+              />
+            )}
+          </>
+        ) : (
+          <Stack
+            direction='column'
+            alignItems='center'
+            justifyContent='center'
+            style={{
+              marginLeft: catalogShow ? `${catalogWidth!}px` : '16px',
+            }}
+            sx={{
+              position: 'relative',
+              height: `calc(100vh - ${footerHeight + 1}px)`,
+            }}
+          >
+            {footerHeight > 0 && (
+              <>
+                <Image
+                  src={NotData.src}
+                  alt='not data'
+                  width={423}
+                  height={232}
+                />
+                <Box
+                  sx={{
+                    fontSize: 14,
+                    color: 'text.secondary',
+                    textAlign: 'center',
+                    mt: 2,
+                  }}
+                >
+                  文档不存在
+                </Box>
+              </>
+            )}
+          </Stack>
+        )}
+        <FooterProvider />
         <Zoom in={showScrollTop}>
           <Fab
             size='small'
@@ -200,103 +304,7 @@ const Doc = ({
           </Fab>
         </Zoom>
       </Box>
-    );
-  }
-
-  return (
-    <Box
-      sx={{
-        position: 'relative',
-        bgcolor: 'background.default',
-      }}
-    >
-      <Catalog id={docId} setId={setDocId} />
-      <Header />
-      {node ? (
-        <>
-          <Box
-            sx={{
-              pt: '96px',
-              position: 'relative',
-              zIndex: 1,
-              minHeight: `calc(100vh - ${footerHeight + 1}px)`,
-              pb: 10,
-              bgcolor: 'background.default',
-            }}
-          >
-            {/* @ts-ignore */}
-            {node.code === 40003 ? (
-              <NoPermission catalogShow={!!catalogShow} />
-            ) : (
-              <DocContent
-                info={node}
-                editorRef={editorRef}
-                docId={docId}
-                kbInfo={kbInfo}
-              />
-            )}
-          </Box>
-          {!!editorRef && (
-            <DocAnchor
-              headings={headings}
-              footerHeight={footerHeight}
-              summary={node?.meta?.summary || ''}
-            />
-          )}
-        </>
-      ) : (
-        <Stack
-          direction='column'
-          alignItems='center'
-          justifyContent='center'
-          style={{
-            marginLeft: catalogShow ? `${catalogWidth!}px` : '16px',
-          }}
-          sx={{
-            position: 'relative',
-            height: `calc(100vh - ${footerHeight + 1}px)`,
-          }}
-        >
-          {footerHeight > 0 && (
-            <>
-              <Image
-                src={NotData.src}
-                alt='not data'
-                width={423}
-                height={232}
-              />
-              <Box
-                sx={{
-                  fontSize: 14,
-                  color: 'text.secondary',
-                  textAlign: 'center',
-                  mt: 2,
-                }}
-              >
-                文档不存在
-              </Box>
-            </>
-          )}
-        </Stack>
-      )}
-      <FooterProvider />
-      <Zoom in={showScrollTop}>
-        <Fab
-          size='small'
-          onClick={scrollToTop}
-          sx={{
-            backgroundColor: 'background.paper2',
-            color: 'text.primary',
-            position: 'fixed',
-            bottom: 66,
-            right: 16,
-            zIndex: 1000,
-          }}
-        >
-          <KeyboardArrowUpIcon sx={{ fontSize: 24 }} />
-        </Fab>
-      </Zoom>
-    </Box>
+    </WaterMarkProvider>
   );
 };
 

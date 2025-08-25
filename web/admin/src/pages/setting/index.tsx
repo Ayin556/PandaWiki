@@ -1,5 +1,8 @@
 import { getApiV1KnowledgeBaseDetail } from '@/request/KnowledgeBase';
-import { DomainKnowledgeBaseDetail } from '@/request/types';
+import {
+  DomainAppDetailResp,
+  DomainKnowledgeBaseDetail,
+} from '@/request/types';
 import { useAppSelector } from '@/store';
 import { Stack, useMediaQuery } from '@mui/material';
 import { useEffect, useState } from 'react';
@@ -8,6 +11,8 @@ import CardKB from './component/CardKB';
 import CardRobot from './component/CardRobot';
 import CardWeb from './component/CardWeb';
 import CardFeedback from './component/CardFeedback';
+import CardSecurity from './component/CardSecurity';
+import { getApiV1AppDetail } from '@/request/App';
 
 const Setting = () => {
   const { kb_id } = useAppSelector(state => state.config);
@@ -15,9 +20,17 @@ const Setting = () => {
   const isWideScreen = useMediaQuery('(min-width:1400px)');
   const [url, setUrl] = useState<string>('');
 
+  const [info, setInfo] = useState<DomainAppDetailResp>();
+
+  const getInfo = async () => {
+    const res = await getApiV1AppDetail({ kb_id: kb_id!, type: '1' });
+    setInfo(res);
+  };
+
   const getKb = () => {
     if (!kb_id) return;
     getApiV1KnowledgeBaseDetail({ id: kb_id }).then(res => setKb(res));
+    getInfo();
   };
 
   useEffect(() => {
@@ -70,8 +83,9 @@ const Setting = () => {
         gap={2}
         sx={{ width: isWideScreen ? 'calc((100% - 16px) / 2)' : '100%' }}
       >
-        <CardKB kb={kb} />
+        <CardKB kb={kb} data={info} />
         <CardAI kb={kb} />
+        <CardSecurity data={info} kb={kb} />
         <CardFeedback kb={kb} />
         <CardRobot kb={kb} url={url} />
       </Stack>

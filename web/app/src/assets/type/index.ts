@@ -67,6 +67,8 @@ export interface KBDetail {
     footer_settings?: FooterSetting | null;
     catalog_settings?: CatalogSetting | null;
     theme_and_style?: ThemeAndStyleSetting | null;
+    watermark_content?: string;
+    watermark_enable?: boolean;
     web_app_custom_style: {
       allow_theme_switching?: boolean;
       header_search_placeholder?: string;

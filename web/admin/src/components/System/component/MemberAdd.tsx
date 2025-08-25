@@ -2,7 +2,7 @@ import { postApiV1UserCreate } from '@/request/User';
 import Card from '@/components/Card';
 import { copyText, generatePassword } from '@/utils';
 import { CheckCircle } from '@mui/icons-material';
-import { Box, Button, MenuItem, Stack, TextField, Select } from '@mui/material';
+import { Box, Button, MenuItem, Stack, TextField } from '@mui/material';
 import { FormItem } from '@/components/Form';
 import { Modal } from 'ct-mui';
 import { useState } from 'react';
@@ -43,10 +43,10 @@ const MemberAdd = ({ refresh }: { refresh: () => void }) => {
     });
   };
 
-  const onSubmit = ({ account }: { account: string }) => {
+  const onSubmit = handleSubmit(data => {
     setLoading(true);
     const password = generatePassword();
-    postApiV1UserCreate({ account, password, role: 'user' })
+    postApiV1UserCreate({ account: data.account, password, role: data.role })
       .then(() => {
         setPassword(password);
         setAddMember(false);
@@ -55,7 +55,7 @@ const MemberAdd = ({ refresh }: { refresh: () => void }) => {
       .finally(() => {
         setLoading(false);
       });
-  };
+  });
 
   return (
     <>
@@ -104,7 +104,7 @@ const MemberAdd = ({ refresh }: { refresh: () => void }) => {
           setAddMember(false);
           reset();
         }}
-        onOk={handleSubmit(onSubmit)}
+        onOk={onSubmit}
         okButtonProps={{
           loading,
         }}

@@ -221,6 +221,8 @@ export interface DomainAppSettings {
   theme_mode?: string;
   /** nav */
   title?: string;
+  watermark_content?: string;
+  watermark_enable?: boolean;
   /** webapp comment settings */
   web_app_comment_settings?: DomainWebAppCommentSettings;
   /** WebAppCustomStyle */
@@ -288,6 +290,8 @@ export interface DomainAppSettingsResp {
   theme_mode?: string;
   /** nav */
   title?: string;
+  watermark_content?: string;
+  watermark_enable?: boolean;
   /** webapp comment settings */
   web_app_comment_settings?: DomainWebAppCommentSettings;
   /** WebAppCustomStyle */
@@ -1151,6 +1155,11 @@ export interface V1UserListResp {
   users?: V1UserListItemResp[];
 }
 
+export interface PutApiV1AppParams {
+  /** id */
+  id: string;
+}
+
 export interface DeleteApiV1AppParams {
   /** app id */
   id: string;
@@ -1317,6 +1326,7 @@ export interface GetApiV1ModelProviderSupportedParams {
 }
 
 export interface GetApiV1NodeDetailParams {
+  format?: string;
   id: string;
   kb_id: string;
 }
@@ -1404,4 +1414,6 @@ export interface GetShareV1ConversationDetailParams {
 export interface GetShareV1NodeDetailParams {
   /** node id */
   id: string;
+  /** format */
+  format: string;
 }

@@ -274,6 +274,14 @@ export interface GithubComChaitinPandaWikiProApiShareV1AuthGitHubResp {
   url?: string;
 }
 
+export interface GithubComChaitinPandaWikiProApiShareV1AuthInfoResp {
+  avatar_url?: string;
+  email?: string;
+  /** Unique identifier for the authentication record */
+  id?: number;
+  username?: string;
+}
+
 export interface GithubComChaitinPandaWikiProApiShareV1AuthLDAPReq {
   kb_id?: string;
   password: string;

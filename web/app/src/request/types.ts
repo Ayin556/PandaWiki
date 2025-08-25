@@ -217,6 +217,8 @@ export interface DomainAppSettings {
   theme_mode?: string;
   /** nav */
   title?: string;
+  watermark_content?: string;
+  watermark_enable?: boolean;
   /** webapp comment settings */
   web_app_comment_settings?: DomainWebAppCommentSettings;
   /** WebAppCustomStyle */
@@ -284,6 +286,8 @@ export interface DomainAppSettingsResp {
   theme_mode?: string;
   /** nav */
   title?: string;
+  watermark_content?: string;
+  watermark_enable?: boolean;
   /** webapp comment settings */
   web_app_comment_settings?: DomainWebAppCommentSettings;
   /** WebAppCustomStyle */
@@ -472,6 +476,7 @@ export interface DomainCreateModelReq {
   api_version?: string;
   base_url: string;
   model: string;
+  param?: DomainModelParam;
   provider:
     | "OpenAI"
     | "Ollama"
@@ -647,11 +652,21 @@ export interface DomainModelDetailResp {
   created_at?: string;
   id?: string;
   model?: string;
+  parameters?: DomainModelParam;
   prompt_tokens?: number;
   provider?: GithubComChaitinPandaWikiDomainModelProvider;
   total_tokens?: number;
   type?: DomainModelType;
   updated_at?: string;
+}
+
+export interface DomainModelParam {
+  context_window?: number;
+  max_tokens?: number;
+  r1_enabled?: boolean;
+  support_computer_use?: boolean;
+  support_images?: boolean;
+  support_prompt_cache?: boolean;
 }
 
 export interface DomainMoveNodeReq {
@@ -898,6 +913,7 @@ export interface DomainUpdateModelReq {
   base_url: string;
   id: string;
   model: string;
+  param?: DomainModelParam;
   provider:
     | "OpenAI"
     | "Ollama"
@@ -1002,6 +1018,7 @@ export interface GithubComChaitinPandaWikiDomainModelListItem {
   completion_tokens?: number;
   id?: string;
   model?: string;
+  parameters?: DomainModelParam;
   prompt_tokens?: number;
   provider?: GithubComChaitinPandaWikiDomainModelProvider;
   total_tokens?: number;
@@ -1134,6 +1151,11 @@ export interface V1UserListItemResp {
 
 export interface V1UserListResp {
   users?: V1UserListItemResp[];
+}
+
+export interface PutApiV1AppParams {
+  /** id */
+  id: string;
 }
 
 export interface DeleteApiV1AppParams {
@@ -1282,6 +1304,7 @@ export interface GetApiV1ModelDetailParams {
 }
 
 export interface GetApiV1NodeDetailParams {
+  format?: string;
   id: string;
   kb_id: string;
 }
@@ -1369,4 +1392,6 @@ export interface GetShareV1ConversationDetailParams {
 export interface GetShareV1NodeDetailParams {
   /** node id */
   id: string;
+  /** format */
+  format: string;
 }
