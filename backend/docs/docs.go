@@ -4583,27 +4583,11 @@ const docTemplate = `{
                 "model": {
                     "type": "string"
                 },
+                "param": {
+                    "$ref": "#/definitions/domain.ModelParam"
+                },
                 "provider": {
-                    "enum": [
-                        "OpenAI",
-                        "Ollama",
-                        "DeepSeek",
-                        "SiliconFlow",
-                        "Moonshot",
-                        "Other",
-                        "AzureOpenAI",
-                        "BaiZhiCloud",
-                        "Hunyuan",
-                        "BaiLian",
-                        "Volcengine",
-                        "Gemini",
-                        "ZhiPu"
-                    ],
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/github_com_chaitin_panda-wiki_domain.ModelProvider"
-                        }
-                    ]
+                    "$ref": "#/definitions/github_com_chaitin_panda-wiki_domain.ModelProvider"
                 },
                 "type": {
                     "enum": [
@@ -4841,21 +4825,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "provider": {
-                    "type": "string",
-                    "enum": [
-                        "SiliconFlow",
-                        "OpenAI",
-                        "Ollama",
-                        "DeepSeek",
-                        "Moonshot",
-                        "AzureOpenAI",
-                        "BaiZhiCloud",
-                        "Hunyuan",
-                        "BaiLian",
-                        "Volcengine",
-                        "Gemini",
-                        "ZhiPu"
-                    ]
+                    "type": "string"
                 },
                 "type": {
                     "enum": [
@@ -5048,6 +5018,9 @@ const docTemplate = `{
                 "model": {
                     "type": "string"
                 },
+                "parameters": {
+                    "$ref": "#/definitions/domain.ModelParam"
+                },
                 "prompt_tokens": {
                     "type": "integer"
                 },
@@ -5062,6 +5035,29 @@ const docTemplate = `{
                 },
                 "updated_at": {
                     "type": "string"
+                }
+            }
+        },
+        "domain.ModelParam": {
+            "type": "object",
+            "properties": {
+                "context_window": {
+                    "type": "integer"
+                },
+                "max_tokens": {
+                    "type": "integer"
+                },
+                "r1_enabled": {
+                    "type": "boolean"
+                },
+                "support_computer_use": {
+                    "type": "boolean"
+                },
+                "support_images": {
+                    "type": "boolean"
+                },
+                "support_prompt_cache": {
+                    "type": "boolean"
                 }
             }
         },
@@ -5784,27 +5780,11 @@ const docTemplate = `{
                 "model": {
                     "type": "string"
                 },
+                "param": {
+                    "$ref": "#/definitions/domain.ModelParam"
+                },
                 "provider": {
-                    "enum": [
-                        "OpenAI",
-                        "Ollama",
-                        "DeepSeek",
-                        "SiliconFlow",
-                        "Moonshot",
-                        "Other",
-                        "AzureOpenAI",
-                        "BaiZhiCloud",
-                        "Hunyuan",
-                        "BaiLian",
-                        "Volcengine",
-                        "Gemini",
-                        "ZhiPu"
-                    ],
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/github_com_chaitin_panda-wiki_domain.ModelProvider"
-                        }
-                    ]
+                    "$ref": "#/definitions/github_com_chaitin_panda-wiki_domain.ModelProvider"
                 },
                 "type": {
                     "enum": [
@@ -5967,26 +5947,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "provider": {
-                    "enum": [
-                        "OpenAI",
-                        "Ollama",
-                        "DeepSeek",
-                        "SiliconFlow",
-                        "Moonshot",
-                        "Other",
-                        "AzureOpenAI",
-                        "BaiZhiCloud",
-                        "Hunyuan",
-                        "BaiLian",
-                        "Volcengine",
-                        "Gemini",
-                        "ZhiPu"
-                    ],
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/github_com_chaitin_panda-wiki_domain.ModelProvider"
-                        }
-                    ]
+                    "$ref": "#/definitions/github_com_chaitin_panda-wiki_domain.ModelProvider"
                 },
                 "type": {
                     "enum": [
@@ -6037,6 +5998,9 @@ const docTemplate = `{
                 },
                 "model": {
                     "type": "string"
+                },
+                "parameters": {
+                    "$ref": "#/definitions/domain.ModelParam"
                 },
                 "prompt_tokens": {
                     "type": "integer"
