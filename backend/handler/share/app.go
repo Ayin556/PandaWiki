@@ -55,7 +55,7 @@ func NewShareAppHandler(
 	return h
 }
 
-// GetAppInfo
+// GetWebAppInfo
 //
 //	@Summary		GetAppInfo
 //	@Description	GetAppInfo

@@ -10,6 +10,11 @@
     "paths": {
         "/api/v1/app": {
             "put": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "description": "Update app",
                 "consumes": [
                     "application/json"
@@ -22,6 +27,13 @@
                 ],
                 "summary": "Update app",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
                     {
                         "description": "app",
                         "name": "app",
@@ -42,6 +54,11 @@
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "description": "Delete app",
                 "consumes": [
                     "application/json"
@@ -71,6 +88,11 @@
         },
         "/api/v1/app/detail": {
             "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "description": "Get app detail",
                 "consumes": [
                     "application/json"
@@ -3794,6 +3816,12 @@
                     "description": "nav",
                     "type": "string"
                 },
+                "watermark_content": {
+                    "type": "string"
+                },
+                "watermark_enable": {
+                    "type": "boolean"
+                },
                 "web_app_comment_settings": {
                     "description": "webapp comment settings",
                     "allOf": [
@@ -3985,6 +4013,12 @@
                 "title": {
                     "description": "nav",
                     "type": "string"
+                },
+                "watermark_content": {
+                    "type": "string"
+                },
+                "watermark_enable": {
+                    "type": "boolean"
                 },
                 "web_app_comment_settings": {
                     "description": "webapp comment settings",
@@ -6030,19 +6064,7 @@
                 "ModelProviderBrandZhiPu": "智谱"
             },
             "x-enum-descriptions": [
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "智谱",
-                ""
+                "智谱"
             ],
             "x-enum-varnames": [
                 "ModelProviderBrandOpenAI",

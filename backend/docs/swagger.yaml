@@ -252,6 +252,10 @@ definitions:
       title:
         description: nav
         type: string
+      watermark_content:
+        type: string
+      watermark_enable:
+        type: boolean
       web_app_comment_settings:
         allOf:
         - $ref: '#/definitions/domain.WebAppCommentSettings'
@@ -376,6 +380,10 @@ definitions:
       title:
         description: nav
         type: string
+      watermark_content:
+        type: string
+      watermark_enable:
+        type: boolean
       web_app_comment_settings:
         allOf:
         - $ref: '#/definitions/domain.WebAppCommentSettings'
@@ -1715,19 +1723,7 @@ definitions:
     x-enum-comments:
       ModelProviderBrandZhiPu: 智谱
     x-enum-descriptions:
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
     - 智谱
-    - ""
     x-enum-varnames:
     - ModelProviderBrandOpenAI
     - ModelProviderBrandOllama
@@ -2024,6 +2020,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/domain.Response'
+      security:
+      - bearerAuth: []
       summary: Delete app
       tags:
       - app
@@ -2032,6 +2030,11 @@ paths:
       - application/json
       description: Update app
       parameters:
+      - description: id
+        in: query
+        name: id
+        required: true
+        type: string
       - description: app
         in: body
         name: app
@@ -2045,6 +2048,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/domain.Response'
+      security:
+      - bearerAuth: []
       summary: Update app
       tags:
       - app
@@ -2076,6 +2081,8 @@ paths:
                 data:
                   $ref: '#/definitions/domain.AppDetailResp'
               type: object
+      security:
+      - bearerAuth: []
       summary: Get app detail
       tags:
       - app

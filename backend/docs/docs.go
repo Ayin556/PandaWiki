@@ -17,6 +17,11 @@ const docTemplate = `{
     "paths": {
         "/api/v1/app": {
             "put": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "description": "Update app",
                 "consumes": [
                     "application/json"
@@ -29,6 +34,13 @@ const docTemplate = `{
                 ],
                 "summary": "Update app",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
                     {
                         "description": "app",
                         "name": "app",
@@ -49,6 +61,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "description": "Delete app",
                 "consumes": [
                     "application/json"
@@ -78,6 +95,11 @@ const docTemplate = `{
         },
         "/api/v1/app/detail": {
             "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "description": "Get app detail",
                 "consumes": [
                     "application/json"
@@ -3801,6 +3823,12 @@ const docTemplate = `{
                     "description": "nav",
                     "type": "string"
                 },
+                "watermark_content": {
+                    "type": "string"
+                },
+                "watermark_enable": {
+                    "type": "boolean"
+                },
                 "web_app_comment_settings": {
                     "description": "webapp comment settings",
                     "allOf": [
@@ -3992,6 +4020,12 @@ const docTemplate = `{
                 "title": {
                     "description": "nav",
                     "type": "string"
+                },
+                "watermark_content": {
+                    "type": "string"
+                },
+                "watermark_enable": {
+                    "type": "boolean"
                 },
                 "web_app_comment_settings": {
                     "description": "webapp comment settings",
@@ -6037,19 +6071,7 @@ const docTemplate = `{
                 "ModelProviderBrandZhiPu": "智谱"
             },
             "x-enum-descriptions": [
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "智谱",
-                ""
+                "智谱"
             ],
             "x-enum-varnames": [
                 "ModelProviderBrandOpenAI",
