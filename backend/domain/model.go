@@ -13,19 +13,7 @@ import (
 type ModelProvider string
 
 const (
-	ModelProviderBrandOpenAI      ModelProvider = "OpenAI"
-	ModelProviderBrandOllama      ModelProvider = "Ollama"
-	ModelProviderBrandDeepSeek    ModelProvider = "DeepSeek"
-	ModelProviderBrandMoonshot    ModelProvider = "Moonshot"
-	ModelProviderBrandSiliconFlow ModelProvider = "SiliconFlow"
-	ModelProviderBrandAzureOpenAI ModelProvider = "AzureOpenAI"
 	ModelProviderBrandBaiZhiCloud ModelProvider = "BaiZhiCloud"
-	ModelProviderBrandHunyuan     ModelProvider = "Hunyuan"
-	ModelProviderBrandBaiLian     ModelProvider = "BaiLian"
-	ModelProviderBrandVolcengine  ModelProvider = "Volcengine"
-	ModelProviderBrandGemini      ModelProvider = "Gemini"
-	ModelProviderBrandZhiPu       ModelProvider = "ZhiPu" // 智谱
-	ModelProviderBrandOther       ModelProvider = "Other"
 )
 
 type ModelType string

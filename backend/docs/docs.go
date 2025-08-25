@@ -6053,40 +6053,10 @@ const docTemplate = `{
         "github_com_chaitin_panda-wiki_domain.ModelProvider": {
             "type": "string",
             "enum": [
-                "OpenAI",
-                "Ollama",
-                "DeepSeek",
-                "Moonshot",
-                "SiliconFlow",
-                "AzureOpenAI",
-                "BaiZhiCloud",
-                "Hunyuan",
-                "BaiLian",
-                "Volcengine",
-                "Gemini",
-                "ZhiPu",
-                "Other"
-            ],
-            "x-enum-comments": {
-                "ModelProviderBrandZhiPu": "智谱"
-            },
-            "x-enum-descriptions": [
-                "智谱"
+                "BaiZhiCloud"
             ],
             "x-enum-varnames": [
-                "ModelProviderBrandOpenAI",
-                "ModelProviderBrandOllama",
-                "ModelProviderBrandDeepSeek",
-                "ModelProviderBrandMoonshot",
-                "ModelProviderBrandSiliconFlow",
-                "ModelProviderBrandAzureOpenAI",
-                "ModelProviderBrandBaiZhiCloud",
-                "ModelProviderBrandHunyuan",
-                "ModelProviderBrandBaiLian",
-                "ModelProviderBrandVolcengine",
-                "ModelProviderBrandGemini",
-                "ModelProviderBrandZhiPu",
-                "ModelProviderBrandOther"
+                "ModelProviderBrandBaiZhiCloud"
             ]
         },
         "schema.RoleType": {
