@@ -5,13 +5,11 @@ import {
   DomainAppDetailResp,
   DomainKnowledgeBaseDetail,
 } from '@/request/types';
-import Card from '@/components/Card';
 import {
   Box,
   FormControlLabel,
   Radio,
   RadioGroup,
-  Stack,
   TextField,
   styled,
   Tooltip,

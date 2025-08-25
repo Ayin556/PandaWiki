@@ -20,6 +20,7 @@ export async function generateMetadata(
     },
   };
   try {
+    // @ts-ignore
     node = (await getShareV1NodeDetail({ id })) as any;
   } catch (error) {
     console.log(error);
@@ -36,6 +37,7 @@ const DocPage = async ({ params }: PageProps) => {
   const kbInfo: any = await getShareV1AppWebInfo();
   let node: any = {};
   try {
+    // @ts-ignore
     node = (await getShareV1NodeDetail({ id })) as any;
   } catch (error: any) {
     node = error.data;

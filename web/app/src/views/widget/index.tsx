@@ -12,6 +12,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { AnswerStatus } from '../chat/constant';
 import ChatInput from './ChatInput';
 import ChatWindow from './ChatWindow';
+import WaterMarkProvider from '@/components/watermark/WaterMarkProvider';
 
 const Widget = () => {
   const isMobile = useMediaQuery(theme => theme.breakpoints.down('sm'));
@@ -184,7 +185,7 @@ const Widget = () => {
   }, []);
 
   return (
-    <>
+    <WaterMarkProvider>
       <Stack
         direction={'row'}
         alignItems={'flex-start'}
@@ -204,7 +205,7 @@ const Widget = () => {
             sx={{ lineHeight: '28px', fontSize: 20 }}
           >
             {widget?.settings?.widget_bot_settings?.btn_logo ||
-              widget?.settings?.icon ? (
+            widget?.settings?.icon ? (
               <img
                 src={
                   widget?.settings?.widget_bot_settings?.btn_logo ||
@@ -403,7 +404,7 @@ const Widget = () => {
         </Link>
         提供技术支持
       </Stack>
-    </>
+    </WaterMarkProvider>
   );
 };
 

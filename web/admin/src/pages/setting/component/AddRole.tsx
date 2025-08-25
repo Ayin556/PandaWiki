@@ -121,7 +121,7 @@ const AddRole = ({ open, onCancel, onOk, selectedIds }: AddRoleProps) => {
 
   return (
     <Modal
-      title='添加管理员'
+      title='添加 Wiki 站管理员'
       open={open}
       onCancel={onCancel}
       onOk={onSubmit}

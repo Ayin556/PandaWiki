@@ -1,4 +1,5 @@
 import { getShareV1AppWebInfo } from '@/request/ShareApp';
+import { getShareProV1AuthInfo } from '@/request/pro/ShareAuth';
 import StoreProvider from '@/provider';
 import { darkTheme, lightTheme } from '@/theme';
 import { Box } from '@mui/material';
@@ -61,7 +62,13 @@ const Layout = async ({
   const headersList = await headers();
   const userAgent = headersList.get('user-agent');
 
-  const kbDetail: any = await getShareV1AppWebInfo();
+  const [kbDetail, authInfo]: any = await Promise.all([
+    getShareV1AppWebInfo(),
+    // @ts-ignore
+    getShareProV1AuthInfo({})
+      .then(res => res)
+      .catch(() => Promise.resolve(undefined)),
+  ]);
 
   const themeMode = kbDetail?.settings?.theme_mode || 'light';
 
@@ -76,6 +83,7 @@ const Layout = async ({
               kbDetail={kbDetail}
               themeMode={themeMode || 'light'}
               mobile={isMobile}
+              authInfo={authInfo}
             >
               <Box sx={{ bgcolor: 'background.paper' }}>{children}</Box>
             </StoreProvider>

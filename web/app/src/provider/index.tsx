@@ -4,8 +4,10 @@ import { KBDetail, NodeListItem, WidgetInfo } from '@/assets/type';
 import { useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { createContext, useContext, useEffect, useState } from 'react';
+import { GithubComChaitinPandaWikiProApiShareV1AuthInfoResp } from '@/request/pro/types';
 
 interface StoreContextType {
+  authInfo?: GithubComChaitinPandaWikiProApiShareV1AuthInfoResp;
   widget?: WidgetInfo;
   kbDetail?: KBDetail;
   catalogShow?: boolean;
@@ -25,6 +27,7 @@ export const StoreContext = createContext<StoreContextType>({
   themeMode: 'light',
   mobile: false,
   nodeList: undefined,
+  authInfo: undefined,
   setNodeList: () => {},
   setCatalogShow: () => {},
 });
@@ -43,6 +46,7 @@ export default function StoreProvider({
     themeMode = context.themeMode,
     nodeList: initialNodeList = context.nodeList || [],
     mobile = context.mobile,
+    authInfo = context.authInfo,
   } = props;
 
   const catalogSettings = kbDetail?.settings?.catalog_settings;
@@ -86,6 +90,7 @@ export default function StoreProvider({
         catalogShow,
         setCatalogShow,
         mobile: isMobile,
+        authInfo,
         setNodeList,
         catalogWidth,
         setCatalogWidth: value => {

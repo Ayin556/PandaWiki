@@ -4,9 +4,11 @@ import {
   getApiV1KnowledgeBaseUserList,
   patchApiV1KnowledgeBaseUserUpdate,
 } from '@/request/KnowledgeBase';
+
 import {
   ConstsUserKBPermission,
   DomainKnowledgeBaseDetail,
+  DomainAppDetailResp,
   V1KBUserListItemResp,
   V1KBUserUpdateReq,
 } from '@/request/types';
@@ -21,6 +23,7 @@ import {
   Stack,
   TextField,
   Tooltip,
+  styled,
 } from '@mui/material';
 import { Ellipsis, Icon, Message, Modal } from 'ct-mui';
 import { useEffect, useMemo, useState } from 'react';
@@ -30,9 +33,10 @@ import { SettingCard, SettingCardItem } from './Common';
 
 interface CardKBProps {
   kb: DomainKnowledgeBaseDetail;
+  data?: DomainAppDetailResp;
 }
 
-const CardKB = ({ kb }: CardKBProps) => {
+const CardKB = ({ kb, data }: CardKBProps) => {
   const { kbList, kb_id, license } = useAppSelector(state => state.config);
   const dispatch = useDispatch();
   const [kbName, setKbName] = useState(kb.name);
@@ -127,14 +131,14 @@ const CardKB = ({ kb }: CardKBProps) => {
       </SettingCardItem>
 
       <SettingCardItem
-        title='管理员'
+        title='Wiki 站管理员'
         extra={
           <Button
             size='small'
             startIcon={<Icon type='icon-tianjiachengyuan' />}
             onClick={() => setAddOpen(true)}
           >
-            添加管理员
+            添加 Wiki 站管理员
           </Button>
         }
       >
@@ -206,7 +210,9 @@ const CardKB = ({ kb }: CardKBProps) => {
 
                 <Tooltip
                   title={
-                    it.role === 'admin' ? '管理员不可修改权限' : '企业版可用'
+                    it.role === 'admin'
+                      ? '超级管理员不可被修改权限'
+                      : '企业版可用'
                   }
                   placement='top'
                   arrow
@@ -226,7 +232,7 @@ const CardKB = ({ kb }: CardKBProps) => {
               </Stack>
 
               <Tooltip
-                title={it.role === 'admin' ? '管理员不可删除' : ''}
+                title={it.role === 'admin' ? '超级管理员不可被删除' : ''}
                 placement='top'
                 arrow
               >

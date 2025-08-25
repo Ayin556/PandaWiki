@@ -6,6 +6,7 @@ import Catalog from '@/views/node/Catalog';
 import { Box } from '@mui/material';
 import { notFound } from 'next/navigation';
 import { getShareV1ConversationDetail } from '@/request/ShareConversation';
+import WaterMarkProvider from '@/components/watermark/WaterMarkProvider';
 
 export interface PageProps {
   params: Promise<{ id: string[] }>;
@@ -66,17 +67,19 @@ const ChatPage = async ({ params }: PageProps) => {
   }
 
   return (
-    <Box
-      sx={{
-        position: 'relative',
-        bgcolor: 'background.default',
-      }}
-    >
-      <Catalog />
-      <Header />
-      <Chat conversation={conversation} />
-      <FooterProvider />
-    </Box>
+    <WaterMarkProvider>
+      <Box
+        sx={{
+          position: 'relative',
+          bgcolor: 'background.default',
+        }}
+      >
+        <Catalog />
+        <Header />
+        <Chat conversation={conversation} />
+        <FooterProvider />
+      </Box>
+    </WaterMarkProvider>
   );
 };
 
