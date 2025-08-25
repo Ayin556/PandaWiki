@@ -438,6 +438,7 @@ export type GetModelNameData = {
 
 export type CreateModelData = {
   model: string;
+  param?: DomainModelParam;
 } & GetModelNameData;
 
 export type CheckModelData = {
@@ -446,7 +447,17 @@ export type CheckModelData = {
 
 export type UpdateModelData = {
   id: string;
+  param?: DomainModelParam;
 } & CheckModelData;
+
+export interface DomainModelParam {
+  context_window?: number;
+  max_tokens?: number;
+  r1_enabled?: boolean;
+  support_computer_use?: boolean;
+  support_images?: boolean;
+  support_prompt_cache?: boolean;
+}
 
 export type ModelListItem = {
   completion_tokens: number;
@@ -456,6 +467,7 @@ export type ModelListItem = {
   api_version: string;
   prompt_tokens: number;
   total_tokens: number;
+  param?: DomainModelParam;
 } & GetModelNameData;
 
 // =============================================》conversation

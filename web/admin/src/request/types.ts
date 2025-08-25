@@ -18,7 +18,6 @@ export enum SchemaRoleType {
 }
 
 export enum GithubComChaitinPandaWikiDomainModelProvider {
-  /** 智谱 */
   ModelProviderBrandOpenAI = "OpenAI",
   ModelProviderBrandOllama = "Ollama",
   ModelProviderBrandDeepSeek = "DeepSeek",
@@ -76,7 +75,12 @@ export enum DomainCommentStatus {
   CommentStatusAccepted = 1,
 }
 
-/** @format int32 */
+export enum DomainAuthType {
+  AuthTypeNull = "",
+  AuthTypeSimple = "simple",
+  AuthTypeEnterprise = "enterprise",
+}
+
 export enum DomainAppType {
   AppTypeWeb = 1,
   AppTypeWidget = 2,
@@ -472,6 +476,7 @@ export interface DomainCreateModelReq {
   api_version?: string;
   base_url: string;
   model: string;
+  param?: DomainModelParam;
   provider:
     | "OpenAI"
     | "Ollama"
@@ -652,6 +657,15 @@ export interface DomainModelDetailResp {
   total_tokens?: number;
   type?: DomainModelType;
   updated_at?: string;
+}
+
+export interface DomainModelParam {
+  context_window?: number;
+  max_tokens?: number;
+  r1_enabled?: boolean;
+  support_computer_use?: boolean;
+  support_images?: boolean;
+  support_prompt_cache?: boolean;
 }
 
 export interface DomainMoveNodeReq {
@@ -898,6 +912,7 @@ export interface DomainUpdateModelReq {
   base_url: string;
   id: string;
   model: string;
+  param?: DomainModelParam;
   provider:
     | "OpenAI"
     | "Ollama"
@@ -1279,6 +1294,26 @@ export interface GetApiV1KnowledgeBaseUserListParams {
 export interface GetApiV1ModelDetailParams {
   /** model id */
   id: string;
+}
+
+export interface GetApiV1ModelProviderSupportedParams {
+  api_header?: string;
+  api_key?: string;
+  base_url: string;
+  provider:
+    | "SiliconFlow"
+    | "OpenAI"
+    | "Ollama"
+    | "DeepSeek"
+    | "Moonshot"
+    | "AzureOpenAI"
+    | "BaiZhiCloud"
+    | "Hunyuan"
+    | "BaiLian"
+    | "Volcengine"
+    | "Gemini"
+    | "ZhiPu";
+  type: "chat" | "embedding" | "rerank";
 }
 
 export interface GetApiV1NodeDetailParams {
