@@ -67,8 +67,8 @@ const Doc = ({
         : 'disable',
     blockContextMenuWhenDisabled: false,
     suffix:
-      kbDetail?.settings?.copy_setting === 'append'
-        ? `\n\n-----------------------------------------\n内容来自 ${window.location.href}`
+      kbDetail?.settings?.copy_setting === ConstsCopySetting.CopySettingAppend
+        ? `\n\n-----------------------------------------\n内容来自 ${typeof window !== 'undefined' ? window.location.href : ''}`
         : '',
   });
 

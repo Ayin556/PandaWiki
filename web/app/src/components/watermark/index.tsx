@@ -139,7 +139,6 @@ export default function Watermark(props: WatermarkProps) {
     fontSize = 14,
     color,
     opacity,
-    mode = 'visible',
     rotate = -22,
     gapX = 120,
     gapY = 120,
@@ -206,11 +205,6 @@ export default function Watermark(props: WatermarkProps) {
     return `rgba(${inv.r}, ${inv.g}, ${inv.b}, 1)`;
   }, [color, theme.palette.text.disabled]);
 
-  const resolvedOpacity = useMemo(() => {
-    if (typeof opacity === 'number') return opacity;
-    return mode === 'invisible' ? 0.01 : 0.1;
-  }, [opacity, mode]);
-
   const contentLines = useMemo(
     () => (Array.isArray(content) ? content : content ? [content] : []),
     [content],
@@ -228,7 +222,7 @@ export default function Watermark(props: WatermarkProps) {
       fontFamily,
       fontWeight,
       color: resolvedColor,
-      opacity: resolvedOpacity,
+      opacity: opacity ?? 0.1,
       rotate,
       gapX,
       gapY,
@@ -243,7 +237,7 @@ export default function Watermark(props: WatermarkProps) {
     fontFamily,
     fontWeight,
     resolvedColor,
-    resolvedOpacity,
+    opacity,
     rotate,
     gapX,
     gapY,

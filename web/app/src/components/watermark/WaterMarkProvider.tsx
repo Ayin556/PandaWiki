@@ -23,11 +23,11 @@ const WaterMarkProvider = (props: WatermarkProps) => {
     <Watermark
       {...rest}
       content={contentLines}
-      mode={
+      opacity={
         kbDetail?.settings?.watermark_setting ===
         ConstsWatermarkSetting.WatermarkVisible
-          ? 'visible'
-          : 'invisible'
+          ? 0.1
+          : 0.01
       }
     >
       {children}
