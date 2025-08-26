@@ -79,7 +79,9 @@ func (u *AppUsecase) ValidateUpdateApp(ctx context.Context, id string, req *doma
 			return err
 		}
 
-		if app.Settings.WatermarkEnable != req.Settings.WatermarkEnable || app.Settings.WatermarkContent != req.Settings.WatermarkContent {
+		if app.Settings.WatermarkContent != req.Settings.WatermarkContent ||
+			app.Settings.WatermarkSetting != req.Settings.WatermarkSetting ||
+			app.Settings.CopySetting != req.Settings.CopySetting {
 			return domain.ErrPermissionDenied
 		}
 	default:
@@ -369,8 +371,9 @@ func (u *AppUsecase) GetAppDetailByKBIDAndAppType(ctx context.Context, kbID stri
 		// WebApp Custom Settings
 		WebAppCustomSettings: app.Settings.WebAppCustomSettings,
 
-		WatermarkEnable:  app.Settings.WatermarkEnable,
 		WatermarkContent: app.Settings.WatermarkContent,
+		WatermarkSetting: app.Settings.WatermarkSetting,
+		CopySetting:      app.Settings.CopySetting,
 	}
 	// init ai feedback string
 	if app.Settings.AIFeedbackSettings.AIFeedbackType == nil {
@@ -427,7 +430,8 @@ func (u *AppUsecase) GetWebAppInfo(ctx context.Context, kbID string) (*domain.Ap
 			WebAppCustomSettings: app.Settings.WebAppCustomSettings,
 
 			WatermarkContent: app.Settings.WatermarkContent,
-			WatermarkEnable:  app.Settings.WatermarkEnable,
+			WatermarkSetting: app.Settings.WatermarkSetting,
+			CopySetting:      app.Settings.CopySetting,
 		},
 	}
 	// init ai feedback string

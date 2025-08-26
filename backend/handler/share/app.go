@@ -63,7 +63,7 @@ func NewShareAppHandler(
 //	@Accept			json
 //	@Produce		json
 //	@Param			X-KB-ID	header		string	true	"kb id"
-//	@Success		200		{object}	domain.Response
+//	@Success		200		{object}	domain.Response{data=domain.AppInfoResp}
 //	@Router			/share/v1/app/web/info [get]
 func (h *ShareAppHandler) GetWebAppInfo(c echo.Context) error {
 	kbID := c.Request().Header.Get("X-KB-ID")
