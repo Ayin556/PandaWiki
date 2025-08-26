@@ -1,4 +1,5 @@
-import { statConversationDistribution, TrendData } from '@/api';
+import { TrendData } from '@/api';
+import { getApiV1StatConversationDistribution } from '@/request/Stat';
 import Nodata from '@/assets/images/nodata.png';
 import Card from '@/components/Card';
 import PieTrend from '@/components/PieTrend';
@@ -13,9 +14,10 @@ const QAReferer = ({ tab }: { tab: ActiveTab }) => {
   const [list, setList] = useState<TrendData[]>([]);
 
   useEffect(() => {
-    statConversationDistribution({ kb_id }).then(res => {
+    if (!kb_id) return;
+    getApiV1StatConversationDistribution({ kb_id, day: tab }).then(res => {
       setList(
-        (res || [])
+        ((res || []) as any[])
           .map((it, idx) => ({
             count: it.count,
             name: AppType[it.app_type as keyof typeof AppType].label,

@@ -1,9 +1,8 @@
+import { StatInstantPageItme, TrendData } from '@/api';
 import {
-  statInstantCount,
-  statInstantPage,
-  StatInstantPageItme,
-  TrendData,
-} from '@/api';
+  getApiV1StatInstantCount,
+  getApiV1StatInstantPages,
+} from '@/request/Stat';
 import Logo from '@/assets/images/logo.png';
 import ClockIcon from '@/assets/images/clock.png';
 import Nodata from '@/assets/images/nodata.png';
@@ -22,11 +21,11 @@ const RTVisitor = ({ isWideScreen }: { isWideScreen: boolean }) => {
 
   useEffect(() => {
     if (kb_id) {
-      statInstantPage({ kb_id }).then(res => {
-        setPages(res);
+      getApiV1StatInstantPages({ kb_id }).then(res => {
+        setPages(res as StatInstantPageItme[]);
       });
-      statInstantCount({ kb_id }).then(res => {
-        const stats = (res || []).map(it => ({
+      getApiV1StatInstantCount({ kb_id }).then(res => {
+        const stats = ((res || []) as any[]).map(it => ({
           count: it.count,
           time: dayjs(it.time).format('YYYY-MM-DD HH:mm'),
         }));

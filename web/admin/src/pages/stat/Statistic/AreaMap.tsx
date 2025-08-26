@@ -1,4 +1,5 @@
-import { statGeoCount, TrendData } from '@/api';
+import { TrendData } from '@/api';
+import { getApiV1StatGeoCount } from '@/request/Stat';
 import Nodata from '@/assets/images/nodata.png';
 import Card from '@/components/Card';
 import MapChart from '@/components/MapChart';
@@ -13,8 +14,9 @@ const AreaMap = ({ tab }: { tab: ActiveTab }) => {
   const [list, setList] = useState<TrendData[]>([]);
 
   useEffect(() => {
-    statGeoCount({ kb_id }).then(res => {
-      const list = Object.entries(res)
+    if (!kb_id) return;
+    getApiV1StatGeoCount({ kb_id, day: tab }).then(res => {
+      const list = Object.entries(res as Record<string, number>)
         .map(([key, value]) => {
           const [country, province, city] = key.split('|');
           return {
