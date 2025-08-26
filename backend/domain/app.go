@@ -6,6 +6,8 @@ import (
 	"errors"
 	"fmt"
 	"time"
+
+	"github.com/chaitin/panda-wiki/consts"
 )
 
 type AppType uint8
@@ -111,8 +113,9 @@ type AppSettings struct {
 	// WebAppCustomStyle
 	WebAppCustomSettings WebAppCustomSettings `json:"web_app_custom_style"`
 
-	WatermarkEnable  bool   `json:"watermark_enable"`
-	WatermarkContent string `json:"watermark_content"`
+	WatermarkContent string                  `json:"watermark_content"`
+	WatermarkSetting consts.WatermarkSetting `json:"watermark_setting" validate:"omitempty,oneof='' hidden visible"`
+	CopySetting      consts.CopySetting      `json:"copy_setting" validate:"omitempty,oneof='' append disabled"`
 }
 
 type WebAppCustomSettings struct {
@@ -257,8 +260,9 @@ type AppSettingsResp struct {
 	// WebAppCustomStyle
 	WebAppCustomSettings WebAppCustomSettings `json:"web_app_custom_style"`
 
-	WatermarkEnable  bool   `json:"watermark_enable"`
-	WatermarkContent string `json:"watermark_content"`
+	WatermarkContent string                  `json:"watermark_content"`
+	WatermarkSetting consts.WatermarkSetting `json:"watermark_setting"`
+	CopySetting      consts.CopySetting      `json:"copy_setting"`
 }
 
 func (s *AppSettingsResp) Scan(value any) error {

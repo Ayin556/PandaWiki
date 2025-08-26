@@ -2938,7 +2938,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/domain.AppInfoResp"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -3489,6 +3501,29 @@ const docTemplate = `{
                 "AuthTypeEnterprise"
             ]
         },
+        "consts.CopySetting": {
+            "type": "string",
+            "enum": [
+                "",
+                "append",
+                "disabled"
+            ],
+            "x-enum-comments": {
+                "CopySettingAppend": "增加内容尾巴",
+                "CopySettingDisabled": "禁止复制内容",
+                "CopySettingNone": "无限制"
+            },
+            "x-enum-descriptions": [
+                "无限制",
+                "增加内容尾巴",
+                "禁止复制内容"
+            ],
+            "x-enum-varnames": [
+                "CopySettingNone",
+                "CopySettingAppend",
+                "CopySettingDisabled"
+            ]
+        },
         "consts.NodeAccessPerm": {
             "type": "string",
             "enum": [
@@ -3602,6 +3637,29 @@ const docTemplate = `{
                 "UserRoleUser"
             ]
         },
+        "consts.WatermarkSetting": {
+            "type": "string",
+            "enum": [
+                "",
+                "hidden",
+                "visible"
+            ],
+            "x-enum-comments": {
+                "WatermarkDisabled": "未开启水印",
+                "WatermarkHidden": "隐形水印",
+                "WatermarkVisible": "显性水印"
+            },
+            "x-enum-descriptions": [
+                "未开启水印",
+                "隐形水印",
+                "显性水印"
+            ],
+            "x-enum-varnames": [
+                "WatermarkDisabled",
+                "WatermarkHidden",
+                "WatermarkVisible"
+            ]
+        },
         "domain.AIFeedbackSettings": {
             "type": "object",
             "properties": {
@@ -3712,6 +3770,23 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.AppInfoResp": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "recommend_nodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.RecommendNodeListResp"
+                    }
+                },
+                "settings": {
+                    "$ref": "#/definitions/domain.AppSettingsResp"
+                }
+            }
+        },
         "domain.AppSettings": {
             "type": "object",
             "properties": {
@@ -3738,6 +3813,18 @@ const docTemplate = `{
                     "allOf": [
                         {
                             "$ref": "#/definitions/domain.CatalogSettings"
+                        }
+                    ]
+                },
+                "copy_setting": {
+                    "enum": [
+                        "",
+                        "append",
+                        "disabled"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/consts.CopySetting"
                         }
                     ]
                 },
@@ -3826,8 +3913,17 @@ const docTemplate = `{
                 "watermark_content": {
                     "type": "string"
                 },
-                "watermark_enable": {
-                    "type": "boolean"
+                "watermark_setting": {
+                    "enum": [
+                        "",
+                        "hidden",
+                        "visible"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/consts.WatermarkSetting"
+                        }
+                    ]
                 },
                 "web_app_comment_settings": {
                     "description": "webapp comment settings",
@@ -3939,6 +4035,9 @@ const docTemplate = `{
                         }
                     ]
                 },
+                "copy_setting": {
+                    "$ref": "#/definitions/consts.CopySetting"
+                },
                 "desc": {
                     "description": "seo",
                     "type": "string"
@@ -4024,8 +4123,8 @@ const docTemplate = `{
                 "watermark_content": {
                     "type": "string"
                 },
-                "watermark_enable": {
-                    "type": "boolean"
+                "watermark_setting": {
+                    "$ref": "#/definitions/consts.WatermarkSetting"
                 },
                 "web_app_comment_settings": {
                     "description": "webapp comment settings",

@@ -18,6 +18,24 @@ definitions:
     - AuthTypeNull
     - AuthTypeSimple
     - AuthTypeEnterprise
+  consts.CopySetting:
+    enum:
+    - ""
+    - append
+    - disabled
+    type: string
+    x-enum-comments:
+      CopySettingAppend: 增加内容尾巴
+      CopySettingDisabled: 禁止复制内容
+      CopySettingNone: 无限制
+    x-enum-descriptions:
+    - 无限制
+    - 增加内容尾巴
+    - 禁止复制内容
+    x-enum-varnames:
+    - CopySettingNone
+    - CopySettingAppend
+    - CopySettingDisabled
   consts.NodeAccessPerm:
     enum:
     - open
@@ -108,6 +126,24 @@ definitions:
     x-enum-varnames:
     - UserRoleAdmin
     - UserRoleUser
+  consts.WatermarkSetting:
+    enum:
+    - ""
+    - hidden
+    - visible
+    type: string
+    x-enum-comments:
+      WatermarkDisabled: 未开启水印
+      WatermarkHidden: 隐形水印
+      WatermarkVisible: 显性水印
+    x-enum-descriptions:
+    - 未开启水印
+    - 隐形水印
+    - 显性水印
+    x-enum-varnames:
+    - WatermarkDisabled
+    - WatermarkHidden
+    - WatermarkVisible
   domain.AIFeedbackSettings:
     properties:
       ai_feedback_type:
@@ -179,6 +215,17 @@ definitions:
       type:
         $ref: '#/definitions/domain.AppType'
     type: object
+  domain.AppInfoResp:
+    properties:
+      name:
+        type: string
+      recommend_nodes:
+        items:
+          $ref: '#/definitions/domain.RecommendNodeListResp'
+        type: array
+      settings:
+        $ref: '#/definitions/domain.AppSettingsResp'
+    type: object
   domain.AppSettings:
     properties:
       ai_feedback_settings:
@@ -196,6 +243,13 @@ definitions:
         allOf:
         - $ref: '#/definitions/domain.CatalogSettings'
         description: catalog settings
+      copy_setting:
+        allOf:
+        - $ref: '#/definitions/consts.CopySetting'
+        enum:
+        - ""
+        - append
+        - disabled
       desc:
         description: seo
         type: string
@@ -254,8 +308,13 @@ definitions:
         type: string
       watermark_content:
         type: string
-      watermark_enable:
-        type: boolean
+      watermark_setting:
+        allOf:
+        - $ref: '#/definitions/consts.WatermarkSetting'
+        enum:
+        - ""
+        - hidden
+        - visible
       web_app_comment_settings:
         allOf:
         - $ref: '#/definitions/domain.WebAppCommentSettings'
@@ -324,6 +383,8 @@ definitions:
         allOf:
         - $ref: '#/definitions/domain.CatalogSettings'
         description: catalog settings
+      copy_setting:
+        $ref: '#/definitions/consts.CopySetting'
       desc:
         description: seo
         type: string
@@ -382,8 +443,8 @@ definitions:
         type: string
       watermark_content:
         type: string
-      watermark_enable:
-        type: boolean
+      watermark_setting:
+        $ref: '#/definitions/consts.WatermarkSetting'
       web_app_comment_settings:
         allOf:
         - $ref: '#/definitions/domain.WebAppCommentSettings'
@@ -3761,7 +3822,12 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.Response'
+            allOf:
+            - $ref: '#/definitions/domain.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.AppInfoResp'
+              type: object
       summary: GetAppInfo
       tags:
       - share_app
