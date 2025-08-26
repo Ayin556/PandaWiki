@@ -7,6 +7,7 @@ export type WatermarkProps = {
   fontSize?: number;
   color?: string;
   opacity?: number; // 0~1
+  mode?: 'visible' | 'invisible';
   rotate?: number; // deg
   gapX?: number; // 水印水平间距
   gapY?: number; // 水印垂直间距
@@ -136,8 +137,9 @@ export default function Watermark(props: WatermarkProps) {
   const {
     content,
     fontSize = 14,
-    color = theme.palette.text.disabled,
-    opacity = 0.3,
+    color,
+    opacity,
+    mode = 'visible',
     rotate = -22,
     gapX = 120,
     gapY = 120,
@@ -153,6 +155,61 @@ export default function Watermark(props: WatermarkProps) {
     pointerEvents = 'none',
     children,
   } = props;
+
+  // 解析 rgb/rgba/hex 颜色为 {r,g,b,a}
+  const parseColorToRgba = (
+    input: string,
+  ): { r: number; g: number; b: number; a: number } | null => {
+    if (!input) return null;
+    const hexMatch = input.trim().match(/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/);
+    if (hexMatch) {
+      let hex = hexMatch[1];
+      if (hex.length === 3) {
+        hex = hex
+          .split('')
+          .map(c => c + c)
+          .join('');
+      }
+      const r = parseInt(hex.slice(0, 2), 16);
+      const g = parseInt(hex.slice(2, 4), 16);
+      const b = parseInt(hex.slice(4, 6), 16);
+      return { r, g, b, a: 1 };
+    }
+    const rgbaMatch = input.trim().match(/^rgba?\(([^)]+)\)$/i);
+    if (rgbaMatch) {
+      const parts = rgbaMatch[1].split(',').map(v => v.trim());
+      const r = parseInt(parts[0], 10);
+      const g = parseInt(parts[1], 10);
+      const b = parseInt(parts[2], 10);
+      const a = parts[3] !== undefined ? parseFloat(parts[3]) : 1;
+      if ([r, g, b].some(v => Number.isNaN(v))) return null;
+      return { r, g, b, a: Number.isNaN(a) ? 1 : a };
+    }
+    return null;
+  };
+
+  const invertRgb = (r: number, g: number, b: number) => ({
+    r: 255 - r,
+    g: 255 - g,
+    b: 255 - b,
+  });
+
+  const resolvedColor = useMemo(() => {
+    if (color) return color;
+    if (typeof window === 'undefined') return theme.palette.text.disabled;
+    const rootEl = document.getElementById('app-theme-root');
+    if (!rootEl) return theme.palette.text.disabled;
+    const bg = getComputedStyle(rootEl).backgroundColor;
+    const rgba = parseColorToRgba(bg);
+    if (!rgba) return theme.palette.text.disabled;
+    const inv = invertRgb(rgba.r, rgba.g, rgba.b);
+    return `rgba(${inv.r}, ${inv.g}, ${inv.b}, 1)`;
+  }, [color, theme.palette.text.disabled]);
+
+  const resolvedOpacity = useMemo(() => {
+    if (typeof opacity === 'number') return opacity;
+    return mode === 'invisible' ? 0.01 : 0.1;
+  }, [opacity, mode]);
 
   const contentLines = useMemo(
     () => (Array.isArray(content) ? content : content ? [content] : []),
@@ -170,8 +227,8 @@ export default function Watermark(props: WatermarkProps) {
       fontSize,
       fontFamily,
       fontWeight,
-      color,
-      opacity,
+      color: resolvedColor,
+      opacity: resolvedOpacity,
       rotate,
       gapX,
       gapY,
@@ -185,8 +242,8 @@ export default function Watermark(props: WatermarkProps) {
     fontSize,
     fontFamily,
     fontWeight,
-    color,
-    opacity,
+    resolvedColor,
+    resolvedOpacity,
     rotate,
     gapX,
     gapY,

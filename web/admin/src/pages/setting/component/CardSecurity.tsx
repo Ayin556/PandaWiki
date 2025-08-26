@@ -15,6 +15,8 @@ import { Message } from 'ct-mui';
 import {
   DomainAppDetailResp,
   DomainKnowledgeBaseDetail,
+  ConstsWatermarkSetting,
+  ConstsCopySetting,
 } from '@/request/types';
 import { getApiProV1Block, postApiProV1Block } from '@/request/pro/Block';
 
@@ -22,7 +24,13 @@ const StyledRadioLabel = styled('div')(({ theme }) => ({
   width: 100,
 }));
 
-const WatermarkForm = ({ data }: { data?: DomainAppDetailResp }) => {
+const WatermarkForm = ({
+  data,
+  refresh,
+}: {
+  data?: DomainAppDetailResp;
+  refresh: () => void;
+}) => {
   const { license } = useAppSelector(state => state.config);
   const [watermarkIsEdit, setWatermarkIsEdit] = useState(false);
   const {
@@ -33,36 +41,37 @@ const WatermarkForm = ({ data }: { data?: DomainAppDetailResp }) => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      watermark_enable: data?.settings?.watermark_enable ?? null,
+      watermark_setting: data?.settings?.watermark_setting ?? null,
       watermark_content: data?.settings?.watermark_content ?? '',
     },
   });
 
-  const watermarkEnable = watch('watermark_enable');
+  const watermarkSetting = watch('watermark_setting');
   const isEnterprise = useMemo(() => {
     return license.edition === 2;
   }, [license]);
 
   const handleSaveWatermark = handleSubmit(values => {
-    if (!data?.id || values.watermark_enable === null) return;
+    if (!data?.id || values.watermark_setting === null) return;
     putApiV1App(
       { id: data.id },
       {
         settings: {
           ...data?.settings,
-          watermark_enable: values.watermark_enable,
+          watermark_setting: values.watermark_setting,
           watermark_content: values.watermark_content,
         },
       },
     ).then(() => {
       Message.success('保存成功');
       setWatermarkIsEdit(false);
+      refresh();
     });
   });
 
   useEffect(() => {
     if (!data) return;
-    setValue('watermark_enable', data.settings?.watermark_enable ?? null);
+    setValue('watermark_setting', data.settings?.watermark_setting ?? null);
     setValue('watermark_content', data.settings?.watermark_content ?? '');
   }, [data]);
 
@@ -75,23 +84,29 @@ const WatermarkForm = ({ data }: { data?: DomainAppDetailResp }) => {
       <FormItem label='水印开关' tooltip={!isEnterprise && '企业版可用'}>
         <Controller
           control={control}
-          name='watermark_enable'
+          name='watermark_setting'
           render={({ field }) => (
             <RadioGroup
               row
               {...field}
               onChange={e => {
                 setWatermarkIsEdit(true);
-                field.onChange(e.target.value === 'true');
+                field.onChange(e.target.value);
               }}
             >
               <FormControlLabel
-                value={true}
+                value={ConstsWatermarkSetting.WatermarkVisible}
                 control={<Radio size='small' disabled={!isEnterprise} />}
-                label={<StyledRadioLabel>启用</StyledRadioLabel>}
+                label={<StyledRadioLabel>显性水印</StyledRadioLabel>}
               />
               <FormControlLabel
-                value={false}
+                value={ConstsWatermarkSetting.WatermarkHidden}
+                control={<Radio size='small' disabled={!isEnterprise} />}
+                label={<StyledRadioLabel>隐形水印</StyledRadioLabel>}
+              />
+
+              <FormControlLabel
+                value={ConstsWatermarkSetting.WatermarkDisabled}
                 control={<Radio size='small' disabled={!isEnterprise} />}
                 label={<StyledRadioLabel>禁用</StyledRadioLabel>}
               />
@@ -99,7 +114,7 @@ const WatermarkForm = ({ data }: { data?: DomainAppDetailResp }) => {
           )}
         />
       </FormItem>
-      {watermarkEnable && (
+      {watermarkSetting !== ConstsWatermarkSetting.WatermarkDisabled && (
         <FormItem label='水印内容' sx={{ alignItems: 'flex-start' }}>
           <Controller
             control={control}
@@ -124,7 +139,13 @@ const WatermarkForm = ({ data }: { data?: DomainAppDetailResp }) => {
     </SettingCardItem>
   );
 };
-const VerificationForm = ({ data }: { data?: DomainAppDetailResp }) => {
+const VerificationForm = ({
+  data,
+  refresh,
+}: {
+  data?: DomainAppDetailResp;
+  refresh: () => void;
+}) => {
   const { license } = useAppSelector(state => state.config);
   const [isEdit, setIsEdit] = useState(false);
   const {
@@ -317,17 +338,109 @@ const KeywordsForm = ({ kb }: { kb: DomainKnowledgeBaseDetail }) => {
   );
 };
 
+const CopyForm = ({
+  data,
+  refresh,
+}: {
+  data?: DomainAppDetailResp;
+  refresh: () => void;
+}) => {
+  const { license } = useAppSelector(state => state.config);
+  const [isEdit, setIsEdit] = useState(false);
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      copy_setting: data?.settings?.copy_setting ?? null,
+    },
+  });
+
+  const isEnterprise = useMemo(() => {
+    return license.edition === 2;
+  }, [license]);
+
+  const handleSaveWatermark = handleSubmit(values => {
+    if (!data?.id || values.copy_setting === null) return;
+    putApiV1App(
+      { id: data.id },
+      {
+        settings: {
+          ...data?.settings,
+          copy_setting: values.copy_setting,
+        },
+      },
+    ).then(() => {
+      refresh();
+      Message.success('保存成功');
+      setIsEdit(false);
+    });
+  });
+
+  useEffect(() => {
+    if (!data) return;
+    setValue('copy_setting', data.settings?.copy_setting ?? null);
+  }, [data]);
+
+  return (
+    <SettingCardItem
+      title='内容复制'
+      isEdit={isEdit}
+      onSubmit={handleSaveWatermark}
+    >
+      <FormItem label='限制复制' tooltip={!isEnterprise && '企业版可用'}>
+        <Controller
+          control={control}
+          name='copy_setting'
+          render={({ field }) => (
+            <RadioGroup
+              row
+              {...field}
+              onChange={e => {
+                setIsEdit(true);
+                field.onChange(e.target.value);
+              }}
+            >
+              <FormControlLabel
+                value={ConstsCopySetting.CopySettingNone}
+                control={<Radio size='small' disabled={!isEnterprise} />}
+                label={<StyledRadioLabel>不做限制</StyledRadioLabel>}
+              />
+              <FormControlLabel
+                value={ConstsCopySetting.CopySettingAppend}
+                control={<Radio size='small' disabled={!isEnterprise} />}
+                label={<StyledRadioLabel>增加内容尾巴</StyledRadioLabel>}
+              />
+
+              <FormControlLabel
+                value={ConstsCopySetting.CopySettingDisabled}
+                control={<Radio size='small' disabled={!isEnterprise} />}
+                label={<StyledRadioLabel>禁止复制内容</StyledRadioLabel>}
+              />
+            </RadioGroup>
+          )}
+        />
+      </FormItem>
+    </SettingCardItem>
+  );
+};
+
 const CardSecurity = ({
   data,
   kb,
+  refresh,
 }: {
   data?: DomainAppDetailResp;
   kb: DomainKnowledgeBaseDetail;
+  refresh: () => void;
 }) => {
   return (
     <SettingCard title='安全'>
-      <VerificationForm data={data} />
-      <WatermarkForm data={data} />
+      <VerificationForm data={data} refresh={refresh} />
+      <WatermarkForm data={data} refresh={refresh} />
+      <CopyForm data={data} refresh={refresh} />
       <KeywordsForm kb={kb} />
     </SettingCard>
   );

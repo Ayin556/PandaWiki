@@ -1,3 +1,5 @@
+import { ConstsWatermarkSetting, ConstsCopySetting } from '@/request/types';
+
 export interface NavBtn {
   id: string;
   url: string;
@@ -68,7 +70,8 @@ export interface KBDetail {
     catalog_settings?: CatalogSetting | null;
     theme_and_style?: ThemeAndStyleSetting | null;
     watermark_content?: string;
-    watermark_enable?: boolean;
+    watermark_setting?: ConstsWatermarkSetting;
+    copy_setting?: ConstsCopySetting;
     web_app_custom_style: {
       allow_theme_switching?: boolean;
       header_search_placeholder?: string;

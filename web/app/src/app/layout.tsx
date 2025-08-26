@@ -85,7 +85,9 @@ const Layout = async ({
               mobile={isMobile}
               authInfo={authInfo}
             >
-              <Box sx={{ bgcolor: 'background.paper' }}>{children}</Box>
+              <Box sx={{ bgcolor: 'background.paper' }} id='app-theme-root'>
+                {children}
+              </Box>
             </StoreProvider>
           </AppRouterCacheProvider>
         </ThemeProvider>

@@ -13,13 +13,15 @@ import { Box, Fab, Stack, Zoom } from '@mui/material';
 import { TocList, useTiptap } from '@yu-cq/tiptap';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Catalog from './Catalog';
 import CatalogH5 from './CatalogH5';
 import DocAnchor from './DocAnchor';
 import DocContent from './DocContent';
 import NoPermission from './NoPermission';
 import WaterMarkProvider from '@/components/watermark/WaterMarkProvider';
+import useCopy from '@/hooks/useCopy';
+import { ConstsCopySetting } from '@/request/types';
 
 const Doc = ({
   node: defaultNode,
@@ -31,7 +33,6 @@ const Doc = ({
   commentList?: any[];
 }) => {
   const { id = '' }: { id: string } = useParams();
-
   const [docId, setDocId] = useState(id);
   const [firstRequest, setFirstRequest] = useState(true);
   const {
@@ -41,7 +42,7 @@ const Doc = ({
     catalogShow,
     catalogWidth,
   } = useStore();
-
+  const docRef = useRef<HTMLDivElement>(null);
   const footerSetting = kbDetail?.settings?.footer_settings;
   const [footerHeight, setFooterHeight] = useState(0);
   const [headings, setHeadings] = useState<TocList>([]);
@@ -58,6 +59,18 @@ const Doc = ({
   });
 
   const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useCopy({
+    mode:
+      kbDetail?.settings?.copy_setting !== ConstsCopySetting.CopySettingDisabled
+        ? 'allow'
+        : 'disable',
+    blockContextMenuWhenDisabled: false,
+    suffix:
+      kbDetail?.settings?.copy_setting === 'append'
+        ? `\n\n-----------------------------------------\n内容来自 ${window.location.href}`
+        : '',
+  });
 
   const handleScroll = () => {
     setShowScrollTop(window.scrollY > 300);
@@ -128,7 +141,7 @@ const Doc = ({
   if (mobile) {
     return (
       <WaterMarkProvider>
-        <Box sx={{ mt: '60px', position: 'relative', zIndex: 1 }}>
+        <Box sx={{ mt: '60px', position: 'relative', zIndex: 1 }} ref={docRef}>
           <Box
             sx={{ minHeight: `calc(100vh - ${footerHeight + 1}px - 100px)` }}
           >

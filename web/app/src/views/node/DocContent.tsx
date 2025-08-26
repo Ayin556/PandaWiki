@@ -38,7 +38,7 @@ const DocContent = ({
   kbInfo?: KBDetail;
   commentList?: any[];
 }) => {
-  const { mobile = false, kbDetail, catalogShow, catalogWidth } = useStore();
+  const { mobile = false, authInfo, catalogShow, catalogWidth } = useStore();
   const [commentList, setCommentList] = useState<any[]>(propsCommentList ?? []);
   const [appDetail, setAppDetail] = useState<any>(kbInfo?.settings);
   const {
@@ -103,9 +103,9 @@ const DocContent = ({
       node_id: docId,
       image: feedbackData.screenshot
         ? base64ToFile(
-          feedbackData.screenshot!,
-          `${info?.name || 'screenshot'}.png`,
-        )
+            feedbackData.screenshot!,
+            `${info?.name || 'screenshot'}.png`,
+          )
         : undefined,
     });
   };
@@ -309,36 +309,38 @@ const DocContent = ({
 
             <Divider sx={{ my: 2 }} />
             <Stack
-              direction='row'
+              direction='row-reverse'
               justifyContent='space-between'
               alignItems='center'
               sx={{ fontSize: 14, color: 'text.secondary' }}
             >
-              <Controller
-                rules={{
-                  required: '请输入你的昵称',
-                }}
-                name='name'
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    placeholder='你的昵称'
-                    size='small'
-                    sx={{
-                      '.MuiOutlinedInput-notchedOutline': {
-                        border: '1px solid',
-                        borderColor: 'var(--mui-palette-divider) !important',
-                      },
-                    }}
-                    error={!!errors.name}
-                    helperText={errors.name?.message}
-                  />
-                )}
-              />
               <Button variant='contained' onClick={onSubmit}>
                 发送
               </Button>
+              {!authInfo?.username && (
+                <Controller
+                  rules={{
+                    required: '请输入你的昵称',
+                  }}
+                  name='name'
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      placeholder='你的昵称'
+                      size='small'
+                      sx={{
+                        '.MuiOutlinedInput-notchedOutline': {
+                          border: '1px solid',
+                          borderColor: 'var(--mui-palette-divider) !important',
+                        },
+                      }}
+                      error={!!errors.name}
+                      helperText={errors.name?.message}
+                    />
+                  )}
+                />
+              )}
             </Stack>
           </Box>
           <Stack gap={1} sx={{ mt: 4 }}>
