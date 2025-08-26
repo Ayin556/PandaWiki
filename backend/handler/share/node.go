@@ -82,8 +82,9 @@ func (h *ShareNodeHandler) GetNodeDetail(c echo.Context) error {
 		return h.NewResponseWithError(c, "id is required", nil)
 	}
 
-	if err := h.usecase.ValidateNodePerm(c.Request().Context(), kbID, id, domain.GetAuthID(c)); err != nil {
-		return h.NewResponseWithErrCode(c, domain.ErrCodePermissionDenied)
+	errCode := h.usecase.ValidateNodePerm(c.Request().Context(), kbID, id, domain.GetAuthID(c))
+	if errCode != nil {
+		return h.NewResponseWithErrCode(c, *errCode)
 	}
 
 	node, err := h.usecase.GetNodeReleaseDetailByKBIDAndID(c.Request().Context(), kbID, id, c.QueryParam("format"))
