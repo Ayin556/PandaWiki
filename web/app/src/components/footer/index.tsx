@@ -12,8 +12,6 @@ const Footer = ({
   fullWidth = false,
   kbDetail,
   mobile,
-  catalogShow,
-  catalogWidth,
 }: {
   kbDetail?: KBDetail;
   mobile?: boolean;
@@ -29,10 +27,8 @@ const Footer = ({
       <Box
         id='footer'
         sx={{
-          position: 'relative',
           fontSize: '12px',
           fontWeight: 'normal',
-          zIndex: 1,
           px: 3,
           color: 'text.secondary',
           ...(footerSetting?.footer_style === 'complex' && {
@@ -166,14 +162,11 @@ const Footer = ({
     <Box
       id='footer'
       style={{
-        width: `calc(100% - ${catalogShow ? catalogWidth! : 16}px)`,
+        width: `calc(100% - 16px)`,
       }}
       sx={{
         px: 10,
-        ml: catalogShow ? `${catalogWidth!}px` : '16px',
-        position: 'relative',
         fontSize: '12px',
-        zIndex: 1,
         color: 'text.secondary',
         ...(footerSetting?.footer_style === 'complex' &&
           showBrand && {

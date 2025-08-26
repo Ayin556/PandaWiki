@@ -6,7 +6,7 @@ import { useStore } from '@/provider';
 import { Box, Button, Divider, Stack, TextField, alpha } from '@mui/material';
 import { Editor, UseTiptapReturn } from '@yu-cq/tiptap';
 import { Controller, useForm } from 'react-hook-form';
-
+import { useParams } from 'next/navigation';
 import FeedbackDialog from '@/components/feedbackModal';
 import TextSelectionTooltip from '@/components/textSelectionTooltip';
 import { useTextSelection } from '@/hooks/useTextSelection';
@@ -28,17 +28,17 @@ dayjs.locale('zh-cn');
 const DocContent = ({
   info,
   editorRef,
-  docId,
   kbInfo,
   commentList: propsCommentList,
 }: {
   info?: NodeDetail;
   editorRef: UseTiptapReturn;
-  docId: string;
   kbInfo?: KBDetail;
   commentList?: any[];
 }) => {
-  const { mobile = false, authInfo, catalogShow, catalogWidth } = useStore();
+  const { mobile = false, authInfo } = useStore();
+  const params = useParams() || {};
+  const docId = params.id as string;
   const [commentList, setCommentList] = useState<any[]>(propsCommentList ?? []);
   const [appDetail, setAppDetail] = useState<any>(kbInfo?.settings);
   const {
@@ -123,7 +123,7 @@ const DocContent = ({
     ) {
       getComment();
     }
-  }, [docId, info, appDetail]);
+  }, [docId, info?.kb_id, appDetail?.web_app_comment_settings?.is_enable]);
 
   const onSubmit = handleSubmit(
     async (data: { content: string; name: string }) => {
@@ -154,16 +154,10 @@ const DocContent = ({
 
   return (
     <Box
+      id='doc-content'
       ref={docContentRef}
-      style={{
-        marginLeft: catalogShow ? `${catalogWidth!}px` : '16px',
-        width: `calc(100% - ${catalogShow ? catalogWidth! : 16}px - 225px)`,
-        ...(mobile && {
-          width: '100%',
-          marginLeft: 0,
-        }),
-      }}
       sx={theme => ({
+        width: 'calc(100% - 220px)',
         wordBreak: 'break-all',
         color: 'text.primary',
         px: 10,
@@ -176,7 +170,8 @@ const DocContent = ({
           )} !important`,
         },
         ...(mobile && {
-          marginTop: '77px',
+          marginTop: 3,
+          width: '100%',
           px: 3,
           table: {
             minWidth: 'auto !important',

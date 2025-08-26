@@ -1,25 +1,35 @@
 'use client';
 
-import { NodeListItem } from '@/assets/type';
 import { IconArrowDown, IconNav } from '@/components/icons';
 import { filterTreeBySearch } from '@/utils';
-import { convertToTree, filterEmptyFolders } from '@/utils/drag';
+import { addExpandState } from '@/utils/drag';
+import { useParams } from 'next/navigation';
 import SearchIcon from '@mui/icons-material/Search';
 import { Box, Stack, TextField } from '@mui/material';
 import { useDebounce } from 'ahooks';
 import { useEffect, useMemo, useState } from 'react';
 import CatalogFolder from './CatalogFolder';
+import { useStore } from '@/provider';
 
-const CatalogH5 = ({ nodes }: { nodes: NodeListItem[] }) => {
+const CatalogH5 = () => {
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const params = useParams() || {};
+  const id = params.id as string;
+  const { tree: initialTree, kbDetail } = useStore();
   const debouncedSearchTerm = useDebounce(searchTerm, { wait: 300 });
 
-  const originalTree = filterEmptyFolders(convertToTree(nodes));
+  const catalogSetting = kbDetail?.settings?.catalog_settings;
+  const catalogFolderExpand = catalogSetting?.catalog_folder !== 2;
 
   const tree = useMemo(() => {
+    const { tree: originalTree } = addExpandState(
+      initialTree || [],
+      id as string,
+      catalogFolderExpand,
+    );
     return filterTreeBySearch(originalTree, debouncedSearchTerm);
-  }, [originalTree, debouncedSearchTerm]);
+  }, [debouncedSearchTerm]);
 
   useEffect(() => {
     if (open) {
@@ -32,13 +42,17 @@ const CatalogH5 = ({ nodes }: { nodes: NodeListItem[] }) => {
     };
   }, [open]);
 
+  useEffect(() => {
+    if (id) {
+      setOpen(false);
+    }
+  }, [id]);
+
   return (
     <Box
       sx={{
-        position: 'fixed',
-        top: '60px',
-        left: 0,
-        right: 0,
+        position: 'sticky',
+        top: '64px',
         width: '100%',
         zIndex: 2,
         bgcolor: 'background.paper2',

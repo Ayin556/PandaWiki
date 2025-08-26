@@ -1,33 +1,28 @@
 import { ITreeItem } from '@/assets/type';
+import { useRouter } from 'next/navigation';
 import { IconArrowDown, IconFile, IconFolder } from '@/components/icons';
 import { useStore } from '@/provider';
 import { highlightText } from '@/utils';
 import { Box, Stack } from '@mui/material';
 import { Ellipsis } from 'ct-mui';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
 
 interface CatalogFolderProps {
-  id?: string;
   item: ITreeItem;
   depth?: number;
-  setId?: (id: string) => void;
   searchTerm?: string;
 }
 
 const CatalogFolder = ({
-  id: activeId,
   item,
   depth = 1,
-  setId,
   searchTerm = '',
 }: CatalogFolderProps) => {
-  const [isExpanded, setIsExpanded] = useState(item.defaultExpand ?? true);
-  const { themeMode = 'light' } = useStore();
-
-  useEffect(() => {
-    setIsExpanded(item.defaultExpand ?? true);
-  }, [item]);
+  const { themeMode = 'light', setTree } = useStore();
+  const params = useParams() || {};
+  const activeId = params.id as string;
+  const router = useRouter();
 
   return (
     <Box key={item.id}>
@@ -44,12 +39,12 @@ const CatalogFolder = ({
         }}
         onClick={() => {
           if (item.type === 1) {
-            setIsExpanded(!isExpanded);
+            item.expanded = !item.expanded;
+            setTree?.(tree => [...(tree || [])]);
             return;
           }
-          if (item.type === 2 && setId) {
-            setId(item.id);
-            window.history.pushState(null, '', `/node/${item.id}`);
+          if (item.type === 2) {
+            router.push(`/node/${item.id}`);
             return;
           }
         }}
@@ -66,22 +61,14 @@ const CatalogFolder = ({
             <IconArrowDown
               sx={{
                 fontSize: 16,
-                transform: isExpanded ? 'none' : 'rotate(-90deg)',
+                transform: item.expanded ? 'none' : 'rotate(-90deg)',
                 transition: 'transform 0.2s',
               }}
             />
           </Box>
         )}
-        {item.type === 2 && setId && (
-          <Link
-            href={`/node/${item.id}`}
-            prefetch={false}
-            style={{ display: 'none' }}
-          >
-            {highlightText(item.name, searchTerm)}
-          </Link>
-        )}
-        {!setId && item.type === 2 ? (
+
+        {item.type === 2 ? (
           <Link href={`/node/${item.id}`} prefetch={false}>
             <Box sx={{ pl: (depth + 0.5) * 2 }}>
               <Stack direction='row' alignItems='center' gap={0.5}>
@@ -113,15 +100,13 @@ const CatalogFolder = ({
           </Box>
         )}
       </Box>
-      {item.children && item.children.length > 0 && isExpanded && (
+      {item.children && item.children.length > 0 && item.expanded && (
         <>
           {item.children.map(child => (
             <CatalogFolder
-              id={activeId}
               key={child.id}
               depth={depth + 1}
               item={child}
-              setId={setId}
               searchTerm={searchTerm}
             />
           ))}

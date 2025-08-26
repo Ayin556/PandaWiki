@@ -35,10 +35,11 @@ const Header = () => {
       alignItems='center'
       justifyContent='space-between'
       sx={{
-        position: 'fixed',
+        transition: 'left 0.2s ease-in-out',
+        position: 'sticky',
         zIndex: 10,
         top: 0,
-        left: catalogShow ? catalogWidth! : 16,
+        left: catalogShow ? catalogWidth! : 32,
         right: 0,
         pr: 10,
         pl: 10,
@@ -75,7 +76,7 @@ const Header = () => {
       </Link>
       <Stack direction='row' alignItems='center' gap={2}>
         {pathname !== '/welcome' &&
-          pathname !== '/chat' &&
+          !pathname.startsWith('/chat') &&
           (mobile ? (
             <IconButton
               size='small'

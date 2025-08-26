@@ -34,14 +34,11 @@ export async function generateMetadata(
 
 const DocPage = async ({ params }: PageProps) => {
   const { id = '' } = await params;
-  const kbInfo: any = await getShareV1AppWebInfo();
-  let node: any = {};
-  try {
+  const [node, kbInfo]: any = await Promise.all([
     // @ts-ignore
-    node = (await getShareV1NodeDetail({ id })) as any;
-  } catch (error: any) {
-    node = error.data;
-  }
+    getShareV1NodeDetail({ id }),
+    getShareV1AppWebInfo(),
+  ]);
   return <Doc node={node} kbInfo={kbInfo} commentList={[]} />;
 };
 

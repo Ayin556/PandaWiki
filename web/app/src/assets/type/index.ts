@@ -148,6 +148,7 @@ export interface ITreeItem {
   order?: number;
   emoji?: string;
   defaultExpand?: boolean;
+  expanded?: boolean;
   parentId?: string | null;
   summary?: string;
   children?: ITreeItem[];

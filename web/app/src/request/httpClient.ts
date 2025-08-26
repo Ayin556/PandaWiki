@@ -284,22 +284,22 @@ export class HttpClient<SecurityDataType = unknown> {
         }
       }
 
-      if (response.status === 403) {
-        console.log("response 403:", response);
-        if (typeof window === "undefined") {
-          const pathname = await getServerPathname();
-          if (pathname !== "/block") {
-            redirect("/block");
-          }
-        }
-        if (typeof window !== "undefined") {
-          const pathname = window.location.pathname;
-          if (pathname !== "/block") {
-            window.location.href = "/block";
-          }
-        }
-        return Promise.reject(403);
-      }
+      // if (response.status === 403) {
+      //   console.log("response 403:", response);
+      //   if (typeof window === "undefined") {
+      //     const pathname = await getServerPathname();
+      //     if (pathname !== "/block") {
+      //       redirect("/block");
+      //     }
+      //   }
+      //   if (typeof window !== "undefined") {
+      //     const pathname = window.location.pathname;
+      //     if (pathname !== "/block") {
+      //       window.location.href = "/block";
+      //     }
+      //   }
+      //   return Promise.reject(403);
+      // }
 
       if (response.status === 404) {
         if (typeof window === "undefined") {
@@ -334,7 +334,7 @@ export class HttpClient<SecurityDataType = unknown> {
         }
         const errorMessage = { data, url: response.url, response };
         console.log("response error:", errorMessage);
-        throw errorMessage;
+        return Promise.reject(data.code || response.status);
       }
       return data.data;
     });

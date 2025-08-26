@@ -17,7 +17,7 @@ const Chat = ({
 }: {
   conversation: ConversationItem[];
 }) => {
-  const { mobile = false, catalogShow, catalogWidth } = useStore();
+  const { mobile = false } = useStore();
 
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
   const sseClientRef = useRef<SSEClient<{
@@ -229,7 +229,7 @@ const Chat = ({
 
   if (mobile) {
     return (
-      <Box sx={{ pt: 12, minHeight: '100vh', position: 'relative' }}>
+      <Box sx={{ pt: 4, minHeight: '100vh', position: 'relative' }}>
         <ChatTab showType={showType} setShowType={setShowType} />
         <Box sx={{ mx: 3 }}>
           {showType === 'chat' ? (
@@ -255,11 +255,8 @@ const Chat = ({
 
   return (
     <Box
-      style={{
-        marginLeft: catalogShow ? `${catalogWidth!}px` : '16px',
-      }}
       sx={{
-        pt: 12,
+        pt: 4,
         px: 10,
         minHeight: '100vh',
       }}

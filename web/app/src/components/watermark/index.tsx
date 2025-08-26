@@ -130,6 +130,8 @@ const StyledFullPageOverlay = styled(Box)(() => ({
 
 const StyledContainer = styled(Box)(() => ({
   position: 'relative',
+  height: '100%',
+  width: '100%',
 }));
 
 export default function Watermark(props: WatermarkProps) {

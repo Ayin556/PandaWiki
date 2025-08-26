@@ -82,7 +82,7 @@ export const addExpandState = (
   nodes: ITreeItem[],
   activeId: string,
   defaultExpand: boolean,
-): ITreeItem[] => {
+): { tree: ITreeItem[] } => {
   const findParentPath = (
     nodes: ITreeItem[],
     targetId: string,
@@ -113,12 +113,16 @@ export const addExpandState = (
         return {
           ...node,
           defaultExpand: isExpanded,
+          expanded: isExpanded,
           children: addExpand(node.children),
         };
       }
       return node;
     });
   };
+  const result = addExpand(nodes);
 
-  return addExpand(nodes);
+  return {
+    tree: result,
+  };
 };

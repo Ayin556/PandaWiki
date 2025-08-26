@@ -174,6 +174,7 @@ export const filterTreeBySearch = (
         children:
           filteredChildren.length > 0 ? filteredChildren : node.children,
         defaultExpand: true, // 搜索时展开所有匹配的节点
+        expanded: true,
       };
     }
 
@@ -245,4 +246,22 @@ export function base64ToFile(base64Data: string, filename: string) {
 export const isValidUrl = (url: string) => {
   const regex = /^(https?):\/\/[^\s/$.?#].[^\s]*$/i;
   return regex.test(url);
+};
+
+export const getRedirectUrl = () => {
+  const searchParams = new URLSearchParams(location.search);
+  const redirect = searchParams.get('redirect') || '/';
+  let redirectUrl: URL | null = null;
+  try {
+    redirectUrl = redirect ? new URL(decodeURIComponent(redirect)) : null;
+  } catch (e) {
+    redirectUrl = redirect
+      ? new URL(location.origin + decodeURIComponent(redirect))
+      : null;
+  }
+
+  redirectUrl = isValidUrl(redirectUrl?.href || '')
+    ? redirectUrl
+    : new URL('/', location.origin);
+  return redirectUrl as URL;
 };
