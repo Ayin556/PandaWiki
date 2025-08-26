@@ -21,6 +21,7 @@ import {
   GithubComChaitinPandaWikiProApiShareV1AuthFeishuResp,
   GithubComChaitinPandaWikiProApiShareV1AuthGitHubReq,
   GithubComChaitinPandaWikiProApiShareV1AuthGitHubResp,
+  GithubComChaitinPandaWikiProApiShareV1AuthInfoResp,
   GithubComChaitinPandaWikiProApiShareV1AuthLDAPReq,
   GithubComChaitinPandaWikiProApiShareV1AuthLDAPResp,
   GithubComChaitinPandaWikiProApiShareV1AuthOAuthReq,
@@ -144,6 +145,32 @@ export const postShareProV1AuthGithub = (
     path: `/share/pro/v1/auth/github`,
     method: "POST",
     body: param,
+    type: ContentType.Json,
+    format: "json",
+    ...params,
+  });
+
+/**
+ * @description AuthInfo
+ *
+ * @tags ShareAuth
+ * @name GetShareProV1AuthInfo
+ * @summary AuthInfo
+ * @request GET:/share/pro/v1/auth/info
+ * @response `200` `(DomainPWResponse & {
+    data?: GithubComChaitinPandaWikiProApiShareV1AuthInfoResp,
+
+})` OK
+ */
+
+export const getShareProV1AuthInfo = (params: RequestParams = {}) =>
+  httpRequest<
+    DomainPWResponse & {
+      data?: GithubComChaitinPandaWikiProApiShareV1AuthInfoResp;
+    }
+  >({
+    path: `/share/pro/v1/auth/info`,
+    method: "GET",
     type: ContentType.Json,
     format: "json",
     ...params,

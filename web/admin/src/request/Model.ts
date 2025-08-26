@@ -20,7 +20,6 @@ import {
   DomainResponse,
   DomainUpdateModelReq,
   GetApiV1ModelDetailParams,
-  GetApiV1ModelProviderSupportedParams,
   GithubComChaitinPandaWikiDomainCheckModelReq,
   GithubComChaitinPandaWikiDomainCheckModelResp,
   GithubComChaitinPandaWikiDomainModelListItem,

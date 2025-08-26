@@ -18,20 +18,7 @@ export enum SchemaRoleType {
 }
 
 export enum GithubComChaitinPandaWikiDomainModelProvider {
-  /** 智谱 */
-  ModelProviderBrandOpenAI = "OpenAI",
-  ModelProviderBrandOllama = "Ollama",
-  ModelProviderBrandDeepSeek = "DeepSeek",
-  ModelProviderBrandMoonshot = "Moonshot",
-  ModelProviderBrandSiliconFlow = "SiliconFlow",
-  ModelProviderBrandAzureOpenAI = "AzureOpenAI",
   ModelProviderBrandBaiZhiCloud = "BaiZhiCloud",
-  ModelProviderBrandHunyuan = "Hunyuan",
-  ModelProviderBrandBaiLian = "BaiLian",
-  ModelProviderBrandVolcengine = "Volcengine",
-  ModelProviderBrandGemini = "Gemini",
-  ModelProviderBrandZhiPu = "ZhiPu",
-  ModelProviderBrandOther = "Other",
 }
 
 export enum DomainStatPageScene {
@@ -88,6 +75,15 @@ export enum DomainAppType {
   AppTypeWechatOfficialAccount = 8,
 }
 
+export enum ConstsWatermarkSetting {
+  /** 未开启水印 */
+  WatermarkDisabled = "",
+  /** 隐形水印 */
+  WatermarkHidden = "hidden",
+  /** 显性水印 */
+  WatermarkVisible = "visible",
+}
+
 export enum ConstsUserRole {
   /** 管理员 */
   UserRoleAdmin = "admin",
@@ -132,6 +128,15 @@ export enum ConstsNodeAccessPerm {
   NodeAccessPermPartial = "partial",
   /** 完全禁止 */
   NodeAccessPermClosed = "closed",
+}
+
+export enum ConstsCopySetting {
+  /** 无限制 */
+  CopySettingNone = "",
+  /** 增加内容尾巴 */
+  CopySettingAppend = "append",
+  /** 禁止复制内容 */
+  CopySettingDisabled = "disabled",
 }
 
 export enum ConstsAuthType {
@@ -187,6 +192,7 @@ export interface DomainAppSettings {
   btns?: unknown[];
   /** catalog settings */
   catalog_settings?: DomainCatalogSettings;
+  copy_setting?: "" | "append" | "disabled";
   /** seo */
   desc?: string;
   dingtalk_bot_client_id?: string;
@@ -218,7 +224,7 @@ export interface DomainAppSettings {
   /** nav */
   title?: string;
   watermark_content?: string;
-  watermark_enable?: boolean;
+  watermark_setting?: "" | "hidden" | "visible";
   /** webapp comment settings */
   web_app_comment_settings?: DomainWebAppCommentSettings;
   /** WebAppCustomStyle */
@@ -256,6 +262,7 @@ export interface DomainAppSettingsResp {
   btns?: unknown[];
   /** catalog settings */
   catalog_settings?: DomainCatalogSettings;
+  copy_setting?: ConstsCopySetting;
   /** seo */
   desc?: string;
   dingtalk_bot_client_id?: string;
@@ -287,7 +294,7 @@ export interface DomainAppSettingsResp {
   /** nav */
   title?: string;
   watermark_content?: string;
-  watermark_enable?: boolean;
+  watermark_setting?: ConstsWatermarkSetting;
   /** webapp comment settings */
   web_app_comment_settings?: DomainWebAppCommentSettings;
   /** WebAppCustomStyle */
@@ -477,20 +484,7 @@ export interface DomainCreateModelReq {
   base_url: string;
   model: string;
   param?: DomainModelParam;
-  provider:
-    | "OpenAI"
-    | "Ollama"
-    | "DeepSeek"
-    | "SiliconFlow"
-    | "Moonshot"
-    | "Other"
-    | "AzureOpenAI"
-    | "BaiZhiCloud"
-    | "Hunyuan"
-    | "BaiLian"
-    | "Volcengine"
-    | "Gemini"
-    | "ZhiPu";
+  provider: GithubComChaitinPandaWikiDomainModelProvider;
   type: "chat" | "embedding" | "rerank";
 }
 
@@ -571,19 +565,7 @@ export interface DomainGetProviderModelListReq {
   api_header?: string;
   api_key?: string;
   base_url: string;
-  provider:
-    | "SiliconFlow"
-    | "OpenAI"
-    | "Ollama"
-    | "DeepSeek"
-    | "Moonshot"
-    | "AzureOpenAI"
-    | "BaiZhiCloud"
-    | "Hunyuan"
-    | "BaiLian"
-    | "Volcengine"
-    | "Gemini"
-    | "ZhiPu";
+  provider: string;
   type: "chat" | "embedding" | "rerank";
 }
 
@@ -914,20 +896,7 @@ export interface DomainUpdateModelReq {
   id: string;
   model: string;
   param?: DomainModelParam;
-  provider:
-    | "OpenAI"
-    | "Ollama"
-    | "DeepSeek"
-    | "SiliconFlow"
-    | "Moonshot"
-    | "Other"
-    | "AzureOpenAI"
-    | "BaiZhiCloud"
-    | "Hunyuan"
-    | "BaiLian"
-    | "Volcengine"
-    | "Gemini"
-    | "ZhiPu";
+  provider: GithubComChaitinPandaWikiDomainModelProvider;
   type: "chat" | "embedding" | "rerank";
 }
 
@@ -987,20 +956,7 @@ export interface GithubComChaitinPandaWikiDomainCheckModelReq {
   api_version?: string;
   base_url: string;
   model: string;
-  provider:
-    | "OpenAI"
-    | "Ollama"
-    | "DeepSeek"
-    | "SiliconFlow"
-    | "Moonshot"
-    | "Other"
-    | "AzureOpenAI"
-    | "BaiZhiCloud"
-    | "Hunyuan"
-    | "BaiLian"
-    | "Volcengine"
-    | "Gemini"
-    | "ZhiPu";
+  provider: GithubComChaitinPandaWikiDomainModelProvider;
   type: "chat" | "embedding" | "rerank";
 }
 

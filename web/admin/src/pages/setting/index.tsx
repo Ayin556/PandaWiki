@@ -85,7 +85,7 @@ const Setting = () => {
       >
         <CardKB kb={kb} data={info} />
         <CardAI kb={kb} />
-        <CardSecurity data={info} kb={kb} />
+        <CardSecurity data={info} kb={kb} refresh={getInfo} />
         <CardFeedback kb={kb} />
         <CardRobot kb={kb} url={url} />
       </Stack>
