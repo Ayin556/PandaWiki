@@ -227,7 +227,7 @@ const MemberAdd = ({ refresh }: { refresh: () => void }) => {
                     fullWidth
                     displayEmpty
                     sx={{ height: 52 }}
-                    renderValue={(value: ConstsUserKBPermission) => {
+                    renderValue={(value: V1KBUserInviteReq['perm']) => {
                       return value ? (
                         PERM_MAP[value]
                       ) : (
