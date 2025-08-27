@@ -417,6 +417,16 @@ func (r *KnowledgeBaseRepository) GetKnowledgeBaseList(ctx context.Context) ([]*
 	return kbs, nil
 }
 
+func (r *KnowledgeBaseRepository) GetKnowledgeBaseIds(ctx context.Context) ([]string, error) {
+	var ids []string
+	if err := r.db.WithContext(ctx).
+		Model(&domain.KnowledgeBase{}).
+		Pluck("id", &ids).Error; err != nil {
+		return nil, err
+	}
+	return ids, nil
+}
+
 func (r *KnowledgeBaseRepository) GetKnowledgeBaseListByUserId(ctx context.Context, userId string) ([]*domain.KnowledgeBaseListItem, error) {
 	var user domain.User
 	err := r.db.WithContext(ctx).

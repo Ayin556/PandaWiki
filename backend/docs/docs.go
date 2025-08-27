@@ -2467,7 +2467,12 @@ const docTemplate = `{
         },
         "/api/v1/stat/browsers": {
             "get": {
-                "description": "GetBrowsers",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "客户端统计",
                 "consumes": [
                     "application/json"
                 ],
@@ -2477,11 +2482,27 @@ const docTemplate = `{
                 "tags": [
                     "stat"
                 ],
-                "summary": "GetBrowsers",
+                "summary": "客户端统计",
                 "parameters": [
                     {
+                        "enum": [
+                            1,
+                            7,
+                            30,
+                            90
+                        ],
+                        "type": "integer",
+                        "x-enum-varnames": [
+                            "StatDay1",
+                            "StatDay7",
+                            "StatDay30",
+                            "StatDay90"
+                        ],
+                        "name": "day",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
-                        "description": "kb_id",
                         "name": "kb_id",
                         "in": "query",
                         "required": true
@@ -2491,7 +2512,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/domain.HotBrowser"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -2499,7 +2532,12 @@ const docTemplate = `{
         },
         "/api/v1/stat/conversation_distribution": {
             "get": {
-                "description": "GetConversationDistribution",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "问答来源",
                 "consumes": [
                     "application/json"
                 ],
@@ -2509,11 +2547,27 @@ const docTemplate = `{
                 "tags": [
                     "stat"
                 ],
-                "summary": "GetConversationDistribution",
+                "summary": "问答来源",
                 "parameters": [
                     {
+                        "enum": [
+                            1,
+                            7,
+                            30,
+                            90
+                        ],
+                        "type": "integer",
+                        "x-enum-varnames": [
+                            "StatDay1",
+                            "StatDay7",
+                            "StatDay30",
+                            "StatDay90"
+                        ],
+                        "name": "day",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
-                        "description": "kb_id",
                         "name": "kb_id",
                         "in": "query",
                         "required": true
@@ -2523,7 +2577,22 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/domain.ConversationDistribution"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -2531,7 +2600,12 @@ const docTemplate = `{
         },
         "/api/v1/stat/count": {
             "get": {
-                "description": "GetCount",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "全局统计",
                 "consumes": [
                     "application/json"
                 ],
@@ -2541,11 +2615,27 @@ const docTemplate = `{
                 "tags": [
                     "stat"
                 ],
-                "summary": "GetCount",
+                "summary": "全局统计",
                 "parameters": [
                     {
+                        "enum": [
+                            1,
+                            7,
+                            30,
+                            90
+                        ],
+                        "type": "integer",
+                        "x-enum-varnames": [
+                            "StatDay1",
+                            "StatDay7",
+                            "StatDay30",
+                            "StatDay90"
+                        ],
+                        "name": "day",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
-                        "description": "kb_id",
                         "name": "kb_id",
                         "in": "query",
                         "required": true
@@ -2555,7 +2645,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.PWResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/v1.StatCountResp"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -2563,7 +2665,12 @@ const docTemplate = `{
         },
         "/api/v1/stat/geo_count": {
             "get": {
-                "description": "GetGeoCount",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "用户地理分布",
                 "consumes": [
                     "application/json"
                 ],
@@ -2573,11 +2680,27 @@ const docTemplate = `{
                 "tags": [
                     "stat"
                 ],
-                "summary": "GetGeoCount",
+                "summary": "用户地理分布",
                 "parameters": [
                     {
+                        "enum": [
+                            1,
+                            7,
+                            30,
+                            90
+                        ],
+                        "type": "integer",
+                        "x-enum-varnames": [
+                            "StatDay1",
+                            "StatDay7",
+                            "StatDay30",
+                            "StatDay90"
+                        ],
+                        "name": "day",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
-                        "description": "kb_id",
                         "name": "kb_id",
                         "in": "query",
                         "required": true
@@ -2595,7 +2718,12 @@ const docTemplate = `{
         },
         "/api/v1/stat/hot_pages": {
             "get": {
-                "description": "GetHotPages",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "热门文档",
                 "consumes": [
                     "application/json"
                 ],
@@ -2605,11 +2733,27 @@ const docTemplate = `{
                 "tags": [
                     "stat"
                 ],
-                "summary": "GetHotPages",
+                "summary": "热门文档",
                 "parameters": [
                     {
+                        "enum": [
+                            1,
+                            7,
+                            30,
+                            90
+                        ],
+                        "type": "integer",
+                        "x-enum-varnames": [
+                            "StatDay1",
+                            "StatDay7",
+                            "StatDay30",
+                            "StatDay90"
+                        ],
+                        "name": "day",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
-                        "description": "kb_id",
                         "name": "kb_id",
                         "in": "query",
                         "required": true
@@ -2619,7 +2763,22 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/domain.HotPage"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -2627,6 +2786,11 @@ const docTemplate = `{
         },
         "/api/v1/stat/instant_count": {
             "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "description": "GetInstantCount",
                 "consumes": [
                     "application/json"
@@ -2641,7 +2805,6 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "kb_id",
                         "name": "kb_id",
                         "in": "query",
                         "required": true
@@ -2651,7 +2814,22 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/domain.InstantCountResp"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -2659,6 +2837,11 @@ const docTemplate = `{
         },
         "/api/v1/stat/instant_pages": {
             "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "description": "GetInstantPages",
                 "consumes": [
                     "application/json"
@@ -2673,7 +2856,6 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "kb_id",
                         "name": "kb_id",
                         "in": "query",
                         "required": true
@@ -2683,7 +2865,22 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/domain.InstantPageResp"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -2691,7 +2888,12 @@ const docTemplate = `{
         },
         "/api/v1/stat/referer_hosts": {
             "get": {
-                "description": "GetRefererHosts",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "来源域名",
                 "consumes": [
                     "application/json"
                 ],
@@ -2701,11 +2903,27 @@ const docTemplate = `{
                 "tags": [
                     "stat"
                 ],
-                "summary": "GetRefererHosts",
+                "summary": "来源域名",
                 "parameters": [
                     {
+                        "enum": [
+                            1,
+                            7,
+                            30,
+                            90
+                        ],
+                        "type": "integer",
+                        "x-enum-varnames": [
+                            "StatDay1",
+                            "StatDay7",
+                            "StatDay30",
+                            "StatDay90"
+                        ],
+                        "name": "day",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
-                        "description": "kb_id",
                         "name": "kb_id",
                         "in": "query",
                         "required": true
@@ -2715,7 +2933,22 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/domain.HotRefererHost"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -3603,6 +3836,21 @@ const docTemplate = `{
                 "SourceTypeLDAP"
             ]
         },
+        "consts.StatDay": {
+            "type": "integer",
+            "enum": [
+                1,
+                7,
+                30,
+                90
+            ],
+            "x-enum-varnames": [
+                "StatDay1",
+                "StatDay7",
+                "StatDay30",
+                "StatDay90"
+            ]
+        },
         "consts.UserKBPermission": {
             "type": "string",
             "enum": [
@@ -4243,6 +4491,20 @@ const docTemplate = `{
                 "AppTypeWechatOfficialAccount"
             ]
         },
+        "domain.AuthUserInfo": {
+            "type": "object",
+            "properties": {
+                "avatar_url": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.BatchMoveReq": {
             "type": "object",
             "required": [
@@ -4272,6 +4534,17 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/domain.Link"
                     }
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.BrowserCount": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
                 },
                 "name": {
                     "type": "string"
@@ -4461,6 +4734,20 @@ const docTemplate = `{
                 },
                 "subject": {
                     "type": "string"
+                }
+            }
+        },
+        "domain.ConversationDistribution": {
+            "type": "object",
+            "properties": {
+                "app_id": {
+                    "type": "string"
+                },
+                "app_type": {
+                    "$ref": "#/definitions/domain.AppType"
+                },
+                "count": {
+                    "type": "integer"
                 }
             }
         },
@@ -5022,6 +5309,51 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.HotBrowser": {
+            "type": "object",
+            "properties": {
+                "browser": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.BrowserCount"
+                    }
+                },
+                "os": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.BrowserCount"
+                    }
+                }
+            }
+        },
+        "domain.HotPage": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "node_id": {
+                    "type": "string"
+                },
+                "node_name": {
+                    "type": "string"
+                },
+                "scene": {
+                    "$ref": "#/definitions/domain.StatPageScene"
+                }
+            }
+        },
+        "domain.HotRefererHost": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "referer_host": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.IPAddress": {
             "type": "object",
             "properties": {
@@ -5036,6 +5368,46 @@ const docTemplate = `{
                 },
                 "province": {
                     "type": "string"
+                }
+            }
+        },
+        "domain.InstantCountResp": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "time": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.InstantPageResp": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "info": {
+                    "$ref": "#/definitions/domain.AuthUserInfo"
+                },
+                "ip": {
+                    "type": "string"
+                },
+                "ip_address": {
+                    "$ref": "#/definitions/domain.IPAddress"
+                },
+                "node_id": {
+                    "type": "string"
+                },
+                "node_name": {
+                    "type": "string"
+                },
+                "scene": {
+                    "$ref": "#/definitions/domain.StatPageScene"
+                },
+                "user_id": {
+                    "type": "integer"
                 }
             }
         },
@@ -6517,6 +6889,23 @@ const docTemplate = `{
                 "new_password": {
                     "type": "string",
                     "minLength": 8
+                }
+            }
+        },
+        "v1.StatCountResp": {
+            "type": "object",
+            "properties": {
+                "conversation_count": {
+                    "type": "integer"
+                },
+                "ip_count": {
+                    "type": "integer"
+                },
+                "page_visit_count": {
+                    "type": "integer"
+                },
+                "session_count": {
+                    "type": "integer"
                 }
             }
         },

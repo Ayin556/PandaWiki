@@ -13,9 +13,9 @@ const ContextKeyEdition contextKey = "edition"
 type LicenseEdition int32
 
 const (
-	LicenseEditionFree        LicenseEdition = 0
-	LicenseEditionContributor LicenseEdition = 1
-	LicenseEditionEnterprise  LicenseEdition = 2
+	LicenseEditionFree        LicenseEdition = 0 // 开源版
+	LicenseEditionContributor LicenseEdition = 1 // 联创版
+	LicenseEditionEnterprise  LicenseEdition = 2 // 企业版
 )
 
 func GetLicenseEdition(c echo.Context) LicenseEdition {
