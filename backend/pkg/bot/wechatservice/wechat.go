@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -179,7 +180,7 @@ func (cfg *WechatServiceConfig) Processmessage(msgRet *MsgRet, Kfmsg *WeixinUser
 func (cfg *WechatServiceConfig) SendResponseToKfUrl(userId, openkfId, conversationID, token, question, baseUrl, image string) error {
 	var imageId string
 	var err error
-	if image != "" { // user own image
+	if image != "" && !strings.HasPrefix(image, "data:image/") { // user own image and not base64 image
 		imageId, err = GetUserImageID(token, fmt.Sprintf("%s%s", "http://panda-wiki-minio:9000", image))
 		if err != nil {
 			return err
