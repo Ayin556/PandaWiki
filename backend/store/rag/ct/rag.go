@@ -35,7 +35,10 @@ func NewCTRAG(config *config.Config, logger *log.Logger) (*CTRAG, error) {
 		converter.WithPlugins(
 			base.NewBasePlugin(),
 			commonmark.NewCommonmarkPlugin(),
-			table.NewTablePlugin(table.WithSpanCellBehavior(table.SpanBehaviorMirror)),
+			table.NewTablePlugin(
+				table.WithSpanCellBehavior(table.SpanBehaviorMirror),
+				table.WithNewlineBehavior(table.NewlineBehaviorPreserve),
+			),
 		),
 	)
 	return &CTRAG{
