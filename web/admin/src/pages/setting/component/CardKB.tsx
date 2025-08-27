@@ -29,6 +29,7 @@ import { Ellipsis, Icon, Message, Modal } from 'ct-mui';
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import AddRole from './AddRole';
+import { setRefreshAdminRequest } from '@/store/slices/config';
 import { SettingCard, SettingCardItem } from './Common';
 
 interface CardKBProps {
@@ -39,6 +40,7 @@ interface CardKBProps {
 const CardKB = ({ kb, data }: CardKBProps) => {
   const { kbList, kb_id, license } = useAppSelector(state => state.config);
   const dispatch = useDispatch();
+
   const [kbName, setKbName] = useState(kb.name);
   const [isEdit, setIsEdit] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
@@ -75,6 +77,10 @@ const CardKB = ({ kb, data }: CardKBProps) => {
       setIsEdit(false);
     });
   };
+
+  useEffect(() => {
+    dispatch(setRefreshAdminRequest(getUserList));
+  }, []);
 
   const onDeleteUser = (id: string) => {
     Modal.confirm({

@@ -13,6 +13,7 @@ export interface config {
   modelStatus: boolean;
   kbDetail: DomainKnowledgeBaseDetail;
   appPreviewData: DomainAppDetailResp | null;
+  refreshAdminRequest: () => void;
 }
 const initialState: config = {
   user: {
@@ -31,6 +32,7 @@ const initialState: config = {
   modelStatus: false,
   kbDetail: {} as DomainKnowledgeBaseDetail,
   appPreviewData: null,
+  refreshAdminRequest: () => {},
 };
 
 const configSlice = createSlice({
@@ -62,6 +64,9 @@ const configSlice = createSlice({
     setKbDetail(state, { payload }) {
       state.kbDetail = payload;
     },
+    setRefreshAdminRequest(state, { payload }) {
+      state.refreshAdminRequest = payload;
+    },
   },
 });
 
@@ -74,5 +79,6 @@ export const {
   setLicense,
   setAppPreviewData,
   setKbDetail,
+  setRefreshAdminRequest,
 } = configSlice.actions;
 export default configSlice.reducer;
