@@ -1,19 +1,35 @@
 import { postApiV1UserCreate } from '@/request/User';
+import { postApiV1KnowledgeBaseUserInvite } from '@/request/KnowledgeBase';
 import Card from '@/components/Card';
 import { copyText, generatePassword } from '@/utils';
 import { CheckCircle } from '@mui/icons-material';
-import { Box, Button, MenuItem, Stack, TextField } from '@mui/material';
+import { Box, Button, MenuItem, Select, Stack, TextField } from '@mui/material';
 import { FormItem } from '@/components/Form';
 import { Modal } from 'ct-mui';
-import { useState } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { useAppSelector } from '@/store';
+
+import { ConstsUserKBPermission, V1KBUserInviteReq } from '@/request/types';
 
 type Role = 'admin' | 'user';
+
+const PERM_MAP = {
+  [ConstsUserKBPermission.UserKBPermissionFullControl]: '完全控制',
+  [ConstsUserKBPermission.UserKBPermissionDocManage]: '文档管理',
+  [ConstsUserKBPermission.UserKBPermissionDataOperate]: '数据运营',
+};
 
 const MemberAdd = ({ refresh }: { refresh: () => void }) => {
   const [addMember, setAddMember] = useState(false);
   const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState('');
+  const { kbList, license, refreshAdminRequest } = useAppSelector(
+    state => state.config,
+  );
+  const isEnterprise = useMemo(() => {
+    return license.edition === 2;
+  }, [license]);
 
   const {
     control,
@@ -21,14 +37,25 @@ const MemberAdd = ({ refresh }: { refresh: () => void }) => {
     formState: { errors },
     reset,
     watch,
+    setValue,
   } = useForm({
     defaultValues: {
       account: '',
       role: 'user' as Role,
+      kb_id: '',
+      perm: '' as V1KBUserInviteReq['perm'],
     },
   });
 
   const account = watch('account');
+  const watchRole = watch('role');
+  const watchKbId = watch('kb_id');
+
+  useEffect(() => {
+    if (watchKbId) {
+      setValue('perm', ConstsUserKBPermission.UserKBPermissionFullControl);
+    }
+  }, [watchKbId]);
 
   const copyUserInfo = ({
     account,
@@ -46,11 +73,27 @@ const MemberAdd = ({ refresh }: { refresh: () => void }) => {
   const onSubmit = handleSubmit(data => {
     setLoading(true);
     const password = generatePassword();
+    const onSuccess = () => {
+      setPassword(password);
+      setAddMember(false);
+      refresh();
+    };
     postApiV1UserCreate({ account: data.account, password, role: data.role })
-      .then(() => {
-        setPassword(password);
-        setAddMember(false);
-        refresh();
+      .then(res => {
+        if (data.kb_id && data.role === 'user') {
+          postApiV1KnowledgeBaseUserInvite({
+            kb_id: data.kb_id,
+            // @ts-expect-error 类型错误
+            user_id: res.id,
+            perm: data.perm,
+          }).then(() => {
+            onSuccess();
+            if (location.pathname.startsWith('/setting')) {
+              refreshAdminRequest();
+            }
+          });
+        }
+        onSuccess();
       })
       .finally(() => {
         setLoading(false);
@@ -131,28 +174,90 @@ const MemberAdd = ({ refresh }: { refresh: () => void }) => {
             )}
           />
         </FormItem>
+
         <FormItem label='角色' required sx={{ mt: 2 }}>
           <Controller
             control={control}
             name='role'
             render={({ field }) => (
-              <TextField
-                {...field}
-                fullWidth
-                select
-                sx={{
-                  '.MuiSelect-select': {
-                    lineHeight: '19px !important',
-                    minHeight: '19px !important',
-                  },
-                }}
-              >
+              <TextField {...field} fullWidth select>
                 <MenuItem value='user'>普通管理员</MenuItem>
                 <MenuItem value='admin'>超级管理员</MenuItem>
               </TextField>
             )}
           />
         </FormItem>
+
+        {watchRole === 'user' && (
+          <>
+            <FormItem label='wiki 站' sx={{ mt: 2 }}>
+              <Controller
+                control={control}
+                name='kb_id'
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    fullWidth
+                    displayEmpty
+                    renderValue={(value: string) =>
+                      value ? (
+                        kbList.find(i => i.id === value)?.name || value
+                      ) : (
+                        <Box sx={{ color: '#9e9fa3' }}>请选择</Box>
+                      )
+                    }
+                    sx={{ height: 52 }}
+                  >
+                    {kbList.map(item => (
+                      <MenuItem key={item.id} value={item.id}>
+                        {item.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                )}
+              />
+            </FormItem>
+            <FormItem label='权限' sx={{ mt: 2 }}>
+              <Controller
+                control={control}
+                name='perm'
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    fullWidth
+                    displayEmpty
+                    sx={{ height: 52 }}
+                    renderValue={(value: V1KBUserInviteReq['perm']) => {
+                      return value ? (
+                        PERM_MAP[value]
+                      ) : (
+                        <Box sx={{ color: '#9e9fa3' }}>请选择</Box>
+                      );
+                    }}
+                  >
+                    <MenuItem
+                      value={ConstsUserKBPermission.UserKBPermissionFullControl}
+                    >
+                      完全控制
+                    </MenuItem>
+                    <MenuItem
+                      disabled={!isEnterprise}
+                      value={ConstsUserKBPermission.UserKBPermissionDocManage}
+                    >
+                      文档管理 {isEnterprise ? '' : '(企业版可用)'}
+                    </MenuItem>
+                    <MenuItem
+                      disabled={!isEnterprise}
+                      value={ConstsUserKBPermission.UserKBPermissionDataOperate}
+                    >
+                      数据运营 {isEnterprise ? '' : '(企业版可用)'}
+                    </MenuItem>
+                  </Select>
+                )}
+              />
+            </FormItem>
+          </>
+        )}
       </Modal>
     </>
   );
