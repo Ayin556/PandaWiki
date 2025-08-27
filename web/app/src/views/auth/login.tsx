@@ -54,8 +54,10 @@ export default function Login() {
   const [sourceType, setSourceType] = useState<ConstsSourceType>();
   const { kbDetail, themeMode, mobile = false, setNodeList } = useStore();
   const redirectUrl =
-    window.location.origin +
-    decodeURIComponent(searchParams.get('redirect') || '');
+    typeof window !== 'undefined'
+      ? window.location.origin +
+        decodeURIComponent(searchParams.get('redirect') || '')
+      : '';
 
   const handleLogin = async () => {
     if (!password.trim()) {
