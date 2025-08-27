@@ -185,6 +185,12 @@ func (cfg *WechatServiceConfig) SendResponseToKfUrl(userId, openkfId, conversati
 		if err != nil {
 			return err
 		}
+	} else if strings.HasPrefix(image, "data:image/") {
+		// 解析base64
+		imageId, err = GetDefaultImageID(token, image)
+		if err != nil {
+			return err
+		}
 	} else {
 		// 解析base64 -> default image
 		imageId, err = GetDefaultImageID(token, domain.DefaultPandaWikiIconB64)
