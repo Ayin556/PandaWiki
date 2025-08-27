@@ -50,7 +50,7 @@ func NewUserHandler(e *echo.Echo, baseHandler *handler.BaseHandler, logger *log.
 //	@Accept			json
 //	@Produce		json
 //	@Param			body	body		v1.CreateUserReq	true	"CreateUser Request"
-//	@Success		200		{object}	domain.Response
+//	@Success		200		{object}	domain.Response{data=v1.CreateUserResp}
 //	@Router			/api/v1/user/create [post]
 func (h *UserHandler) CreateUser(c echo.Context) error {
 	var req v1.CreateUserReq
@@ -62,8 +62,9 @@ func (h *UserHandler) CreateUser(c echo.Context) error {
 		return h.NewResponseWithError(c, "invalid request", err)
 	}
 
+	uid := uuid.New().String()
 	err := h.usecase.CreateUser(c.Request().Context(), &domain.User{
-		ID:       uuid.New().String(),
+		ID:       uid,
 		Account:  req.Account,
 		Password: req.Password,
 		Role:     req.Role,
@@ -72,7 +73,7 @@ func (h *UserHandler) CreateUser(c echo.Context) error {
 		return h.NewResponseWithError(c, "failed to create user", err)
 	}
 
-	return h.NewResponseWithData(c, nil)
+	return h.NewResponseWithData(c, v1.CreateUserResp{ID: uid})
 }
 
 // Login

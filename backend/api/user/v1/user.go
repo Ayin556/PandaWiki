@@ -12,6 +12,10 @@ type CreateUserReq struct {
 	Role     consts.UserRole `json:"role" validate:"required,oneof=admin user"`
 }
 
+type CreateUserResp struct {
+	ID string `json:"id"`
+}
+
 type UserInfoResp struct {
 	ID         string          `json:"id"`
 	Account    string          `json:"account"`

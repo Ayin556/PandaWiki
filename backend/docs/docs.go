@@ -2769,7 +2769,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/v1.CreateUserResp"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -6262,6 +6274,14 @@ const docTemplate = `{
                             "$ref": "#/definitions/consts.UserRole"
                         }
                     ]
+                }
+            }
+        },
+        "v1.CreateUserResp": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
                 }
             }
         },
