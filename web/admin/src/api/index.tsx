@@ -60,7 +60,7 @@ export const updateAppDetail = (
 // =============================================》model
 export const getModelNameList = (
   data: GetModelNameData,
-): Promise<{ models: { model: string }[] }> =>
+): Promise<{ models: { model: string }[]; error: string }> =>
   request({ url: 'api/v1/model/provider/supported', method: 'post', data });
 
 export const testModel = (data: CheckModelData): Promise<{ error: string }> =>
