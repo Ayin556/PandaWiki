@@ -1,4 +1,5 @@
-import { HotDocsItem, statHotPages } from '@/api';
+import { HotDocsItem } from '@/api';
+import { getApiV1StatHotPages } from '@/request/Stat';
 import Nodata from '@/assets/images/nodata.png';
 import Card from '@/components/Card';
 import { useAppSelector } from '@/store';
@@ -13,8 +14,9 @@ const HotDocs = ({ tab }: { tab: ActiveTab }) => {
   const [max, setMax] = useState(0);
 
   useEffect(() => {
-    statHotPages({ kb_id }).then(res => {
-      const data = res.sort((a, b) => b.count - a.count).slice(0, 7);
+    if (!kb_id) return;
+    getApiV1StatHotPages({ kb_id, day: tab }).then(res => {
+      const data = (res as any[]).sort((a, b) => b.count - a.count).slice(0, 7);
       setList(data);
       setMax(Math.max(...data.map(item => item.count)));
     });

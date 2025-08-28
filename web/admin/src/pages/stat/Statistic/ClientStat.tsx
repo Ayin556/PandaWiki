@@ -1,4 +1,5 @@
-import { TrendData, statBrowsers } from '@/api';
+import { TrendData } from '@/api';
+import { getApiV1StatBrowsers } from '@/request/Stat';
 import Nodata from '@/assets/images/nodata.png';
 import Card from '@/components/Card';
 import PieTrend from '@/components/PieTrend';
@@ -16,9 +17,10 @@ const ClientStat = ({ tab }: { tab: ActiveTab }) => {
   >([]);
 
   useEffect(() => {
-    statBrowsers({ kb_id }).then(res => {
+    if (!kb_id) return;
+    getApiV1StatBrowsers({ kb_id, day: tab }).then(res => {
       setOsList(
-        (res.os || [])
+        (((res as any).os || []) as any[])
           .sort((a, b) => b.count - a.count)
           .slice(0, 5)
           .map((it, idx) => ({
@@ -28,7 +30,7 @@ const ClientStat = ({ tab }: { tab: ActiveTab }) => {
           })),
       );
       setBrowserList(
-        (res.browser || [])
+        (((res as any).browser || []) as any[])
           .sort((a, b) => b.count - a.count)
           .slice(0, 5)
           .map((it, idx) => ({

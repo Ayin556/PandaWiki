@@ -102,6 +102,13 @@ export enum ConstsUserKBPermission {
   UserKBPermissionDataOperate = "data_operate",
 }
 
+export enum ConstsStatDay {
+  StatDay1 = 1,
+  StatDay7 = 7,
+  StatDay30 = 30,
+  StatDay90 = 90,
+}
+
 export enum ConstsSourceType {
   SourceTypeDingTalk = "dingtalk",
   SourceTypeFeishu = "feishu",
@@ -1089,6 +1096,13 @@ export interface V1ResetPasswordReq {
   new_password: string;
 }
 
+export interface V1StatCountResp {
+  conversation_count?: number;
+  ip_count?: number;
+  page_visit_count?: number;
+  session_count?: number;
+}
+
 export interface V1UserInfoResp {
   account?: string;
   created_at?: string;
@@ -1281,42 +1295,40 @@ export interface GetApiV1NodeRecommendNodesParams {
 }
 
 export interface GetApiV1StatBrowsersParams {
-  /** kb_id */
+  day?: 1 | 7 | 30 | 90;
   kb_id: string;
 }
 
 export interface GetApiV1StatConversationDistributionParams {
-  /** kb_id */
+  day?: 1 | 7 | 30 | 90;
   kb_id: string;
 }
 
 export interface GetApiV1StatCountParams {
-  /** kb_id */
+  day?: 1 | 7 | 30 | 90;
   kb_id: string;
 }
 
 export interface GetApiV1StatGeoCountParams {
-  /** kb_id */
+  day?: 1 | 7 | 30 | 90;
   kb_id: string;
 }
 
 export interface GetApiV1StatHotPagesParams {
-  /** kb_id */
+  day?: 1 | 7 | 30 | 90;
   kb_id: string;
 }
 
 export interface GetApiV1StatInstantCountParams {
-  /** kb_id */
   kb_id: string;
 }
 
 export interface GetApiV1StatInstantPagesParams {
-  /** kb_id */
   kb_id: string;
 }
 
 export interface GetApiV1StatRefererHostsParams {
-  /** kb_id */
+  day?: 1 | 7 | 30 | 90;
   kb_id: string;
 }
 

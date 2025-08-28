@@ -1,4 +1,5 @@
-import { statCount, StatTypeItem } from '@/api';
+import { StatTypeItem } from '@/api';
+import { getApiV1StatCount } from '@/request/Stat';
 import BlueCard from '@/assets/images/blueCard.png';
 import PurpleCard from '@/assets/images/purpleCard.png';
 import Card from '@/components/Card';
@@ -40,8 +41,9 @@ const TypeCount = ({ tab }: { tab: ActiveTab }) => {
   ];
 
   useEffect(() => {
-    statCount({ kb_id }).then(res => {
-      setData(res);
+    if (!kb_id) return;
+    getApiV1StatCount({ kb_id, day: tab }).then(res => {
+      setData(res as StatTypeItem);
     });
   }, [tab, kb_id]);
 
