@@ -312,22 +312,22 @@ func (u *StatUseCase) GetInstantPages(ctx context.Context, kbID string) ([]*doma
 }
 
 func (u *StatUseCase) GetGeoCount(ctx context.Context, kbID string, day consts.StatDay) (map[string]int64, error) {
-	switch day {
-	case consts.StatDay1:
-		geoCount, err := u.geoCacheRepo.GetLast24HourGeo(ctx, kbID)
-		if err != nil {
-			return nil, err
-		}
-		return geoCount, nil
-	case consts.StatDay7, consts.StatDay30, consts.StatDay90:
-		geoCount, err := u.geoCacheRepo.GetGeoByHour(ctx, kbID, int64(day)*24+1)
-		if err != nil {
-			return nil, err
-		}
-		return geoCount, nil
-	default:
-		return nil, errors.New("invalid stat day")
+	geoCount, err := u.geoCacheRepo.GetLast24HourGeo(ctx, kbID)
+	if err != nil {
+		return nil, err
 	}
+
+	if day > consts.StatDay1 {
+		geoCountHour, err := u.geoCacheRepo.GetGeoByHour(ctx, kbID, int64(day)*24)
+		if err != nil {
+			return nil, err
+		}
+		for k, v := range geoCountHour {
+			geoCount[k] += v
+		}
+	}
+	return geoCount, nil
+
 }
 
 func (u *StatUseCase) GetConversationDistribution(ctx context.Context, kbID string, day consts.StatDay) ([]domain.ConversationDistribution, error) {
@@ -336,39 +336,62 @@ func (u *StatUseCase) GetConversationDistribution(ctx context.Context, kbID stri
 		return nil, err
 	}
 
-	switch day {
-	case consts.StatDay1:
-		distributions, err := u.conversationRepo.GetConversationDistribution(ctx, kbID)
-		if err != nil {
-			return nil, err
-		}
-		distributions = lo.Map(distributions, func(resp domain.ConversationDistribution, _ int) domain.ConversationDistribution {
-			if dist, ok := appMap[resp.AppID]; ok {
-				resp.AppType = dist.Type
-			}
-			return resp
-		})
-		return distributions, nil
-
-	case consts.StatDay7, consts.StatDay30, consts.StatDay90:
-		m, err := u.conversationRepo.GetConversationDistributionByHour(ctx, kbID, int64(day)*24+1)
-		if err != nil {
-			return nil, err
-		}
-
-		distributions := make([]domain.ConversationDistribution, 0)
-		for k, v := range m {
-			t, _ := strconv.Atoi(k)
-			distributions = append(distributions, domain.ConversationDistribution{
-				AppType: domain.AppType(t),
-				Count:   v,
-			})
-		}
-
-		return distributions, nil
-	default:
-		return nil, errors.New("invalid stat day")
+	distributions, err := u.conversationRepo.GetConversationDistribution(ctx, kbID)
+	if err != nil {
+		return nil, err
 	}
+
+	if day > consts.StatDay1 {
+		m, err := u.conversationRepo.GetConversationDistributionByHour(ctx, kbID, int64(day)*24)
+		if err != nil {
+			return nil, err
+		}
+
+		// 使用map合并避免重复遍历
+		mergedDistributions := make(map[string]*domain.ConversationDistribution)
+		for _, dist := range distributions {
+			key := fmt.Sprintf("%d|%s", dist.AppType, dist.AppID)
+			mergedDistributions[key] = &domain.ConversationDistribution{
+				AppType: dist.AppType,
+				AppID:   dist.AppID,
+				Count:   dist.Count,
+			}
+		}
+
+		for k, v := range m {
+			t, err := strconv.Atoi(k)
+			if err != nil {
+				continue
+			}
+
+			// 假设AppID为空，因为从map中只能获取AppType
+			key := fmt.Sprintf("%d|", t)
+			if existDist, ok := mergedDistributions[key]; ok {
+				existDist.Count += v
+			} else {
+				mergedDistributions[key] = &domain.ConversationDistribution{
+					AppType: domain.AppType(t),
+					AppID:   "",
+					Count:   v,
+				}
+			}
+		}
+
+		// 转换回slice
+		distributions = make([]domain.ConversationDistribution, 0, len(mergedDistributions))
+		for _, dist := range mergedDistributions {
+			distributions = append(distributions, *dist)
+		}
+	}
+
+	// 更新AppType
+	for i := range distributions {
+		if app, ok := appMap[distributions[i].AppID]; ok {
+			distributions[i].AppType = app.Type
+		}
+	}
+
+	return distributions, nil
 }
 
 // AggregateHourlyStats 聚合上一小时的统计数据到stat_page_hours表
