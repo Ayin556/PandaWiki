@@ -1246,6 +1246,8 @@ definitions:
     properties:
       id:
         type: string
+      kb_id:
+        type: string
       next_id:
         type: string
       parent_id:
@@ -1254,6 +1256,7 @@ definitions:
         type: string
     required:
     - id
+    - kb_id
     type: object
   domain.NodeActionReq:
     properties:
