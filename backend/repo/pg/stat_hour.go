@@ -160,6 +160,18 @@ func (r *StatRepository) CreateStatPageHour(ctx context.Context, statPageHour *d
 	return r.db.WithContext(ctx).Create(statPageHour).Error
 }
 
+// CheckStatPageHourExists 检查指定时间和知识库的小时统计数据是否已存在
+func (r *StatRepository) CheckStatPageHourExists(ctx context.Context, kbID string, hour time.Time) (bool, error) {
+	var count int64
+	err := r.db.WithContext(ctx).Model(&domain.StatPageHour{}).
+		Where("kb_id = ? AND hour = ?", kbID, hour).
+		Count(&count).Error
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil
+}
+
 // CleanupOldHourlyStats 清理90天前的小时统计数据
 func (r *StatRepository) CleanupOldHourlyStats(ctx context.Context) error {
 	return r.db.WithContext(ctx).Model(&domain.StatPageHour{}).

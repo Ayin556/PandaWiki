@@ -378,7 +378,18 @@ func (u *StatUseCase) AggregateHourlyStats(ctx context.Context) error {
 		return err
 	}
 
+	// 获取上一小时的时间点
+	lastHour := utils.GetTimeHourOffset(-1)
+
 	for _, kbId := range kbIds {
+		exists, err := u.repo.CheckStatPageHourExists(ctx, kbId, lastHour)
+		if err != nil {
+			return err
+		}
+
+		if exists {
+			continue
+		}
 
 		statPageHour, err := u.repo.GetStatPageOneHour(ctx, kbId)
 		if err != nil {
@@ -421,7 +432,7 @@ func (u *StatUseCase) AggregateHourlyStats(ctx context.Context) error {
 		}
 
 		statPageHour.KbID = kbId
-		statPageHour.Hour = utils.GetTimeHourOffset(-1)
+		statPageHour.Hour = lastHour
 		statPageHour.ConversationCount = conversationCount
 
 		statPageHour.GeoCount = geoCount

@@ -24,8 +24,8 @@ func NewStatCronHandler(logger *log.Logger, statRepo *pg.StatRepository, statUse
 	}
 	cron := cron.New()
 
-	// 每小时0分执行聚合统计数据任务
-	if _, err := cron.AddFunc("0 */1 * * *", h.AggregateHourlyStats); err != nil {
+	// 每小时 */10 分执行聚合统计数据任务
+	if _, err := cron.AddFunc("*/10 */1 * * *", h.AggregateHourlyStats); err != nil {
 		h.logger.Error("failed to add cron job for aggregating hourly stats", log.Error(err))
 		return nil, err
 	}
