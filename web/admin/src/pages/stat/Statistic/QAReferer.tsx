@@ -17,9 +17,9 @@ const QAReferer = ({ tab }: { tab: ActiveTab }) => {
     if (!kb_id) return;
     getApiV1StatConversationDistribution({ kb_id, day: tab }).then(res => {
       setList(
-        ((res || []) as any[])
+        (res || [])
           .map((it, idx) => ({
-            count: it.count,
+            count: it.count!,
             name: AppType[it.app_type as keyof typeof AppType].label,
             color: chartColor[idx],
           }))

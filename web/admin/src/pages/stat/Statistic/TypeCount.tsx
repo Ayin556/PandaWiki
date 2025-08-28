@@ -8,10 +8,11 @@ import { addOpacityToColor } from '@/utils';
 import { Box, Stack } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { ActiveTab } from '.';
+import { V1StatCountResp } from '@/request/types';
 
 const TypeCount = ({ tab }: { tab: ActiveTab }) => {
   const { kb_id = '' } = useAppSelector(state => state.config);
-  const [data, setData] = useState<StatTypeItem | null>(null);
+  const [data, setData] = useState<V1StatCountResp | null>(null);
 
   const list = [
     {
@@ -43,7 +44,7 @@ const TypeCount = ({ tab }: { tab: ActiveTab }) => {
   useEffect(() => {
     if (!kb_id) return;
     getApiV1StatCount({ kb_id, day: tab }).then(res => {
-      setData(res as StatTypeItem);
+      setData(res);
     });
   }, [tab, kb_id]);
 

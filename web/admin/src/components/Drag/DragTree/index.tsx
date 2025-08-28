@@ -5,6 +5,7 @@ import { DndContext } from '@dnd-kit/core';
 import { SortableTree, TreeItems } from 'dnd-kit-sortable-tree';
 import { ItemChangedReason } from 'dnd-kit-sortable-tree/dist/types';
 import { useEffect, useState } from 'react';
+import { useAppSelector } from '@/store';
 import TreeItem from './TreeItem';
 
 const DragTree = ({
@@ -19,7 +20,7 @@ const DragTree = ({
   relativeSelect = true,
 }: DragTreeProps) => {
   const [items, setItems] = useState<TreeItems<ITreeItem>>(data);
-
+  const { kb_id } = useAppSelector(state => state.config);
   useEffect(() => {
     setItems(data);
   }, [data]);
@@ -56,6 +57,7 @@ const DragTree = ({
                 parent_id: parentId,
                 next_id: nextItemId as string,
                 prev_id: prevItemId as string,
+                kb_id: kb_id,
               }).then(() => {
                 refresh?.();
               });

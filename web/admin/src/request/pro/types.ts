@@ -29,11 +29,8 @@ export enum ConstsSourceType {
 
 /** @format int32 */
 export enum ConstsLicenseEdition {
-  /** 开源版 */
   LicenseEditionFree = 0,
-  /** 联创版 */
   LicenseEditionContributor = 1,
-  /** 企业版 */
   LicenseEditionEnterprise = 2,
 }
 
