@@ -43,8 +43,8 @@ const HotDocs = ({ tab }: { tab: ActiveTab }) => {
       </Stack>
       {list.length > 0 ? (
         <Stack gap={2}>
-          {list.map(it => (
-            <Box key={it.node_id} sx={{ fontSize: 12 }}>
+          {list.map((it, index) => (
+            <Box key={index} sx={{ fontSize: 12 }}>
               <Stack
                 direction={'row'}
                 alignItems={'center'}
