@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"slices"
 	"sort"
 	"strconv"
 
@@ -98,62 +97,57 @@ func (u *StatUseCase) GetHotPages(ctx context.Context, kbID string, day consts.S
 			return nil, err
 		}
 		for _, page := range hotPages {
-			switch page.Scene {
-			case domain.StatPageSceneNodeDetail:
-				page.NodeName = docNames[page.NodeID]
-			case domain.StatPageSceneWelcome:
-				page.NodeName = "欢迎页"
-			case domain.StatPageSceneChat:
-				page.NodeName = "问答页"
-			case domain.StatPageSceneLogin:
-				page.NodeName = "登录页"
-			}
+			page.NodeName = docNames[page.NodeID]
 		}
 		return hotPages, nil
 	case consts.StatDay7, consts.StatDay30, consts.StatDay90:
-		hotPageMap, err := u.repo.GetHotPagesByHour(ctx, kbID, int64(day)*24)
+		hotPages, err := u.repo.GetHotPagesNoLimit(ctx, kbID)
 		if err != nil {
 			return nil, err
 		}
 
-		// 转换 map 为 slice 并排序
-		var hotPages []*domain.HotPage
-		var nodeIDs []string
-		for pageKey, count := range hotPageMap {
-			hotPages = append(hotPages, &domain.HotPage{
-				NodeID:   pageKey,
-				Count:    count,
-				NodeName: pageKey,
-			})
-			if !slices.Contains(domain.StatPageSceneNames, pageKey) {
-				nodeIDs = append(nodeIDs, pageKey)
-			}
-		}
-
-		sort.Slice(hotPages, func(i, j int) bool {
-			return hotPages[i].Count > hotPages[j].Count
+		hotPagesMap := lo.SliceToMap(hotPages, func(page *domain.HotPage) (string, int64) {
+			return page.NodeID, page.Count
 		})
 
-		if len(hotPages) > 10 {
-			hotPages = hotPages[:10]
+		hotPageMapHour, err := u.repo.GetHotPagesByHour(ctx, kbID, int64(day)*24)
+		if err != nil {
+			return nil, err
 		}
 
-		if len(nodeIDs) > 0 {
-			docNames, err := u.nodeRepo.GetNodeNameByNodeIDs(ctx, nodeIDs)
-			if err != nil {
-				return nil, err
-			}
-			for _, page := range hotPages {
-				if !slices.Contains(domain.StatPageSceneNames, page.NodeID) {
-					name, ok := docNames[page.NodeID]
-					if ok {
-						page.NodeName = name
-					}
-				}
-			}
+		for pageKey, count := range hotPagesMap {
+			hotPageMapHour[pageKey] = +count
 		}
 
-		return hotPages, nil
+		finalPage := make([]*domain.HotPage, 0)
+		for pageKey, count := range hotPageMapHour {
+			finalPage = append(finalPage, &domain.HotPage{
+				Count:  count,
+				NodeID: pageKey,
+			})
+		}
+
+		sort.Slice(finalPage, func(i, j int) bool {
+			return finalPage[i].Count > finalPage[j].Count
+		})
+
+		if len(finalPage) > 10 {
+			finalPage = finalPage[:10]
+		}
+
+		nodeIDs := lo.Uniq(lo.Map(finalPage, func(page *domain.HotPage, _ int) string {
+			return page.NodeID
+		}))
+		docNames, err := u.nodeRepo.GetNodeNameByNodeIDs(ctx, nodeIDs)
+		if err != nil {
+			return nil, err
+		}
+		for i := range finalPage {
+			finalPage[i].NodeName = docNames[finalPage[i].NodeID]
+		}
+
+		return finalPage, nil
+
 	default:
 		return nil, errors.New("invalid stat day")
 	}

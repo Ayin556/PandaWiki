@@ -30,10 +30,24 @@ func (r *StatRepository) GetHotPages(ctx context.Context, kbID string) ([]*domai
 	var hotPages []*domain.HotPage
 	if err := r.db.WithContext(ctx).Model(&domain.StatPage{}).
 		Where("kb_id = ?", kbID).
-		Group("scene, node_id").
-		Select("scene, node_id, COUNT(*) as count").
+		Where("scene = ?", domain.StatPageSceneNodeDetail).
+		Group("node_id").
+		Select("node_id, COUNT(*) as count").
 		Order("count DESC").
 		Limit(10).
+		Find(&hotPages).Error; err != nil {
+		return nil, err
+	}
+	return hotPages, nil
+}
+
+func (r *StatRepository) GetHotPagesNoLimit(ctx context.Context, kbID string) ([]*domain.HotPage, error) {
+	var hotPages []*domain.HotPage
+	if err := r.db.WithContext(ctx).Model(&domain.StatPage{}).
+		Where("kb_id = ?", kbID).
+		Where("scene = ?", domain.StatPageSceneNodeDetail).
+		Group("node_id").
+		Select("node_id, COUNT(*) as count").
 		Find(&hotPages).Error; err != nil {
 		return nil, err
 	}
