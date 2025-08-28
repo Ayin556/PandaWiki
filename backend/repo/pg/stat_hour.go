@@ -183,47 +183,17 @@ func (r *StatRepository) GetHotPagesOneHour(ctx context.Context, kbID string) (m
 	var hotPages []*domain.HotPage
 	if err := r.db.WithContext(ctx).Model(&domain.StatPage{}).
 		Where("kb_id = ?", kbID).
+		Where("scene = ?", domain.StatPageSceneNodeDetail).
 		Where("created_at >= ? AND created_at < ?", utils.GetTimeHourOffset(-1), utils.GetTimeHourOffset(0)).
-		Group("scene, node_id").
-		Select("scene, node_id, COUNT(*) as count").
+		Group("node_id").
+		Select("node_id, COUNT(*) as count").
 		Order("count DESC").
-		Limit(10).
 		Find(&hotPages).Error; err != nil {
 		return nil, err
 	}
 
 	if len(hotPages) == 0 {
 		return make(map[string]int64), nil
-	}
-
-	nodeIDs := lo.Uniq(lo.Map(hotPages, func(page *domain.HotPage, _ int) string {
-		return page.NodeID
-	}))
-	nodesMap := make(map[string]string)
-	for _, chunk := range lo.Chunk(nodeIDs, 1000) {
-		var nodes []*domain.Node
-		if err := r.db.WithContext(ctx).
-			Model(&domain.Node{}).
-			Where("id IN ?", chunk).
-			Select("id, name").
-			Find(&nodes).Error; err != nil {
-			return nil, err
-		}
-		for _, node := range nodes {
-			nodesMap[node.ID] = node.Name
-		}
-	}
-
-	for _, page := range hotPages {
-		switch page.Scene {
-		case domain.StatPageSceneNodeDetail:
-		case domain.StatPageSceneWelcome:
-			page.NodeID = "欢迎页"
-		case domain.StatPageSceneChat:
-			page.NodeID = "问答页"
-		case domain.StatPageSceneLogin:
-			page.NodeID = "登录页"
-		}
 	}
 
 	refererHostCount := lo.SliceToMap(hotPages, func(item *domain.HotPage) (string, int64) {
@@ -234,18 +204,6 @@ func (r *StatRepository) GetHotPagesOneHour(ctx context.Context, kbID string) (m
 }
 
 func (r *StatRepository) GetHotPagesByHour(ctx context.Context, kbID string, startHour int64) (map[string]int64, error) {
-	// 查询实时数据
-	var hotPages []*domain.HotPage
-	if err := r.db.WithContext(ctx).Model(&domain.StatPage{}).
-		Where("kb_id = ?", kbID).
-		Where("created_at > ?", utils.GetTimeHourOffset(-24)).
-		Group("scene, node_id").
-		Select("scene, node_id, COUNT(*) as count").
-		Order("count DESC").
-		Find(&hotPages).Error; err != nil {
-		return nil, err
-	}
-
 	// 查询小时统计表中的聚合数据
 	counts := make(map[string]int64)
 	hotPageMaps := make([]domain.MapStrInt64, 0)
@@ -261,17 +219,7 @@ func (r *StatRepository) GetHotPagesByHour(ctx context.Context, kbID string, sta
 		}
 	}
 
-	// 合并实时数据和聚合数据
-	finalHotPagesMap := make(map[string]int64)
-	for _, item := range hotPages {
-		finalHotPagesMap[item.NodeID] = item.Count
-	}
-
-	for host, count := range counts {
-		finalHotPagesMap[host] += count
-	}
-
-	return finalHotPagesMap, nil
+	return counts, nil
 }
 
 func (r *StatRepository) GetHotBrowsersOneHour(ctx context.Context, kbID string) (map[string]int64, error) {
