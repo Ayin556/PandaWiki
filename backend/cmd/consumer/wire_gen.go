@@ -11,7 +11,11 @@ import (
 	mq2 "github.com/chaitin/panda-wiki/handler/mq"
 	"github.com/chaitin/panda-wiki/log"
 	"github.com/chaitin/panda-wiki/mq"
+	cache2 "github.com/chaitin/panda-wiki/repo/cache"
+	ipdb2 "github.com/chaitin/panda-wiki/repo/ipdb"
 	pg2 "github.com/chaitin/panda-wiki/repo/pg"
+	"github.com/chaitin/panda-wiki/store/cache"
+	"github.com/chaitin/panda-wiki/store/ipdb"
 	"github.com/chaitin/panda-wiki/store/pg"
 	"github.com/chaitin/panda-wiki/store/rag"
 	"github.com/chaitin/panda-wiki/usecase"
@@ -47,8 +51,21 @@ func createApp() (*App, error) {
 	if err != nil {
 		return nil, err
 	}
-	statRepository := pg2.NewStatRepository(db)
-	statCronHandler, err := mq2.NewStatCronHandler(logger, statRepository)
+	cacheCache, err := cache.NewCache(configConfig)
+	if err != nil {
+		return nil, err
+	}
+	statRepository := pg2.NewStatRepository(db, cacheCache)
+	appRepository := pg2.NewAppRepository(db, logger)
+	ipdbIPDB, err := ipdb.NewIPDB(configConfig, logger)
+	if err != nil {
+		return nil, err
+	}
+	ipAddressRepo := ipdb2.NewIPAddressRepo(ipdbIPDB, logger)
+	geoRepo := cache2.NewGeoCache(cacheCache, db, logger)
+	authRepo := pg2.NewAuthRepo(db, logger)
+	statUseCase := usecase.NewStatUseCase(statRepository, nodeRepository, conversationRepository, appRepository, ipAddressRepo, geoRepo, authRepo, knowledgeBaseRepository, logger)
+	statCronHandler, err := mq2.NewStatCronHandler(logger, statRepository, statUseCase)
 	if err != nil {
 		return nil, err
 	}

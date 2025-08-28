@@ -90,6 +90,18 @@ definitions:
     - SourceTypeGitHub
     - SourceTypeCAS
     - SourceTypeLDAP
+  consts.StatDay:
+    enum:
+    - 1
+    - 7
+    - 30
+    - 90
+    type: integer
+    x-enum-varnames:
+    - StatDay1
+    - StatDay7
+    - StatDay30
+    - StatDay90
   consts.UserKBPermission:
     enum:
     - ""
@@ -517,6 +529,15 @@ definitions:
     - AppTypeWechatServiceBot
     - AppTypeDisCordBot
     - AppTypeWechatOfficialAccount
+  domain.AuthUserInfo:
+    properties:
+      avatar_url:
+        type: string
+      email:
+        type: string
+      username:
+        type: string
+    type: object
   domain.BatchMoveReq:
     properties:
       ids:
@@ -537,6 +558,13 @@ definitions:
         items:
           $ref: '#/definitions/domain.Link'
         type: array
+      name:
+        type: string
+    type: object
+  domain.BrowserCount:
+    properties:
+      count:
+        type: integer
       name:
         type: string
     type: object
@@ -661,6 +689,15 @@ definitions:
         type: string
       subject:
         type: string
+    type: object
+  domain.ConversationDistribution:
+    properties:
+      app_id:
+        type: string
+      app_type:
+        $ref: '#/definitions/domain.AppType'
+      count:
+        type: integer
     type: object
   domain.ConversationInfo:
     properties:
@@ -1020,6 +1057,35 @@ definitions:
       space_id:
         type: string
     type: object
+  domain.HotBrowser:
+    properties:
+      browser:
+        items:
+          $ref: '#/definitions/domain.BrowserCount'
+        type: array
+      os:
+        items:
+          $ref: '#/definitions/domain.BrowserCount'
+        type: array
+    type: object
+  domain.HotPage:
+    properties:
+      count:
+        type: integer
+      node_id:
+        type: string
+      node_name:
+        type: string
+      scene:
+        $ref: '#/definitions/domain.StatPageScene'
+    type: object
+  domain.HotRefererHost:
+    properties:
+      count:
+        type: integer
+      referer_host:
+        type: string
+    type: object
   domain.IPAddress:
     properties:
       city:
@@ -1030,6 +1096,32 @@ definitions:
         type: string
       province:
         type: string
+    type: object
+  domain.InstantCountResp:
+    properties:
+      count:
+        type: integer
+      time:
+        type: string
+    type: object
+  domain.InstantPageResp:
+    properties:
+      created_at:
+        type: string
+      info:
+        $ref: '#/definitions/domain.AuthUserInfo'
+      ip:
+        type: string
+      ip_address:
+        $ref: '#/definitions/domain.IPAddress'
+      node_id:
+        type: string
+      node_name:
+        type: string
+      scene:
+        $ref: '#/definitions/domain.StatPageScene'
+      user_id:
+        type: integer
     type: object
   domain.KBReleaseListItemResp:
     properties:
@@ -2002,6 +2094,17 @@ definitions:
     required:
     - id
     - new_password
+    type: object
+  v1.StatCountResp:
+    properties:
+      conversation_count:
+        type: integer
+      ip_count:
+        type: integer
+      page_visit_count:
+        type: integer
+      session_count:
+        type: integer
     type: object
   v1.UserInfoResp:
     properties:
@@ -3525,10 +3628,22 @@ paths:
     get:
       consumes:
       - application/json
-      description: GetBrowsers
+      description: 客户端统计
       parameters:
-      - description: kb_id
+      - enum:
+        - 1
+        - 7
+        - 30
+        - 90
         in: query
+        name: day
+        type: integer
+        x-enum-varnames:
+        - StatDay1
+        - StatDay7
+        - StatDay30
+        - StatDay90
+      - in: query
         name: kb_id
         required: true
         type: string
@@ -3538,18 +3653,37 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.Response'
-      summary: GetBrowsers
+            allOf:
+            - $ref: '#/definitions/domain.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.HotBrowser'
+              type: object
+      security:
+      - bearerAuth: []
+      summary: 客户端统计
       tags:
       - stat
   /api/v1/stat/conversation_distribution:
     get:
       consumes:
       - application/json
-      description: GetConversationDistribution
+      description: 问答来源
       parameters:
-      - description: kb_id
+      - enum:
+        - 1
+        - 7
+        - 30
+        - 90
         in: query
+        name: day
+        type: integer
+        x-enum-varnames:
+        - StatDay1
+        - StatDay7
+        - StatDay30
+        - StatDay90
+      - in: query
         name: kb_id
         required: true
         type: string
@@ -3559,18 +3693,39 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.Response'
-      summary: GetConversationDistribution
+            allOf:
+            - $ref: '#/definitions/domain.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.ConversationDistribution'
+                  type: array
+              type: object
+      security:
+      - bearerAuth: []
+      summary: 问答来源
       tags:
       - stat
   /api/v1/stat/count:
     get:
       consumes:
       - application/json
-      description: GetCount
+      description: 全局统计
       parameters:
-      - description: kb_id
+      - enum:
+        - 1
+        - 7
+        - 30
+        - 90
         in: query
+        name: day
+        type: integer
+        x-enum-varnames:
+        - StatDay1
+        - StatDay7
+        - StatDay30
+        - StatDay90
+      - in: query
         name: kb_id
         required: true
         type: string
@@ -3580,18 +3735,37 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.Response'
-      summary: GetCount
+            allOf:
+            - $ref: '#/definitions/domain.PWResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/v1.StatCountResp'
+              type: object
+      security:
+      - bearerAuth: []
+      summary: 全局统计
       tags:
       - stat
   /api/v1/stat/geo_count:
     get:
       consumes:
       - application/json
-      description: GetGeoCount
+      description: 用户地理分布
       parameters:
-      - description: kb_id
+      - enum:
+        - 1
+        - 7
+        - 30
+        - 90
         in: query
+        name: day
+        type: integer
+        x-enum-varnames:
+        - StatDay1
+        - StatDay7
+        - StatDay30
+        - StatDay90
+      - in: query
         name: kb_id
         required: true
         type: string
@@ -3602,17 +3776,31 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/domain.Response'
-      summary: GetGeoCount
+      security:
+      - bearerAuth: []
+      summary: 用户地理分布
       tags:
       - stat
   /api/v1/stat/hot_pages:
     get:
       consumes:
       - application/json
-      description: GetHotPages
+      description: 热门文档
       parameters:
-      - description: kb_id
+      - enum:
+        - 1
+        - 7
+        - 30
+        - 90
         in: query
+        name: day
+        type: integer
+        x-enum-varnames:
+        - StatDay1
+        - StatDay7
+        - StatDay30
+        - StatDay90
+      - in: query
         name: kb_id
         required: true
         type: string
@@ -3622,8 +3810,17 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.Response'
-      summary: GetHotPages
+            allOf:
+            - $ref: '#/definitions/domain.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.HotPage'
+                  type: array
+              type: object
+      security:
+      - bearerAuth: []
+      summary: 热门文档
       tags:
       - stat
   /api/v1/stat/instant_count:
@@ -3632,8 +3829,7 @@ paths:
       - application/json
       description: GetInstantCount
       parameters:
-      - description: kb_id
-        in: query
+      - in: query
         name: kb_id
         required: true
         type: string
@@ -3643,7 +3839,16 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.Response'
+            allOf:
+            - $ref: '#/definitions/domain.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.InstantCountResp'
+                  type: array
+              type: object
+      security:
+      - bearerAuth: []
       summary: GetInstantCount
       tags:
       - stat
@@ -3653,8 +3858,7 @@ paths:
       - application/json
       description: GetInstantPages
       parameters:
-      - description: kb_id
-        in: query
+      - in: query
         name: kb_id
         required: true
         type: string
@@ -3664,7 +3868,16 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.Response'
+            allOf:
+            - $ref: '#/definitions/domain.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.InstantPageResp'
+                  type: array
+              type: object
+      security:
+      - bearerAuth: []
       summary: GetInstantPages
       tags:
       - stat
@@ -3672,10 +3885,22 @@ paths:
     get:
       consumes:
       - application/json
-      description: GetRefererHosts
+      description: 来源域名
       parameters:
-      - description: kb_id
+      - enum:
+        - 1
+        - 7
+        - 30
+        - 90
         in: query
+        name: day
+        type: integer
+        x-enum-varnames:
+        - StatDay1
+        - StatDay7
+        - StatDay30
+        - StatDay90
+      - in: query
         name: kb_id
         required: true
         type: string
@@ -3685,8 +3910,17 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.Response'
-      summary: GetRefererHosts
+            allOf:
+            - $ref: '#/definitions/domain.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.HotRefererHost'
+                  type: array
+              type: object
+      security:
+      - bearerAuth: []
+      summary: 来源域名
       tags:
       - stat
   /api/v1/user:
