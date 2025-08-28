@@ -164,7 +164,7 @@ func (u *NodeUsecase) GetNodeReleaseDetailByKBIDAndID(ctx context.Context, kbID,
 }
 
 func (u *NodeUsecase) MoveNode(ctx context.Context, req *domain.MoveNodeReq) error {
-	return u.nodeRepo.MoveNodeBetween(ctx, req.ID, req.ParentID, req.PrevID, req.NextID)
+	return u.nodeRepo.MoveNodeBetween(ctx, req.ID, req.ParentID, req.PrevID, req.NextID, req.KbID)
 }
 
 func (u *NodeUsecase) SummaryNode(ctx context.Context, req *domain.NodeSummaryReq) (string, error) {
