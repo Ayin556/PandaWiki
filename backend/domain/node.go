@@ -231,6 +231,7 @@ func (n *ShareNodeListItemResp) GetURL(baseURL string) string {
 
 type MoveNodeReq struct {
 	ID       string `json:"id" validate:"required"`
+	KbID     string `json:"kb_id" validate:"required"`
 	ParentID string `json:"parent_id"`
 	PrevID   string `json:"prev_id"`
 	NextID   string `json:"next_id"`

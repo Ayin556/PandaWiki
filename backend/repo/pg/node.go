@@ -453,13 +453,14 @@ func (r *NodeRepository) GetNodeReleaseDetailByKBIDAndID(ctx context.Context, kb
 	return node, nil
 }
 
-func (r *NodeRepository) MoveNodeBetween(ctx context.Context, id string, parentID string, prevID, nextID string) error {
+func (r *NodeRepository) MoveNodeBetween(ctx context.Context, id, parentID, prevID, nextID, kbId string) error {
 	return r.db.Transaction(func(tx *gorm.DB) error {
 		var prevPos, maxPos float64 = 0, domain.MaxPosition
 		if prevID != "" {
 			var prevNode *domain.Node
 			if err := tx.Model(&domain.Node{}).
 				Where("id = ?", prevID).
+				Where("kb_id = ?", kbId).
 				Where("parent_id = ?", parentID).
 				Select("position, parent_id").
 				First(&prevNode).Error; err != nil {
@@ -472,6 +473,7 @@ func (r *NodeRepository) MoveNodeBetween(ctx context.Context, id string, parentI
 			if err := tx.Model(&domain.Node{}).
 				Where("id = ?", nextID).
 				Where("parent_id = ?", parentID).
+				Where("kb_id = ?", kbId).
 				Select("position, parent_id").
 				First(&nextNode).Error; err != nil {
 				return err
