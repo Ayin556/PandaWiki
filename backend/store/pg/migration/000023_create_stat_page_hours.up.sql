@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS stat_page_hours (
     conversation_distribution JSONB NULL,
     hot_referer_host JSONB NULL,
     hot_page JSONB NULL,
+    hot_os JSONB NULL,
     hot_browser JSONB NULL,
     created_at timestamptz NOT NULL DEFAULT NOW(),
     UNIQUE(kb_id, hour)
