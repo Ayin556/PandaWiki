@@ -68,7 +68,7 @@ func (h *UserHandler) CreateUser(c echo.Context) error {
 		Account:  req.Account,
 		Password: req.Password,
 		Role:     req.Role,
-	})
+	}, consts.GetLicenseEdition(c))
 	if err != nil {
 		return h.NewResponseWithError(c, "failed to create user", err)
 	}

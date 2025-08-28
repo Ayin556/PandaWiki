@@ -5594,10 +5594,14 @@ const docTemplate = `{
         "domain.MoveNodeReq": {
             "type": "object",
             "required": [
-                "id"
+                "id",
+                "kb_id"
             ],
             "properties": {
                 "id": {
+                    "type": "string"
+                },
+                "kb_id": {
                     "type": "string"
                 },
                 "next_id": {
