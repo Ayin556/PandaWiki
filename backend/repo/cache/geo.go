@@ -73,26 +73,11 @@ func (r *GeoRepo) GetLast24HourGeo(ctx context.Context, kbID string) (map[string
 func (r *GeoRepo) GetGeoByHour(ctx context.Context, kbID string, startHour int64) (map[string]int64, error) {
 	counts := make(map[string]int64)
 
-	key := fmt.Sprintf("geo:%s:%s", kbID, time.Now().Format("2006-01-02-15"))
-
-	values, err := r.cache.HGetAll(ctx, key).Result()
-	if err != nil {
-		return nil, fmt.Errorf("get geo count failed: %w", err)
-	}
-
-	for field, value := range values {
-		valueInt, err := strconv.ParseInt(value, 10, 64)
-		if err != nil {
-			return nil, fmt.Errorf("parse geo count failed: %w", err)
-		}
-		counts[field] += valueInt
-	}
-
 	geoCounts := make([]domain.MapStrInt64, 0)
 	if err := r.db.WithContext(ctx).Model(&domain.StatPageHour{}).
 		Select("geo_count").
 		Where("kb_id = ?", kbID).
-		Where("hour >=  ?", utils.GetTimeHourOffset(-startHour)).
+		Where("hour >= ? and hour < ?", utils.GetTimeHourOffset(-startHour), utils.GetTimeHourOffset(-24)).
 		Pluck("geo_count", &geoCounts).Error; err != nil {
 		return nil, err
 	}

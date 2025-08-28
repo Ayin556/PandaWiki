@@ -251,7 +251,7 @@ func (r *ConversationRepository) GetConversationDistributionByHour(ctx context.C
 	if err := r.db.WithContext(ctx).Model(&domain.StatPageHour{}).
 		Select("conversation_distribution").
 		Where("kb_id = ?", kbID).
-		Where("hour >=  ?", utils.GetTimeHourOffset(-startHour)).
+		Where("hour >= ? and hour < ?", utils.GetTimeHourOffset(-startHour), utils.GetTimeHourOffset(-24)).
 		Pluck("conversation_distribution", &distributions).Error; err != nil {
 		return nil, err
 	}

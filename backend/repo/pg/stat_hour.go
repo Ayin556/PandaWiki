@@ -116,7 +116,7 @@ func (r *StatRepository) GetHotRefererHostsByHour(ctx context.Context, kbID stri
 	var hotRefererHosts []*domain.HotRefererHost
 	if err := r.db.WithContext(ctx).Model(&domain.StatPage{}).
 		Where("kb_id = ?", kbID).
-		Where("created_at > ?", utils.GetTimeHourOffset(0)).
+		Where("created_at > ?", utils.GetTimeHourOffset(-24)).
 		Group("referer_host").
 		Select("referer_host, COUNT(*) as count").
 		Order("count DESC").
@@ -130,7 +130,7 @@ func (r *StatRepository) GetHotRefererHostsByHour(ctx context.Context, kbID stri
 	if err := r.db.WithContext(ctx).Model(&domain.StatPageHour{}).
 		Select("hot_referer_host").
 		Where("kb_id = ?", kbID).
-		Where("hour >=  ?", utils.GetTimeHourOffset(-startHour)).
+		Where("hour >= ? and hour < ?", utils.GetTimeHourOffset(-startHour), utils.GetTimeHourOffset(-24)).
 		Find(&statPageHours).Error; err != nil {
 		return nil, err
 	}
@@ -238,7 +238,7 @@ func (r *StatRepository) GetHotPagesByHour(ctx context.Context, kbID string, sta
 	var hotPages []*domain.HotPage
 	if err := r.db.WithContext(ctx).Model(&domain.StatPage{}).
 		Where("kb_id = ?", kbID).
-		Where("created_at > ?", utils.GetTimeHourOffset(0)).
+		Where("created_at > ?", utils.GetTimeHourOffset(-24)).
 		Group("scene, node_id").
 		Select("scene, node_id, COUNT(*) as count").
 		Order("count DESC").
@@ -251,7 +251,7 @@ func (r *StatRepository) GetHotPagesByHour(ctx context.Context, kbID string, sta
 	hotPageMaps := make([]domain.MapStrInt64, 0)
 	if err := r.db.WithContext(ctx).Model(&domain.StatPageHour{}).
 		Where("kb_id = ?", kbID).
-		Where("hour >=  ?", utils.GetTimeHourOffset(-startHour)).
+		Where("hour >= ? and hour < ?", utils.GetTimeHourOffset(-startHour), utils.GetTimeHourOffset(-24)).
 		Pluck("hot_page", &hotPageMaps).Error; err != nil {
 		return nil, err
 	}
@@ -325,7 +325,7 @@ func (r *StatRepository) GetStatPageCountByHour(ctx context.Context, kbID string
 	if err := r.db.WithContext(ctx).Model(&domain.StatPageHour{}).
 		Select("SUM(ip_count) as ip_count, SUM(session_count) as session_count, SUM(page_visit_count) as page_visit_count, SUM(conversation_count) as conversation_count").
 		Where("kb_id = ?", kbID).
-		Where("hour >=  ?", utils.GetTimeHourOffset(-startHour)).
+		Where("hour >=  ? and hour < ?", utils.GetTimeHourOffset(-startHour), utils.GetTimeHourOffset(-24)).
 		Scan(&count).Error; err != nil {
 		return nil, err
 	}
@@ -337,7 +337,7 @@ func (r *StatRepository) GetHotBrowsersByHour(ctx context.Context, kbID string, 
 	var browserCount []domain.BrowserCount
 	query := r.db.WithContext(ctx).Model(&domain.StatPage{}).
 		Where("kb_id = ?", kbID).
-		Where("created_at > ?", utils.GetTimeHourOffset(0)).
+		Where("created_at > ?", utils.GetTimeHourOffset(-24)).
 		Group("browser_name").
 		Select("browser_name as name, COUNT(*) as count")
 	if err := query.Order("count DESC").Find(&browserCount).Error; err != nil {
@@ -347,7 +347,7 @@ func (r *StatRepository) GetHotBrowsersByHour(ctx context.Context, kbID string, 
 	var osCount []domain.BrowserCount
 	query = r.db.WithContext(ctx).Model(&domain.StatPage{}).
 		Where("kb_id = ?", kbID).
-		Where("created_at > ?", utils.GetTimeHourOffset(0)).
+		Where("created_at > ?", utils.GetTimeHourOffset(-24)).
 		Group("browser_os").
 		Select("browser_os as name, COUNT(*) as count")
 	if err := query.Order("count DESC").Find(&osCount).Error; err != nil {
@@ -358,7 +358,7 @@ func (r *StatRepository) GetHotBrowsersByHour(ctx context.Context, kbID string, 
 	if err := r.db.WithContext(ctx).Model(&domain.StatPageHour{}).
 		Select("hot_os, hot_browser").
 		Where("kb_id = ?", kbID).
-		Where("hour >= ?", utils.GetTimeHourOffset(-startHour)).
+		Where("hour >= ? and hour < ?", utils.GetTimeHourOffset(-startHour), utils.GetTimeHourOffset(-24)).
 		Find(&statPageHours).Error; err != nil {
 		return nil, err
 	}
