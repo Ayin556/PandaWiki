@@ -5,12 +5,13 @@ import { copyText, generatePassword } from '@/utils';
 import { CheckCircle } from '@mui/icons-material';
 import { Box, Button, MenuItem, Select, Stack, TextField } from '@mui/material';
 import { FormItem } from '@/components/Form';
-import { Modal } from 'ct-mui';
+import { Modal, Message } from 'ct-mui';
 import { useState, useMemo, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useAppSelector } from '@/store';
 
 import { ConstsUserKBPermission, V1KBUserInviteReq } from '@/request/types';
+import { ConstsLicenseEdition } from '@/request/pro/types';
 
 type Role = 'admin' | 'user';
 
@@ -20,7 +21,24 @@ const PERM_MAP = {
   [ConstsUserKBPermission.UserKBPermissionDataOperate]: '数据运营',
 };
 
-const MemberAdd = ({ refresh }: { refresh: () => void }) => {
+const VERSION_MAP = {
+  [ConstsLicenseEdition.LicenseEditionFree]: {
+    message: '开源版只支持 1 个管理员',
+    max: 1,
+  },
+  [ConstsLicenseEdition.LicenseEditionContributor]: {
+    message: '联创版最多支持 3 个管理员',
+    max: 3,
+  },
+};
+
+const MemberAdd = ({
+  refresh,
+  userLen,
+}: {
+  refresh: () => void;
+  userLen: number;
+}) => {
   const [addMember, setAddMember] = useState(false);
   const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState('');
@@ -105,7 +123,15 @@ const MemberAdd = ({ refresh }: { refresh: () => void }) => {
       <Button
         size='small'
         variant='outlined'
-        onClick={() => setAddMember(true)}
+        onClick={() => {
+          const versionLimit =
+            VERSION_MAP[license.edition as keyof typeof VERSION_MAP];
+          if (versionLimit && userLen >= versionLimit.max) {
+            Message.error(versionLimit.message);
+            return;
+          }
+          setAddMember(true);
+        }}
       >
         添加新管理员
       </Button>

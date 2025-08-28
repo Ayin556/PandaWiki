@@ -203,6 +203,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
       kb_id,
       source_type: source_type as ConstsSourceType,
     }).then(res => {
+      if (!res) return;
       setMemberList(res.auths || []);
       setValue('client_id', res.client_id!);
       setValue('client_secret', res.client_secret!);
