@@ -20,22 +20,22 @@ const ClientStat = ({ tab }: { tab: ActiveTab }) => {
     if (!kb_id) return;
     getApiV1StatBrowsers({ kb_id, day: tab }).then(res => {
       setOsList(
-        (((res as any).os || []) as any[])
-          .sort((a, b) => b.count - a.count)
+        (res.os || [])
+          .sort((a, b) => b.count! - a.count!)
           .slice(0, 5)
           .map((it, idx) => ({
-            name: it.name,
-            count: it.count,
+            name: it.name!,
+            count: it.count!,
             color: chartColor[idx],
           })),
       );
       setBrowserList(
-        (((res as any).browser || []) as any[])
-          .sort((a, b) => b.count - a.count)
+        (res.browser || [])
+          .sort((a, b) => b.count! - a.count!)
           .slice(0, 5)
           .map((it, idx) => ({
-            name: it.name,
-            count: it.count,
+            name: it.name!,
+            count: it.count!,
             color: chartColor[idx],
           })),
       );
@@ -89,7 +89,7 @@ const ClientStat = ({ tab }: { tab: ActiveTab }) => {
                     direction={'row'}
                     alignItems={'center'}
                     justifyContent={'space-between'}
-                    key={it.name}
+                    key={it.name!}
                   >
                     <Stack direction={'row'} alignItems={'center'} gap={1}>
                       <Box
@@ -100,7 +100,7 @@ const ClientStat = ({ tab }: { tab: ActiveTab }) => {
                           bgcolor: it.color,
                         }}
                       ></Box>
-                      <Box>{it.name || '-'}</Box>
+                      <Box>{it.name! || '-'}</Box>
                     </Stack>
                     <Box sx={{ fontFamily: 'Gbold' }}>{it.count}</Box>
                   </Stack>

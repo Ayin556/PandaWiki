@@ -12,6 +12,12 @@
 
 import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
+  DomainConversationDistribution,
+  DomainHotBrowser,
+  DomainHotPage,
+  DomainHotRefererHost,
+  DomainInstantCountResp,
+  DomainInstantPageResp,
   DomainPWResponse,
   DomainResponse,
   GetApiV1StatBrowsersParams,
@@ -26,21 +32,28 @@ import {
 } from "./types";
 
 /**
- * @description GetBrowsers
+ * @description 客户端统计
  *
  * @tags stat
  * @name GetApiV1StatBrowsers
- * @summary GetBrowsers
+ * @summary 客户端统计
  * @request GET:/api/v1/stat/browsers
  * @secure
- * @response `200` `DomainResponse` OK
+ * @response `200` `(DomainResponse & {
+    data?: DomainHotBrowser,
+
+})` OK
  */
 
 export const getApiV1StatBrowsers = (
   query: GetApiV1StatBrowsersParams,
   params: RequestParams = {},
 ) =>
-  httpRequest<DomainResponse>({
+  httpRequest<
+    DomainResponse & {
+      data?: DomainHotBrowser;
+    }
+  >({
     path: `/api/v1/stat/browsers`,
     method: "GET",
     query: query,
@@ -51,21 +64,28 @@ export const getApiV1StatBrowsers = (
   });
 
 /**
- * @description GetConversationDistribution
+ * @description 问答来源
  *
  * @tags stat
  * @name GetApiV1StatConversationDistribution
- * @summary GetConversationDistribution
+ * @summary 问答来源
  * @request GET:/api/v1/stat/conversation_distribution
  * @secure
- * @response `200` `DomainResponse` OK
+ * @response `200` `(DomainResponse & {
+    data?: (DomainConversationDistribution)[],
+
+})` OK
  */
 
 export const getApiV1StatConversationDistribution = (
   query: GetApiV1StatConversationDistributionParams,
   params: RequestParams = {},
 ) =>
-  httpRequest<DomainResponse>({
+  httpRequest<
+    DomainResponse & {
+      data?: DomainConversationDistribution[];
+    }
+  >({
     path: `/api/v1/stat/conversation_distribution`,
     method: "GET",
     query: query,
@@ -76,11 +96,11 @@ export const getApiV1StatConversationDistribution = (
   });
 
 /**
- * @description StatsCount
+ * @description 全局统计
  *
  * @tags stat
  * @name GetApiV1StatCount
- * @summary StatsCount
+ * @summary 全局统计
  * @request GET:/api/v1/stat/count
  * @secure
  * @response `200` `(DomainPWResponse & {
@@ -108,11 +128,11 @@ export const getApiV1StatCount = (
   });
 
 /**
- * @description GetGeoCount
+ * @description 用户地理分布
  *
  * @tags stat
  * @name GetApiV1StatGeoCount
- * @summary GetGeoCount
+ * @summary 用户地理分布
  * @request GET:/api/v1/stat/geo_count
  * @secure
  * @response `200` `DomainResponse` OK
@@ -133,21 +153,28 @@ export const getApiV1StatGeoCount = (
   });
 
 /**
- * @description GetHotPages
+ * @description 热门文档
  *
  * @tags stat
  * @name GetApiV1StatHotPages
- * @summary GetHotPages
+ * @summary 热门文档
  * @request GET:/api/v1/stat/hot_pages
  * @secure
- * @response `200` `DomainResponse` OK
+ * @response `200` `(DomainResponse & {
+    data?: (DomainHotPage)[],
+
+})` OK
  */
 
 export const getApiV1StatHotPages = (
   query: GetApiV1StatHotPagesParams,
   params: RequestParams = {},
 ) =>
-  httpRequest<DomainResponse>({
+  httpRequest<
+    DomainResponse & {
+      data?: DomainHotPage[];
+    }
+  >({
     path: `/api/v1/stat/hot_pages`,
     method: "GET",
     query: query,
@@ -165,14 +192,21 @@ export const getApiV1StatHotPages = (
  * @summary GetInstantCount
  * @request GET:/api/v1/stat/instant_count
  * @secure
- * @response `200` `DomainResponse` OK
+ * @response `200` `(DomainResponse & {
+    data?: (DomainInstantCountResp)[],
+
+})` OK
  */
 
 export const getApiV1StatInstantCount = (
   query: GetApiV1StatInstantCountParams,
   params: RequestParams = {},
 ) =>
-  httpRequest<DomainResponse>({
+  httpRequest<
+    DomainResponse & {
+      data?: DomainInstantCountResp[];
+    }
+  >({
     path: `/api/v1/stat/instant_count`,
     method: "GET",
     query: query,
@@ -190,14 +224,21 @@ export const getApiV1StatInstantCount = (
  * @summary GetInstantPages
  * @request GET:/api/v1/stat/instant_pages
  * @secure
- * @response `200` `DomainResponse` OK
+ * @response `200` `(DomainResponse & {
+    data?: (DomainInstantPageResp)[],
+
+})` OK
  */
 
 export const getApiV1StatInstantPages = (
   query: GetApiV1StatInstantPagesParams,
   params: RequestParams = {},
 ) =>
-  httpRequest<DomainResponse>({
+  httpRequest<
+    DomainResponse & {
+      data?: DomainInstantPageResp[];
+    }
+  >({
     path: `/api/v1/stat/instant_pages`,
     method: "GET",
     query: query,
@@ -208,21 +249,28 @@ export const getApiV1StatInstantPages = (
   });
 
 /**
- * @description GetRefererHosts
+ * @description 来源域名
  *
  * @tags stat
  * @name GetApiV1StatRefererHosts
- * @summary GetRefererHosts
+ * @summary 来源域名
  * @request GET:/api/v1/stat/referer_hosts
  * @secure
- * @response `200` `DomainResponse` OK
+ * @response `200` `(DomainResponse & {
+    data?: (DomainHotRefererHost)[],
+
+})` OK
  */
 
 export const getApiV1StatRefererHosts = (
   query: GetApiV1StatRefererHostsParams,
   params: RequestParams = {},
 ) =>
-  httpRequest<DomainResponse>({
+  httpRequest<
+    DomainResponse & {
+      data?: DomainHotRefererHost[];
+    }
+  >({
     path: `/api/v1/stat/referer_hosts`,
     method: "GET",
     query: query,

@@ -191,6 +191,12 @@ export interface DomainAppDetailResp {
   type?: DomainAppType;
 }
 
+export interface DomainAppInfoResp {
+  name?: string;
+  recommend_nodes?: DomainRecommendNodeListResp[];
+  settings?: DomainAppSettingsResp;
+}
+
 export interface DomainAppSettings {
   /** AI feedback */
   ai_feedback_settings?: DomainAIFeedbackSettings;
@@ -331,6 +337,12 @@ export interface DomainAppSettingsResp {
   widget_bot_settings?: DomainWidgetBotSettings;
 }
 
+export interface DomainAuthUserInfo {
+  avatar_url?: string;
+  email?: string;
+  username?: string;
+}
+
 export interface DomainBatchMoveReq {
   ids: string[];
   kb_id: string;
@@ -339,6 +351,11 @@ export interface DomainBatchMoveReq {
 
 export interface DomainBrandGroup {
   links?: DomainLink[];
+  name?: string;
+}
+
+export interface DomainBrowserCount {
+  count?: number;
   name?: string;
 }
 
@@ -400,6 +417,12 @@ export interface DomainConversationDetailResp {
   references?: DomainConversationReference[];
   remote_ip?: string;
   subject?: string;
+}
+
+export interface DomainConversationDistribution {
+  app_id?: string;
+  app_type?: DomainAppType;
+  count?: number;
 }
 
 export interface DomainConversationInfo {
@@ -591,11 +614,44 @@ export interface DomainGetSpaceListResp {
   space_id?: string;
 }
 
+export interface DomainHotBrowser {
+  browser?: DomainBrowserCount[];
+  os?: DomainBrowserCount[];
+}
+
+export interface DomainHotPage {
+  count?: number;
+  node_id?: string;
+  node_name?: string;
+  scene?: DomainStatPageScene;
+}
+
+export interface DomainHotRefererHost {
+  count?: number;
+  referer_host?: string;
+}
+
 export interface DomainIPAddress {
   city?: string;
   country?: string;
   ip?: string;
   province?: string;
+}
+
+export interface DomainInstantCountResp {
+  count?: number;
+  time?: string;
+}
+
+export interface DomainInstantPageResp {
+  created_at?: string;
+  info?: DomainAuthUserInfo;
+  ip?: string;
+  ip_address?: DomainIPAddress;
+  node_id?: string;
+  node_name?: string;
+  scene?: DomainStatPageScene;
+  user_id?: number;
 }
 
 export interface DomainKBReleaseListItemResp {
@@ -660,6 +716,7 @@ export interface DomainModelParam {
 
 export interface DomainMoveNodeReq {
   id: string;
+  kb_id: string;
   next_id?: string;
   parent_id?: string;
   prev_id?: string;
@@ -1017,6 +1074,10 @@ export interface V1CreateUserReq {
   /** @minLength 8 */
   password: string;
   role: "admin" | "user";
+}
+
+export interface V1CreateUserResp {
+  id?: string;
 }
 
 export interface V1DeleteUserReq {

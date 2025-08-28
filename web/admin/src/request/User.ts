@@ -15,6 +15,7 @@ import {
   DomainPWResponse,
   DomainResponse,
   V1CreateUserReq,
+  V1CreateUserResp,
   V1DeleteUserReq,
   V1LoginReq,
   V1LoginResp,
@@ -48,14 +49,21 @@ export const getApiV1User = (params: RequestParams = {}) =>
  * @name PostApiV1UserCreate
  * @summary CreateUser
  * @request POST:/api/v1/user/create
- * @response `200` `DomainResponse` OK
+ * @response `200` `(DomainResponse & {
+    data?: V1CreateUserResp,
+
+})` OK
  */
 
 export const postApiV1UserCreate = (
   body: V1CreateUserReq,
   params: RequestParams = {},
 ) =>
-  httpRequest<DomainResponse>({
+  httpRequest<
+    DomainResponse & {
+      data?: V1CreateUserResp;
+    }
+  >({
     path: `/api/v1/user/create`,
     method: "POST",
     body: body,

@@ -1,4 +1,3 @@
-import { HotDocsItem } from '@/api';
 import { getApiV1StatHotPages } from '@/request/Stat';
 import Nodata from '@/assets/images/nodata.png';
 import Card from '@/components/Card';
@@ -7,18 +6,19 @@ import { Box, Stack } from '@mui/material';
 import { Ellipsis } from 'ct-mui';
 import { useEffect, useState } from 'react';
 import { ActiveTab, TimeList } from '.';
+import { DomainHotPage } from '@/request/types';
 
 const HotDocs = ({ tab }: { tab: ActiveTab }) => {
   const { kb_id = '' } = useAppSelector(state => state.config);
-  const [list, setList] = useState<HotDocsItem[]>([]);
+  const [list, setList] = useState<DomainHotPage[]>([]);
   const [max, setMax] = useState(0);
 
   useEffect(() => {
     if (!kb_id) return;
     getApiV1StatHotPages({ kb_id, day: tab }).then(res => {
-      const data = (res as any[]).sort((a, b) => b.count - a.count).slice(0, 7);
+      const data = res.sort((a, b) => b.count! - a.count!).slice(0, 7);
       setList(data);
-      setMax(Math.max(...data.map(item => item.count)));
+      setMax(Math.max(...data.map(item => item.count!)));
     });
   }, [tab, kb_id]);
 
@@ -69,7 +69,7 @@ const HotDocs = ({ tab }: { tab: ActiveTab }) => {
                     height: 6,
                     background:
                       'linear-gradient( 90deg, #3248F2 0%, #9E68FC 100%)',
-                    width: `${(it.count / max) * 100}%`,
+                    width: `${(it.count! / max) * 100}%`,
                     borderRadius: '3px',
                   }}
                 ></Box>
