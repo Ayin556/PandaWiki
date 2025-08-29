@@ -108,20 +108,20 @@ func (u *NodeUsecase) Update(ctx context.Context, req *domain.UpdateNodeReq, use
 	return nil
 }
 
-func (u *NodeUsecase) ValidateNodePerm(ctx context.Context, kbID, nodeId string, authId uint) error {
+func (u *NodeUsecase) ValidateNodePerm(ctx context.Context, kbID, nodeId string, authId uint) *domain.PWResponseErrCode {
 	node, err := u.nodeRepo.GetNodeReleaseDetailByKBIDAndID(ctx, kbID, nodeId)
 	if err != nil {
-		return err
+		return &domain.ErrCodeNotFound
 	}
 	switch node.Permissions.Visitable {
 	case consts.NodeAccessPermOpen:
 		return nil
 	case consts.NodeAccessPermClosed:
-		return domain.ErrPermissionDenied
+		return &domain.ErrCodePermissionDenied
 	case consts.NodeAccessPermPartial:
 		authGroups, err := u.authRepo.GetAuthGroupByAuthId(ctx, authId)
 		if err != nil {
-			return err
+			return &domain.ErrCodeInternalError
 		}
 
 		authGroupIds := lo.Map(authGroups, func(v domain.AuthGroup, i int) uint {
@@ -132,7 +132,7 @@ func (u *NodeUsecase) ValidateNodePerm(ctx context.Context, kbID, nodeId string,
 		if len(authGroupIds) != 0 {
 			nodeGroups, err := u.nodeRepo.GetNodeGroupsByGroupIdsPerm(ctx, authGroupIds, consts.NodePermNameVisitable)
 			if err != nil {
-				return err
+				return &domain.ErrCodeInternalError
 			}
 
 			nodeGroupIds = lo.Map(nodeGroups, func(v domain.NodeAuthGroup, i int) string {
@@ -141,10 +141,10 @@ func (u *NodeUsecase) ValidateNodePerm(ctx context.Context, kbID, nodeId string,
 		}
 		if !slices.Contains(nodeGroupIds, nodeId) {
 			u.logger.Error("ValidateNodePerm failed", log.Any("node_group_ids", nodeGroupIds), log.Any("node_id", nodeId))
-			return domain.ErrPermissionDenied
+			return &domain.ErrCodePermissionDenied
 		}
 	default:
-		return domain.ErrInternalServerError
+		return &domain.ErrCodeInternalError
 	}
 	return nil
 }

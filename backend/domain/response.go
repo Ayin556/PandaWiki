@@ -10,5 +10,8 @@ type PWResponse struct {
 type PWResponseErrCode PWResponse
 
 var (
-	ErrCodePermissionDenied = PWResponseErrCode{"permission denied", false, nil, 40003}
+	ErrCodeNil              = PWResponseErrCode{"success", true, nil, 0}
+	ErrCodePermissionDenied = PWResponseErrCode{"Permission Denied", false, nil, 40003}
+	ErrCodeNotFound         = PWResponseErrCode{"Not Found", false, nil, 40004}
+	ErrCodeInternalError    = PWResponseErrCode{"Internal Error", false, nil, 50001}
 )
