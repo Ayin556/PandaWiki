@@ -14,7 +14,7 @@ const PCLayout = ({ children }: { children: React.ReactNode }) => {
       <Catalog />
       <Stack sx={{ flex: 1, height: '100vh', overflow: 'auto' }}>
         <Header />
-        <Box
+        <Stack
           sx={{
             flex: 1,
             pt: 4,
@@ -24,7 +24,7 @@ const PCLayout = ({ children }: { children: React.ReactNode }) => {
           }}
         >
           {children}
-        </Box>
+        </Stack>
 
         <FooterProvider />
       </Stack>

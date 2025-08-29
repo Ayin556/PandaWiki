@@ -1,4 +1,3 @@
-'use client';
 import { FooterProvider } from '@/components/footer';
 import Header from '@/components/header';
 import Catalog from '@/views/node/Catalog';
