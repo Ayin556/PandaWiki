@@ -217,7 +217,7 @@ const KBCreate = () => {
         okText={'创建'}
         onOk={handleSubmit(onSubmit)}
         disableEscapeKeyDown={kbList.length === 0}
-        title={'创建知识库'}
+        title='创建 Wiki 站'
         closable={kbList.length > 0}
         showCancel={kbList.length > 0}
         okButtonProps={{ loading, disabled: !(http || https) }}

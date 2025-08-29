@@ -62,23 +62,28 @@ const Layout = async ({
   const headersList = await headers();
   const userAgent = headersList.get('user-agent');
 
-  const [kbDetail, authInfo]: any = await Promise.all([
+  const [kbDetailResolve, authInfoResolve] = await Promise.allSettled([
     getShareV1AppWebInfo(),
     // @ts-ignore
-    getShareProV1AuthInfo({})
-      .then(res => res)
-      .catch(() => Promise.resolve(undefined)),
+    getShareProV1AuthInfo({}),
   ]);
+
+  const authInfo: any =
+    authInfoResolve.status === 'fulfilled' ? authInfoResolve.value : undefined;
+  const kbDetail: any =
+    kbDetailResolve.status === 'fulfilled' ? kbDetailResolve.value : undefined;
 
   const themeMode = kbDetail?.settings?.theme_mode || 'light';
 
-  const { isMobile } = getSelectorsByUserAgent(userAgent || '');
+  const { isMobile } = getSelectorsByUserAgent(userAgent || '') || {
+    isMobile: false,
+  };
 
   return (
     <html lang='en'>
       <body className={`${gilory.variable}`}>
-        <ThemeProvider theme={themeMode === 'dark' ? darkTheme : lightTheme}>
-          <AppRouterCacheProvider>
+        <AppRouterCacheProvider>
+          <ThemeProvider theme={themeMode === 'dark' ? darkTheme : lightTheme}>
             <StoreProvider
               kbDetail={kbDetail}
               themeMode={themeMode || 'light'}
@@ -89,8 +94,8 @@ const Layout = async ({
                 {children}
               </Box>
             </StoreProvider>
-          </AppRouterCacheProvider>
-        </ThemeProvider>
+          </ThemeProvider>
+        </AppRouterCacheProvider>
       </body>
     </html>
   );

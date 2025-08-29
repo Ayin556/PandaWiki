@@ -16,6 +16,7 @@
     "*.{js,jsx,ts,tsx,css,scss,md,mdx,json,yml,yaml,mjs,cjs}": "prettier --write"
   },
   "dependencies": {
+    "@cap.js/widget": "^0.1.26",
     "@emotion/cache": "^11.14.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",

@@ -19,6 +19,7 @@ import {
   ConstsCopySetting,
 } from '@/request/types';
 import { getApiProV1Block, postApiProV1Block } from '@/request/pro/Block';
+import { ConstsCaptchaSettings } from '@/request/types';
 
 const StyledRadioLabel = styled('div')(({ theme }) => ({
   width: 100,
@@ -139,6 +140,7 @@ const WatermarkForm = ({
     </SettingCardItem>
   );
 };
+
 const VerificationForm = ({
   data,
   refresh,
@@ -148,101 +150,97 @@ const VerificationForm = ({
 }) => {
   const { license } = useAppSelector(state => state.config);
   const [isEdit, setIsEdit] = useState(false);
-  const {
-    control,
-    handleSubmit,
-    setValue,
-    watch,
-    formState: { errors },
-  } = useForm({
+  const { control, handleSubmit, setValue } = useForm({
     defaultValues: {
-      verification_enable: null,
-      comment_verification_enable: null,
+      chat_status: '' as ConstsCaptchaSettings['chat_status'],
+      comment_status: '' as ConstsCaptchaSettings['comment_status'],
     },
   });
 
-  const verificationEnable = watch('verification_enable');
   const isEnterprise = useMemo(() => {
     return license.edition === 2;
   }, [license]);
 
   const handleSaveVerification = handleSubmit(values => {
-    // if (!data?.id || values.verification_enable === null) return;
-    // putApiV1App(
-    //   { id: data.id },
-    //   {
-    //     settings: {
-    //       ...data?.settings,
-    //       verification_enable: values.verification_enable,
-    //       verification_content: values.verification_content,
-    //     },
-    //   },
-    // ).then(() => {
-    //   Message.success('保存成功');
-    //   setIsEdit(false);
-    // });
+    if (!data?.id) return;
+    putApiV1App(
+      { id: data.id },
+      {
+        settings: {
+          ...data?.settings,
+          captcha_settings: {
+            chat_status: values.chat_status,
+            comment_status: values.comment_status,
+          },
+        },
+      },
+    ).then(() => {
+      Message.success('保存成功');
+      setIsEdit(false);
+      refresh();
+    });
   });
 
   useEffect(() => {
     if (!data) return;
-    // setValue('verification_enable', data.settings?.verification_enable ?? null);
-    // setValue('verification_content', data.settings?.verification_content ?? '');
+    setValue('chat_status', data.settings?.captcha_settings?.chat_status);
+    setValue('comment_status', data.settings?.captcha_settings?.comment_status);
   }, [data]);
 
   return (
     <SettingCardItem
-      title='人机验证（敬请期待）'
+      title='人机验证'
       isEdit={isEdit}
       onSubmit={handleSaveVerification}
     >
-      <FormItem label='问答'>
+      <FormItem label='问答' tooltip={!isEnterprise && '企业版可用'}>
         <Controller
           control={control}
-          name='verification_enable'
+          name='chat_status'
           render={({ field }) => (
             <RadioGroup
               row
               {...field}
               onChange={e => {
                 setIsEdit(true);
-                field.onChange(e.target.value === 'true');
+                field.onChange(e.target.value);
               }}
             >
               <FormControlLabel
-                value={true}
-                control={<Radio size='small' disabled />}
+                value={'enable'}
+                control={<Radio size='small' disabled={!isEnterprise} />}
                 label={<StyledRadioLabel>需要验证码</StyledRadioLabel>}
               />
               <FormControlLabel
-                value={false}
-                control={<Radio size='small' disabled />}
+                value={'disable'}
+                control={<Radio size='small' disabled={!isEnterprise} />}
                 label={<StyledRadioLabel>无需验证码</StyledRadioLabel>}
               />
             </RadioGroup>
           )}
         />
       </FormItem>
-      <FormItem label='评论'>
+      <FormItem label='评论' tooltip={!isEnterprise && '企业版可用'}>
         <Controller
           control={control}
-          name='comment_verification_enable'
+          name='comment_status'
           render={({ field }) => (
             <RadioGroup
               row
               {...field}
               onChange={e => {
                 setIsEdit(true);
-                field.onChange(e.target.value === 'true');
+                field.onChange(e.target.value);
               }}
             >
               <FormControlLabel
-                value={true}
-                control={<Radio size='small' disabled />}
+                value={'enable'}
+                control={<Radio size='small' disabled={!isEnterprise} />}
                 label={<StyledRadioLabel>需要验证码</StyledRadioLabel>}
               />
               <FormControlLabel
-                value={false}
-                control={<Radio size='small' disabled />}
+                value={'disable'}
+                control={<Radio size='small' disabled={!isEnterprise} />}
                 label={<StyledRadioLabel>无需验证码</StyledRadioLabel>}
               />
             </RadioGroup>

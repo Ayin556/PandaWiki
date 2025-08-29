@@ -6,7 +6,7 @@ import { useStore } from '@/provider';
 import { Box, Button, Divider, Stack, TextField, alpha } from '@mui/material';
 import { Editor, UseTiptapReturn } from '@yu-cq/tiptap';
 import { Controller, useForm } from 'react-hook-form';
-
+import { useParams } from 'next/navigation';
 import FeedbackDialog from '@/components/feedbackModal';
 import TextSelectionTooltip from '@/components/textSelectionTooltip';
 import { useTextSelection } from '@/hooks/useTextSelection';
@@ -22,23 +22,27 @@ import 'dayjs/locale/zh-cn';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import React, { useEffect, useRef, useState } from 'react';
 
+// @ts-ignore
+import Cap from '@cap.js/widget';
+
 dayjs.extend(relativeTime);
 dayjs.locale('zh-cn');
 
 const DocContent = ({
   info,
   editorRef,
-  docId,
   kbInfo,
   commentList: propsCommentList,
 }: {
   info?: NodeDetail;
   editorRef: UseTiptapReturn;
-  docId: string;
   kbInfo?: KBDetail;
   commentList?: any[];
 }) => {
-  const { mobile = false, authInfo, catalogShow, catalogWidth } = useStore();
+  const { mobile = false, authInfo, kbDetail } = useStore();
+  const params = useParams() || {};
+  const [commentLoading, setCommentLoading] = useState(false);
+  const docId = params.id as string;
   const [commentList, setCommentList] = useState<any[]>(propsCommentList ?? []);
   const [appDetail, setAppDetail] = useState<any>(kbInfo?.settings);
   const {
@@ -123,19 +127,38 @@ const DocContent = ({
     ) {
       getComment();
     }
-  }, [docId, info, appDetail]);
+  }, [docId, info?.kb_id, appDetail?.web_app_comment_settings?.is_enable]);
 
   const onSubmit = handleSubmit(
     async (data: { content: string; name: string }) => {
-      postShareV1Comment({
+      setCommentLoading(true);
+      let token = '';
+      // @ts-ignore
+      if (kbDetail?.settings?.captcha_settings?.comment_status === 'enable') {
+        const cap = new Cap({
+          apiEndpoint: '/share/v1/captcha/',
+        });
+        try {
+          const solution = await cap.solve();
+          token = solution.token;
+        } catch (error) {
+          message.error('验证失败');
+          console.log(error, 'error---------');
+          return;
+        }
+      }
+
+      await postShareV1Comment({
         content: data.content,
         node_id: docId,
         user_name: data.name,
+        captcha_token: token,
       }).then(res => {
         getComment();
         reset();
         message.success('评论成功');
       });
+      setCommentLoading(false);
     },
   );
   if (!editorRef || !info) return null;
@@ -154,16 +177,10 @@ const DocContent = ({
 
   return (
     <Box
+      id='doc-content'
       ref={docContentRef}
-      style={{
-        marginLeft: catalogShow ? `${catalogWidth!}px` : '16px',
-        width: `calc(100% - ${catalogShow ? catalogWidth! : 16}px - 225px)`,
-        ...(mobile && {
-          width: '100%',
-          marginLeft: 0,
-        }),
-      }}
       sx={theme => ({
+        width: 'calc(100% - 220px)',
         wordBreak: 'break-all',
         color: 'text.primary',
         px: 10,
@@ -176,7 +193,8 @@ const DocContent = ({
           )} !important`,
         },
         ...(mobile && {
-          marginTop: '77px',
+          marginTop: 3,
+          width: '100%',
           px: 3,
           table: {
             minWidth: 'auto !important',
@@ -314,7 +332,11 @@ const DocContent = ({
               alignItems='center'
               sx={{ fontSize: 14, color: 'text.secondary' }}
             >
-              <Button variant='contained' onClick={onSubmit}>
+              <Button
+                variant='contained'
+                onClick={onSubmit}
+                loading={commentLoading}
+              >
                 发送
               </Button>
               {!authInfo?.username && (

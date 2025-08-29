@@ -1,32 +1,25 @@
 'use client';
 import { IconFold, IconSearch, IconUnfold } from '@/components/icons';
 import { useStore } from '@/provider';
+import { useParams } from 'next/navigation';
 import { filterTreeBySearch } from '@/utils';
-import {
-  addExpandState,
-  convertToTree,
-  filterEmptyFolders,
-} from '@/utils/drag';
+import { addExpandState } from '@/utils/drag';
 import { Box, IconButton, TextField } from '@mui/material';
 import { useDebounce } from 'ahooks';
 import { useMemo, useState } from 'react';
 import CatalogFolder from './CatalogFolder';
 
-const Catalog = ({
-  id,
-  setId,
-}: {
-  id?: string;
-  setId?: (id: string) => void;
-}) => {
+const Catalog = () => {
+  const params = useParams() || {};
+  const id = params.id as string;
   const {
     kbDetail,
-    nodeList = [],
     mobile = false,
     catalogShow,
     setCatalogShow,
     catalogWidth,
     setCatalogWidth,
+    tree: initialTree,
   } = useStore();
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -35,16 +28,14 @@ const Catalog = ({
   const catalogSetting = kbDetail?.settings?.catalog_settings;
   const catalogFolderExpand = catalogSetting?.catalog_folder !== 2;
 
-  // 首先转换为树形结构
-  const originalTree = addExpandState(
-    filterEmptyFolders(convertToTree(nodeList) || []),
-    id as string,
-    catalogFolderExpand,
-  );
-
   const tree = useMemo(() => {
+    const { tree: originalTree } = addExpandState(
+      initialTree || [],
+      id as string,
+      catalogFolderExpand,
+    );
     return filterTreeBySearch(originalTree, debouncedSearchTerm);
-  }, [originalTree, debouncedSearchTerm]);
+  }, [debouncedSearchTerm]);
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -68,14 +59,27 @@ const Catalog = ({
   if (mobile) return null;
 
   return (
-    <>
+    <Box
+      sx={{
+        position: 'sticky',
+        top: 0,
+        left: 0,
+        height: '100vh',
+        zIndex: 11,
+        px: 2,
+        py: 3,
+        fontSize: 14,
+        width: catalogShow ? catalogWidth : 0,
+        transition: 'width 0.2s ease-in-out',
+      }}
+    >
       <Box
         style={{
-          left: catalogShow ? catalogWidth! - 16 : 0,
+          right: -16,
         }}
         sx={{
           color: 'text.primary',
-          position: 'fixed',
+          position: 'absolute',
           zIndex: 11,
           top: 18,
         }}
@@ -100,117 +104,95 @@ const Catalog = ({
           {catalogShow ? <IconFold /> : <IconUnfold />}
         </IconButton>
       </Box>
-      {!catalogShow ? (
+      <TextField
+        slotProps={{
+          input: {
+            endAdornment: (
+              <IconSearch sx={{ fontSize: 18, color: 'text.tertiary' }} />
+            ),
+          },
+        }}
+        size='small'
+        placeholder='搜索'
+        value={searchTerm}
+        onChange={e => setSearchTerm(e.target.value)}
+        sx={{
+          width: 'calc(100% - 26px)',
+          mb: 2,
+          ml: 2,
+          bgcolor: 'background.default',
+          borderRadius: '10px',
+          overflow: 'hidden',
+          '& .MuiInputBase-input': {
+            lineHeight: '24px',
+            height: '24px',
+            fontFamily: 'Mono',
+            fontSize: 14,
+          },
+          '& .MuiOutlinedInput-root': {
+            height: 36,
+            fontSize: 14,
+            pr: '18px',
+            '& fieldset': {
+              borderRadius: '10px',
+              borderColor: 'divider',
+              px: 2,
+            },
+          },
+        }}
+      />
+      <Box
+        sx={{
+          width: '100%',
+          overflow: 'hidden',
+        }}
+      >
         <Box
-          sx={{
-            width: 16,
-            height: '100vh',
-            borderRight: '1px solid',
-            borderColor: 'divider',
-            position: 'fixed',
-            zIndex: 5,
-          }}
-        ></Box>
-      ) : (
-        <Box
-          style={{
-            width: catalogWidth,
-          }}
           sx={{
             px: 2,
-            py: 3,
-            fontSize: 14,
-            position: 'fixed',
-            zIndex: 5,
+            pb: 1,
             lineHeight: '22px',
-            color: 'text.primary',
+            fontWeight: 'bold',
+            whiteSpace: 'nowrap',
           }}
         >
-          <TextField
-            slotProps={{
-              input: {
-                endAdornment: (
-                  <IconSearch sx={{ fontSize: 18, color: 'text.tertiary' }} />
-                ),
-              },
-            }}
-            size='small'
-            placeholder='搜索'
-            value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)}
-            sx={{
-              width: 'calc(100% - 26px)',
-              mb: 2,
-              ml: 2,
-              bgcolor: 'background.default',
-              borderRadius: '10px',
-              overflow: 'hidden',
-              '& .MuiInputBase-input': {
-                lineHeight: '24px',
-                height: '24px',
-                fontFamily: 'Mono',
-                fontSize: 14,
-              },
-              '& .MuiOutlinedInput-root': {
-                height: 36,
-                fontSize: 14,
-                pr: '18px',
-                '& fieldset': {
-                  borderRadius: '10px',
-                  borderColor: 'divider',
-                  px: 2,
-                },
-              },
-            }}
-          />
-          <Box
-            sx={{
-              px: 2,
-              pb: 1,
-              lineHeight: '22px',
-              fontWeight: 'bold',
-            }}
-          >
-            目录
-          </Box>
-
-          <Box
-            sx={{
-              height: 'calc(100vh - 130px)',
-              overflowY: 'auto',
-              overflowX: 'hidden',
-              '&::-webkit-scrollbar': {
-                display: 'none',
-              },
-              msOverflowStyle: 'none',
-              scrollbarWidth: 'none',
-            }}
-          >
-            {tree.map(item => (
-              <CatalogFolder
-                id={id}
-                key={item.id}
-                item={item}
-                setId={setId}
-                searchTerm={debouncedSearchTerm}
-              />
-            ))}
-          </Box>
-          <Box
-            sx={{
-              position: 'absolute',
-              top: 0,
-              bottom: 0,
-              right: 0,
-              width: '1px',
-              bgcolor: 'divider',
-              cursor: 'col-resize',
-            }}
-            onMouseDown={handleMouseDown}
-          />
+          目录
         </Box>
-      )}
-    </>
+      </Box>
+
+      <Box
+        sx={{
+          height: 'calc(100vh - 130px)',
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          '&::-webkit-scrollbar': {
+            display: 'none',
+          },
+          msOverflowStyle: 'none',
+          scrollbarWidth: 'none',
+        }}
+      >
+        {tree.map(item => (
+          <CatalogFolder
+            key={item.id}
+            item={item}
+            searchTerm={debouncedSearchTerm}
+          />
+        ))}
+      </Box>
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 0,
+          bottom: 0,
+          right: 0,
+          width: '1px',
+          bgcolor: 'divider',
+          cursor: 'col-resize',
+        }}
+        onMouseDown={handleMouseDown}
+      />
+    </Box>
   );
 };
 

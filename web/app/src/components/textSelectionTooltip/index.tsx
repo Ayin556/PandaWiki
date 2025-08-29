@@ -1,5 +1,5 @@
 import { IconErrorCorrection } from '@/components/icons';
-import { alpha, Box, Button, Popover, Tooltip } from '@mui/material';
+import { alpha, Box, Button, Tooltip } from '@mui/material';
 import React from 'react';
 
 interface TextSelectionTooltipProps {
@@ -19,29 +19,21 @@ export const TextSelectionTooltip: React.FC<TextSelectionTooltipProps> = ({
   isCapturingScreenshot = false,
   className = 'text-selection-tooltip',
 }) => {
+  if (!open || !anchorPosition) {
+    return null;
+  }
+
   return (
-    <Popover
-      open={open && !!anchorPosition}
-      anchorReference='anchorPosition'
-      anchorPosition={
-        anchorPosition
-          ? { top: anchorPosition.y, left: anchorPosition.x }
-          : undefined
-      }
-      transformOrigin={{
-        vertical: 'bottom',
-        horizontal: 'center',
-      }}
-      disableRestoreFocus
+    <Box
       sx={{
+        position: 'absolute',
+        top: anchorPosition.y,
+        left: anchorPosition.x,
+        transform: 'translate(-50%, -100%)',
+        zIndex: 9999,
         pointerEvents: 'none',
-        '& .MuiPopover-paper': {
+        '& > *': {
           pointerEvents: 'auto',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
-          border: '1px solid',
-          borderColor: 'divider',
-          borderRadius: 2,
-          overflow: 'visible',
         },
       }}
       className={className}
@@ -52,7 +44,26 @@ export const TextSelectionTooltip: React.FC<TextSelectionTooltipProps> = ({
           display: 'flex',
           alignItems: 'center',
           gap: 1,
-          bgcolor: 'background.paper2',
+          bgcolor: 'background.paper',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+          border: '1px solid',
+          borderColor: 'divider',
+          borderRadius: 2,
+          overflow: 'visible',
+          position: 'relative',
+          '&::after': {
+            content: '""',
+            position: 'absolute',
+            top: '100%',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: 0,
+            height: 0,
+            borderLeft: '6px solid transparent',
+            borderRight: '6px solid transparent',
+            borderTop: '6px solid',
+            borderTopColor: 'divider',
+          },
         }}
       >
         <Tooltip title='文档纠错'>
@@ -83,7 +94,7 @@ export const TextSelectionTooltip: React.FC<TextSelectionTooltipProps> = ({
           </Button>
         </Tooltip>
       </Box>
-    </Popover>
+    </Box>
   );
 };
 

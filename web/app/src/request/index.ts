@@ -1,5 +1,6 @@
 export * from './ShareApp'
 export * from './ShareAuth'
+export * from './ShareCaptcha'
 export * from './ShareChat'
 export * from './ShareComment'
 export * from './ShareConversation'

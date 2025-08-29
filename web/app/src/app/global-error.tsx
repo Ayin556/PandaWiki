@@ -1,30 +1,21 @@
 'use client';
 import ErrorPng from '@/assets/images/500.png';
 import Footer from '@/components/footer';
-import { useStore } from '@/provider';
-import { darkTheme, lightTheme } from '@/theme';
+import { lightTheme } from '@/theme';
 import { Box, Stack } from '@mui/material';
 import { ThemeProvider } from 'ct-mui';
 import Image from 'next/image';
-import { useEffect } from 'react';
 
 export default function GlobalError({
   error,
-  reset,
 }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  const { themeMode = 'light' } = useStore();
-
-  useEffect(() => {
-    console.error(error);
-  }, [error]);
-
   return (
     <html lang='en'>
       <body>
-        <ThemeProvider theme={themeMode === 'dark' ? darkTheme : lightTheme}>
+        <ThemeProvider theme={lightTheme}>
           <Box
             sx={{
               position: 'relative',

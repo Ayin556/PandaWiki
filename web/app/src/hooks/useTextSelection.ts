@@ -307,9 +307,17 @@ export const useTextSelection = ({
       containerRef.current.contains(range.commonAncestorContainer)
     ) {
       setSelectedText(text);
+
+      // 相对于父容器计算位置
+      const container = containerRef.current;
+      const containerRect = container.getBoundingClientRect();
+      const containerScrollLeft = container.scrollLeft || 0;
+      const containerScrollTop = container.scrollTop || 0;
+
       setTooltipAnchor({
-        x: rect.left + rect.width / 2,
-        y: rect.top - 10,
+        x:
+          rect.left - containerRect.left + rect.width / 2 + containerScrollLeft,
+        y: rect.top - containerRect.top - 10 + containerScrollTop,
       });
       setTooltipOpen(true);
     }

@@ -146,6 +146,11 @@ export enum ConstsCopySetting {
   CopySettingDisabled = "disabled",
 }
 
+export enum ConstsCaptchaStatus {
+  CaptchaStatusEnable = "enable",
+  CaptchaStatusDisable = "disable",
+}
+
 export enum ConstsAuthType {
   /** 无认证 */
   AuthTypeNull = "",
@@ -153,6 +158,16 @@ export enum ConstsAuthType {
   AuthTypeSimple = "simple",
   /** 企业认证 */
   AuthTypeEnterprise = "enterprise",
+}
+
+export interface ConstsCaptchaSettings {
+  chat_status?: "" | "enable" | "disable";
+  comment_status?: "" | "enable" | "disable";
+}
+
+export interface ConstsRedeemCaptchaReq {
+  solutions?: number[];
+  token?: string;
 }
 
 export interface DomainAIFeedbackSettings {
@@ -203,6 +218,8 @@ export interface DomainAppSettings {
   auto_sitemap?: boolean;
   body_code?: string;
   btns?: unknown[];
+  /** Captcha settings */
+  captcha_settings?: ConstsCaptchaSettings;
   /** catalog settings */
   catalog_settings?: DomainCatalogSettings;
   copy_setting?: "" | "append" | "disabled";
@@ -273,6 +290,8 @@ export interface DomainAppSettingsResp {
   auto_sitemap?: boolean;
   body_code?: string;
   btns?: unknown[];
+  /** Captcha Settings */
+  captcha_settings?: ConstsCaptchaSettings;
   /** catalog settings */
   catalog_settings?: DomainCatalogSettings;
   copy_setting?: ConstsCopySetting;
@@ -370,6 +389,7 @@ export interface DomainCatalogSettings {
 
 export interface DomainChatRequest {
   app_type: 1 | 2;
+  captcha_token?: string;
   conversation_id?: string;
   message: string;
   nonce?: string;
@@ -401,6 +421,7 @@ export interface DomainCommentListItem {
 }
 
 export interface DomainCommentReq {
+  captcha_token?: string;
   content: string;
   node_id: string;
   parent_id?: string;

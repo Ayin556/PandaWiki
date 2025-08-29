@@ -102,6 +102,13 @@ export enum ConstsUserKBPermission {
   UserKBPermissionDataOperate = "data_operate",
 }
 
+export enum ConstsStatDay {
+  StatDay1 = 1,
+  StatDay7 = 7,
+  StatDay30 = 30,
+  StatDay90 = 90,
+}
+
 export enum ConstsSourceType {
   SourceTypeDingTalk = "dingtalk",
   SourceTypeFeishu = "feishu",
@@ -139,6 +146,11 @@ export enum ConstsCopySetting {
   CopySettingDisabled = "disabled",
 }
 
+export enum ConstsCaptchaStatus {
+  CaptchaStatusEnable = "enable",
+  CaptchaStatusDisable = "disable",
+}
+
 export enum ConstsAuthType {
   /** 无认证 */
   AuthTypeNull = "",
@@ -146,6 +158,16 @@ export enum ConstsAuthType {
   AuthTypeSimple = "simple",
   /** 企业认证 */
   AuthTypeEnterprise = "enterprise",
+}
+
+export interface ConstsCaptchaSettings {
+  chat_status?: "" | "enable" | "disable";
+  comment_status?: "" | "enable" | "disable";
+}
+
+export interface ConstsRedeemCaptchaReq {
+  solutions?: number[];
+  token?: string;
 }
 
 export interface DomainAIFeedbackSettings {
@@ -184,12 +206,20 @@ export interface DomainAppDetailResp {
   type?: DomainAppType;
 }
 
+export interface DomainAppInfoResp {
+  name?: string;
+  recommend_nodes?: DomainRecommendNodeListResp[];
+  settings?: DomainAppSettingsResp;
+}
+
 export interface DomainAppSettings {
   /** AI feedback */
   ai_feedback_settings?: DomainAIFeedbackSettings;
   auto_sitemap?: boolean;
   body_code?: string;
   btns?: unknown[];
+  /** Captcha settings */
+  captcha_settings?: ConstsCaptchaSettings;
   /** catalog settings */
   catalog_settings?: DomainCatalogSettings;
   copy_setting?: "" | "append" | "disabled";
@@ -260,6 +290,8 @@ export interface DomainAppSettingsResp {
   auto_sitemap?: boolean;
   body_code?: string;
   btns?: unknown[];
+  /** Captcha Settings */
+  captcha_settings?: ConstsCaptchaSettings;
   /** catalog settings */
   catalog_settings?: DomainCatalogSettings;
   copy_setting?: ConstsCopySetting;
@@ -324,6 +356,12 @@ export interface DomainAppSettingsResp {
   widget_bot_settings?: DomainWidgetBotSettings;
 }
 
+export interface DomainAuthUserInfo {
+  avatar_url?: string;
+  email?: string;
+  username?: string;
+}
+
 export interface DomainBatchMoveReq {
   ids: string[];
   kb_id: string;
@@ -332,6 +370,11 @@ export interface DomainBatchMoveReq {
 
 export interface DomainBrandGroup {
   links?: DomainLink[];
+  name?: string;
+}
+
+export interface DomainBrowserCount {
+  count?: number;
   name?: string;
 }
 
@@ -346,6 +389,7 @@ export interface DomainCatalogSettings {
 
 export interface DomainChatRequest {
   app_type: 1 | 2;
+  captcha_token?: string;
   conversation_id?: string;
   message: string;
   nonce?: string;
@@ -377,6 +421,7 @@ export interface DomainCommentListItem {
 }
 
 export interface DomainCommentReq {
+  captcha_token?: string;
   content: string;
   node_id: string;
   parent_id?: string;
@@ -393,6 +438,12 @@ export interface DomainConversationDetailResp {
   references?: DomainConversationReference[];
   remote_ip?: string;
   subject?: string;
+}
+
+export interface DomainConversationDistribution {
+  app_id?: string;
+  app_type?: DomainAppType;
+  count?: number;
 }
 
 export interface DomainConversationInfo {
@@ -584,11 +635,44 @@ export interface DomainGetSpaceListResp {
   space_id?: string;
 }
 
+export interface DomainHotBrowser {
+  browser?: DomainBrowserCount[];
+  os?: DomainBrowserCount[];
+}
+
+export interface DomainHotPage {
+  count?: number;
+  node_id?: string;
+  node_name?: string;
+  scene?: DomainStatPageScene;
+}
+
+export interface DomainHotRefererHost {
+  count?: number;
+  referer_host?: string;
+}
+
 export interface DomainIPAddress {
   city?: string;
   country?: string;
   ip?: string;
   province?: string;
+}
+
+export interface DomainInstantCountResp {
+  count?: number;
+  time?: string;
+}
+
+export interface DomainInstantPageResp {
+  created_at?: string;
+  info?: DomainAuthUserInfo;
+  ip?: string;
+  ip_address?: DomainIPAddress;
+  node_id?: string;
+  node_name?: string;
+  scene?: DomainStatPageScene;
+  user_id?: number;
 }
 
 export interface DomainKBReleaseListItemResp {
@@ -653,6 +737,7 @@ export interface DomainModelParam {
 
 export interface DomainMoveNodeReq {
   id: string;
+  kb_id: string;
   next_id?: string;
   parent_id?: string;
   prev_id?: string;
@@ -1012,6 +1097,10 @@ export interface V1CreateUserReq {
   role: "admin" | "user";
 }
 
+export interface V1CreateUserResp {
+  id?: string;
+}
+
 export interface V1DeleteUserReq {
   user_id: string;
 }
@@ -1087,6 +1176,13 @@ export interface V1ResetPasswordReq {
   id: string;
   /** @minLength 8 */
   new_password: string;
+}
+
+export interface V1StatCountResp {
+  conversation_count?: number;
+  ip_count?: number;
+  page_visit_count?: number;
+  session_count?: number;
 }
 
 export interface V1UserInfoResp {
@@ -1281,42 +1377,40 @@ export interface GetApiV1NodeRecommendNodesParams {
 }
 
 export interface GetApiV1StatBrowsersParams {
-  /** kb_id */
+  day?: 1 | 7 | 30 | 90;
   kb_id: string;
 }
 
 export interface GetApiV1StatConversationDistributionParams {
-  /** kb_id */
+  day?: 1 | 7 | 30 | 90;
   kb_id: string;
 }
 
 export interface GetApiV1StatCountParams {
-  /** kb_id */
+  day?: 1 | 7 | 30 | 90;
   kb_id: string;
 }
 
 export interface GetApiV1StatGeoCountParams {
-  /** kb_id */
+  day?: 1 | 7 | 30 | 90;
   kb_id: string;
 }
 
 export interface GetApiV1StatHotPagesParams {
-  /** kb_id */
+  day?: 1 | 7 | 30 | 90;
   kb_id: string;
 }
 
 export interface GetApiV1StatInstantCountParams {
-  /** kb_id */
   kb_id: string;
 }
 
 export interface GetApiV1StatInstantPagesParams {
-  /** kb_id */
   kb_id: string;
 }
 
 export interface GetApiV1StatRefererHostsParams {
-  /** kb_id */
+  day?: 1 | 7 | 30 | 90;
   kb_id: string;
 }
 

@@ -17,7 +17,6 @@ export async function middleware(
 ) {
   const url = request.nextUrl.clone();
   const { page, id } = parsePathname(url.pathname);
-
   try {
     // 获取节点列表
     // const nodeListResult = await apiClient.serverGetNodeList(kb_id, authToken);
