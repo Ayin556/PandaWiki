@@ -3824,7 +3824,14 @@ const docTemplate = `{
                 "oauth",
                 "github",
                 "cas",
-                "ldap"
+                "ldap",
+                "widget",
+                "dingtalk_bot",
+                "feishu_bot",
+                "wechat_bot",
+                "wechat_service_bot",
+                "discord_bot",
+                "wechat_official_account"
             ],
             "x-enum-varnames": [
                 "SourceTypeDingTalk",
@@ -3833,7 +3840,14 @@ const docTemplate = `{
                 "SourceTypeOAuth",
                 "SourceTypeGitHub",
                 "SourceTypeCAS",
-                "SourceTypeLDAP"
+                "SourceTypeLDAP",
+                "SourceTypeWidget",
+                "SourceTypeDingtalkBot",
+                "SourceTypeFeishuBot",
+                "SourceTypeWechatBot",
+                "SourceTypeWechatServiceBot",
+                "SourceTypeDiscordBot",
+                "SourceTypeWechatOfficialAccount"
             ]
         },
         "consts.StatDay": {

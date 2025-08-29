@@ -34,6 +34,29 @@ var AppTypes = []AppType{
 	AppTypeWechatOfficialAccount,
 }
 
+func (t AppType) ToSourceType() consts.SourceType {
+	switch t {
+	case AppTypeWeb:
+		return ""
+	case AppTypeWidget:
+		return consts.SourceTypeWidget
+	case AppTypeDingTalkBot:
+		return consts.SourceTypeDingtalkBot
+	case AppTypeFeishuBot:
+		return consts.SourceTypeFeishuBot
+	case AppTypeWechatBot:
+		return consts.SourceTypeWechatBot
+	case AppTypeWechatServiceBot:
+		return consts.SourceTypeWechatServiceBot
+	case AppTypeDisCordBot:
+		return consts.SourceTypeDiscordBot
+	case AppTypeWechatOfficialAccount:
+		return consts.SourceTypeWechatOfficialAccount
+	default:
+		return ""
+	}
+}
+
 type App struct {
 	ID   string  `json:"id" gorm:"primaryKey"`
 	KBID string  `json:"kb_id"`
