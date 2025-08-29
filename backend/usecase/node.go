@@ -25,6 +25,7 @@ import (
 
 type NodeUsecase struct {
 	nodeRepo   *pg.NodeRepository
+	appRepo    *pg.AppRepository
 	ragRepo    *mq.RAGRepository
 	kbRepo     *pg.KnowledgeBaseRepository
 	modelRepo  *pg.ModelRepository
@@ -34,11 +35,20 @@ type NodeUsecase struct {
 	s3Client   *s3.MinioClient
 }
 
-func NewNodeUsecase(nodeRepo *pg.NodeRepository, ragRepo *mq.RAGRepository, kbRepo *pg.KnowledgeBaseRepository, llmUsecase *LLMUsecase, logger *log.Logger, s3Client *s3.MinioClient, modelRepo *pg.ModelRepository,
+func NewNodeUsecase(
+	nodeRepo *pg.NodeRepository,
+	appRepo *pg.AppRepository,
+	ragRepo *mq.RAGRepository,
+	kbRepo *pg.KnowledgeBaseRepository,
+	llmUsecase *LLMUsecase,
+	logger *log.Logger,
+	s3Client *s3.MinioClient,
+	modelRepo *pg.ModelRepository,
 	authRepo *pg.AuthRepo,
 ) *NodeUsecase {
 	return &NodeUsecase{
 		nodeRepo:   nodeRepo,
+		appRepo:    appRepo,
 		ragRepo:    ragRepo,
 		kbRepo:     kbRepo,
 		authRepo:   authRepo,
@@ -274,7 +284,7 @@ func (u *NodeUsecase) GetNodeReleaseListByKBID(ctx context.Context, kbID string,
 		return nil, err
 	}
 
-	nodeGroupIds, err := u.GetNodeIdsByAuthId(ctx, authId)
+	nodeGroupIds, err := u.GetNodeIdsByAuthId(ctx, authId, consts.NodePermNameVisible)
 	if err != nil {
 		return nil, err
 	}
@@ -295,7 +305,58 @@ func (u *NodeUsecase) GetNodeReleaseListByKBID(ctx context.Context, kbID string,
 	return items, nil
 }
 
-func (u *NodeUsecase) GetNodeIdsByAuthId(ctx context.Context, authId uint) ([]string, error) {
+func (u *NodeUsecase) GetNodeRecommendListByKBID(ctx context.Context, kbID string, authId uint) ([]*domain.RecommendNodeListResp, error) {
+
+	app, err := u.appRepo.GetOrCreateAppByKBIDAndType(ctx, kbID, domain.AppTypeWeb)
+	if err != nil {
+		return nil, err
+	}
+
+	recommendNodes := make([]*domain.RecommendNodeListResp, 0)
+
+	if len(app.Settings.RecommendNodeIDs) > 0 {
+		nodes, err := u.GetRecommendNodeList(ctx, &domain.GetRecommendNodeListReq{
+			KBID:    kbID,
+			NodeIDs: app.Settings.RecommendNodeIDs,
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		nodeVisibleGroupIds, err := u.GetNodeIdsByAuthId(ctx, authId, consts.NodePermNameVisible)
+		if err != nil {
+			return nil, err
+		}
+
+		nodeVisitableGroupIds, err := u.GetNodeIdsByAuthId(ctx, authId, consts.NodePermNameVisitable)
+		if err != nil {
+			return nil, err
+		}
+
+		for i, node := range nodes {
+			switch node.Permissions.Visitable {
+			case consts.NodeAccessPermClosed:
+				nodes[i].Summary = ""
+			case consts.NodeAccessPermPartial:
+				if !slices.Contains(nodeVisitableGroupIds, node.ID) {
+					nodes[i].Summary = ""
+				}
+			}
+
+			switch node.Permissions.Visible {
+			case consts.NodeAccessPermOpen:
+				recommendNodes = append(recommendNodes, nodes[i])
+			case consts.NodeAccessPermPartial:
+				if slices.Contains(nodeVisibleGroupIds, node.ID) {
+					recommendNodes = append(recommendNodes, nodes[i])
+				}
+			}
+		}
+	}
+	return recommendNodes, nil
+}
+
+func (u *NodeUsecase) GetNodeIdsByAuthId(ctx context.Context, authId uint, PermName consts.NodePermName) ([]string, error) {
 
 	authGroups, err := u.authRepo.GetAuthGroupByAuthId(ctx, authId)
 	if err != nil {
@@ -308,7 +369,7 @@ func (u *NodeUsecase) GetNodeIdsByAuthId(ctx context.Context, authId uint) ([]st
 
 	nodeGroupIds := make([]string, 0)
 	if len(authGroupIds) != 0 {
-		nodeGroups, err := u.nodeRepo.GetNodeGroupsByGroupIdsPerm(ctx, authGroupIds, consts.NodePermNameVisible)
+		nodeGroups, err := u.nodeRepo.GetNodeGroupsByGroupIdsPerm(ctx, authGroupIds, PermName)
 		if err != nil {
 			return nil, err
 		}
