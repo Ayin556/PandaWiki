@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@cap.js/server':
-        specifier: ^3.0.1
-        version: 3.0.1
       '@cap.js/widget':
         specifier: ^0.1.26
         version: 0.1.26
@@ -248,9 +245,6 @@ packages:
   '@c-x/cx-swagger-api@1.0.1':
     resolution: {integrity: sha512-Yas86S5SmXTYzXOaSehxJ/S8t3OggXPucd0FsAjNY/WFz/wsRphlCfxlZoCVuxfmaCafwnfpiP3vSKvVsRWWzQ==}
     hasBin: true
-
-  '@cap.js/server@3.0.1':
-    resolution: {integrity: sha512-dt6TKVDsFUOEoFUNVpPAOjvpPjAhuI+9AuJZdSiGD01a2/Me7TBcuq431dqqIUMqhFrjGRjt4hahurKcB5dXeA==}
 
   '@cap.js/widget@0.1.26':
     resolution: {integrity: sha512-cvPIddRI1LfCZ0ePOXkuHDwQh9xXsodVC73Jk70N6Do/SkMxbQPgxhrsbY4vy9TP/TrSE49R6GBle7rPLirgHA==}
@@ -1360,9 +1354,6 @@ packages:
 
   '@types/node@20.17.48':
     resolution: {integrity: sha512-KpSfKOHPsiSC4IkZeu2LsusFwExAIVGkhG1KkbaBMLwau0uMhj0fCrvyg9ddM2sAvd+gtiBJLir4LAw1MNMIaw==}
-
-  '@types/node@22.18.0':
-    resolution: {integrity: sha512-m5ObIqwsUp6BZzyiy4RdZpzWGub9bqLJMvZDD0QMXhxjqMHMENlj+SqF5QxoUwaQNFe+8kz8XM8ZQhqkQPTgMQ==}
 
   '@types/parse-json@4.0.2':
     resolution: {integrity: sha512-dISoDXWWQwUquiKsyZ4Ng+HX2KsPL7LyHKHQwgGFEA3IaKac4Obd+h2a/a6waisAoepJlBcx9paWqjA8/HVjCw==}
@@ -4035,9 +4026,6 @@ packages:
   undici-types@6.19.8:
     resolution: {integrity: sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==}
 
-  undici-types@6.21.0:
-    resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
-
   unified@11.0.5:
     resolution: {integrity: sha512-xKvGhPWw3k84Qjh8bI3ZeJjqnyadK+GEFtazSfZv/rKeTkTjOJho6mFqh2SM96iIcZokxiOpg78GazTSg8+KHA==}
 
@@ -4305,11 +4293,6 @@ snapshots:
       - encoding
       - magicast
       - typescript
-
-  '@cap.js/server@3.0.1':
-    dependencies:
-      '@types/node': 22.18.0
-      typescript: 5.8.3
 
   '@cap.js/widget@0.1.26': {}
 
@@ -5412,10 +5395,6 @@ snapshots:
   '@types/node@20.17.48':
     dependencies:
       undici-types: 6.19.8
-
-  '@types/node@22.18.0':
-    dependencies:
-      undici-types: 6.21.0
 
   '@types/parse-json@4.0.2': {}
 
@@ -8850,8 +8829,6 @@ snapshots:
       which-boxed-primitive: 1.1.1
 
   undici-types@6.19.8: {}
-
-  undici-types@6.21.0: {}
 
   unified@11.0.5:
     dependencies:
