@@ -135,6 +135,8 @@ type AppSettings struct {
 	AIFeedbackSettings AIFeedbackSettings `json:"ai_feedback_settings"`
 	// WebAppCustomStyle
 	WebAppCustomSettings WebAppCustomSettings `json:"web_app_custom_style"`
+	// Captcha settings
+	CaptchaSettings consts.CaptchaSettings `json:"captcha_settings"`
 
 	WatermarkContent string                  `json:"watermark_content"`
 	WatermarkSetting consts.WatermarkSetting `json:"watermark_setting" validate:"omitempty,oneof='' hidden visible"`
@@ -286,6 +288,8 @@ type AppSettingsResp struct {
 	WatermarkContent string                  `json:"watermark_content"`
 	WatermarkSetting consts.WatermarkSetting `json:"watermark_setting"`
 	CopySetting      consts.CopySetting      `json:"copy_setting"`
+	// Captcha Settings
+	CaptchaSettings consts.CaptchaSettings `json:"captcha_settings"`
 }
 
 func (s *AppSettingsResp) Scan(value any) error {

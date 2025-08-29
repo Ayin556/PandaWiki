@@ -3352,6 +3352,79 @@ const docTemplate = `{
                 }
             }
         },
+        "/share/v1/captcha/challenge": {
+            "post": {
+                "description": "CreateCaptcha",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "share_captcha"
+                ],
+                "summary": "CreateCaptcha",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "kb id",
+                        "name": "X-KB-ID",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/gocap.ChallengeData"
+                        }
+                    }
+                }
+            }
+        },
+        "/share/v1/captcha/redeem": {
+            "post": {
+                "description": "RedeemCaptcha",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "share_captcha"
+                ],
+                "summary": "RedeemCaptcha",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "kb id",
+                        "name": "X-KB-ID",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "request",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/consts.RedeemCaptchaReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/gocap.VerificationResult"
+                        }
+                    }
+                }
+            }
+        },
         "/share/v1/chat/feedback": {
             "post": {
                 "description": "Process user feedback for chat conversations",
@@ -3793,6 +3866,46 @@ const docTemplate = `{
                 "AuthTypeEnterprise"
             ]
         },
+        "consts.CaptchaSettings": {
+            "type": "object",
+            "properties": {
+                "chat_status": {
+                    "enum": [
+                        "",
+                        "enable",
+                        "disable"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/consts.CaptchaStatus"
+                        }
+                    ]
+                },
+                "comment_status": {
+                    "enum": [
+                        "",
+                        "enable",
+                        "disable"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/consts.CaptchaStatus"
+                        }
+                    ]
+                }
+            }
+        },
+        "consts.CaptchaStatus": {
+            "type": "string",
+            "enum": [
+                "enable",
+                "disable"
+            ],
+            "x-enum-varnames": [
+                "CaptchaStatusEnable",
+                "CaptchaStatusDisable"
+            ]
+        },
         "consts.CopySetting": {
             "type": "string",
             "enum": [
@@ -3861,6 +3974,20 @@ const docTemplate = `{
                 "NodePermNameVisitable",
                 "NodePermNameAnswerable"
             ]
+        },
+        "consts.RedeemCaptchaReq": {
+            "type": "object",
+            "properties": {
+                "solutions": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "token": {
+                    "type": "string"
+                }
+            }
         },
         "consts.SourceType": {
             "type": "string",
@@ -4129,6 +4256,14 @@ const docTemplate = `{
                     "type": "array",
                     "items": {}
                 },
+                "captcha_settings": {
+                    "description": "Captcha settings",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/consts.CaptchaSettings"
+                        }
+                    ]
+                },
                 "catalog_settings": {
                     "description": "catalog settings",
                     "allOf": [
@@ -4347,6 +4482,14 @@ const docTemplate = `{
                 "btns": {
                     "type": "array",
                     "items": {}
+                },
+                "captcha_settings": {
+                    "description": "Captcha Settings",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/consts.CaptchaSettings"
+                        }
+                    ]
                 },
                 "catalog_settings": {
                     "description": "catalog settings",
@@ -4647,6 +4790,9 @@ const docTemplate = `{
                         }
                     ]
                 },
+                "captcha_token": {
+                    "type": "string"
+                },
                 "conversation_id": {
                     "type": "string"
                 },
@@ -4732,6 +4878,9 @@ const docTemplate = `{
                 "node_id"
             ],
             "properties": {
+                "captcha_token": {
+                    "type": "string"
+                },
                 "content": {
                     "type": "string"
                 },
@@ -6609,6 +6758,58 @@ const docTemplate = `{
             "x-enum-varnames": [
                 "ModelProviderBrandBaiZhiCloud"
             ]
+        },
+        "gocap.ChallengeData": {
+            "type": "object",
+            "properties": {
+                "challenge": {
+                    "$ref": "#/definitions/gocap.ChallengeItem"
+                },
+                "expires": {
+                    "description": "过期时间,毫秒级时间戳",
+                    "type": "integer"
+                },
+                "token": {
+                    "description": "质询令牌",
+                    "type": "string"
+                }
+            }
+        },
+        "gocap.ChallengeItem": {
+            "type": "object",
+            "properties": {
+                "c": {
+                    "description": "质询数量",
+                    "type": "integer"
+                },
+                "d": {
+                    "description": "质询难度",
+                    "type": "integer"
+                },
+                "s": {
+                    "description": "质询大小",
+                    "type": "integer"
+                }
+            }
+        },
+        "gocap.VerificationResult": {
+            "type": "object",
+            "properties": {
+                "expires": {
+                    "description": "过期时间,毫秒级时间戳",
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                },
+                "token": {
+                    "description": "验证令牌",
+                    "type": "string"
+                }
+            }
         },
         "schema.RoleType": {
             "type": "string",

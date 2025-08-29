@@ -14,6 +14,7 @@ import (
 	"github.com/chaitin/panda-wiki/log"
 	"github.com/chaitin/panda-wiki/middleware"
 	"github.com/chaitin/panda-wiki/mq"
+	"github.com/chaitin/panda-wiki/pkg/captcha"
 	cache2 "github.com/chaitin/panda-wiki/repo/cache"
 	ipdb2 "github.com/chaitin/panda-wiki/repo/ipdb"
 	mq2 "github.com/chaitin/panda-wiki/repo/mq"
@@ -76,7 +77,8 @@ func createApp() (*App, error) {
 		return nil, err
 	}
 	shareAuthMiddleware := middleware.NewShareAuthMiddleware(logger, knowledgeBaseUsecase)
-	baseHandler := handler.NewBaseHandler(echo, logger, configConfig, authMiddleware, shareAuthMiddleware)
+	captchaCaptcha := captcha.NewCaptcha()
+	baseHandler := handler.NewBaseHandler(echo, logger, configConfig, authMiddleware, shareAuthMiddleware, captchaCaptcha)
 	userUsecase, err := usecase.NewUserUsecase(userRepository, logger, configConfig)
 	if err != nil {
 		return nil, err
@@ -164,6 +166,7 @@ func createApp() (*App, error) {
 	wechatUsecase := usecase.NewWechatUsecase(logger, appUsecase, chatUsecase, wechatRepository, authRepo)
 	wechatAppUsecase := usecase.NewWechatAppUsecase(logger, appUsecase, chatUsecase, wechatRepository, authRepo)
 	shareWechatHandler := share.NewShareWechatHandler(echo, baseHandler, logger, appUsecase, conversationUsecase, wechatUsecase, wechatAppUsecase)
+	shareCaptchaHandler := share.NewShareCaptchaHandler(baseHandler, echo, logger)
 	shareHandler := &share.ShareHandler{
 		ShareNodeHandler:         shareNodeHandler,
 		ShareAppHandler:          shareAppHandler,
@@ -174,6 +177,7 @@ func createApp() (*App, error) {
 		ShareAuthHandler:         shareAuthHandler,
 		ShareConversationHandler: shareConversationHandler,
 		ShareWechatHandler:       shareWechatHandler,
+		ShareCaptchaHandler:      shareCaptchaHandler,
 	}
 	client, err := telemetry.NewClient(logger, knowledgeBaseRepository)
 	if err != nil {

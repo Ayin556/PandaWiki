@@ -18,6 +18,31 @@ definitions:
     - AuthTypeNull
     - AuthTypeSimple
     - AuthTypeEnterprise
+  consts.CaptchaSettings:
+    properties:
+      chat_status:
+        allOf:
+        - $ref: '#/definitions/consts.CaptchaStatus'
+        enum:
+        - ""
+        - enable
+        - disable
+      comment_status:
+        allOf:
+        - $ref: '#/definitions/consts.CaptchaStatus'
+        enum:
+        - ""
+        - enable
+        - disable
+    type: object
+  consts.CaptchaStatus:
+    enum:
+    - enable
+    - disable
+    type: string
+    x-enum-varnames:
+    - CaptchaStatusEnable
+    - CaptchaStatusDisable
   consts.CopySetting:
     enum:
     - ""
@@ -72,6 +97,15 @@ definitions:
     - NodePermNameVisible
     - NodePermNameVisitable
     - NodePermNameAnswerable
+  consts.RedeemCaptchaReq:
+    properties:
+      solutions:
+        items:
+          type: integer
+        type: array
+      token:
+        type: string
+    type: object
   consts.SourceType:
     enum:
     - dingtalk
@@ -265,6 +299,10 @@ definitions:
       btns:
         items: {}
         type: array
+      captcha_settings:
+        allOf:
+        - $ref: '#/definitions/consts.CaptchaSettings'
+        description: Captcha settings
       catalog_settings:
         allOf:
         - $ref: '#/definitions/domain.CatalogSettings'
@@ -405,6 +443,10 @@ definitions:
       btns:
         items: {}
         type: array
+      captcha_settings:
+        allOf:
+        - $ref: '#/definitions/consts.CaptchaSettings'
+        description: Captcha Settings
       catalog_settings:
         allOf:
         - $ref: '#/definitions/domain.CatalogSettings'
@@ -602,6 +644,8 @@ definitions:
         enum:
         - 1
         - 2
+      captcha_token:
+        type: string
       conversation_id:
         type: string
       message:
@@ -656,6 +700,8 @@ definitions:
     type: object
   domain.CommentReq:
     properties:
+      captcha_token:
+        type: string
       content:
         type: string
       node_id:
@@ -1882,6 +1928,42 @@ definitions:
     type: string
     x-enum-varnames:
     - ModelProviderBrandBaiZhiCloud
+  gocap.ChallengeData:
+    properties:
+      challenge:
+        $ref: '#/definitions/gocap.ChallengeItem'
+      expires:
+        description: 过期时间,毫秒级时间戳
+        type: integer
+      token:
+        description: 质询令牌
+        type: string
+    type: object
+  gocap.ChallengeItem:
+    properties:
+      c:
+        description: 质询数量
+        type: integer
+      d:
+        description: 质询难度
+        type: integer
+      s:
+        description: 质询大小
+        type: integer
+    type: object
+  gocap.VerificationResult:
+    properties:
+      expires:
+        description: 过期时间,毫秒级时间戳
+        type: integer
+      message:
+        type: string
+      success:
+        type: boolean
+      token:
+        description: 验证令牌
+        type: string
+    type: object
   schema.RoleType:
     enum:
     - assistant
@@ -4212,6 +4294,54 @@ paths:
       summary: AuthLoginSimple
       tags:
       - share_auth
+  /share/v1/captcha/challenge:
+    post:
+      consumes:
+      - application/json
+      description: CreateCaptcha
+      parameters:
+      - description: kb id
+        in: header
+        name: X-KB-ID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/gocap.ChallengeData'
+      summary: CreateCaptcha
+      tags:
+      - share_captcha
+  /share/v1/captcha/redeem:
+    post:
+      consumes:
+      - application/json
+      description: RedeemCaptcha
+      parameters:
+      - description: kb id
+        in: header
+        name: X-KB-ID
+        required: true
+        type: string
+      - description: request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/consts.RedeemCaptchaReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/gocap.VerificationResult'
+      summary: RedeemCaptcha
+      tags:
+      - share_captcha
   /share/v1/chat/feedback:
     post:
       consumes:

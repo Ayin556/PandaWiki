@@ -52,11 +52,12 @@ func (d *CommentInfo) Scan(value any) error {
 
 // 前端请求
 type CommentReq struct {
-	NodeID   string `json:"node_id" validate:"required"`
-	Content  string `json:"content" validate:"required"`
-	UserName string `json:"user_name"`
-	ParentID string `json:"parent_id"`
-	RootID   string `json:"root_id"`
+	NodeID       string `json:"node_id" validate:"required"`
+	Content      string `json:"content" validate:"required"`
+	UserName     string `json:"user_name"`
+	ParentID     string `json:"parent_id"`
+	RootID       string `json:"root_id"`
+	CaptchaToken string `json:"captcha_token"`
 }
 
 type CommentListReq struct {

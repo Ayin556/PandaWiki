@@ -15,3 +15,15 @@ const (
 	WatermarkHidden   WatermarkSetting = "hidden"  // 隐形水印
 	WatermarkVisible  WatermarkSetting = "visible" // 显性水印
 )
+
+type CaptchaStatus string
+
+const (
+	CaptchaStatusEnable  CaptchaStatus = "enable"
+	CaptchaStatusDisable CaptchaStatus = "disable"
+)
+
+type CaptchaSettings struct {
+	ChatStatus    CaptchaStatus `json:"chat_status" validate:"omitempty,oneof='' enable disable"`
+	CommentStatus CaptchaStatus `json:"comment_status" validate:"omitempty,oneof='' enable disable"`
+}

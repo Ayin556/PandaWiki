@@ -385,6 +385,8 @@ func (u *AppUsecase) GetAppDetailByKBIDAndAppType(ctx context.Context, kbID stri
 		AIFeedbackSettings: app.Settings.AIFeedbackSettings,
 		// WebApp Custom Settings
 		WebAppCustomSettings: app.Settings.WebAppCustomSettings,
+		// captcha settings
+		CaptchaSettings: app.Settings.CaptchaSettings,
 
 		WatermarkContent: app.Settings.WatermarkContent,
 		WatermarkSetting: app.Settings.WatermarkSetting,
@@ -443,6 +445,8 @@ func (u *AppUsecase) GetWebAppInfo(ctx context.Context, kbID string) (*domain.Ap
 			AIFeedbackSettings: app.Settings.AIFeedbackSettings,
 			// WebApp Custom Settings
 			WebAppCustomSettings: app.Settings.WebAppCustomSettings,
+			// Captcha Settings
+			CaptchaSettings: app.Settings.CaptchaSettings,
 
 			WatermarkContent: app.Settings.WatermarkContent,
 			WatermarkSetting: app.Settings.WatermarkSetting,
