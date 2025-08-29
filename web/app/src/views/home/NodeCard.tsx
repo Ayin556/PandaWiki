@@ -1,11 +1,11 @@
-import { RecommendNode } from '@/assets/type';
 import { IconFile, IconFolder } from '@/components/icons';
 import { useStore } from '@/provider';
 import { Box, Stack } from '@mui/material';
 import { Ellipsis } from 'ct-mui';
 import Link from 'next/link';
+import { V1RecommendNodeListItem } from '@/request/types';
 
-const NodeFolder = ({ node }: { node: RecommendNode }) => {
+const NodeFolder = ({ node }: { node: V1RecommendNodeListItem }) => {
   const children =
     node.recommend_nodes?.sort(
       (a, b) => (a.position ?? 0) - (b.position ?? 0),
@@ -85,7 +85,7 @@ const NodeFolder = ({ node }: { node: RecommendNode }) => {
   );
 };
 
-const NodeFile = ({ node }: { node: RecommendNode }) => {
+const NodeFile = ({ node }: { node: V1RecommendNodeListItem }) => {
   return (
     <Link href={`/node/${node.id}`} prefetch={false}>
       <Stack
@@ -147,7 +147,7 @@ const NodeFile = ({ node }: { node: RecommendNode }) => {
   );
 };
 
-const DocCard = ({ node }: { node: RecommendNode }) => {
+const DocCard = ({ node }: { node: V1RecommendNodeListItem }) => {
   const { mobile = false } = useStore();
   return (
     <Box

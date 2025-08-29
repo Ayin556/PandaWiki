@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 /* tslint:disable */
 // @ts-nocheck
 /*
@@ -1444,4 +1444,15 @@ export interface GetShareV1NodeDetailParams {
   id: string;
   /** format */
   format: string;
+}
+
+export interface V1RecommendNodeListItem {
+  emoji?: string;
+  id?: string;
+  name?: string;
+  parent_id?: string;
+  position?: number;
+  recommend_nodes?: DomainRecommendNodeListResp[];
+  summary?: string;
+  type?: DomainNodeType;
 }
