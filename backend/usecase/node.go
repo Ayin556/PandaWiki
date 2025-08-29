@@ -351,6 +351,23 @@ func (u *NodeUsecase) GetNodeRecommendListByKBID(ctx context.Context, kbID strin
 					recommendNodes = append(recommendNodes, nodes[i])
 				}
 			}
+
+			if node.Type == domain.NodeTypeFolder {
+				newFileNodes := make([]*domain.RecommendNodeListResp, 0)
+
+				for i2, recommendNode := range node.RecommendNodes {
+					node.RecommendNodes[i2].Summary = ""
+					switch recommendNode.Permissions.Visible {
+					case consts.NodeAccessPermOpen:
+						newFileNodes = append(newFileNodes, node.RecommendNodes[i2])
+					case consts.NodeAccessPermPartial:
+						if slices.Contains(nodeVisibleGroupIds, node.RecommendNodes[i2].ID) {
+							newFileNodes = append(newFileNodes, node.RecommendNodes[i2])
+						}
+					}
+				}
+				node.RecommendNodes = newFileNodes
+			}
 		}
 	}
 	return recommendNodes, nil
