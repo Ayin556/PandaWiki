@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Box, Paper, Fade, Stack, Fab, Zoom } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { styled, alpha } from '@mui/material/styles';
 import MarkDown2 from '@/components/markdown2';
 import SSEClient from '@/utils/fetch';
 import { message } from 'ct-mui';
@@ -25,7 +25,7 @@ const StyledContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   height: '100vh',
-  background: '#ededed',
+  background: theme.palette.background.paper2,
   fontFamily: theme.typography.fontFamily,
 }));
 
@@ -40,11 +40,15 @@ const StyledMessagesContainer = styled(Box)(({ theme }) => ({
     background: 'transparent',
   },
   '&::-webkit-scrollbar-thumb': {
-    background: 'rgba(0, 0, 0, 0.3)',
+    background: (theme.palette.mode === 'dark'
+      ? 'rgba(255, 255, 255, 0.3)'
+      : 'rgba(0, 0, 0, 0.3)') as any,
     borderRadius: 2,
   },
   '&::-webkit-scrollbar-thumb:hover': {
-    background: 'rgba(0, 0, 0, 0.5)',
+    background: (theme.palette.mode === 'dark'
+      ? 'rgba(255, 255, 255, 0.5)'
+      : 'rgba(0, 0, 0, 0.5)') as any,
   },
 }));
 
@@ -78,8 +82,8 @@ const StyledMessage = styled(Box, {
 const StyledMessageContent = styled(Paper, {
   shouldForwardProp: prop => prop !== 'isUser',
 })<{ isUser: boolean }>(({ theme, isUser }) => ({
-  background: isUser ? '#95EA68' : 'white',
-  color: isUser ? '#000000' : theme.palette.text.primary,
+  background: isUser ? '#95EA68' : theme.palette.background.paper,
+  color: isUser ? '#000' : theme.palette.text.primary,
   padding: theme.spacing(1.5, 2),
   borderRadius: 4,
   boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
@@ -90,7 +94,7 @@ const StyledMessageContent = styled(Paper, {
     ? {
         content: '""',
         position: 'absolute',
-        right: -8,
+        right: -7,
         top: '50%',
         transform: 'translateY(-50%)',
         width: 0,
@@ -102,12 +106,12 @@ const StyledMessageContent = styled(Paper, {
     : {
         content: '""',
         position: 'absolute',
-        left: -8,
+        left: -7,
         top: '50%',
         transform: 'translateY(-50%)',
         width: 0,
         height: 0,
-        borderRight: '8px solid white',
+        borderRight: `8px solid ${theme.palette.background.paper}`,
         borderTop: '8px solid transparent',
         borderBottom: '8px solid transparent',
       },
@@ -122,7 +126,7 @@ const StyledMessageLine = styled('div')(() => ({
   },
 }));
 
-const StyledTyping = styled('div')(() => ({
+const StyledTyping = styled('div')(({ theme }) => ({
   display: 'inline-flex',
   alignItems: 'center',
   gap: 4,
@@ -133,7 +137,7 @@ const StyledTyping = styled('div')(() => ({
     width: 6,
     height: 6,
     borderRadius: '50%',
-    background: '#000000',
+    background: theme.palette.text.primary,
     opacity: 0.2,
     animation: 'blink 1.4s infinite both',
   },
@@ -162,14 +166,15 @@ const ChatLoading = ({ onClick }: { onClick: () => void }) => {
         px: 1.5,
         py: 1,
         borderRadius: '18px',
-        bgcolor: 'rgba(255,255,255,0.9)',
+        bgcolor: theme => alpha(theme.palette.background.paper, 0.9),
         position: 'fixed',
         bottom: 80,
         left: '50%',
         transform: 'translateX(-50%)',
         gap: 1,
         fontSize: 12,
-        border: '1px solid #eee',
+        border: '1px solid',
+        borderColor: 'divider',
         boxShadow: '0px 4px 10px 0px rgba(0,0,0,0.1)',
       }}
       onClick={onClick}
@@ -266,7 +271,7 @@ const H5Chat: React.FC = () => {
           });
         } else if (type === 'answer') {
           setAnswer(prev => {
-            return prev + content;
+            return prev + content + '\n\n';
           });
         } else if (type === 'error') {
           setLoading(false);
@@ -351,11 +356,12 @@ const H5Chat: React.FC = () => {
                         sx={{
                           borderRadius: 2,
                           p: 0.5,
-                          border: '1px solid #EEEEEE',
+                          border: '1px solid',
+                          borderColor: 'divider',
                         }}
                       >
                         <IconCopy
-                          sx={{ cursor: 'pointer', color: '#000' }}
+                          sx={{ cursor: 'pointer', color: 'text.primary' }}
                           onClick={() => {
                             copyText(answer);
                           }}

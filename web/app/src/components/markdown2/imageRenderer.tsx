@@ -247,7 +247,7 @@ export const createImageRenderer = (options: ImageRendererOptions) => {
 
     return (
       container.innerHTML ||
-      `<div  className="image-container image-container-${imageIndex}"}></div>`
+      `<div  className="image-container image-container-${imageIndex}"></div>`
     );
   };
 };

@@ -11,13 +11,15 @@ import ChatResult from './ChatResult';
 import ChatTab from './ChatTab';
 import SearchResult from './SearchResult';
 import { AnswerStatus } from './constant';
+// @ts-ignore
+import Cap from '@cap.js/widget';
 
 const Chat = ({
   conversation: initialConversation,
 }: {
   conversation: ConversationItem[];
 }) => {
-  const { mobile = false } = useStore();
+  const { mobile = false, kbDetail } = useStore();
 
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
   const sseClientRef = useRef<SSEClient<{
@@ -55,11 +57,27 @@ const Chat = ({
     setThinking(1);
     setIsUserScrolling(false);
 
+    let token = '';
+    // @ts-ignore
+    if (kbDetail?.settings?.captcha_settings?.comment_status === 'enable') {
+      const cap = new Cap({
+        apiEndpoint: '/share/v1/captcha/',
+      });
+      try {
+        const solution = await cap.solve();
+        token = solution.token;
+      } catch (error) {
+        message.error('验证失败');
+        console.log(error, 'error---------');
+        return;
+      }
+    }
     const reqData = {
       message: q,
       nonce: '',
       conversation_id: '',
       app_type: 1,
+      captcha_token: token,
     };
     if (conversationId) reqData.conversation_id = conversationId;
     if (nonce) reqData.nonce = nonce;

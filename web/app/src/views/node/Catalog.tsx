@@ -153,6 +153,7 @@ const Catalog = () => {
             pb: 1,
             lineHeight: '22px',
             fontWeight: 'bold',
+            whiteSpace: 'nowrap',
           }}
         >
           目录

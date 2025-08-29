@@ -11,48 +11,45 @@
  */
 
 import httpRequest, { ContentType, RequestParams } from "./httpClient";
-import { DomainAppInfoResp, DomainResponse } from "./types";
+import { ConstsRedeemCaptchaReq, DomainResponse } from "./types";
 
 /**
- * @description GetAppInfo
+ * @description CreateCaptcha
  *
- * @tags share_app
- * @name GetShareV1AppWebInfo
- * @summary GetAppInfo
- * @request GET:/share/v1/app/web/info
- * @response `200` `(DomainResponse & {
-    data?: DomainAppInfoResp,
-
-})` OK
+ * @tags share_captcha
+ * @name PostShareV1CaptchaChallenge
+ * @summary CreateCaptcha
+ * @request POST:/share/v1/captcha/challenge
+ * @response `200` `DomainResponse` OK
  */
 
-export const getShareV1AppWebInfo = (params: RequestParams = {}) =>
-  httpRequest<
-    DomainResponse & {
-      data?: DomainAppInfoResp;
-    }
-  >({
-    path: `/share/v1/app/web/info`,
-    method: "GET",
+export const postShareV1CaptchaChallenge = (params: RequestParams = {}) =>
+  httpRequest<DomainResponse>({
+    path: `/share/v1/captcha/challenge`,
+    method: "POST",
     type: ContentType.Json,
     format: "json",
     ...params,
   });
 
 /**
- * @description GetWidgetAppInfo
+ * @description RedeemCaptcha
  *
- * @tags share_app
- * @name GetShareV1AppWidgetInfo
- * @summary GetWidgetAppInfo
- * @request GET:/share/v1/app/widget/info
+ * @tags share_captcha
+ * @name PostShareV1CaptchaRedeem
+ * @summary RedeemCaptcha
+ * @request POST:/share/v1/captcha/redeem
  * @response `200` `DomainResponse` OK
  */
 
-export const getShareV1AppWidgetInfo = (params: RequestParams = {}) =>
+export const postShareV1CaptchaRedeem = (
+  body: ConstsRedeemCaptchaReq,
+  params: RequestParams = {},
+) =>
   httpRequest<DomainResponse>({
-    path: `/share/v1/app/widget/info`,
-    method: "GET",
+    path: `/share/v1/captcha/redeem`,
+    method: "POST",
+    body: body,
     type: ContentType.Json,
     format: "json",
     ...params,

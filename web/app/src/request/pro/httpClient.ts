@@ -16,7 +16,7 @@ import {
   getServerSearch,
 } from "@/utils/getServerHeader";
 import { message as alert } from "ct-mui";
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 export type QueryParamsType = Record<string | number, any>;
 export type ResponseFormat = keyof Omit<Body, "body" | "bodyUsed">;
 
@@ -284,7 +284,7 @@ export class HttpClient<SecurityDataType = unknown> {
         }
       }
 
-      // if (response.status === 403) {
+      //  if (response.status === 403) {
       //   console.log("response 403:", response);
       //   if (typeof window === "undefined") {
       //     const pathname = await getServerPathname();
@@ -316,7 +316,6 @@ export class HttpClient<SecurityDataType = unknown> {
       if (cancelToken) {
         this.abortControllers.delete(cancelToken);
       }
-
 
       if (
         !response.ok ||

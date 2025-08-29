@@ -22,6 +22,9 @@ import 'dayjs/locale/zh-cn';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import React, { useEffect, useRef, useState } from 'react';
 
+// @ts-ignore
+import Cap from '@cap.js/widget';
+
 dayjs.extend(relativeTime);
 dayjs.locale('zh-cn');
 
@@ -36,8 +39,9 @@ const DocContent = ({
   kbInfo?: KBDetail;
   commentList?: any[];
 }) => {
-  const { mobile = false, authInfo } = useStore();
+  const { mobile = false, authInfo, kbDetail } = useStore();
   const params = useParams() || {};
+  const [commentLoading, setCommentLoading] = useState(false);
   const docId = params.id as string;
   const [commentList, setCommentList] = useState<any[]>(propsCommentList ?? []);
   const [appDetail, setAppDetail] = useState<any>(kbInfo?.settings);
@@ -127,15 +131,34 @@ const DocContent = ({
 
   const onSubmit = handleSubmit(
     async (data: { content: string; name: string }) => {
-      postShareV1Comment({
+      setCommentLoading(true);
+      let token = '';
+      // @ts-ignore
+      if (kbDetail?.settings?.captcha_settings?.comment_status === 'enable') {
+        const cap = new Cap({
+          apiEndpoint: '/share/v1/captcha/',
+        });
+        try {
+          const solution = await cap.solve();
+          token = solution.token;
+        } catch (error) {
+          message.error('验证失败');
+          console.log(error, 'error---------');
+          return;
+        }
+      }
+
+      await postShareV1Comment({
         content: data.content,
         node_id: docId,
         user_name: data.name,
+        captcha_token: token,
       }).then(res => {
         getComment();
         reset();
         message.success('评论成功');
       });
+      setCommentLoading(false);
     },
   );
   if (!editorRef || !info) return null;
@@ -309,7 +332,11 @@ const DocContent = ({
               alignItems='center'
               sx={{ fontSize: 14, color: 'text.secondary' }}
             >
-              <Button variant='contained' onClick={onSubmit}>
+              <Button
+                variant='contained'
+                onClick={onSubmit}
+                loading={commentLoading}
+              >
                 发送
               </Button>
               {!authInfo?.username && (

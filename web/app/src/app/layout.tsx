@@ -75,7 +75,9 @@ const Layout = async ({
 
   const themeMode = kbDetail?.settings?.theme_mode || 'light';
 
-  const { isMobile } = getSelectorsByUserAgent(userAgent || '');
+  const { isMobile } = getSelectorsByUserAgent(userAgent || '') || {
+    isMobile: false,
+  };
 
   return (
     <html lang='en'>
