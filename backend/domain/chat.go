@@ -12,6 +12,7 @@ type ChatRequest struct {
 	Message        string  `json:"message" validate:"required"`
 	Nonce          string  `json:"nonce"`
 	AppType        AppType `json:"app_type" validate:"required,oneof=1 2"`
+	CaptchaToken   string  `json:"captcha_token"`
 
 	KBID  string `json:"-" validate:"required"`
 	AppID string `json:"-"`

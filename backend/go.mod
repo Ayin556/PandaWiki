@@ -6,6 +6,7 @@ require (
 	github.com/88250/lute v1.7.6
 	github.com/JohannesKaufmann/html-to-markdown/v2 v2.3.3
 	github.com/Wsine/feishu2md v1.4.1-0.20250408013403-9b7ae9759a8c
+	github.com/ackcoder/go-cap v1.1.3
 	github.com/alibabacloud-go/darabonba-openapi/v2 v2.1.7
 	github.com/alibabacloud-go/dingtalk v1.6.88
 	github.com/alibabacloud-go/dingtalk/v2 v2.0.83
@@ -41,7 +42,7 @@ require (
 	github.com/open-dingtalk/dingtalk-stream-sdk-go v0.9.1
 	github.com/pkoukk/tiktoken-go v0.1.7
 	github.com/pkoukk/tiktoken-go-loader v0.0.1
-	github.com/redis/go-redis/v9 v9.8.0
+	github.com/redis/go-redis/v9 v9.11.0
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/russross/blackfriday/v2 v2.1.0
 	github.com/samber/lo v1.50.0
