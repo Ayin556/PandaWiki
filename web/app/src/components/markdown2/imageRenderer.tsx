@@ -225,16 +225,18 @@ export const createImageRenderer = (options: ImageRendererOptions) => {
     const container = document.createElement('div');
     const root = createRoot(container);
 
-    root.render(
-      <ImageComponent
-        src={src}
-        alt={alt}
-        attrs={attrs}
-        imageIndex={imageIndex}
-        onLoad={onImageLoad}
-        onError={onImageError}
-      />,
-    );
+    flushSync(() => {
+      root.render(
+        <ImageComponent
+          src={src}
+          alt={alt}
+          attrs={attrs}
+          imageIndex={imageIndex}
+          onLoad={onImageLoad}
+          onError={onImageError}
+        />,
+      );
+    });
 
     setTimeout(() => {
       const imageContainer = document.querySelector(

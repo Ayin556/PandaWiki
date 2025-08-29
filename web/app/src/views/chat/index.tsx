@@ -150,6 +150,11 @@ const Chat = ({
     }
   };
 
+  useEffect(() => {
+    // @ts-ignore
+    window.CAP_CUSTOM_WASM_URL = window.location.origin + '/cap_wasm.min.js';
+  }, []);
+
   const onSearch = (q: string, reset: boolean = false) => {
     if (loading || !q.trim()) return;
     const newConversation = reset
