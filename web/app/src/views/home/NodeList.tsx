@@ -1,9 +1,14 @@
 import { RecommendNode } from '@/assets/type';
 import { useStore } from '@/provider';
+import { V1RecommendNodeListItem } from '@/request/types';
 import { Stack } from '@mui/material';
 import NodeCard from './NodeCard';
 
-const NodeList = () => {
+const NodeList = ({
+  recommendNodes,
+}: {
+  recommendNodes: V1RecommendNodeListItem[];
+}) => {
   const { mobile = false, kbDetail } = useStore();
 
   return (
@@ -24,7 +29,7 @@ const NodeList = () => {
         }),
       }}
     >
-      {kbDetail?.recommend_nodes?.map((item: RecommendNode) => (
+      {recommendNodes.map((item: V1RecommendNodeListItem) => (
         <NodeCard key={item.id} node={item} />
       ))}
     </Stack>

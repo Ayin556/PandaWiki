@@ -77,7 +77,6 @@ export interface KBDetail {
       header_search_placeholder?: string;
     };
   };
-  recommend_nodes: RecommendNode[];
 }
 
 export type WidgetInfo = {
