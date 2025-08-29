@@ -3687,6 +3687,53 @@ const docTemplate = `{
                 }
             }
         },
+        "/share/v1/node/recommend/list": {
+            "get": {
+                "description": "推荐卡片列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "share_node"
+                ],
+                "summary": "推荐卡片列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "kb id",
+                        "name": "X-KB-ID",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/v1.RecommendNodeListItem"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/share/v1/stat/page": {
             "post": {
                 "description": "RecordPage",
@@ -5950,6 +5997,9 @@ const docTemplate = `{
                 "parent_id": {
                     "type": "string"
                 },
+                "permissions": {
+                    "$ref": "#/definitions/domain.NodePermissions"
+                },
                 "position": {
                     "type": "number"
                 },
@@ -6891,6 +6941,38 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/domain.NodeGroupDetail"
                     }
+                }
+            }
+        },
+        "v1.RecommendNodeListItem": {
+            "type": "object",
+            "properties": {
+                "emoji": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "parent_id": {
+                    "type": "string"
+                },
+                "position": {
+                    "type": "number"
+                },
+                "recommend_nodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.RecommendNodeListResp"
+                    }
+                },
+                "summary": {
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/domain.NodeType"
                 }
             }
         },

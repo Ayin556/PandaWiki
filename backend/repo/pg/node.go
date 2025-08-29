@@ -363,10 +363,11 @@ func (r *NodeRepository) GetRecommendNodeListByIDs(ctx context.Context, kbID str
 	if err := r.db.WithContext(ctx).
 		Model(&domain.KBReleaseNodeRelease{}).
 		Joins("LEFT JOIN node_releases ON node_releases.id = kb_release_node_releases.node_release_id").
+		Joins("LEFT JOIN nodes ON nodes.id = node_releases.node_id").
 		Where("node_releases.kb_id = ?", kbID).
 		Where("kb_release_node_releases.release_id = ?", releaseID).
 		Where("node_releases.node_id IN ?", ids).
-		Select("node_releases.node_id as id, node_releases.name, node_releases.type, node_releases.meta->>'summary' as summary, node_releases.meta->>'emoji' as emoji, node_releases.parent_id, node_releases.position").
+		Select("node_releases.node_id as id, node_releases.name, node_releases.type, node_releases.meta->>'summary' as summary, node_releases.meta->>'emoji' as emoji, node_releases.parent_id, node_releases.position, nodes.permissions").
 		Find(&nodes).Error; err != nil {
 		return nil, err
 	}
@@ -378,11 +379,12 @@ func (r *NodeRepository) GetRecommendNodeListByParentIDs(ctx context.Context, kb
 	if err := r.db.WithContext(ctx).
 		Model(&domain.KBReleaseNodeRelease{}).
 		Joins("LEFT JOIN node_releases ON node_releases.id = kb_release_node_releases.node_release_id").
+		Joins("LEFT JOIN nodes ON nodes.id = node_releases.node_id").
 		Where("node_releases.kb_id = ?", kbID).
 		Where("kb_release_node_releases.release_id = ?", releaseID).
 		Where("node_releases.parent_id IN ?", parentIDs).
 		Where("node_releases.type != ?", domain.NodeTypeFolder).
-		Select("node_releases.node_id as id, node_releases.name, node_releases.type, node_releases.meta->>'summary' as summary, node_releases.meta->>'emoji' as emoji, node_releases.parent_id, node_releases.position").
+		Select("node_releases.node_id as id, node_releases.name, node_releases.type, node_releases.meta->>'summary' as summary, node_releases.meta->>'emoji' as emoji, node_releases.parent_id, node_releases.position, nodes.permissions").
 		Find(&nodes).Error; err != nil {
 		return nil, err
 	}

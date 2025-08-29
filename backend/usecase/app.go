@@ -454,16 +454,6 @@ func (u *AppUsecase) GetWebAppInfo(ctx context.Context, kbID string) (*domain.Ap
 		appInfo.Settings.AIFeedbackSettings.AIFeedbackType = []string{"内容不准确", "没有帮助", "其他"}
 	}
 
-	if len(app.Settings.RecommendNodeIDs) > 0 {
-		nodes, err := u.nodeUsecase.GetRecommendNodeList(ctx, &domain.GetRecommendNodeListReq{
-			KBID:    kbID,
-			NodeIDs: app.Settings.RecommendNodeIDs,
-		})
-		if err != nil {
-			return nil, err
-		}
-		appInfo.RecommendNodes = nodes
-	}
 	return appInfo, nil
 }
 

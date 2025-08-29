@@ -196,6 +196,7 @@ type RecommendNodeListResp struct {
 	Position       float64                  `json:"position"`
 	Emoji          string                   `json:"emoji"`
 	RecommendNodes []*RecommendNodeListResp `json:"recommend_nodes,omitempty" gorm:"-"`
+	Permissions    NodePermissions          `json:"permissions" gorm:"type:jsonb"`
 }
 
 type NodeActionReq struct {
