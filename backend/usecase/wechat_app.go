@@ -13,16 +13,18 @@ import (
 type WechatAppUsecase struct {
 	logger      *log.Logger
 	AppUsecase  *AppUsecase
+	authRepo    *pg.AuthRepo
 	chatUsecase *ChatUsecase
 	weRepo      *pg.WechatRepository
 }
 
-func NewWechatAppUsecase(logger *log.Logger, AppUsecase *AppUsecase, chatUsecase *ChatUsecase, weRepo *pg.WechatRepository) *WechatAppUsecase {
+func NewWechatAppUsecase(logger *log.Logger, AppUsecase *AppUsecase, chatUsecase *ChatUsecase, weRepo *pg.WechatRepository, authRepo *pg.AuthRepo) *WechatAppUsecase {
 	return &WechatAppUsecase{
 		logger:      logger.WithModule("usecase.wechatAppUsecase"),
 		AppUsecase:  AppUsecase,
 		chatUsecase: chatUsecase,
 		weRepo:      weRepo,
+		authRepo:    authRepo,
 	}
 }
 
@@ -72,6 +74,13 @@ func (u *WechatAppUsecase) NewWechatConfig(ctx context.Context, appInfo *domain.
 
 func (u *WechatAppUsecase) getQAFunc(kbID string, appType domain.AppType) bot.GetQAFun {
 	return func(ctx context.Context, msg string, info domain.ConversationInfo, ConversationID string) (chan string, error) {
+		auth, err := u.authRepo.GetAuthBySourceType(ctx, domain.AppTypeWechatBot.ToSourceType())
+		if err != nil {
+			u.logger.Error("get auth failed", log.Error(err))
+			return nil, err
+		}
+		info.UserInfo.AuthUserID = auth.ID
+
 		eventCh, err := u.chatUsecase.Chat(ctx, &domain.ChatRequest{
 			Message:        msg,
 			KBID:           kbID,

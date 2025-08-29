@@ -81,6 +81,13 @@ definitions:
     - github
     - cas
     - ldap
+    - widget
+    - dingtalk_bot
+    - feishu_bot
+    - wechat_bot
+    - wechat_service_bot
+    - discord_bot
+    - wechat_official_account
     type: string
     x-enum-varnames:
     - SourceTypeDingTalk
@@ -90,6 +97,13 @@ definitions:
     - SourceTypeGitHub
     - SourceTypeCAS
     - SourceTypeLDAP
+    - SourceTypeWidget
+    - SourceTypeDingtalkBot
+    - SourceTypeFeishuBot
+    - SourceTypeWechatBot
+    - SourceTypeWechatServiceBot
+    - SourceTypeDiscordBot
+    - SourceTypeWechatOfficialAccount
   consts.StatDay:
     enum:
     - 1

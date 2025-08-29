@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/chaitin/panda-wiki/config"
 	"github.com/chaitin/panda-wiki/consts"
@@ -18,6 +19,7 @@ import (
 
 type AppUsecase struct {
 	repo          *pg.AppRepository
+	authRepo      *pg.AuthRepo
 	nodeUsecase   *NodeUsecase
 	chatUsecase   *ChatUsecase
 	logger        *log.Logger
@@ -32,6 +34,7 @@ type AppUsecase struct {
 
 func NewAppUsecase(
 	repo *pg.AppRepository,
+	authRepo *pg.AuthRepo,
 	nodeUsecase *NodeUsecase,
 	logger *log.Logger,
 	config *config.Config,
@@ -41,6 +44,7 @@ func NewAppUsecase(
 		repo:         repo,
 		nodeUsecase:  nodeUsecase,
 		chatUsecase:  chatUsecase,
+		authRepo:     authRepo,
 		logger:       logger.WithModule("usecase.app"),
 		config:       config,
 		dingTalkBots: make(map[string]*dingtalk.DingTalkClient),
@@ -92,6 +96,10 @@ func (u *AppUsecase) ValidateUpdateApp(ctx context.Context, id string, req *doma
 }
 
 func (u *AppUsecase) UpdateApp(ctx context.Context, id string, appRequest *domain.UpdateAppReq) error {
+	if err := u.handleBotAuths(ctx, id, appRequest.Settings); err != nil {
+		return err
+	}
+
 	if err := u.repo.UpdateApp(ctx, id, appRequest); err != nil {
 		return err
 	}
@@ -115,6 +123,13 @@ func (u *AppUsecase) UpdateApp(ctx context.Context, id string, appRequest *domai
 
 func (u *AppUsecase) getQAFunc(kbID string, appType domain.AppType) bot.GetQAFun {
 	return func(ctx context.Context, msg string, info domain.ConversationInfo, ConversationID string) (chan string, error) {
+		auth, err := u.authRepo.GetAuthBySourceType(ctx, appType.ToSourceType())
+		if err != nil {
+			u.logger.Error("get auth failed", log.Error(err))
+			return nil, err
+		}
+		info.UserInfo.AuthUserID = auth.ID
+
 		eventCh, err := u.chatUsecase.Chat(ctx, &domain.ChatRequest{
 			Message:        msg,
 			KBID:           kbID,
@@ -482,5 +497,110 @@ func (u *AppUsecase) GetWidgetAppInfo(ctx context.Context, kbID string) (*domain
 		appInfo.RecommendNodes = nodes
 	}
 	return appInfo, nil
+}
 
+func (u *AppUsecase) handleBotAuths(ctx context.Context, id string, newSettings *domain.AppSettings) error {
+
+	currentApp, err := u.repo.GetAppDetail(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	// Handle DingTalk Bot
+	if currentApp.Settings.WidgetBotSettings.IsOpen != newSettings.WidgetBotSettings.IsOpen {
+		if err := u.handleBotAuth(ctx, currentApp.KBID, currentApp.ID, &currentApp.Settings.WidgetBotSettings.IsOpen,
+			&newSettings.WidgetBotSettings.IsOpen, consts.SourceTypeWidget); err != nil {
+			u.logger.Error("failed to handle widget auth", log.Error(err))
+		}
+	}
+
+	// Handle DingTalk Bot
+	if currentApp.Settings.DingTalkBotIsEnabled != newSettings.DingTalkBotIsEnabled {
+		if err := u.handleBotAuth(ctx, currentApp.KBID, currentApp.ID, currentApp.Settings.DingTalkBotIsEnabled,
+			newSettings.DingTalkBotIsEnabled, consts.SourceTypeDingtalkBot); err != nil {
+			u.logger.Error("failed to handle dingtalk bot auth", log.Error(err))
+		}
+	}
+
+	// Handle Feishu Bot
+	if currentApp.Settings.FeishuBotIsEnabled != newSettings.FeishuBotIsEnabled {
+		if err := u.handleBotAuth(ctx, currentApp.KBID, currentApp.ID, currentApp.Settings.FeishuBotIsEnabled,
+			newSettings.FeishuBotIsEnabled, consts.SourceTypeFeishuBot); err != nil {
+			u.logger.Error("failed to handle feishu bot auth", log.Error(err))
+		}
+	}
+
+	// Handle WeChat Bot
+	if currentApp.Settings.WeChatAppIsEnabled != newSettings.WeChatAppIsEnabled {
+		if err := u.handleBotAuth(ctx, currentApp.KBID, currentApp.ID, currentApp.Settings.WeChatAppIsEnabled,
+			newSettings.WeChatAppIsEnabled, consts.SourceTypeWechatBot); err != nil {
+			u.logger.Error("failed to handle wechat bot auth", log.Error(err))
+		}
+	}
+
+	// Handle WeChat Service Bot
+	if currentApp.Settings.WeChatServiceIsEnabled != newSettings.WeChatServiceIsEnabled {
+		if err := u.handleBotAuth(ctx, currentApp.KBID, currentApp.ID, currentApp.Settings.WeChatServiceIsEnabled,
+			newSettings.WeChatServiceIsEnabled, consts.SourceTypeWechatServiceBot); err != nil {
+			u.logger.Error("failed to handle wechat service bot auth", log.Error(err))
+		}
+	}
+
+	// Handle Discord Bot
+	if currentApp.Settings.DiscordBotIsEnabled != newSettings.DiscordBotIsEnabled {
+		if err := u.handleBotAuth(ctx, currentApp.KBID, currentApp.ID, currentApp.Settings.DiscordBotIsEnabled,
+			newSettings.DiscordBotIsEnabled, consts.SourceTypeDiscordBot); err != nil {
+			u.logger.Error("failed to handle discord bot auth", log.Error(err))
+		}
+	}
+
+	// Handle WeChat Official Account
+	if currentApp.Settings.WechatOfficialAccountIsEnabled != newSettings.WechatOfficialAccountIsEnabled {
+		if err := u.handleBotAuth(ctx, currentApp.KBID, currentApp.ID, currentApp.Settings.WechatOfficialAccountIsEnabled,
+			newSettings.WechatOfficialAccountIsEnabled, consts.SourceTypeWechatOfficialAccount); err != nil {
+			u.logger.Error("failed to handle wechat official account auth", log.Error(err))
+		}
+	}
+
+	return nil
+}
+
+// handleBotAuth handles creation/deletion of auth for a specific bot type
+func (u *AppUsecase) handleBotAuth(ctx context.Context, kbID, appId string, currentEnabled, newEnabled *bool, sourceType consts.SourceType) error {
+	// Determine if bot was enabled/disabled
+	wasEnabled := currentEnabled != nil && *currentEnabled
+	isEnabled := newEnabled != nil && *newEnabled
+
+	// If enabling the bot, create auth record
+	if !wasEnabled && isEnabled {
+		auth := &domain.Auth{
+			KBID:          kbID,
+			UnionID:       fmt.Sprintf("bot_%s_%s", appId, sourceType), // Generate unique union_id for bot
+			SourceType:    sourceType,
+			LastLoginTime: time.Now(),
+			UserInfo: domain.AuthUserInfo{
+				Username: sourceType.Name(),
+			},
+		}
+
+		if err := u.authRepo.DeleteAuthsBySourceType(ctx, kbID, sourceType); err != nil {
+			return fmt.Errorf("failed to delete auths for %s: %w", sourceType, err)
+		}
+
+		if err := u.authRepo.CreateAuth(ctx, auth); err != nil {
+			return fmt.Errorf("failed to create auths for %s: %w", sourceType, err)
+		}
+
+		u.logger.Info("created auth", log.String("kb_id", kbID), log.String("source_type", string(sourceType)))
+	}
+
+	// If disabling the bot, delete auth records
+	if wasEnabled && !isEnabled {
+		if err := u.authRepo.DeleteAuthsBySourceType(ctx, kbID, sourceType); err != nil {
+			return fmt.Errorf("failed to delete auths for %s: %w", sourceType, err)
+		}
+		u.logger.Info("deleted auths", log.String("kb_id", kbID), log.String("source_type", string(sourceType)))
+	}
+
+	return nil
 }

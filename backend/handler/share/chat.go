@@ -18,6 +18,7 @@ type ShareChatHandler struct {
 	logger              *log.Logger
 	appUsecase          *usecase.AppUsecase
 	chatUsecase         *usecase.ChatUsecase
+	authUsecase         *usecase.AuthUsecase
 	conversationUsecase *usecase.ConversationUsecase
 	modelUsecase        *usecase.ModelUsecase
 }
@@ -28,6 +29,7 @@ func NewShareChatHandler(
 	logger *log.Logger,
 	appUsecase *usecase.AppUsecase,
 	chatUsecase *usecase.ChatUsecase,
+	authUsecase *usecase.AuthUsecase,
 	conversationUsecase *usecase.ConversationUsecase,
 	modelUsecase *usecase.ModelUsecase,
 ) *ShareChatHandler {
@@ -36,6 +38,7 @@ func NewShareChatHandler(
 		logger:              logger.WithModule("handler.share.chat"),
 		appUsecase:          appUsecase,
 		chatUsecase:         chatUsecase,
+		authUsecase:         authUsecase,
 		conversationUsecase: conversationUsecase,
 		modelUsecase:        modelUsecase,
 	}
