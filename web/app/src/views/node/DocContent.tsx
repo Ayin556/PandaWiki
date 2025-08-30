@@ -161,6 +161,12 @@ const DocContent = ({
       setCommentLoading(false);
     },
   );
+
+  useEffect(() => {
+    // @ts-ignore
+    window.CAP_CUSTOM_WASM_URL = window.location.origin + '/cap_wasm.min.js';
+  }, []);
+
   if (!editorRef || !info) return null;
 
   const renderIp = (ip_address: any = {}) => {

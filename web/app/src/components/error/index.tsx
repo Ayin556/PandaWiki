@@ -38,6 +38,7 @@ export default function Error({
   const errorInfo = CODE_MAP[error.message as '40003'] || DEFAULT_ERROR;
   return (
     <Stack
+      flex={1}
       style={{
         ...(mobile && {
           width: '100%',
