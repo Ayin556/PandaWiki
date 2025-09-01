@@ -12,7 +12,10 @@ const PCLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <Stack direction='row'>
       <Catalog />
-      <Stack sx={{ flex: 1, height: '100vh', overflow: 'auto' }}>
+      <Stack
+        sx={{ flex: 1, height: '100vh', overflow: 'auto' }}
+        id='scroll-container'
+      >
         <Header />
         <Stack
           sx={{

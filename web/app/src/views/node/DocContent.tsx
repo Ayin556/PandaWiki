@@ -21,8 +21,6 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import React, { useEffect, useRef, useState } from 'react';
-
-// @ts-ignore
 import Cap from '@cap.js/widget';
 
 dayjs.extend(relativeTime);
