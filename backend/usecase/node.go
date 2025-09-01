@@ -443,22 +443,17 @@ func (u *NodeUsecase) ValidateNodePermissionsEdit(req v1.NodePermissionEditReq, 
 }
 
 func (u *NodeUsecase) NodePermissionsEdit(ctx context.Context, req v1.NodePermissionEditReq) error {
-	_, err := u.nodeRepo.GetByID(ctx, req.ID, req.KbId)
-	if err != nil {
-		return err
-	}
-
 	if req.Permissions != nil {
 		updateMap := map[string]interface{}{
 			"permissions": req.Permissions,
 		}
 
-		if err := u.nodeRepo.UpdateNodeByKbID(ctx, req.ID, req.KbId, updateMap); err != nil {
+		if err := u.nodeRepo.UpdateNodesByKbID(ctx, req.IDs, req.KbId, updateMap); err != nil {
 			return err
 		}
 	}
 
-	nodeReleases, err := u.nodeRepo.GetLatestNodeReleaseByNodeIDs(ctx, req.KbId, []string{req.ID})
+	nodeReleases, err := u.nodeRepo.GetLatestNodeReleaseByNodeIDs(ctx, req.KbId, req.IDs)
 	if err != nil {
 		return fmt.Errorf("get latest node release failed: %w", err)
 	}
@@ -495,19 +490,19 @@ func (u *NodeUsecase) NodePermissionsEdit(ctx context.Context, req v1.NodePermis
 	}
 
 	if req.AnswerableGroups != nil {
-		if err := u.nodeRepo.UpdateNodeGroupByKbID(ctx, req.ID, *req.AnswerableGroups, consts.NodePermNameAnswerable); err != nil {
+		if err := u.nodeRepo.UpdateNodeGroupByKbID(ctx, req.IDs, *req.AnswerableGroups, consts.NodePermNameAnswerable); err != nil {
 			return err
 		}
 	}
 
 	if req.VisibleGroups != nil {
-		if err := u.nodeRepo.UpdateNodeGroupByKbID(ctx, req.ID, *req.VisibleGroups, consts.NodePermNameVisible); err != nil {
+		if err := u.nodeRepo.UpdateNodeGroupByKbID(ctx, req.IDs, *req.VisibleGroups, consts.NodePermNameVisible); err != nil {
 			return err
 		}
 	}
 
 	if req.VisitableGroups != nil {
-		if err := u.nodeRepo.UpdateNodeGroupByKbID(ctx, req.ID, *req.VisitableGroups, consts.NodePermNameVisitable); err != nil {
+		if err := u.nodeRepo.UpdateNodeGroupByKbID(ctx, req.IDs, *req.VisitableGroups, consts.NodePermNameVisitable); err != nil {
 			return err
 		}
 	}

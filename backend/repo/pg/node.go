@@ -739,11 +739,19 @@ func (r *NodeRepository) UpdateNodeByKbID(ctx context.Context, id, kbId string, 
 		Updates(updateMap).Error
 }
 
-func (r *NodeRepository) UpdateNodeGroupByKbID(ctx context.Context, nodeId string, groupIds []int, perm consts.NodePermName) error {
+func (r *NodeRepository) UpdateNodesByKbID(ctx context.Context, ids []string, kbId string, updateMap map[string]interface{}) error {
+	return r.db.WithContext(ctx).
+		Model(&domain.Node{}).
+		Where("id in (?)", ids).
+		Where("kb_id = ?", kbId).
+		Updates(updateMap).Error
+}
+
+func (r *NodeRepository) UpdateNodeGroupByKbID(ctx context.Context, nodeIds []string, groupIds []int, perm consts.NodePermName) error {
 	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		// 先根据 nodeId 和 perm 删除 node_group 表中的数据
 		if err := tx.Model(&domain.NodeAuthGroup{}).
-			Where("node_id = ? AND perm = ?", nodeId, perm).
+			Where("node_id in (?) AND perm = ?", nodeIds, perm).
 			Delete(&domain.NodeAuthGroup{}).Error; err != nil {
 			return err
 		}
@@ -753,21 +761,23 @@ func (r *NodeRepository) UpdateNodeGroupByKbID(ctx context.Context, nodeId strin
 			return nil
 		}
 
-		// 批量插入新的数据
-		nodeGroups := make([]domain.NodeAuthGroup, 0)
-		for _, id := range groupIds {
-			if id == 0 {
-				continue
+		for i := range nodeIds {
+			// 批量插入新的数据
+			nodeGroups := make([]domain.NodeAuthGroup, 0)
+			for _, id := range groupIds {
+				if id == 0 {
+					continue
+				}
+				nodeGroups = append(nodeGroups, domain.NodeAuthGroup{
+					NodeID:      nodeIds[i],
+					AuthGroupID: id,
+					Perm:        perm,
+				})
 			}
-			nodeGroups = append(nodeGroups, domain.NodeAuthGroup{
-				NodeID:      nodeId,
-				AuthGroupID: id,
-				Perm:        perm,
-			})
-		}
-		if len(nodeGroups) != 0 {
-			if err := tx.Model(&domain.NodeAuthGroup{}).Create(&nodeGroups).Error; err != nil {
-				return err
+			if len(nodeGroups) != 0 {
+				if err := tx.Model(&domain.NodeAuthGroup{}).Create(&nodeGroups).Error; err != nil {
+					return err
+				}
 			}
 		}
 		return nil

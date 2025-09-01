@@ -41,7 +41,7 @@ type NodePermissionResp struct {
 
 type NodePermissionEditReq struct {
 	KbId             string                  `query:"kb_id" json:"kb_id" validate:"required"`
-	ID               string                  `query:"id" json:"id" validate:"required"`
+	IDs              []string                `query:"ids" json:"ids" validate:"required"`
 	Permissions      *domain.NodePermissions `json:"permissions"`
 	AnswerableGroups *[]int                  `json:"answerable_groups"` // 可被问答
 	VisitableGroups  *[]int                  `json:"visitable_groups"`  // 可被访问
