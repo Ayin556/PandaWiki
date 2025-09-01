@@ -157,7 +157,17 @@ const DocPropertiesModal = ({
   const tree = filterEmptyFolders(convertToTree(data));
 
   useEffect(() => {
-    if (open && data && !isBatch) {
+    if (open && data) {
+      if (isEnterprise) {
+        getApiProV1AuthGroupList({
+          kb_id: kb_id!,
+          page: 1,
+          per_page: 9999,
+        }).then(res => {
+          setUserGroups(res.list || []);
+        });
+      }
+      if (isBatch) return;
       setValue('name', data[0].name!);
       setValue('summary', data[0].summary!);
       getApiV1NodePermission({
@@ -192,15 +202,6 @@ const DocPropertiesModal = ({
           })),
         );
       });
-      if (isEnterprise) {
-        getApiProV1AuthGroupList({
-          kb_id: kb_id!,
-          page: 1,
-          per_page: 9999,
-        }).then(res => {
-          setUserGroups(res.list || []);
-        });
-      }
     }
   }, [open, data, isEnterprise]);
 
