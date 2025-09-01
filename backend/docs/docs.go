@@ -7074,7 +7074,7 @@ const docTemplate = `{
         "v1.NodePermissionEditReq": {
             "type": "object",
             "required": [
-                "id",
+                "ids",
                 "kb_id"
             ],
             "properties": {
@@ -7085,8 +7085,11 @@ const docTemplate = `{
                         "type": "integer"
                     }
                 },
-                "id": {
-                    "type": "string"
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "kb_id": {
                     "type": "string"

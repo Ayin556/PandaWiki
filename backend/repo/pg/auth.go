@@ -74,10 +74,14 @@ func (r *AuthRepo) GetAuthBySourceType(ctx context.Context, sourceType consts.So
 	return auth, nil
 }
 
-func (r *AuthRepo) CreateAuth(ctx context.Context, auth *domain.Auth) error {
-	return r.db.WithContext(ctx).Model(&domain.Auth{}).Create(auth).Error
+func (r *AuthRepo) GetAuthByKBIDAndSourceType(ctx context.Context, kbID string, sourceType consts.SourceType) (*domain.Auth, error) {
+	var auth *domain.Auth
+	if err := r.db.WithContext(ctx).Model(&domain.Auth{}).Where("kb_id = ? AND source_type = ?", kbID, string(sourceType)).First(&auth).Error; err != nil {
+		return nil, err
+	}
+	return auth, nil
 }
 
-func (r *AuthRepo) DeleteAuthsBySourceType(ctx context.Context, kbID string, sourceType consts.SourceType) error {
-	return r.db.WithContext(ctx).Where("kb_id = ? AND source_type = ?", kbID, string(sourceType)).Delete(&domain.Auth{}).Error
+func (r *AuthRepo) CreateAuth(ctx context.Context, auth *domain.Auth) error {
+	return r.db.WithContext(ctx).Model(&domain.Auth{}).Create(auth).Error
 }

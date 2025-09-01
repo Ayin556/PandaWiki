@@ -15,6 +15,7 @@ import (
 	"github.com/chaitin/panda-wiki/pkg/bot/discord"
 	"github.com/chaitin/panda-wiki/pkg/bot/feishu"
 	"github.com/chaitin/panda-wiki/repo/pg"
+	"github.com/chaitin/panda-wiki/store/cache"
 )
 
 type AppUsecase struct {
@@ -24,6 +25,7 @@ type AppUsecase struct {
 	chatUsecase   *ChatUsecase
 	logger        *log.Logger
 	config        *config.Config
+	cache         *cache.Cache
 	dingTalkBots  map[string]*dingtalk.DingTalkClient
 	dingTalkMutex sync.RWMutex
 	feishuBots    map[string]*feishu.FeishuClient
@@ -39,6 +41,7 @@ func NewAppUsecase(
 	logger *log.Logger,
 	config *config.Config,
 	chatUsecase *ChatUsecase,
+	cache *cache.Cache,
 ) *AppUsecase {
 	u := &AppUsecase{
 		repo:         repo,
@@ -47,6 +50,7 @@ func NewAppUsecase(
 		authRepo:     authRepo,
 		logger:       logger.WithModule("usecase.app"),
 		config:       config,
+		cache:        cache,
 		dingTalkBots: make(map[string]*dingtalk.DingTalkClient),
 		feishuBots:   make(map[string]*feishu.FeishuClient),
 		discordBots:  make(map[string]*discord.DiscordClient),
@@ -123,7 +127,7 @@ func (u *AppUsecase) UpdateApp(ctx context.Context, id string, appRequest *domai
 
 func (u *AppUsecase) getQAFunc(kbID string, appType domain.AppType) bot.GetQAFun {
 	return func(ctx context.Context, msg string, info domain.ConversationInfo, ConversationID string) (chan string, error) {
-		auth, err := u.authRepo.GetAuthBySourceType(ctx, appType.ToSourceType())
+		auth, err := u.authRepo.GetAuthByKBIDAndSourceType(ctx, kbID, appType.ToSourceType())
 		if err != nil {
 			u.logger.Error("get auth failed", log.Error(err))
 			return nil, err
@@ -559,17 +563,25 @@ func (u *AppUsecase) handleBotAuths(ctx context.Context, id string, newSettings 
 	return nil
 }
 
-// handleBotAuth handles creation/deletion of auth for a specific bot type
 func (u *AppUsecase) handleBotAuth(ctx context.Context, kbID, appId string, currentEnabled, newEnabled *bool, sourceType consts.SourceType) error {
-	// Determine if bot was enabled/disabled
 	wasEnabled := currentEnabled != nil && *currentEnabled
 	isEnabled := newEnabled != nil && *newEnabled
 
-	// If enabling the bot, create auth record
 	if !wasEnabled && isEnabled {
+		rdsKey := fmt.Sprintf("handleBotAuth:%s:%s", kbID, sourceType)
+		if !u.cache.AcquireLock(ctx, rdsKey) {
+			return fmt.Errorf("bot auth creation is in progress, please try again later")
+		}
+		defer u.cache.ReleaseLock(ctx, rdsKey)
+
+		existingAuth, _ := u.authRepo.GetAuthByKBIDAndSourceType(ctx, kbID, sourceType)
+		if existingAuth != nil {
+			return nil
+		}
+
 		auth := &domain.Auth{
 			KBID:          kbID,
-			UnionID:       fmt.Sprintf("bot_%s_%s", appId, sourceType), // Generate unique union_id for bot
+			UnionID:       fmt.Sprintf("bot_%s_%s", appId, sourceType),
 			SourceType:    sourceType,
 			LastLoginTime: time.Now(),
 			UserInfo: domain.AuthUserInfo{
@@ -577,23 +589,10 @@ func (u *AppUsecase) handleBotAuth(ctx context.Context, kbID, appId string, curr
 			},
 		}
 
-		if err := u.authRepo.DeleteAuthsBySourceType(ctx, kbID, sourceType); err != nil {
-			return fmt.Errorf("failed to delete auths for %s: %w", sourceType, err)
-		}
-
 		if err := u.authRepo.CreateAuth(ctx, auth); err != nil {
-			return fmt.Errorf("failed to create auths for %s: %w", sourceType, err)
+			return fmt.Errorf("failed to create auth for %s: %w", sourceType, err)
 		}
 
-		u.logger.Info("created auth", log.String("kb_id", kbID), log.String("source_type", string(sourceType)))
-	}
-
-	// If disabling the bot, delete auth records
-	if wasEnabled && !isEnabled {
-		if err := u.authRepo.DeleteAuthsBySourceType(ctx, kbID, sourceType); err != nil {
-			return fmt.Errorf("failed to delete auths for %s: %w", sourceType, err)
-		}
-		u.logger.Info("deleted auths", log.String("kb_id", kbID), log.String("source_type", string(sourceType)))
 	}
 
 	return nil
