@@ -87,11 +87,6 @@ func (m *MigrationCreateBotAuth) Execute(tx *gorm.DB) error {
 			continue
 		}
 
-		// 先删除该知识库下相同source_type的旧认证记录（确保唯一性）
-		if err := tx.WithContext(ctx).Where("kb_id = ? AND source_type = ?", app.KBID, string(sourceType)).Delete(&domain.Auth{}).Error; err != nil {
-			return fmt.Errorf("failed to delete existing auths for kb_id %s, source_type %s: %w", app.KBID, sourceType, err)
-		}
-
 		// 创建新的认证记录
 		auth := &domain.Auth{
 			KBID:          app.KBID,

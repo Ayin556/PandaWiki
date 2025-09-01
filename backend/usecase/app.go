@@ -123,7 +123,7 @@ func (u *AppUsecase) UpdateApp(ctx context.Context, id string, appRequest *domai
 
 func (u *AppUsecase) getQAFunc(kbID string, appType domain.AppType) bot.GetQAFun {
 	return func(ctx context.Context, msg string, info domain.ConversationInfo, ConversationID string) (chan string, error) {
-		auth, err := u.authRepo.GetAuthBySourceType(ctx, appType.ToSourceType())
+		auth, err := u.authRepo.GetAuthByKBIDAndSourceType(ctx, kbID, appType.ToSourceType())
 		if err != nil {
 			u.logger.Error("get auth failed", log.Error(err))
 			return nil, err
@@ -559,14 +559,21 @@ func (u *AppUsecase) handleBotAuths(ctx context.Context, id string, newSettings 
 	return nil
 }
 
-// handleBotAuth handles creation/deletion of auth for a specific bot type
+// handleBotAuth handles creation of auth for a specific bot type when enabling
 func (u *AppUsecase) handleBotAuth(ctx context.Context, kbID, appId string, currentEnabled, newEnabled *bool, sourceType consts.SourceType) error {
 	// Determine if bot was enabled/disabled
 	wasEnabled := currentEnabled != nil && *currentEnabled
 	isEnabled := newEnabled != nil && *newEnabled
 
-	// If enabling the bot, create auth record
+	// If enabling the bot, check if auth exists, create if not
 	if !wasEnabled && isEnabled {
+		// Check if auth already exists for this source type
+		existingAuth, _ := u.authRepo.GetAuthByKBIDAndSourceType(ctx, kbID, sourceType)
+		if existingAuth != nil {
+			return nil
+		}
+
+		// If auth doesn't exist, create it
 		auth := &domain.Auth{
 			KBID:          kbID,
 			UnionID:       fmt.Sprintf("bot_%s_%s", appId, sourceType), // Generate unique union_id for bot
@@ -577,23 +584,10 @@ func (u *AppUsecase) handleBotAuth(ctx context.Context, kbID, appId string, curr
 			},
 		}
 
-		if err := u.authRepo.DeleteAuthsBySourceType(ctx, kbID, sourceType); err != nil {
-			return fmt.Errorf("failed to delete auths for %s: %w", sourceType, err)
-		}
-
 		if err := u.authRepo.CreateAuth(ctx, auth); err != nil {
-			return fmt.Errorf("failed to create auths for %s: %w", sourceType, err)
+			return fmt.Errorf("failed to create auth for %s: %w", sourceType, err)
 		}
 
-		u.logger.Info("created auth", log.String("kb_id", kbID), log.String("source_type", string(sourceType)))
-	}
-
-	// If disabling the bot, delete auth records
-	if wasEnabled && !isEnabled {
-		if err := u.authRepo.DeleteAuthsBySourceType(ctx, kbID, sourceType); err != nil {
-			return fmt.Errorf("failed to delete auths for %s: %w", sourceType, err)
-		}
-		u.logger.Info("deleted auths", log.String("kb_id", kbID), log.String("source_type", string(sourceType)))
 	}
 
 	return nil

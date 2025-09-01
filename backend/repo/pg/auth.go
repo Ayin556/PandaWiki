@@ -3,8 +3,6 @@ package pg
 import (
 	"context"
 
-	"gorm.io/gorm"
-
 	"github.com/chaitin/panda-wiki/consts"
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/log"
@@ -76,38 +74,14 @@ func (r *AuthRepo) GetAuthBySourceType(ctx context.Context, sourceType consts.So
 	return auth, nil
 }
 
-func (r *AuthRepo) CreateAuth(ctx context.Context, auth *domain.Auth) error {
-	return r.db.WithContext(ctx).Model(&domain.Auth{}).Create(auth).Error
+func (r *AuthRepo) GetAuthByKBIDAndSourceType(ctx context.Context, kbID string, sourceType consts.SourceType) (*domain.Auth, error) {
+	var auth *domain.Auth
+	if err := r.db.WithContext(ctx).Model(&domain.Auth{}).Where("kb_id = ? AND source_type = ?", kbID, string(sourceType)).First(&auth).Error; err != nil {
+		return nil, err
+	}
+	return auth, nil
 }
 
-func (r *AuthRepo) DeleteAuthsBySourceType(ctx context.Context, kbID string, sourceType consts.SourceType) error {
-	var authIDs []string
-
-	if err := r.db.WithContext(ctx).
-		Model(&domain.Auth{}).
-		Where("kb_id = ? AND source_type = ?", kbID, string(sourceType)).
-		Pluck("id", &authIDs).Error; err != nil {
-		return err
-	}
-
-	if len(authIDs) == 0 {
-		return nil
-	}
-
-	if err := r.db.WithContext(ctx).
-		Where("id IN ?", authIDs).
-		Delete(&domain.Auth{}).Error; err != nil {
-		return err
-	}
-
-	for _, id := range authIDs {
-		if err := r.db.WithContext(ctx).
-			Model(&domain.AuthGroup{}).
-			Where("kb_id = ?", kbID).
-			Update("auth_ids", gorm.Expr("array_remove(auth_ids, ?)", id)).Error; err != nil {
-			return err
-		}
-	}
-
-	return nil
+func (r *AuthRepo) CreateAuth(ctx context.Context, auth *domain.Auth) error {
+	return r.db.WithContext(ctx).Model(&domain.Auth{}).Create(auth).Error
 }
