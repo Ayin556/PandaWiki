@@ -2,7 +2,9 @@ import { useEffect, useState, useMemo } from 'react';
 import { Form, FormItem } from '@/pages/setting/component/Common';
 import { Modal, Icon, Message } from 'ct-mui';
 import { GithubComChaitinPandaWikiProApiAuthV1AuthGroupListItem } from '@/request/pro/types';
-import { DomainNodeListItemResp } from '@/request/types';
+import { DomainNodeListItemResp, DomainNodeType } from '@/request/types';
+import Card from '@/components/Card';
+import DragTree from '@/components/Drag/DragTree';
 import dayjs from 'dayjs';
 import {
   RadioGroup,
@@ -12,12 +14,15 @@ import {
   Stack,
   Button,
   Autocomplete,
+  Box,
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import { FormControlLabel } from '@mui/material';
 import { ConstsNodeAccessPerm } from '@/request/types';
 import { postApiV1NodeSummary, putApiV1NodeDetail } from '@/request/Node';
 import { getApiProV1AuthGroupList } from '@/request/pro/AuthGroup';
+import { convertToTree } from '@/utils/drag';
+import { filterEmptyFolders } from '@/utils/tree';
 import {
   getApiV1NodePermission,
   patchApiV1NodePermissionEdit,
@@ -28,7 +33,8 @@ interface DocPropertiesModalProps {
   open: boolean;
   onCancel: () => void;
   onOk: () => void;
-  data: DomainNodeListItemResp;
+  isBatch?: boolean;
+  data: DomainNodeListItemResp[];
 }
 
 const tips = '(企业版可用)';
@@ -58,6 +64,7 @@ const DocPropertiesModal = ({
   onCancel,
   data,
   onOk,
+  isBatch = false,
 }: DocPropertiesModalProps) => {
   const { kb_id, license } = useAppSelector(state => state.config);
   const [loading, setLoading] = useState(false);
@@ -94,7 +101,7 @@ const DocPropertiesModal = ({
   const onGenerateSummary = () => {
     setLoading(true);
     postApiV1NodeSummary({
-      ids: [data.id!],
+      ids: [data[0].id!],
       kb_id: kb_id!,
     })
       .then(res => {
@@ -110,7 +117,9 @@ const DocPropertiesModal = ({
     Promise.all([
       patchApiV1NodePermissionEdit({
         kb_id: kb_id!,
-        id: data.id!,
+        ids: data
+          .filter(item => item.type === DomainNodeType.NodeTypeDocument)
+          .map(item => item.id!),
         permissions: {
           answerable: values.answerable as ConstsNodeAccessPerm,
           visitable: values.visitable as ConstsNodeAccessPerm,
@@ -127,12 +136,14 @@ const DocPropertiesModal = ({
           : undefined,
       }),
 
-      putApiV1NodeDetail({
-        id: data.id!,
-        name: values.name,
-        summary: values.summary,
-        kb_id: kb_id!,
-      }),
+      !isBatch
+        ? putApiV1NodeDetail({
+            id: data[0].id!,
+            name: values.name,
+            summary: values.summary,
+            kb_id: kb_id!,
+          })
+        : undefined,
     ]).then(() => {
       Message.success('编辑成功');
       onOk();
@@ -143,13 +154,15 @@ const DocPropertiesModal = ({
     return license.edition === 2;
   }, [license]);
 
+  const tree = filterEmptyFolders(convertToTree(data));
+
   useEffect(() => {
-    if (open && data) {
-      setValue('name', data.name!);
-      setValue('summary', data.summary!);
+    if (open && data && !isBatch) {
+      setValue('name', data[0].name!);
+      setValue('summary', data[0].summary!);
       getApiV1NodePermission({
         kb_id: kb_id!,
-        id: data.id!,
+        id: data[0].id!,
       }).then(res => {
         const permissions = res.permissions!;
         if (permissions) {
@@ -199,7 +212,7 @@ const DocPropertiesModal = ({
 
   return (
     <Modal
-      title='文档属性'
+      title={isBatch ? '批量设置权限' : '文档属性'}
       open={open}
       onCancel={onCancel}
       width={700}
@@ -208,43 +221,77 @@ const DocPropertiesModal = ({
       }}
       onOk={onSubmit}
     >
+      {isBatch && (
+        <>
+          <Box sx={{ fontSize: 14, mb: 1, color: 'text.secondary' }}>
+            已选中
+            <Box
+              component={'span'}
+              sx={{ fontFamily: 'Gbold', color: 'primary.main', px: 0.5 }}
+            >
+              {
+                data.filter(
+                  item => item.type === DomainNodeType.NodeTypeDocument,
+                ).length
+              }
+            </Box>
+            个文档，设置权限
+          </Box>
+          <Card
+            sx={{
+              py: 1,
+              bgcolor: 'background.paper2',
+              '& .dndkit-drag-handle': {
+                top: '-2px !important',
+              },
+            }}
+          >
+            <DragTree data={tree} readOnly={true} supportSelect={false} />
+          </Card>
+        </>
+      )}
+
       <Form labelWidth={100} gap={3}>
-        <FormItem label='文档名称' required>
-          <Controller
-            name='name'
-            control={control}
-            rules={{ required: '文档名称不能为空' }}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                fullWidth
-                error={!!errors.name}
-                helperText={errors.name?.message as string}
+        {!isBatch && (
+          <>
+            <FormItem label='文档名称' required>
+              <Controller
+                name='name'
+                control={control}
+                rules={{ required: '文档名称不能为空' }}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    error={!!errors.name}
+                    helperText={errors.name?.message as string}
+                  />
+                )}
               />
-            )}
-          />
-        </FormItem>
-        <FormItem label='创建时间'>
-          <StyledText>
-            {data?.created_at
-              ? dayjs(data.created_at).format('YYYY-MM-DD HH:mm:ss')
-              : '-'}
-          </StyledText>
-        </FormItem>
-        <FormItem label='创建者'>
-          <StyledText>{data?.creator}</StyledText>
-        </FormItem>
-        <FormItem label='修改时间'>
-          <StyledText>
-            {data?.updated_at
-              ? dayjs(data.updated_at).format('YYYY-MM-DD HH:mm:ss')
-              : '-'}
-          </StyledText>
-        </FormItem>
-        <FormItem label='修改者'>
-          <StyledText>{data?.editor}</StyledText>
-        </FormItem>
-        <FormItem label='可被问答'>
+            </FormItem>
+            <FormItem label='创建时间'>
+              <StyledText>
+                {data?.[0]?.created_at
+                  ? dayjs(data[0].created_at).format('YYYY-MM-DD HH:mm:ss')
+                  : '-'}
+              </StyledText>
+            </FormItem>
+            <FormItem label='创建者'>
+              <StyledText>{data?.[0]?.creator}</StyledText>
+            </FormItem>
+            <FormItem label='修改时间'>
+              <StyledText>
+                {data?.[0]?.updated_at
+                  ? dayjs(data[0].updated_at).format('YYYY-MM-DD HH:mm:ss')
+                  : '-'}
+              </StyledText>
+            </FormItem>
+            <FormItem label='修改者'>
+              <StyledText>{data?.[0]?.editor}</StyledText>
+            </FormItem>
+          </>
+        )}
+        <FormItem label='可被问答' sx={{ mt: isBatch ? 2 : 0 }}>
           <Controller
             name='answerable'
             control={control}
@@ -414,41 +461,44 @@ const DocPropertiesModal = ({
             />
           </FormItem>
         )}
-        <FormItem label='内容摘要' sx={{ alignItems: 'flex-start' }}>
-          <Controller
-            name='summary'
-            control={control}
-            render={({ field }) => (
-              <Stack sx={{ flex: 1 }} alignItems='flex-start'>
-                <TextField
-                  {...field}
-                  fullWidth
-                  error={!!errors.name}
-                  helperText={errors.name?.message as string}
-                  multiline
-                  minRows={4}
-                />
-                <Button
-                  sx={{ minWidth: 'auto', mt: 1 }}
-                  onClick={onGenerateSummary}
-                  disabled={loading}
-                  startIcon={
-                    <Icon
-                      type='icon-shuaxin'
-                      sx={
-                        loading
-                          ? { animation: 'loadingRotate 1s linear infinite' }
-                          : {}
-                      }
-                    />
-                  }
-                >
-                  AI 生成
-                </Button>
-              </Stack>
-            )}
-          />
-        </FormItem>
+
+        {!isBatch && (
+          <FormItem label='内容摘要' sx={{ alignItems: 'flex-start' }}>
+            <Controller
+              name='summary'
+              control={control}
+              render={({ field }) => (
+                <Stack sx={{ flex: 1 }} alignItems='flex-start'>
+                  <TextField
+                    {...field}
+                    fullWidth
+                    error={!!errors.name}
+                    helperText={errors.name?.message as string}
+                    multiline
+                    minRows={4}
+                  />
+                  <Button
+                    sx={{ minWidth: 'auto', mt: 1 }}
+                    onClick={onGenerateSummary}
+                    disabled={loading}
+                    startIcon={
+                      <Icon
+                        type='icon-shuaxin'
+                        sx={
+                          loading
+                            ? { animation: 'loadingRotate 1s linear infinite' }
+                            : {}
+                        }
+                      />
+                    }
+                  >
+                    AI 生成
+                  </Button>
+                </Stack>
+              )}
+            />
+          </FormItem>
+        )}
       </Form>
     </Modal>
   );
