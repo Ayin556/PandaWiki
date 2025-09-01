@@ -11,7 +11,6 @@ import ChatResult from './ChatResult';
 import ChatTab from './ChatTab';
 import SearchResult from './SearchResult';
 import { AnswerStatus } from './constant';
-// @ts-ignore
 import Cap from '@cap.js/widget';
 
 const Chat = ({
