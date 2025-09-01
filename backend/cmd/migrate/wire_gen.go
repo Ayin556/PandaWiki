@@ -67,8 +67,10 @@ func createApp() (*App, error) {
 		return nil, err
 	}
 	migrationNodeVersion := fns.NewMigrationNodeVersion(logger, nodeUsecase, knowledgeBaseUsecase, ragRepository)
+	migrationCreateBotAuth := fns.NewMigrationCreateBotAuth(logger)
 	migrationFuncs := &migration.MigrationFuncs{
-		NodeMigration: migrationNodeVersion,
+		NodeMigration:    migrationNodeVersion,
+		BotAuthMigration: migrationCreateBotAuth,
 	}
 	manager, err := migration.NewManager(db, logger, migrationFuncs)
 	if err != nil {
