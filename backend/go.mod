@@ -14,7 +14,7 @@ require (
 	github.com/alibabacloud-go/tea-utils/v2 v2.0.7
 	github.com/boj/redistore v1.4.1
 	github.com/bwmarrin/discordgo v0.29.0
-	github.com/chaitin/ModelKit v1.8.3
+	github.com/chaitin/ModelKit v1.8.4
 	github.com/chaitin/pandawiki/sdk/rag v0.0.0-20250821111634-e0b93366d1c0
 	github.com/cloudwego/eino v0.3.51
 	github.com/cloudwego/eino-ext/components/model/deepseek v0.0.0-20250522060253-ddb617598b09
