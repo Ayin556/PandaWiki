@@ -2,7 +2,7 @@
 
 import { useStore } from '@/provider';
 import { copyText } from '@/utils';
-import { Box, useTheme } from '@mui/material';
+import { Box, Dialog, useTheme } from '@mui/material';
 import mk from '@vscode/markdown-it-katex';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/an-old-hope.css';
@@ -71,6 +71,8 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
 
   // 状态管理
   const [showThink, setShowThink] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImgSrc, setPreviewImgSrc] = useState('');
 
   // Refs
   const containerRef = useRef<HTMLDivElement>(null);
@@ -121,6 +123,10 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
       createImageRenderer({
         onImageLoad: handleImageLoad,
         onImageError: handleImageError,
+        onImageClick: (src: string) => {
+          setPreviewImgSrc(src);
+          setPreviewOpen(true);
+        },
         imageRenderCache: imageRenderCacheRef.current,
       }),
     [handleImageLoad, handleImageError],
@@ -396,20 +402,42 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
     // 暗色主题下的 LaTeX 样式
     ...(themeMode === 'dark' && {
       '.katex, .katex *, .katex .mord, .katex .mrel, .katex .mop, .katex .mbin, .katex .mpunct, .katex .mopen, .katex .mclose, .katex-display':
-      {
-        color: `${theme.palette.text.primary} !important`,
-      },
+        {
+          color: `${theme.palette.text.primary} !important`,
+        },
     }),
   };
 
   // ==================== 渲染 ====================
   return (
-    <Box
-      className={`markdown-body ${themeMode === 'dark' ? 'md-dark' : ''}`}
-      sx={componentStyles}
-    >
-      <div ref={containerRef} />
-    </Box>
+    <>
+      {/* 图片预览弹窗 */}
+      <Dialog
+        sx={{
+          '.MuiDialog-paper': {
+            maxWidth: '95vw',
+            maxHeight: '95vh',
+          },
+        }}
+        open={previewOpen}
+        onClose={() => {
+          setPreviewOpen(false);
+          setPreviewImgSrc('');
+        }}
+      >
+        <img
+          src={previewImgSrc}
+          alt='preview'
+          style={{ width: '100%', height: '100%' }}
+        />
+      </Dialog>
+      <Box
+        className={`markdown-body ${themeMode === 'dark' ? 'md-dark' : ''}`}
+        sx={componentStyles}
+      >
+        <div ref={containerRef} />
+      </Box>
+    </>
   );
 };
 
