@@ -252,10 +252,15 @@ const TreeItem = React.forwardRef<
         gap={2}
         onClick={e => e.stopPropagation()}
       >
-        <div
-          className={'dnd-sortable-tree_simple_handle'}
-          {...props.handleProps}
-        />
+        {!readOnly ? (
+          <div
+            className={'dnd-sortable-tree_simple_handle'}
+            {...props.handleProps}
+          />
+        ) : (
+          <Box />
+        )}
+
         {supportSelect && (
           <Checkbox
             sx={{

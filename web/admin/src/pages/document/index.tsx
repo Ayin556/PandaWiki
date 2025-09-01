@@ -58,6 +58,7 @@ const Content = () => {
   const [publishOpen, setPublishOpen] = useState(false);
   const [key, setKey] = useState<ImportDocType>('URL');
   const [propertiesOpen, setPropertiesOpen] = useState(false);
+  const [isBatch, setIsBatch] = useState(false);
 
   const handleUrl = (item: ITreeItem, key: ImportDocType) => {
     setKey(key);
@@ -83,6 +84,7 @@ const Content = () => {
   const handleProperties = (item: ITreeItem) => {
     setPropertiesOpen(true);
     setOpraData(list.filter(it => it.id === item.id));
+    setIsBatch(false);
   };
 
   const menu = (opra: TreeMenuOptions): TreeMenuItem[] => {
@@ -376,6 +378,19 @@ const Content = () => {
                   >
                     批量删除
                   </Button>
+                  <Button
+                    size='small'
+                    sx={{ minWidth: 0, p: 0 }}
+                    onClick={() => {
+                      setPropertiesOpen(true);
+                      setIsBatch(true);
+                      setOpraData(
+                        list.filter(item => selected.includes(item.id!)),
+                      );
+                    }}
+                  >
+                    批量设置权限
+                  </Button>
                 </Stack>
               </>
             ) : (
@@ -496,7 +511,8 @@ const Content = () => {
           setPropertiesOpen(false);
           setOpraData([]);
         }}
-        data={opraData[0]}
+        data={opraData}
+        isBatch={isBatch}
       />
     </>
   );
