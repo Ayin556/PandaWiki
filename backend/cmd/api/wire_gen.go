@@ -110,7 +110,7 @@ func createApp() (*App, error) {
 	if err != nil {
 		return nil, err
 	}
-	appUsecase := usecase.NewAppUsecase(appRepository, authRepo, nodeUsecase, logger, configConfig, chatUsecase)
+	appUsecase := usecase.NewAppUsecase(appRepository, authRepo, nodeUsecase, logger, configConfig, chatUsecase, cacheCache)
 	appHandler := v1.NewAppHandler(echo, baseHandler, logger, authMiddleware, appUsecase, modelUsecase, conversationUsecase, configConfig)
 	fileUsecase := usecase.NewFileUsecase(logger, minioClient, configConfig)
 	fileHandler := v1.NewFileHandler(echo, baseHandler, logger, authMiddleware, minioClient, configConfig, fileUsecase)

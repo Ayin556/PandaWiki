@@ -490,19 +490,19 @@ func (u *NodeUsecase) NodePermissionsEdit(ctx context.Context, req v1.NodePermis
 	}
 
 	if req.AnswerableGroups != nil {
-		if err := u.nodeRepo.UpdateNodeGroupByKbID(ctx, req.IDs, *req.AnswerableGroups, consts.NodePermNameAnswerable); err != nil {
+		if err := u.nodeRepo.UpdateNodeGroupByKbIDAndNodeIds(ctx, req.IDs, *req.AnswerableGroups, consts.NodePermNameAnswerable); err != nil {
 			return err
 		}
 	}
 
 	if req.VisibleGroups != nil {
-		if err := u.nodeRepo.UpdateNodeGroupByKbID(ctx, req.IDs, *req.VisibleGroups, consts.NodePermNameVisible); err != nil {
+		if err := u.nodeRepo.UpdateNodeGroupByKbIDAndNodeIds(ctx, req.IDs, *req.VisibleGroups, consts.NodePermNameVisible); err != nil {
 			return err
 		}
 	}
 
 	if req.VisitableGroups != nil {
-		if err := u.nodeRepo.UpdateNodeGroupByKbID(ctx, req.IDs, *req.VisitableGroups, consts.NodePermNameVisitable); err != nil {
+		if err := u.nodeRepo.UpdateNodeGroupByKbIDAndNodeIds(ctx, req.IDs, *req.VisitableGroups, consts.NodePermNameVisitable); err != nil {
 			return err
 		}
 	}

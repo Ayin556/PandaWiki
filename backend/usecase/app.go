@@ -15,6 +15,7 @@ import (
 	"github.com/chaitin/panda-wiki/pkg/bot/discord"
 	"github.com/chaitin/panda-wiki/pkg/bot/feishu"
 	"github.com/chaitin/panda-wiki/repo/pg"
+	"github.com/chaitin/panda-wiki/store/cache"
 )
 
 type AppUsecase struct {
@@ -24,6 +25,7 @@ type AppUsecase struct {
 	chatUsecase   *ChatUsecase
 	logger        *log.Logger
 	config        *config.Config
+	cache         *cache.Cache
 	dingTalkBots  map[string]*dingtalk.DingTalkClient
 	dingTalkMutex sync.RWMutex
 	feishuBots    map[string]*feishu.FeishuClient
@@ -39,6 +41,7 @@ func NewAppUsecase(
 	logger *log.Logger,
 	config *config.Config,
 	chatUsecase *ChatUsecase,
+	cache *cache.Cache,
 ) *AppUsecase {
 	u := &AppUsecase{
 		repo:         repo,
@@ -47,6 +50,7 @@ func NewAppUsecase(
 		authRepo:     authRepo,
 		logger:       logger.WithModule("usecase.app"),
 		config:       config,
+		cache:        cache,
 		dingTalkBots: make(map[string]*dingtalk.DingTalkClient),
 		feishuBots:   make(map[string]*feishu.FeishuClient),
 		discordBots:  make(map[string]*discord.DiscordClient),
@@ -559,24 +563,25 @@ func (u *AppUsecase) handleBotAuths(ctx context.Context, id string, newSettings 
 	return nil
 }
 
-// handleBotAuth handles creation of auth for a specific bot type when enabling
 func (u *AppUsecase) handleBotAuth(ctx context.Context, kbID, appId string, currentEnabled, newEnabled *bool, sourceType consts.SourceType) error {
-	// Determine if bot was enabled/disabled
 	wasEnabled := currentEnabled != nil && *currentEnabled
 	isEnabled := newEnabled != nil && *newEnabled
 
-	// If enabling the bot, check if auth exists, create if not
 	if !wasEnabled && isEnabled {
-		// Check if auth already exists for this source type
+		rdsKey := fmt.Sprintf("handleBotAuth:%s:%s", kbID, sourceType)
+		if !u.cache.AcquireLock(ctx, rdsKey) {
+			return fmt.Errorf("bot auth creation is in progress, please try again later")
+		}
+		defer u.cache.ReleaseLock(ctx, rdsKey)
+
 		existingAuth, _ := u.authRepo.GetAuthByKBIDAndSourceType(ctx, kbID, sourceType)
 		if existingAuth != nil {
 			return nil
 		}
 
-		// If auth doesn't exist, create it
 		auth := &domain.Auth{
 			KBID:          kbID,
-			UnionID:       fmt.Sprintf("bot_%s_%s", appId, sourceType), // Generate unique union_id for bot
+			UnionID:       fmt.Sprintf("bot_%s_%s", appId, sourceType),
 			SourceType:    sourceType,
 			LastLoginTime: time.Now(),
 			UserInfo: domain.AuthUserInfo{

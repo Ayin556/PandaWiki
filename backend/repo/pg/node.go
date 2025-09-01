@@ -767,13 +767,23 @@ func (r *NodeRepository) UpdateNodesByKbID(ctx context.Context, ids []string, kb
 	return nil
 }
 
-func (r *NodeRepository) UpdateNodeGroupByKbID(ctx context.Context, nodeIds []string, groupIds []int, perm consts.NodePermName) error {
+func (r *NodeRepository) UpdateNodeGroupByKbIDAndNodeIds(ctx context.Context, nodeIds []string, groupIds []int, perm consts.NodePermName) error {
+	const batchSize = 1000 // 批处理大小，避免IN子句过长
+
 	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		// 先根据 nodeId 和 perm 删除 node_group 表中的数据
-		if err := tx.Model(&domain.NodeAuthGroup{}).
-			Where("node_id in (?) AND perm = ?", nodeIds, perm).
-			Delete(&domain.NodeAuthGroup{}).Error; err != nil {
-			return err
+		// 分批删除现有的权限记录，防止nodeIds过长
+		for i := 0; i < len(nodeIds); i += batchSize {
+			end := i + batchSize
+			if end > len(nodeIds) {
+				end = len(nodeIds)
+			}
+
+			batch := nodeIds[i:end]
+			if err := tx.Model(&domain.NodeAuthGroup{}).
+				Where("node_id in (?) AND perm = ?", batch, perm).
+				Delete(&domain.NodeAuthGroup{}).Error; err != nil {
+				return err
+			}
 		}
 
 		// 如果 groupIds 为空，则只执行删除操作
@@ -781,23 +791,24 @@ func (r *NodeRepository) UpdateNodeGroupByKbID(ctx context.Context, nodeIds []st
 			return nil
 		}
 
+		nodeGroups := make([]domain.NodeAuthGroup, 0)
 		for i := range nodeIds {
 			// 批量插入新的数据
-			nodeGroups := make([]domain.NodeAuthGroup, 0)
-			for _, id := range groupIds {
-				if id == 0 {
+			for index := range groupIds {
+				if groupIds[index] == 0 {
 					continue
 				}
 				nodeGroups = append(nodeGroups, domain.NodeAuthGroup{
 					NodeID:      nodeIds[i],
-					AuthGroupID: id,
+					AuthGroupID: groupIds[index],
 					Perm:        perm,
 				})
 			}
-			if len(nodeGroups) != 0 {
-				if err := tx.Model(&domain.NodeAuthGroup{}).Create(&nodeGroups).Error; err != nil {
-					return err
-				}
+		}
+
+		if len(nodeGroups) != 0 {
+			if err := tx.Model(&domain.NodeAuthGroup{}).CreateInBatches(&nodeGroups, 100).Error; err != nil {
+				return err
 			}
 		}
 		return nil
