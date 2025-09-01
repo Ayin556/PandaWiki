@@ -740,11 +740,31 @@ func (r *NodeRepository) UpdateNodeByKbID(ctx context.Context, id, kbId string, 
 }
 
 func (r *NodeRepository) UpdateNodesByKbID(ctx context.Context, ids []string, kbId string, updateMap map[string]interface{}) error {
-	return r.db.WithContext(ctx).
-		Model(&domain.Node{}).
-		Where("id in (?)", ids).
-		Where("kb_id = ?", kbId).
-		Updates(updateMap).Error
+	const batchSize = 500 // 批处理大小，避免IN子句过长
+
+	// 如果没有ID需要更新，直接返回
+	if len(ids) == 0 {
+		return nil
+	}
+
+	// 分批处理
+	for i := 0; i < len(ids); i += batchSize {
+		end := i + batchSize
+		if end > len(ids) {
+			end = len(ids)
+		}
+
+		batch := ids[i:end]
+		if err := r.db.WithContext(ctx).
+			Model(&domain.Node{}).
+			Where("id in (?)", batch).
+			Where("kb_id = ?", kbId).
+			Updates(updateMap).Error; err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (r *NodeRepository) UpdateNodeGroupByKbID(ctx context.Context, nodeIds []string, groupIds []int, perm consts.NodePermName) error {
