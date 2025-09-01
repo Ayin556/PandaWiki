@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { flushSync } from 'react-dom';
-import { Dialog, styled, Box, SvgIcon, SvgIconProps } from '@mui/material';
+import { styled, SvgIcon, SvgIconProps } from '@mui/material';
 
 const StyledErrorContainer = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
+  padding: theme.spacing(2),
   alignItems: 'center',
   justifyContent: 'center',
   gap: '8px',
@@ -15,11 +15,9 @@ const StyledErrorContainer = styled('div')(({ theme }) => ({
   borderRadius: '10px',
   marginLeft: '5px',
   cursor: 'pointer',
-  maxWidth: '50%',
   boxSizing: 'content-box' as const,
   backgroundColor: 'var(--mui-palette-background-default)',
   border: `1px dashed var(--mui-palette-divider)`,
-  minHeight: '100px',
   color: 'var(--mui-palette-text-tertiary)',
   fontSize: '14px',
 }));
@@ -57,7 +55,7 @@ export const ImageErrorIcon = (props: SvgIconProps) => {
 const ImageErrorDisplay = () => (
   <StyledErrorContainer>
     <ImageErrorIcon
-      sx={{ color: 'var(--mui-palette-text-tertiary)', fontSize: '180px' }}
+      sx={{ color: 'var(--mui-palette-text-tertiary)', fontSize: 160 }}
     />
     <StyledErrorText>图片加载失败</StyledErrorText>
   </StyledErrorContainer>
@@ -71,6 +69,7 @@ interface ImageComponentProps {
   imageIndex: number;
   onLoad: (index: number, html: string) => void;
   onError: (index: number, html: string) => void;
+  onImageClick: (src: string) => void;
 }
 
 // ==================== 图片组件 ====================
@@ -81,13 +80,11 @@ const ImageComponent: React.FC<ImageComponentProps> = ({
   imageIndex,
   onLoad,
   onError,
+  onImageClick,
 }) => {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>(
     'loading',
   );
-  const classname = `image-container-${imageIndex}`;
-  const [previewOpen, setPreviewOpen] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
 
   // 基础样式对象
   const baseStyleObj = {
@@ -140,64 +137,41 @@ const ImageComponent: React.FC<ImageComponentProps> = ({
 
   const handleLoad = () => {
     setStatus('success');
-    if (containerRef.current) {
-      onLoad(imageIndex, containerRef.current.outerHTML);
+    const classname = `.image-container-${imageIndex}`;
+    const containerDom = document.querySelector(classname);
+    if (containerDom) {
+      onLoad(imageIndex, containerDom.outerHTML);
     }
   };
 
   const handleError = () => {
     setStatus('error');
-    // 使用React组件渲染错误状态的HTML
-    const errorContainer = document.createElement('div');
-    const errorRoot = createRoot(errorContainer);
-
-    // 使用flushSync强制同步渲染
-    flushSync(() => {
-      errorRoot.render(<ImageErrorDisplay />);
-    });
-
-    onError(imageIndex, errorContainer.innerHTML);
-    errorRoot.unmount();
+    // 通知父组件错误状态
+    const classname = `.image-container-${imageIndex}`;
+    const containerDom = document.querySelector(classname);
+    if (containerDom) {
+      requestAnimationFrame(() => {
+        onError(imageIndex, containerDom.outerHTML);
+      });
+    }
   };
-
-  const handleImageClick = () => {
-    setPreviewOpen(true);
-  };
-
-  if (status === 'error') {
-    return <ImageErrorDisplay />;
-  }
 
   return (
-    <div ref={containerRef} className={`image-container ${classname}`}>
-      <img
-        src={src}
-        alt={alt || 'markdown-img'}
-        referrerPolicy='no-referrer'
-        onLoad={handleLoad}
-        onError={handleError}
-        onClick={handleImageClick}
-        {...getOtherProps()}
-      />
-      {/* 图片预览弹窗 */}
-      <Dialog
-        sx={{
-          '.MuiDialog-paper': {
-            maxWidth: '95vw',
-            maxHeight: '95vh',
-          },
-        }}
-        open={previewOpen}
-        onClose={() => setPreviewOpen(false)}
-      >
+    <>
+      {status === 'error' ? (
+        <ImageErrorDisplay />
+      ) : (
         <img
-          onClick={() => setPreviewOpen(false)}
           src={src}
-          alt='preview'
-          style={{ width: '100%', height: '100%' }}
+          alt={alt || 'markdown-img'}
+          referrerPolicy='no-referrer'
+          onLoad={handleLoad}
+          onError={handleError}
+          onClick={() => onImageClick(src)}
+          {...getOtherProps()}
         />
-      </Dialog>
-    </div>
+      )}
+    </>
   );
 };
 
@@ -205,11 +179,12 @@ const ImageComponent: React.FC<ImageComponentProps> = ({
 export interface ImageRendererOptions {
   onImageLoad: (index: number, html: string) => void;
   onImageError: (index: number, html: string) => void;
+  onImageClick: (src: string) => void;
   imageRenderCache: Map<number, string>;
 }
 
 export const createImageRenderer = (options: ImageRendererOptions) => {
-  const { onImageLoad, onImageError, imageRenderCache } = options;
+  const { onImageLoad, onImageError, imageRenderCache, onImageClick } = options;
   return (
     src: string,
     alt: string,
@@ -219,37 +194,62 @@ export const createImageRenderer = (options: ImageRendererOptions) => {
     // 检查缓存
     const cached = imageRenderCache.get(imageIndex);
     if (cached) {
+      // 下一帧对已缓存的DOM绑定原生点击事件，避免事件丢失且不引起重渲染
+      requestAnimationFrame(() => {
+        const container = document.querySelector(
+          `.image-container-${imageIndex}`,
+        ) as HTMLElement | null;
+        if (!container) return;
+        const img = container.querySelector('img') as HTMLImageElement | null;
+        if (!img) return;
+        const alreadyBound = (img as HTMLElement).getAttribute(
+          'data-click-bound',
+        );
+        if (!alreadyBound) {
+          (img as HTMLElement).setAttribute('data-click-bound', '1');
+          img.style.cursor = img.style.cursor || 'pointer';
+          img.addEventListener('click', () => {
+            try {
+              onImageClick(img.src);
+            } catch (e) {
+              // noop
+            }
+          });
+        }
+      });
       return cached;
     }
 
-    const container = document.createElement('div');
-    const root = createRoot(container);
+    // 直接返回占位符，让 React 组件在 DOM 中渲染
+    const placeholderHtml = `<div class="image-container image-container-${imageIndex}"></div>`;
 
-    flushSync(() => {
-      root.render(
-        <ImageComponent
-          src={src}
-          alt={alt}
-          attrs={attrs}
-          imageIndex={imageIndex}
-          onLoad={onImageLoad}
-          onError={onImageError}
-        />,
-      );
-    });
-
-    setTimeout(() => {
-      const imageContainer = document.querySelector(
+    // 使用 requestAnimationFrame 确保在下一帧渲染时执行
+    requestAnimationFrame(() => {
+      const placeholder = document.querySelector(
         `.image-container-${imageIndex}`,
       );
-      if (imageContainer) {
-        imageContainer.outerHTML = container.innerHTML;
+      console.log(
+        `Looking for placeholder with index ${imageIndex}:`,
+        placeholder,
+      );
+      if (placeholder) {
+        const root = createRoot(placeholder);
+        root.render(
+          <ImageComponent
+            src={src}
+            alt={alt}
+            attrs={attrs}
+            imageIndex={imageIndex}
+            onLoad={onImageLoad}
+            onError={onImageError}
+            onImageClick={onImageClick}
+          />,
+        );
+      } else {
+        console.warn(`Placeholder with index ${imageIndex} not found`);
       }
     });
 
-    return (
-      container.innerHTML ||
-      `<div  className="image-container image-container-${imageIndex}"></div>`
-    );
+    return placeholderHtml;
   };
 };
