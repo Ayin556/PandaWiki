@@ -17,7 +17,6 @@ const Toolbar = ({ editorRef, handleAiGenerate }: ToolbarProps) => {
         bgcolor: 'background.default',
         px: 0.5,
         mx: 1,
-        boxShadow: 1,
       }}
     >
       <EditorToolbar

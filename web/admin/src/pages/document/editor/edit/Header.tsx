@@ -1,5 +1,5 @@
 import VersionPublish from '@/pages/release/components/VersionPublish';
-import { postApiV1Node } from '@/request';
+import { postApiV1Node, putApiV1NodeDetail } from '@/request';
 import { V1NodeDetailResp } from '@/request/types';
 import { useAppSelector } from '@/store';
 import { addOpacityToColor, getShortcutKeyText } from '@/utils';
@@ -51,6 +51,10 @@ const Header = ({
   const { catalogOpen, nodeDetail, setCatalogOpen } =
     useOutletContext<WrapContext>();
 
+  const docWidth = useMemo(() => {
+    return nodeDetail?.meta?.doc_width || 'full';
+  }, [nodeDetail]);
+
   const [renameOpen, setRenameOpen] = useState(false);
   const [delOpen, setDelOpen] = useState(false);
   const [publishOpen, setPublishOpen] = useState(false);
@@ -60,6 +64,22 @@ const Header = ({
   const isEnterprise = useMemo(() => {
     return license.edition === 2;
   }, [license]);
+
+  const updateDocWidth = (doc_width: string) => {
+    if (!nodeDetail) return;
+    putApiV1NodeDetail({
+      id: nodeDetail.id!,
+      kb_id,
+      doc_width,
+    }).then(() => {
+      updateDetail({
+        meta: {
+          ...nodeDetail.meta,
+          doc_width,
+        },
+      });
+    });
+  }
 
   const handlePublish = useCallback(() => {
     if (nodeDetail?.status === 2) {
@@ -182,6 +202,53 @@ const Header = ({
         <Stack direction={'row'} gap={1}>
           <MenuSelect
             list={[
+              {
+                key: 'page_width',
+                label: <StyledMenuSelect sx={{ width: 120 }}>
+                  <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'} sx={{ width: '100%' }}>
+                    页面宽度
+                    <Icon type='icon-xiala-copy' sx={{ color: 'text.disabled', fontSize: 18, mr: -1 }} />
+                  </Stack>
+                </StyledMenuSelect>,
+                children: [
+                  {
+                    key: 'full',
+                    label: <StyledMenuSelect>
+                      <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'} sx={{ width: '100%' }}>
+                        全宽
+                        {docWidth === 'full' && <Icon type='icon-duihao1' sx={{ color: 'primary.main', fontSize: 14, mr: -1, mt: -0.5 }} />}
+                      </Stack>
+                    </StyledMenuSelect>,
+                    onClick: () => {
+                      updateDocWidth('full');
+                    },
+                  },
+                  {
+                    key: 'wide',
+                    label: <StyledMenuSelect>
+                      <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'} sx={{ width: '100%' }}>
+                        超宽
+                        {docWidth === 'wide' && <Icon type='icon-duihao1' sx={{ color: 'primary.main', fontSize: 14, mr: -1, mt: -0.5 }} />}
+                      </Stack>
+                    </StyledMenuSelect>,
+                    onClick: () => {
+                      updateDocWidth('wide');
+                    },
+                  },
+                  {
+                    key: 'normal',
+                    label: <StyledMenuSelect>
+                      <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'} sx={{ width: '100%' }}>
+                        常规
+                        {docWidth === 'normal' && <Icon type='icon-duihao1' sx={{ color: 'primary.main', fontSize: 14, mr: -1, mt: -0.5 }} />}
+                      </Stack>
+                    </StyledMenuSelect>,
+                    onClick: () => {
+                      updateDocWidth('normal');
+                    },
+                  },
+                ],
+              },
               {
                 key: 'copy',
                 label: <StyledMenuSelect>复制</StyledMenuSelect>,

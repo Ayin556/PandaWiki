@@ -76,6 +76,7 @@ const Summary = ({ open, onClose, updateDetail }: SummaryProps) => {
         <TextField
           autoFocus
           multiline
+          disabled={loading}
           rows={10}
           fullWidth
           value={summary}
@@ -98,7 +99,7 @@ const Summary = ({ open, onClose, updateDetail }: SummaryProps) => {
             )
           }
         >
-          点击此处，生成智能摘要
+          点击此处，AI 自动生成摘要
         </Button>
       </Stack>
     </Modal>

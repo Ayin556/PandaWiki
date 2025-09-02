@@ -784,6 +784,8 @@ export interface DomainNodeListItemResp {
 }
 
 export interface DomainNodeMeta {
+  /** normal / wide / full */
+  doc_width?: string;
   emoji?: string;
   summary?: string;
 }
@@ -995,6 +997,7 @@ export interface DomainUpdateModelReq {
 
 export interface DomainUpdateNodeReq {
   content?: string;
+  doc_width?: string;
   emoji?: string;
   id: string;
   kb_id: string;

@@ -35,7 +35,7 @@ const initialState: config = {
   modelStatus: false,
   kbDetail: {} as DomainKnowledgeBaseDetail,
   appPreviewData: null,
-  refreshAdminRequest: () => {},
+  refreshAdminRequest: () => { },
 };
 
 const configSlice = createSlice({
@@ -48,9 +48,6 @@ const configSlice = createSlice({
     setKbId(state, { payload }) {
       localStorage.setItem('kb_id', payload);
       state.kb_id = payload;
-      state.kbDetail = state.kbList.find(
-        item => item.id === payload,
-      ) as DomainKnowledgeBaseDetail;
     },
     setKbList(state, { payload }) {
       state.kbList = payload;

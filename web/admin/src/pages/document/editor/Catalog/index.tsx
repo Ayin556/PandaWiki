@@ -184,12 +184,9 @@ const Catalog = ({ curNode, setCatalogOpen }: CatalogProps) => {
       >
         <Stack direction='row' alignItems='center' gap={1} sx={{ flex: 1 }}>
           <KBSwitch />
-          <Stack sx={{ width: 0, flex: 1 }}>
-            <Box sx={{ fontWeight: 'bold', fontSize: 16 }}>知识库</Box>
-            <Ellipsis sx={{ color: 'text.auxiliary', fontSize: 12 }}>
-              {kbDetail.name}
-            </Ellipsis>
-          </Stack>
+          <Ellipsis sx={{ fontSize: 14, fontWeight: 'bold', width: 0, flex: 1 }}>
+            {kbDetail.name}
+          </Ellipsis>
         </Stack>
         <Stack
           alignItems='center'
