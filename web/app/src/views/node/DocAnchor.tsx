@@ -1,13 +1,11 @@
 'use client';
 
-import { IconArrowDown } from '@/components/icons';
 import useScroll from '@/utils/useScroll';
-import { Box, IconButton, Stack } from '@mui/material';
+import { Box } from '@mui/material';
 import { TocItem, TocList } from '@yu-cq/tiptap';
 import { useState } from 'react';
 
 interface DocAnchorProps {
-  summary?: string;
   headings: TocList;
 }
 
@@ -17,7 +15,7 @@ const HeadingSx = [
   { fontWeight: 400, color: 'text.disabled' },
 ];
 
-const DocAnchor = ({ summary, headings }: DocAnchorProps) => {
+const DocAnchor = ({ headings }: DocAnchorProps) => {
   const { activeHeading, scrollToElement } = useScroll(
     headings,
     document.querySelector('#scroll-container') as HTMLDivElement,
@@ -58,70 +56,12 @@ const DocAnchor = ({ summary, headings }: DocAnchorProps) => {
       sx={{
         fontSize: 12,
         position: 'sticky',
-
         zIndex: 5,
         top: 96,
         right: 16,
         width: 200,
       }}
     >
-      {summary && (
-        <Box
-          sx={{
-            bgcolor: 'background.paper2',
-            borderRadius: '10px',
-            border: '1px solid',
-            borderColor: 'divider',
-            p: 2,
-            mb: 2,
-          }}
-        >
-          <Stack
-            direction='row'
-            justifyContent='space-between'
-            alignItems='center'
-          >
-            <Box
-              sx={{
-                fontWeight: 'bold',
-                cursor: 'pointer',
-                color: 'text.secondary',
-              }}
-            >
-              文档摘要
-            </Box>
-            <IconButton
-              size='small'
-              sx={{ width: 17, height: 17 }}
-              onClick={() => setExpand(!expand)}
-            >
-              <IconArrowDown
-                sx={{ transform: expand ? 'rotate(0deg)' : 'rotate(-180deg)' }}
-              />
-            </IconButton>
-          </Stack>
-          {expand && (
-            <Box
-              sx={{
-                color: 'text.tertiary',
-                maxHeight: '110px',
-                mt: 1,
-                lineHeight: '20px',
-                textAlign: 'justify',
-                overflowY: 'auto',
-                overflowX: 'hidden',
-                '&::-webkit-scrollbar': {
-                  display: 'none',
-                },
-                msOverflowStyle: 'none',
-                scrollbarWidth: 'none',
-              }}
-            >
-              {summary}
-            </Box>
-          )}
-        </Box>
-      )}
       {headings.length > 0 && (
         <Box
           sx={{
@@ -145,6 +85,7 @@ const DocAnchor = ({ summary, headings }: DocAnchorProps) => {
           </Box>
           <Box
             sx={{
+              maxHeight: 'calc(100vh - 200px)',
               overflowY: 'auto',
               overflowX: 'hidden',
               lineHeight: '32px',

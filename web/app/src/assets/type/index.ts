@@ -1,4 +1,4 @@
-import { ConstsWatermarkSetting, ConstsCopySetting } from '@/request/types';
+import { ConstsCopySetting, ConstsWatermarkSetting } from '@/request/types';
 
 export interface NavBtn {
   id: string;
@@ -116,6 +116,7 @@ export interface NodeDetail {
   updated_at: string;
   type: 1 | 2;
   meta: {
+    doc_width: string;
     summary: string;
     emoji?: string;
   };

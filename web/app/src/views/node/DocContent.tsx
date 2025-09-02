@@ -4,6 +4,7 @@ import { KBDetail, NodeDetail } from '@/assets/type';
 import FeedbackDialog from '@/components/feedbackModal';
 import { IconFile, IconFolder } from '@/components/icons';
 import TextSelectionTooltip from '@/components/textSelectionTooltip';
+import { DocWidth } from '@/constant';
 import { useTextSelection } from '@/hooks/useTextSelection';
 import { useStore } from '@/provider';
 import { postShareProV1DocumentFeedback } from '@/request/pro/DocumentFeedback';
@@ -19,7 +20,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { useParams } from 'next/navigation';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 // @ts-ignore
@@ -33,11 +34,13 @@ const DocContent = ({
   editorRef,
   kbInfo,
   commentList: propsCommentList,
+  characterCount,
 }: {
   info?: NodeDetail;
   editorRef: UseTiptapReturn;
   kbInfo?: KBDetail;
   commentList?: any[];
+  characterCount?: number;
 }) => {
   const { mobile = false, authInfo, kbDetail } = useStore();
   const params = useParams() || {};
@@ -66,6 +69,10 @@ const DocContent = ({
     selectedText: string;
     screenshot?: string;
   }>({ selectedText: '' });
+
+  const docWidth = useMemo(() => {
+    return info?.meta?.doc_width || 'full';
+  }, [info]);
 
   // 使用划词功能hook
   const {
@@ -107,9 +114,9 @@ const DocContent = ({
       node_id: docId,
       image: feedbackData.screenshot
         ? base64ToFile(
-          feedbackData.screenshot!,
-          `${info?.name || 'screenshot'}.png`,
-        )
+            feedbackData.screenshot!,
+            `${info?.name || 'screenshot'}.png`,
+          )
         : undefined,
     });
   };
@@ -187,9 +194,13 @@ const DocContent = ({
       id='doc-content'
       ref={docContentRef}
       sx={theme => ({
-        width: 'calc(100% - 220px)',
+        width:
+          docWidth === 'full'
+            ? 'calc(100% - 320px)'
+            : DocWidth[docWidth as keyof typeof DocWidth].value,
         wordBreak: 'break-all',
         color: 'text.primary',
+        mx: 'auto',
         px: 10,
         position: 'relative',
         zIndex: 1,
@@ -210,65 +221,71 @@ const DocContent = ({
       })}
     >
       <Stack
-        direction={mobile ? 'column' : 'row'}
-        alignItems={mobile ? 'flex-start' : 'center'}
-        justifyContent='space-between'
+        direction={'row'}
+        alignItems={'flex-start'}
+        gap={1}
         sx={{
-          bgcolor: 'background.paper2',
-          p: 3,
-          borderRadius: '10px',
-          border: '1px solid',
-          borderColor: 'divider',
+          mb: 2,
+          fontSize: 28,
+          lineHeight: '40px',
+          fontWeight: '700',
+          color: 'text.primary',
         }}
       >
-        <Stack
-          direction={'row'}
-          alignItems={'flex-start'}
-          gap={1}
-          sx={{
-            fontSize: 32,
-            lineHeight: '40px',
-            fontWeight: '700',
-            color: 'text.primary',
-          }}
-        >
-          {info?.meta?.emoji ? (
-            <Box sx={{ flexShrink: 0 }}>{info?.meta?.emoji}</Box>
-          ) : info?.type === 1 ? (
-            <IconFolder sx={{ flexShrink: 0, mt: 0.5 }} />
-          ) : (
-            <IconFile sx={{ flexShrink: 0, mt: 0.5 }} />
-          )}
-          {info?.name}
-        </Stack>
-        <Stack
-          direction={mobile ? 'row' : 'column'}
-          alignItems={mobile ? 'center' : 'flex-end'}
-          gap={1}
-          sx={{
-            fontSize: 12,
-            textAlign: 'right',
-            width: 100,
-            color: 'text.tertiary',
-            flexShrink: 0,
-            ...(mobile && {
-              width: 'auto',
-              mt: 1,
-            }),
-          }}
-        >
-          {info?.created_at && (
-            <Box>{dayjs(info?.created_at).fromNow()}创建</Box>
-          )}
-          {info?.updated_at && info.updated_at.slice(0, 1) !== '0' && (
-            <Box>{dayjs(info.updated_at).fromNow()}更新</Box>
-          )}
-        </Stack>
+        {info?.meta?.emoji ? (
+          <Box sx={{ flexShrink: 0 }}>{info?.meta?.emoji}</Box>
+        ) : info?.type === 1 ? (
+          <IconFolder sx={{ flexShrink: 0, mt: 0.5 }} />
+        ) : (
+          <IconFile sx={{ flexShrink: 0, mt: 0.5 }} />
+        )}
+        {info?.name}
       </Stack>
+      <Stack
+        direction='row'
+        alignItems='center'
+        gap={1}
+        sx={{
+          fontSize: 12,
+          mb: 4,
+          color: 'text.tertiary',
+        }}
+      >
+        {info?.created_at && <Box>{dayjs(info?.created_at).fromNow()}创建</Box>}
+        {info?.updated_at && info.updated_at.slice(0, 1) !== '0' && (
+          <>
+            <Box>·</Box>
+            <Box>{dayjs(info.updated_at).fromNow()}更新</Box>
+          </>
+        )}
+        {characterCount && characterCount > 0 && (
+          <>
+            <Box>·</Box>
+            <Box>{characterCount} 字</Box>
+          </>
+        )}
+      </Stack>
+      {info?.meta?.summary && (
+        <Box
+          sx={{
+            mb: 6,
+            border: '1px solid',
+            borderColor: 'divider',
+            borderRadius: '10px',
+            bgcolor: 'background.paper2',
+            p: 2,
+            fontSize: 14,
+            lineHeight: '28px',
+            color: 'text.secondary',
+          }}
+        >
+          {info?.meta?.summary}
+        </Box>
+      )}
       <Box
         className='editor-container'
         sx={{
-          mt: 3,
+          mt: 6,
           '.tiptap.ProseMirror': {
             color: 'text.primary',
           },

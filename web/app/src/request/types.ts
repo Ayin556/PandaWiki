@@ -1,4 +1,4 @@
- 
+/* eslint-disable */
 /* tslint:disable */
 // @ts-nocheck
 /*
@@ -117,6 +117,13 @@ export enum ConstsSourceType {
   SourceTypeGitHub = "github",
   SourceTypeCAS = "cas",
   SourceTypeLDAP = "ldap",
+  SourceTypeWidget = "widget",
+  SourceTypeDingtalkBot = "dingtalk_bot",
+  SourceTypeFeishuBot = "feishu_bot",
+  SourceTypeWechatBot = "wechat_bot",
+  SourceTypeWechatServiceBot = "wechat_service_bot",
+  SourceTypeDiscordBot = "discord_bot",
+  SourceTypeWechatOfficialAccount = "wechat_official_account",
 }
 
 export enum ConstsNodePermName {
@@ -777,6 +784,8 @@ export interface DomainNodeListItemResp {
 }
 
 export interface DomainNodeMeta {
+  /** normal / wide / full */
+  doc_width?: string;
   emoji?: string;
   summary?: string;
 }
@@ -852,6 +861,7 @@ export interface DomainRecommendNodeListResp {
   id?: string;
   name?: string;
   parent_id?: string;
+  permissions?: DomainNodePermissions;
   position?: number;
   recommend_nodes?: DomainRecommendNodeListResp[];
   summary?: string;
@@ -987,6 +997,7 @@ export interface DomainUpdateModelReq {
 
 export interface DomainUpdateNodeReq {
   content?: string;
+  doc_width?: string;
   emoji?: string;
   id: string;
   kb_id: string;
@@ -1064,6 +1075,32 @@ export interface GithubComChaitinPandaWikiDomainModelListItem {
   provider?: GithubComChaitinPandaWikiDomainModelProvider;
   total_tokens?: number;
   type?: DomainModelType;
+}
+
+export interface GocapChallengeData {
+  challenge?: GocapChallengeItem;
+  /** 过期时间,毫秒级时间戳 */
+  expires?: number;
+  /** 质询令牌 */
+  token?: string;
+}
+
+export interface GocapChallengeItem {
+  /** 质询数量 */
+  c?: number;
+  /** 质询难度 */
+  d?: number;
+  /** 质询大小 */
+  s?: number;
+}
+
+export interface GocapVerificationResult {
+  /** 过期时间,毫秒级时间戳 */
+  expires?: number;
+  message?: string;
+  success?: boolean;
+  /** 验证令牌 */
+  token?: string;
 }
 
 export interface ShareShareCommentLists {
@@ -1150,7 +1187,7 @@ export interface V1NodeDetailResp {
 export interface V1NodePermissionEditReq {
   /** 可被问答 */
   answerable_groups?: number[];
-  id: string;
+  ids: string[];
   kb_id: string;
   permissions?: DomainNodePermissions;
   /** 导航内可见 */
@@ -1170,6 +1207,17 @@ export interface V1NodePermissionResp {
   visible_groups?: DomainNodeGroupDetail[];
   /** 可被访问 */
   visitable_groups?: DomainNodeGroupDetail[];
+}
+
+export interface V1RecommendNodeListItem {
+  emoji?: string;
+  id?: string;
+  name?: string;
+  parent_id?: string;
+  position?: number;
+  recommend_nodes?: DomainRecommendNodeListResp[];
+  summary?: string;
+  type?: DomainNodeType;
 }
 
 export interface V1ResetPasswordReq {
@@ -1444,15 +1492,4 @@ export interface GetShareV1NodeDetailParams {
   id: string;
   /** format */
   format: string;
-}
-
-export interface V1RecommendNodeListItem {
-  emoji?: string;
-  id?: string;
-  name?: string;
-  parent_id?: string;
-  position?: number;
-  recommend_nodes?: DomainRecommendNodeListResp[];
-  summary?: string;
-  type?: DomainNodeType;
 }

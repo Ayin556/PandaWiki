@@ -22,6 +22,7 @@ import { useLocation, useNavigate, useOutletContext } from 'react-router-dom';
 // import { WebsocketProvider } from 'y-websocket';
 // import * as Y from 'yjs';
 import { DocWidth } from '@/constant/enums';
+import { useAppSelector } from '@/store';
 import { useMemo } from 'react';
 import { WrapContext } from '..';
 import AIGenerate from './AIGenerate';
@@ -36,7 +37,7 @@ interface WrapProps {
 
 const Wrap = ({ detail: defaultDetail }: WrapProps) => {
   const navigate = useNavigate();
-  // const { user } = useAppSelector(state => state.config);
+  const { license } = useAppSelector(state => state.config);
   const state = useLocation().state as { node?: V1NodeDetailResp };
   const { catalogOpen, nodeDetail, setNodeDetail, onSave } =
     useOutletContext<WrapContext>();
@@ -46,6 +47,10 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
   }, [nodeDetail]);
 
   // const connectCount = useRef(0);
+
+  const isEnterprise = useMemo(() => {
+    return license.edition === 2;
+  }, [license]);
 
   const [title, setTitle] = useState(nodeDetail?.name || defaultDetail.name);
   const [summary, setSummary] = useState(nodeDetail?.meta?.summary || defaultDetail.meta?.summary || '');
@@ -284,6 +289,7 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
         meta: {
           summary: state.node.meta?.summary || nodeDetail?.meta?.summary || '',
           emoji: state.node.meta?.emoji || nodeDetail?.meta?.emoji || '',
+          doc_width: state.node.meta?.doc_width || nodeDetail?.meta?.doc_width || 'full',
         },
         content: state.node.content || nodeDetail?.content || '',
       });
@@ -496,7 +502,7 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
             />
           </Stack>
           <Stack direction={'row'} alignItems={'center'} gap={2} sx={{ mb: 4 }}>
-            <Tooltip arrow title='查看历史版本'>
+            <Tooltip arrow title={isEnterprise ? '查看历史版本' : ''}>
               <Stack
                 direction={'row'}
                 alignItems={'center'}
@@ -504,13 +510,15 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
                 sx={{
                   fontSize: 12,
                   color: 'text.auxiliary',
-                  cursor: 'pointer',
+                  cursor: isEnterprise ? 'pointer' : 'text',
                   ':hover': {
-                    color: 'primary.main',
+                    color: isEnterprise ? 'primary.main' : 'text.auxiliary',
                   },
                 }}
                 onClick={() => {
-                  navigate(`/doc/editor/history/${defaultDetail.id}`);
+                  if (isEnterprise) {
+                    navigate(`/doc/editor/history/${defaultDetail.id}`);
+                  }
                 }}
               >
                 <Icon type='icon-a-shijian2' />

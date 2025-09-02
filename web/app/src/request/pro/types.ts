@@ -25,6 +25,13 @@ export enum ConstsSourceType {
   SourceTypeGitHub = "github",
   SourceTypeCAS = "cas",
   SourceTypeLDAP = "ldap",
+  SourceTypeWidget = "widget",
+  SourceTypeDingtalkBot = "dingtalk_bot",
+  SourceTypeFeishuBot = "feishu_bot",
+  SourceTypeWechatBot = "wechat_bot",
+  SourceTypeWechatServiceBot = "wechat_service_bot",
+  SourceTypeDiscordBot = "discord_bot",
+  SourceTypeWechatOfficialAccount = "wechat_official_account",
 }
 
 /** @format int32 */
@@ -98,6 +105,8 @@ export interface DomainLicenseResp {
 }
 
 export interface DomainNodeMeta {
+  /** normal / wide / full */
+  doc_width?: string;
   emoji?: string;
   summary?: string;
 }
@@ -372,7 +381,14 @@ export interface GetApiProV1AuthGetParams {
     | "oauth"
     | "github"
     | "cas"
-    | "ldap";
+    | "ldap"
+    | "widget"
+    | "dingtalk_bot"
+    | "feishu_bot"
+    | "wechat_bot"
+    | "wechat_service_bot"
+    | "discord_bot"
+    | "wechat_official_account";
 }
 
 export interface DeleteApiProV1AuthGroupDeleteParams {

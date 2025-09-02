@@ -1,4 +1,5 @@
 import EmojiPicker from '@/components/Emoji';
+import { DocWidth } from '@/constant/enums';
 import {
   DomainGetNodeReleaseDetailResp,
   DomainNodeReleaseListItem,
@@ -18,7 +19,7 @@ import {
 } from '@mui/material';
 import { Editor, EditorThemeProvider, useTiptap } from '@yu-cq/tiptap';
 import { Icon, Message } from 'ct-mui';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
 import { WrapContext } from '..';
 
@@ -54,6 +55,10 @@ const History = () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   };
+
+  const docWidth = useMemo(() => {
+    return curNode?.meta?.doc_width || 'full';
+  }, [curNode]);
 
   useEffect(() => {
     if (curVersion) {
@@ -127,13 +132,13 @@ const History = () => {
           <Icon type='icon-chahao' />
         </IconButton>
       </Stack>
-      <Box sx={{ mt: '56px', width: 'calc(100% - 292px)' }}>
+      <Box sx={{ mt: '56px', mr: '292px' }}>
         {curNode && (
           <Box
             sx={{
               p: '48px 72px 150px',
               mx: 'auto',
-              maxWidth: 892,
+              width: docWidth === 'full' ? `calc(100% - 160px)` : DocWidth[docWidth as keyof typeof DocWidth].value,
               minWidth: '386px',
             }}
           >
