@@ -401,6 +401,15 @@ func (u *AppUsecase) GetAppDetailByKBIDAndAppType(ctx context.Context, kbID stri
 		appDetailResp.Settings.AIFeedbackSettings.AIFeedbackType = []string{"内容不准确", "没有帮助", "其他"}
 	}
 
+	// default enable captcha
+	if app.Settings.CaptchaSettings.ChatStatus == "" {
+		app.Settings.CaptchaSettings.ChatStatus = consts.CaptchaStatusEnable
+	}
+	if app.Settings.CaptchaSettings.CommentStatus == "" {
+		app.Settings.CaptchaSettings.CommentStatus = consts.CaptchaStatusEnable
+	}
+
+	// get recommend nodes
 	if len(app.Settings.RecommendNodeIDs) > 0 {
 		nodes, err := u.nodeUsecase.GetRecommendNodeList(ctx, &domain.GetRecommendNodeListReq{
 			KBID:    kbID,
@@ -460,6 +469,13 @@ func (u *AppUsecase) GetWebAppInfo(ctx context.Context, kbID string) (*domain.Ap
 	// init ai feedback string
 	if app.Settings.AIFeedbackSettings.AIFeedbackType == nil {
 		appInfo.Settings.AIFeedbackSettings.AIFeedbackType = []string{"内容不准确", "没有帮助", "其他"}
+	}
+	// default enable captcha
+	if app.Settings.CaptchaSettings.ChatStatus == "" {
+		app.Settings.CaptchaSettings.ChatStatus = consts.CaptchaStatusEnable
+	}
+	if app.Settings.CaptchaSettings.CommentStatus == "" {
+		app.Settings.CaptchaSettings.CommentStatus = consts.CaptchaStatusEnable
 	}
 
 	return appInfo, nil
