@@ -183,7 +183,7 @@ func (r *NodeRepository) UpdateNodeContent(ctx context.Context, req *domain.Upda
 		}
 
 		// Handle multiple meta field updates
-		if req.Emoji != nil || req.Summary != nil {
+		if req.Emoji != nil || req.Summary != nil || req.DocWidth != nil {
 			metaExpr := "meta"
 			var args []any
 			metaUpdated := false
@@ -201,6 +201,12 @@ func (r *NodeRepository) UpdateNodeContent(ctx context.Context, req *domain.Upda
 				// Second jsonb_set: jsonb_set(previous_expr, '{summary}', to_jsonb(?::text))
 				metaExpr = "jsonb_set(" + metaExpr + ", '{summary}', to_jsonb(?::text))"
 				args = append(args, *req.Summary) // Second parameter for summary
+				metaUpdated = true
+			}
+			// Compare and update DocWidth
+			if req.DocWidth != nil && *req.DocWidth != currentNode.Meta.DocWidth {
+				metaExpr = "jsonb_set(" + metaExpr + ", '{doc_width}', to_jsonb(?::text))"
+				args = append(args, *req.DocWidth)
 				metaUpdated = true
 			}
 

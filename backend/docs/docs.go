@@ -5929,6 +5929,10 @@ const docTemplate = `{
         "domain.NodeMeta": {
             "type": "object",
             "properties": {
+                "doc_width": {
+                    "description": "normal / wide / full",
+                    "type": "string"
+                },
                 "emoji": {
                     "type": "string"
                 },
@@ -6542,6 +6546,9 @@ const docTemplate = `{
             ],
             "properties": {
                 "content": {
+                    "type": "string"
+                },
+                "doc_width": {
                     "type": "string"
                 },
                 "emoji": {
