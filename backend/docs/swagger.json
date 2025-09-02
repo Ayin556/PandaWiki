@@ -5922,6 +5922,10 @@
         "domain.NodeMeta": {
             "type": "object",
             "properties": {
+                "doc_width": {
+                    "description": "normal / wide / full",
+                    "type": "string"
+                },
                 "emoji": {
                     "type": "string"
                 },
@@ -6535,6 +6539,9 @@
             ],
             "properties": {
                 "content": {
+                    "type": "string"
+                },
+                "doc_width": {
                     "type": "string"
                 },
                 "emoji": {

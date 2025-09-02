@@ -1387,6 +1387,9 @@ definitions:
     type: object
   domain.NodeMeta:
     properties:
+      doc_width:
+        description: normal / wide / full
+        type: string
       emoji:
         type: string
       summary:
@@ -1783,6 +1786,8 @@ definitions:
   domain.UpdateNodeReq:
     properties:
       content:
+        type: string
+      doc_width:
         type: string
       emoji:
         type: string
