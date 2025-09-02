@@ -97,7 +97,7 @@ const Header = () => {
               onKeyDown={handleKeyDown}
               placeholder={
                 kbDetail?.settings?.web_app_custom_style
-                  ?.header_search_placeholder || '搜索...'
+                  ?.header_search_placeholder || '搜索'
               }
               sx={{
                 width: '300px',
@@ -105,8 +105,9 @@ const Header = () => {
                 borderRadius: '10px',
                 overflow: 'hidden',
                 '& .MuiInputBase-input': {
-                  lineHeight: '24px',
-                  height: '24px',
+                  fontSize: 14,
+                  lineHeight: '19.5px',
+                  height: '19.5px',
                   fontFamily: 'Mono',
                 },
                 '& .MuiOutlinedInput-root': {

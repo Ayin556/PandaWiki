@@ -1,15 +1,15 @@
 'use client';
 
 import { KBDetail, NodeDetail } from '@/assets/type';
+import useCopy from '@/hooks/useCopy';
 import { useStore } from '@/provider';
+import { ConstsCopySetting } from '@/request/types';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { Fab, Stack, Zoom } from '@mui/material';
 import { TocList, useTiptap } from '@yu-cq/tiptap';
 import { useEffect, useState } from 'react';
-import DocContent from './DocContent';
-import useCopy from '@/hooks/useCopy';
-import { ConstsCopySetting } from '@/request/types';
 import DocAnchor from './DocAnchor';
+import DocContent from './DocContent';
 
 const Doc = ({
   node,
@@ -22,6 +22,7 @@ const Doc = ({
 }) => {
   const { kbDetail, mobile } = useStore();
   const [headings, setHeadings] = useState<TocList>([]);
+  const [characterCount, setCharacterCount] = useState(0);
 
   const editorRef = useTiptap({
     content: node?.content || '',
@@ -29,6 +30,9 @@ const Doc = ({
     immediatelyRender: false,
     onTocUpdate: (toc: TocList) => {
       setHeadings(toc);
+    },
+    onCreate: ({ editor }) => {
+      setCharacterCount((editor.storage as any).characterCount.characters());
     },
   });
 
@@ -73,11 +77,14 @@ const Doc = ({
       justifyContent='space-between'
       alignItems='flex-start'
     >
-      <DocContent info={node} editorRef={editorRef} kbInfo={kbInfo} />
+      <DocContent
+        info={node}
+        editorRef={editorRef}
+        kbInfo={kbInfo}
+        characterCount={characterCount}
+      />
 
-      {!mobile && (
-        <DocAnchor headings={headings} summary={node?.meta?.summary} />
-      )}
+      {!mobile && <DocAnchor headings={headings} />}
 
       <Zoom in={showScrollTop}>
         <Fab

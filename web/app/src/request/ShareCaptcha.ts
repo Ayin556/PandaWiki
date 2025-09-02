@@ -11,7 +11,11 @@
  */
 
 import httpRequest, { ContentType, RequestParams } from "./httpClient";
-import { ConstsRedeemCaptchaReq, DomainResponse } from "./types";
+import {
+  ConstsRedeemCaptchaReq,
+  GocapChallengeData,
+  GocapVerificationResult,
+} from "./types";
 
 /**
  * @description CreateCaptcha
@@ -20,11 +24,11 @@ import { ConstsRedeemCaptchaReq, DomainResponse } from "./types";
  * @name PostShareV1CaptchaChallenge
  * @summary CreateCaptcha
  * @request POST:/share/v1/captcha/challenge
- * @response `200` `DomainResponse` OK
+ * @response `200` `GocapChallengeData` OK
  */
 
 export const postShareV1CaptchaChallenge = (params: RequestParams = {}) =>
-  httpRequest<DomainResponse>({
+  httpRequest<GocapChallengeData>({
     path: `/share/v1/captcha/challenge`,
     method: "POST",
     type: ContentType.Json,
@@ -39,14 +43,14 @@ export const postShareV1CaptchaChallenge = (params: RequestParams = {}) =>
  * @name PostShareV1CaptchaRedeem
  * @summary RedeemCaptcha
  * @request POST:/share/v1/captcha/redeem
- * @response `200` `DomainResponse` OK
+ * @response `200` `GocapVerificationResult` OK
  */
 
 export const postShareV1CaptchaRedeem = (
   body: ConstsRedeemCaptchaReq,
   params: RequestParams = {},
 ) =>
-  httpRequest<DomainResponse>({
+  httpRequest<GocapVerificationResult>({
     path: `/share/v1/captcha/redeem`,
     method: "POST",
     body: body,

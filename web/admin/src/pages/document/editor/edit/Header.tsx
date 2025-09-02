@@ -136,7 +136,7 @@ const Header = ({
               <Box
                 component='span'
                 sx={{ cursor: 'pointer' }}
-                onClick={() => setRenameOpen(true)}
+              // onClick={() => setRenameOpen(true)}
               >
                 {detail.name}
               </Box>
@@ -160,7 +160,7 @@ const Header = ({
             )}
           </Stack>
         </Stack>
-        <Box sx={{ mr: 1 }}>
+        {/* <Box sx={{ mr: 1 }}>
           {isSyncing ? (
             collaborativeUsers.length > 0 && (
               <Stack
@@ -198,7 +198,7 @@ const Header = ({
               离线编辑
             </Stack>
           )}
-        </Box>
+        </Box> */}
         <Stack direction={'row'} gap={1}>
           <MenuSelect
             list={[

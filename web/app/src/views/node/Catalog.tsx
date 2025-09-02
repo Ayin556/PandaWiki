@@ -1,11 +1,11 @@
 'use client';
 import { IconFold, IconSearch, IconUnfold } from '@/components/icons';
 import { useStore } from '@/provider';
-import { useParams } from 'next/navigation';
 import { filterTreeBySearch } from '@/utils';
 import { addExpandState } from '@/utils/drag';
 import { Box, IconButton, TextField } from '@mui/material';
 import { useDebounce } from 'ahooks';
+import { useParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import CatalogFolder from './CatalogFolder';
 
@@ -67,7 +67,8 @@ const Catalog = () => {
         height: '100vh',
         zIndex: 11,
         px: 2,
-        py: 3,
+        pb: 3,
+        pt: 2,
         fontSize: 14,
         width: catalogShow ? catalogWidth : 0,
         transition: 'width 0.2s ease-in-out',
