@@ -193,7 +193,7 @@ const VerificationForm = ({
       isEdit={isEdit}
       onSubmit={handleSaveVerification}
     >
-      <FormItem label='问答' tooltip={!isEnterprise && '企业版可用'}>
+      <FormItem label='问答'>
         <Controller
           control={control}
           name='chat_status'
@@ -208,19 +208,19 @@ const VerificationForm = ({
             >
               <FormControlLabel
                 value={'enable'}
-                control={<Radio size='small' disabled={!isEnterprise} />}
+                control={<Radio size='small' />}
                 label={<StyledRadioLabel>需要验证码</StyledRadioLabel>}
               />
               <FormControlLabel
                 value={'disable'}
-                control={<Radio size='small' disabled={!isEnterprise} />}
+                control={<Radio size='small' />}
                 label={<StyledRadioLabel>无需验证码</StyledRadioLabel>}
               />
             </RadioGroup>
           )}
         />
       </FormItem>
-      <FormItem label='评论' tooltip={!isEnterprise && '企业版可用'}>
+      <FormItem label='评论'>
         <Controller
           control={control}
           name='comment_status'
@@ -235,12 +235,12 @@ const VerificationForm = ({
             >
               <FormControlLabel
                 value={'enable'}
-                control={<Radio size='small' disabled={!isEnterprise} />}
+                control={<Radio size='small' />}
                 label={<StyledRadioLabel>需要验证码</StyledRadioLabel>}
               />
               <FormControlLabel
                 value={'disable'}
-                control={<Radio size='small' disabled={!isEnterprise} />}
+                control={<Radio size='small' />}
                 label={<StyledRadioLabel>无需验证码</StyledRadioLabel>}
               />
             </RadioGroup>
