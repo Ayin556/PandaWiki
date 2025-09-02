@@ -10,8 +10,6 @@ import {
 } from '@yu-cq/tiptap';
 import { Ellipsis, Icon } from 'ct-mui';
 import { useState } from 'react';
-import { useOutletContext } from 'react-router-dom';
-import { WrapContext } from '..';
 
 interface TocProps {
   headings: TocList;
@@ -35,9 +33,8 @@ const HeadingSx = [
   { fontSize: 14, fontWeight: 400, color: 'text.disabled' },
 ];
 
-const Toc = ({ headings, fixed, setFixed, setShowSummary }: TocProps) => {
+const Toc = ({ headings, fixed, setFixed }: TocProps) => {
   const [open, setOpen] = useState(false);
-  const { nodeDetail } = useOutletContext<WrapContext>();
   const levels = Array.from(
     new Set(headings.map(it => it.level).sort((a, b) => a - b)),
   ).slice(0, 3);
@@ -98,6 +95,7 @@ const Toc = ({ headings, fixed, setFixed, setShowSummary }: TocProps) => {
           flexShrink: 0,
           '& .MuiDrawer-paper': {
             p: 1,
+            boxShadow: 'none !important',
             mt: '102px',
             bgcolor: 'background.default',
             width: 292,

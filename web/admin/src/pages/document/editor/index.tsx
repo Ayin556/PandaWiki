@@ -80,6 +80,7 @@ const DocEditor = () => {
           transition: 'width 0.3s ease-in-out',
           '.MuiPaper-root': {
             width: catalogWidth,
+            boxShadow: 'none !important',
             boxSizing: 'border-box',
           },
         }}

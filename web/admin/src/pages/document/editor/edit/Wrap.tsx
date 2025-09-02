@@ -21,6 +21,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate, useOutletContext } from 'react-router-dom';
 // import { WebsocketProvider } from 'y-websocket';
 // import * as Y from 'yjs';
+import { DocWidth } from '@/constant/enums';
+import { useMemo } from 'react';
 import { WrapContext } from '..';
 import AIGenerate from './AIGenerate';
 import Header from './Header';
@@ -38,6 +40,10 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
   const state = useLocation().state as { node?: V1NodeDetailResp };
   const { catalogOpen, nodeDetail, setNodeDetail, onSave } =
     useOutletContext<WrapContext>();
+
+  const docWidth = useMemo(() => {
+    return nodeDetail?.meta?.doc_width || 'full';
+  }, [nodeDetail]);
 
   // const connectCount = useRef(0);
 
@@ -396,8 +402,9 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
         }}
       >
         <Box sx={{
-          width: `calc(100vw - 160px - ${catalogOpen ? 292 : 0}px - ${fixedToc ? 292 : 0}px)`,
-          p: '72px 0 150px',
+          width: docWidth === 'full' ? `calc(100vw - 160px - ${catalogOpen ? 292 : 0}px - ${fixedToc ? 292 : 0}px)`
+            : DocWidth[docWidth as keyof typeof DocWidth].value,
+          p: '72px 80px 150px',
           mt: '102px',
           mx: 'auto',
         }}>
@@ -406,10 +413,10 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
             alignItems={'center'}
             gap={1}
             sx={{ mb: 2, position: 'relative' }}
-            onMouseEnter={() => setShowSummaryBtn(true)}
-            onMouseLeave={() => setShowSummaryBtn(false)}
+          // onMouseEnter={() => setShowSummaryBtn(true)}
+          // onMouseLeave={() => setShowSummaryBtn(false)}
           >
-            {showSummaryBtn && (
+            {/* {showSummaryBtn && (
               <Stack
                 direction={'row'}
                 alignItems={'center'}
@@ -441,7 +448,7 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
                   智能摘要
                 </Stack>
               </Stack>
-            )}
+            )} */}
             <Emoji
               type={2}
               sx={{ flexShrink: 0, width: 36, height: 36 }}
@@ -523,8 +530,13 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
               {characterCount} 字
             </Stack>
           </Stack>
-          {summary && <Box sx={{
+          <Box sx={{
             mb: 6,
+            border: '1px solid',
+            borderColor: 'divider',
+            borderRadius: '10px',
+            bgcolor: 'background.paper2',
+            p: 2,
             position: 'relative',
             '.ai-generate-summary-left-icon': {
               opacity: '0',
@@ -547,7 +559,7 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
               onClick={() => setShowSummary(true)}
               sx={{
                 position: 'absolute',
-                top: -14,
+                top: -18,
                 left: 0,
                 zIndex: 1,
                 lineHeight: '18px',
@@ -560,21 +572,21 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
               }}
             >
               <Icon type='icon-DJzhinengzhaiyao' sx={{ fontSize: 12 }} />
-              智能摘要
+              文档摘要
             </Stack>
-            <TextField
+            {nodeDetail?.meta?.summary ? <TextField
               value={summary}
               multiline
               fullWidth
+              placeholder='暂无摘要，可在此处输入摘要'
               slotProps={{
                 input: {
                   sx: {
                     fontSize: 14,
-                    lineHeight: '24px',
+                    lineHeight: '28px',
                     letterSpacing: '1px',
                     fontWeight: 'normal',
                     color: 'text.secondary',
-                    bgcolor: 'background.default',
                     '& fieldset': {
                       border: 'none !important',
                     },
@@ -585,8 +597,10 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
                 setSummary(e.target.value);
                 debouncedUpdateSummary(e.target.value);
               }}
-            />
-          </Box>}
+            /> : <Box sx={{ fontSize: 12, color: 'text.auxiliary' }}>
+              暂无摘要，点击<Box component='span' sx={{ color: 'primary.main', cursor: 'pointer' }} onClick={() => setShowSummary(true)}>生成摘要</Box>
+            </Box>}
+          </Box>
           <Box
             sx={{
               wordBreak: 'break-all',

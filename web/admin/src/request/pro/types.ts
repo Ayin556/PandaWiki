@@ -105,6 +105,8 @@ export interface DomainLicenseResp {
 }
 
 export interface DomainNodeMeta {
+  /** normal / wide / full */
+  doc_width?: string;
   emoji?: string;
   summary?: string;
 }
