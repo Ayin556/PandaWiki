@@ -57,7 +57,7 @@ const DocEditor = () => {
   };
 
   useEffect(() => {
-    if (!isWideScreen) setCatalogOpen(false);
+    setCatalogOpen(isWideScreen);
   }, [isWideScreen]);
 
   useEffect(() => {

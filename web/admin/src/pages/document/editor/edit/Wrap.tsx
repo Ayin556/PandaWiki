@@ -396,7 +396,13 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
           edit={isEditing}
           detail={nodeDetail!}
           updateDetail={updateDetail}
-          handleSave={async () => await onSave(editorRef.getHTML())}
+          handleSave={async () => {
+            const value = editorRef.getHTML()
+            updateDetail({
+              content: value,
+            })
+            await onSave(value)
+          }}
           handleExport={handleExport}
         />
         <Toolbar editorRef={editorRef} handleAiGenerate={handleAiGenerate} />
