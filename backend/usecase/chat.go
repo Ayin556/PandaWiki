@@ -208,7 +208,7 @@ func (u *ChatUsecase) Chat(ctx context.Context, req *domain.ChatRequest) (<-chan
 			}
 		}
 
-		groupIds, err := u.AuthRepo.GetAuthGroupIdsByAuthId(ctx, req.Info.UserInfo.AuthUserID)
+		groupIds, err := u.AuthRepo.GetAuthGroupIdsWithParentsByAuthId(ctx, req.Info.UserInfo.AuthUserID)
 		if err != nil {
 			u.logger.Error("failed to get auth groupIds", log.Error(err))
 			eventCh <- domain.SSEEvent{Type: "error", Content: "failed to get auth groupIds"}

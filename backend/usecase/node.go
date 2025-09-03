@@ -129,7 +129,7 @@ func (u *NodeUsecase) ValidateNodePerm(ctx context.Context, kbID, nodeId string,
 	case consts.NodeAccessPermClosed:
 		return &domain.ErrCodePermissionDenied
 	case consts.NodeAccessPermPartial:
-		authGroups, err := u.authRepo.GetAuthGroupByAuthId(ctx, authId)
+		authGroups, err := u.authRepo.GetAuthGroupWithParentsByAuthId(ctx, authId)
 		if err != nil {
 			return &domain.ErrCodeInternalError
 		}
@@ -374,8 +374,7 @@ func (u *NodeUsecase) GetNodeRecommendListByKBID(ctx context.Context, kbID strin
 }
 
 func (u *NodeUsecase) GetNodeIdsByAuthId(ctx context.Context, authId uint, PermName consts.NodePermName) ([]string, error) {
-
-	authGroups, err := u.authRepo.GetAuthGroupByAuthId(ctx, authId)
+	authGroups, err := u.authRepo.GetAuthGroupWithParentsByAuthId(ctx, authId)
 	if err != nil {
 		return nil, err
 	}
