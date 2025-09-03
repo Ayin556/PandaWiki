@@ -58,7 +58,7 @@ const Chat = ({
 
     let token = '';
     // @ts-ignore
-    if (kbDetail?.settings?.captcha_settings?.comment_status === 'enable') {
+    if (kbDetail?.settings?.captcha_settings?.chat_status === 'enable') {
       const cap = new Cap({
         apiEndpoint: '/share/v1/captcha/',
       });

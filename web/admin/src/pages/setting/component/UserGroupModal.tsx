@@ -22,6 +22,7 @@ interface UserGroupModalProps {
   onCancel: () => void;
   onOk: () => void;
   userList: GithubComChaitinPandaWikiProApiAuthV1AuthItem[];
+  type: 'add' | 'edit';
 }
 
 const UserGroupModal = ({
@@ -30,6 +31,7 @@ const UserGroupModal = ({
   onCancel,
   userList,
   onOk,
+  type,
 }: UserGroupModalProps) => {
   const { kb_id } = useAppSelector(state => state.config);
   const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>(
@@ -73,7 +75,7 @@ const UserGroupModal = ({
     },
   });
   const onSubmit = handleSubmit(values => {
-    if (data) {
+    if (type === 'edit' && data) {
       patchApiProV1AuthGroupUpdate({
         name: values.name,
         auth_ids: selectedRowKeys,
@@ -83,11 +85,13 @@ const UserGroupModal = ({
         Message.success('编辑成功');
         onOk();
       });
-    } else {
+    } else if (type === 'add') {
       postApiProV1AuthGroupCreate({
         name: values.name,
         ids: selectedRowKeys,
         kb_id,
+        parent_id:
+          (data?.id as 'root' | number) === 'root' ? undefined : data?.id,
       }).then(res => {
         Message.success('添加成功');
         onOk();
@@ -96,9 +100,11 @@ const UserGroupModal = ({
   });
 
   useEffect(() => {
-    setSelectedRowKeys(data?.auth_ids || []);
-    setValue('name', data?.name || '');
-  }, [data]);
+    if (type === 'edit' && data) {
+      setSelectedRowKeys(data?.auth_ids || []);
+      setValue('name', data?.name || '');
+    }
+  }, [data, type]);
 
   useEffect(() => {
     if (!open) {
@@ -109,7 +115,7 @@ const UserGroupModal = ({
 
   return (
     <Modal
-      title={data ? '编辑用户组' : '添加用户组'}
+      title={type === 'add' ? '添加用户组' : '编辑用户组'}
       open={open}
       onCancel={onCancel}
       onOk={onSubmit}
