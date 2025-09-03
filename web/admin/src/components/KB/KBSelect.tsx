@@ -15,6 +15,7 @@ import { Ellipsis, Icon, Message } from 'ct-mui';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import KBDelete from './KBDelete';
+import { ConstsUserRole } from '@/request/types';
 
 const KBSelect = () => {
   const location = useLocation();
@@ -22,7 +23,9 @@ const KBSelect = () => {
 
   const dispatch = useAppDispatch();
   const [_, setSearchParams] = useURLSearchParams();
-  const { kb_id, kbList, license } = useAppSelector(state => state.config);
+  const { kb_id, kbList, license, user } = useAppSelector(
+    state => state.config,
+  );
 
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [opraData, setOpraData] = useState<KnowledgeBaseListItem | null>(null);
@@ -117,7 +120,8 @@ const KBSelect = () => {
             fullWidth
             disabled={
               (license.edition === 0 && (kbList || []).length >= 1) ||
-              (license.edition === 1 && (kbList || []).length >= 3)
+              (license.edition === 1 && (kbList || []).length >= 3) ||
+              user.role === ConstsUserRole.UserRoleUser
             }
             onClick={event => {
               event.stopPropagation();
@@ -146,25 +150,27 @@ const KBSelect = () => {
                 />
                 <Ellipsis>{item.name}</Ellipsis>
                 <Box sx={{ width: 10 }}></Box>
-                <IconButton
-                  size='small'
-                  className='hover-del-space-icon'
-                  sx={{ display: 'none' }}
-                >
-                  <Icon
-                    type='icon-shanchu'
-                    sx={{
-                      fontSize: 14,
-                      color: 'text.auxiliary',
-                      flexShrink: 0,
-                    }}
-                    onClick={event => {
-                      event.stopPropagation();
-                      setOpraData(item);
-                      setDeleteOpen(true);
-                    }}
-                  />
-                </IconButton>
+                {user.role !== ConstsUserRole.UserRoleUser && (
+                  <IconButton
+                    size='small'
+                    className='hover-del-space-icon'
+                    sx={{ display: 'none' }}
+                  >
+                    <Icon
+                      type='icon-shanchu'
+                      sx={{
+                        fontSize: 14,
+                        color: 'text.auxiliary',
+                        flexShrink: 0,
+                      }}
+                      onClick={event => {
+                        event.stopPropagation();
+                        setOpraData(item);
+                        setDeleteOpen(true);
+                      }}
+                    />
+                  </IconButton>
+                )}
               </Stack>
             </MenuItem>
           ))}
