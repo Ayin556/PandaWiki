@@ -81,6 +81,8 @@ jobs:
           echo "VITE_APP_VERSION=${{ needs.version.outputs.version }}" >> .env.production
 
       - name: Build admin and app (parallel)
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         run: |
           cd web
           pnpm run build
