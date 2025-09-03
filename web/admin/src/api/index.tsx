@@ -1,3 +1,8 @@
+/**
+ * @deprecated This file is deprecated and will be removed in a future version.
+ * Do not import from this file. Use 'src/request' instead.
+ */
+
 import request from './request';
 import {
   CheckModelData,

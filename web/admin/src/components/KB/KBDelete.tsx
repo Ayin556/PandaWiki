@@ -22,12 +22,12 @@ const KBDelete = ({ open, onClose, data }: KBDeleteProps) => {
     if (!data) return;
     deleteApiV1KnowledgeBaseDetail({ id: data?.id || '' }).then(() => {
       Message.success('删除成功');
-      const newKbList = kbList.filter(item => item.id !== data.id);
+      const newKbList = kbList?.filter(item => item.id !== data.id) || [];
       dispatch(setKbList(newKbList));
-      if (kb_id === data.id && newKbList.length > 0) {
-        dispatch(setKbId(newKbList[0].id));
+      if (kb_id === data.id && newKbList!.length > 0) {
+        dispatch(setKbId(newKbList![0].id));
       }
-      if (kbList.length === 1) {
+      if (kbList!.length === 1) {
         dispatch(setKbC(true));
       }
       onClose();

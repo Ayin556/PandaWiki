@@ -1,10 +1,9 @@
-import { ModelListItem } from '@/api';
 import { getApiV1ModelList } from '@/request/Model';
 import ErrorJSON from '@/assets/json/error.json';
 import Card from '@/components/Card';
 import { ModelProvider } from '@/constant/enums';
 import { useAppDispatch, useAppSelector } from '@/store';
-import { setModelStatus } from '@/store/slices/config';
+import { setModelStatus, setModelList } from '@/store/slices/config';
 import { addOpacityToColor } from '@/utils';
 import { Box, Button, Stack, Tooltip, useTheme } from '@mui/material';
 import { Icon, Modal, Message } from 'ct-mui';
@@ -14,52 +13,56 @@ import Member from './component/Member';
 import { ModelModal } from '@yokowu/modelkit-ui';
 import {
   modelService,
-  modelkitModelTypeToLocal,
   convertLocalModelToUIModel,
 } from '@/services/modelService';
+import { GithubComChaitinPandaWikiDomainModelListItem } from '@/request/types';
 
 const System = () => {
   const theme = useTheme();
-  const { user } = useAppSelector(state => state.config);
+  const { user, modelList } = useAppSelector(state => state.config);
   const [open, setOpen] = useState(false);
   const dispatch = useAppDispatch();
   const [addOpen, setAddOpen] = useState(false);
   const [addType, setAddType] = useState<'chat' | 'embedding' | 'rerank'>(
     'chat',
   );
-  const [chatModelData, setChatModelData] = useState<ModelListItem | null>(
-    null,
-  );
+  const [chatModelData, setChatModelData] =
+    useState<GithubComChaitinPandaWikiDomainModelListItem | null>(null);
   const [embeddingModelData, setEmbeddingModelData] =
-    useState<ModelListItem | null>(null);
-  const [rerankModelData, setRerankModelData] = useState<ModelListItem | null>(
-    null,
-  );
+    useState<GithubComChaitinPandaWikiDomainModelListItem | null>(null);
+  const [rerankModelData, setRerankModelData] =
+    useState<GithubComChaitinPandaWikiDomainModelListItem | null>(null);
 
   const disabledClose =
     !chatModelData || !embeddingModelData || !rerankModelData;
 
-  const getModel = () => {
+  const getModelList = () => {
     getApiV1ModelList().then(res => {
-      // @ts-expect-error 类型不匹配
-      const chat = res.find(it => it.type === 'chat') || null;
-      // @ts-expect-error 类型不匹配
-      const embedding = res.find(it => it.type === 'embedding') || null;
-      // @ts-expect-error 类型不匹配
-      const rerank = res.find(it => it.type === 'rerank') || null;
-      setChatModelData(chat);
-      setEmbeddingModelData(embedding);
-      setRerankModelData(rerank);
-
-      const status = chat && embedding && rerank;
-      dispatch(setModelStatus(status));
-      if (!status) setOpen(true);
+      dispatch(
+        setModelList(res as GithubComChaitinPandaWikiDomainModelListItem[]),
+      );
     });
   };
 
+  const handleModelList = (
+    list: GithubComChaitinPandaWikiDomainModelListItem[],
+  ) => {
+    const chat = list.find(it => it.type === 'chat') || null;
+    const embedding = list.find(it => it.type === 'embedding') || null;
+    const rerank = list.find(it => it.type === 'rerank') || null;
+    setChatModelData(chat);
+    setEmbeddingModelData(embedding);
+    setRerankModelData(rerank);
+    const status = chat && embedding && rerank;
+    if (!status) setOpen(true);
+    dispatch(setModelStatus(status));
+  };
+
   useEffect(() => {
-    getModel();
-  }, []);
+    if (modelList) {
+      handleModelList(modelList);
+    }
+  }, [modelList]);
 
   return (
     <>
@@ -618,13 +621,16 @@ const System = () => {
         model_type={addType}
         data={
           addType === 'chat'
-            ? convertLocalModelToUIModel(chatModelData)
+            ? // @ts-expect-error 类型不匹配
+              convertLocalModelToUIModel(chatModelData)
             : addType === 'embedding'
-              ? convertLocalModelToUIModel(embeddingModelData)
-              : convertLocalModelToUIModel(rerankModelData)
+              ? // @ts-expect-error 类型不匹配
+                convertLocalModelToUIModel(embeddingModelData)
+              : // @ts-expect-error 类型不匹配
+                convertLocalModelToUIModel(rerankModelData)
         }
         onClose={() => setAddOpen(false)}
-        refresh={getModel}
+        refresh={getModelList}
         modelService={modelService}
         language='zh-CN'
         messageComponent={Message}

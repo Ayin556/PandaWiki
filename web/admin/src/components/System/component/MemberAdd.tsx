@@ -227,14 +227,14 @@ const MemberAdd = ({
                     displayEmpty
                     renderValue={(value: string) =>
                       value ? (
-                        kbList.find(i => i.id === value)?.name || value
+                        kbList?.find(i => i.id === value)?.name || value
                       ) : (
                         <Box sx={{ color: '#9e9fa3' }}>请选择</Box>
                       )
                     }
                     sx={{ height: 52 }}
                   >
-                    {kbList.map(item => (
+                    {kbList?.map(item => (
                       <MenuItem key={item.id} value={item.id}>
                         {item.name}
                       </MenuItem>

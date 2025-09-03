@@ -29,7 +29,7 @@ const KBSelect = () => {
 
   return (
     <>
-      {kbList.length > 0 && (
+      {(kbList || []).length > 0 && (
         <Select
           value={kb_id}
           size='small'
@@ -116,8 +116,8 @@ const KBSelect = () => {
             }}
             fullWidth
             disabled={
-              (license.edition === 0 && kbList.length >= 1) ||
-              (license.edition === 1 && kbList.length >= 3)
+              (license.edition === 0 && (kbList || []).length >= 1) ||
+              (license.edition === 1 && (kbList || []).length >= 3)
             }
             onClick={event => {
               event.stopPropagation();
@@ -126,7 +126,7 @@ const KBSelect = () => {
           >
             创建新 Wiki 站
           </Button>
-          {kbList.map(item => (
+          {(kbList || []).map(item => (
             <MenuItem
               key={item.id}
               value={item.id}

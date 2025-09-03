@@ -1,17 +1,14 @@
-import Header from '@/components/Header';
-import Sidebar from '@/components/Sidebar';
 import router from '@/router';
 import { useAppDispatch } from '@/store';
 import { light } from '@/themes/color';
 import componentStyleOverrides from '@/themes/override';
-import { Box } from '@mui/material';
 import { ThemeProvider } from 'ct-mui';
 import { useEffect } from 'react';
-import { useLocation, useRoutes } from 'react-router-dom';
-import { getApiV1User } from './request/User';
+import { useLocation, useRoutes, useNavigate } from 'react-router-dom';
+
 import { getApiV1License } from './request/pro/License';
-import KBCreate from './components/KB/KBCreate';
-import { setLicense, setUser } from './store/slices/config';
+
+import { setLicense } from './store/slices/config';
 
 import '@yu-cq/tiptap/dist/index.css';
 
@@ -19,21 +16,12 @@ function App() {
   const location = useLocation();
   const { pathname } = location;
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const routerView = useRoutes(router);
   const loginPage = pathname.includes('/login');
-  const docEditPage = pathname.includes('/doc/editor');
   const onlyAllowShareApi = loginPage;
-  const hideLayout = loginPage || docEditPage;
 
   const token = localStorage.getItem('panda_wiki_token') || '';
-
-  useEffect(() => {
-    if (onlyAllowShareApi) return;
-    getApiV1User().then(res => {
-      dispatch(setUser(res));
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]);
 
   useEffect(() => {
     if (token) {
@@ -56,42 +44,7 @@ function App() {
         components: componentStyleOverrides,
       }}
     >
-      {hideLayout ? (
-        <Box
-          sx={{
-            minWidth: '900px',
-          }}
-        >
-          {routerView}
-        </Box>
-      ) : (
-        <>
-          <Box
-            sx={{
-              position: 'relative',
-              minWidth: '900px',
-              minHeight: '100vh',
-              fontSize: '16px',
-              bgcolor: 'background.paper0',
-            }}
-          >
-            <Sidebar />
-            <Header />
-            <Box
-              sx={{
-                pr: 2,
-                width: 'calc(100% - 170px)',
-                pt: '64px',
-                ml: '170px',
-                color: 'text.primary',
-              }}
-            >
-              {routerView}
-            </Box>
-          </Box>
-          <KBCreate />
-        </>
-      )}
+      {routerView}
     </ThemeProvider>
   );
 }

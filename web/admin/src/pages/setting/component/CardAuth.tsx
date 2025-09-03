@@ -1,12 +1,8 @@
 import { AuthSetting } from '@/api/type';
-import {
-  ConstsSourceType,
-  GithubComChaitinPandaWikiProApiAuthV1AuthGroupListItem,
-} from '@/request/pro/types';
+import { ConstsSourceType } from '@/request/pro/types';
 import dayjs from 'dayjs';
 import {
   Box,
-  Button,
   FormControlLabel,
   Radio,
   RadioGroup,
@@ -14,8 +10,6 @@ import {
   TextField,
   Select,
   MenuItem,
-  Tooltip,
-  IconButton,
   Autocomplete,
   Chip,
 } from '@mui/material';
@@ -23,23 +17,19 @@ import NoData from '@/assets/images/nodata.png';
 import { putApiV1KnowledgeBaseDetail } from '@/request/KnowledgeBase';
 import { DomainKnowledgeBaseDetail } from '@/request/types';
 import { GithubComChaitinPandaWikiProApiAuthV1AuthItem } from '@/request/pro/types';
+import UserGroup from './UserGroup';
 import {
   getApiProV1AuthGet,
   postApiProV1AuthSet,
   deleteApiProV1AuthDelete,
 } from '@/request/pro/Auth';
-import {
-  deleteApiProV1AuthGroupDelete,
-  getApiProV1AuthGroupList,
-} from '@/request/pro/AuthGroup';
-import UserGroupModal from './UserGroupModal';
+
 import { Message, Table, Icon, Modal } from 'ct-mui';
 import { ColumnType } from 'ct-mui/dist/Table';
 import { useEffect, useMemo, useState, useRef } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useAppSelector } from '@/store';
 import { SettingCardItem, FormItem } from './Common';
-import InfoIcon from '@mui/icons-material/Info';
 
 interface CardAuthProps {
   kb: DomainKnowledgeBaseDetail;
@@ -67,12 +57,6 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
   const [memberList, setMemberList] = useState<
     GithubComChaitinPandaWikiProApiAuthV1AuthItem[]
   >([]);
-  const [userGroupList, setUserGroupList] = useState<
-    GithubComChaitinPandaWikiProApiAuthV1AuthGroupListItem[]
-  >([]);
-  const [userGroupModalData, setUserGroupModalData] =
-    useState<GithubComChaitinPandaWikiProApiAuthV1AuthGroupListItem>();
-  const [userGroupModalOpen, setUserGroupModalOpen] = useState(false);
   const {
     control,
     handleSubmit,
@@ -232,20 +216,6 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
     getAuth();
   }, [kb_id, isPro, source_type, enabled]);
 
-  const getUserGroup = () => {
-    getApiProV1AuthGroupList({
-      kb_id,
-      page: 1,
-      per_page: 9999,
-    }).then(res => {
-      setUserGroupList(res?.list || []);
-    });
-  };
-  useEffect(() => {
-    if (!kb_id || enabled !== '2' || !isEnterprise) return;
-    getUserGroup();
-  }, [kb_id, enabled, isPro]);
-
   const onDeleteUser = (id: number) => {
     Modal.confirm({
       title: '删除用户',
@@ -263,86 +233,6 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
       },
     });
   };
-
-  const onDeleteUserGroup = (id: number) => {
-    Modal.confirm({
-      title: '删除用户组',
-      content: '确定要删除该用户组吗？',
-      okButtonProps: {
-        color: 'error',
-      },
-      onOk: () => {
-        deleteApiProV1AuthGroupDelete({
-          id,
-          kb_id,
-        }).then(() => {
-          Message.success('删除成功');
-          getUserGroup();
-        });
-      },
-    });
-  };
-
-  const userGroupColumns: ColumnType<GithubComChaitinPandaWikiProApiAuthV1AuthGroupListItem>[] =
-    [
-      {
-        title: '用户组名',
-        dataIndex: 'name',
-      },
-      {
-        title: '成员',
-        dataIndex: 'auth_ids',
-        render: (text: string, record) => {
-          return (
-            <Box
-              sx={{
-                color: 'info.main',
-                cursor: 'pointer',
-              }}
-              onClick={() => {
-                setUserGroupModalData({
-                  ...record,
-                  auth_ids:
-                    sourceTypeRef.current !== source_type
-                      ? []
-                      : record.auth_ids,
-                });
-                setUserGroupModalOpen(true);
-              }}
-            >
-              共{' '}
-              {sourceTypeRef.current !== source_type
-                ? 0
-                : record.auth_ids?.length}{' '}
-              个成员
-            </Box>
-          );
-        },
-      },
-      {
-        title: '操作',
-        dataIndex: 'action',
-        width: 60,
-        render: (text: string, record) => {
-          return (
-            <IconButton
-              size='small'
-              sx={{ p: '2px' }}
-              onClick={() => {
-                onDeleteUserGroup(record.id!);
-              }}
-            >
-              <Icon
-                type='icon-icon_tool_close'
-                sx={{
-                  color: 'error.main',
-                }}
-              />
-            </IconButton>
-          );
-        },
-      },
-    ];
 
   const columns: ColumnType<GithubComChaitinPandaWikiProApiAuthV1AuthItem>[] = [
     {
@@ -1123,62 +1013,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
       {enabled === '2' &&
         source_type !== EXTEND_CONSTS_SOURCE_TYPE.SourceTypePassword && (
           <>
-            <SettingCardItem
-              title='用户组'
-              more={
-                !isEnterprise && (
-                  <Tooltip title='企业版可用' placement='top' arrow>
-                    <InfoIcon
-                      sx={{ color: 'text.secondary', fontSize: 14, ml: 1 }}
-                    />
-                  </Tooltip>
-                )
-              }
-              extra={
-                <Button
-                  size='small'
-                  onClick={() => setUserGroupModalOpen(true)}
-                  disabled={!isEnterprise}
-                >
-                  添加用户组 {!isEnterprise ? ' (企业版可用)' : ''}
-                </Button>
-              }
-            >
-              <Table
-                columns={userGroupColumns}
-                dataSource={userGroupList}
-                showHeader={false}
-                rowKey='id'
-                size='small'
-                sx={{
-                  '.MuiTableContainer-root': {
-                    maxHeight: 400,
-                    border: '1px dashed',
-                    borderColor: 'divider',
-                    borderRadius: '10px',
-                    borderBottom: 'none',
-                  },
-
-                  '.MuiTableCell-root': {
-                    px: '16px !important',
-                    height: 'auto !important',
-                  },
-                  '.MuiTableRow-root': {
-                    '&:hover': {
-                      '.MuiTableCell-root': {
-                        backgroundColor: 'transparent !important',
-                      },
-                    },
-                  },
-                }}
-                renderEmpty={
-                  <Stack alignItems={'center'}>
-                    <img src={NoData} width={124} />
-                    <Box>暂无数据</Box>
-                  </Stack>
-                }
-              />
-            </SettingCardItem>
+            <UserGroup memberList={memberList} enabled={enabled} />
             <SettingCardItem title='成员'>
               <Table
                 columns={columns}
@@ -1217,20 +1052,6 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
             </SettingCardItem>
           </>
         )}
-      <UserGroupModal
-        open={userGroupModalOpen}
-        onCancel={() => {
-          setUserGroupModalOpen(false);
-          setUserGroupModalData(undefined);
-        }}
-        onOk={() => {
-          getUserGroup();
-          setUserGroupModalOpen(false);
-          setUserGroupModalData(undefined);
-        }}
-        userList={memberList}
-        data={userGroupModalData}
-      />
     </>
   );
 };

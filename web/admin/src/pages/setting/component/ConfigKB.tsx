@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 const ConfigKB = () => {
   const dispatch = useAppDispatch();
   const { kb_id, kbList } = useAppSelector(state => state.config);
-  const kb = kbList.find(item => item.id === kb_id);
+  const kb = kbList?.find(item => item.id === kb_id);
 
   const [editName, setEditName] = useState(false);
   const [name, setName] = useState('');
@@ -20,7 +20,7 @@ const ConfigKB = () => {
       Message.success('保存成功');
       dispatch(
         setKbList(
-          kbList.map(item => (item.id === kb_id ? { ...item, name } : item)),
+          kbList?.map(item => (item.id === kb_id ? { ...item, name } : item)),
         ),
       );
       setEditName(false);
@@ -28,7 +28,7 @@ const ConfigKB = () => {
   };
 
   useEffect(() => {
-    if (!kb_id) return;
+    if (!kb_id || !kbList) return;
     const kb = kbList.find(item => item.id === kb_id);
     setName(kb?.name || '');
   }, [kb_id, kbList]);

@@ -69,7 +69,7 @@ const CardKB = ({ kb, data }: CardKBProps) => {
       Message.success('保存成功');
       dispatch(
         setKbList(
-          kbList.map(item =>
+          kbList?.map(item =>
             item.id === kb.id ? { ...item, name: kbName } : item,
           ),
         ),

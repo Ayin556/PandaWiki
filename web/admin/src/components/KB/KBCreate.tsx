@@ -112,15 +112,11 @@ const KBCreate = () => {
   const getKbList = (id?: string) => {
     const kb_id = id || localStorage.getItem('kb_id') || '';
     getApiV1KnowledgeBaseList().then(res => {
-      if (res.length > 0) {
-        dispatch(setKbList(res));
-        if (res.find(item => item.id === kb_id)) {
-          dispatch(setKbId(kb_id));
-        } else {
-          dispatch(setKbId(res[0]?.id || ''));
-        }
+      dispatch(setKbList(res));
+      if (res.find(item => item.id === kb_id)) {
+        dispatch(setKbId(kb_id));
       } else {
-        if (modelStatus) setOpen(true);
+        dispatch(setKbId(res[0]?.id || ''));
       }
     });
   };
@@ -130,7 +126,10 @@ const KBCreate = () => {
   }, [kb_c]);
 
   useEffect(() => {
-    getKbList();
+    if (kbList && kbList.length === 0 && modelStatus) setOpen(true);
+  }, [kbList, modelStatus]);
+
+  useEffect(() => {
     dispatch(setKbC(false));
   }, [pathname, modelStatus]);
 
@@ -216,10 +215,10 @@ const KBCreate = () => {
         }}
         okText={'创建'}
         onOk={handleSubmit(onSubmit)}
-        disableEscapeKeyDown={kbList.length === 0}
+        disableEscapeKeyDown={(kbList || []).length === 0}
         title='创建 Wiki 站'
-        closable={kbList.length > 0}
-        showCancel={kbList.length > 0}
+        closable={(kbList || []).length > 0}
+        showCancel={(kbList || []).length > 0}
         okButtonProps={{ loading, disabled: !(http || https) }}
       >
         <Box sx={{ mt: 1 }}>
