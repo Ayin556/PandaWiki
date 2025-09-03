@@ -39,11 +39,11 @@ func NewKnowledgeBaseHandler(
 	}
 
 	group := echo.Group("/api/v1/knowledge_base", h.auth.Authorize)
-	group.POST("", h.CreateKnowledgeBase)
+	group.POST("", h.CreateKnowledgeBase, h.auth.ValidateUserRole(consts.UserRoleAdmin))
 	group.GET("/list", h.GetKnowledgeBaseList)
 	group.GET("/detail", h.GetKnowledgeBaseDetail)
 	group.PUT("/detail", h.UpdateKnowledgeBase, h.auth.ValidateKBUserPerm(consts.UserKBPermissionFullControl))
-	group.DELETE("/detail", h.DeleteKnowledgeBase, h.auth.ValidateKBUserPerm(consts.UserKBPermissionFullControl))
+	group.DELETE("/detail", h.DeleteKnowledgeBase, h.auth.ValidateUserRole(consts.UserRoleAdmin))
 
 	// user management
 	userGroup := group.Group("/user", h.auth.ValidateKBUserPerm(consts.UserKBPermissionFullControl))
