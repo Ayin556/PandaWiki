@@ -114,9 +114,9 @@ const DocContent = ({
       node_id: docId,
       image: feedbackData.screenshot
         ? base64ToFile(
-            feedbackData.screenshot!,
-            `${info?.name || 'screenshot'}.png`,
-          )
+          feedbackData.screenshot!,
+          `${info?.name || 'screenshot'}.png`,
+        )
         : undefined,
     });
   };
@@ -288,6 +288,10 @@ const DocContent = ({
           mt: 6,
           '.tiptap.ProseMirror': {
             color: 'text.primary',
+            '.tableWrapper': {
+              width: '100%',
+              overflowX: 'auto',
+            }
           },
         }}
       >
