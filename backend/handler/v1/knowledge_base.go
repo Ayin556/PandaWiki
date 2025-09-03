@@ -207,6 +207,11 @@ func (h *KnowledgeBaseHandler) GetKnowledgeBaseDetail(c echo.Context) error {
 		return h.NewResponseWithError(c, "failed to get knowledge base permission", err)
 	}
 
+	if perm != consts.UserKBPermissionFullControl {
+		kb.AccessSettings.PrivateKey = ""
+		kb.AccessSettings.PublicKey = ""
+	}
+
 	return h.NewResponseWithData(c, &domain.KnowledgeBaseDetail{
 		ID:             kb.ID,
 		Name:           kb.Name,
