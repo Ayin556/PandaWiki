@@ -51,8 +51,8 @@ importers:
         specifier: 0.7.6
         version: 0.7.6(bad7b9f0227c356a7457bb7fc95752fa)
       '@yu-cq/tiptap':
-        specifier: 0.3.11
-        version: 0.3.11(@tiptap/extension-code-block@3.3.0(@tiptap/core@3.3.0(@tiptap/pm@3.3.0))(@tiptap/pm@3.3.0))(@tiptap/extension-drag-handle@3.3.0(@tiptap/core@3.3.0(@tiptap/pm@3.3.0))(@tiptap/extension-collaboration@3.3.0(@tiptap/core@3.3.0(@tiptap/pm@3.3.0))(@tiptap/pm@3.3.0)(@tiptap/y-tiptap@3.0.0(prosemirror-model@1.25.3)(prosemirror-state@1.4.3)(prosemirror-view@1.40.1)(y-protocols@1.0.6(yjs@13.6.27))(yjs@13.6.27))(yjs@13.6.27))(@tiptap/extension-node-range@3.3.0(@tiptap/core@3.3.0(@tiptap/pm@3.3.0))(@tiptap/pm@3.3.0))(@tiptap/pm@3.3.0)(@tiptap/y-tiptap@3.0.0(prosemirror-model@1.25.3)(prosemirror-state@1.4.3)(prosemirror-view@1.40.1)(y-protocols@1.0.6(yjs@13.6.27))(yjs@13.6.27)))(@types/react@19.1.12)(emojibase@16.0.0)(happy-dom@18.0.1)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+        specifier: 0.3.12
+        version: 0.3.12(@tiptap/extension-code-block@3.3.0(@tiptap/core@3.3.0(@tiptap/pm@3.3.0))(@tiptap/pm@3.3.0))(@tiptap/extension-drag-handle@3.3.0(@tiptap/core@3.3.0(@tiptap/pm@3.3.0))(@tiptap/extension-collaboration@3.3.0(@tiptap/core@3.3.0(@tiptap/pm@3.3.0))(@tiptap/pm@3.3.0)(@tiptap/y-tiptap@3.0.0(prosemirror-model@1.25.3)(prosemirror-state@1.4.3)(prosemirror-view@1.40.1)(y-protocols@1.0.6(yjs@13.6.27))(yjs@13.6.27))(yjs@13.6.27))(@tiptap/extension-node-range@3.3.0(@tiptap/core@3.3.0(@tiptap/pm@3.3.0))(@tiptap/pm@3.3.0))(@tiptap/pm@3.3.0)(@tiptap/y-tiptap@3.0.0(prosemirror-model@1.25.3)(prosemirror-state@1.4.3)(prosemirror-view@1.40.1)(y-protocols@1.0.6(yjs@13.6.27))(yjs@13.6.27)))(@types/react@19.1.12)(emojibase@16.0.0)(happy-dom@18.0.1)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       axios:
         specifier: ^1.7.9
         version: 1.11.0
@@ -1449,8 +1449,8 @@ packages:
   '@yokowu/modelkit-ui@0.7.6':
     resolution: {integrity: sha512-wDot1xTM/wDeOua7WVw0i1BnZRwwo3sxYPE49nkjc6FFLXQc++MNeJmiX8kdbY5cPmH487nzoJQ2PStRnFaGwQ==}
 
-  '@yu-cq/tiptap@0.3.11':
-    resolution: {integrity: sha512-ShCBAHByUWj4j6rAKQT6/a26xGdupGDTn+vOHsxNEzxEuSJkgyBgdSlizq9IsOUmleNo52RnbVLG3RON3d7rOg==}
+  '@yu-cq/tiptap@0.3.12':
+    resolution: {integrity: sha512-V8bSByqziOvDkSK7nirUAuT8/ZYlJzTC3gM2YI8HfMI/uL9+v5UTyv406Jze/OOj9y526slRCarMWTm5sHtRfg==}
     peerDependencies:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
@@ -4678,7 +4678,7 @@ snapshots:
       - '@types/react'
       - supports-color
 
-  '@yu-cq/tiptap@0.3.11(@tiptap/extension-code-block@3.3.0(@tiptap/core@3.3.0(@tiptap/pm@3.3.0))(@tiptap/pm@3.3.0))(@tiptap/extension-drag-handle@3.3.0(@tiptap/core@3.3.0(@tiptap/pm@3.3.0))(@tiptap/extension-collaboration@3.3.0(@tiptap/core@3.3.0(@tiptap/pm@3.3.0))(@tiptap/pm@3.3.0)(@tiptap/y-tiptap@3.0.0(prosemirror-model@1.25.3)(prosemirror-state@1.4.3)(prosemirror-view@1.40.1)(y-protocols@1.0.6(yjs@13.6.27))(yjs@13.6.27))(yjs@13.6.27))(@tiptap/extension-node-range@3.3.0(@tiptap/core@3.3.0(@tiptap/pm@3.3.0))(@tiptap/pm@3.3.0))(@tiptap/pm@3.3.0)(@tiptap/y-tiptap@3.0.0(prosemirror-model@1.25.3)(prosemirror-state@1.4.3)(prosemirror-view@1.40.1)(y-protocols@1.0.6(yjs@13.6.27))(yjs@13.6.27)))(@types/react@19.1.12)(emojibase@16.0.0)(happy-dom@18.0.1)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)':
+  '@yu-cq/tiptap@0.3.12(@tiptap/extension-code-block@3.3.0(@tiptap/core@3.3.0(@tiptap/pm@3.3.0))(@tiptap/pm@3.3.0))(@tiptap/extension-drag-handle@3.3.0(@tiptap/core@3.3.0(@tiptap/pm@3.3.0))(@tiptap/extension-collaboration@3.3.0(@tiptap/core@3.3.0(@tiptap/pm@3.3.0))(@tiptap/pm@3.3.0)(@tiptap/y-tiptap@3.0.0(prosemirror-model@1.25.3)(prosemirror-state@1.4.3)(prosemirror-view@1.40.1)(y-protocols@1.0.6(yjs@13.6.27))(yjs@13.6.27))(yjs@13.6.27))(@tiptap/extension-node-range@3.3.0(@tiptap/core@3.3.0(@tiptap/pm@3.3.0))(@tiptap/pm@3.3.0))(@tiptap/pm@3.3.0)(@tiptap/y-tiptap@3.0.0(prosemirror-model@1.25.3)(prosemirror-state@1.4.3)(prosemirror-view@1.40.1)(y-protocols@1.0.6(yjs@13.6.27))(yjs@13.6.27)))(@types/react@19.1.12)(emojibase@16.0.0)(happy-dom@18.0.1)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)':
     dependencies:
       '@emotion/react': 11.14.0(@types/react@19.1.12)(react@19.1.1)
       '@emotion/styled': 11.14.1(@emotion/react@11.14.0(@types/react@19.1.12)(react@19.1.1))(@types/react@19.1.12)(react@19.1.1)
