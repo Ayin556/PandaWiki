@@ -31,7 +31,7 @@
     "@reduxjs/toolkit": "^2.5.0",
     "@tiptap/extension-collaboration": "^3.3.0",
     "@tiptap/extension-collaboration-caret": "^3.3.0",
-    "@yu-cq/tiptap": "0.3.12",
+    "@yu-cq/tiptap": "0.3.13",
     "axios": "^1.7.9",
     "ct-mui": "1.0.1-beta.11",
     "dayjs": "^1.11.13",
