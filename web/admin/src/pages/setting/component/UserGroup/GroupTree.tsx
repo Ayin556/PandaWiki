@@ -128,23 +128,18 @@ const TreeItem = React.forwardRef<
               flex={1}
               sx={{ pr: 2 }}
             >
-              <Stack
-                direction='row'
-                alignItems={'center'}
-                gap={1}
-                sx={{ fontSize: 14, width: '200px' }}
-              >
+              <Box sx={{ fontSize: 14 }}>
                 <Box>{item.name}</Box>
-              </Stack>
+              </Box>
 
               <Stack
                 direction='row'
                 alignItems={'center'}
-                justifyContent={'flex-end'}
+                justifyContent='space-between'
                 gap={1}
-                sx={{ flexShrink: 1, flex: 1 }}
+                sx={{ flexShrink: 1, width: 240 }}
               >
-                {!item.isRoot && (
+                {!item.isRoot ? (
                   <Box
                     sx={{
                       color: 'info.main',
@@ -161,12 +156,13 @@ const TreeItem = React.forwardRef<
                   >
                     共 {item?.count || 0} 个成员
                   </Box>
+                ) : (
+                  <Box />
                 )}
                 <Box
                   onClick={e => e.stopPropagation()}
                   onMouseDown={e => e.stopPropagation()}
                   onPointerDown={e => e.stopPropagation()}
-                  sx={{ width: 120, textAlign: 'right' }}
                 >
                   <IconButton
                     size='small'
@@ -497,6 +493,7 @@ const GroupModal = ({
       open={open}
       showCancel={false}
       onCancel={onCancel}
+      onOk={onCancel}
       okText='关闭'
     >
       <Table

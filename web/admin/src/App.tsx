@@ -4,7 +4,7 @@ import { light } from '@/themes/color';
 import componentStyleOverrides from '@/themes/override';
 import { ThemeProvider } from 'ct-mui';
 import { useEffect } from 'react';
-import { useLocation, useRoutes, useNavigate } from 'react-router-dom';
+import { useLocation, useRoutes } from 'react-router-dom';
 
 import { getApiV1License } from './request/pro/License';
 
@@ -16,7 +16,6 @@ function App() {
   const location = useLocation();
   const { pathname } = location;
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const routerView = useRoutes(router);
   const loginPage = pathname.includes('/login');
   const onlyAllowShareApi = loginPage;

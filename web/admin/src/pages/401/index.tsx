@@ -38,7 +38,7 @@ const Index = () => {
         没有权限访问
       </Typography>
       <Typography variant='body2' color='text.secondary' textAlign='center'>
-        您没有访问该页面的权限。如需访问，请联系管理员为您开通权限。
+        你的账号没有访问相关Wiki站点的权限。如需访问，请联系管理员为你开通。
       </Typography>
       <StyledActions>
         <Button variant='contained' onClick={() => navigate('/')}>
