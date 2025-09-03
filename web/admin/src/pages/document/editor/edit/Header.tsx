@@ -88,7 +88,9 @@ const Header = ({
       Message.info('当前已是最新版本！');
     } else {
       handleSave();
-      setPublishOpen(true);
+      setTimeout(() => {
+        setPublishOpen(true);
+      }, 200);
     }
   }, [nodeDetail, edit]);
 
