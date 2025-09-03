@@ -155,8 +155,18 @@ type OpenAIAPIBotSettings struct {
 }
 
 type WebAppCustomSettings struct {
-	AllowThemeSwitching *bool  `json:"allow_theme_switching"`
-	HeaderPlaceholder   string `json:"header_search_placeholder"`
+	AllowThemeSwitching *bool                `json:"allow_theme_switching"`
+	HeaderPlaceholder   string               `json:"header_search_placeholder"`
+	SocialMediaAccounts []SocialMediaAccount `json:"social_media_accounts"`
+	ShowBrandInfo       *bool                `json:"show_brand_info"`
+}
+
+type SocialMediaAccount struct {
+	Channel string `json:"channel"`
+	Text    string `json:"text"`
+	Link    string `json:"link"`
+	Icon    string `json:"icon"`
+	Phone   string `json:"phone"`
 }
 
 type WebAppCommentSettings struct {
@@ -295,12 +305,13 @@ type AppSettingsResp struct {
 	AIFeedbackSettings AIFeedbackSettings `json:"ai_feedback_settings"`
 	// WebAppCustomStyle
 	WebAppCustomSettings WebAppCustomSettings `json:"web_app_custom_style"`
+	// Captcha Settings
+	CaptchaSettings consts.CaptchaSettings `json:"captcha_settings"`
 
 	WatermarkContent string                  `json:"watermark_content"`
 	WatermarkSetting consts.WatermarkSetting `json:"watermark_setting"`
 	CopySetting      consts.CopySetting      `json:"copy_setting"`
-	// Captcha Settings
-	CaptchaSettings consts.CaptchaSettings `json:"captcha_settings"`
+
 	// OpenAI API settings
 	OpenAIAPIBotSettings OpenAIAPIBotSettings `json:"openai_api_bot_settings"`
 }

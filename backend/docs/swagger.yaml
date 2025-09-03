@@ -1875,6 +1875,19 @@ definitions:
       password:
         type: string
     type: object
+  domain.SocialMediaAccount:
+    properties:
+      channel:
+        type: string
+      icon:
+        type: string
+      link:
+        type: string
+      phone:
+        type: string
+      text:
+        type: string
+    type: object
   domain.Source:
     properties:
       obj_token:
@@ -2032,6 +2045,12 @@ definitions:
         type: boolean
       header_search_placeholder:
         type: string
+      show_brand_info:
+        type: boolean
+      social_media_accounts:
+        items:
+          $ref: '#/definitions/domain.SocialMediaAccount'
+        type: array
     type: object
   domain.WidgetBotSettings:
     properties:
