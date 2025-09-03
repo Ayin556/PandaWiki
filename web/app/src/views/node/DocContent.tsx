@@ -258,7 +258,7 @@ const DocContent = ({
             <Box>{dayjs(info.updated_at).fromNow()}更新</Box>
           </>
         )}
-        {characterCount && characterCount > 0 && (
+        {!!characterCount && characterCount > 0 && (
           <>
             <Box>·</Box>
             <Box>{characterCount} 字</Box>

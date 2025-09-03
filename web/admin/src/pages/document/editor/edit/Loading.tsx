@@ -38,12 +38,13 @@ const LoadingEditorWrap = () => {
         }}
       >
         <Header
+          edit={false}
           isSyncing={isSyncing}
           collaborativeUsers={collaborativeUsers}
           detail={{}}
-          updateDetail={() => {}}
-          handleSave={() => {}}
-          handleExport={() => {}}
+          updateDetail={() => { }}
+          handleSave={() => { }}
+          handleExport={() => { }}
         />
         <Toolbar editorRef={editorRef} />
       </Box>

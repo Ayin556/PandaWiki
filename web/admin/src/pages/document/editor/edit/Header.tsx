@@ -23,6 +23,7 @@ import DocAddByCustomText from '../../component/DocAddByCustomText';
 import DocDelete from '../../component/DocDelete';
 
 interface HeaderProps {
+  edit: boolean;
   collaborativeUsers?: Array<{
     id: string;
     name: string;
@@ -36,6 +37,7 @@ interface HeaderProps {
 }
 
 const Header = ({
+  edit,
   collaborativeUsers = [],
   isSyncing = false,
   detail,
@@ -82,13 +84,13 @@ const Header = ({
   }
 
   const handlePublish = useCallback(() => {
-    if (nodeDetail?.status === 2) {
+    if (nodeDetail?.status === 2 && !edit) {
       Message.info('当前已是最新版本！');
     } else {
       handleSave();
       setPublishOpen(true);
     }
-  }, [nodeDetail]);
+  }, [nodeDetail, edit]);
 
   useEffect(() => {
     if (nodeDetail?.updated_at && !firstLoad.current) {

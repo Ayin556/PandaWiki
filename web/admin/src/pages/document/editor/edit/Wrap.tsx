@@ -68,7 +68,7 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
   // >([]);
   const [selectionText, setSelectionText] = useState('');
   const [aiGenerateOpen, setAiGenerateOpen] = useState(false);
-  const [showSummaryBtn, setShowSummaryBtn] = useState(false);
+  // const [showSummaryBtn, setShowSummaryBtn] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -393,9 +393,10 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
         <Header
           // isSyncing={isSyncing}
           // collaborativeUsers={collaborativeUsers}
+          edit={isEditing}
           detail={nodeDetail!}
           updateDetail={updateDetail}
-          handleSave={() => onSave(editorRef.getHTML())}
+          handleSave={async () => await onSave(editorRef.getHTML())}
           handleExport={handleExport}
         />
         <Toolbar editorRef={editorRef} handleAiGenerate={handleAiGenerate} />

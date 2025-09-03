@@ -44,14 +44,13 @@ const DocEditor = () => {
   const onSave = async (content: string) => {
     if (!kb_id || !nodeDetail.id) return;
     try {
-      putApiV1NodeDetail({
+      await putApiV1NodeDetail({
         kb_id,
         id: nodeDetail.id,
         content,
         name: nodeDetail.name || '',
-      }).then(() => {
-        Message.success('保存成功');
-      });
+      })
+      Message.success('保存成功');
     } catch (error) {
       console.error(error);
     }
