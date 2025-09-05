@@ -60,13 +60,14 @@ func (s *CTRAG) CreateKnowledgeBase(ctx context.Context) (string, error) {
 
 func (s *CTRAG) QueryRecords(ctx context.Context, datasetIDs []string, query string, groupIds []int) ([]*domain.NodeContentChunk, error) {
 
-	chunks, _, err := s.client.RetrieveChunks(ctx, rag.RetrievalRequest{
+	chunks, _, rewriteQuery, err := s.client.RetrieveChunks(ctx, rag.RetrievalRequest{
 		DatasetIDs:   datasetIDs,
 		Question:     query,
 		TopK:         10,
 		UserGroupIDs: groupIds,
 		// SimilarityThreshold: 0.2,
 	})
+	s.logger.Info("retrieve chunks result", log.Int("chunks count", len(chunks)), log.String("query", rewriteQuery))
 
 	if err != nil {
 		return nil, err
@@ -129,16 +130,20 @@ func (s *CTRAG) DeleteKnowledgeBase(ctx context.Context, datasetID string) error
 }
 
 func (s *CTRAG) AddModel(ctx context.Context, model *domain.Model) (string, error) {
+	config, err := json.Marshal(model.Parameters)
+	if err != nil {
+		return "", fmt.Errorf("failed to marshal parameters when adding model: %v", err)
+	}
 	addReq := rag.AddModelConfigRequest{
 		Name:      model.Model,
-		Provider:  "openai-compatible-api",
+		Provider:  string(model.Provider),
 		TaskType:  string(model.Type),
 		ApiBase:   model.BaseURL,
 		ApiKey:    model.APIKey,
 		MaxTokens: 8192,
 		IsDefault: true,
 		Enabled:   true,
-		Config:    json.RawMessage(`{"max_context": 8192, "chunk_size": 1024, "chunk_overlap": 128, "dimension": 1024}`),
+		Config:    config,
 	}
 	modelConfig, err := s.client.AddModelConfig(ctx, addReq)
 	if err != nil {
@@ -148,18 +153,22 @@ func (s *CTRAG) AddModel(ctx context.Context, model *domain.Model) (string, erro
 }
 
 func (s *CTRAG) UpdateModel(ctx context.Context, model *domain.Model) error {
+	config, err := json.Marshal(model.Parameters)
+	if err != nil {
+		return fmt.Errorf("failed to marshal model params with err: %v", err)
+	}
 	updateReq := rag.AddModelConfigRequest{
 		Name:      model.Model,
-		Provider:  "openai-compatible-api",
+		Provider:  string(model.Provider),
 		TaskType:  string(model.Type),
 		ApiBase:   model.BaseURL,
 		ApiKey:    model.APIKey,
 		MaxTokens: 8192,
 		IsDefault: true,
-		Enabled:   true,
-		Config:    json.RawMessage(`{"max_context": 8192, "chunk_size": 1024, "chunk_overlap": 128, "dimension": 1024}`),
+		Enabled:   model.IsActive,
+		Config:    config,
 	}
-	_, err := s.client.AddModelConfig(ctx, updateReq)
+	_, err = s.client.AddModelConfig(ctx, updateReq)
 	if err != nil {
 		return err
 	}

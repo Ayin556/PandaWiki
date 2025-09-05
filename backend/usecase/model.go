@@ -36,20 +36,15 @@ func NewModelUsecase(modelRepo *pg.ModelRepository, nodeRepo *pg.NodeRepository,
 		kbRepo:    kbRepo,
 	}
 	if err := u.initEmbeddingAndRerankModel(context.Background()); err != nil {
-		logger.Error("init embedding & rerank model failed", log.Any("error", err))
+		logger.Error("init embedding & rerank & analysis model failed", log.Any("error", err))
 	}
 	return u
 }
 
 func (u *ModelUsecase) initEmbeddingAndRerankModel(ctx context.Context) error {
-	// FIXME: just for test, remove it later
-	// shared_key by BaiZhiCloud
-	sharedKey := "sk-r8tmBtcU1JotPDPnlgZLOY4Z6Dbb7FufcSeTkFpRWA5v4Llr"
-	baseURL := "https://model-square.app.baizhi.cloud/v1"
-
 	isReady := false
 	// wait for raglite to be ready
-	for i := 0; i < 10; i++ {
+	for range 30 {
 		models, err := u.ragStore.GetModelList(ctx)
 		if err != nil {
 			u.logger.Error("wait for raglite to be ready", log.Any("error", err))
@@ -58,6 +53,19 @@ func (u *ModelUsecase) initEmbeddingAndRerankModel(ctx context.Context) error {
 		}
 		isReady = true
 		if len(models) > 0 {
+			// init analysis model for old user
+			hasAnalysis := false
+			for _, m := range models {
+				if m.Type == domain.ModelTypeAnalysis {
+					hasAnalysis = true
+					break
+				}
+			}
+			if !hasAnalysis {
+				if err := u.createAndSyncModelToRAGLite(ctx, "qwen2.5-3b-instruct", domain.ModelTypeAnalysis); err != nil {
+					return fmt.Errorf("add analysis model err: %v", err)
+				}
+			}
 			return nil
 		} else {
 			break
@@ -66,41 +74,42 @@ func (u *ModelUsecase) initEmbeddingAndRerankModel(ctx context.Context) error {
 	if !isReady {
 		return fmt.Errorf("raglite is not ready")
 	}
-	embeddingModel := &domain.Model{
+
+	if err := u.createAndSyncModelToRAGLite(ctx, "bge-m3", domain.ModelTypeEmbedding); err != nil {
+		return fmt.Errorf("create and sync model err: %v", err)
+	}
+	if err := u.createAndSyncModelToRAGLite(ctx, "bge-reranker-v2-m3", domain.ModelTypeEmbedding); err != nil {
+		return fmt.Errorf("create and sync model err: %v", err)
+	}
+	if err := u.createAndSyncModelToRAGLite(ctx, "qwen2.5-3b-instruct", domain.ModelTypeAnalysis); err != nil {
+		return fmt.Errorf("create and sync model err: %v", err)
+	}
+	return nil
+}
+
+func (u *ModelUsecase) createAndSyncModelToRAGLite(ctx context.Context, modelName string, modelType domain.ModelType) error {
+	// FIXME: just for test, remove it later
+	// shared_key by BaiZhiCloud
+	sharedKey := "sk-r8tmBtcU1JotPDPnlgZLOY4Z6Dbb7FufcSeTkFpRWA5v4Llr"
+	baseURL := "https://model-square.app.baizhi.cloud/v1"
+	model := &domain.Model{
 		ID:         uuid.New().String(),
 		Provider:   domain.ModelProviderBrandBaiZhiCloud,
-		Model:      "bge-m3",
+		Model:      "qwen2.5-3b-instruct",
 		APIKey:     sharedKey,
 		APIHeader:  "",
 		BaseURL:    baseURL,
+		IsActive:   true,
 		APIVersion: "",
-		Type:       domain.ModelTypeEmbedding,
+		Type:       modelType,
 	}
-	id, err := u.ragStore.AddModel(ctx, embeddingModel)
+	id, err := u.ragStore.AddModel(ctx, model)
 	if err != nil {
-		return fmt.Errorf("init embedding model failed: %w", err)
+		return fmt.Errorf("init %s model failed: %w", modelName, err)
 	}
-	embeddingModel.ID = id
-	if err := u.modelRepo.Create(ctx, embeddingModel); err != nil {
-		return fmt.Errorf("init embedding model failed: %w", err)
-	}
-	rerankModel := &domain.Model{
-		ID:         uuid.New().String(),
-		Provider:   domain.ModelProviderBrandBaiZhiCloud,
-		Model:      "bge-reranker-v2-m3",
-		APIKey:     sharedKey,
-		APIHeader:  "",
-		BaseURL:    baseURL,
-		APIVersion: "",
-		Type:       domain.ModelTypeRerank,
-	}
-	id, err = u.ragStore.AddModel(ctx, rerankModel)
-	if err != nil {
-		return fmt.Errorf("init rerank model failed: %w", err)
-	}
-	rerankModel.ID = id
-	if err := u.modelRepo.Create(ctx, rerankModel); err != nil {
-		return fmt.Errorf("init rerank model failed: %w", err)
+	model.ID = id
+	if err := u.modelRepo.Create(ctx, model); err != nil {
+		return fmt.Errorf("create %s model failed: %w", modelName, err)
 	}
 	return nil
 }
@@ -109,7 +118,7 @@ func (u *ModelUsecase) Create(ctx context.Context, model *domain.Model) error {
 	if err := u.modelRepo.Create(ctx, model); err != nil {
 		return err
 	}
-	if model.Type == domain.ModelTypeEmbedding || model.Type == domain.ModelTypeRerank {
+	if model.Type == domain.ModelTypeEmbedding || model.Type == domain.ModelTypeRerank || model.Type == domain.ModelTypeAnalysis {
 		if id, err := u.ragStore.AddModel(ctx, model); err != nil {
 			return err
 		} else {
@@ -166,22 +175,25 @@ func (u *ModelUsecase) TriggerUpsertRecords(ctx context.Context) error {
 	return nil
 }
 
-func (u *ModelUsecase) Get(ctx context.Context, id string) (*domain.ModelDetailResp, error) {
-	return u.modelRepo.Get(ctx, id)
-}
-
 func (u *ModelUsecase) Update(ctx context.Context, req *domain.UpdateModelReq) error {
 	if err := u.modelRepo.Update(ctx, req); err != nil {
 		return err
 	}
-	if req.Type == domain.ModelTypeEmbedding || req.Type == domain.ModelTypeRerank {
-		if err := u.ragStore.UpdateModel(ctx, &domain.Model{
+	if req.Type == domain.ModelTypeEmbedding || req.Type == domain.ModelTypeRerank || req.Type == domain.ModelTypeAnalysis {
+		updateModel := &domain.Model{
 			ID:      req.ID,
 			Model:   req.Model,
 			Type:    req.Type,
 			BaseURL: req.BaseURL,
 			APIKey:  req.APIKey,
-		}); err != nil {
+		}
+		if req.Parameters != nil {
+			updateModel.Parameters = *req.Parameters
+		}
+		if req.Type == domain.ModelTypeAnalysis && req.IsActive != nil {
+			updateModel.IsActive = *req.IsActive
+		}
+		if err := u.ragStore.UpdateModel(ctx, updateModel); err != nil {
 			return err
 		}
 	}

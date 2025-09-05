@@ -22,6 +22,7 @@ const (
 	ModelTypeChat      ModelType = "chat"
 	ModelTypeEmbedding ModelType = "embedding"
 	ModelTypeRerank    ModelType = "rerank"
+	ModelTypeAnalysis  ModelType = "analysis"
 )
 
 type Model struct {
@@ -72,27 +73,24 @@ type ModelListItem struct {
 	APIVersion string        `json:"api_version"` // for azure openai
 	Type       ModelType     `json:"type"`
 
+	IsActive bool `json:"is_active" gorm:"default:false"`
+
 	PromptTokens     uint64     `json:"prompt_tokens"`
 	CompletionTokens uint64     `json:"completion_tokens"`
 	TotalTokens      uint64     `json:"total_tokens"`
-	Parameters       ModelParam `json:"parameters" gorm:"column:parameters"`
-}
-
-type ModelDetailResp struct {
-	ModelListItem
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	Parameters       ModelParam `json:"parameters" gorm:"column:parameters;type:jsonb"`
 }
 
 type CreateModelReq struct {
 	BaseModelInfo
-	Param *ModelParam `json:"param"`
+	Parameters *ModelParam `json:"parameters"`
 }
 
 type UpdateModelReq struct {
 	ID string `json:"id" validate:"required"`
 	BaseModelInfo
-	Param *ModelParam `json:"param"`
+	Parameters *ModelParam `json:"parameters"`
+	IsActive   *bool       `json:"is_active"`
 }
 
 type CheckModelReq struct {
@@ -136,7 +134,7 @@ type BaseModelInfo struct {
 	APIKey     string        `json:"api_key"`
 	APIHeader  string        `json:"api_header"`
 	APIVersion string        `json:"api_version"` // for azure openai
-	Type       ModelType     `json:"type" validate:"required,oneof=chat embedding rerank"`
+	Type       ModelType     `json:"type" validate:"required,oneof=chat embedding rerank analysis"`
 }
 
 type CheckModelResp struct {
@@ -149,7 +147,7 @@ type GetProviderModelListReq struct {
 	BaseURL   string    `json:"base_url" query:"base_url" validate:"required"`
 	APIKey    string    `json:"api_key" query:"api_key"`
 	APIHeader string    `json:"api_header" query:"api_header"`
-	Type      ModelType `json:"type" query:"type" validate:"required,oneof=chat embedding rerank"`
+	Type      ModelType `json:"type" query:"type" validate:"required,oneof=chat embedding rerank analysis"`
 }
 
 type GetProviderModelListResp struct {

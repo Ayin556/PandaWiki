@@ -15,7 +15,7 @@ require (
 	github.com/boj/redistore v1.4.1
 	github.com/bwmarrin/discordgo v0.29.0
 	github.com/chaitin/ModelKit/v2 v2.0.6
-	github.com/chaitin/pandawiki/sdk/rag v0.0.0-20250821111634-e0b93366d1c0
+	github.com/chaitin/pandawiki/sdk/rag v0.0.0-20250904060255-79da6add9190
 	github.com/cloudwego/eino v0.4.7
 	github.com/cloudwego/eino-ext/components/model/deepseek v0.0.0-20250522060253-ddb617598b09
 	github.com/go-ldap/ldap/v3 v3.4.11

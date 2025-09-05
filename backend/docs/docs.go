@@ -1802,50 +1802,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/model/detail": {
-            "get": {
-                "description": "get model detail",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "model"
-                ],
-                "summary": "get model detail",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "model id",
-                        "name": "id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/domain.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/domain.ModelDetailResp"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
         "/api/v1/model/list": {
             "get": {
                 "description": "get model list",
@@ -5299,7 +5255,7 @@ const docTemplate = `{
                 "model": {
                     "type": "string"
                 },
-                "param": {
+                "parameters": {
                     "$ref": "#/definitions/domain.ModelParam"
                 },
                 "provider": {
@@ -5309,7 +5265,8 @@ const docTemplate = `{
                     "enum": [
                         "chat",
                         "embedding",
-                        "rerank"
+                        "rerank",
+                        "analysis"
                     ],
                     "allOf": [
                         {
@@ -5547,7 +5504,8 @@ const docTemplate = `{
                     "enum": [
                         "chat",
                         "embedding",
-                        "rerank"
+                        "rerank",
+                        "analysis"
                     ],
                     "allOf": [
                         {
@@ -5791,54 +5749,6 @@ const docTemplate = `{
                 "MessageFromPrivate"
             ]
         },
-        "domain.ModelDetailResp": {
-            "type": "object",
-            "properties": {
-                "api_header": {
-                    "type": "string"
-                },
-                "api_key": {
-                    "type": "string"
-                },
-                "api_version": {
-                    "description": "for azure openai",
-                    "type": "string"
-                },
-                "base_url": {
-                    "type": "string"
-                },
-                "completion_tokens": {
-                    "type": "integer"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "model": {
-                    "type": "string"
-                },
-                "parameters": {
-                    "$ref": "#/definitions/domain.ModelParam"
-                },
-                "prompt_tokens": {
-                    "type": "integer"
-                },
-                "provider": {
-                    "$ref": "#/definitions/github_com_chaitin_panda-wiki_domain.ModelProvider"
-                },
-                "total_tokens": {
-                    "type": "integer"
-                },
-                "type": {
-                    "$ref": "#/definitions/domain.ModelType"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
         "domain.ModelParam": {
             "type": "object",
             "properties": {
@@ -5867,12 +5777,14 @@ const docTemplate = `{
             "enum": [
                 "chat",
                 "embedding",
-                "rerank"
+                "rerank",
+                "analysis"
             ],
             "x-enum-varnames": [
                 "ModelTypeChat",
                 "ModelTypeEmbedding",
-                "ModelTypeRerank"
+                "ModelTypeRerank",
+                "ModelTypeAnalysis"
             ]
         },
         "domain.MoveNodeReq": {
@@ -6872,10 +6784,13 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
+                "is_active": {
+                    "type": "boolean"
+                },
                 "model": {
                     "type": "string"
                 },
-                "param": {
+                "parameters": {
                     "$ref": "#/definitions/domain.ModelParam"
                 },
                 "provider": {
@@ -6885,7 +6800,8 @@ const docTemplate = `{
                     "enum": [
                         "chat",
                         "embedding",
-                        "rerank"
+                        "rerank",
+                        "analysis"
                     ],
                     "allOf": [
                         {
@@ -7051,7 +6967,8 @@ const docTemplate = `{
                     "enum": [
                         "chat",
                         "embedding",
-                        "rerank"
+                        "rerank",
+                        "analysis"
                     ],
                     "allOf": [
                         {
@@ -7093,6 +7010,9 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
                 },
                 "model": {
                     "type": "string"
