@@ -18,8 +18,6 @@ const PCLayout = ({ children }: { children: React.ReactNode }) => {
         alignItems='flex-start'
         gap={'96px'}
         sx={{
-          position: 'relative',
-          zIndex: 1,
           pt: '50px',
           pb: 10,
           px: 5,

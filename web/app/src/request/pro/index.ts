@@ -13,4 +13,5 @@ export * from './ShareAuth';
 export * from './ShareContribute';
 export * from './ShareFile';
 export * from './ShareOpenapi';
+export * from './otherCustomer';
 export * from './types';

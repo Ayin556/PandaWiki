@@ -3,7 +3,7 @@ import Picker from '@emoji-mart/react';
 import { Box, IconButton, Popover, SxProps } from '@mui/material';
 import { Icon } from '@ctzhian/ui';
 import React, { useCallback } from 'react';
-import zh from '../../../public/emoji-data/zh.json';
+import zh from '../../assets/emoji-data/zh.json';
 
 interface EmojiPickerProps {
   type: 1 | 2;
@@ -39,7 +39,7 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
   };
 
   const handleSelect = useCallback(
-    (emoji: any) => {
+    (emoji: { native: string }) => {
       onChange?.(emoji.native);
       handleClose();
     },

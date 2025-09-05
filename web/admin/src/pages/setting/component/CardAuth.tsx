@@ -20,11 +20,7 @@ import { putApiV1KnowledgeBaseDetail } from '@/request/KnowledgeBase';
 import { DomainKnowledgeBaseDetail } from '@/request/types';
 import { GithubComChaitinPandaWikiProApiAuthV1AuthItem } from '@/request/pro/types';
 import UserGroup from './UserGroup';
-import {
-  getApiProV1AuthGet,
-  postApiProV1AuthSet,
-  deleteApiProV1AuthDelete,
-} from '@/request/pro/Auth';
+import { getApiProV1AuthGet, postApiProV1AuthSet } from '@/request/pro/Auth';
 
 import { getApiV1AuthGet, postApiV1AuthSet } from '@/request/Auth';
 
@@ -241,24 +237,6 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
     if (!kb_id || enabled !== '2') return;
     getAuth();
   }, [kb_id, isPro, source_type, enabled]);
-
-  const onDeleteUser = (id: number) => {
-    Modal.confirm({
-      title: '删除用户',
-      content: '确定要删除该用户吗？',
-      okButtonProps: {
-        color: 'error',
-      },
-      onOk: () => {
-        deleteApiProV1AuthDelete({
-          id,
-        }).then(() => {
-          message.success('删除成功');
-          setMemberList(memberList.filter(item => item.id !== id));
-        });
-      },
-    });
-  };
 
   const columns: ColumnType<GithubComChaitinPandaWikiProApiAuthV1AuthItem>[] = [
     {

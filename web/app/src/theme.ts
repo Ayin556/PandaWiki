@@ -9,16 +9,16 @@ const createComponentStyleOverrides = (
 ): CssVarsThemeOptions['components'] => ({
   MuiInputBase: {
     styleOverrides: {
-      root: {
+      root: ({ theme }) => ({
         borderRadius: '10px !important',
         '.MuiOutlinedInput-notchedOutline': {
-          borderColor: 'transparent',
+          borderColor: theme.palette.divider,
         },
         '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
           borderColor: 'var(--mui-palette-text-primary) !important',
           borderWidth: '1px !important',
         },
-      },
+      }),
     },
   },
   MuiSvgIcon: {

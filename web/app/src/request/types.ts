@@ -242,6 +242,7 @@ export interface DomainAppSettings {
   captcha_settings?: ConstsCaptchaSettings;
   /** catalog settings */
   catalog_settings?: DomainCatalogSettings;
+  contribute_settings?: DomainContributeSettings;
   copy_setting?: '' | 'append' | 'disabled';
   /** seo */
   desc?: string;
@@ -316,6 +317,7 @@ export interface DomainAppSettingsResp {
   captcha_settings?: ConstsCaptchaSettings;
   /** catalog settings */
   catalog_settings?: DomainCatalogSettings;
+  contribute_settings?: DomainContributeSettings;
   copy_setting?: ConstsCopySetting;
   /** seo */
   desc?: string;
@@ -451,6 +453,10 @@ export interface DomainCommentReq {
   parent_id?: string;
   root_id?: string;
   user_name?: string;
+}
+
+export interface DomainContributeSettings {
+  is_enable?: boolean;
 }
 
 export interface DomainConversationDetailResp {
@@ -1157,6 +1163,7 @@ export interface GithubComChaitinPandaWikiApiAuthV1AuthGetResp {
   auths?: V1AuthItem[];
   client_id?: string;
   client_secret?: string;
+  proxy?: string;
   source_type?: ConstsSourceType;
 }
 
@@ -1165,6 +1172,11 @@ export interface GithubComChaitinPandaWikiApiShareV1AuthGetResp {
   license_edition?: ConstsLicenseEdition;
   source_type?: ConstsSourceType;
 }
+
+export type GithubComChaitinPandaWikiApiShareV1GitHubCallbackResp = Record<
+  string,
+  any
+>;
 
 export interface GithubComChaitinPandaWikiDomainCheckModelReq {
   api_header?: string;
@@ -1257,6 +1269,7 @@ export interface V1AuthSetReq {
   client_id?: string;
   client_secret?: string;
   kb_id?: string;
+  proxy?: string;
   source_type: 'github';
 }
 
@@ -1657,4 +1670,9 @@ export interface GetShareV1NodeDetailParams {
   id: string;
   /** format */
   format: string;
+}
+
+export interface GetShareV1OpenapiGithubCallbackParams {
+  code?: string;
+  state?: string;
 }

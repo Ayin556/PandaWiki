@@ -80,6 +80,9 @@ export interface KBDetail {
       social_media_accounts?: DomainSocialMediaAccount[];
       footer_show_intro?: boolean;
     };
+    contribute_settings?: {
+      is_enable: boolean;
+    };
   };
 }
 export interface DomainSocialMediaAccount {
