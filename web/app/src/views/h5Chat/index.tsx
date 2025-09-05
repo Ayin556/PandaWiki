@@ -271,7 +271,7 @@ const H5Chat: React.FC = () => {
           });
         } else if (type === 'answer') {
           setAnswer(prev => {
-            return prev + content + '\n\n';
+            return prev + content;
           });
         } else if (type === 'error') {
           setLoading(false);
