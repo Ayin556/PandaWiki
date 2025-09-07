@@ -88,7 +88,7 @@ export const MainLayout = () => {
           minWidth: '900px',
           minHeight: '100vh',
           fontSize: '16px',
-          bgcolor: 'background.paper0',
+          bgcolor: 'background.paper2',
         }}
       >
         <Sidebar />

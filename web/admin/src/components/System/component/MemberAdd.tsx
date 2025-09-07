@@ -5,7 +5,7 @@ import { copyText, generatePassword } from '@/utils';
 import { CheckCircle } from '@mui/icons-material';
 import { Box, Button, MenuItem, Select, Stack, TextField } from '@mui/material';
 import { FormItem } from '@/components/Form';
-import { Modal, Message } from 'ct-mui';
+import { Modal, message } from '@ctzhian/ui';
 import { useState, useMemo, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useAppSelector } from '@/store';
@@ -127,7 +127,7 @@ const MemberAdd = ({
           const versionLimit =
             VERSION_MAP[license.edition as keyof typeof VERSION_MAP];
           if (versionLimit && userLen >= versionLimit.max) {
-            Message.error(versionLimit.message);
+            message.error(versionLimit.message);
             return;
           }
           setAddMember(true);
@@ -155,14 +155,14 @@ const MemberAdd = ({
         }}
         onOk={() => copyUserInfo({ account, password })}
       >
-        <Card sx={{ p: 2, fontSize: 14, bgcolor: 'background.paper2' }}>
+        <Card sx={{ p: 2, fontSize: 14, bgcolor: 'background.paper3' }}>
           <Stack direction={'row'}>
             <Box sx={{ width: 80 }}>用户名</Box>
-            <Box sx={{ fontFamily: 'Gbold' }}>{account}</Box>
+            <Box sx={{ fontWeight: 700 }}>{account}</Box>
           </Stack>
           <Stack direction={'row'} sx={{ mt: 1 }}>
             <Box sx={{ width: 80 }}>密码</Box>
-            <Box sx={{ fontFamily: 'Gbold' }}>{password}</Box>
+            <Box sx={{ fontWeight: 700 }}>{password}</Box>
           </Stack>
         </Card>
       </Modal>

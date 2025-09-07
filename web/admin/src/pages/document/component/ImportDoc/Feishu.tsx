@@ -19,7 +19,7 @@ import {
   Stack,
   TextField,
 } from '@mui/material';
-import { Ellipsis, Icon, Message, Modal } from 'ct-mui';
+import { Ellipsis, Icon, message, Modal } from '@ctzhian/ui';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
@@ -119,7 +119,7 @@ const FeishuImport = ({
               type: 2,
               kb_id,
             });
-            Message.success(item?.title + '导入成功');
+            message.success(item?.title + '导入成功');
             setItems(prev => {
               const idx = prev.findIndex(it => it.url === item.url);
               if (idx === -1) {
@@ -132,7 +132,7 @@ const FeishuImport = ({
               ];
             });
           } catch (error) {
-            Message.success(item?.title + '导入失败');
+            message.success(item?.title + '导入失败');
           }
         });
       }
@@ -184,7 +184,7 @@ const FeishuImport = ({
       return;
     }
     if (selectIds.length === 0) {
-      Message.error('请选择要导入的文档');
+      message.error('请选择要导入的文档');
       return;
     }
     setLoading(true);
@@ -210,7 +210,7 @@ const FeishuImport = ({
           borderBottom: idx === items.length - 1 ? 'none' : '1px solid',
           borderColor: 'divider',
           ':hover': {
-            bgcolor: 'background.paper2',
+            bgcolor: 'background.paper3',
           },
         }}
       >
@@ -219,7 +219,7 @@ const FeishuImport = ({
             type='icon-shuaxin'
             sx={{
               fontSize: 18,
-              color: 'text.auxiliary',
+              color: 'text.tertiary',
               animation: 'loadingRotate 1s linear infinite',
             }}
           />
@@ -265,7 +265,7 @@ const FeishuImport = ({
         >
           <Ellipsis sx={{ fontSize: 14 }}>{item.title || item.url}</Ellipsis>
           {item.content && (
-            <Ellipsis sx={{ fontSize: 12, color: 'text.auxiliary' }}>
+            <Ellipsis sx={{ fontSize: 12, color: 'text.tertiary' }}>
               {item.content}
             </Ellipsis>
           )}
@@ -288,7 +288,7 @@ const FeishuImport = ({
                 kb_id,
               })
                 .then(res => {
-                  Message.success(item.title + '导入成功');
+                  message.success(item.title + '导入成功');
                   setItems(prev =>
                     prev.map(it =>
                       it.url === item.url
@@ -298,7 +298,7 @@ const FeishuImport = ({
                   );
                 })
                 .catch(() => {
-                  Message.error(item.title + '导入失败');
+                  message.error(item.title + '导入失败');
                 });
             }}
           >
@@ -525,7 +525,7 @@ const FeishuImport = ({
                     py: 1,
                     borderBottom: '1px solid',
                     borderColor: 'divider',
-                    bgcolor: 'background.paper2',
+                    bgcolor: 'background.paper3',
                   }}
                 >
                   <Stack
@@ -655,7 +655,7 @@ const FeishuImport = ({
                         type='icon-shuaxin'
                         sx={{
                           fontSize: 18,
-                          color: 'text.auxiliary',
+                          color: 'text.tertiary',
                           animation: 'loadingRotate 1s linear infinite',
                         }}
                       />
@@ -676,7 +676,7 @@ const FeishuImport = ({
                           fontSize: 12,
                           py: 1,
                           textAlign: 'center',
-                          color: 'text.auxiliary',
+                          color: 'text.tertiary',
                           borderBottom: '1px solid',
                           borderColor: 'divider',
                         }}
@@ -699,7 +699,7 @@ const FeishuImport = ({
                 py: 1,
                 borderBottom: '1px solid',
                 borderColor: 'divider',
-                bgcolor: 'background.paper2',
+                bgcolor: 'background.paper3',
               }}
             >
               <Stack
@@ -755,7 +755,7 @@ const FeishuImport = ({
                   fontSize: 12,
                   py: 1,
                   textAlign: 'center',
-                  color: 'text.auxiliary',
+                  color: 'text.tertiary',
                   borderBottom: '1px solid',
                   borderColor: 'divider',
                 }}

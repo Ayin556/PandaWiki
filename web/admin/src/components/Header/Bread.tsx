@@ -1,6 +1,6 @@
 import { useAppSelector } from '@/store';
 import { Box, Stack, useTheme } from '@mui/material';
-import { Icon } from 'ct-mui';
+import { Icon } from '@ctzhian/ui';
 import { useEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import KBSelect from '../KB/KBSelect';
@@ -47,9 +47,9 @@ const Bread = () => {
       gap={1}
       sx={{
         flexGrow: 1,
-        color: 'text.auxiliary',
+        color: 'text.tertiary',
         fontSize: '14px',
-        a: { color: 'text.auxiliary' },
+        a: { color: 'text.tertiary' },
         lineHeight: '22px',
       }}
     >

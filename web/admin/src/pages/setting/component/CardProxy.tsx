@@ -11,7 +11,7 @@ import {
   Stack,
   TextField,
 } from '@mui/material';
-import { Message } from 'ct-mui';
+import { message } from '@ctzhian/ui';
 import { useEffect, useState } from 'react';
 
 const CardProxy = ({
@@ -38,12 +38,12 @@ const CardProxy = ({
           trusted_proxies: hasProxy ? [proxyIP] : null,
         },
       }).then(() => {
-        Message.success('保存成功');
+        message.success('保存成功');
         setIsEdit(false);
         refresh();
       });
     } catch (e) {
-      Message.error('保存失败');
+      message.error('保存失败');
     }
   };
 
@@ -60,7 +60,7 @@ const CardProxy = ({
           sx={{
             flexGrow: 1,
             fontSize: 12,
-            color: 'text.auxiliary',
+            color: 'text.tertiary',
             ml: 1,
             fontWeight: 'normal',
           }}

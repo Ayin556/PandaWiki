@@ -1,6 +1,6 @@
 import { addOpacityToColor, copyText } from '@/utils';
 import { Box, IconButton, useTheme } from '@mui/material';
-import { Icon } from 'ct-mui';
+import { Icon } from '@ctzhian/ui';
 import 'katex/dist/katex.min.css';
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
@@ -44,10 +44,10 @@ const MarkDown = ({ loading = false, content }: MarkDownProps) => {
           alignItems: 'flex-end',
           gap: '16px',
           fontSize: '12px',
-          color: 'text.auxiliary',
+          color: 'text.tertiary',
           marginBottom: '40px',
           lineHeight: '20px',
-          backgroundColor: 'background.paper2',
+          backgroundColor: 'background.paper3',
           padding: '16px',
           cursor: 'pointer',
           borderRadius: '10px',

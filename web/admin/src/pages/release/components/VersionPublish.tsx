@@ -7,7 +7,7 @@ import DragTree from '@/components/Drag/DragTree';
 import { useAppSelector } from '@/store';
 import { convertToTree } from '@/utils/drag';
 import { Box, Checkbox, Stack, TextField } from '@mui/material';
-import { Message, Modal } from 'ct-mui';
+import { message, Modal } from '@ctzhian/ui';
 import dayjs from 'dayjs';
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -68,14 +68,14 @@ const VersionPublish = ({
         ...data,
         node_ids: [...selected, ...folderIds],
       }).then(() => {
-        Message.success(`${data.tag} 版本发布成功`);
+        message.success(`${data.tag} 版本发布成功`);
         reset();
         setSelected([]);
         onClose();
         refresh();
       });
     } else {
-      Message.error(total > 0 ? '请选择要发布的文档' : '暂无未发布文档');
+      message.error(total > 0 ? '请选择要发布的文档' : '暂无未发布文档');
     }
   });
 
@@ -163,13 +163,13 @@ const VersionPublish = ({
             未发布文档/文件夹
             <Box
               component='span'
-              sx={{ color: 'text.auxiliary', fontSize: 12, pl: 1 }}
+              sx={{ color: 'text.tertiary', fontSize: 12, pl: 1 }}
             >
               共 {list.length} 个，已选中 {selectedTotal} 个
             </Box>
           </Box>
           <Stack direction='row' alignItems={'center'}>
-            <Box sx={{ color: 'text.auxiliary', fontSize: 12 }}>全选</Box>
+            <Box sx={{ color: 'text.tertiary', fontSize: 12 }}>全选</Box>
             <Checkbox
               size='small'
               sx={{
@@ -189,7 +189,7 @@ const VersionPublish = ({
             />
           </Stack>
         </Stack>
-        <Card sx={{ bgcolor: 'background.paper2', py: 1 }}>
+        <Card sx={{ bgcolor: 'background.paper3', py: 1 }}>
           <Stack
             gap={0.25}
             sx={{

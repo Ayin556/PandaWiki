@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { TrendData } from '@/api';
-import { useThemeMode } from 'ct-mui';
+import { useThemeMode } from '@ctzhian/ui';
 import * as echarts from 'echarts';
 import { useEffect, useRef, useState } from 'react';
 

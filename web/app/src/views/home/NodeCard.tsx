@@ -1,7 +1,7 @@
 import { IconFile, IconFolder } from '@/components/icons';
 import { useStore } from '@/provider';
 import { Box, Stack } from '@mui/material';
-import { Ellipsis } from 'ct-mui';
+import { Ellipsis } from '@ctzhian/ui';
 import Link from 'next/link';
 import { V1RecommendNodeListItem } from '@/request/types';
 

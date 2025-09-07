@@ -23,7 +23,7 @@ const HeadingSx = [
 const DocAnchor = ({ headings }: DocAnchorProps) => {
   const { activeHeading, scrollToElement } = useScroll(
     headings,
-    document.querySelector('#scroll-container') as HTMLDivElement,
+    'scroll-container',
   );
 
   const levels = Array.from(
@@ -128,7 +128,6 @@ const DocAnchor = ({ headings }: DocAnchorProps) => {
         const offset = 80;
         const elementPosition = element.getBoundingClientRect().top;
         const offsetPosition = elementPosition + window.pageYOffset - offset;
-        console.log(offsetPosition, 'offsetPosition==============');
         window.scrollTo({
           top: offsetPosition,
           behavior: 'smooth',

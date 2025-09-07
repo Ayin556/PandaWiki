@@ -13,7 +13,7 @@ import {
   Stack,
   TextField,
 } from '@mui/material';
-import { Icon } from 'ct-mui';
+import { Icon } from '@ctzhian/ui';
 import {
   CSSProperties,
   Dispatch,
@@ -317,7 +317,7 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(
                 handleRemove?.(item.id);
               }}
               sx={{
-                color: 'text.auxiliary',
+                color: 'text.tertiary',
                 ':hover': { color: 'error.main' },
                 fontSize: '12px',
               }}

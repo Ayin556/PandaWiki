@@ -14,7 +14,8 @@ import {
   Tooltip,
   useTheme,
 } from '@mui/material';
-import { Ellipsis, Icon, MenuSelect, Message } from 'ct-mui';
+import { Ellipsis, Icon, message } from '@ctzhian/ui';
+import Cascader from '@/components/Cascader';
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
@@ -81,11 +82,11 @@ const Header = ({
         },
       });
     });
-  }
+  };
 
   const handlePublish = useCallback(() => {
     if (nodeDetail?.status === 2 && !edit) {
-      Message.info('当前已是最新版本！');
+      message.info('当前已是最新版本！');
     } else {
       handleSave();
       setTimeout(() => {
@@ -120,7 +121,7 @@ const Header = ({
             onClick={() => setCatalogOpen(true)}
             sx={{
               cursor: 'pointer',
-              color: 'text.auxiliary',
+              color: 'text.tertiary',
               ':hover': {
                 color: 'text.primary',
               },
@@ -140,7 +141,7 @@ const Header = ({
               <Box
                 component='span'
                 sx={{ cursor: 'pointer' }}
-              // onClick={() => setRenameOpen(true)}
+                // onClick={() => setRenameOpen(true)}
               >
                 {detail.name}
               </Box>
@@ -152,7 +153,7 @@ const Header = ({
             direction={'row'}
             alignItems={'center'}
             gap={0.5}
-            sx={{ fontSize: 12, color: 'text.auxiliary' }}
+            sx={{ fontSize: 12, color: 'text.tertiary' }}
           >
             <Icon type='icon-baocun' />
             {showSaveTip ? (
@@ -204,49 +205,110 @@ const Header = ({
           )}
         </Box> */}
         <Stack direction={'row'} gap={1}>
-          <MenuSelect
+          <Cascader
             list={[
               {
                 key: 'page_width',
-                label: <StyledMenuSelect sx={{ width: 120 }}>
-                  <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'} sx={{ width: '100%' }}>
-                    页面宽度
-                    <Icon type='icon-xiala-copy' sx={{ color: 'text.disabled', fontSize: 18, mr: -1 }} />
-                  </Stack>
-                </StyledMenuSelect>,
+                label: (
+                  <StyledMenuSelect sx={{ width: 120 }}>
+                    <Stack
+                      direction={'row'}
+                      alignItems={'center'}
+                      justifyContent={'space-between'}
+                      sx={{ width: '100%' }}
+                    >
+                      页面宽度
+                      <Icon
+                        type='icon-xiala-copy'
+                        sx={{ color: 'text.disabled', fontSize: 18, mr: -1 }}
+                      />
+                    </Stack>
+                  </StyledMenuSelect>
+                ),
                 children: [
                   {
                     key: 'full',
-                    label: <StyledMenuSelect>
-                      <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'} sx={{ width: '100%' }}>
-                        自适应
-                        {docWidth === 'full' && <Icon type='icon-duihao1' sx={{ color: 'primary.main', fontSize: 14, mr: -1, mt: -0.5 }} />}
-                      </Stack>
-                    </StyledMenuSelect>,
+                    label: (
+                      <StyledMenuSelect>
+                        <Stack
+                          direction={'row'}
+                          alignItems={'center'}
+                          justifyContent={'space-between'}
+                          sx={{ width: '100%' }}
+                        >
+                          自适应
+                          {docWidth === 'full' && (
+                            <Icon
+                              type='icon-duihao1'
+                              sx={{
+                                color: 'primary.main',
+                                fontSize: 14,
+                                mr: -1,
+                                mt: -0.5,
+                              }}
+                            />
+                          )}
+                        </Stack>
+                      </StyledMenuSelect>
+                    ),
                     onClick: () => {
                       updateDocWidth('full');
                     },
                   },
                   {
                     key: 'wide',
-                    label: <StyledMenuSelect>
-                      <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'} sx={{ width: '100%' }}>
-                        超宽
-                        {docWidth === 'wide' && <Icon type='icon-duihao1' sx={{ color: 'primary.main', fontSize: 14, mr: -1, mt: -0.5 }} />}
-                      </Stack>
-                    </StyledMenuSelect>,
+                    label: (
+                      <StyledMenuSelect>
+                        <Stack
+                          direction={'row'}
+                          alignItems={'center'}
+                          justifyContent={'space-between'}
+                          sx={{ width: '100%' }}
+                        >
+                          超宽
+                          {docWidth === 'wide' && (
+                            <Icon
+                              type='icon-duihao1'
+                              sx={{
+                                color: 'primary.main',
+                                fontSize: 14,
+                                mr: -1,
+                                mt: -0.5,
+                              }}
+                            />
+                          )}
+                        </Stack>
+                      </StyledMenuSelect>
+                    ),
                     onClick: () => {
                       updateDocWidth('wide');
                     },
                   },
                   {
                     key: 'normal',
-                    label: <StyledMenuSelect>
-                      <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'} sx={{ width: '100%' }}>
-                        常规
-                        {docWidth === 'normal' && <Icon type='icon-duihao1' sx={{ color: 'primary.main', fontSize: 14, mr: -1, mt: -0.5 }} />}
-                      </Stack>
-                    </StyledMenuSelect>,
+                    label: (
+                      <StyledMenuSelect>
+                        <Stack
+                          direction={'row'}
+                          alignItems={'center'}
+                          justifyContent={'space-between'}
+                          sx={{ width: '100%' }}
+                        >
+                          常规
+                          {docWidth === 'normal' && (
+                            <Icon
+                              type='icon-duihao1'
+                              sx={{
+                                color: 'primary.main',
+                                fontSize: 14,
+                                mr: -1,
+                                mt: -0.5,
+                              }}
+                            />
+                          )}
+                        </Stack>
+                      </StyledMenuSelect>
+                    ),
                     onClick: () => {
                       updateDocWidth('normal');
                     },
@@ -266,7 +328,7 @@ const Header = ({
                       type: 2,
                       emoji: detail.meta?.emoji,
                     }).then(res => {
-                      Message.success('复制成功');
+                      message.success('复制成功');
                       window.open(`/doc/editor/${res.id}`, '_blank');
                     });
                   }
@@ -317,7 +379,7 @@ const Header = ({
               </IconButton>
             }
           />
-          <MenuSelect
+          <Cascader
             list={[
               {
                 key: 'html',
@@ -387,7 +449,7 @@ const Header = ({
               </Button>
             }
           />
-          <MenuSelect
+          <Cascader
             list={[
               {
                 key: 'save',

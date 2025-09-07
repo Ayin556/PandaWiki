@@ -1,4 +1,4 @@
-import { message } from 'ct-mui';
+import { message } from '@ctzhian/ui';
 import { ResolvingMetadata } from 'next';
 import React from 'react';
 import { ITreeItem } from '@/assets/type';

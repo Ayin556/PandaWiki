@@ -59,7 +59,7 @@ const QAReferer = ({ tab }: { tab: ActiveTab }) => {
               width: 184,
               flexShrink: 0,
               fontSize: 12,
-              bgcolor: 'background.paper2',
+              bgcolor: 'background.paper3',
               borderRadius: '10px',
             }}
             gap={1.5}
@@ -82,7 +82,7 @@ const QAReferer = ({ tab }: { tab: ActiveTab }) => {
                   ></Box>
                   <Box>{it.name}</Box>
                 </Stack>
-                <Box sx={{ fontFamily: 'Gbold' }}>{it.count}</Box>
+                <Box sx={{ fontWeight: 700 }}>{it.count}</Box>
               </Stack>
             ))}
           </Stack>

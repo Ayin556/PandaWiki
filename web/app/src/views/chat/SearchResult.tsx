@@ -2,7 +2,7 @@ import { ChunkResultItem } from '@/assets/type';
 import { IconArrowUp } from '@/components/icons';
 import { useStore } from '@/provider';
 import { Box, Skeleton, Stack } from '@mui/material';
-import { Ellipsis } from 'ct-mui';
+import { Ellipsis } from '@ctzhian/ui';
 import Link from 'next/link';
 
 const SearchResult = ({
@@ -91,7 +91,7 @@ const SearchResult = ({
         <Box sx={{ mt: 1 }}>
           <Stack
             sx={{
-              bgcolor: 'background.paper2',
+              bgcolor: 'background.paper3',
               borderRadius: '10px',
               px: 2,
               py: 1,

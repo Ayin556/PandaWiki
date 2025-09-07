@@ -56,7 +56,7 @@ const Version = () => {
         onClick={() => setTypeOpen(true)}
       >
         <Stack direction={'row'} alignItems='center' gap={0.5}>
-          <Box sx={{ width: 30, color: 'text.auxiliary' }}>型号</Box>
+          <Box sx={{ width: 30, color: 'text.tertiary' }}>型号</Box>
           <img
             src={versionMap[license.edition!]}
             style={{ height: 13, marginTop: -1 }}
@@ -64,7 +64,7 @@ const Version = () => {
           {EditionType[license.edition as keyof typeof EditionType].text}
         </Stack>
         <Stack direction={'row'} gap={0.5}>
-          <Box sx={{ width: 30, color: 'text.auxiliary' }}>版本</Box>
+          <Box sx={{ width: 30, color: 'text.tertiary' }}>版本</Box>
           <Box sx={{ whiteSpace: 'nowrap' }}>{curVersion}</Box>
           {latestVersion !== `v${curVersion}` && (
             <Tooltip

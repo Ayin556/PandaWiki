@@ -1,7 +1,7 @@
 import { formatByte } from '@/utils';
 import { Upload as UploadIcon } from '@mui/icons-material';
 import { Box, Button, Stack, Typography, useTheme } from '@mui/material';
-import { Icon, Message } from 'ct-mui';
+import { Icon, message } from '@ctzhian/ui';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { FileRejection, useDropzone } from 'react-dropzone';
 
@@ -68,7 +68,7 @@ const Upload = ({
             textAlign: 'center',
             backgroundColor: isDragActive
               ? 'primary.main'
-              : 'background.paper2',
+              : 'background.paper3',
             cursor: 'pointer',
             '&:hover': {
               borderColor: theme.palette.primary.main,

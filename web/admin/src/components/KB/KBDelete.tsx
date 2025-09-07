@@ -5,7 +5,7 @@ import { setKbC, setKbId, setKbList } from '@/store/slices/config';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { Box, Stack, useTheme } from '@mui/material';
-import { Message, Modal } from 'ct-mui';
+import { message, Modal } from '@ctzhian/ui';
 
 interface KBDeleteProps {
   open: boolean;
@@ -21,7 +21,7 @@ const KBDelete = ({ open, onClose, data }: KBDeleteProps) => {
   const handleOk = () => {
     if (!data) return;
     deleteApiV1KnowledgeBaseDetail({ id: data?.id || '' }).then(() => {
-      Message.success('删除成功');
+      message.success('删除成功');
       const newKbList = kbList?.filter(item => item.id !== data.id) || [];
       dispatch(setKbList(newKbList));
       if (kb_id === data.id && newKbList!.length > 0) {

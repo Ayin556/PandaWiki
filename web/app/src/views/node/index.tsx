@@ -91,7 +91,7 @@ const Doc = ({ node }: { node?: NodeDetail }) => {
           size='small'
           onClick={scrollToTop}
           sx={{
-            backgroundColor: 'background.paper2',
+            backgroundColor: 'background.paper3',
             color: 'text.primary',
             position: 'fixed',
             bottom: 66,

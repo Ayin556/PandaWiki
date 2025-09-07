@@ -1,6 +1,6 @@
 import { uploadFile } from '@/api';
 import { Box, IconButton, Stack } from '@mui/material';
-import { Icon, Message } from 'ct-mui';
+import { Icon, message } from '@ctzhian/ui';
 import { useEffect, useRef, useState } from 'react';
 import CustomImage from '../CustomImage';
 
@@ -57,7 +57,7 @@ const UploadFile = ({
         currentPreviewUrl.current = null;
       } catch (error) {
         console.error(error);
-        Message.error('图片处理失败');
+        message.error('图片处理失败');
         setPreview(value);
         clearInputValue();
         URL.revokeObjectURL(previewUrl);
@@ -74,7 +74,7 @@ const UploadFile = ({
         currentPreviewUrl.current = null;
       } catch (error) {
         console.error(error);
-        Message.error('上传失败');
+        message.error('上传失败');
         setPreview(value);
         clearInputValue();
         URL.revokeObjectURL(previewUrl);
@@ -117,9 +117,9 @@ const UploadFile = ({
           height: width || 173.26,
           borderRadius: '10px',
           border: '1px solid',
-          borderColor: 'background.paper2',
+          borderColor: 'background.paper3',
           cursor: 'pointer',
-          bgcolor: 'background.paper2',
+          bgcolor: 'background.paper3',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -166,7 +166,7 @@ const UploadFile = ({
             >
               <Icon
                 type='icon-icon_tool_close'
-                sx={{ color: 'text.auxiliary' }}
+                sx={{ color: 'text.tertiary' }}
               />
             </IconButton>
           </>
@@ -174,9 +174,15 @@ const UploadFile = ({
           <Stack
             alignItems={'center'}
             gap={0.5}
-            sx={{ color: 'text.disabled', fontSize: width?(width<40?8:12):12 }}
+            sx={{
+              color: 'text.disabled',
+              fontSize: width ? (width < 40 ? 8 : 12) : 12,
+            }}
           >
-            <Icon type='icon-shangchuan' sx={{ fontSize: width?(width<40?12:18):18 }} />
+            <Icon
+              type='icon-shangchuan'
+              sx={{ fontSize: width ? (width < 40 ? 12 : 18) : 18 }}
+            />
             <Box>点击上传</Box>
           </Stack>
         )}

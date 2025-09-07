@@ -1,27 +1,9 @@
 import { addOpacityToColor } from '@/utils';
 import { custom, ThemeColor } from './color';
 
+declare module '@mui/material/styles' {}
+
 declare module '@mui/material/styles' {
-  interface Palette {
-    neutral: Palette['primary'];
-  }
-
-  interface PaletteOptions {
-    neutral: PaletteOptions['primary'];
-  }
-}
-declare module '@mui/material/Button' {
-  interface ButtonPropsColorOverrides {
-    neutral: true;
-  }
-}
-declare module '@mui/material/ButtonGroup' {
-  interface ButtonGroupPropsColorOverrides {
-    neutral: true;
-  }
-}
-
-declare module '@mui/material/styles/createPalette' {
   interface TypeBackground {
     paper0?: string;
     paper2?: string;
@@ -105,10 +87,10 @@ const componentStyleOverrides = (theme: ThemeColor) => {
                 backgroundColor: addOpacityToColor(theme.text.primary, 0.9),
               }),
               ...(ownerState.variant === 'text' && {
-                backgroundColor: theme.background.paper2,
+                backgroundColor: theme.background.paper3,
               }),
               ...(ownerState.variant === 'outlined' && {
-                backgroundColor: theme.background.paper2,
+                backgroundColor: theme.background.paper3,
               }),
               ...(ownerState.color === 'neutral' && {
                 color: theme.text.primary,
@@ -222,7 +204,7 @@ const componentStyleOverrides = (theme: ThemeColor) => {
           },
         },
         head: {
-          backgroundColor: theme.background.paper2,
+          backgroundColor: theme.background.paper3,
           color: theme.table.head.color,
           fontSize: '12px',
           height: theme.table.head.height,
@@ -269,7 +251,7 @@ const componentStyleOverrides = (theme: ThemeColor) => {
           height: '40px',
           borderRadius: '5px',
           ':hover': {
-            backgroundColor: theme.background.paper2,
+            backgroundColor: theme.background.paper3,
           },
           '&.Mui-selected': {
             fontWeight: '500',
@@ -287,10 +269,10 @@ const componentStyleOverrides = (theme: ThemeColor) => {
         root: ({ ownerState }: { ownerState: { elevation?: number } }) => {
           return {
             ...(ownerState.elevation === 0 && {
-              backgroundColor: theme.background.paper0,
+              backgroundColor: theme.background.paper2,
             }),
             ...(ownerState.elevation === 2 && {
-              backgroundColor: theme.background.paper2,
+              backgroundColor: theme.background.paper3,
             }),
             backgroundImage: 'none',
           };
@@ -433,9 +415,9 @@ const componentStyleOverrides = (theme: ThemeColor) => {
       styleOverrides: {
         root: {
           borderRadius: '10px !important',
-          backgroundColor: theme.background.paper2,
+          backgroundColor: theme.background.paper3,
           '.MuiOutlinedInput-notchedOutline': {
-            borderColor: `${theme.background.paper2} !important`,
+            borderColor: `${theme.background.paper3} !important`,
             borderWidth: '1px !important',
           },
           '&.Mui-focused': {
@@ -465,7 +447,7 @@ const componentStyleOverrides = (theme: ThemeColor) => {
         root: {
           height: '36px',
           borderRadius: '10px !important',
-          backgroundColor: theme.background.paper2,
+          backgroundColor: theme.background.paper3,
         },
         select: {
           paddingRight: '0 !important',

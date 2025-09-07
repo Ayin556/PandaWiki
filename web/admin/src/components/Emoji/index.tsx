@@ -1,7 +1,7 @@
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
 import { Box, IconButton, Popover, SxProps } from '@mui/material';
-import { Icon } from 'ct-mui';
+import { Icon } from '@ctzhian/ui';
 import React, { useCallback } from 'react';
 import zh from '../../../public/emoji-data/zh.json';
 

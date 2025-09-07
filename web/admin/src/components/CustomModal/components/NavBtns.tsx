@@ -1,5 +1,5 @@
 import { Box, Button, IconButton, Stack } from '@mui/material';
-import { Icon } from 'ct-mui';
+import { Icon } from '@ctzhian/ui';
 import { AppSetting } from '@/api';
 import { useState } from 'react';
 import { getButtonThemeStyle } from './buttonThemeUtils';

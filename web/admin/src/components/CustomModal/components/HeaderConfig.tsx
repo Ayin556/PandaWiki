@@ -2,7 +2,7 @@ import { AppDetail, HeaderSetting } from '@/api';
 import DragBtn from './DragBtn';
 import UploadFile from '@/components/UploadFile';
 import { Stack, Box, TextField } from '@mui/material';
-import { Icon } from 'ct-mui';
+import { Icon } from '@ctzhian/ui';
 import { Dispatch, SetStateAction, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useAppDispatch, useAppSelector } from '@/store';

@@ -6,7 +6,7 @@ import { Box, Paper, Fade, Stack, Fab, Zoom } from '@mui/material';
 import { styled, alpha } from '@mui/material/styles';
 import MarkDown2 from '@/components/markdown2';
 import SSEClient from '@/utils/fetch';
-import { message } from 'ct-mui';
+import { message } from '@ctzhian/ui';
 import { IconCopy } from '@/components/icons';
 import { copyText } from '@/utils';
 import LoadingIcon from '@/assets/images/loading.png';
@@ -25,7 +25,7 @@ const StyledContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   height: '100vh',
-  background: theme.palette.background.paper2,
+  background: theme.palette.background.paper3,
   fontFamily: theme.typography.fontFamily,
 }));
 
@@ -381,7 +381,7 @@ const H5Chat: React.FC = () => {
           size='small'
           onClick={scrollToTop}
           sx={{
-            backgroundColor: 'background.paper2',
+            backgroundColor: 'background.paper3',
             color: 'text.primary',
             position: 'fixed',
             bottom: 66,

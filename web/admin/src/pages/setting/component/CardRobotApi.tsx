@@ -16,7 +16,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { useEffect, useMemo, useState } from 'react';
 import { FormItem, SettingCardItem } from './Common';
 import { DomainAppDetailResp } from '@/request/types';
-import { Message } from 'ct-mui';
+import { message } from '@ctzhian/ui';
 import { useAppSelector } from '@/store';
 
 const CardRobotApi = ({
@@ -83,7 +83,7 @@ const CardRobotApi = ({
         },
       },
     ).then(() => {
-      Message.success('保存成功');
+      message.success('保存成功');
       setIsEdit(false);
       getDetail();
       reset();

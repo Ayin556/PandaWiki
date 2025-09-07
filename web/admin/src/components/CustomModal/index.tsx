@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Button, Stack, Typography } from '@mui/material';
-import { CusTabs, Icon, Message, Modal } from 'ct-mui';
+import { CusTabs, Icon, message, Modal } from '@ctzhian/ui';
 import {
   DomainKnowledgeBaseDetail,
   getApiV1KnowledgeBaseDetail,
@@ -77,7 +77,7 @@ const CustomModal = ({ open, onCancel }: CustomModalProps) => {
       { settings: { ...info.settings, ...appPreviewData.settings }, kb_id },
     ).then(() => {
       refresh(appPreviewData);
-      Message.success('保存成功');
+      message.success('保存成功');
       setIsEdit(false);
     });
   };
@@ -256,7 +256,7 @@ const CustomModal = ({ open, onCancel }: CustomModalProps) => {
             sx={{
               width: '100%',
               minWidth: 0,
-              bgcolor: 'background.paper0',
+              bgcolor: 'background.paper2',
               minHeight: 0,
               height: '100%',
             }}

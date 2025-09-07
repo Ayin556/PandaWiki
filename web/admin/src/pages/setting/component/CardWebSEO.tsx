@@ -1,6 +1,6 @@
 import { SEOSetting } from '@/api';
 import { Checkbox, TextField } from '@mui/material';
-import { Message } from 'ct-mui';
+import { message } from '@ctzhian/ui';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { DomainAppDetailResp } from '@/request/types';
@@ -35,7 +35,7 @@ const CardWebSEO = ({ data, id, refresh }: CardWebSEOProps) => {
       { id },
       { kb_id, settings: { ...data.settings, ...value } },
     ).then(() => {
-      Message.success('保存成功');
+      message.success('保存成功');
       refresh(value);
       setIsEdit(false);
     });

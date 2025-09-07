@@ -1,7 +1,7 @@
 import { ThemeAndStyleSetting, ThemeMode } from '@/api/type';
 import UploadFile from '@/components/UploadFile';
 import { MenuItem, Select } from '@mui/material';
-import { Message } from 'ct-mui';
+import { message } from '@ctzhian/ui';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { FormItem, SettingCardItem } from './Common';
@@ -43,7 +43,7 @@ const CardStyle = ({ id, data, refresh }: CardStyleProps) => {
       },
     ).then(() => {
       refresh(value);
-      Message.success('保存成功');
+      message.success('保存成功');
       setIsEdit(false);
     });
   };

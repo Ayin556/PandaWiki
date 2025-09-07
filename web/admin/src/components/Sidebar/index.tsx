@@ -3,7 +3,7 @@ import Qrcode from '@/assets/images/qrcode.png';
 
 import { Box, Button, Stack, useTheme } from '@mui/material';
 import { ConstsUserKBPermission } from '@/request/types';
-import { Icon, Modal } from 'ct-mui';
+import { Icon, Modal } from '@ctzhian/ui';
 import { useState, useMemo, useEffect } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import Avatar from '../Avatar';
@@ -151,14 +151,15 @@ const Sidebar = () => {
               to={it.value}
               style={{
                 zIndex: isActive ? 2 : 1,
-                color: isActive ? '#FFFFFF' : 'text.primary',
               }}
             >
               <Button
                 variant={isActive ? 'contained' : 'text'}
+                color='dark'
                 sx={{
                   width: '100%',
                   height: 50,
+                  px: 2,
                   justifyContent: 'flex-start',
                   color: isActive ? '#FFFFFF' : 'text.primary',
                   fontWeight: isActive ? '500' : '400',
@@ -171,16 +172,15 @@ const Sidebar = () => {
                       : 'none',
                   },
                 }}
-                startIcon={
-                  <Icon
-                    type={it.icon}
-                    sx={{
-                      fontSize: 14,
-                      color: isActive ? '#FFFFFF' : 'text.disabled',
-                    }}
-                  />
-                }
               >
+                <Icon
+                  type={it.icon}
+                  sx={{
+                    fontSize: 14,
+                    mr: 1,
+                    color: isActive ? '#FFFFFF' : 'text.disabled',
+                  }}
+                />
                 {it.label}
               </Button>
             </NavLink>
@@ -190,10 +190,11 @@ const Sidebar = () => {
       <Stack gap={1} sx={{ flexShrink: 0 }}>
         <Button
           variant='outlined'
+          color='dark'
           sx={{
             fontSize: 14,
             flexShrink: 0,
-            bgcolor: 'background.paper',
+            fontWeight: 400,
             pr: 1.5,
             pl: 1.5,
             gap: 0.5,
@@ -206,7 +207,9 @@ const Sidebar = () => {
               color: 'primary.main',
             },
           }}
-          startIcon={<Icon type='icon-bangzhuwendang1' />}
+          startIcon={
+            <Icon type='icon-bangzhuwendang1' sx={{ width: 14, height: 14 }} />
+          }
           onClick={() =>
             window.open('https://pandawiki.docs.baizhi.cloud/', '_blank')
           }
@@ -215,10 +218,11 @@ const Sidebar = () => {
         </Button>
         <Button
           variant='outlined'
+          color='dark'
           sx={{
             fontSize: 14,
             flexShrink: 0,
-            bgcolor: 'background.paper',
+            fontWeight: 400,
             pr: 1.5,
             pl: 1.5,
             gap: 0.5,
@@ -232,7 +236,7 @@ const Sidebar = () => {
               color: 'primary.main',
             },
           }}
-          startIcon={<Icon type='icon-GitHub' />}
+          startIcon={<Icon type='icon-GitHub' sx={{ width: 14, height: 14 }} />}
           onClick={() =>
             window.open('https://github.com/chaitin/PandaWiki', '_blank')
           }
@@ -241,10 +245,11 @@ const Sidebar = () => {
         </Button>
         <Button
           variant='outlined'
+          color='dark'
           sx={{
             fontSize: 14,
             flexShrink: 0,
-            bgcolor: 'background.paper',
+            fontWeight: 400,
             pr: 1.5,
             pl: 1.5,
             gap: 0.5,
@@ -258,7 +263,7 @@ const Sidebar = () => {
             },
           }}
           onClick={() => setShowQrcode(true)}
-          startIcon={<Icon type='icon-group' />}
+          startIcon={<Icon type='icon-group' sx={{ width: 14, height: 14 }} />}
         >
           交流群
         </Button>

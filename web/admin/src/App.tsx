@@ -1,10 +1,9 @@
 import router from '@/router';
 import { useAppDispatch } from '@/store';
-import { light } from '@/themes/color';
-import componentStyleOverrides from '@/themes/override';
-import { ThemeProvider } from 'ct-mui';
+import { ThemeProvider } from '@ctzhian/ui';
 import { useEffect } from 'react';
 import { useLocation, useRoutes } from 'react-router-dom';
+import { theme } from '@/themes';
 
 import { getApiV1License } from './request/pro/License';
 
@@ -36,13 +35,7 @@ function App() {
   }
 
   return (
-    <ThemeProvider
-      colors={{ light }}
-      mode='light'
-      theme={{
-        components: componentStyleOverrides,
-      }}
-    >
+    <ThemeProvider theme={theme} defaultMode='light' storageManager={null}>
       {routerView}
     </ThemeProvider>
   );

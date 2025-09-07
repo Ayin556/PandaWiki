@@ -4,14 +4,13 @@ import { ChunkResultItem, ConversationItem } from '@/assets/type';
 import { useStore } from '@/provider';
 import SSEClient from '@/utils/fetch';
 import { Box, Stack } from '@mui/material';
-import { message } from 'ct-mui';
+import { message } from '@ctzhian/ui';
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import ChatResult from './ChatResult';
 import ChatTab from './ChatTab';
 import SearchResult from './SearchResult';
 import { AnswerStatus } from './constant';
-import Cap from '@cap.js/widget';
 
 const Chat = ({
   conversation: initialConversation,
@@ -59,6 +58,7 @@ const Chat = ({
     let token = '';
     // @ts-ignore
     if (kbDetail?.settings?.captcha_settings?.chat_status === 'enable') {
+      const Cap = (await import('@cap.js/widget')).default;
       const cap = new Cap({
         apiEndpoint: '/share/v1/captcha/',
       });

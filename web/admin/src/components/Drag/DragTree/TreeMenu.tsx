@@ -1,7 +1,8 @@
 import { ITreeItem } from '@/api';
 import { addOpacityToColor } from '@/utils';
 import { Box, IconButton, Stack, useTheme } from '@mui/material';
-import { Icon, MenuSelect } from 'ct-mui';
+import { Icon } from '@ctzhian/ui';
+import Cascader from '@/components/Cascader';
 
 export type TreeMenuItem = {
   key: string;
@@ -28,7 +29,7 @@ const TreeMenu = ({ menu }: { menu: TreeMenuItem[] }) => {
   const theme = useTheme();
 
   return (
-    <MenuSelect
+    <Cascader
       anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       childrenProps={{

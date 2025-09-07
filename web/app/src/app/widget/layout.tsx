@@ -1,7 +1,7 @@
 import StoreProvider from '@/provider';
 import { darkThemeWidget, lightThemeWidget } from '@/theme';
 import { getShareV1AppWidgetInfo } from '@/request/ShareApp';
-import { ThemeProvider } from 'ct-mui';
+import { ThemeProvider } from '@ctzhian/ui';
 
 import React from 'react';
 

@@ -4,8 +4,8 @@
 import StoreProvider from '@/provider';
 import { darkTheme, lightTheme } from '@/theme';
 import { Box } from '@mui/material';
-import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
-import { ThemeProvider } from 'ct-mui';
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
+import { ThemeProvider } from '@ctzhian/ui';
 import { useEffect, useState } from 'react';
 
 export default function ThemeWrapper({

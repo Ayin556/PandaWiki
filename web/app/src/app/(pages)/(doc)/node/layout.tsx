@@ -51,7 +51,7 @@ const MobileLayout = ({
       <Box
         sx={{
           mt: 5,
-          bgcolor: 'background.paper2',
+          bgcolor: 'background.paper3',
           ...(footerSetting?.footer_style === 'complex' && {
             borderTop: '1px solid',
             borderColor: 'divider',

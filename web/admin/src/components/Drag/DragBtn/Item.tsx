@@ -1,7 +1,7 @@
 import { CardWebHeaderBtn } from '@/api';
 import Avatar from '@/components/Avatar';
 import { Box, Button, IconButton, Stack } from '@mui/material';
-import { Icon } from 'ct-mui';
+import { Icon } from '@ctzhian/ui';
 import { CSSProperties, forwardRef, HTMLAttributes } from 'react';
 
 export type ItemProps = HTMLAttributes<HTMLDivElement> & {
@@ -82,7 +82,7 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(
               e.stopPropagation();
               handleRemove?.(item.id);
             }}
-            sx={{ color: 'text.auxiliary', ':hover': { color: 'error.main' } }}
+            sx={{ color: 'text.tertiary', ':hover': { color: 'error.main' } }}
           >
             <Icon type='icon-icon_tool_close' />
           </IconButton>

@@ -3,7 +3,7 @@ import ErrorPng from '@/assets/images/500.png';
 import Footer from '@/components/footer';
 import { lightTheme } from '@/theme';
 import { Box, Stack } from '@mui/material';
-import { ThemeProvider } from 'ct-mui';
+import { ThemeProvider } from '@ctzhian/ui';
 import Image from 'next/image';
 
 export default function GlobalError({

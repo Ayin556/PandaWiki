@@ -12,7 +12,7 @@ import { setModelList, setModelStatus } from '@/store/slices/config';
 import { addOpacityToColor } from '@/utils';
 import { Box, Button, Stack, Switch, Tooltip, useTheme } from '@mui/material';
 import { ModelModal } from '@yokowu/modelkit-ui';
-import { Icon, Message, Modal } from 'ct-mui';
+import { Icon, message, Modal } from '@ctzhian/ui';
 import { useEffect, useState } from 'react';
 import LottieIcon from '../LottieIcon';
 import Member from './component/Member';
@@ -176,7 +176,7 @@ const System = () => {
                   justifyContent={'center'}
                   sx={{ my: '0px', ml: 2, fontSize: 14 }}
                 >
-                  <Box sx={{ height: '20px', color: 'text.auxiliary' }}>
+                  <Box sx={{ height: '20px', color: 'text.tertiary' }}>
                     尚未配置，
                   </Box>
                   <Button
@@ -218,7 +218,7 @@ const System = () => {
                         sx={{
                           fontSize: 14,
                           lineHeight: '20px',
-                          color: 'text.auxiliary',
+                          color: 'text.tertiary',
                         }}
                       >
                         {ModelProvider[
@@ -289,7 +289,7 @@ const System = () => {
                     <Box
                       sx={{
                         fontSize: 12,
-                        color: 'text.auxiliary',
+                        color: 'text.tertiary',
                         mt: 1,
                       }}
                     >
@@ -394,7 +394,7 @@ const System = () => {
                   justifyContent={'center'}
                   sx={{ my: '0px', ml: 2, fontSize: 14 }}
                 >
-                  <Box sx={{ height: '20px', color: 'text.auxiliary' }}>
+                  <Box sx={{ height: '20px', color: 'text.tertiary' }}>
                     尚未配置，
                   </Box>
                   <Button
@@ -435,7 +435,7 @@ const System = () => {
                         sx={{
                           fontSize: 14,
                           lineHeight: '20px',
-                          color: 'text.auxiliary',
+                          color: 'text.tertiary',
                         }}
                       >
                         {ModelProvider[
@@ -506,7 +506,7 @@ const System = () => {
                     <Box
                       sx={{
                         fontSize: 12,
-                        color: 'text.auxiliary',
+                        color: 'text.tertiary',
                         mt: 1,
                       }}
                     >
@@ -616,7 +616,7 @@ const System = () => {
                   justifyContent={'center'}
                   sx={{ my: '0px', ml: 2, fontSize: 14 }}
                 >
-                  <Box sx={{ height: '20px', color: 'text.auxiliary' }}>
+                  <Box sx={{ height: '20px', color: 'text.tertiary' }}>
                     尚未配置，
                   </Box>
                   <Button
@@ -657,7 +657,7 @@ const System = () => {
                         sx={{
                           fontSize: 14,
                           lineHeight: '20px',
-                          color: 'text.auxiliary',
+                          color: 'text.tertiary',
                         }}
                       >
                         {ModelProvider[
@@ -728,7 +728,7 @@ const System = () => {
                     <Box
                       sx={{
                         fontSize: 12,
-                        color: 'text.auxiliary',
+                        color: 'text.tertiary',
                         mt: 1,
                       }}
                     >
@@ -798,9 +798,7 @@ const System = () => {
                     mb: 2,
                   }}
                 >
-                  <Box sx={{ fontWeight: 'bold' }}>
-                    文档分析模型
-                  </Box>
+                  <Box sx={{ fontWeight: 'bold' }}>文档分析模型</Box>
                   <Box
                     sx={{
                       fontSize: 12,
@@ -823,7 +821,7 @@ const System = () => {
                       lineHeight: '20px',
                       borderRadius: '10px',
                       bgcolor: theme.palette.divider,
-                      color: 'text.auxiliary',
+                      color: 'text.tertiary',
                     }}
                   >
                     可选
@@ -835,7 +833,7 @@ const System = () => {
                   justifyContent={'center'}
                   sx={{ my: '0px', ml: 2, fontSize: 14 }}
                 >
-                  <Box sx={{ height: '20px', color: 'text.auxiliary' }}>
+                  <Box sx={{ height: '20px', color: 'text.tertiary' }}>
                     尚未配置，
                   </Box>
                   <Button
@@ -877,7 +875,7 @@ const System = () => {
                         sx={{
                           fontSize: 14,
                           lineHeight: '20px',
-                          color: 'text.auxiliary',
+                          color: 'text.tertiary',
                         }}
                       >
                         {ModelProvider[
@@ -936,7 +934,7 @@ const System = () => {
                           lineHeight: '20px',
                           borderRadius: '10px',
                           bgcolor: theme.palette.divider,
-                          color: 'text.auxiliary',
+                          color: 'text.tertiary',
                         }}
                       >
                         可选
@@ -945,12 +943,12 @@ const System = () => {
                         size='small'
                         checked={analysisModelData.is_active}
                         onChange={() => {
-                          // @ts-ignore
+                          // @ts-expect-error base_url 可能为 undefined
                           putApiV1Model({
                             ...analysisModelData,
                             is_active: !analysisModelData.is_active,
                           }).then(() => {
-                            Message.success('修改成功');
+                            message.success('修改成功');
                             getModelList();
                           });
                         }}
@@ -959,7 +957,7 @@ const System = () => {
                     <Box
                       sx={{
                         fontSize: 12,
-                        color: 'text.auxiliary',
+                        color: 'text.tertiary',
                         mt: 1,
                       }}
                     >
@@ -1025,7 +1023,7 @@ const System = () => {
         refresh={getModelList}
         modelService={modelService}
         language='zh-CN'
-        messageComponent={Message}
+        messageComponent={message}
         is_close_model_remark={true}
       />
     </>

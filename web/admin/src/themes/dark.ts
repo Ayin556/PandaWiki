@@ -59,9 +59,9 @@ const dark = {
   },
   divider: '#ededed',
   background: {
-    paper0: '#060608',
     paper: '#18181b',
-    paper2: '#27272a',
+    paper2: '#060608',
+    paper3: '#27272a',
     default: 'rgba(255,255,255,0.6)',
     disabled: 'rgba(15,15,15,0.8)',
     chip: 'rgba(145,147,171,0.16)',

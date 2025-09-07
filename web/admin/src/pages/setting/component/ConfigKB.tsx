@@ -3,7 +3,7 @@ import Card from '@/components/Card';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { setKbList } from '@/store/slices/config';
 import { Box, Button, Stack, TextField } from '@mui/material';
-import { Ellipsis, Message } from 'ct-mui';
+import { Ellipsis, message } from '@ctzhian/ui';
 import { useEffect, useState } from 'react';
 
 const ConfigKB = () => {
@@ -17,7 +17,7 @@ const ConfigKB = () => {
   const handleSave = () => {
     if (!kb_id) return;
     updateKnowledgeBase({ id: kb_id, name }).then(() => {
-      Message.success('保存成功');
+      message.success('保存成功');
       dispatch(
         setKbList(
           kbList?.map(item => (item.id === kb_id ? { ...item, name } : item)),
@@ -69,7 +69,7 @@ const ConfigKB = () => {
               px: '14px',
               fontWeight: 'bold',
               lineHeight: '36px',
-              bgcolor: 'background.paper2',
+              bgcolor: 'background.paper3',
               borderRadius: '10px',
               cursor: 'pointer',
             }}
@@ -92,7 +92,7 @@ const ConfigKB = () => {
         </Box>
         <Stack
           gap={1}
-          sx={{ fontSize: 14, lineHeight: '36px', fontFamily: 'GBold' }}
+          sx={{ fontSize: 14, lineHeight: '36px', fontWeight: 700 }}
         >
           {kb?.access_settings?.ports &&
             kb.access_settings.ports.length > 0 &&
@@ -100,7 +100,7 @@ const ConfigKB = () => {
               <Box
                 sx={{
                   width: 300,
-                  bgcolor: 'background.paper2',
+                  bgcolor: 'background.paper3',
                   borderRadius: '10px',
                   px: '14px',
                   cursor: 'pointer',
@@ -149,7 +149,7 @@ const ConfigKB = () => {
                 }}
                 sx={{
                   width: 300,
-                  bgcolor: 'background.paper2',
+                  bgcolor: 'background.paper3',
                   borderRadius: '10px',
                   px: '14px',
                   cursor: 'pointer',

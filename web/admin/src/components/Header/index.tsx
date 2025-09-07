@@ -3,7 +3,7 @@ import { useAppSelector, useAppDispatch } from '@/store';
 import { setKbDetail } from '@/store/slices/config';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { Button, IconButton, Stack, Tooltip } from '@mui/material';
-import { Icon, Message, Modal } from 'ct-mui';
+import { Icon, message, Modal } from '@ctzhian/ui';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import System from '../System';
@@ -61,7 +61,7 @@ const Header = () => {
         pr: 2,
         zIndex: 998,
         width: '100%',
-        bgcolor: 'background.paper0',
+        bgcolor: 'background.paper2',
       }}
     >
       <Bread />
@@ -69,6 +69,7 @@ const Header = () => {
         <Button
           size='small'
           variant='contained'
+          color='dark'
           onClick={() => {
             if (wikiUrl) {
               window.open(wikiUrl, '_blank');
@@ -101,7 +102,7 @@ const Header = () => {
         open={logoutConfirmOpen}
         onCancel={() => setLogoutConfirmOpen(false)}
         onOk={() => {
-          Message.success('退出登录成功，请重新登录');
+          message.success('退出登录成功，请重新登录');
           setTimeout(() => {
             localStorage.removeItem('panda_wiki_token');
             navigate('/login');

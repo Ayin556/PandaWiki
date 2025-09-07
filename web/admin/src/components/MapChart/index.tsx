@@ -37,7 +37,7 @@ const MapChart = ({ map, data: chartData, tooltipText }: Props) => {
       },
       tooltip: {
         formatter: (params: any) => {
-          return `${params.name}<br />${tooltipText}: <span style='font-family: 'Gbold'>${params.value || 0}</span>`;
+          return `${params.name}<br />${tooltipText}: <span style='font-weight: 700'>${params.value || 0}</span>`;
         },
       },
       visualMap: [

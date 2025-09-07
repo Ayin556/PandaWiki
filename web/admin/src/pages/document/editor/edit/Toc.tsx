@@ -8,7 +8,7 @@ import {
   H6Icon,
   TocList,
 } from '@yu-cq/tiptap';
-import { Ellipsis, Icon } from 'ct-mui';
+import { Ellipsis, Icon } from '@ctzhian/ui';
 import { useState } from 'react';
 
 interface TocProps {
@@ -29,7 +29,7 @@ const HeadingIcon = [
 
 const HeadingSx = [
   { fontSize: 14, fontWeight: 700, color: 'text.secondary' },
-  { fontSize: 14, fontWeight: 400, color: 'text.auxiliary' },
+  { fontSize: 14, fontWeight: 400, color: 'text.tertiary' },
   { fontSize: 14, fontWeight: 400, color: 'text.disabled' },
 ];
 
@@ -110,15 +110,13 @@ const Toc = ({ headings, fixed, setFixed }: TocProps) => {
           sx={{
             fontSize: 14,
             fontWeight: 'bold',
-            color: 'text.auxiliary',
+            color: 'text.tertiary',
             mb: 1,
             p: 1,
             pb: 0,
           }}
         >
-          <Box>
-            内容大纲
-          </Box>
+          <Box>内容大纲</Box>
           <IconButton
             size='small'
             onClick={() => {
@@ -195,7 +193,7 @@ const Toc = ({ headings, fixed, setFixed }: TocProps) => {
               );
             })}
         </Stack>
-      </Drawer >
+      </Drawer>
     </>
   );
 };

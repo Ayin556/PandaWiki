@@ -11,7 +11,7 @@ import {
   Select,
   Stack,
 } from '@mui/material';
-import { Ellipsis, Icon, Message } from 'ct-mui';
+import { Ellipsis, Icon, message } from '@ctzhian/ui';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import KBDelete from './KBDelete';
@@ -41,6 +41,7 @@ const KBSelect = () => {
             pr: 2,
             height: 32,
             fontSize: 14,
+            fontFamily: 'G',
             transition: 'all 0.3s',
             '.MuiSelect-select': {
               width: 'calc(100% + 48px)',
@@ -62,7 +63,7 @@ const KBSelect = () => {
             if (e.target.value === kb_id || !e.target.value) return;
             dispatch(setKbId(e.target.value as string));
             if (resetPagination) setSearchParams({ page: '1', pageSize: '20' });
-            Message.success('切换成功');
+            message.success('切换成功');
           }}
           IconComponent={({ className, ...rest }) => {
             return (
@@ -112,7 +113,7 @@ const KBSelect = () => {
               height: 40,
               mb: 0.5,
               borderRadius: '5px',
-              bgcolor: 'background.paper2',
+              bgcolor: 'background.paper3',
               '&:hover': {
                 bgcolor: custom.selectedMenuItemBgColor,
               },
@@ -135,6 +136,8 @@ const KBSelect = () => {
               key={item.id}
               value={item.id}
               sx={{
+                fontFamily: 'G',
+                height: '40px',
                 '&:hover .hover-del-space-icon': { display: 'inline-flex' },
               }}
             >
@@ -160,7 +163,7 @@ const KBSelect = () => {
                       type='icon-shanchu'
                       sx={{
                         fontSize: 14,
-                        color: 'text.auxiliary',
+                        color: 'text.tertiary',
                         flexShrink: 0,
                       }}
                       onClick={event => {

@@ -47,7 +47,7 @@ export function FreeSoloAutocomplete<T>({
       slotProps={{
         listbox: {
           sx: {
-            bgcolor: 'background.paper2',
+            bgcolor: 'background.paper3',
           },
         },
       }}
