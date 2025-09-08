@@ -77,6 +77,13 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "description": "kb id",
+                        "name": "kb_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
                         "description": "app id",
                         "name": "id",
                         "in": "query",
@@ -6811,6 +6818,9 @@ const docTemplate = `{
         "domain.UpdateAppReq": {
             "type": "object",
             "properties": {
+                "kb_id": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
                 },

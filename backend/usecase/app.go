@@ -104,7 +104,7 @@ func (u *AppUsecase) UpdateApp(ctx context.Context, id string, appRequest *domai
 		return err
 	}
 
-	if err := u.repo.UpdateApp(ctx, id, appRequest); err != nil {
+	if err := u.repo.UpdateApp(ctx, id, appRequest.KbID, appRequest); err != nil {
 		return err
 	}
 
@@ -313,8 +313,8 @@ func (u *AppUsecase) updateDisCordBot(app *domain.App) {
 	u.discordBots[app.ID] = discordBots
 }
 
-func (u *AppUsecase) DeleteApp(ctx context.Context, id string) error {
-	return u.repo.DeleteApp(ctx, id)
+func (u *AppUsecase) DeleteApp(ctx context.Context, id, kbID string) error {
+	return u.repo.DeleteApp(ctx, id, kbID)
 }
 
 func (u *AppUsecase) GetAppDetailByKBIDAndAppType(ctx context.Context, kbID string, appType domain.AppType) (*domain.AppDetailResp, error) {
