@@ -163,6 +163,10 @@ const CardRobotApi = ({
                 <TextField
                   {...field}
                   fullWidth
+                  onChange={e => {
+                    field.onChange(e.target.value);
+                    setIsEdit(true);
+                  }}
                   placeholder={'API Token'}
                   error={!!errors.secret_key}
                   helperText={errors.secret_key?.message}
