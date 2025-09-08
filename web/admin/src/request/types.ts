@@ -73,6 +73,7 @@ export enum DomainAppType {
   AppTypeWechatServiceBot = 6,
   AppTypeDisCordBot = 7,
   AppTypeWechatOfficialAccount = 8,
+  AppTypeOpenAIAPI = 9,
 }
 
 export enum ConstsWatermarkSetting {
@@ -124,6 +125,7 @@ export enum ConstsSourceType {
   SourceTypeWechatServiceBot = "wechat_service_bot",
   SourceTypeDiscordBot = "discord_bot",
   SourceTypeWechatOfficialAccount = "wechat_official_account",
+  SourceTypeOpenAIAPI = "openai_api",
 }
 
 export enum ConstsNodePermName {
@@ -252,6 +254,8 @@ export interface DomainAppSettings {
   head_code?: string;
   icon?: string;
   keyword?: string;
+  /** OpenAI API Bot settings */
+  openai_api_bot_settings?: DomainOpenAIAPIBotSettings;
   recommend_node_ids?: string[];
   recommend_questions?: string[];
   search_placeholder?: string;
@@ -324,6 +328,8 @@ export interface DomainAppSettingsResp {
   head_code?: string;
   icon?: string;
   keyword?: string;
+  /** OpenAI API settings */
+  openai_api_bot_settings?: DomainOpenAIAPIBotSettings;
   recommend_node_ids?: string[];
   recommend_questions?: string[];
   search_placeholder?: string;
@@ -811,6 +817,104 @@ export interface DomainNotnionGetListReq {
 
 export interface DomainObjectUploadResp {
   key?: string;
+}
+
+export interface DomainOpenAIAPIBotSettings {
+  is_enabled?: boolean;
+  secret_key?: string;
+}
+
+export interface DomainOpenAIChoice {
+  /** for streaming */
+  delta?: DomainOpenAIMessage;
+  finish_reason?: string;
+  index?: number;
+  message?: DomainOpenAIMessage;
+}
+
+export interface DomainOpenAICompletionsRequest {
+  frequency_penalty?: number;
+  max_tokens?: number;
+  messages: DomainOpenAIMessage[];
+  model: string;
+  presence_penalty?: number;
+  response_format?: DomainOpenAIResponseFormat;
+  stop?: string[];
+  stream?: boolean;
+  temperature?: number;
+  tool_choice?: DomainOpenAIToolChoice;
+  tools?: DomainOpenAITool[];
+  top_p?: number;
+  user?: string;
+}
+
+export interface DomainOpenAICompletionsResponse {
+  choices?: DomainOpenAIChoice[];
+  created?: number;
+  id?: string;
+  model?: string;
+  object?: string;
+  usage?: DomainOpenAIUsage;
+}
+
+export interface DomainOpenAIError {
+  code?: string;
+  message?: string;
+  param?: string;
+  type?: string;
+}
+
+export interface DomainOpenAIErrorResponse {
+  error?: DomainOpenAIError;
+}
+
+export interface DomainOpenAIFunction {
+  description?: string;
+  name: string;
+  parameters?: Record<string, any>;
+}
+
+export interface DomainOpenAIFunctionCall {
+  arguments: string;
+  name: string;
+}
+
+export interface DomainOpenAIFunctionChoice {
+  name: string;
+}
+
+export interface DomainOpenAIMessage {
+  content?: string;
+  name?: string;
+  role: string;
+  tool_call_id?: string;
+  tool_calls?: DomainOpenAIToolCall[];
+}
+
+export interface DomainOpenAIResponseFormat {
+  type: string;
+}
+
+export interface DomainOpenAITool {
+  function?: DomainOpenAIFunction;
+  type: string;
+}
+
+export interface DomainOpenAIToolCall {
+  function: DomainOpenAIFunctionCall;
+  id: string;
+  type: string;
+}
+
+export interface DomainOpenAIToolChoice {
+  function?: DomainOpenAIFunctionChoice;
+  type?: string;
+}
+
+export interface DomainOpenAIUsage {
+  completion_tokens?: number;
+  prompt_tokens?: number;
+  total_tokens?: number;
 }
 
 export interface DomainPWResponse {

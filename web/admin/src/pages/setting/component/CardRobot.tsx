@@ -19,7 +19,7 @@ const CardRobot = ({
   return (
     <SettingCard title='问答机器人'>
       <CardRobotWebComponent kb={kb} />
-      <CardRobotApi kb={kb} />
+      <CardRobotApi kb={kb} url={url} />
       <CardRobotDing kb={kb} />
       <CardRobotFeishu kb={kb} />
       <CardRobotWechatOfficeAccount kb={kb} url={url} />
