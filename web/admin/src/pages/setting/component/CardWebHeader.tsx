@@ -1,9 +1,4 @@
-import {
-  AppDetail,
-  CardWebHeaderBtn,
-  HeaderSetting,
-  updateAppDetail,
-} from '@/api';
+import { CardWebHeaderBtn, HeaderSetting } from '@/api';
 import DragBtn from '@/components/Drag/DragBtn';
 import UploadFile from '@/components/UploadFile';
 import { DomainAppDetailResp } from '@/request/types';
@@ -18,6 +13,8 @@ import {
   Stack,
   TextField,
 } from '@mui/material';
+import { useAppSelector } from '@/store';
+import { putApiV1App } from '@/request/App';
 import { Icon, Message } from 'ct-mui';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -31,6 +28,7 @@ interface CardWebHeaderProps {
 
 const CardWebHeader = ({ id, data, refresh }: CardWebHeaderProps) => {
   const [isEdit, setIsEdit] = useState(false);
+  const { kb_id } = useAppSelector(state => state.config);
   const {
     control,
     handleSubmit,
@@ -69,14 +67,14 @@ const CardWebHeader = ({ id, data, refresh }: CardWebHeaderProps) => {
   };
 
   const onSubmit = handleSubmit(value => {
-    // @ts-expect-error 类型不匹配
-    updateAppDetail({ id }, { settings: { ...data.settings, ...value } }).then(
-      () => {
-        refresh(value);
-        Message.success('保存成功');
-        setIsEdit(false);
-      },
-    );
+    putApiV1App(
+      { id },
+      { kb_id, settings: { ...data.settings, ...value } },
+    ).then(() => {
+      refresh(value);
+      Message.success('保存成功');
+      setIsEdit(false);
+    });
   });
 
   useEffect(() => {

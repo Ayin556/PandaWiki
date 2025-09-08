@@ -1,8 +1,8 @@
-import { getShareV1AppWebInfo } from '@/request/ShareApp';
 import { getShareV1NodeDetail } from '@/request/ShareNode';
 import { formatMeta } from '@/utils';
 import Doc from '@/views/node';
 import { ResolvingMetadata } from 'next';
+import ErrorComponent from '@/components/error';
 
 export interface PageProps {
   params: Promise<{ id: string }>;
@@ -34,12 +34,15 @@ export async function generateMetadata(
 
 const DocPage = async ({ params }: PageProps) => {
   const { id = '' } = await params;
-  const [node, kbInfo]: any = await Promise.all([
+  let error: any = null;
+  let node: any = null;
+  try {
     // @ts-ignore
-    getShareV1NodeDetail({ id }),
-    getShareV1AppWebInfo(),
-  ]);
-  return <Doc node={node} kbInfo={kbInfo} commentList={[]} />;
+    node = await getShareV1NodeDetail({ id });
+  } catch (err) {
+    error = err;
+  }
+  return error ? <ErrorComponent error={error} /> : <Doc node={node} />;
 };
 
 export default DocPage;

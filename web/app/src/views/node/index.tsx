@@ -1,6 +1,6 @@
 'use client';
 
-import { KBDetail, NodeDetail } from '@/assets/type';
+import { NodeDetail } from '@/assets/type';
 import useCopy from '@/hooks/useCopy';
 import { useStore } from '@/provider';
 import { ConstsCopySetting } from '@/request/types';
@@ -11,15 +11,7 @@ import { useEffect, useState } from 'react';
 import DocAnchor from './DocAnchor';
 import DocContent from './DocContent';
 
-const Doc = ({
-  node,
-  kbInfo,
-  commentList,
-}: {
-  node?: NodeDetail;
-  kbInfo?: KBDetail;
-  commentList?: any[];
-}) => {
+const Doc = ({ node }: { node?: NodeDetail }) => {
   const { kbDetail, mobile } = useStore();
   const [headings, setHeadings] = useState<TocList>([]);
   const [characterCount, setCharacterCount] = useState(0);
@@ -80,7 +72,6 @@ const Doc = ({
       <DocContent
         info={node}
         editorRef={editorRef}
-        kbInfo={kbInfo}
         characterCount={characterCount}
       />
 

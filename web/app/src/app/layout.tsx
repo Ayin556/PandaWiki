@@ -9,6 +9,7 @@ import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import { headers } from 'next/headers';
 import { getSelectorsByUserAgent } from 'react-device-detect';
+import ErrorComponent from '@/components/error';
 import './globals.css';
 
 const gilory = localFont({
@@ -61,6 +62,7 @@ const Layout = async ({
 }>) => {
   const headersList = await headers();
   const userAgent = headersList.get('user-agent');
+  let error: any = null;
 
   const [kbDetailResolve, authInfoResolve] = await Promise.allSettled([
     getShareV1AppWebInfo(),
@@ -72,6 +74,13 @@ const Layout = async ({
     authInfoResolve.status === 'fulfilled' ? authInfoResolve.value : undefined;
   const kbDetail: any =
     kbDetailResolve.status === 'fulfilled' ? kbDetailResolve.value : undefined;
+
+  if (
+    authInfoResolve.status === 'rejected' &&
+    authInfoResolve.reason.code === 403
+  ) {
+    error = authInfoResolve.reason;
+  }
 
   const themeMode = kbDetail?.settings?.theme_mode || 'light';
 
@@ -90,8 +99,14 @@ const Layout = async ({
               mobile={isMobile}
               authInfo={authInfo}
             >
-              <Box sx={{ bgcolor: 'background.paper' }} id='app-theme-root'>
-                {children}
+              <Box
+                sx={{
+                  bgcolor: 'background.paper',
+                  height: error ? '100vh' : 'auto',
+                }}
+                id='app-theme-root'
+              >
+                {error ? <ErrorComponent error={error} /> : children}
               </Box>
             </StoreProvider>
           </ThemeProvider>

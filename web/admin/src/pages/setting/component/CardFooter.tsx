@@ -1,5 +1,6 @@
-import { updateAppDetail } from '@/api';
+import { putApiV1App } from '@/request/App';
 import { FooterSetting } from '@/api/type';
+
 import DragBrand from '@/components/Drag/DragBrand';
 import UploadFile from '@/components/UploadFile';
 import { DomainAppDetailResp, DomainBrandGroup } from '@/request/types';
@@ -16,6 +17,7 @@ import { Message } from 'ct-mui';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { FormItem, SettingCardItem } from './Common';
+import { useAppSelector } from '@/store';
 
 interface CardFooterProps {
   id: string;
@@ -25,6 +27,7 @@ interface CardFooterProps {
 
 const CardFooter = ({ id, data, refresh }: CardFooterProps) => {
   const [isEdit, setIsEdit] = useState(false);
+  const { kb_id } = useAppSelector(state => state.config);
   const {
     control,
     handleSubmit,
@@ -46,12 +49,12 @@ const CardFooter = ({ id, data, refresh }: CardFooterProps) => {
   const footerStyle = watch('footer_style');
 
   const onSubmit = handleSubmit(value => {
-    updateAppDetail(
+    putApiV1App(
       { id },
       {
+        kb_id,
         settings: {
           ...data.settings,
-          // @ts-expect-error 类型不匹配
           footer_settings: {
             ...data.settings?.footer_settings,
             ...value,

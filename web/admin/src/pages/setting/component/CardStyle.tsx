@@ -1,4 +1,3 @@
-import { updateAppDetail } from '@/api';
 import { ThemeAndStyleSetting, ThemeMode } from '@/api/type';
 import UploadFile from '@/components/UploadFile';
 import { MenuItem, Select } from '@mui/material';
@@ -7,6 +6,8 @@ import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { FormItem, SettingCardItem } from './Common';
 import { DomainAppDetailResp } from '@/request/types';
+import { useAppSelector } from '@/store';
+import { putApiV1App } from '@/request/App';
 
 interface CardStyleProps {
   id: string;
@@ -16,6 +17,7 @@ interface CardStyleProps {
 
 const CardStyle = ({ id, data, refresh }: CardStyleProps) => {
   const [isEdit, setIsEdit] = useState(false);
+  const { kb_id } = useAppSelector(state => state.config);
   const { control, handleSubmit, setValue } = useForm<
     ThemeMode & ThemeAndStyleSetting
   >({
@@ -26,10 +28,10 @@ const CardStyle = ({ id, data, refresh }: CardStyleProps) => {
   });
 
   const onSubmit = (value: ThemeMode & ThemeAndStyleSetting) => {
-    updateAppDetail(
+    putApiV1App(
       { id },
       {
-        // @ts-expect-error 类型不匹配
+        kb_id,
         settings: {
           ...data.settings,
           theme_mode: value.theme_mode,

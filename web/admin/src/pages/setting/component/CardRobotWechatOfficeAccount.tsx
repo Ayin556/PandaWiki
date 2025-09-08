@@ -1,4 +1,4 @@
-import { updateAppDetail, WechatOfficeAccountSetting } from '@/api';
+import { WechatOfficeAccountSetting } from '@/api';
 import ShowText from '@/components/ShowText';
 import {
   Box,
@@ -14,9 +14,9 @@ import {
   DomainKnowledgeBaseDetail,
   DomainAppDetailResp,
 } from '@/request/types';
-import { getApiV1AppDetail } from '@/request/App';
+import { getApiV1AppDetail, putApiV1App } from '@/request/App';
 import { FormItem, SettingCardItem } from './Common';
-
+import { useAppSelector } from '@/store';
 const CardRobotWechatOfficeAccount = ({
   kb,
   url,
@@ -27,7 +27,7 @@ const CardRobotWechatOfficeAccount = ({
   const [isEdit, setIsEdit] = useState(false);
   const [detail, setDetail] = useState<DomainAppDetailResp | null>(null);
   const [isEnabled, setIsEnabled] = useState(false);
-
+  const { kb_id } = useAppSelector(state => state.config);
   const {
     control,
     handleSubmit,
@@ -64,9 +64,10 @@ const CardRobotWechatOfficeAccount = ({
 
   const onSubmit = handleSubmit(data => {
     if (!detail) return;
-    updateAppDetail(
+    putApiV1App(
       { id: detail.id! },
       {
+        kb_id,
         settings: {
           wechat_official_account_is_enabled:
             data.wechat_official_account_is_enabled,

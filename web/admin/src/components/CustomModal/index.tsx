@@ -5,7 +5,6 @@ import {
   DomainKnowledgeBaseDetail,
   getApiV1KnowledgeBaseDetail,
 } from '@/request';
-import { updateAppDetail } from '@/api';
 import { DomainAppDetailResp } from '@/request/types';
 import { getApiV1AppDetail, putApiV1App } from '@/request/App';
 import { useAppSelector, useAppDispatch } from '@/store';
@@ -73,10 +72,9 @@ const CustomModal = ({ open, onCancel }: CustomModalProps) => {
   };
   const onSubmit = () => {
     if (!info || !appPreviewData) return;
-    updateAppDetail(
+    putApiV1App(
       { id: info.id! },
-      // @ts-expect-error 类型不匹配
-      { settings: { ...info.settings, ...appPreviewData.settings } },
+      { settings: { ...info.settings, ...appPreviewData.settings }, kb_id },
     ).then(() => {
       refresh(appPreviewData);
       Message.success('保存成功');

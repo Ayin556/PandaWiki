@@ -31,15 +31,17 @@ export default function Error({
   error,
   reset,
 }: {
-  error: Error & { digest?: string };
-  reset: () => void;
+  error: Partial<Error> & { digest?: string } & { code?: number | string };
+  reset?: () => void;
 }) {
   const { mobile } = useStore();
-  const errorInfo = CODE_MAP[error.message as '40003'] || DEFAULT_ERROR;
+  const errorInfo =
+    CODE_MAP[(error.code ?? error.message) as '40003'] || DEFAULT_ERROR;
   return (
     <Stack
       flex={1}
       style={{
+        height: '100%',
         ...(mobile && {
           width: '100%',
           marginLeft: 0,

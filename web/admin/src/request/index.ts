@@ -11,6 +11,5 @@ export * from './Node'
 export * from './NodePermission'
 export * from './Stat'
 export * from './User'
-export * from './other'
 export * from './types'
 
