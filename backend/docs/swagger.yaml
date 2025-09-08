@@ -122,6 +122,7 @@ definitions:
     - wechat_service_bot
     - discord_bot
     - wechat_official_account
+    - openai_api
     type: string
     x-enum-varnames:
     - SourceTypeDingTalk
@@ -138,6 +139,7 @@ definitions:
     - SourceTypeWechatServiceBot
     - SourceTypeDiscordBot
     - SourceTypeWechatOfficialAccount
+    - SourceTypeOpenAIAPI
   consts.StatDay:
     enum:
     - 1
@@ -352,6 +354,10 @@ definitions:
         type: string
       keyword:
         type: string
+      openai_api_bot_settings:
+        allOf:
+        - $ref: '#/definitions/domain.OpenAIAPIBotSettings'
+        description: OpenAI API Bot settings
       recommend_node_ids:
         items:
           type: string
@@ -491,6 +497,10 @@ definitions:
         type: string
       keyword:
         type: string
+      openai_api_bot_settings:
+        allOf:
+        - $ref: '#/definitions/domain.OpenAIAPIBotSettings'
+        description: OpenAI API settings
       recommend_node_ids:
         items:
           type: string
@@ -574,6 +584,7 @@ definitions:
     - 6
     - 7
     - 8
+    - 9
     format: int32
     type: integer
     x-enum-varnames:
@@ -585,6 +596,7 @@ definitions:
     - AppTypeWechatServiceBot
     - AppTypeDisCordBot
     - AppTypeWechatOfficialAccount
+    - AppTypeOpenAIAPI
   domain.AuthUserInfo:
     properties:
       avatar_url:
@@ -1451,6 +1463,188 @@ definitions:
     properties:
       key:
         type: string
+    type: object
+  domain.OpenAIAPIBotSettings:
+    properties:
+      is_enabled:
+        type: boolean
+      secret_key:
+        type: string
+    type: object
+  domain.OpenAIChoice:
+    properties:
+      delta:
+        allOf:
+        - $ref: '#/definitions/domain.OpenAIMessage'
+        description: for streaming
+      finish_reason:
+        type: string
+      index:
+        type: integer
+      message:
+        $ref: '#/definitions/domain.OpenAIMessage'
+    type: object
+  domain.OpenAICompletionsRequest:
+    properties:
+      frequency_penalty:
+        type: number
+      max_tokens:
+        type: integer
+      messages:
+        items:
+          $ref: '#/definitions/domain.OpenAIMessage'
+        type: array
+      model:
+        type: string
+      presence_penalty:
+        type: number
+      response_format:
+        $ref: '#/definitions/domain.OpenAIResponseFormat'
+      stop:
+        items:
+          type: string
+        type: array
+      stream:
+        type: boolean
+      temperature:
+        type: number
+      tool_choice:
+        $ref: '#/definitions/domain.OpenAIToolChoice'
+      tools:
+        items:
+          $ref: '#/definitions/domain.OpenAITool'
+        type: array
+      top_p:
+        type: number
+      user:
+        type: string
+    required:
+    - messages
+    - model
+    type: object
+  domain.OpenAICompletionsResponse:
+    properties:
+      choices:
+        items:
+          $ref: '#/definitions/domain.OpenAIChoice'
+        type: array
+      created:
+        type: integer
+      id:
+        type: string
+      model:
+        type: string
+      object:
+        type: string
+      usage:
+        $ref: '#/definitions/domain.OpenAIUsage'
+    type: object
+  domain.OpenAIError:
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      param:
+        type: string
+      type:
+        type: string
+    type: object
+  domain.OpenAIErrorResponse:
+    properties:
+      error:
+        $ref: '#/definitions/domain.OpenAIError'
+    type: object
+  domain.OpenAIFunction:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      parameters:
+        additionalProperties: true
+        type: object
+    required:
+    - name
+    type: object
+  domain.OpenAIFunctionCall:
+    properties:
+      arguments:
+        type: string
+      name:
+        type: string
+    required:
+    - arguments
+    - name
+    type: object
+  domain.OpenAIFunctionChoice:
+    properties:
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  domain.OpenAIMessage:
+    properties:
+      content:
+        type: string
+      name:
+        type: string
+      role:
+        type: string
+      tool_call_id:
+        type: string
+      tool_calls:
+        items:
+          $ref: '#/definitions/domain.OpenAIToolCall'
+        type: array
+    required:
+    - role
+    type: object
+  domain.OpenAIResponseFormat:
+    properties:
+      type:
+        type: string
+    required:
+    - type
+    type: object
+  domain.OpenAITool:
+    properties:
+      function:
+        $ref: '#/definitions/domain.OpenAIFunction'
+      type:
+        type: string
+    required:
+    - type
+    type: object
+  domain.OpenAIToolCall:
+    properties:
+      function:
+        $ref: '#/definitions/domain.OpenAIFunctionCall'
+      id:
+        type: string
+      type:
+        type: string
+    required:
+    - function
+    - id
+    - type
+    type: object
+  domain.OpenAIToolChoice:
+    properties:
+      function:
+        $ref: '#/definitions/domain.OpenAIFunctionChoice'
+      type:
+        type: string
+    type: object
+  domain.OpenAIUsage:
+    properties:
+      completion_tokens:
+        type: integer
+      prompt_tokens:
+        type: integer
+      total_tokens:
+        type: integer
     type: object
   domain.PWResponse:
     properties:
@@ -4349,6 +4543,37 @@ paths:
       summary: RedeemCaptcha
       tags:
       - share_captcha
+  /share/v1/chat/completions:
+    post:
+      consumes:
+      - application/json
+      description: OpenAI API compatible chat completions endpoint
+      parameters:
+      - description: Knowledge Base ID
+        in: header
+        name: X-KB-ID
+        required: true
+        type: string
+      - description: OpenAI API request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.OpenAICompletionsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.OpenAICompletionsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.OpenAIErrorResponse'
+      summary: ChatCompletions
+      tags:
+      - share_chat
   /share/v1/chat/feedback:
     post:
       consumes:

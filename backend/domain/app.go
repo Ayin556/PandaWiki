@@ -21,6 +21,7 @@ const (
 	AppTypeWechatServiceBot
 	AppTypeDisCordBot
 	AppTypeWechatOfficialAccount
+	AppTypeOpenAIAPI
 )
 
 var AppTypes = []AppType{
@@ -32,6 +33,7 @@ var AppTypes = []AppType{
 	AppTypeWechatServiceBot,
 	AppTypeDisCordBot,
 	AppTypeWechatOfficialAccount,
+	AppTypeOpenAIAPI,
 }
 
 func (t AppType) ToSourceType() consts.SourceType {
@@ -52,6 +54,8 @@ func (t AppType) ToSourceType() consts.SourceType {
 		return consts.SourceTypeDiscordBot
 	case AppTypeWechatOfficialAccount:
 		return consts.SourceTypeWechatOfficialAccount
+	case AppTypeOpenAIAPI:
+		return consts.SourceTypeOpenAIAPI
 	default:
 		return ""
 	}
@@ -137,10 +141,17 @@ type AppSettings struct {
 	WebAppCustomSettings WebAppCustomSettings `json:"web_app_custom_style"`
 	// Captcha settings
 	CaptchaSettings consts.CaptchaSettings `json:"captcha_settings"`
+	// OpenAI API Bot settings
+	OpenAIAPIBotSettings OpenAIAPIBotSettings `json:"openai_api_bot_settings"`
 
 	WatermarkContent string                  `json:"watermark_content"`
 	WatermarkSetting consts.WatermarkSetting `json:"watermark_setting" validate:"omitempty,oneof='' hidden visible"`
 	CopySetting      consts.CopySetting      `json:"copy_setting" validate:"omitempty,oneof='' append disabled"`
+}
+
+type OpenAIAPIBotSettings struct {
+	IsEnabled bool   `json:"is_enabled"`
+	SecretKey string `json:"secret_key"`
 }
 
 type WebAppCustomSettings struct {
@@ -290,6 +301,8 @@ type AppSettingsResp struct {
 	CopySetting      consts.CopySetting      `json:"copy_setting"`
 	// Captcha Settings
 	CaptchaSettings consts.CaptchaSettings `json:"captcha_settings"`
+	// OpenAI API settings
+	OpenAIAPIBotSettings OpenAIAPIBotSettings `json:"openai_api_bot_settings"`
 }
 
 func (s *AppSettingsResp) Scan(value any) error {
