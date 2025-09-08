@@ -29,10 +29,6 @@ type JWTMiddleware struct {
 func NewJWTMiddleware(config *config.Config, logger *log.Logger, userAccessRepo *pg.UserAccessRepository, apiTokenRepo *pg.APITokenRepo) *JWTMiddleware {
 	jwtMiddleware := echoMiddleware.WithConfig(echoMiddleware.Config{
 		SigningKey: []byte(config.Auth.JWT.Secret),
-		Skipper: func(c echo.Context) bool {
-			authHeader := c.Request().Header.Get("Authorization")
-			return strings.HasPrefix(authHeader, "Bearer ") && !strings.Contains(authHeader, ".")
-		},
 		ErrorHandler: func(c echo.Context, err error) error {
 			logger.Error("jwt auth failed", log.Error(err))
 			return c.JSON(http.StatusUnauthorized, domain.PWResponse{

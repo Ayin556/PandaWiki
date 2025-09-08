@@ -319,6 +319,7 @@ func (s AppSettingsResp) Value() (driver.Value, error) {
 
 type UpdateAppReq struct {
 	Name     *string      `json:"name"`
+	KbID     string       `json:"kb_id"`
 	Settings *AppSettings `json:"settings" gorm:"type:jsonb"`
 }
 

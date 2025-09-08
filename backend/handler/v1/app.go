@@ -119,8 +119,9 @@ func (h *AppHandler) UpdateApp(c echo.Context) error {
 //	@Tags			app
 //	@Accept			json
 //	@Security		bearerAuth
-//	@Param			id	query		string	true	"app id"
-//	@Success		200	{object}	domain.Response
+//	@Param			kb_id	query		string	true	"kb id"
+//	@Param			id		query		string	true	"app id"
+//	@Success		200		{object}	domain.Response
 //	@Router			/api/v1/app [delete]
 func (h *AppHandler) DeleteApp(c echo.Context) error {
 	id := c.QueryParam("id")
@@ -128,7 +129,12 @@ func (h *AppHandler) DeleteApp(c echo.Context) error {
 		return h.NewResponseWithError(c, "id is required", nil)
 	}
 
-	if err := h.usecase.DeleteApp(c.Request().Context(), id); err != nil {
+	kbID := c.QueryParam("kb_id")
+	if kbID == "" {
+		return h.NewResponseWithError(c, "kb id is required", nil)
+	}
+
+	if err := h.usecase.DeleteApp(c.Request().Context(), id, kbID); err != nil {
 		return h.NewResponseWithError(c, "delete app failed", err)
 	}
 
