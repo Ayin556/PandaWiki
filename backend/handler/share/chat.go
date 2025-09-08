@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
+	"time"
 
 	"github.com/labstack/echo/v4"
 
@@ -57,6 +59,7 @@ func NewShareChatHandler(
 			}
 		})
 	share.POST("/message", h.ChatMessage, h.ShareAuthMiddleware.Authorize)
+	share.POST("/completions", h.ChatCompletions)
 	share.POST("/widget", h.ChatWidget)
 	share.POST("/feedback", h.FeedBack)
 	return h
@@ -229,4 +232,216 @@ func (h *ShareChatHandler) FeedBack(c echo.Context) error {
 		return h.NewResponseWithError(c, "handle feedback failed", err)
 	}
 	return h.NewResponseWithData(c, "success")
+}
+
+// ChatCompletions OpenAI API compatible chat completions
+//
+//	@Summary		ChatCompletions
+//	@Description	OpenAI API compatible chat completions endpoint
+//	@Tags			share_chat
+//	@Accept			json
+//	@Produce		json
+//	@Param			X-KB-ID	header		string							true	"Knowledge Base ID"
+//	@Param			request	body		domain.OpenAICompletionsRequest	true	"OpenAI API request"
+//	@Success		200		{object}	domain.OpenAICompletionsResponse
+//	@Failure		400		{object}	domain.OpenAIErrorResponse
+//	@Router			/share/v1/chat/completions [post]
+func (h *ShareChatHandler) ChatCompletions(c echo.Context) error {
+	var req domain.OpenAICompletionsRequest
+	if err := c.Bind(&req); err != nil {
+		h.logger.Error("parse OpenAI request failed", log.Error(err))
+		return h.sendOpenAIError(c, "parse request failed", "invalid_request_error")
+	}
+
+	// get kb id from header
+	kbID := c.Request().Header.Get("X-KB-ID")
+	if kbID == "" {
+		return h.sendOpenAIError(c, "X-KB-ID header is required", "invalid_request_error")
+	}
+
+	if err := c.Validate(&req); err != nil {
+		h.logger.Error("validate OpenAI request failed", log.Error(err))
+		return h.sendOpenAIError(c, "validate request failed", "invalid_request_error")
+	}
+
+	// validate messages
+	if len(req.Messages) == 0 {
+		return h.sendOpenAIError(c, "messages cannot be empty", "invalid_request_error")
+	}
+
+	// use last user message as message
+	var lastUserMessage string
+	for i := len(req.Messages) - 1; i >= 0; i-- {
+		if req.Messages[i].Role == "user" {
+			lastUserMessage = req.Messages[i].Content
+			break
+		}
+	}
+	if lastUserMessage == "" {
+		return h.sendOpenAIError(c, "no user message found", "invalid_request_error")
+	}
+
+	// validate api bot settings
+	appBot, err := h.appUsecase.GetOpenAIAPIAppInfo(c.Request().Context(), kbID)
+	if err != nil {
+		return h.sendOpenAIError(c, err.Error(), "internal_error")
+	}
+	if !appBot.Settings.OpenAIAPIBotSettings.IsEnabled {
+		return h.sendOpenAIError(c, "API Bot is not enabled", "forbidden")
+	}
+
+	secretKeyHeader := c.Request().Header.Get("Authorization")
+	if secretKeyHeader == "" {
+		return h.sendOpenAIError(c, "Authorization header is required", "invalid_request_error")
+	}
+	if secretKey, found := strings.CutPrefix(secretKeyHeader, "Bearer "); !found {
+		return h.sendOpenAIError(c, "Invalid Authorization key format", "invalid_request_error")
+	} else {
+		if appBot.Settings.OpenAIAPIBotSettings.SecretKey != secretKey {
+			return h.sendOpenAIError(c, "Invalid Authorization key", "unauthorized")
+		}
+	}
+
+	chatReq := &domain.ChatRequest{
+		Message:  lastUserMessage,
+		KBID:     kbID,
+		AppType:  domain.AppTypeOpenAIAPI,
+		RemoteIP: c.RealIP(),
+	}
+
+	// set stream response header
+	if req.Stream {
+		c.Response().Header().Set("Content-Type", "text/event-stream")
+		c.Response().Header().Set("Cache-Control", "no-cache")
+		c.Response().Header().Set("Connection", "keep-alive")
+		c.Response().Header().Set("Transfer-Encoding", "chunked")
+	}
+
+	eventCh, err := h.chatUsecase.Chat(c.Request().Context(), chatReq)
+	if err != nil {
+		return h.sendOpenAIError(c, err.Error(), "internal_error")
+	}
+
+	// handle stream response
+	if req.Stream {
+		return h.handleOpenAIStreamResponse(c, eventCh, req.Model)
+	} else {
+		return h.handleOpenAINonStreamResponse(c, eventCh, req.Model)
+	}
+}
+
+func (h *ShareChatHandler) handleOpenAIStreamResponse(c echo.Context, eventCh <-chan domain.SSEEvent, model string) error {
+	responseID := "chatcmpl-" + generateID()
+	created := time.Now().Unix()
+
+	for event := range eventCh {
+		switch event.Type {
+		case "error":
+			return h.sendOpenAIError(c, event.Content, "internal_error")
+		case "data":
+			// send stream response
+			streamResp := domain.OpenAIStreamResponse{
+				ID:      responseID,
+				Object:  "chat.completion.chunk",
+				Created: created,
+				Model:   model,
+				Choices: []domain.OpenAIStreamChoice{
+					{
+						Index: 0,
+						Delta: domain.OpenAIMessage{
+							Role:    "assistant",
+							Content: event.Content,
+						},
+					},
+				},
+			}
+			if err := h.writeOpenAIStreamEvent(c, streamResp); err != nil {
+				return err
+			}
+		case "done":
+			// send done event
+			streamResp := domain.OpenAIStreamResponse{
+				ID:      responseID,
+				Object:  "chat.completion.chunk",
+				Created: created,
+				Model:   model,
+				Choices: []domain.OpenAIStreamChoice{
+					{
+						Index:        0,
+						Delta:        domain.OpenAIMessage{},
+						FinishReason: stringPtr("stop"),
+					},
+				},
+			}
+			return h.writeOpenAIStreamEvent(c, streamResp)
+		}
+	}
+	return nil
+}
+
+func (h *ShareChatHandler) handleOpenAINonStreamResponse(c echo.Context, eventCh <-chan domain.SSEEvent, model string) error {
+	responseID := "chatcmpl-" + generateID()
+	created := time.Now().Unix()
+
+	var content string
+	for event := range eventCh {
+		switch event.Type {
+		case "error":
+			return h.sendOpenAIError(c, event.Content, "internal_error")
+		case "data":
+			content += event.Content
+		case "done":
+			// send complete response
+			resp := domain.OpenAICompletionsResponse{
+				ID:      responseID,
+				Object:  "chat.completion",
+				Created: created,
+				Model:   model,
+				Choices: []domain.OpenAIChoice{
+					{
+						Index: 0,
+						Message: domain.OpenAIMessage{
+							Role:    "assistant",
+							Content: content,
+						},
+						FinishReason: "stop",
+					},
+				},
+			}
+			return c.JSON(http.StatusOK, resp)
+		}
+	}
+	return nil
+}
+
+func (h *ShareChatHandler) sendOpenAIError(c echo.Context, message, errorType string) error {
+	errResp := domain.OpenAIErrorResponse{
+		Error: domain.OpenAIError{
+			Message: message,
+			Type:    errorType,
+		},
+	}
+	return c.JSON(http.StatusBadRequest, errResp)
+}
+
+func (h *ShareChatHandler) writeOpenAIStreamEvent(c echo.Context, data domain.OpenAIStreamResponse) error {
+	jsonContent, err := json.Marshal(data)
+	if err != nil {
+		return err
+	}
+
+	sseMessage := fmt.Sprintf("data: %s\n\n", string(jsonContent))
+	if _, err := c.Response().Write([]byte(sseMessage)); err != nil {
+		return err
+	}
+	c.Response().Flush()
+	return nil
+}
+
+func generateID() string {
+	return fmt.Sprintf("%d", time.Now().UnixNano())
+}
+
+func stringPtr(s string) *string {
+	return &s
 }

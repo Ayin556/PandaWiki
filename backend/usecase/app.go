@@ -391,6 +391,8 @@ func (u *AppUsecase) GetAppDetailByKBIDAndAppType(ctx context.Context, kbID stri
 		WebAppCustomSettings: app.Settings.WebAppCustomSettings,
 		// captcha settings
 		CaptchaSettings: app.Settings.CaptchaSettings,
+		// openai api settings
+		OpenAIAPIBotSettings: app.Settings.OpenAIAPIBotSettings,
 
 		WatermarkContent: app.Settings.WatermarkContent,
 		WatermarkSetting: app.Settings.WatermarkSetting,
@@ -520,7 +522,10 @@ func (u *AppUsecase) handleBotAuths(ctx context.Context, id string, newSettings 
 		return err
 	}
 
-	// Handle DingTalk Bot
+	switch currentApp.Type {
+
+	}
+	// Handle Widget Bot
 	if currentApp.Settings.WidgetBotSettings.IsOpen != newSettings.WidgetBotSettings.IsOpen {
 		if err := u.handleBotAuth(ctx, currentApp.KBID, currentApp.ID, &currentApp.Settings.WidgetBotSettings.IsOpen,
 			&newSettings.WidgetBotSettings.IsOpen, consts.SourceTypeWidget); err != nil {
@@ -576,6 +581,14 @@ func (u *AppUsecase) handleBotAuths(ctx context.Context, id string, newSettings 
 		}
 	}
 
+	// Handle OpenAI API BOT Account
+	if currentApp.Settings.OpenAIAPIBotSettings.IsEnabled != newSettings.OpenAIAPIBotSettings.IsEnabled {
+		if err := u.handleBotAuth(ctx, currentApp.KBID, currentApp.ID, &currentApp.Settings.OpenAIAPIBotSettings.IsEnabled,
+			&newSettings.OpenAIAPIBotSettings.IsEnabled, consts.SourceTypeOpenAIAPI); err != nil {
+			u.logger.Error("failed to handle openai api bot auth", log.Error(err))
+		}
+	}
+
 	return nil
 }
 
@@ -612,4 +625,17 @@ func (u *AppUsecase) handleBotAuth(ctx context.Context, kbID, appId string, curr
 	}
 
 	return nil
+}
+
+func (u *AppUsecase) GetOpenAIAPIAppInfo(ctx context.Context, kbID string) (*domain.AppInfoResp, error) {
+	apiApp, err := u.repo.GetOrCreateAppByKBIDAndType(ctx, kbID, domain.AppTypeOpenAIAPI)
+	if err != nil {
+		return nil, err
+	}
+	appInfo := &domain.AppInfoResp{
+		Settings: domain.AppSettingsResp{
+			OpenAIAPIBotSettings: apiApp.Settings.OpenAIAPIBotSettings,
+		},
+	}
+	return appInfo, nil
 }

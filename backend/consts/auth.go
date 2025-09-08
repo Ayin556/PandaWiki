@@ -21,6 +21,7 @@ const (
 	SourceTypeWechatServiceBot      SourceType = "wechat_service_bot"
 	SourceTypeDiscordBot            SourceType = "discord_bot"
 	SourceTypeWechatOfficialAccount SourceType = "wechat_official_account"
+	SourceTypeOpenAIAPI             SourceType = "openai_api"
 )
 
 func (s SourceType) Name() string {
