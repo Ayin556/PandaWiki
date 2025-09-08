@@ -972,6 +972,7 @@ export interface DomainThemeAndStyle {
 }
 
 export interface DomainUpdateAppReq {
+  kb_id?: string;
   name?: string;
   settings?: DomainAppSettings;
 }
@@ -1259,6 +1260,8 @@ export interface PutApiV1AppParams {
 }
 
 export interface DeleteApiV1AppParams {
+  /** kb id */
+  kb_id: string;
   /** app id */
   id: string;
 }

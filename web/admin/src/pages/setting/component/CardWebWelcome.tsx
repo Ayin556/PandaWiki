@@ -1,4 +1,4 @@
-import { updateAppDetail, WelcomeSetting } from '@/api';
+import { WelcomeSetting } from '@/api';
 import { getApiV1NodeRecommendNodes } from '@/request/Node';
 import {
   DomainAppDetailResp,
@@ -14,6 +14,8 @@ import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import AddRecommendContent from './AddRecommendContent';
 import { FormItem, SettingCardItem } from './Common';
+
+import { putApiV1App } from '@/request/App';
 
 interface CardWebWelcomeProps {
   id: string;
@@ -53,14 +55,14 @@ const CardWebWelcome = ({ id, data, refresh }: CardWebWelcomeProps) => {
   });
 
   const onSubmit = handleSubmit(value => {
-    // @ts-expect-error 类型不匹配
-    updateAppDetail({ id }, { settings: { ...data.settings, ...value } }).then(
-      () => {
-        refresh(value);
-        Message.success('保存成功');
-        setIsEdit(false);
-      },
-    );
+    putApiV1App(
+      { id },
+      { kb_id, settings: { ...data.settings, ...value } },
+    ).then(() => {
+      refresh(value);
+      Message.success('保存成功');
+      setIsEdit(false);
+    });
   });
 
   const nodeRec = () => {

@@ -185,7 +185,7 @@ const GroupTree = ({ data, onDelete, onMove, onEdit }: GroupTreeProps) => {
   const { kbDetail } = useAppSelector(state => state.config);
 
   const itemsWithRoot = useMemo<TreeItems<TreeNode>>(() => {
-    if (!itemsData || itemsData.length === 0) return itemsData;
+    if (!itemsData) return itemsData;
     const attachRootParent = (children: TreeNode[]): TreeNode[] =>
       (children || []).map(c => ({ ...c, parentId: 'root' }));
     return [

@@ -1,10 +1,12 @@
-import { SEOSetting, updateAppDetail } from '@/api';
-import { Box, Button, Checkbox, Stack, TextField } from '@mui/material';
+import { SEOSetting } from '@/api';
+import { Checkbox, TextField } from '@mui/material';
 import { Message } from 'ct-mui';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { DomainAppDetailResp } from '@/request/types';
 import { SettingCardItem, FormItem } from './Common';
+import { useAppSelector } from '@/store';
+import { putApiV1App } from '@/request/App';
 
 interface CardWebSEOProps {
   id: string;
@@ -14,6 +16,7 @@ interface CardWebSEOProps {
 
 const CardWebSEO = ({ data, id, refresh }: CardWebSEOProps) => {
   const [isEdit, setIsEdit] = useState(false);
+  const { kb_id } = useAppSelector(state => state.config);
   const {
     handleSubmit,
     control,
@@ -28,14 +31,14 @@ const CardWebSEO = ({ data, id, refresh }: CardWebSEOProps) => {
   });
 
   const onSubmit = handleSubmit((value: SEOSetting) => {
-    // @ts-expect-error 类型不匹配
-    updateAppDetail({ id }, { settings: { ...data.settings, ...value } }).then(
-      () => {
-        Message.success('保存成功');
-        refresh(value);
-        setIsEdit(false);
-      },
-    );
+    putApiV1App(
+      { id },
+      { kb_id, settings: { ...data.settings, ...value } },
+    ).then(() => {
+      Message.success('保存成功');
+      refresh(value);
+      setIsEdit(false);
+    });
   });
 
   useEffect(() => {

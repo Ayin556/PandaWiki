@@ -17,6 +17,17 @@ export enum DomainCommentStatus {
   CommentStatusAccepted = 1,
 }
 
+export enum ConstsUserKBPermission {
+  /** 无权限 */
+  UserKBPermissionNull = "",
+  /** 完全控制 */
+  UserKBPermissionFullControl = "full_control",
+  /** 文档管理 */
+  UserKBPermissionDocManage = "doc_manage",
+  /** 数据运营 */
+  UserKBPermissionDataOperate = "data_operate",
+}
+
 export enum ConstsSourceType {
   SourceTypeDingTalk = "dingtalk",
   SourceTypeFeishu = "feishu",
@@ -388,6 +399,33 @@ export type GithubComChaitinPandaWikiProApiShareV1WecomCallbackResp = Record<
   any
 >;
 
+export interface GithubComChaitinPandaWikiProApiTokenV1APITokenListItem {
+  created_at?: string;
+  id?: string;
+  name?: string;
+  permission?: ConstsUserKBPermission;
+  token?: string;
+  updated_at?: string;
+}
+
+export interface GithubComChaitinPandaWikiProApiTokenV1CreateAPITokenReq {
+  kb_id: string;
+  name: string;
+  permission: "full_control" | "doc_manage" | "data_operate";
+}
+
+export interface GithubComChaitinPandaWikiProApiTokenV1DeleteAPITokenReq {
+  id: string;
+  kb_id: string;
+}
+
+export interface GithubComChaitinPandaWikiProApiTokenV1UpdateAPITokenReq {
+  id: string;
+  kb_id: string;
+  name?: string;
+  permission?: "full_control" | "doc_manage" | "data_operate";
+}
+
 export interface GithubComChaitinPandaWikiProDomainBlockWords {
   words?: string[];
 }
@@ -472,6 +510,11 @@ export interface GetApiProV1NodeReleaseListParams {
 
 export interface GetApiProV1PromptParams {
   /** knowledge base ID */
+  kb_id: string;
+}
+
+export interface GetApiProV1TokenListParams {
+  /** 知识库ID */
   kb_id: string;
 }
 

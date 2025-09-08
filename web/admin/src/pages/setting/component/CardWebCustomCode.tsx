@@ -1,10 +1,12 @@
-import { CustomCodeSetting, updateAppDetail } from '@/api';
+import { CustomCodeSetting } from '@/api';
 import { TextField } from '@mui/material';
 import { Message } from 'ct-mui';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { DomainKnowledgeBaseDetail } from '@/request/types';
 import { SettingCardItem, FormItem } from './Common';
+import { useAppSelector } from '@/store';
+import { putApiV1App } from '@/request/App';
 
 interface CardWebCustomCodeProps {
   id: string;
@@ -14,7 +16,7 @@ interface CardWebCustomCodeProps {
 
 const CardWebCustomCode = ({ id, data, refresh }: CardWebCustomCodeProps) => {
   const [isEdit, setIsEdit] = useState(false);
-
+  const { kb_id } = useAppSelector(state => state.config);
   const {
     handleSubmit,
     control,
@@ -28,14 +30,15 @@ const CardWebCustomCode = ({ id, data, refresh }: CardWebCustomCodeProps) => {
   });
 
   const onSubmit = handleSubmit((value: CustomCodeSetting) => {
-    // @ts-expect-error 类型不匹配
-    updateAppDetail({ id }, { settings: { ...data.settings, ...value } }).then(
-      () => {
-        Message.success('保存成功');
-        refresh(value);
-        setIsEdit(false);
-      },
-    );
+    putApiV1App(
+      { id },
+      // @ts-expect-error 类型不匹配
+      { kb_id, settings: { ...data.settings, ...value } },
+    ).then(() => {
+      Message.success('保存成功');
+      refresh(value);
+      setIsEdit(false);
+    });
   });
 
   useEffect(() => {

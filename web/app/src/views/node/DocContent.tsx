@@ -32,13 +32,11 @@ dayjs.locale('zh-cn');
 const DocContent = ({
   info,
   editorRef,
-  kbInfo,
   commentList: propsCommentList,
   characterCount,
 }: {
   info?: NodeDetail;
   editorRef: UseTiptapReturn;
-  kbInfo?: KBDetail;
   commentList?: any[];
   characterCount?: number;
 }) => {
@@ -47,7 +45,7 @@ const DocContent = ({
   const [commentLoading, setCommentLoading] = useState(false);
   const docId = params.id as string;
   const [commentList, setCommentList] = useState<any[]>(propsCommentList ?? []);
-  const [appDetail, setAppDetail] = useState<any>(kbInfo?.settings);
+  const [appDetail, setAppDetail] = useState<any>(kbDetail?.settings);
   const {
     control,
     handleSubmit,
@@ -114,9 +112,9 @@ const DocContent = ({
       node_id: docId,
       image: feedbackData.screenshot
         ? base64ToFile(
-          feedbackData.screenshot!,
-          `${info?.name || 'screenshot'}.png`,
-        )
+            feedbackData.screenshot!,
+            `${info?.name || 'screenshot'}.png`,
+          )
         : undefined,
     });
   };
@@ -291,7 +289,7 @@ const DocContent = ({
             '.tableWrapper': {
               width: '100%',
               overflowX: 'auto',
-            }
+            },
           },
         }}
       >

@@ -32,7 +32,7 @@ const WatermarkForm = ({
   data?: DomainAppDetailResp;
   refresh: () => void;
 }) => {
-  const { license } = useAppSelector(state => state.config);
+  const { license, kb_id } = useAppSelector(state => state.config);
   const [watermarkIsEdit, setWatermarkIsEdit] = useState(false);
   const {
     control,
@@ -57,6 +57,7 @@ const WatermarkForm = ({
     putApiV1App(
       { id: data.id },
       {
+        kb_id,
         settings: {
           ...data?.settings,
           watermark_setting: values.watermark_setting,
@@ -148,7 +149,7 @@ const VerificationForm = ({
   data?: DomainAppDetailResp;
   refresh: () => void;
 }) => {
-  const { license } = useAppSelector(state => state.config);
+  const { license, kb_id } = useAppSelector(state => state.config);
   const [isEdit, setIsEdit] = useState(false);
   const { control, handleSubmit, setValue } = useForm({
     defaultValues: {
@@ -166,6 +167,7 @@ const VerificationForm = ({
     putApiV1App(
       { id: data.id },
       {
+        kb_id,
         settings: {
           ...data?.settings,
           captcha_settings: {
@@ -343,7 +345,7 @@ const CopyForm = ({
   data?: DomainAppDetailResp;
   refresh: () => void;
 }) => {
-  const { license } = useAppSelector(state => state.config);
+  const { license, kb_id } = useAppSelector(state => state.config);
   const [isEdit, setIsEdit] = useState(false);
   const {
     control,
@@ -365,6 +367,7 @@ const CopyForm = ({
     putApiV1App(
       { id: data.id },
       {
+        kb_id,
         settings: {
           ...data?.settings,
           copy_setting: values.copy_setting,

@@ -102,47 +102,40 @@ const UserGroup = ({ enabled, memberList }: UserGroupProps) => {
         )
       }
     >
-      {userGroupTree?.length ? (
-        <Box
-          sx={{
-            border: '1px dashed',
-            borderColor: 'divider',
-            borderRadius: '10px',
-            p: 1,
-            maxHeight: 400,
-            overflow: 'auto',
+      <Box
+        sx={{
+          border: '1px dashed',
+          borderColor: 'divider',
+          borderRadius: '10px',
+          p: 1,
+          maxHeight: 400,
+          overflow: 'auto',
+        }}
+      >
+        <GroupTree
+          data={userGroupTree}
+          onMove={handleMove}
+          onDelete={onDeleteUserGroup}
+          onClickMembers={item => {
+            setUserGroupModalData({
+              id: item.id,
+              name: item.name,
+              auth_ids: item.auth_ids,
+            });
+            setUserGroupModalOpen(true);
+            setUserGroupModalType('edit');
           }}
-        >
-          <GroupTree
-            data={userGroupTree}
-            onMove={handleMove}
-            onDelete={onDeleteUserGroup}
-            onClickMembers={item => {
-              setUserGroupModalData({
-                id: item.id,
-                name: item.name,
-                auth_ids: item.auth_ids,
-              });
-              setUserGroupModalOpen(true);
-              setUserGroupModalType('edit');
-            }}
-            onEdit={(item, type) => {
-              setUserGroupModalData({
-                id: item.id,
-                name: item.name,
-                auth_ids: item.auth_ids,
-              });
-              setUserGroupModalOpen(true);
-              setUserGroupModalType(type);
-            }}
-          />
-        </Box>
-      ) : (
-        <Stack alignItems={'center'}>
-          <img src={NoData} width={124} />
-          <Box>暂无数据</Box>
-        </Stack>
-      )}
+          onEdit={(item, type) => {
+            setUserGroupModalData({
+              id: item.id,
+              name: item.name,
+              auth_ids: item.auth_ids,
+            });
+            setUserGroupModalOpen(true);
+            setUserGroupModalType(type);
+          }}
+        />
+      </Box>
       <UserGroupModal
         open={userGroupModalOpen}
         onCancel={() => {

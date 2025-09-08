@@ -54,14 +54,6 @@ export const uploadFile = (
     headers: { 'Content-Type': 'multipart/form-data' },
   });
 
-// =============================================》app
-
-export const updateAppDetail = (
-  params: { id: string },
-  app: UpdateAppDetailData,
-): Promise<void> =>
-  request({ url: 'api/v1/app', method: 'put', params, data: app });
-
 // =============================================》model
 export const getModelNameList = (
   data: GetModelNameData,

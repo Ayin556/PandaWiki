@@ -1,4 +1,4 @@
-import { updateAppDetail } from '@/api';
+import { putApiV1App } from '@/request/App';
 import { useAppSelector } from '@/store';
 import InfoIcon from '@mui/icons-material/Info';
 import {
@@ -37,7 +37,7 @@ const DocumentComments = ({
   data: DomainAppDetailResp;
   refresh: () => void;
 }) => {
-  const { license } = useAppSelector(state => state.config);
+  const { license, kb_id } = useAppSelector(state => state.config);
   const [isEdit, setIsEdit] = useState(false);
   const { control, handleSubmit, setValue } = useForm({
     defaultValues: {
@@ -60,12 +60,12 @@ const DocumentComments = ({
   const isPro = license.edition === 1 || license.edition === 2;
 
   const onSubmit = handleSubmit(formData => {
-    updateAppDetail(
+    putApiV1App(
       { id: data.id! },
       {
+        kb_id,
         settings: {
           ...data.settings,
-          // @ts-expect-error 忽略类型错误
           web_app_comment_settings: {
             ...data.settings?.web_app_comment_settings,
             is_enable: Boolean(formData.is_open),
@@ -150,6 +150,7 @@ const AIQuestion = ({
   refresh: () => void;
 }) => {
   const [isEdit, setIsEdit] = useState(false);
+  const { kb_id } = useAppSelector(state => state.config);
   const { control, handleSubmit, setValue } = useForm({
     defaultValues: {
       is_enabled: true,
@@ -159,12 +160,12 @@ const AIQuestion = ({
   const [inputValue, setInputValue] = useState('');
 
   const onSubmit = handleSubmit(formData => {
-    updateAppDetail(
+    putApiV1App(
       { id: data.id! },
       {
+        kb_id,
         settings: {
           ...data.settings,
-          // @ts-expect-error 忽略类型错误
           ai_feedback_settings: {
             ...formData,
           },
@@ -261,7 +262,7 @@ const DocumentCorrection = ({
   refresh: () => void;
 }) => {
   const [isEdit, setIsEdit] = useState(false);
-  const { license } = useAppSelector(state => state.config);
+  const { license, kb_id } = useAppSelector(state => state.config);
   const { control, handleSubmit, setValue } = useForm({
     defaultValues: {
       document_feedback_is_enabled: 0,
@@ -270,12 +271,12 @@ const DocumentCorrection = ({
 
   const onSubmit = handleSubmit(formData => {
     console.log(data);
-    updateAppDetail(
+    putApiV1App(
       { id: data.id! },
       {
+        kb_id,
         settings: {
           ...data.settings,
-          // @ts-expect-error 忽略类型错误
           document_feedback_is_enabled: Boolean(
             formData.document_feedback_is_enabled,
           ),

@@ -17,6 +17,17 @@ export enum DomainCommentStatus {
   CommentStatusAccepted = 1,
 }
 
+export enum ConstsUserKBPermission {
+  /** 无权限 */
+  UserKBPermissionNull = "",
+  /** 完全控制 */
+  UserKBPermissionFullControl = "full_control",
+  /** 文档管理 */
+  UserKBPermissionDocManage = "doc_manage",
+  /** 数据运营 */
+  UserKBPermissionDataOperate = "data_operate",
+}
+
 export enum ConstsSourceType {
   SourceTypeDingTalk = "dingtalk",
   SourceTypeFeishu = "feishu",
@@ -177,6 +188,8 @@ export interface GithubComChaitinPandaWikiProApiAuthV1AuthGroupCreateReq {
    * @maxLength 100
    */
   name: string;
+  parent_id?: number;
+  position?: number;
 }
 
 export type GithubComChaitinPandaWikiProApiAuthV1AuthGroupCreateResp = Record<
@@ -187,16 +200,23 @@ export type GithubComChaitinPandaWikiProApiAuthV1AuthGroupCreateResp = Record<
 export interface GithubComChaitinPandaWikiProApiAuthV1AuthGroupDetailResp {
   auth_ids?: number[];
   auths?: GithubComChaitinPandaWikiProApiAuthV1AuthItem[];
+  children?: GithubComChaitinPandaWikiProApiAuthV1AuthGroupListItem[];
   created_at?: string;
   id?: number;
   name?: string;
+  parent?: GithubComChaitinPandaWikiProApiAuthV1AuthGroupListItem;
+  parent_id?: number;
+  position?: number;
 }
 
 export interface GithubComChaitinPandaWikiProApiAuthV1AuthGroupListItem {
   auth_ids?: number[];
+  count?: number;
   created_at?: string;
   id?: number;
   name?: string;
+  parent_id?: number;
+  position?: number;
 }
 
 export interface GithubComChaitinPandaWikiProApiAuthV1AuthGroupListResp {
@@ -204,11 +224,37 @@ export interface GithubComChaitinPandaWikiProApiAuthV1AuthGroupListResp {
   total?: number;
 }
 
+export interface GithubComChaitinPandaWikiProApiAuthV1AuthGroupMoveReq {
+  id: number;
+  kb_id: string;
+  next_id?: number;
+  parent_id?: number;
+  prev_id?: number;
+}
+
+export interface GithubComChaitinPandaWikiProApiAuthV1AuthGroupTreeItem {
+  auth_ids?: number[];
+  children?: GithubComChaitinPandaWikiProApiAuthV1AuthGroupTreeItem[];
+  count?: number;
+  created_at?: string;
+  id?: number;
+  level?: number;
+  name?: string;
+  parent_id?: number;
+  position?: number;
+}
+
+export interface GithubComChaitinPandaWikiProApiAuthV1AuthGroupTreeResp {
+  list?: GithubComChaitinPandaWikiProApiAuthV1AuthGroupTreeItem[];
+}
+
 export interface GithubComChaitinPandaWikiProApiAuthV1AuthGroupUpdateReq {
   auth_ids?: number[];
   id: number;
   kb_id: string;
   name?: string;
+  parent_id?: number;
+  position?: number;
 }
 
 export interface GithubComChaitinPandaWikiProApiAuthV1AuthItem {
@@ -353,6 +399,33 @@ export type GithubComChaitinPandaWikiProApiShareV1WecomCallbackResp = Record<
   any
 >;
 
+export interface GithubComChaitinPandaWikiProApiTokenV1APITokenListItem {
+  created_at?: string;
+  id?: string;
+  name?: string;
+  permission?: ConstsUserKBPermission;
+  token?: string;
+  updated_at?: string;
+}
+
+export interface GithubComChaitinPandaWikiProApiTokenV1CreateAPITokenReq {
+  kb_id: string;
+  name: string;
+  permission: "full_control" | "doc_manage" | "data_operate";
+}
+
+export interface GithubComChaitinPandaWikiProApiTokenV1DeleteAPITokenReq {
+  id: string;
+  kb_id: string;
+}
+
+export interface GithubComChaitinPandaWikiProApiTokenV1UpdateAPITokenReq {
+  id: string;
+  kb_id: string;
+  name?: string;
+  permission?: "full_control" | "doc_manage" | "data_operate";
+}
+
 export interface GithubComChaitinPandaWikiProDomainBlockWords {
   words?: string[];
 }
@@ -409,6 +482,10 @@ export interface GetApiProV1AuthGroupListParams {
   per_page: number;
 }
 
+export interface GetApiProV1AuthGroupTreeParams {
+  kb_id: string;
+}
+
 export interface GetApiProV1BlockParams {
   /** knowledge base ID */
   kb_id: string;
@@ -433,6 +510,11 @@ export interface GetApiProV1NodeReleaseListParams {
 
 export interface GetApiProV1PromptParams {
   /** knowledge base ID */
+  kb_id: string;
+}
+
+export interface GetApiProV1TokenListParams {
+  /** 知识库ID */
   kb_id: string;
 }
 

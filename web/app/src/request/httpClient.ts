@@ -334,7 +334,10 @@ export class HttpClient<SecurityDataType = unknown> {
         }
         const errorMessage = { data, url: response.url, response };
         console.log("response error:", errorMessage);
-        return Promise.reject(data.code || response.status);
+        return Promise.reject({
+          ...data,
+          code: response.status === 200 ? data.code : response.status,
+        });
       }
       return data.data;
     });
