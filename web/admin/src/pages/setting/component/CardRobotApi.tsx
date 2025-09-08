@@ -74,7 +74,6 @@ const CardRobotApi = ({
     putApiV1App(
       { id: detail!.id! },
       {
-        // @ts-expect-error 类型错误
         kb_id: kb.id!,
         settings: {
           openai_api_bot_settings: {
