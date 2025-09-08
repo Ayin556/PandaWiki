@@ -77,7 +77,7 @@ func (m *JWTMiddleware) validateAPIToken(c echo.Context, token string, next echo
 		})
 	}
 
-	apiToken, err := m.apiTokenRepo.GetByToken(c.Request().Context(), token)
+	apiToken, err := m.apiTokenRepo.GetByTokenWithCache(c.Request().Context(), token)
 	if err != nil || apiToken == nil {
 		m.logger.Error("failed to get API token", log.Error(err))
 		return c.JSON(http.StatusUnauthorized, domain.PWResponse{

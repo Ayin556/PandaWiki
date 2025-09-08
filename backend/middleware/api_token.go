@@ -7,5 +7,5 @@ import (
 )
 
 type APITokenRepository interface {
-	GetByToken(ctx context.Context, token string) (*domain.APIToken, error)
+	GetByTokenWithCache(ctx context.Context, token string) (*domain.APIToken, error)
 }

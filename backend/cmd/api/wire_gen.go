@@ -55,7 +55,7 @@ func createApp() (*App, error) {
 		return nil, err
 	}
 	userAccessRepository := pg2.NewUserAccessRepository(db, logger)
-	apiTokenRepo := pg2.NewAPITokenRepo(db, logger)
+	apiTokenRepo := pg2.NewAPITokenRepo(db, logger, cacheCache)
 	authMiddleware, err := middleware.NewAuthMiddleware(configConfig, logger, userAccessRepository, apiTokenRepo)
 	if err != nil {
 		return nil, err
