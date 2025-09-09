@@ -18,10 +18,11 @@ import {
   useTheme,
 } from '@mui/material';
 import { Editor, EditorThemeProvider, useTiptap } from '@yu-cq/tiptap';
-import { Icon, Message } from 'ct-mui';
+import { Icon } from 'ct-mui';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
 import { WrapContext } from '..';
+import VersionRollback from '../../component/VersionRollback';
 
 const History = () => {
   const { id = '' } = useParams();
@@ -30,6 +31,7 @@ const History = () => {
   const { catalogOpen, setCatalogOpen } = useOutletContext<WrapContext>();
   const theme = useTheme();
 
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [list, setList] = useState<DomainNodeReleaseListItem[]>([]);
   const [curVersion, setCurVersion] =
     useState<DomainNodeReleaseListItem | null>(null);
@@ -45,7 +47,6 @@ const History = () => {
     onUpdate: ({ editor }) => {
       setCharacterCount((editor.storage as any).characterCount.characters());
     },
-    onError: (error: Error) => Message.error(error.message),
   });
 
   const getDetail = (v: DomainNodeReleaseListItem) => {
@@ -219,6 +220,10 @@ const History = () => {
                   '.tiptap': {
                     minHeight: 'calc(100vh - 56px)',
                   },
+                  '.tableWrapper': {
+                    maxWidth: '100%',
+                    overflowX: 'auto',
+                  },
                 }}
               >
                 <Editor editor={editorRef.editor} />
@@ -278,7 +283,7 @@ const History = () => {
                 >
                   {item.release_name}
                 </Box>
-                <Box
+                {curVersion?.id === item.id && <Box
                   sx={{
                     fontSize: 14,
                     color: 'primary.main',
@@ -288,27 +293,13 @@ const History = () => {
                       bgcolor: 'action.hover',
                     },
                   }}
-                  onClick={async (event) => {
+                  onClick={(event) => {
                     event.stopPropagation();
-                    if (curVersion?.id === item.id) {
-                      navigate(`/doc/editor/${id}`, {
-                        state: {
-                          node: curNode,
-                        },
-                      });
-                    } else {
-                      getApiProV1NodeReleaseDetail({ id: item.id! }).then(res => {
-                        navigate(`/doc/editor/${id}`, {
-                          state: {
-                            node: res,
-                          },
-                        });
-                      });
-                    }
+                    setConfirmOpen(true);
                   }}
                 >
                   还原
-                </Box>
+                </Box>}
               </Stack>
               <Box sx={{ fontSize: 13, color: 'text.auxiliary' }}>
                 {item.release_message}
@@ -318,6 +309,18 @@ const History = () => {
           </>
         ))}
       </Stack>
+      <VersionRollback
+        open={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onOk={async () => {
+          navigate(`/doc/editor/${id}`, {
+            state: {
+              node: curNode,
+            },
+          });
+        }}
+        data={curVersion}
+      />
     </Box>
   );
 };

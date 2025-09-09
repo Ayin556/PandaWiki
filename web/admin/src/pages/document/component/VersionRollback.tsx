@@ -7,7 +7,7 @@ interface VersionRollbackProps {
   open: boolean;
   onClose: () => void;
   onOk: () => void
-  data: DomainNodeReleaseListItem
+  data: DomainNodeReleaseListItem | null
 }
 
 const VersionRollback = ({
@@ -16,6 +16,7 @@ const VersionRollback = ({
   data,
   onOk,
 }: VersionRollbackProps) => {
+  if (!data) return null;
   return (
     <Modal
       title={
