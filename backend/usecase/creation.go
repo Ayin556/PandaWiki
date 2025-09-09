@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	modelkit "github.com/chaitin/ModelKit/usecase"
+	modelkit "github.com/chaitin/ModelKit/v2/usecase"
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/log"
 	"github.com/cloudwego/eino/schema"

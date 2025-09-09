@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	modelkit "github.com/chaitin/ModelKit/usecase"
+	modelkit "github.com/chaitin/ModelKit/v2/usecase"
 	"github.com/cloudwego/eino-ext/components/model/deepseek"
 	"github.com/cloudwego/eino/components/model"
 	"github.com/cloudwego/eino/components/prompt"

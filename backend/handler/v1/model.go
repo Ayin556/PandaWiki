@@ -4,8 +4,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 
-	modelkitDomain "github.com/chaitin/ModelKit/domain"
-	modelkit "github.com/chaitin/ModelKit/usecase"
+	modelkitDomain "github.com/chaitin/ModelKit/v2/domain"
+	modelkit "github.com/chaitin/ModelKit/v2/usecase"
 
 	"github.com/chaitin/panda-wiki/consts"
 	"github.com/chaitin/panda-wiki/domain"
