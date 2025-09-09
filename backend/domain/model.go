@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"time"
 
-	modelkitConsts "github.com/chaitin/ModelKit/consts"
-	modelkitDomain "github.com/chaitin/ModelKit/domain"
+	modelkitConsts "github.com/chaitin/ModelKit/v2/consts"
+	modelkitDomain "github.com/chaitin/ModelKit/v2/domain"
 )
 
 type ModelProvider string
