@@ -26,10 +26,12 @@ type ChatUsecase struct {
 	kbRepo              *pg.KnowledgeBaseRepository
 	AuthRepo            *pg.AuthRepo
 	logger              *log.Logger
+	modelkit            *modelkit.ModelKit
 }
 
 func NewChatUsecase(llmUsecase *LLMUsecase, kbRepo *pg.KnowledgeBaseRepository, conversationUsecase *ConversationUsecase, modelUsecase *ModelUsecase, appRepo *pg.AppRepository,
 	blockWordRepo *pg.BlockWordRepo, authRepo *pg.AuthRepo, logger *log.Logger) (*ChatUsecase, error) {
+	modelkit := modelkit.NewModelKit(logger.Logger)
 	u := &ChatUsecase{
 		llmUsecase:          llmUsecase,
 		conversationUsecase: conversationUsecase,
@@ -39,6 +41,7 @@ func NewChatUsecase(llmUsecase *LLMUsecase, kbRepo *pg.KnowledgeBaseRepository, 
 		kbRepo:              kbRepo,
 		AuthRepo:            authRepo,
 		logger:              logger.WithModule("usecase.chat"),
+		modelkit:            modelkit,
 	}
 	if err := u.initDFA(); err != nil {
 		u.logger.Error("failed to init dfa", log.Error(err))
@@ -242,7 +245,7 @@ func (u *ChatUsecase) Chat(ctx context.Context, req *domain.ChatRequest) (<-chan
 			eventCh <- domain.SSEEvent{Type: "error", Content: "failed to convert model to modelkit model"}
 			return
 		}
-		chatModel, err := modelkit.GetChatModel(ctx, modelkitModel)
+		chatModel, err := u.modelkit.GetChatModel(ctx, modelkitModel)
 
 		if err != nil {
 			u.logger.Error("failed to get chat model", log.Error(err))

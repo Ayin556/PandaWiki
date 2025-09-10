@@ -36,10 +36,12 @@ type LLMUsecase struct {
 	promptRepo       *pg.PromptRepo
 	config           *config.Config
 	logger           *log.Logger
+	modelkit         *modelkit.ModelKit
 }
 
 func NewLLMUsecase(config *config.Config, rag rag.RAGService, conversationRepo *pg.ConversationRepository, kbRepo *pg.KnowledgeBaseRepository, nodeRepo *pg.NodeRepository, modelRepo *pg.ModelRepository, promptRepo *pg.PromptRepo, logger *log.Logger) *LLMUsecase {
 	tiktoken.SetBpeLoader(&utils.Localloader{})
+	modelkit := modelkit.NewModelKit(logger.Logger)
 	return &LLMUsecase{
 		config:           config,
 		rag:              rag,
@@ -49,6 +51,7 @@ func NewLLMUsecase(config *config.Config, rag rag.RAGService, conversationRepo *
 		modelRepo:        modelRepo,
 		promptRepo:       promptRepo,
 		logger:           logger.WithModule("usecase.llm"),
+		modelkit:         modelkit,
 	}
 }
 
@@ -222,7 +225,7 @@ func (u *LLMUsecase) SummaryNode(ctx context.Context, model *domain.Model, name,
 	if err != nil {
 		return "", err
 	}
-	chatModel, err := modelkit.GetChatModel(ctx, modelkitModel)
+	chatModel, err := u.modelkit.GetChatModel(ctx, modelkitModel)
 	if err != nil {
 		return "", err
 	}

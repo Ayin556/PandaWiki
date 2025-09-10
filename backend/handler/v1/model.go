@@ -21,15 +21,18 @@ type ModelHandler struct {
 	auth       middleware.AuthMiddleware
 	usecase    *usecase.ModelUsecase
 	llmUsecase *usecase.LLMUsecase
+	modelkit   *modelkit.ModelKit
 }
 
 func NewModelHandler(echo *echo.Echo, baseHandler *handler.BaseHandler, logger *log.Logger, auth middleware.AuthMiddleware, usecase *usecase.ModelUsecase, llmUsecase *usecase.LLMUsecase) *ModelHandler {
+	modelkit := modelkit.NewModelKit(logger.Logger)
 	handler := &ModelHandler{
 		BaseHandler: baseHandler,
 		logger:      logger.WithModule("handler.v1.model"),
 		auth:        auth,
 		usecase:     usecase,
 		llmUsecase:  llmUsecase,
+		modelkit:    modelkit,
 	}
 	group := echo.Group("/api/v1/model", handler.auth.Authorize)
 	group.GET("/list", handler.GetModelList)
@@ -160,7 +163,7 @@ func (h *ModelHandler) CheckModel(c echo.Context) error {
 		modelType = domain.ModelTypeChat
 	default:
 	}
-	model, err := modelkit.CheckModel(ctx, &modelkitDomain.CheckModelReq{
+	model, err := h.modelkit.CheckModel(ctx, &modelkitDomain.CheckModelReq{
 		Provider:   string(req.Provider),
 		Model:      req.Model,
 		BaseURL:    req.BaseURL,
@@ -195,7 +198,7 @@ func (h *ModelHandler) GetProviderSupportedModelList(c echo.Context) error {
 	}
 	ctx := c.Request().Context()
 
-	models, err := modelkit.ModelList(ctx, &modelkitDomain.ModelListReq{
+	models, err := h.modelkit.ModelList(ctx, &modelkitDomain.ModelListReq{
 		Provider:  req.Provider,
 		BaseURL:   req.BaseURL,
 		APIKey:    req.APIKey,
