@@ -6739,6 +6739,26 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.SocialMediaAccount": {
+            "type": "object",
+            "properties": {
+                "channel": {
+                    "type": "string"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "link": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "text": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.Source": {
             "type": "object",
             "properties": {
@@ -6974,6 +6994,15 @@ const docTemplate = `{
                 },
                 "header_search_placeholder": {
                     "type": "string"
+                },
+                "show_brand_info": {
+                    "type": "boolean"
+                },
+                "social_media_accounts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.SocialMediaAccount"
+                    }
                 }
             }
         },
