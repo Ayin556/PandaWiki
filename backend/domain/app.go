@@ -159,6 +159,7 @@ type WebAppCustomSettings struct {
 	HeaderPlaceholder   string               `json:"header_search_placeholder"`
 	SocialMediaAccounts []SocialMediaAccount `json:"social_media_accounts"`
 	ShowBrandInfo       *bool                `json:"show_brand_info"`
+	FooterShowIntro     *bool                `json:"footer_show_intro"`
 }
 
 type SocialMediaAccount struct {
