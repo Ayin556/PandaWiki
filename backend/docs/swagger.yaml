@@ -935,7 +935,7 @@ definitions:
         type: string
       model:
         type: string
-      param:
+      parameters:
         $ref: '#/definitions/domain.ModelParam'
       provider:
         $ref: '#/definitions/github_com_chaitin_panda-wiki_domain.ModelProvider'
@@ -946,6 +946,7 @@ definitions:
         - chat
         - embedding
         - rerank
+        - analysis
     required:
     - base_url
     - model
@@ -1101,6 +1102,7 @@ definitions:
         - chat
         - embedding
         - rerank
+        - analysis
     required:
     - base_url
     - provider
@@ -1257,38 +1259,6 @@ definitions:
     x-enum-varnames:
     - MessageFromGroup
     - MessageFromPrivate
-  domain.ModelDetailResp:
-    properties:
-      api_header:
-        type: string
-      api_key:
-        type: string
-      api_version:
-        description: for azure openai
-        type: string
-      base_url:
-        type: string
-      completion_tokens:
-        type: integer
-      created_at:
-        type: string
-      id:
-        type: string
-      model:
-        type: string
-      parameters:
-        $ref: '#/definitions/domain.ModelParam'
-      prompt_tokens:
-        type: integer
-      provider:
-        $ref: '#/definitions/github_com_chaitin_panda-wiki_domain.ModelProvider'
-      total_tokens:
-        type: integer
-      type:
-        $ref: '#/definitions/domain.ModelType'
-      updated_at:
-        type: string
-    type: object
   domain.ModelParam:
     properties:
       context_window:
@@ -1309,11 +1279,13 @@ definitions:
     - chat
     - embedding
     - rerank
+    - analysis
     type: string
     x-enum-varnames:
     - ModelTypeChat
     - ModelTypeEmbedding
     - ModelTypeRerank
+    - ModelTypeAnalysis
   domain.MoveNodeReq:
     properties:
       id:
@@ -1972,9 +1944,11 @@ definitions:
         type: string
       id:
         type: string
+      is_active:
+        type: boolean
       model:
         type: string
-      param:
+      parameters:
         $ref: '#/definitions/domain.ModelParam'
       provider:
         $ref: '#/definitions/github_com_chaitin_panda-wiki_domain.ModelProvider'
@@ -1985,6 +1959,7 @@ definitions:
         - chat
         - embedding
         - rerank
+        - analysis
     required:
     - base_url
     - id
@@ -2101,6 +2076,7 @@ definitions:
         - chat
         - embedding
         - rerank
+        - analysis
     required:
     - base_url
     - model
@@ -2129,6 +2105,8 @@ definitions:
         type: integer
       id:
         type: string
+      is_active:
+        type: boolean
       model:
         type: string
       parameters:
@@ -3577,32 +3555,6 @@ paths:
                   $ref: '#/definitions/github_com_chaitin_panda-wiki_domain.CheckModelResp'
               type: object
       summary: check model
-      tags:
-      - model
-  /api/v1/model/detail:
-    get:
-      consumes:
-      - application/json
-      description: get model detail
-      parameters:
-      - description: model id
-        in: query
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/domain.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/domain.ModelDetailResp'
-              type: object
-      summary: get model detail
       tags:
       - model
   /api/v1/model/list:
