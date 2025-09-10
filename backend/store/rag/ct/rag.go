@@ -11,6 +11,7 @@ import (
 	"github.com/JohannesKaufmann/html-to-markdown/v2/plugin/base"
 	"github.com/JohannesKaufmann/html-to-markdown/v2/plugin/commonmark"
 	"github.com/JohannesKaufmann/html-to-markdown/v2/plugin/table"
+	"github.com/cloudwego/eino/schema"
 	"github.com/google/uuid"
 
 	"github.com/chaitin/pandawiki/sdk/rag"
@@ -58,13 +59,31 @@ func (s *CTRAG) CreateKnowledgeBase(ctx context.Context) (string, error) {
 	return dataset.ID, nil
 }
 
-func (s *CTRAG) QueryRecords(ctx context.Context, datasetIDs []string, query string, groupIds []int) ([]*domain.NodeContentChunk, error) {
-
+func (s *CTRAG) QueryRecords(ctx context.Context, datasetIDs []string, query string, groupIds []int, historyMsgs []*schema.Message) ([]*domain.NodeContentChunk, error) {
+	var chatMsgs []rag.ChatMessage
+	for _, msg := range historyMsgs {
+		switch msg.Role {
+		case schema.User:
+			chatMsgs = append(chatMsgs, rag.ChatMessage{
+				Role:    string(msg.Role),
+				Content: msg.Content,
+			})
+		case schema.Assistant:
+			chatMsgs = append(chatMsgs, rag.ChatMessage{
+				Role:    string(msg.Role),
+				Content: msg.Content,
+			})
+		default:
+			continue
+		}
+	}
+	s.logger.Debug("retrieving by history msgs", log.Any("history_msgs", historyMsgs), log.Any("chat_msgs", chatMsgs))
 	chunks, _, rewriteQuery, err := s.client.RetrieveChunks(ctx, rag.RetrievalRequest{
 		DatasetIDs:   datasetIDs,
 		Question:     query,
 		TopK:         10,
 		UserGroupIDs: groupIds,
+		ChatMessages: chatMsgs,
 		// SimilarityThreshold: 0.2,
 	})
 	s.logger.Info("retrieve chunks result", log.Int("chunks count", len(chunks)), log.String("query", rewriteQuery))
