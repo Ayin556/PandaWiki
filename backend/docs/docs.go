@@ -6908,6 +6908,9 @@ const docTemplate = `{
                 "allow_theme_switching": {
                     "type": "boolean"
                 },
+                "footer_show_intro": {
+                    "type": "boolean"
+                },
                 "header_search_placeholder": {
                     "type": "string"
                 },
