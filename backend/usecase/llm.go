@@ -99,7 +99,7 @@ func (u *LLMUsecase) FormatConversationMessages(
 				return nil, nil, fmt.Errorf("get kb failed: %w", err)
 			}
 			// get related documents from raglite
-			records, err := u.rag.QueryRecords(ctx, []string{kb.DatasetID}, question, groupIDs)
+			records, err := u.rag.QueryRecords(ctx, []string{kb.DatasetID}, question, groupIDs, historyMessages[:len(historyMessages)-1])
 			if err != nil {
 				return nil, nil, fmt.Errorf("get records from raglite failed: %w", err)
 			}
