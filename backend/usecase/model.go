@@ -78,7 +78,7 @@ func (u *ModelUsecase) initEmbeddingAndRerankModel(ctx context.Context) error {
 	if err := u.createAndSyncModelToRAGLite(ctx, "bge-m3", domain.ModelTypeEmbedding); err != nil {
 		return fmt.Errorf("create and sync model err: %v", err)
 	}
-	if err := u.createAndSyncModelToRAGLite(ctx, "bge-reranker-v2-m3", domain.ModelTypeEmbedding); err != nil {
+	if err := u.createAndSyncModelToRAGLite(ctx, "bge-reranker-v2-m3", domain.ModelTypeRerank); err != nil {
 		return fmt.Errorf("create and sync model err: %v", err)
 	}
 	if err := u.createAndSyncModelToRAGLite(ctx, "qwen2.5-3b-instruct", domain.ModelTypeAnalysis); err != nil {
@@ -95,7 +95,7 @@ func (u *ModelUsecase) createAndSyncModelToRAGLite(ctx context.Context, modelNam
 	model := &domain.Model{
 		ID:         uuid.New().String(),
 		Provider:   domain.ModelProviderBrandBaiZhiCloud,
-		Model:      "qwen2.5-3b-instruct",
+		Model:      modelName,
 		APIKey:     sharedKey,
 		APIHeader:  "",
 		BaseURL:    baseURL,
