@@ -99,8 +99,8 @@ importers:
         specifier: ^3.3.0
         version: 3.4.1(@tiptap/core@3.4.1(@tiptap/pm@3.4.1))(@tiptap/pm@3.4.1)(@tiptap/y-tiptap@3.0.0(prosemirror-model@1.25.3)(prosemirror-state@1.4.3)(prosemirror-view@1.40.1)(y-protocols@1.0.6(yjs@13.6.27))(yjs@13.6.27))
       '@yokowu/modelkit-ui':
-        specifier: 2.0.5
-        version: 2.0.5(@mui/lab@6.0.0-dev.240424162023-9968b4889d(@emotion/react@11.14.0(@types/react@19.1.12)(react@19.1.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.1.12)(react@19.1.1))(@types/react@19.1.12)(react@19.1.1))(@mui/material@6.5.0(@emotion/react@11.14.0(@types/react@19.1.12)(react@19.1.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.1.12)(react@19.1.1))(@types/react@19.1.12)(react@19.1.1))(@types/react@19.1.12)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(@types/react@19.1.12)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(@mui/utils@7.3.2(@types/react@19.1.12)(react@19.1.1))(@types/react@19.1.12)(i18next@25.5.2(typescript@5.9.2))(typescript@5.9.2)
+        specifier: 2.2.1
+        version: 2.2.1(@mui/lab@6.0.0-dev.240424162023-9968b4889d(@emotion/react@11.14.0(@types/react@19.1.12)(react@19.1.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.1.12)(react@19.1.1))(@types/react@19.1.12)(react@19.1.1))(@mui/material@6.5.0(@emotion/react@11.14.0(@types/react@19.1.12)(react@19.1.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.1.12)(react@19.1.1))(@types/react@19.1.12)(react@19.1.1))(@types/react@19.1.12)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(@types/react@19.1.12)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(@mui/utils@7.3.2(@types/react@19.1.12)(react@19.1.1))(@types/react@19.1.12)(i18next@25.5.2(typescript@5.9.2))(typescript@5.9.2)
       '@yu-cq/tiptap':
         specifier: 0.4.0
         version: 0.4.0(1b04936a1f418c807ba7c4cc0d29b098)
@@ -1181,7 +1181,6 @@ packages:
       }
     cpu: [arm64]
     os: [linux]
-    libc: [glibc]
 
   '@img/sharp-libvips-linux-arm@1.2.0':
     resolution:
@@ -1190,7 +1189,6 @@ packages:
       }
     cpu: [arm]
     os: [linux]
-    libc: [glibc]
 
   '@img/sharp-libvips-linux-ppc64@1.2.0':
     resolution:
@@ -1199,7 +1197,6 @@ packages:
       }
     cpu: [ppc64]
     os: [linux]
-    libc: [glibc]
 
   '@img/sharp-libvips-linux-s390x@1.2.0':
     resolution:
@@ -1208,7 +1205,6 @@ packages:
       }
     cpu: [s390x]
     os: [linux]
-    libc: [glibc]
 
   '@img/sharp-libvips-linux-x64@1.2.0':
     resolution:
@@ -1217,7 +1213,6 @@ packages:
       }
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@img/sharp-libvips-linuxmusl-arm64@1.2.0':
     resolution:
@@ -1226,7 +1221,6 @@ packages:
       }
     cpu: [arm64]
     os: [linux]
-    libc: [musl]
 
   '@img/sharp-libvips-linuxmusl-x64@1.2.0':
     resolution:
@@ -1235,7 +1229,6 @@ packages:
       }
     cpu: [x64]
     os: [linux]
-    libc: [musl]
 
   '@img/sharp-linux-arm64@0.34.3':
     resolution:
@@ -1245,7 +1238,6 @@ packages:
     engines: { node: ^18.17.0 || ^20.3.0 || >=21.0.0 }
     cpu: [arm64]
     os: [linux]
-    libc: [glibc]
 
   '@img/sharp-linux-arm@0.34.3':
     resolution:
@@ -1255,7 +1247,6 @@ packages:
     engines: { node: ^18.17.0 || ^20.3.0 || >=21.0.0 }
     cpu: [arm]
     os: [linux]
-    libc: [glibc]
 
   '@img/sharp-linux-ppc64@0.34.3':
     resolution:
@@ -1265,7 +1256,6 @@ packages:
     engines: { node: ^18.17.0 || ^20.3.0 || >=21.0.0 }
     cpu: [ppc64]
     os: [linux]
-    libc: [glibc]
 
   '@img/sharp-linux-s390x@0.34.3':
     resolution:
@@ -1275,7 +1265,6 @@ packages:
     engines: { node: ^18.17.0 || ^20.3.0 || >=21.0.0 }
     cpu: [s390x]
     os: [linux]
-    libc: [glibc]
 
   '@img/sharp-linux-x64@0.34.3':
     resolution:
@@ -1285,7 +1274,6 @@ packages:
     engines: { node: ^18.17.0 || ^20.3.0 || >=21.0.0 }
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@img/sharp-linuxmusl-arm64@0.34.3':
     resolution:
@@ -1295,7 +1283,6 @@ packages:
     engines: { node: ^18.17.0 || ^20.3.0 || >=21.0.0 }
     cpu: [arm64]
     os: [linux]
-    libc: [musl]
 
   '@img/sharp-linuxmusl-x64@0.34.3':
     resolution:
@@ -1305,7 +1292,6 @@ packages:
     engines: { node: ^18.17.0 || ^20.3.0 || >=21.0.0 }
     cpu: [x64]
     os: [linux]
-    libc: [musl]
 
   '@img/sharp-wasm32@0.34.3':
     resolution:
@@ -1702,7 +1688,6 @@ packages:
     engines: { node: '>= 10' }
     cpu: [arm64]
     os: [linux]
-    libc: [glibc]
 
   '@next/swc-linux-arm64-musl@15.4.6':
     resolution:
@@ -1712,7 +1697,6 @@ packages:
     engines: { node: '>= 10' }
     cpu: [arm64]
     os: [linux]
-    libc: [musl]
 
   '@next/swc-linux-x64-gnu@15.4.6':
     resolution:
@@ -1722,7 +1706,6 @@ packages:
     engines: { node: '>= 10' }
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@next/swc-linux-x64-musl@15.4.6':
     resolution:
@@ -1732,7 +1715,6 @@ packages:
     engines: { node: '>= 10' }
     cpu: [x64]
     os: [linux]
-    libc: [musl]
 
   '@next/swc-win32-arm64-msvc@15.4.6':
     resolution:
@@ -1867,7 +1849,6 @@ packages:
       }
     cpu: [arm]
     os: [linux]
-    libc: [glibc]
 
   '@rollup/rollup-linux-arm-musleabihf@4.50.0':
     resolution:
@@ -1876,7 +1857,6 @@ packages:
       }
     cpu: [arm]
     os: [linux]
-    libc: [musl]
 
   '@rollup/rollup-linux-arm64-gnu@4.50.0':
     resolution:
@@ -1885,7 +1865,6 @@ packages:
       }
     cpu: [arm64]
     os: [linux]
-    libc: [glibc]
 
   '@rollup/rollup-linux-arm64-musl@4.50.0':
     resolution:
@@ -1894,7 +1873,6 @@ packages:
       }
     cpu: [arm64]
     os: [linux]
-    libc: [musl]
 
   '@rollup/rollup-linux-loongarch64-gnu@4.50.0':
     resolution:
@@ -1903,7 +1881,6 @@ packages:
       }
     cpu: [loong64]
     os: [linux]
-    libc: [glibc]
 
   '@rollup/rollup-linux-ppc64-gnu@4.50.0':
     resolution:
@@ -1912,7 +1889,6 @@ packages:
       }
     cpu: [ppc64]
     os: [linux]
-    libc: [glibc]
 
   '@rollup/rollup-linux-riscv64-gnu@4.50.0':
     resolution:
@@ -1921,7 +1897,6 @@ packages:
       }
     cpu: [riscv64]
     os: [linux]
-    libc: [glibc]
 
   '@rollup/rollup-linux-riscv64-musl@4.50.0':
     resolution:
@@ -1930,7 +1905,6 @@ packages:
       }
     cpu: [riscv64]
     os: [linux]
-    libc: [musl]
 
   '@rollup/rollup-linux-s390x-gnu@4.50.0':
     resolution:
@@ -1939,7 +1913,6 @@ packages:
       }
     cpu: [s390x]
     os: [linux]
-    libc: [glibc]
 
   '@rollup/rollup-linux-x64-gnu@4.50.0':
     resolution:
@@ -1948,7 +1921,6 @@ packages:
       }
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@rollup/rollup-linux-x64-musl@4.50.0':
     resolution:
@@ -1957,7 +1929,6 @@ packages:
       }
     cpu: [x64]
     os: [linux]
-    libc: [musl]
 
   '@rollup/rollup-openharmony-arm64@4.50.0':
     resolution:
@@ -3084,7 +3055,6 @@ packages:
       }
     cpu: [arm64]
     os: [linux]
-    libc: [glibc]
 
   '@unrs/resolver-binding-linux-arm64-musl@1.11.1':
     resolution:
@@ -3093,7 +3063,6 @@ packages:
       }
     cpu: [arm64]
     os: [linux]
-    libc: [musl]
 
   '@unrs/resolver-binding-linux-ppc64-gnu@1.11.1':
     resolution:
@@ -3102,7 +3071,6 @@ packages:
       }
     cpu: [ppc64]
     os: [linux]
-    libc: [glibc]
 
   '@unrs/resolver-binding-linux-riscv64-gnu@1.11.1':
     resolution:
@@ -3111,7 +3079,6 @@ packages:
       }
     cpu: [riscv64]
     os: [linux]
-    libc: [glibc]
 
   '@unrs/resolver-binding-linux-riscv64-musl@1.11.1':
     resolution:
@@ -3120,7 +3087,6 @@ packages:
       }
     cpu: [riscv64]
     os: [linux]
-    libc: [musl]
 
   '@unrs/resolver-binding-linux-s390x-gnu@1.11.1':
     resolution:
@@ -3129,7 +3095,6 @@ packages:
       }
     cpu: [s390x]
     os: [linux]
-    libc: [glibc]
 
   '@unrs/resolver-binding-linux-x64-gnu@1.11.1':
     resolution:
@@ -3138,7 +3103,6 @@ packages:
       }
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@unrs/resolver-binding-linux-x64-musl@1.11.1':
     resolution:
@@ -3147,7 +3111,6 @@ packages:
       }
     cpu: [x64]
     os: [linux]
-    libc: [musl]
 
   '@unrs/resolver-binding-wasm32-wasi@1.11.1':
     resolution:
@@ -3196,10 +3159,10 @@ packages:
         integrity: sha512-+4IIv5PgrmhKvW/3LpkpkGg257OViEhXkOOgCyj5KMsjsOfnRXkni8XAuuF9Ui5p3B8WnUovlDXAQNb8RJ/RaQ==,
       }
 
-  '@yokowu/modelkit-ui@2.0.5':
+  '@yokowu/modelkit-ui@2.2.1':
     resolution:
       {
-        integrity: sha512-fQV+gPU2EZs5DQkvze2yiGANV/+hI1fecsh5w7ulf1EVsy/RyVwr/mpZuRZRFwXO2SeRnrGEDZc+resKA9628Q==,
+        integrity: sha512-cUT7vvWC3lX1/u5UxgbXAI2RWxMjQAttBRIn594Hf/n8+00fKtfbKmE6p6zozxKqgwHzl5ZCdtVz3GQTsKEruw==,
       }
 
   '@yu-cq/tiptap@0.4.0':
@@ -10136,7 +10099,7 @@ snapshots:
     dependencies:
       katex: 0.16.22
 
-  '@yokowu/modelkit-ui@2.0.5(@mui/lab@6.0.0-dev.240424162023-9968b4889d(@emotion/react@11.14.0(@types/react@19.1.12)(react@19.1.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.1.12)(react@19.1.1))(@types/react@19.1.12)(react@19.1.1))(@mui/material@6.5.0(@emotion/react@11.14.0(@types/react@19.1.12)(react@19.1.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.1.12)(react@19.1.1))(@types/react@19.1.12)(react@19.1.1))(@types/react@19.1.12)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(@types/react@19.1.12)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(@mui/utils@7.3.2(@types/react@19.1.12)(react@19.1.1))(@types/react@19.1.12)(i18next@25.5.2(typescript@5.9.2))(typescript@5.9.2)':
+  '@yokowu/modelkit-ui@2.2.1(@mui/lab@6.0.0-dev.240424162023-9968b4889d(@emotion/react@11.14.0(@types/react@19.1.12)(react@19.1.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.1.12)(react@19.1.1))(@types/react@19.1.12)(react@19.1.1))(@mui/material@6.5.0(@emotion/react@11.14.0(@types/react@19.1.12)(react@19.1.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.1.12)(react@19.1.1))(@types/react@19.1.12)(react@19.1.1))(@types/react@19.1.12)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(@types/react@19.1.12)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(@mui/utils@7.3.2(@types/react@19.1.12)(react@19.1.1))(@types/react@19.1.12)(i18next@25.5.2(typescript@5.9.2))(typescript@5.9.2)':
     dependencies:
       '@c-x/ui': 1.0.9(8f70fa391c69a0747de2c6e66c781361)
       '@emotion/react': 11.14.0(@types/react@19.1.12)(react@19.1.1)
