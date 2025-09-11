@@ -2,19 +2,11 @@ import { uploadFile } from '@/api';
 import Emoji from '@/components/Emoji';
 import { putApiV1NodeDetail } from '@/request';
 import { V1NodeDetailResp } from '@/request/types';
-import light from '@/themes/light';
-import componentStyleOverrides from '@/themes/override';
 import { Box, Stack, TextField, Tooltip } from '@mui/material';
 // import { Collaboration } from '@tiptap/extension-collaboration';
 // import { CollaborationCaret } from '@tiptap/extension-collaboration-caret';
-import {
-  Editor,
-  EditorThemeProvider,
-  TocList,
-  useTiptap,
-  UseTiptapReturn,
-} from '@yu-cq/tiptap';
 import { Icon, message } from '@ctzhian/ui';
+import { Editor, TocList, useTiptap, UseTiptapReturn } from '@yu-cq/tiptap';
 import dayjs from 'dayjs';
 import { debounce } from 'lodash';
 import { useCallback, useEffect, useState } from 'react';
@@ -39,12 +31,8 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
   const navigate = useNavigate();
   const { license } = useAppSelector(state => state.config);
   const state = useLocation().state as { node?: V1NodeDetailResp };
-  const { catalogOpen, nodeDetail, setNodeDetail, onSave } =
+  const { catalogOpen, nodeDetail, setNodeDetail, onSave, docWidth } =
     useOutletContext<WrapContext>();
-
-  const docWidth = useMemo(() => {
-    return nodeDetail?.meta?.doc_width || 'full';
-  }, [nodeDetail]);
 
   // const connectCount = useRef(0);
 
@@ -291,8 +279,8 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
         meta: {
           summary: state.node.meta?.summary || nodeDetail?.meta?.summary || '',
           emoji: state.node.meta?.emoji || nodeDetail?.meta?.emoji || '',
-          doc_width:
-            state.node.meta?.doc_width || nodeDetail?.meta?.doc_width || 'full',
+          // doc_width:
+          //   state.node.meta?.doc_width || nodeDetail?.meta?.doc_width || 'full',
         },
         content: state.node.content || nodeDetail?.content || '',
       });

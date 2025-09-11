@@ -1,13 +1,24 @@
 import { ThemeAndStyleSetting, ThemeMode } from '@/api/type';
+import doc_width_full from '@/assets/images/full.png';
+import doc_width_normal from '@/assets/images/normal.png';
+import doc_width_wide from '@/assets/images/wide.png';
 import UploadFile from '@/components/UploadFile';
-import { MenuItem, Select } from '@mui/material';
+import { putApiV1App } from '@/request/App';
+import { DomainAppDetailResp } from '@/request/types';
+import { useAppSelector } from '@/store';
 import { message } from '@ctzhian/ui';
+import {
+  Box,
+  FormControlLabel,
+  MenuItem,
+  Radio,
+  RadioGroup,
+  Select,
+  Stack,
+} from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { FormItem, SettingCardItem } from './Common';
-import { DomainAppDetailResp } from '@/request/types';
-import { useAppSelector } from '@/store';
-import { putApiV1App } from '@/request/App';
 
 interface CardStyleProps {
   id: string;
@@ -24,6 +35,7 @@ const CardStyle = ({ id, data, refresh }: CardStyleProps) => {
     defaultValues: {
       theme_mode: 'light',
       bg_image: '',
+      doc_width: 'full',
     },
   });
 
@@ -38,6 +50,7 @@ const CardStyle = ({ id, data, refresh }: CardStyleProps) => {
           theme_and_style: {
             ...data.settings?.theme_and_style,
             bg_image: value.bg_image,
+            doc_width: value.doc_width,
           },
         },
       },
@@ -51,6 +64,7 @@ const CardStyle = ({ id, data, refresh }: CardStyleProps) => {
   useEffect(() => {
     setValue('theme_mode', data.settings?.theme_mode as 'light' | 'dark');
     setValue('bg_image', data.settings?.theme_and_style?.bg_image || '');
+    setValue('doc_width', data.settings?.theme_and_style?.doc_width || 'full');
   }, [data]);
 
   return (
@@ -97,6 +111,48 @@ const CardStyle = ({ id, data, refresh }: CardStyleProps) => {
             />
           )}
         />{' '}
+      </FormItem>
+
+      <FormItem label='页面宽度' sx={{ alignItems: 'flex-start' }}>
+        <Controller
+          control={control}
+          name='doc_width'
+          render={({ field }) => (
+            <RadioGroup
+              row
+              {...field}
+              onChange={e => {
+                field.onChange(e.target.value);
+                setIsEdit(true);
+              }}
+            >
+              <Stack alignItems='center' sx={{ width: 100, mr: 2 }}>
+                <img src={doc_width_full} width={100} alt='自适应' />
+                <FormControlLabel
+                  value={'full'}
+                  control={<Radio size='small' />}
+                  label={<Box>自适应</Box>}
+                />
+              </Stack>
+              <Stack alignItems='center' sx={{ width: 100, mr: 2 }}>
+                <img src={doc_width_wide} width={100} alt='超宽' />
+                <FormControlLabel
+                  value={'wide'}
+                  control={<Radio size='small' />}
+                  label={<Box>超宽</Box>}
+                />
+              </Stack>
+              <Stack alignItems='center' sx={{ width: 100 }}>
+                <img src={doc_width_normal} width={100} alt='常规' />
+                <FormControlLabel
+                  value={'normal'}
+                  control={<Radio size='small' />}
+                  label={<Box>常规</Box>}
+                />
+              </Stack>
+            </RadioGroup>
+          )}
+        />
       </FormItem>
     </SettingCardItem>
   );

@@ -11,14 +11,14 @@
  */
 
 export enum SchemaRoleType {
-  Assistant = "assistant",
-  User = "user",
-  System = "system",
-  Tool = "tool",
+  Assistant = 'assistant',
+  User = 'user',
+  System = 'system',
+  Tool = 'tool',
 }
 
 export enum GithubComChaitinPandaWikiDomainModelProvider {
-  ModelProviderBrandBaiZhiCloud = "BaiZhiCloud",
+  ModelProviderBrandBaiZhiCloud = 'BaiZhiCloud',
 }
 
 export enum DomainStatPageScene {
@@ -46,10 +46,10 @@ export enum DomainNodeStatus {
 }
 
 export enum DomainModelType {
-  ModelTypeChat = "chat",
-  ModelTypeEmbedding = "embedding",
-  ModelTypeRerank = "rerank",
-  ModelTypeAnalysis = "analysis",
+  ModelTypeChat = 'chat',
+  ModelTypeEmbedding = 'embedding',
+  ModelTypeRerank = 'rerank',
+  ModelTypeAnalysis = 'analysis',
 }
 
 export enum DomainMessageFrom {
@@ -79,29 +79,29 @@ export enum DomainAppType {
 
 export enum ConstsWatermarkSetting {
   /** 未开启水印 */
-  WatermarkDisabled = "",
+  WatermarkDisabled = '',
   /** 隐形水印 */
-  WatermarkHidden = "hidden",
+  WatermarkHidden = 'hidden',
   /** 显性水印 */
-  WatermarkVisible = "visible",
+  WatermarkVisible = 'visible',
 }
 
 export enum ConstsUserRole {
   /** 管理员 */
-  UserRoleAdmin = "admin",
+  UserRoleAdmin = 'admin',
   /** 普通用户 */
-  UserRoleUser = "user",
+  UserRoleUser = 'user',
 }
 
 export enum ConstsUserKBPermission {
   /** 无权限 */
-  UserKBPermissionNull = "",
+  UserKBPermissionNull = '',
   /** 完全控制 */
-  UserKBPermissionFullControl = "full_control",
+  UserKBPermissionFullControl = 'full_control',
   /** 文档管理 */
-  UserKBPermissionDocManage = "doc_manage",
+  UserKBPermissionDocManage = 'doc_manage',
   /** 数据运营 */
-  UserKBPermissionDataOperate = "data_operate",
+  UserKBPermissionDataOperate = 'data_operate',
 }
 
 export enum ConstsStatDay {
@@ -112,67 +112,67 @@ export enum ConstsStatDay {
 }
 
 export enum ConstsSourceType {
-  SourceTypeDingTalk = "dingtalk",
-  SourceTypeFeishu = "feishu",
-  SourceTypeWeCom = "wecom",
-  SourceTypeOAuth = "oauth",
-  SourceTypeGitHub = "github",
-  SourceTypeCAS = "cas",
-  SourceTypeLDAP = "ldap",
-  SourceTypeWidget = "widget",
-  SourceTypeDingtalkBot = "dingtalk_bot",
-  SourceTypeFeishuBot = "feishu_bot",
-  SourceTypeWechatBot = "wechat_bot",
-  SourceTypeWechatServiceBot = "wechat_service_bot",
-  SourceTypeDiscordBot = "discord_bot",
-  SourceTypeWechatOfficialAccount = "wechat_official_account",
-  SourceTypeOpenAIAPI = "openai_api",
+  SourceTypeDingTalk = 'dingtalk',
+  SourceTypeFeishu = 'feishu',
+  SourceTypeWeCom = 'wecom',
+  SourceTypeOAuth = 'oauth',
+  SourceTypeGitHub = 'github',
+  SourceTypeCAS = 'cas',
+  SourceTypeLDAP = 'ldap',
+  SourceTypeWidget = 'widget',
+  SourceTypeDingtalkBot = 'dingtalk_bot',
+  SourceTypeFeishuBot = 'feishu_bot',
+  SourceTypeWechatBot = 'wechat_bot',
+  SourceTypeWechatServiceBot = 'wechat_service_bot',
+  SourceTypeDiscordBot = 'discord_bot',
+  SourceTypeWechatOfficialAccount = 'wechat_official_account',
+  SourceTypeOpenAIAPI = 'openai_api',
 }
 
 export enum ConstsNodePermName {
   /** 导航内可见 */
-  NodePermNameVisible = "visible",
+  NodePermNameVisible = 'visible',
   /** 可被访问 */
-  NodePermNameVisitable = "visitable",
+  NodePermNameVisitable = 'visitable',
   /** 可被问答 */
-  NodePermNameAnswerable = "answerable",
+  NodePermNameAnswerable = 'answerable',
 }
 
 export enum ConstsNodeAccessPerm {
   /** 完全开放 */
-  NodeAccessPermOpen = "open",
+  NodeAccessPermOpen = 'open',
   /** 部分开放 */
-  NodeAccessPermPartial = "partial",
+  NodeAccessPermPartial = 'partial',
   /** 完全禁止 */
-  NodeAccessPermClosed = "closed",
+  NodeAccessPermClosed = 'closed',
 }
 
 export enum ConstsCopySetting {
   /** 无限制 */
-  CopySettingNone = "",
+  CopySettingNone = '',
   /** 增加内容尾巴 */
-  CopySettingAppend = "append",
+  CopySettingAppend = 'append',
   /** 禁止复制内容 */
-  CopySettingDisabled = "disabled",
+  CopySettingDisabled = 'disabled',
 }
 
 export enum ConstsCaptchaStatus {
-  CaptchaStatusEnable = "enable",
-  CaptchaStatusDisable = "disable",
+  CaptchaStatusEnable = 'enable',
+  CaptchaStatusDisable = 'disable',
 }
 
 export enum ConstsAuthType {
   /** 无认证 */
-  AuthTypeNull = "",
+  AuthTypeNull = '',
   /** 简单口令 */
-  AuthTypeSimple = "simple",
+  AuthTypeSimple = 'simple',
   /** 企业认证 */
-  AuthTypeEnterprise = "enterprise",
+  AuthTypeEnterprise = 'enterprise',
 }
 
 export interface ConstsCaptchaSettings {
-  chat_status?: "" | "enable" | "disable";
-  comment_status?: "" | "enable" | "disable";
+  chat_status?: '' | 'enable' | 'disable';
+  comment_status?: '' | 'enable' | 'disable';
 }
 
 export interface ConstsRedeemCaptchaReq {
@@ -232,7 +232,7 @@ export interface DomainAppSettings {
   captcha_settings?: ConstsCaptchaSettings;
   /** catalog settings */
   catalog_settings?: DomainCatalogSettings;
-  copy_setting?: "" | "append" | "disabled";
+  copy_setting?: '' | 'append' | 'disabled';
   /** seo */
   desc?: string;
   dingtalk_bot_client_id?: string;
@@ -266,7 +266,7 @@ export interface DomainAppSettings {
   /** nav */
   title?: string;
   watermark_content?: string;
-  watermark_setting?: "" | "hidden" | "visible";
+  watermark_setting?: '' | 'hidden' | 'visible';
   /** webapp comment settings */
   web_app_comment_settings?: DomainWebAppCommentSettings;
   /** WebAppCustomStyle */
@@ -550,7 +550,7 @@ export interface DomainCreateModelReq {
   model: string;
   parameters?: DomainModelParam;
   provider: GithubComChaitinPandaWikiDomainModelProvider;
-  type: "chat" | "embedding" | "rerank" | "analysis";
+  type: 'chat' | 'embedding' | 'rerank' | 'analysis';
 }
 
 export interface DomainCreateNodeReq {
@@ -631,7 +631,7 @@ export interface DomainGetProviderModelListReq {
   api_key?: string;
   base_url: string;
   provider: string;
-  type: "chat" | "embedding" | "rerank" | "analysis";
+  type: 'chat' | 'embedding' | 'rerank' | 'analysis';
 }
 
 export interface DomainGetProviderModelListResp {
@@ -740,7 +740,7 @@ export interface DomainMoveNodeReq {
 }
 
 export interface DomainNodeActionReq {
-  action: "delete";
+  action: 'delete';
   ids: string[];
   kb_id: string;
 }
@@ -773,8 +773,6 @@ export interface DomainNodeListItemResp {
 }
 
 export interface DomainNodeMeta {
-  /** normal / wide / full */
-  doc_width?: string;
   emoji?: string;
   summary?: string;
 }
@@ -1064,6 +1062,7 @@ export interface DomainTextReq {
 
 export interface DomainThemeAndStyle {
   bg_image?: string;
+  doc_width?: string;
 }
 
 export interface DomainUpdateAppReq {
@@ -1089,12 +1088,11 @@ export interface DomainUpdateModelReq {
   model: string;
   parameters?: DomainModelParam;
   provider: GithubComChaitinPandaWikiDomainModelProvider;
-  type: "chat" | "embedding" | "rerank" | "analysis";
+  type: 'chat' | 'embedding' | 'rerank' | 'analysis';
 }
 
 export interface DomainUpdateNodeReq {
   content?: string;
-  doc_width?: string;
   emoji?: string;
   id: string;
   kb_id: string;
@@ -1153,7 +1151,7 @@ export interface GithubComChaitinPandaWikiDomainCheckModelReq {
   base_url: string;
   model: string;
   provider: GithubComChaitinPandaWikiDomainModelProvider;
-  type: "chat" | "embedding" | "rerank" | "analysis";
+  type: 'chat' | 'embedding' | 'rerank' | 'analysis';
 }
 
 export interface GithubComChaitinPandaWikiDomainCheckModelResp {
@@ -1232,7 +1230,7 @@ export interface V1CreateUserReq {
   account: string;
   /** @minLength 8 */
   password: string;
-  role: "admin" | "user";
+  role: 'admin' | 'user';
 }
 
 export interface V1CreateUserResp {
@@ -1245,7 +1243,7 @@ export interface V1DeleteUserReq {
 
 export interface V1KBUserInviteReq {
   kb_id: string;
-  perm: "full_control" | "doc_manage" | "data_operate";
+  perm: 'full_control' | 'doc_manage' | 'data_operate';
   user_id: string;
 }
 
@@ -1258,7 +1256,7 @@ export interface V1KBUserListItemResp {
 
 export interface V1KBUserUpdateReq {
   kb_id: string;
-  perm: "full_control" | "doc_manage" | "data_operate";
+  perm: 'full_control' | 'doc_manage' | 'data_operate';
   user_id: string;
 }
 

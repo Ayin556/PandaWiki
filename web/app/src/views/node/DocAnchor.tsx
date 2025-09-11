@@ -74,45 +74,49 @@ const DocAnchor = ({ headings }: DocAnchorProps) => {
 
   // 递归渲染树结构的函数
   const renderTreeHeadings = (items: TreeHeading[]): React.ReactNode => {
-    return items.map(heading => {
-      const levelIndex = levels.indexOf(heading.level);
+    return (
+      <>
+        {items.map(heading => {
+          const levelIndex = levels.indexOf(heading.level);
 
-      return (
-        <Stack gap={'8px'} key={heading.id}>
-          <Box
-            sx={{
-              cursor: 'pointer',
-              ...HeadingSx[levelIndex],
-              color:
-                activeHeading?.id === heading.id
-                  ? 'primary.main'
-                  : HeadingSx[levelIndex].color,
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              ':hover': {
-                color: 'primary.main',
-              },
-            }}
-            onClick={e => handleClick(e, heading)}
-          >
-            {heading.textContent}
-          </Box>
-          {heading.children.length > 0 && (
-            <Stack
-              gap={'8px'}
-              sx={{
-                borderLeft: '1px solid',
-                borderColor: 'rgba(115,112,118,0.05)',
-                pl: 3,
-              }}
-            >
-              {renderTreeHeadings(heading.children)}
+          return (
+            <Stack gap={'8px'} key={heading.id}>
+              <Box
+                sx={{
+                  cursor: 'pointer',
+                  ...HeadingSx[levelIndex],
+                  color:
+                    activeHeading?.id === heading.id
+                      ? 'primary.main'
+                      : HeadingSx[levelIndex].color,
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  ':hover': {
+                    color: 'primary.main',
+                  },
+                }}
+                onClick={e => handleClick(e, heading)}
+              >
+                {heading.textContent}
+              </Box>
+              {heading.children.length > 0 && (
+                <Stack
+                  gap={'8px'}
+                  sx={{
+                    borderLeft: '1px solid',
+                    borderColor: 'rgba(115,112,118,0.05)',
+                    pl: 3,
+                  }}
+                >
+                  {renderTreeHeadings(heading.children) as any}
+                </Stack>
+              )}
             </Stack>
-          )}
-        </Stack>
-      );
-    });
+          );
+        })}
+      </>
+    );
   };
 
   const handleClick = (
@@ -182,7 +186,7 @@ const DocAnchor = ({ headings }: DocAnchorProps) => {
           gap={'8px'}
           sx={{
             pr: 3,
-            height: 'calc(100vh - 194px)',
+            maxHeight: 'calc(100vh - 194px)',
             overflowY: 'auto',
             overflowX: 'hidden',
             fontSize: 14,
@@ -194,7 +198,7 @@ const DocAnchor = ({ headings }: DocAnchorProps) => {
             scrollbarWidth: 'none',
           }}
         >
-          {renderTreeHeadings(treeHeadings)}
+          {renderTreeHeadings(treeHeadings) as any}
         </Stack>
       )}
     </Box>

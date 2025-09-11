@@ -4,6 +4,7 @@ import { FooterSetting } from '@/assets/type';
 import { FooterProvider } from '@/components/footer';
 import Header from '@/components/header';
 import { useStore } from '@/provider';
+import Catalog from '@/views/node/Catalog';
 import CatalogH5 from '@/views/node/CatalogH5';
 import { Box, Stack } from '@mui/material';
 
@@ -12,6 +13,10 @@ const PCLayout = ({ children }: { children: React.ReactNode }) => {
     <Stack sx={{ height: '100vh', overflow: 'auto' }} id='scroll-container'>
       <Header />
       <Stack
+        direction='row'
+        justifyContent='center'
+        alignItems='flex-start'
+        gap={'96px'}
         sx={{
           position: 'relative',
           zIndex: 1,
@@ -20,6 +25,7 @@ const PCLayout = ({ children }: { children: React.ReactNode }) => {
           px: 5,
         }}
       >
+        <Catalog />
         {children}
       </Stack>
       <FooterProvider />

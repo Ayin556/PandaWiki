@@ -326,6 +326,7 @@ export type CustomCodeSetting = {
 
 export type ThemeAndStyleSetting = {
   bg_image: string;
+  doc_width?: string;
 };
 
 export type ThemeMode = {

@@ -7,8 +7,7 @@ import {
   getApiProV1NodeReleaseList,
 } from '@/request/pro';
 import { useAppSelector } from '@/store';
-import light from '@/themes/light';
-import componentStyleOverrides from '@/themes/override';
+import { Icon } from '@ctzhian/ui';
 import {
   alpha,
   Box,
@@ -17,9 +16,8 @@ import {
   Stack,
   useTheme,
 } from '@mui/material';
-import { Editor, EditorThemeProvider, useTiptap } from '@yu-cq/tiptap';
-import { Icon } from '@ctzhian/ui';
-import { useEffect, useMemo, useState } from 'react';
+import { Editor, useTiptap } from '@yu-cq/tiptap';
+import { useEffect, useState } from 'react';
 import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
 import { WrapContext } from '..';
 import VersionRollback from '../../component/VersionRollback';
@@ -28,7 +26,8 @@ const History = () => {
   const { id = '' } = useParams();
   const navigate = useNavigate();
   const { kb_id } = useAppSelector(state => state.config);
-  const { catalogOpen, setCatalogOpen } = useOutletContext<WrapContext>();
+  const { catalogOpen, setCatalogOpen, docWidth } =
+    useOutletContext<WrapContext>();
   const theme = useTheme();
 
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -56,10 +55,6 @@ const History = () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   };
-
-  const docWidth = useMemo(() => {
-    return curNode?.meta?.doc_width || 'full';
-  }, [curNode]);
 
   useEffect(() => {
     if (curVersion) {

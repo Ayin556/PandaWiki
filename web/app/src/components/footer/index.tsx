@@ -1,14 +1,14 @@
 'use client';
 
-import { KBDetail } from '@/assets/type';
 import logo from '@/assets/images/logo.png';
+import { KBDetail } from '@/assets/type';
+import { useStore } from '@/provider';
 import { Box, Divider, Stack } from '@mui/material';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useStore } from '@/provider';
-import { IconWechat, IconPhone } from '../icons';
-import Overlay from './Overlay';
 import { useState } from 'react';
+import { IconPhone, IconWechat } from '../icons';
+import Overlay from './Overlay';
 
 const Footer = ({
   showBrand = true,
@@ -409,7 +409,7 @@ const Footer = ({
           py={
             customStyle?.footer_show_intro
               ? 6
-              : (footerSetting?.brand_groups.length || 0) > 0
+              : (footerSetting?.brand_groups?.length || 0) > 0
                 ? 6
                 : 0
           }
