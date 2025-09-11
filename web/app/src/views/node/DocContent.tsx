@@ -12,11 +12,10 @@ import {
   getShareV1CommentList,
   postShareV1Comment,
 } from '@/request/ShareComment';
-import dynamic from 'next/dynamic';
 import { base64ToFile } from '@/utils';
+import { message } from '@ctzhian/ui';
 import { Box, Button, Divider, Stack, TextField, alpha } from '@mui/material';
 import { Editor, UseTiptapReturn } from '@yu-cq/tiptap';
-import { message } from '@ctzhian/ui';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -40,7 +39,14 @@ const DocContent = ({
   commentList?: any[];
   characterCount?: number;
 }) => {
-  const { mobile = false, authInfo, kbDetail, catalogWidth } = useStore();
+  const {
+    mobile = false,
+    authInfo,
+    kbDetail,
+    catalogWidth,
+    catalogShow,
+  } = useStore();
+  console.log(catalogWidth);
   const params = useParams() || {};
   const [commentLoading, setCommentLoading] = useState(false);
   const docId = params.id as string;
@@ -191,7 +197,7 @@ const DocContent = ({
       sx={theme => ({
         width:
           docWidth === 'full'
-            ? 'calc(100% - 320px)'
+            ? 'calc(100% - 424px)'
             : DocWidth[docWidth as keyof typeof DocWidth].value,
         wordBreak: 'break-all',
         color: 'text.primary',
@@ -209,7 +215,7 @@ const DocContent = ({
           }),
         ...(docWidth !== 'full' &&
           !mobile && {
-            maxWidth: `calc(100% - ${catalogWidth}px - 265px - 160px)`,
+            maxWidth: `calc(100% - ${catalogWidth}px - 265px - 192px)`,
           }),
         ...(mobile && {
           mx: 'auto',
@@ -294,7 +300,8 @@ const DocContent = ({
           '.tiptap.ProseMirror': {
             color: 'text.primary',
             '.tableWrapper': {
-              width: '100%',
+              transition: 'width 0.3s ease-in-out',
+              width: `calc(100vw - 537px - ${catalogShow ? catalogWidth : 0}px)`,
               overflowX: 'auto',
             },
           },

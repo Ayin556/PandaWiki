@@ -5,10 +5,9 @@ import useCopy from '@/hooks/useCopy';
 import { useStore } from '@/provider';
 import { ConstsCopySetting } from '@/request/types';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { Fab, Stack, Zoom } from '@mui/material';
+import { Fab, Zoom } from '@mui/material';
 import { TocList, useTiptap } from '@yu-cq/tiptap';
 import { useEffect, useMemo, useState } from 'react';
-import Catalog from './Catalog';
 import DocAnchor from './DocAnchor';
 import DocContent from './DocContent';
 
@@ -30,8 +29,8 @@ const Doc = ({ node }: { node?: NodeDetail }) => {
   });
 
   const docWidth = useMemo(() => {
-    return node?.meta?.doc_width || 'full';
-  }, [node]);
+    return kbDetail?.settings?.theme_and_style?.doc_width || 'full';
+  }, [kbDetail]);
 
   const [showScrollTop, setShowScrollTop] = useState(false);
 
@@ -69,14 +68,7 @@ const Doc = ({ node }: { node?: NodeDetail }) => {
   }, [node]);
 
   return (
-    <Stack
-      direction='row'
-      justifyContent='center'
-      alignItems='flex-start'
-      gap={'96px'}
-    >
-      {!mobile && <Catalog docWidth={docWidth} />}
-
+    <>
       <DocContent
         info={node}
         docWidth={docWidth}
@@ -102,7 +94,7 @@ const Doc = ({ node }: { node?: NodeDetail }) => {
           <KeyboardArrowUpIcon sx={{ fontSize: 24 }} />
         </Fab>
       </Zoom>
-    </Stack>
+    </>
   );
 };
 

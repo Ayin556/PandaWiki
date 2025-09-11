@@ -9,7 +9,7 @@ import { useParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import CatalogFolder from './CatalogFolder';
 
-const Catalog = ({ docWidth }: { docWidth?: string }) => {
+const Catalog = () => {
   const params = useParams() || {};
   const id = params.id as string;
   const {
@@ -27,6 +27,7 @@ const Catalog = ({ docWidth }: { docWidth?: string }) => {
 
   const catalogSetting = kbDetail?.settings?.catalog_settings;
   const catalogFolderExpand = catalogSetting?.catalog_folder !== 2;
+  const docWidth = kbDetail?.settings?.theme_and_style?.doc_width || 'full';
 
   const tree = useMemo(() => {
     const { tree: originalTree } = addExpandState(
@@ -99,7 +100,7 @@ const Catalog = ({ docWidth }: { docWidth?: string }) => {
         </Stack>
         <Box
           sx={{
-            height: 'calc(100vh - 194px)',
+            maxHeight: 'calc(100vh - 194px)',
             overflowY: 'auto',
             overflowX: 'hidden',
             width: '100%',

@@ -47,6 +47,7 @@ export interface CatalogSetting {
 
 export interface ThemeAndStyleSetting {
   bg_image: string;
+  doc_width: string;
 }
 
 export interface KBDetail {
