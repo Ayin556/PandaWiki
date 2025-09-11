@@ -99,9 +99,8 @@ type NodeGroupDetail struct {
 }
 
 type NodeMeta struct {
-	Summary  string `json:"summary"`
-	Emoji    string `json:"emoji"`
-	DocWidth string `json:"doc_width"` // normal / wide / full
+	Summary string `json:"summary"`
+	Emoji   string `json:"emoji"`
 }
 
 func (d *NodeMeta) Value() (driver.Value, error) {
@@ -214,7 +213,6 @@ type UpdateNodeReq struct {
 	Emoji    *string  `json:"emoji"`
 	Summary  *string  `json:"summary"`
 	Position *float64 `json:"position"`
-	DocWidth *string  `json:"doc_width"`
 }
 
 type ShareNodeListItemResp struct {

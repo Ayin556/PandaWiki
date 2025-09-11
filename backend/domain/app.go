@@ -181,7 +181,8 @@ type AIFeedbackSettings struct {
 }
 
 type ThemeAndStyle struct {
-	BGImage string `json:"bg_image,omitempty"`
+	BGImage  string `json:"bg_image,omitempty"`
+	DocWidth string `json:"doc_width,omitempty"`
 }
 
 type CatalogSettings struct {
