@@ -29,21 +29,21 @@ export enum ConstsUserKBPermission {
 }
 
 export enum ConstsSourceType {
-  SourceTypeDingTalk = "dingtalk",
-  SourceTypeFeishu = "feishu",
-  SourceTypeWeCom = "wecom",
-  SourceTypeOAuth = "oauth",
-  SourceTypeGitHub = "github",
-  SourceTypeCAS = "cas",
-  SourceTypeLDAP = "ldap",
-  SourceTypeWidget = "widget",
-  SourceTypeDingtalkBot = "dingtalk_bot",
-  SourceTypeFeishuBot = "feishu_bot",
-  SourceTypeWechatBot = "wechat_bot",
-  SourceTypeWechatServiceBot = "wechat_service_bot",
-  SourceTypeDiscordBot = "discord_bot",
-  SourceTypeWechatOfficialAccount = "wechat_official_account",
-  SourceTypeOpenAIAPI = "openai_api",
+  SourceTypeDingTalk = 'dingtalk',
+  SourceTypeFeishu = 'feishu',
+  SourceTypeWeCom = 'wecom',
+  SourceTypeOAuth = 'oauth',
+  SourceTypeGitHub = 'github',
+  SourceTypeCAS = 'cas',
+  SourceTypeLDAP = 'ldap',
+  SourceTypeWidget = 'widget',
+  SourceTypeDingtalkBot = 'dingtalk_bot',
+  SourceTypeFeishuBot = 'feishu_bot',
+  SourceTypeWechatBot = 'wechat_bot',
+  SourceTypeWechatServiceBot = 'wechat_service_bot',
+  SourceTypeDiscordBot = 'discord_bot',
+  SourceTypeWechatOfficialAccount = 'wechat_official_account',
+  SourceTypeOpenAIAPI = 'openai_api',
 }
 
 /** @format int32 */
@@ -447,21 +447,21 @@ export interface DeleteApiProV1AuthDeleteParams {
 export interface GetApiProV1AuthGetParams {
   kb_id?: string;
   source_type?:
-  | "dingtalk"
-  | "feishu"
-  | "wecom"
-  | "oauth"
-  | "github"
-  | "cas"
-  | "ldap"
-  | "widget"
-  | "dingtalk_bot"
-  | "feishu_bot"
-  | "wechat_bot"
-  | "wechat_service_bot"
-  | "discord_bot"
-  | "wechat_official_account"
-  | "openai_api";
+    | 'dingtalk'
+    | 'feishu'
+    | 'wecom'
+    | 'oauth'
+    | 'github'
+    | 'cas'
+    | 'ldap'
+    | 'widget'
+    | 'dingtalk_bot'
+    | 'feishu_bot'
+    | 'wechat_bot'
+    | 'wechat_service_bot'
+    | 'discord_bot'
+    | 'wechat_official_account'
+    | 'openai_api';
 }
 
 export interface DeleteApiProV1AuthGroupDeleteParams {

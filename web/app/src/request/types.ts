@@ -46,10 +46,10 @@ export enum DomainNodeStatus {
 }
 
 export enum DomainModelType {
-  ModelTypeChat = "chat",
-  ModelTypeEmbedding = "embedding",
-  ModelTypeRerank = "rerank",
-  ModelTypeAnalysis = "analysis",
+  ModelTypeChat = 'chat',
+  ModelTypeEmbedding = 'embedding',
+  ModelTypeRerank = 'rerank',
+  ModelTypeAnalysis = 'analysis',
 }
 
 export enum DomainMessageFrom {
@@ -112,21 +112,21 @@ export enum ConstsStatDay {
 }
 
 export enum ConstsSourceType {
-  SourceTypeDingTalk = "dingtalk",
-  SourceTypeFeishu = "feishu",
-  SourceTypeWeCom = "wecom",
-  SourceTypeOAuth = "oauth",
-  SourceTypeGitHub = "github",
-  SourceTypeCAS = "cas",
-  SourceTypeLDAP = "ldap",
-  SourceTypeWidget = "widget",
-  SourceTypeDingtalkBot = "dingtalk_bot",
-  SourceTypeFeishuBot = "feishu_bot",
-  SourceTypeWechatBot = "wechat_bot",
-  SourceTypeWechatServiceBot = "wechat_service_bot",
-  SourceTypeDiscordBot = "discord_bot",
-  SourceTypeWechatOfficialAccount = "wechat_official_account",
-  SourceTypeOpenAIAPI = "openai_api",
+  SourceTypeDingTalk = 'dingtalk',
+  SourceTypeFeishu = 'feishu',
+  SourceTypeWeCom = 'wecom',
+  SourceTypeOAuth = 'oauth',
+  SourceTypeGitHub = 'github',
+  SourceTypeCAS = 'cas',
+  SourceTypeLDAP = 'ldap',
+  SourceTypeWidget = 'widget',
+  SourceTypeDingtalkBot = 'dingtalk_bot',
+  SourceTypeFeishuBot = 'feishu_bot',
+  SourceTypeWechatBot = 'wechat_bot',
+  SourceTypeWechatServiceBot = 'wechat_service_bot',
+  SourceTypeDiscordBot = 'discord_bot',
+  SourceTypeWechatOfficialAccount = 'wechat_official_account',
+  SourceTypeOpenAIAPI = 'openai_api',
 }
 
 export enum ConstsNodePermName {
@@ -550,7 +550,7 @@ export interface DomainCreateModelReq {
   model: string;
   parameters?: DomainModelParam;
   provider: GithubComChaitinPandaWikiDomainModelProvider;
-  type: "chat" | "embedding" | "rerank" | "analysis";
+  type: 'chat' | 'embedding' | 'rerank' | 'analysis';
 }
 
 export interface DomainCreateNodeReq {
@@ -631,7 +631,7 @@ export interface DomainGetProviderModelListReq {
   api_key?: string;
   base_url: string;
   provider: string;
-  type: "chat" | "embedding" | "rerank" | "analysis";
+  type: 'chat' | 'embedding' | 'rerank' | 'analysis';
 }
 
 export interface DomainGetProviderModelListResp {
@@ -1088,7 +1088,7 @@ export interface DomainUpdateModelReq {
   model: string;
   parameters?: DomainModelParam;
   provider: GithubComChaitinPandaWikiDomainModelProvider;
-  type: "chat" | "embedding" | "rerank" | "analysis";
+  type: 'chat' | 'embedding' | 'rerank' | 'analysis';
 }
 
 export interface DomainUpdateNodeReq {
@@ -1151,7 +1151,7 @@ export interface GithubComChaitinPandaWikiDomainCheckModelReq {
   base_url: string;
   model: string;
   provider: GithubComChaitinPandaWikiDomainModelProvider;
-  type: "chat" | "embedding" | "rerank" | "analysis";
+  type: 'chat' | 'embedding' | 'rerank' | 'analysis';
 }
 
 export interface GithubComChaitinPandaWikiDomainCheckModelResp {

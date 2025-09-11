@@ -46,30 +46,6 @@ export const postShareV1ChatCompletions = (
   });
 
 /**
- * @description OpenAI API compatible chat completions endpoint
- *
- * @tags share_chat
- * @name PostShareV1ChatCompletions
- * @summary ChatCompletions
- * @request POST:/share/v1/chat/completions
- * @response `200` `DomainOpenAICompletionsResponse` OK
- * @response `400` `DomainOpenAIErrorResponse` Bad Request
- */
-
-export const postShareV1ChatCompletions = (
-  request: DomainOpenAICompletionsRequest,
-  params: RequestParams = {},
-) =>
-  httpRequest<DomainOpenAICompletionsResponse>({
-    path: `/share/v1/chat/completions`,
-    method: "POST",
-    body: request,
-    type: ContentType.Json,
-    format: "json",
-    ...params,
-  });
-
-/**
  * @description Process user feedback for chat conversations
  *
  * @tags share_chat
