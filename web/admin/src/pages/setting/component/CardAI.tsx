@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { SettingCard, SettingCardItem, FormItem } from './Common';
 import { Controller, useForm } from 'react-hook-form';
 import { useAppSelector } from '@/store';
-import { Message } from 'ct-mui';
+import { message } from '@ctzhian/ui';
 
 interface CardAIProps {
   kb: DomainKnowledgeBaseDetail;
@@ -28,7 +28,7 @@ const CardAI = ({ kb }: CardAIProps) => {
       content: data.content,
     });
 
-    Message.success('保存成功');
+    message.success('保存成功');
     setIsEdit(false);
   });
 

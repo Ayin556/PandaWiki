@@ -1,6 +1,6 @@
 import Logo from '@/assets/images/logo.png';
 import { Avatar as MuiAvatar, SxProps } from '@mui/material';
-import { Icon } from 'ct-mui';
+import { Icon } from '@ctzhian/ui';
 import { ReactNode } from 'react';
 
 interface AvatarProps {

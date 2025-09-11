@@ -1,6 +1,6 @@
 import { Box, Skeleton, Stack } from '@mui/material';
 import { useTiptap } from '@yu-cq/tiptap';
-import { Icon } from 'ct-mui';
+import { Icon } from '@ctzhian/ui';
 import { useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { WrapContext } from '..';
@@ -42,9 +42,9 @@ const LoadingEditorWrap = () => {
           isSyncing={isSyncing}
           collaborativeUsers={collaborativeUsers}
           detail={{}}
-          updateDetail={() => { }}
-          handleSave={() => { }}
-          handleExport={() => { }}
+          updateDetail={() => {}}
+          handleSave={() => {}}
+          handleExport={() => {}}
         />
         <Toolbar editorRef={editorRef} />
       </Box>
@@ -64,11 +64,11 @@ const LoadingEditorWrap = () => {
           </Stack>
           <Stack direction={'row'} alignItems={'center'} gap={2} sx={{ mb: 4 }}>
             <Stack direction={'row'} alignItems={'center'} gap={0.5}>
-              <Icon type='icon-a-shijian2' sx={{ color: 'text.auxiliary' }} />
+              <Icon type='icon-a-shijian2' sx={{ color: 'text.tertiary' }} />
               <Skeleton variant='text' width={130} height={24} />
             </Stack>
             <Stack direction={'row'} alignItems={'center'} gap={0.5}>
-              <Icon type='icon-ziti' sx={{ color: 'text.auxiliary' }} />
+              <Icon type='icon-ziti' sx={{ color: 'text.tertiary' }} />
               <Skeleton variant='text' width={80} height={24} />
             </Stack>
           </Stack>

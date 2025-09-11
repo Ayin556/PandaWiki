@@ -1,6 +1,6 @@
 import { CustomCodeSetting } from '@/api';
 import { TextField } from '@mui/material';
-import { Message } from 'ct-mui';
+import { message } from '@ctzhian/ui';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { DomainKnowledgeBaseDetail } from '@/request/types';
@@ -35,7 +35,7 @@ const CardWebCustomCode = ({ id, data, refresh }: CardWebCustomCodeProps) => {
       // @ts-expect-error 类型不匹配
       { kb_id, settings: { ...data.settings, ...value } },
     ).then(() => {
-      Message.success('保存成功');
+      message.success('保存成功');
       refresh(value);
       setIsEdit(false);
     });

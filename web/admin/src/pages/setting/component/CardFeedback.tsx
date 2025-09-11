@@ -18,7 +18,7 @@ import {
 import { Controller, useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
-import { Message } from 'ct-mui';
+import { message } from '@ctzhian/ui';
 import { FormItem, SettingCard, SettingCardItem } from './Common';
 import { getApiV1AppDetail } from '@/request/App';
 
@@ -74,7 +74,7 @@ const DocumentComments = ({
         },
       },
     ).then(() => {
-      Message.success('保存成功');
+      message.success('保存成功');
       setIsEdit(false);
       refresh();
     });
@@ -172,7 +172,7 @@ const AIQuestion = ({
         },
       },
     ).then(() => {
-      Message.success('保存成功');
+      message.success('保存成功');
       setIsEdit(false);
       refresh();
     });
@@ -283,7 +283,7 @@ const DocumentCorrection = ({
         },
       },
     ).then(() => {
-      Message.success('保存成功');
+      message.success('保存成功');
       setIsEdit(false);
       refresh();
     });

@@ -1,13 +1,17 @@
 import { useAppSelector } from '@/store';
-import { Box, Stack, Typography } from '@mui/material';
-import { ThemeProvider } from 'ct-mui';
+import {
+  Box,
+  Stack,
+  Typography,
+  useColorScheme,
+  createTheme,
+} from '@mui/material';
+import { ThemeProvider } from '@ctzhian/ui';
 
 import { Dispatch, SetStateAction, useMemo, useState, useEffect } from 'react';
 import { AppSetting } from '@/api';
 import Header from './Header';
-import componentStyleOverrides from '@/themes/override';
-import light from '../theme/light';
-import dark from '../theme/dark';
+import { themeOptions } from '@/themes';
 import { Component } from '..';
 
 interface ShowContentProps {
@@ -24,13 +28,10 @@ const ShowContent = ({
   scale,
 }: ShowContentProps) => {
   const { appPreviewData } = useAppSelector(state => state.config);
-  const [key, setKey] = useState(0); // 用于强制重新渲染ThemeProvider的key
-
-  // 监听主题模式变化，强制重新渲染ThemeProvider
+  const { mode, setMode } = useColorScheme();
   useEffect(() => {
-    setKey(prev => prev + 1);
+    setMode(appPreviewData?.settings?.theme_mode as 'light' | 'dark');
   }, [appPreviewData?.settings?.theme_mode]);
-
   // @ts-expect-error 类型错误
   const settings: Partial<AppSetting> = useMemo(() => {
     return (
@@ -92,61 +93,71 @@ const ShowContent = ({
   };
 
   return (
-    <ThemeProvider
-      key={key} // 强制刷新主题
-      colors={{ light, dark }}
-      mode={appPreviewData?.settings!.theme_mode || 'light'}
-      theme={{
-        components: componentStyleOverrides,
+    <Stack
+      sx={{
+        flex: 1,
+        flexShrink: 0,
+        height: '95%',
+        marginTop: '20px',
+        width: '100%',
+        overflowX: 'auto',
+        overflowY: 'auto',
+        borderRight: '1px solid #ECEEF1',
+        borderLeft: '1px solid #ECEEF1',
+        borderTop: '1px solid #ECEEF1',
+        '&::-webkit-scrollbar': {
+          height: '8px', // 滚动条高度
+        },
+        '&::-webkit-scrollbar-thumb': {
+          background: '#888', // 滑块颜色
+          borderRadius: '4px',
+        },
       }}
     >
       <Stack
         sx={{
-          flex: 1,
-          flexShrink: 0,
-          height: '95%',
-          marginTop: '20px',
-          width: '100%',
-          overflowX: 'auto',
+          minWidth: renderMode === 'pc' ? `1200px` : '375px',
+          width: renderMode === 'pc' ? `100%` : '375px',
+          margin: '0 auto',
+          boxShadow:
+            renderMode === 'pc' ? null : '0 10px 15px -3px rgb(0 0 0 / 0.1)',
+          height: '100%',
+          overflowX: renderMode === 'pc' ? 'auto' : 'hidden',
           overflowY: 'auto',
-          borderRight: '1px solid #ECEEF1',
-          borderLeft: '1px solid #ECEEF1',
-          borderTop: '1px solid #ECEEF1',
-          '&::-webkit-scrollbar': {
-            height: '8px', // 滚动条高度
-          },
-          '&::-webkit-scrollbar-thumb': {
-            background: '#888', // 滑块颜色
-            borderRadius: '4px',
-          },
+          position: 'relative',
+          bgcolor: 'background.default',
+          transform: `scale(${scale})`,
+          transformOrigin: 'left top',
+          transition: 'transform 0.2s ease',
         }}
       >
-        <Stack
-          sx={{
-            minWidth: renderMode === 'pc' ? `1200px` : '375px',
-            width: renderMode === 'pc' ? `100%` : '375px',
-            margin: '0 auto',
-            boxShadow:
-              renderMode === 'pc' ? null : '0 10px 15px -3px rgb(0 0 0 / 0.1)',
-            height: '100%',
-            overflowX: renderMode === 'pc' ? 'auto' : 'hidden',
-            overflowY: 'auto',
-            position: 'relative',
-            bgcolor: 'background.default',
-            transform: `scale(${scale})`,
-            transformOrigin: 'left top',
-            transition: 'transform 0.2s ease',
-          }}
-        >
-          {/* Header预览部分 */}
-          {renderHighlightedComponent(
-            'header',
-            <Header settings={settings} renderMode={renderMode} />,
-          )}
-        </Stack>
+        {/* Header预览部分 */}
+        {renderHighlightedComponent(
+          'header',
+          <Header settings={settings} renderMode={renderMode} />,
+        )}
       </Stack>
+    </Stack>
+  );
+};
+
+const ThemeWrapper = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <ThemeProvider
+      theme={createTheme(...(themeOptions as any))}
+      storageManager={null}
+    >
+      {children}
     </ThemeProvider>
   );
 };
 
-export default ShowContent;
+const Content = (props: ShowContentProps) => {
+  return (
+    <ThemeWrapper>
+      <ShowContent {...props} />
+    </ThemeWrapper>
+  );
+};
+
+export default Content;

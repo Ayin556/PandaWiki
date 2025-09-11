@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { Form, FormItem } from '@/pages/setting/component/Common';
-import { Modal, Icon, Message } from 'ct-mui';
+import { Modal, Icon, message } from '@ctzhian/ui';
 import { GithubComChaitinPandaWikiProApiAuthV1AuthGroupListItem } from '@/request/pro/types';
 import { DomainNodeListItemResp, DomainNodeType } from '@/request/types';
 import Card from '@/components/Card';
@@ -145,7 +145,7 @@ const DocPropertiesModal = ({
           })
         : undefined,
     ]).then(() => {
-      Message.success('编辑成功');
+      message.success('编辑成功');
       onOk();
     });
   });
@@ -228,7 +228,7 @@ const DocPropertiesModal = ({
             已选中
             <Box
               component={'span'}
-              sx={{ fontFamily: 'Gbold', color: 'primary.main', px: 0.5 }}
+              sx={{ fontWeight: 700, color: 'primary.main', px: 0.5 }}
             >
               {
                 data.filter(
@@ -241,7 +241,7 @@ const DocPropertiesModal = ({
           <Card
             sx={{
               py: 1,
-              bgcolor: 'background.paper2',
+              bgcolor: 'background.paper3',
               '& .dndkit-drag-handle': {
                 top: '-2px !important',
               },

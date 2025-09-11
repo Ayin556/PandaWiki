@@ -17,7 +17,8 @@ import {
   Stack,
   useTheme,
 } from '@mui/material';
-import { Icon, MenuSelect } from 'ct-mui';
+import { Icon } from '@ctzhian/ui';
+import Cascader from '@/components/Cascader';
 import { getApiV1NodeList } from '@/request/Node';
 import { DomainNodeListItemResp } from '@/request/types';
 import { useCallback, useEffect, useState } from 'react';
@@ -274,7 +275,7 @@ const Content = () => {
           <Stack direction={'row'} alignItems={'center'} gap={2}>
             <DocSearch />
             <DocAdd refresh={getData} />
-            <MenuSelect
+            <Cascader
               list={[
                 {
                   key: 'batch',
@@ -344,6 +345,7 @@ const Content = () => {
                 <Stack direction={'row'} alignItems={'center'} gap={1}>
                   <Button
                     size='small'
+                    color='primary'
                     sx={{ minWidth: 0, p: 0 }}
                     onClick={() => {
                       setMoreSummaryOpen(true);
@@ -356,6 +358,7 @@ const Content = () => {
                   </Button>
                   <Button
                     size='small'
+                    color='primary'
                     sx={{ minWidth: 0, p: 0 }}
                     onClick={() => {
                       setMoveOpen(true);
@@ -368,6 +371,7 @@ const Content = () => {
                   </Button>
                   <Button
                     size='small'
+                    color='primary'
                     sx={{ minWidth: 0, p: 0 }}
                     onClick={() => {
                       setDeleteOpen(true);
@@ -380,6 +384,7 @@ const Content = () => {
                   </Button>
                   <Button
                     size='small'
+                    color='primary'
                     sx={{ minWidth: 0, p: 0 }}
                     onClick={() => {
                       setPropertiesOpen(true);

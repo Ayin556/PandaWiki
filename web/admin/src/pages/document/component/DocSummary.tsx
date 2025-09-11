@@ -6,7 +6,7 @@ import { convertToTree } from '@/utils/drag';
 import { filterEmptyFolders } from '@/utils/tree';
 import ErrorIcon from '@mui/icons-material/Error';
 import { Box, Stack } from '@mui/material';
-import { Message, Modal } from 'ct-mui';
+import { message, Modal } from '@ctzhian/ui';
 
 interface DocSummaryProps {
   open: boolean;
@@ -19,7 +19,7 @@ interface DocSummaryProps {
 const DocSummary = ({ open, kb_id, onClose, data }: DocSummaryProps) => {
   const submit = () => {
     postApiV1NodeSummary({ kb_id, ids: data.map(it => it.id!) }).then(() => {
-      Message.success('正在后台生成文档摘要');
+      message.success('正在后台生成文档摘要');
       onClose();
     });
   };
@@ -48,7 +48,7 @@ const DocSummary = ({ open, kb_id, onClose, data }: DocSummaryProps) => {
       <Card
         sx={{
           py: 1,
-          bgcolor: 'background.paper2',
+          bgcolor: 'background.paper3',
           '& .dndkit-drag-handle': {
             top: '-2px !important',
           },

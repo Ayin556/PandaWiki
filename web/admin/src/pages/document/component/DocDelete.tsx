@@ -6,7 +6,7 @@ import { useAppSelector } from '@/store';
 import { convertToTree } from '@/utils/drag';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { Stack } from '@mui/material';
-import { Message, Modal } from 'ct-mui';
+import { message, Modal } from '@ctzhian/ui';
 
 interface DocDeleteProps {
   open: boolean;
@@ -25,7 +25,7 @@ const DocDelete = ({ open, onClose, data, refresh }: DocDeleteProps) => {
       kb_id,
       action: 'delete',
     }).then(() => {
-      Message.success('删除成功');
+      message.success('删除成功');
       onClose();
       refresh?.();
     });
@@ -51,7 +51,7 @@ const DocDelete = ({ open, onClose, data, refresh }: DocDeleteProps) => {
       <Card
         sx={{
           py: 1,
-          bgcolor: 'background.paper2',
+          bgcolor: 'background.paper3',
           '& .dndkit-drag-handle': {
             top: '-2px !important',
           },

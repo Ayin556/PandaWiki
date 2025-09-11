@@ -40,7 +40,7 @@ import {
   Stack,
   TextField,
 } from '@mui/material';
-import { message } from 'ct-mui';
+import { message } from '@ctzhian/ui';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';

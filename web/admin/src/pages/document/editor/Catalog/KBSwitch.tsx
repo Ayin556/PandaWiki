@@ -1,5 +1,5 @@
 import { Stack } from '@mui/material';
-import { Icon } from 'ct-mui';
+import { Icon } from '@ctzhian/ui';
 
 const KBSwitch = () => {
   // const dispatch = useAppDispatch();
@@ -35,7 +35,7 @@ const KBSwitch = () => {
           width: 36,
           height: 36,
         }}
-      // onMouseEnter={handlePopoverOpen}
+        // onMouseEnter={handlePopoverOpen}
       >
         <Icon type='icon-zuzhi' sx={{ color: 'text.primary' }} />
       </Stack>

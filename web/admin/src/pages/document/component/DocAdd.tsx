@@ -1,7 +1,7 @@
 import { ImportDocType } from '@/api';
 import { addOpacityToColor } from '@/utils';
 import { Box, Button, Stack, useTheme } from '@mui/material';
-import { MenuSelect } from 'ct-mui';
+import Cascader from '@/components/Cascader';
 import { useState } from 'react';
 import DocAddByCustomText from './DocAddByCustomText';
 import ImportDoc from './ImportDoc';
@@ -125,7 +125,7 @@ const DocAdd = ({ refresh }: InputContentProps) => {
 
   return (
     <Box>
-      <MenuSelect
+      <Cascader
         list={Object.entries(ImportContentWays).map(([key, value]) => ({
           key,
           label: (

@@ -4,7 +4,7 @@ import Card from '@/components/Card';
 import { copyText, generatePassword } from '@/utils';
 import { CheckCircle } from '@mui/icons-material';
 import { Box, IconButton, Stack, TextField } from '@mui/material';
-import { Icon, Modal } from 'ct-mui';
+import { Icon, Modal } from '@ctzhian/ui';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
@@ -82,14 +82,14 @@ const MemberUpdate = ({ user, refresh, type }: UpdateMemberProps) => {
         okButtonProps={{ sx: { minWidth: '120px' } }}
         onOk={copyUserInfo}
       >
-        <Card sx={{ p: 2, fontSize: 14, bgcolor: 'background.paper2' }}>
+        <Card sx={{ p: 2, fontSize: 14, bgcolor: 'background.paper3' }}>
           <Stack direction={'row'}>
             <Box sx={{ width: 80 }}>用户名</Box>
-            <Box sx={{ fontFamily: 'Gbold' }}>{user.account}</Box>
+            <Box sx={{ fontWeight: 700 }}>{user.account}</Box>
           </Stack>
           <Stack direction={'row'} sx={{ mt: 1 }}>
             <Box sx={{ width: 80 }}>{'新密码'}</Box>
-            <Box sx={{ fontFamily: 'Gbold' }}>{password}</Box>
+            <Box sx={{ fontWeight: 700 }}>{password}</Box>
           </Stack>
         </Card>
       </Modal>
@@ -111,11 +111,11 @@ const MemberUpdate = ({ user, refresh, type }: UpdateMemberProps) => {
         <Box
           sx={{
             lineHeight: '36px',
-            bgcolor: 'background.paper2',
+            bgcolor: 'background.paper3',
             px: '14px',
             borderRadius: '10px',
             fontSize: 14,
-            fontFamily: 'Gbold',
+            fontWeight: 700,
             cursor: 'not-allowed',
           }}
         >

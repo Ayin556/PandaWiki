@@ -1,7 +1,7 @@
 import { useStore } from '@/provider';
 import { addOpacityToColor, copyText } from '@/utils';
 import { Box, Dialog, IconButton, useTheme } from '@mui/material';
-import { Icon } from 'ct-mui';
+import { Icon } from '@ctzhian/ui';
 import 'katex/dist/katex.min.css';
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
@@ -51,7 +51,7 @@ const MarkDown = ({ loading = false, content }: MarkDownProps) => {
           color: 'text.tertiary',
           marginBottom: '40px',
           lineHeight: '20px',
-          bgcolor: 'background.paper2',
+          bgcolor: 'background.paper3',
           padding: '16px',
           cursor: 'pointer',
           borderRadius: '10px',
@@ -134,7 +134,7 @@ const MarkDown = ({ loading = false, content }: MarkDownProps) => {
                     size='small'
                     onClick={() => setShowThink(!showThink)}
                     sx={{
-                      bgcolor: 'background.paper2',
+                      bgcolor: 'background.paper3',
                       ':hover': {
                         bgcolor: addOpacityToColor(
                           theme.palette.primary.main,

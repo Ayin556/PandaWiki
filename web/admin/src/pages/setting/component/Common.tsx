@@ -120,7 +120,7 @@ export const FormItem = ({
 const StyleSettingCardTitle = styled('div')(({ theme }) => ({
   fontWeight: 'bold',
   padding: theme.spacing(2, 1.5),
-  backgroundColor: theme.palette.background.paper2,
+  backgroundColor: theme.palette.background.paper3,
 }));
 
 export const SettingCard = ({

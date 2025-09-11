@@ -36,7 +36,7 @@ const HostReferer = ({ tab }: { tab: ActiveTab }) => {
         sx={{ mb: 2 }}
       >
         <Box sx={{ fontSize: 16, fontWeight: 'bold' }}>来源域名</Box>
-        <Box sx={{ fontSize: 12, color: 'text.auxiliary' }}>
+        <Box sx={{ fontSize: 12, color: 'text.tertiary' }}>
           {TimeList.find(it => it.value === tab)?.label}
         </Box>
       </Stack>
@@ -50,14 +50,14 @@ const HostReferer = ({ tab }: { tab: ActiveTab }) => {
                 justifyContent={'space-between'}
               >
                 <Box>{it.referer_host || '-'}</Box>
-                <Box sx={{ fontFamily: 'Gbold' }}>{it.count}</Box>
+                <Box sx={{ fontWeight: 700 }}>{it.count}</Box>
               </Stack>
               <Box
                 sx={{
                   height: 6,
                   mt: '6px',
                   borderRadius: '3px',
-                  bgcolor: 'background.paper2',
+                  bgcolor: 'background.paper3',
                 }}
               >
                 <Box

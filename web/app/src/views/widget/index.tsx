@@ -5,7 +5,7 @@ import { IconFile, IconFolder, IconLogo } from '@/components/icons';
 import { useStore } from '@/provider';
 import SSEClient from '@/utils/fetch';
 import { Box, Stack, useMediaQuery } from '@mui/material';
-import { Ellipsis, message } from 'ct-mui';
+import { Ellipsis, message } from '@ctzhian/ui';
 import dayjs from 'dayjs';
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -284,7 +284,7 @@ const Widget = () => {
                     cursor: 'pointer',
                     bgcolor:
                       themeMode === 'dark'
-                        ? 'background.paper2'
+                        ? 'background.paper3'
                         : 'background.default',
                     '&:hover': {
                       borderColor: 'primary.main',

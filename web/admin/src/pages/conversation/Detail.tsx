@@ -14,7 +14,7 @@ import {
   Stack,
   useTheme,
 } from '@mui/material';
-import { Ellipsis, Icon, Modal } from 'ct-mui';
+import { Ellipsis, Icon, Modal } from '@ctzhian/ui';
 import { useEffect, useState } from 'react';
 
 const Detail = ({
@@ -126,7 +126,7 @@ const Detail = ({
               >
                 内容来源
               </Stack>
-              <Card sx={{ p: 2, bgcolor: 'background.paper2' }}>
+              <Card sx={{ p: 2, bgcolor: 'background.paper3' }}>
                 {detail.references?.map((item, index) => (
                   <Stack
                     direction={'row'}
@@ -141,7 +141,7 @@ const Detail = ({
                       errorIcon={
                         <Icon
                           type='icon-ditu_diqiu'
-                          sx={{ fontSize: 18, color: 'text.auxiliary' }}
+                          sx={{ fontSize: 18, color: 'text.tertiary' }}
                         />
                       }
                     />
@@ -173,7 +173,7 @@ const Detail = ({
                       expandIcon={<ExpandMoreIcon sx={{ fontSize: 24 }} />}
                       sx={{
                         userSelect: 'text',
-                        backgroundColor: 'background.paper2',
+                        backgroundColor: 'background.paper3',
                         fontSize: '18px',
                         fontWeight: 'bold',
                       }}

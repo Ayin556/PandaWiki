@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import { useAppSelector } from '@/store';
 import { putApiV1App } from '@/request/App';
-import { Icon, Message } from 'ct-mui';
+import { Icon, message } from '@ctzhian/ui';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { FormItem, SettingCardItem } from './Common';
@@ -72,7 +72,7 @@ const CardWebHeader = ({ id, data, refresh }: CardWebHeaderProps) => {
       { kb_id, settings: { ...data.settings, ...value } },
     ).then(() => {
       refresh(value);
-      Message.success('保存成功');
+      message.success('保存成功');
       setIsEdit(false);
     });
   });

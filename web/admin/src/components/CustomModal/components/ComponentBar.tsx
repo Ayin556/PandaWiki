@@ -1,5 +1,5 @@
 import { MenuItem, Select, Stack, Typography } from '@mui/material';
-import { Icon } from 'ct-mui';
+import { Icon } from '@ctzhian/ui';
 import { Dispatch, SetStateAction } from 'react';
 import { Component } from '../index';
 import { useAppDispatch, useAppSelector } from '@/store';

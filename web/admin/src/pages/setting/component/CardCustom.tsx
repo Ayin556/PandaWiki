@@ -1,7 +1,7 @@
 import { KnowledgeBaseListItem, updateKnowledgeBase } from '@/api';
 import { validateUrl } from '@/utils';
 import { Box, Button, Stack, TextField } from '@mui/material';
-import { Message } from 'ct-mui';
+import { message } from '@ctzhian/ui';
 import { useEffect, useState } from 'react';
 import CustomModal from '@/components/CustomModal';
 import { SettingCardItem } from './Common';
@@ -18,6 +18,7 @@ const CardCustom = () => {
       extra={
         <Button
           size='small'
+          color='dark'
           variant='outlined'
           onClick={() => {
             setCustomModalOpen(true);

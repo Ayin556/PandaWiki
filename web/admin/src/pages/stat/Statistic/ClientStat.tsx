@@ -75,7 +75,7 @@ const ClientStat = ({ tab }: { tab: ActiveTab }) => {
           </Stack>
           <Card
             sx={{
-              bgcolor: 'background.paper2',
+              bgcolor: 'background.paper3',
               p: 2,
             }}
           >
@@ -102,7 +102,7 @@ const ClientStat = ({ tab }: { tab: ActiveTab }) => {
                       ></Box>
                       <Box>{it.name! || '-'}</Box>
                     </Stack>
-                    <Box sx={{ fontFamily: 'Gbold' }}>{it.count}</Box>
+                    <Box sx={{ fontWeight: 700 }}>{it.count}</Box>
                   </Stack>
                 ))}
               </Stack>
@@ -125,7 +125,7 @@ const ClientStat = ({ tab }: { tab: ActiveTab }) => {
                       ></Box>
                       <Box>{it.name || '-'}</Box>
                     </Stack>
-                    <Box sx={{ fontFamily: 'Gbold' }}>{it.count}</Box>
+                    <Box sx={{ fontWeight: 700 }}>{it.count}</Box>
                   </Stack>
                 ))}
               </Stack>

@@ -21,11 +21,11 @@ export const treeSx = (supportSelect: boolean, ui: 'select' | 'move') => ({
     cursor: 'grabbing',
   },
   '&:hover': {
-    bgcolor: 'background.paper2',
+    bgcolor: 'background.paper3',
     borderRadius: '10px',
   },
   '&:has(.MuiInputBase-root)': {
-    bgcolor: 'background.paper2',
+    bgcolor: 'background.paper3',
     borderRadius: '10px',
   },
   '& .dnd-sortable-tree_simple_wrapper': {

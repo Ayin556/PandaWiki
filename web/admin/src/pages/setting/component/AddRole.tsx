@@ -9,9 +9,9 @@ import {
 import { FormItem } from '@/components/Form';
 import NoData from '@/assets/images/nodata.png';
 import Card from '@/components/Card';
-import { Message, Modal, Table } from 'ct-mui';
+import { message, Modal, Table } from '@ctzhian/ui';
 import dayjs from 'dayjs';
-import { ColumnType } from 'ct-mui/dist/Table';
+import { ColumnType } from '@ctzhian/ui/dist/Table';
 import { useEffect, useMemo, useState } from 'react';
 import { useAppSelector } from '@/store';
 
@@ -95,7 +95,7 @@ const AddRole = ({ open, onCancel, onOk, selectedIds }: AddRoleProps) => {
 
   const onSubmit = () => {
     if (!selectedRowKeys) {
-      Message.error('请选择用户');
+      message.error('请选择用户');
       return;
     }
     postApiV1KnowledgeBaseUserInvite({
@@ -104,7 +104,7 @@ const AddRole = ({ open, onCancel, onOk, selectedIds }: AddRoleProps) => {
       perm,
     }).then(() => {
       onOk();
-      Message.success('添加成功');
+      message.success('添加成功');
     });
   };
 
@@ -182,7 +182,7 @@ const AddRole = ({ open, onCancel, onOk, selectedIds }: AddRoleProps) => {
                   sx={{
                     fontSize: 12,
                     lineHeight: '20px',
-                    color: 'text.auxiliary',
+                    color: 'text.tertiary',
                   }}
                 >
                   暂无数据

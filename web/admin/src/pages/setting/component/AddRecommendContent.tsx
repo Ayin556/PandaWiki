@@ -6,7 +6,7 @@ import { useAppSelector } from '@/store';
 import { convertToTree } from '@/utils/drag';
 import { filterEmptyFolders } from '@/utils/tree';
 import { Box, Skeleton, Stack } from '@mui/material';
-import { Modal } from 'ct-mui';
+import { Modal } from '@ctzhian/ui';
 import { useCallback, useEffect, useState } from 'react';
 
 interface AddRecommendContentProps {
@@ -85,7 +85,7 @@ const AddRecommendContent = ({
             sx={{
               fontSize: 12,
               lineHeight: '20px',
-              color: 'text.auxiliary',
+              color: 'text.tertiary',
               mt: 1,
             }}
           >

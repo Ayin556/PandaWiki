@@ -19,7 +19,7 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import { Ellipsis, Icon, Message, Modal } from 'ct-mui';
+import { Ellipsis, Icon, message, Modal } from '@ctzhian/ui';
 import { useState } from 'react';
 import { FileRejection } from 'react-dropzone';
 
@@ -158,7 +158,7 @@ const OfflineFileImport = ({
       handleFile();
     } else if (step === 'import') {
       if (selectIds.length === 0) {
-        Message.error('请选择要导入的文档');
+        message.error('请选择要导入的文档');
         return;
       }
       setItems(prev => prev.map(item => ({ ...item, success: 0 })));
@@ -178,7 +178,7 @@ const OfflineFileImport = ({
           });
           const index = newItems.findIndex(item => item.url === url);
           if (index !== -1) {
-            Message.success(newItems[index].title + '导入成功');
+            message.success(newItems[index].title + '导入成功');
             newItems[index] = {
               ...newItems[index],
               success: 1,
@@ -188,7 +188,7 @@ const OfflineFileImport = ({
         } catch (error) {
           const index = newItems.findIndex(item => item.url === url);
           if (index !== -1) {
-            Message.error(newItems[index].title + '导入失败');
+            message.error(newItems[index].title + '导入失败');
             newItems[index] = {
               ...newItems[index],
               success: 1,
@@ -270,7 +270,7 @@ const OfflineFileImport = ({
                         borderBottom: '1px dashed',
                         borderColor: 'divider',
                         ':hover': {
-                          backgroundColor: 'background.paper2',
+                          backgroundColor: 'background.paper3',
                         },
                       }}
                       secondaryAction={
@@ -348,7 +348,7 @@ const OfflineFileImport = ({
                   px: 2,
                   py: 1,
                   cursor: 'pointer',
-                  bgcolor: 'background.paper2',
+                  bgcolor: 'background.paper3',
                 }}
               >
                 <Stack
@@ -361,7 +361,7 @@ const OfflineFileImport = ({
                     type='icon-shuaxin'
                     sx={{
                       fontSize: 18,
-                      color: 'text.auxiliary',
+                      color: 'text.tertiary',
                       animation: 'loadingRotate 1s linear infinite',
                     }}
                   />
@@ -385,7 +385,7 @@ const OfflineFileImport = ({
                   borderBottom: idx === items.length - 1 ? 'none' : '1px solid',
                   borderColor: 'divider',
                   ':hover': {
-                    bgcolor: 'background.paper2',
+                    bgcolor: 'background.paper3',
                   },
                 }}
               >
@@ -394,7 +394,7 @@ const OfflineFileImport = ({
                     type='icon-shuaxin'
                     sx={{
                       fontSize: 18,
-                      color: 'text.auxiliary',
+                      color: 'text.tertiary',
                       animation: 'loadingRotate 1s linear infinite',
                     }}
                   />
@@ -442,7 +442,7 @@ const OfflineFileImport = ({
                     {item.title || item.url}
                   </Ellipsis>
                   {item.content && (
-                    <Ellipsis sx={{ fontSize: 12, color: 'text.auxiliary' }}>
+                    <Ellipsis sx={{ fontSize: 12, color: 'text.tertiary' }}>
                       {item.content}
                     </Ellipsis>
                   )}
@@ -467,7 +467,7 @@ const OfflineFileImport = ({
                         kb_id,
                       })
                         .then(res => {
-                          Message.success(item.title + '导入成功');
+                          message.success(item.title + '导入成功');
                           setItems(prev =>
                             prev.map(it =>
                               it.url === item.url
@@ -477,7 +477,7 @@ const OfflineFileImport = ({
                           );
                         })
                         .catch(() => {
-                          Message.error(item.title + '导入失败');
+                          message.error(item.title + '导入失败');
                         });
                     }}
                   >

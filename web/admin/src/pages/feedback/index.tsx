@@ -6,7 +6,7 @@ import { useState } from 'react';
 import Comments from './Comments';
 import Evaluate from './Evaluate';
 import { Stack, Select, MenuItem, Box, Tooltip } from '@mui/material';
-import { CusTabs } from 'ct-mui';
+import { CusTabs } from '@ctzhian/ui';
 import { useAppSelector } from '@/store';
 import InfoIcon from '@mui/icons-material/Info';
 import Correction from './Correction';

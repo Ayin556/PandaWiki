@@ -55,7 +55,7 @@ const CatalogH5 = () => {
         top: '64px',
         width: '100%',
         zIndex: 2,
-        bgcolor: 'background.paper2',
+        bgcolor: 'background.paper3',
       }}
     >
       <Stack
@@ -103,7 +103,7 @@ const CatalogH5 = () => {
             : '0px',
           paddingBottom: 'env(safe-area-inset-bottom)',
           transition: 'height 0.3s ease-in-out',
-          bgcolor: 'background.paper2',
+          bgcolor: 'background.paper3',
           overflowY: 'auto',
           overflowX: 'hidden',
           '&::-webkit-scrollbar': {

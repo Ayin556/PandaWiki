@@ -5,7 +5,7 @@ import {
 } from '@/request';
 import { useAppSelector } from '@/store';
 import { Button, CircularProgress, Stack, TextField } from '@mui/material';
-import { Icon, Message, Modal } from 'ct-mui';
+import { Icon, message, Modal } from '@ctzhian/ui';
 import { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { WrapContext } from '..';
@@ -67,7 +67,7 @@ const Summary = ({ open, onClose, updateDetail }: SummaryProps) => {
           },
         });
         putApiV1NodeDetail({ id: nodeDetail.id!, kb_id, summary }).then(() => {
-          Message.success('保存成功');
+          message.success('保存成功');
         });
         handleClose();
       }}

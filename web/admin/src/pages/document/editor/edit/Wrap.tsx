@@ -14,7 +14,7 @@ import {
   useTiptap,
   UseTiptapReturn,
 } from '@yu-cq/tiptap';
-import { Icon, Message } from 'ct-mui';
+import { Icon, message } from '@ctzhian/ui';
 import dayjs from 'dayjs';
 import { debounce } from 'lodash';
 import { useCallback, useEffect, useState } from 'react';
@@ -53,7 +53,9 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
   }, [license]);
 
   const [title, setTitle] = useState(nodeDetail?.name || defaultDetail.name);
-  const [summary, setSummary] = useState(nodeDetail?.meta?.summary || defaultDetail.meta?.summary || '');
+  const [summary, setSummary] = useState(
+    nodeDetail?.meta?.summary || defaultDetail.meta?.summary || '',
+  );
   const [characterCount, setCharacterCount] = useState(0);
   const [headings, setHeadings] = useState<TocList>([]);
   const [fixedToc, setFixedToc] = useState(false);
@@ -125,7 +127,7 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
       a.download = `${nodeDetail?.name}.html`;
       a.click();
       URL.revokeObjectURL(url);
-      Message.success('导出成功');
+      message.success('导出成功');
     }
     if (type === 'md') {
       const markdown = editorRef.getMarkdownByJSON();
@@ -137,7 +139,7 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
       a.download = `${nodeDetail?.name}.md`;
       a.click();
       URL.revokeObjectURL(url);
-      Message.success('导出成功');
+      message.success('导出成功');
     }
   };
 
@@ -163,7 +165,7 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
 
   const handleError = (error: Error) => {
     if (error.message) {
-      Message.error(error.message);
+      message.error(error.message);
     }
   };
 
@@ -242,7 +244,7 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
       const { from, to } = editorRef.editor.state.selection;
       const text = editorRef.editor.state.doc.textBetween(from, to, '\n');
       if (!text) {
-        Message.error('请先选择文本');
+        message.error('请先选择文本');
         return;
       }
       setSelectionText(text);
@@ -289,7 +291,8 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
         meta: {
           summary: state.node.meta?.summary || nodeDetail?.meta?.summary || '',
           emoji: state.node.meta?.emoji || nodeDetail?.meta?.emoji || '',
-          doc_width: state.node.meta?.doc_width || nodeDetail?.meta?.doc_width || 'full',
+          doc_width:
+            state.node.meta?.doc_width || nodeDetail?.meta?.doc_width || 'full',
         },
         content: state.node.content || nodeDetail?.content || '',
       });
@@ -372,13 +375,14 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
   }, []);
 
   return (
-    <EditorThemeProvider
-      colors={{ light }}
-      mode='light'
-      theme={{
-        components: componentStyleOverrides,
-      }}
-    >
+    <>
+      {/* // <EditorThemeProvider
+    //   colors={{ light }}
+    //   mode='light'
+    //   theme={{
+    //     components: componentStyleOverrides,
+    //   }}
+    // > */}
       <Box
         sx={{
           position: 'fixed',
@@ -397,11 +401,11 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
           detail={nodeDetail!}
           updateDetail={updateDetail}
           handleSave={async () => {
-            const value = editorRef.getHTML()
+            const value = editorRef.getHTML();
             updateDetail({
               content: value,
-            })
-            await onSave(value)
+            });
+            await onSave(value);
           }}
           handleExport={handleExport}
         />
@@ -414,22 +418,25 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
           }),
         }}
       >
-        <Box sx={{
-          width: docWidth === 'full'
-            ? `calc(100vw - 160px - ${catalogOpen ? 292 : 0}px - ${fixedToc ? 292 : 0}px)`
-            : DocWidth[docWidth as keyof typeof DocWidth].value,
-          maxWidth: '100%',
-          p: '72px 80px 150px',
-          mt: '102px',
-          mx: 'auto',
-        }}>
+        <Box
+          sx={{
+            width:
+              docWidth === 'full'
+                ? `calc(100vw - 160px - ${catalogOpen ? 292 : 0}px - ${fixedToc ? 292 : 0}px)`
+                : DocWidth[docWidth as keyof typeof DocWidth].value,
+            maxWidth: '100%',
+            p: '72px 80px 150px',
+            mt: '102px',
+            mx: 'auto',
+          }}
+        >
           <Stack
             direction={'row'}
             alignItems={'center'}
             gap={1}
             sx={{ mb: 2, position: 'relative' }}
-          // onMouseEnter={() => setShowSummaryBtn(true)}
-          // onMouseLeave={() => setShowSummaryBtn(false)}
+            // onMouseEnter={() => setShowSummaryBtn(true)}
+            // onMouseLeave={() => setShowSummaryBtn(false)}
           >
             {/* {showSummaryBtn && (
               <Stack
@@ -444,7 +451,7 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
                   width: '100%',
                   zIndex: 1,
                   fontSize: 14,
-                  color: 'text.auxiliary',
+                  color: 'text.tertiary',
                 }}
               >
                 <Stack
@@ -518,10 +525,10 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
                 gap={0.5}
                 sx={{
                   fontSize: 12,
-                  color: 'text.auxiliary',
+                  color: 'text.tertiary',
                   cursor: isEnterprise ? 'pointer' : 'text',
                   ':hover': {
-                    color: isEnterprise ? 'primary.main' : 'text.auxiliary',
+                    color: isEnterprise ? 'primary.main' : 'text.tertiary',
                   },
                 }}
                 onClick={() => {
@@ -541,33 +548,35 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
               direction={'row'}
               alignItems={'center'}
               gap={0.5}
-              sx={{ fontSize: 12, color: 'text.auxiliary' }}
+              sx={{ fontSize: 12, color: 'text.tertiary' }}
             >
               <Icon type='icon-ziti' />
               {characterCount} 字
             </Stack>
           </Stack>
-          <Box sx={{
-            mb: 6,
-            border: '1px solid',
-            borderColor: 'divider',
-            borderRadius: '10px',
-            bgcolor: 'background.paper2',
-            p: 2,
-            position: 'relative',
-            '.ai-generate-summary-left-icon': {
-              opacity: '0',
-              transition: 'opacity 0.3s ease-in-out',
-            },
-            ':hover': {
+          <Box
+            sx={{
+              mb: 6,
+              border: '1px solid',
+              borderColor: 'divider',
+              borderRadius: '10px',
+              bgcolor: 'background.paper2',
+              p: 2,
+              position: 'relative',
               '.ai-generate-summary-left-icon': {
-                opacity: '1',
+                opacity: '0',
+                transition: 'opacity 0.3s ease-in-out',
               },
-            },
-            '.MuiInputBase-root': {
-              p: 0,
-            }
-          }}>
+              ':hover': {
+                '.ai-generate-summary-left-icon': {
+                  opacity: '1',
+                },
+              },
+              '.MuiInputBase-root': {
+                p: 0,
+              },
+            }}
+          >
             <Stack
               className='ai-generate-summary-left-icon'
               direction={'row'}
@@ -582,7 +591,7 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
                 lineHeight: '18px',
                 cursor: 'pointer',
                 fontSize: 12,
-                color: 'text.auxiliary',
+                color: 'text.tertiary',
                 ':hover': {
                   color: 'text.primary',
                 },
@@ -591,32 +600,43 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
               <Icon type='icon-DJzhinengzhaiyao' sx={{ fontSize: 12 }} />
               文档摘要
             </Stack>
-            {nodeDetail?.meta?.summary ? <TextField
-              value={summary}
-              multiline
-              fullWidth
-              placeholder='暂无摘要，可在此处输入摘要'
-              slotProps={{
-                input: {
-                  sx: {
-                    fontSize: 14,
-                    lineHeight: '28px',
-                    letterSpacing: '1px',
-                    fontWeight: 'normal',
-                    color: 'text.secondary',
-                    '& fieldset': {
-                      border: 'none !important',
+            {nodeDetail?.meta?.summary ? (
+              <TextField
+                value={summary}
+                multiline
+                fullWidth
+                placeholder='暂无摘要，可在此处输入摘要'
+                slotProps={{
+                  input: {
+                    sx: {
+                      fontSize: 14,
+                      lineHeight: '28px',
+                      letterSpacing: '1px',
+                      fontWeight: 'normal',
+                      color: 'text.secondary',
+                      '& fieldset': {
+                        border: 'none !important',
+                      },
                     },
                   },
-                },
-              }}
-              onChange={e => {
-                setSummary(e.target.value);
-                debouncedUpdateSummary(e.target.value);
-              }}
-            /> : <Box sx={{ fontSize: 12, color: 'text.auxiliary' }}>
-              暂无摘要，点击<Box component='span' sx={{ color: 'primary.main', cursor: 'pointer' }} onClick={() => setShowSummary(true)}>生成摘要</Box>
-            </Box>}
+                }}
+                onChange={e => {
+                  setSummary(e.target.value);
+                  debouncedUpdateSummary(e.target.value);
+                }}
+              />
+            ) : (
+              <Box sx={{ fontSize: 12, color: 'text.tertiary' }}>
+                暂无摘要，点击
+                <Box
+                  component='span'
+                  sx={{ color: 'primary.main', cursor: 'pointer' }}
+                  onClick={() => setShowSummary(true)}
+                >
+                  生成摘要
+                </Box>
+              </Box>
+            )}
           </Box>
           <Box
             sx={{
@@ -674,7 +694,8 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
         updateDetail={updateDetail}
         onClose={() => setShowSummary(false)}
       />
-    </EditorThemeProvider >
+      {/* </EditorThemeProvider> */}
+    </>
   );
 };
 

@@ -18,8 +18,8 @@ import {
 } from 'dnd-kit-sortable-tree';
 import { ItemChangedReason } from 'dnd-kit-sortable-tree/dist/types';
 
-import { Icon, Modal, Table } from 'ct-mui';
-import { ColumnType } from 'ct-mui/dist/Table';
+import { Icon, Modal, Table } from '@ctzhian/ui';
+import { ColumnType } from '@ctzhian/ui/dist/Table';
 import { GithubComChaitinPandaWikiProApiAuthV1AuthGroupTreeItem } from '@/request/pro/types';
 import { treeSx } from '@/constant/styles';
 import { useAppSelector } from '@/store';

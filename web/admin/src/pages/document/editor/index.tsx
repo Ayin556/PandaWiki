@@ -4,7 +4,7 @@ import { V1NodeDetailResp } from '@/request/types';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { setKbDetail, setKbId, setKbList } from '@/store/slices/config';
 import { Box, Drawer, Stack, useMediaQuery } from '@mui/material';
-import { Message } from 'ct-mui';
+import { message } from '@ctzhian/ui';
 import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Catalog from './Catalog';
@@ -49,8 +49,8 @@ const DocEditor = () => {
         id: nodeDetail.id,
         content,
         name: nodeDetail.name || '',
-      })
-      Message.success('保存成功');
+      });
+      message.success('保存成功');
     } catch (error) {
       console.error(error);
     }

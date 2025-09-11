@@ -10,7 +10,7 @@ import {
   Stack,
   TextField,
 } from '@mui/material';
-import { Icon, Message } from 'ct-mui';
+import { Icon, message } from '@ctzhian/ui';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { FormItem, SettingCardItem } from './Common';
@@ -90,7 +90,7 @@ const CardRobotWebComponent = ({ kb }: CardRobotWebComponentProps) => {
         },
       },
     ).then(() => {
-      Message.success('保存成功');
+      message.success('保存成功');
       setIsEdit(false);
       getDetail();
       reset();

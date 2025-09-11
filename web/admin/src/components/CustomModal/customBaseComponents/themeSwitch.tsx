@@ -1,5 +1,5 @@
 import { SwitchProps, Box } from '@mui/material';
-import { Icon } from 'ct-mui';
+import { Icon } from '@ctzhian/ui';
 import MySwitch from './Switch';
 
 const ThemeSwitch = (props: SwitchProps) => {

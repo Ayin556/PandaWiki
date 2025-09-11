@@ -9,7 +9,7 @@ import { FreeSoloAutocomplete } from '@/components/FreeSoloAutocomplete';
 import { useCommitPendingInput } from '@/hooks';
 import { useAppSelector } from '@/store';
 import { Box, Button, Stack, TextField } from '@mui/material';
-import { Icon, Message } from 'ct-mui';
+import { Icon, message } from '@ctzhian/ui';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import AddRecommendContent from './AddRecommendContent';
@@ -60,7 +60,7 @@ const CardWebWelcome = ({ id, data, refresh }: CardWebWelcomeProps) => {
       { kb_id, settings: { ...data.settings, ...value } },
     ).then(() => {
       refresh(value);
-      Message.success('保存成功');
+      message.success('保存成功');
       setIsEdit(false);
     });
   });

@@ -5,12 +5,12 @@ import {
 } from '@/request/pro/AuthGroup';
 import { TextField, Box, Stack } from '@mui/material';
 import dayjs from 'dayjs';
-import { Modal, Table, Message } from 'ct-mui';
+import { Modal, Table, message } from '@ctzhian/ui';
 import NoData from '@/assets/images/nodata.png';
 import { useForm, Controller } from 'react-hook-form';
 import { FormItem } from './Common';
 import { useAppSelector } from '@/store';
-import { ColumnType } from 'ct-mui/dist/Table';
+import { ColumnType } from '@ctzhian/ui/dist/Table';
 import {
   GithubComChaitinPandaWikiProApiAuthV1AuthGroupListItem,
   GithubComChaitinPandaWikiProApiAuthV1AuthItem,
@@ -82,7 +82,7 @@ const UserGroupModal = ({
         kb_id,
         id: data.id!,
       }).then(res => {
-        Message.success('编辑成功');
+        message.success('编辑成功');
         onOk();
       });
     } else if (type === 'add') {
@@ -93,7 +93,7 @@ const UserGroupModal = ({
         parent_id:
           (data?.id as 'root' | number) === 'root' ? undefined : data?.id,
       }).then(res => {
-        Message.success('添加成功');
+        message.success('添加成功');
         onOk();
       });
     }
@@ -172,7 +172,7 @@ const UserGroupModal = ({
               sx={{
                 fontSize: 12,
                 lineHeight: '20px',
-                color: 'text.auxiliary',
+                color: 'text.tertiary',
               }}
             >
               暂无数据

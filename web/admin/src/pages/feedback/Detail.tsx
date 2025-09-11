@@ -9,7 +9,7 @@ import {
   AccordionSummary,
   Box,
 } from '@mui/material';
-import { Ellipsis, Icon, Modal } from 'ct-mui';
+import { Ellipsis, Icon, Modal } from '@ctzhian/ui';
 import { useEffect, useState } from 'react';
 
 const Detail = ({
@@ -67,7 +67,7 @@ const Detail = ({
               expandIcon={<ExpandMoreIcon sx={{ fontSize: 24 }} />}
               sx={{
                 userSelect: 'text',
-                backgroundColor: 'background.paper2',
+                backgroundColor: 'background.paper3',
                 fontSize: '18px',
                 fontWeight: 'bold',
               }}

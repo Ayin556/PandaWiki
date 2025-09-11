@@ -1,10 +1,7 @@
 import { TocItem, TocList } from '@yu-cq/tiptap';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-const useScroll = (
-  headings: TocList,
-  container: HTMLDivElement | Window = window,
-) => {
+const useScroll = (headings: TocList, domId: string) => {
   const [activeHeading, setActiveHeading] = useState<TocItem | null>(null);
   const isFirstLoad = useRef(true);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -26,6 +23,7 @@ const useScroll = (
     (elementId: string, offset = 80) => {
       const element = document.getElementById(elementId);
       if (element) {
+        const container = document.getElementById(domId) || window;
         const targetHeading = headings.find(h => h.id === elementId);
         if (targetHeading) {
           isManualScroll.current = true;
@@ -68,6 +66,7 @@ const useScroll = (
       const header = visibleHeadings[i];
       const element = document.getElementById(header.id);
       if (element) {
+        const container = document.getElementById(domId) || window;
         const scrollTop =
           'scrollY' in container ? container.scrollY : container.scrollTop;
         const elementTop = element.getBoundingClientRect().top + scrollTop;
@@ -109,6 +108,7 @@ const useScroll = (
             isManualScroll.current = true;
             const element = document.getElementById(targetHeading.id);
             if (element) {
+              const container = document.getElementById(domId) || window;
               const elementPosition = element.getBoundingClientRect().top;
               const scrollTop =
                 'scrollY' in container
@@ -140,6 +140,7 @@ const useScroll = (
 
   useEffect(() => {
     if (headings.length === 0) return;
+    const container = document.getElementById(domId) || window;
     container.addEventListener('scroll', debouncedScrollHandler);
     debouncedScrollHandler();
     return () => {
@@ -148,7 +149,7 @@ const useScroll = (
         clearTimeout(scrollTimeoutRef.current);
       }
     };
-  }, [debouncedScrollHandler, headings, container]);
+  }, [debouncedScrollHandler, headings, domId]);
 
   return {
     activeHeading,

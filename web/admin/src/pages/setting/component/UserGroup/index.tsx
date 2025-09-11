@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { SettingCardItem } from '../Common';
 import { Tooltip } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
-import { Modal, Message } from 'ct-mui';
+import { Modal, message } from '@ctzhian/ui';
 import NoData from '@/assets/images/nodata.png';
 import { Stack } from '@mui/material';
 import { Box } from '@mui/material';
@@ -52,7 +52,7 @@ const UserGroup = ({ enabled, memberList }: UserGroupProps) => {
           id,
           kb_id,
         }).then(() => {
-          Message.success('删除成功');
+          message.success('删除成功');
           getUserGroup();
         });
       },

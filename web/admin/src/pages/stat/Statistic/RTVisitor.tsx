@@ -10,7 +10,7 @@ import BarTrend from '@/components/BarTrend';
 import Card from '@/components/Card';
 import { useAppSelector } from '@/store';
 import { Box, Stack } from '@mui/material';
-import { Ellipsis } from 'ct-mui';
+import { Ellipsis } from '@ctzhian/ui';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 
@@ -77,7 +77,7 @@ const RTVisitor = ({ isWideScreen }: { isWideScreen: boolean }) => {
         <Card
           sx={{
             flex: 1,
-            bgcolor: 'background.paper2',
+            bgcolor: 'background.paper3',
             p: 2,
             pr: 0,
             lineHeight: '20px',
@@ -126,7 +126,7 @@ const RTVisitor = ({ isWideScreen }: { isWideScreen: boolean }) => {
                       sx={{ width: 80, flexShrink: 0 }}
                     >
                       <Box component={'img'} src={ClockIcon} width={12} />
-                      <Box sx={{ color: 'text.auxiliary', fontSize: '12px' }}>
+                      <Box sx={{ color: 'text.tertiary', fontSize: '12px' }}>
                         {dayjs(it.created_at).fromNow()}
                       </Box>
                     </Stack>
@@ -147,7 +147,7 @@ const RTVisitor = ({ isWideScreen }: { isWideScreen: boolean }) => {
                     <Box
                       sx={{
                         fontSize: 12,
-                        color: 'text.auxiliary',
+                        color: 'text.tertiary',
                         ...(!isWideScreen && { ml: '20px', fontSize: 10 }),
                       }}
                     >
@@ -168,14 +168,14 @@ const RTVisitor = ({ isWideScreen }: { isWideScreen: boolean }) => {
                       </Stack>
 
                       {/* {it?.info?.email && (
-                        <Box sx={{ color: 'text.auxiliary' }}>
+                        <Box sx={{ color: 'text.tertiary' }}>
                           {it?.info?.email}
                         </Box>
                       )} */}
                     </Box>
                     <Box
                       sx={{
-                        color: 'text.auxiliary',
+                        color: 'text.tertiary',
                         fontSize: '12px',
                         ...(!isWideScreen && { ml: '20px', fontSize: 10 }),
                       }}

@@ -24,8 +24,8 @@ import {
   deleteApiProV1AuthDelete,
 } from '@/request/pro/Auth';
 
-import { Message, Table, Icon, Modal } from 'ct-mui';
-import { ColumnType } from 'ct-mui/dist/Table';
+import { message, Table, Icon, Modal } from '@ctzhian/ui';
+import { ColumnType } from '@ctzhian/ui/dist/Table';
 import { useEffect, useMemo, useState, useRef } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useAppSelector } from '@/store';
@@ -147,7 +147,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
         enabled: value.enabled === '2',
         password: value.password,
       });
-      Message.success('保存成功');
+      message.success('保存成功');
       setIsEdit(false);
     });
   });
@@ -227,7 +227,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
         deleteApiProV1AuthDelete({
           id,
         }).then(() => {
-          Message.success('删除成功');
+          message.success('删除成功');
           setMemberList(memberList.filter(item => item.id !== id));
         });
       },

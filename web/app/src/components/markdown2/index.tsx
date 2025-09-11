@@ -350,7 +350,7 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
     fontSize: '14px',
     background: 'transparent',
     '--primary-color': theme.palette.primary.main,
-    '--background-paper': theme.palette.background.paper2,
+    '--background-paper': theme.palette.background.paper3,
 
     // 省略号样式
     '.three-ellipsis': {

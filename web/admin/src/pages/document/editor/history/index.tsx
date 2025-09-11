@@ -18,7 +18,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { Editor, EditorThemeProvider, useTiptap } from '@yu-cq/tiptap';
-import { Icon } from 'ct-mui';
+import { Icon } from '@ctzhian/ui';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
 import { WrapContext } from '..';
@@ -108,7 +108,7 @@ const History = () => {
             onClick={() => setCatalogOpen(true)}
             sx={{
               cursor: 'pointer',
-              color: 'text.auxiliary',
+              color: 'text.tertiary',
               ':hover': {
                 color: 'text.primary',
               },
@@ -139,7 +139,10 @@ const History = () => {
             sx={{
               p: '48px 72px 150px',
               mx: 'auto',
-              width: docWidth === 'full' ? `calc(100% - 160px)` : DocWidth[docWidth as keyof typeof DocWidth].value,
+              width:
+                docWidth === 'full'
+                  ? `calc(100% - 160px)`
+                  : DocWidth[docWidth as keyof typeof DocWidth].value,
               minWidth: '386px',
             }}
           >
@@ -169,7 +172,7 @@ const History = () => {
               direction={'row'}
               alignItems={'center'}
               gap={2}
-              sx={{ mb: 4, fontSize: 12, color: 'text.auxiliary' }}
+              sx={{ mb: 4, fontSize: 12, color: 'text.tertiary' }}
             >
               <Stack direction={'row'} alignItems={'center'} gap={0.5}>
                 <Icon type='icon-a-shijian2' />
@@ -201,34 +204,34 @@ const History = () => {
                 </Box>
                 <Box
                   sx={{
-                    color: 'text.auxiliary',
+                    color: 'text.tertiary',
                   }}
                 >
                   {curNode.meta?.summary}
                 </Box>
               </Box>
             )}
-            <EditorThemeProvider
+            {/* <EditorThemeProvider
               colors={{ light }}
               mode='light'
               theme={{
                 components: componentStyleOverrides,
               }}
+            > */}
+            <Box
+              sx={{
+                '.tiptap': {
+                  minHeight: 'calc(100vh - 56px)',
+                },
+                '.tableWrapper': {
+                  maxWidth: '100%',
+                  overflowX: 'auto',
+                },
+              }}
             >
-              <Box
-                sx={{
-                  '.tiptap': {
-                    minHeight: 'calc(100vh - 56px)',
-                  },
-                  '.tableWrapper': {
-                    maxWidth: '100%',
-                    overflowX: 'auto',
-                  },
-                }}
-              >
-                <Editor editor={editorRef.editor} />
-              </Box>
-            </EditorThemeProvider>
+              <Editor editor={editorRef.editor} />
+            </Box>
+            {/* </EditorThemeProvider> */}
           </Box>
         )}
       </Box>
@@ -240,7 +243,7 @@ const History = () => {
           flexShrink: 0,
           width: 292,
           p: 0.5,
-          bgcolor: 'background.paper2',
+          bgcolor: 'background.paper3',
           height: 'calc(100vh - 56px)',
           overflow: 'auto',
           borderLeft: '1px solid',
@@ -283,25 +286,27 @@ const History = () => {
                 >
                   {item.release_name}
                 </Box>
-                {curVersion?.id === item.id && <Box
-                  sx={{
-                    fontSize: 14,
-                    color: 'primary.main',
-                    borderRadius: '4px',
-                    px: 1,
-                    ':hover': {
-                      bgcolor: 'action.hover',
-                    },
-                  }}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    setConfirmOpen(true);
-                  }}
-                >
-                  还原
-                </Box>}
+                {curVersion?.id === item.id && (
+                  <Box
+                    sx={{
+                      fontSize: 14,
+                      color: 'primary.main',
+                      borderRadius: '4px',
+                      px: 1,
+                      ':hover': {
+                        bgcolor: 'action.hover',
+                      },
+                    }}
+                    onClick={event => {
+                      event.stopPropagation();
+                      setConfirmOpen(true);
+                    }}
+                  >
+                    还原
+                  </Box>
+                )}
               </Stack>
-              <Box sx={{ fontSize: 13, color: 'text.auxiliary' }}>
+              <Box sx={{ fontSize: 13, color: 'text.tertiary' }}>
                 {item.release_message}
               </Box>
             </Box>

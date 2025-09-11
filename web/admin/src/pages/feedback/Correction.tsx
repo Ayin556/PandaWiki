@@ -9,7 +9,7 @@ import NoData from '@/assets/images/nodata.png';
 import { tableSx } from '@/constant/styles';
 import { useAppSelector } from '@/store';
 import { Box, Stack, ButtonBase, IconButton } from '@mui/material';
-import { Ellipsis, Table, Modal, Icon, Message } from 'ct-mui';
+import { Ellipsis, Table, Modal, Icon, message } from '@ctzhian/ui';
 import dayjs from 'dayjs';
 import { useEffect, useState, useMemo } from 'react';
 
@@ -47,7 +47,7 @@ const Correction = () => {
       },
       onOk: () => {
         deleteApiProV1DocumentFeedback({ ids: [id] }).then(() => {
-          Message.success('删除成功');
+          message.success('删除成功');
           if (page === 1) {
             getData({});
           } else {
@@ -139,7 +139,7 @@ const Correction = () => {
               <Box sx={{ fontSize: 14 }}>{user?.user_name || '匿名用户'}</Box>
             </Stack>
             {user?.email && (
-              <Box sx={{ color: 'text.auxiliary' }}>{user?.email}</Box>
+              <Box sx={{ color: 'text.tertiary' }}>{user?.email}</Box>
             )}
           </Box>
         );
@@ -159,7 +159,7 @@ const Correction = () => {
         return (
           <>
             <Box>{ip}</Box>
-            <Box sx={{ color: 'text.auxiliary', fontSize: 12 }}>
+            <Box sx={{ color: 'text.tertiary', fontSize: 12 }}>
               {country === '中国' ? `${province}-${city}` : `${country}`}
             </Box>
           </>

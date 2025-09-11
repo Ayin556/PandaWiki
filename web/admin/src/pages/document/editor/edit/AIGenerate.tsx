@@ -1,7 +1,7 @@
 import SSEClient from '@/utils/fetch';
 import { Box, Divider, Stack } from '@mui/material';
 import { Editor, useTiptap, UseTiptapReturn } from '@yu-cq/tiptap';
-import { Modal } from 'ct-mui';
+import { Modal } from '@ctzhian/ui';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface AIGenerateProps {
@@ -123,7 +123,7 @@ const AIGenerate = ({
               ml: 1,
               fontSize: 14,
               fontWeight: 'bold',
-              color: 'text.auxiliary',
+              color: 'text.tertiary',
             }}
           >
             原文
@@ -132,7 +132,7 @@ const AIGenerate = ({
             sx={{
               borderRadius: '10px',
               p: 2,
-              bgcolor: 'background.paper2',
+              bgcolor: 'background.paper3',
               flex: 1,
             }}
           >
@@ -147,7 +147,7 @@ const AIGenerate = ({
               ml: 1,
               fontSize: 14,
               fontWeight: 'bold',
-              color: 'text.auxiliary',
+              color: 'text.tertiary',
             }}
           >
             润色后
@@ -156,7 +156,7 @@ const AIGenerate = ({
             sx={{
               borderRadius: '10px',
               p: 2,
-              bgcolor: 'background.paper2',
+              bgcolor: 'background.paper3',
               flex: 1,
             }}
           >

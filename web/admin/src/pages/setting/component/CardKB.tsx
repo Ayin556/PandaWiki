@@ -37,7 +37,7 @@ import {
   styled,
 } from '@mui/material';
 import { copyText } from '@/utils';
-import { Ellipsis, Icon, Message, Modal } from 'ct-mui';
+import { Ellipsis, Icon, message, Modal } from '@ctzhian/ui';
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import AddRole from './AddRole';
@@ -89,8 +89,11 @@ const ApiToken = () => {
       title: '删除 API Token',
       content: (
         <>
-          确定删除 <span style={{ fontWeight: 500 }}>{name}</span> 这个 API
-          Token 吗？
+          确定删除{' '}
+          <Box component='span' sx={{ fontWeight: 700, color: 'text.primary' }}>
+            {name}
+          </Box>{' '}
+          这个 API Token 吗？
         </>
       ),
       okButtonProps: {
@@ -101,7 +104,7 @@ const ApiToken = () => {
           id,
           kb_id,
         }).then(() => {
-          Message.success('删除成功');
+          message.success('删除成功');
           getApiTokenList();
         });
       },
@@ -114,7 +117,7 @@ const ApiToken = () => {
       kb_id,
       permission,
     }).then(() => {
-      Message.success('更新成功');
+      message.success('更新成功');
       getApiTokenList();
     });
   };
@@ -153,6 +156,7 @@ const ApiToken = () => {
       extra={
         <Stack direction={'row'} alignItems={'center'}>
           <Button
+            color='primary'
             size='small'
             disabled={!isEnterprise}
             onClick={() => setAddOpen(true)}
@@ -215,10 +219,10 @@ const ApiToken = () => {
               sx={{
                 pt: 0.5,
                 px: 1,
-                bgcolor: 'background.paper2',
+                bgcolor: 'background.paper3',
                 borderRadius: 1,
                 fontSize: 12,
-                color: 'text.auxiliary',
+                color: 'text.tertiary',
                 width: 236,
               }}
             >
@@ -321,7 +325,7 @@ const ApiToken = () => {
         {apiTokenList.length === 0 && (
           <Stack
             alignItems={'center'}
-            sx={{ my: 2, fontSize: 14, color: 'text.auxiliary' }}
+            sx={{ my: 2, fontSize: 14, color: 'text.tertiary' }}
           >
             <img src={NoData} width={104} />
             <Box>暂无数据</Box>
@@ -426,7 +430,7 @@ const CardKB = ({ kb, data }: CardKBProps) => {
   const handleSave = () => {
     if (!kb.id) return;
     updateKnowledgeBase({ id: kb.id, name: kbName }).then(() => {
-      Message.success('保存成功');
+      message.success('保存成功');
       dispatch(
         setKbList(
           kbList?.map(item =>
@@ -455,7 +459,7 @@ const CardKB = ({ kb, data }: CardKBProps) => {
           user_id: id,
         }).then(() => {
           getUserList();
-          Message.success('删除成功');
+          message.success('删除成功');
         });
       },
     });
@@ -471,7 +475,7 @@ const CardKB = ({ kb, data }: CardKBProps) => {
       perm,
     }).then(() => {
       getUserList();
-      Message.success('更新成功');
+      message.success('更新成功');
     });
   };
 
@@ -503,6 +507,7 @@ const CardKB = ({ kb, data }: CardKBProps) => {
             size='small'
             startIcon={<Icon type='icon-tianjiachengyuan' />}
             onClick={() => setAddOpen(true)}
+            sx={{ color: 'primary.main' }}
           >
             添加 Wiki 站管理员
           </Button>

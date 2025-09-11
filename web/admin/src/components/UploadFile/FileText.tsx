@@ -1,6 +1,6 @@
 import { CheckCircle } from '@mui/icons-material';
 import { Box, Stack, Typography, useTheme } from '@mui/material';
-import { Icon } from 'ct-mui';
+import { Icon } from '@ctzhian/ui';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 
@@ -79,7 +79,7 @@ const FileText = ({
           borderRadius: '10px',
           p: 2,
           textAlign: 'center',
-          backgroundColor: isDragActive ? 'primary.main' : 'background.paper2',
+          backgroundColor: isDragActive ? 'primary.main' : 'background.paper3',
           cursor: 'pointer',
           '&:hover': {
             borderColor: theme.palette.text.primary,

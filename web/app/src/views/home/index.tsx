@@ -100,7 +100,7 @@ const Home = ({
                 pr: '18px',
                 bgcolor:
                   themeMode === 'dark'
-                    ? 'background.paper2'
+                    ? 'background.paper3'
                     : 'background.default',
                 '& fieldset': {
                   borderRadius: '10px',

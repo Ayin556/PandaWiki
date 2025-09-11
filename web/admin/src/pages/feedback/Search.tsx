@@ -1,6 +1,6 @@
 import { useURLSearchParams } from '@/hooks';
 import { IconButton, InputAdornment, Stack, TextField } from '@mui/material';
-import { Icon } from 'ct-mui';
+import { Icon } from '@ctzhian/ui';
 import { useState } from 'react';
 
 const Search = () => {
@@ -37,7 +37,7 @@ const Search = () => {
               >
                 <Icon
                   type='icon-icon_tool_close'
-                  sx={{ fontSize: 14, color: 'text.auxiliary' }}
+                  sx={{ fontSize: 14, color: 'text.tertiary' }}
                 />
               </IconButton>
             </InputAdornment>
@@ -68,7 +68,7 @@ const Search = () => {
               >
                 <Icon
                   type='icon-icon_tool_close'
-                  sx={{ fontSize: 14, color: 'text.auxiliary' }}
+                  sx={{ fontSize: 14, color: 'text.tertiary' }}
                 />
               </IconButton>
             </InputAdornment>

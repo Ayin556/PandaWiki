@@ -16,7 +16,7 @@ import {
   Skeleton,
   Stack,
 } from '@mui/material';
-import { message } from 'ct-mui';
+import { message } from '@ctzhian/ui';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -127,7 +127,7 @@ const ChatWindow = ({
                 bgcolor:
                   themeMode === 'dark'
                     ? 'background.default'
-                    : 'background.paper2',
+                    : 'background.paper3',
               }}
             >
               <AccordionSummary

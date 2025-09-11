@@ -4,7 +4,7 @@ import { DomainNodeListItemResp, V1NodeDetailResp } from '@/request/types';
 import { useAppSelector } from '@/store';
 import { convertToTree } from '@/utils/drag';
 import { alpha, Box, Stack, useTheme } from '@mui/material';
-import { Ellipsis, Icon } from 'ct-mui';
+import { Ellipsis, Icon } from '@ctzhian/ui';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import KBSwitch from './KBSwitch';
@@ -171,7 +171,7 @@ const Catalog = ({ curNode, setCatalogOpen }: CatalogProps) => {
   return (
     <Stack
       sx={{
-        bgcolor: 'background.paper2',
+        bgcolor: 'background.paper3',
         height: '100%',
         color: 'text.primary',
       }}
@@ -184,7 +184,9 @@ const Catalog = ({ curNode, setCatalogOpen }: CatalogProps) => {
       >
         <Stack direction='row' alignItems='center' gap={1} sx={{ flex: 1 }}>
           <KBSwitch />
-          <Ellipsis sx={{ fontSize: 14, fontWeight: 'bold', width: 0, flex: 1 }}>
+          <Ellipsis
+            sx={{ fontSize: 14, fontWeight: 'bold', width: 0, flex: 1 }}
+          >
             {kbDetail.name}
           </Ellipsis>
         </Stack>
@@ -194,7 +196,7 @@ const Catalog = ({ curNode, setCatalogOpen }: CatalogProps) => {
           onClick={() => setCatalogOpen(false)}
           sx={{
             cursor: 'pointer',
-            color: 'text.auxiliary',
+            color: 'text.tertiary',
             ':hover': {
               color: 'text.primary',
             },
@@ -213,7 +215,7 @@ const Catalog = ({ curNode, setCatalogOpen }: CatalogProps) => {
           px: 2,
           fontSize: 14,
           fontWeight: 'bold',
-          color: 'text.auxiliary',
+          color: 'text.tertiary',
         }}
       >
         目录

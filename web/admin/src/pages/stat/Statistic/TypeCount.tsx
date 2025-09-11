@@ -64,7 +64,7 @@ const TypeCount = ({ tab }: { tab: ActiveTab }) => {
           <Box
             sx={{
               fontSize: 20,
-              fontFamily: 'Gbold',
+              fontWeight: 700,
               lineHeight: '28px',
               height: 28,
             }}

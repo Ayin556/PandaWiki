@@ -1,6 +1,6 @@
 import { copyText } from '@/utils';
 import { Box, Stack } from '@mui/material';
-import { Ellipsis, Icon } from 'ct-mui';
+import { Ellipsis, Icon } from '@ctzhian/ui';
 
 interface ShowTextProps {
   text: string[];
@@ -32,7 +32,7 @@ const ShowText = ({
         py: 2,
         lineHeight: '20px',
         fontFamily: 'monospace',
-        bgcolor: 'background.paper2',
+        bgcolor: 'background.paper3',
         borderRadius: '10px',
         cursor: copyable ? 'pointer' : 'default',
         '&:hover': {

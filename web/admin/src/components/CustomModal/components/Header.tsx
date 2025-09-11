@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import Logo from '@/assets/images/logo.png';
-import { Icon } from 'ct-mui';
+import { Icon } from '@ctzhian/ui';
 import { AppSetting } from '@/api';
 import NavBtns from './NavBtns';
 import { getButtonThemeStyle } from './buttonThemeUtils';

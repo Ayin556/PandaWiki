@@ -1,7 +1,7 @@
 import { postApiV1NodeSummary, putApiV1NodeDetail } from '@/request/Node';
 import { DomainNodeListItemResp } from '@/request/types';
 import { Button, Stack, TextField } from '@mui/material';
-import { Icon, Message, Modal } from 'ct-mui';
+import { Icon, message, Modal } from '@ctzhian/ui';
 import { useEffect, useState } from 'react';
 
 interface SummaryProps {
@@ -30,7 +30,7 @@ const Summary = ({ open, data, kb_id, onClose, refresh }: SummaryProps) => {
 
   const handleOk = () => {
     putApiV1NodeDetail({ id: data.id!, kb_id, summary }).then(() => {
-      Message.success('保存成功');
+      message.success('保存成功');
       refresh?.(summary);
       onClose();
     });

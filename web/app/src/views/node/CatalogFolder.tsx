@@ -3,7 +3,7 @@ import { IconArrowDown, IconFile, IconFolder } from '@/components/icons';
 import { useStore } from '@/provider';
 import { addOpacityToColor, highlightText } from '@/utils';
 import { Box, Stack, useTheme } from '@mui/material';
-import { Ellipsis } from 'ct-mui';
+import { Ellipsis } from '@ctzhian/ui';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 
@@ -46,7 +46,7 @@ const CatalogFolder = ({
                 ? addOpacityToColor(theme.palette.primary.main, 0.08)
                 : themeMode === 'dark'
                   ? '#394052'
-                  : 'background.paper2',
+                  : 'background.paper3',
           },
         }}
         onClick={() => {

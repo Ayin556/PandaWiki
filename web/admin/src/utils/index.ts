@@ -1,5 +1,5 @@
 import { MAC_SYMBOLS } from '@/constant/enums';
-import { Message } from 'ct-mui';
+import { message } from '@ctzhian/ui';
 import { isArray, isEmpty, isNil, isObject, pickBy } from 'lodash';
 
 export * from './render';
@@ -96,14 +96,14 @@ export const copyText = (text: string, callback?: () => void) => {
   const isNotHttps = !/^https:\/\//.test(window.location.origin);
 
   if (isNotHttps) {
-    Message.error('非 https 协议下不支持复制，请使用 https 协议');
+    message.error('非 https 协议下不支持复制，请使用 https 协议');
     return;
   }
 
   try {
     if (navigator.clipboard && window.isSecureContext) {
       navigator.clipboard.writeText(text);
-      Message.success('复制成功');
+      message.success('复制成功');
       callback?.();
     } else {
       const textArea = document.createElement('textarea');
@@ -118,18 +118,18 @@ export const copyText = (text: string, callback?: () => void) => {
       try {
         const successful = document.execCommand('copy');
         if (successful) {
-          Message.success('复制成功');
+          message.success('复制成功');
           callback?.();
         } else {
-          Message.error('复制失败，请手动复制');
+          message.error('复制失败，请手动复制');
         }
       } catch (err) {
-        Message.error('复制失败，请手动复制');
+        message.error('复制失败，请手动复制');
       }
       document.body.removeChild(textArea);
     }
   } catch (err) {
-    Message.error('复制失败，请手动复制');
+    message.error('复制失败，请手动复制');
   }
 };
 

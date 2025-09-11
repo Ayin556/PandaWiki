@@ -12,19 +12,17 @@ import {
   getShareV1CommentList,
   postShareV1Comment,
 } from '@/request/ShareComment';
+import dynamic from 'next/dynamic';
 import { base64ToFile } from '@/utils';
 import { Box, Button, Divider, Stack, TextField, alpha } from '@mui/material';
 import { Editor, UseTiptapReturn } from '@yu-cq/tiptap';
-import { message } from 'ct-mui';
+import { message } from '@ctzhian/ui';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { useParams } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-
-// @ts-ignore
-import Cap from '@cap.js/widget';
 
 dayjs.extend(relativeTime);
 dayjs.locale('zh-cn');
@@ -138,6 +136,7 @@ const DocContent = ({
       let token = '';
       // @ts-ignore
       if (kbDetail?.settings?.captcha_settings?.comment_status === 'enable') {
+        const Cap = (await import('@cap.js/widget')).default;
         const cap = new Cap({
           apiEndpoint: '/share/v1/captcha/',
         });
@@ -178,7 +177,7 @@ const DocContent = ({
     return (
       <>
         <Box>{ip}</Box>
-        <Box sx={{ color: 'text.auxiliary', fontSize: 12 }}>
+        <Box sx={{ color: 'text.tertiary', fontSize: 12 }}>
           {country === '中国' ? `${province}-${city}` : `${country}`}
         </Box>
       </>
@@ -275,7 +274,7 @@ const DocContent = ({
             border: '1px solid',
             borderColor: 'divider',
             borderRadius: '10px',
-            bgcolor: 'background.paper2',
+            bgcolor: 'background.paper3',
             p: '20px',
             fontSize: 14,
             lineHeight: '28px',

@@ -5,7 +5,7 @@ import Avatar from '@/components/Avatar';
 import Card from '@/components/Card';
 import { useURLSearchParams } from '@/hooks';
 import { Box, Button, IconButton, Stack, TextField } from '@mui/material';
-import { Icon, Message } from 'ct-mui';
+import { Icon, message } from '@ctzhian/ui';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -23,7 +23,7 @@ const Login = () => {
       .then(res => {
         localStorage.setItem('panda_wiki_token', res.token!);
         navigate(redirect);
-        Message.success('登录成功');
+        message.success('登录成功');
       })
       .finally(() => {
         setLoading(false);
@@ -72,7 +72,7 @@ const Login = () => {
               gap={1}
               sx={{
                 fontSize: 28,
-                fontFamily: 'Gbold',
+                fontWeight: 700,
                 color: 'text.primary',
                 mb: 4,
               }}
@@ -103,7 +103,7 @@ const Login = () => {
                     >
                       <Icon
                         type='icon-icon_tool_close'
-                        sx={{ fontSize: 14, color: 'text.auxiliary' }}
+                        sx={{ fontSize: 14, color: 'text.tertiary' }}
                       />
                     </IconButton>
                   ) : null,
@@ -146,7 +146,7 @@ const Login = () => {
                       >
                         <Icon
                           type={see ? 'icon-kejian' : 'icon-bukejian'}
-                          sx={{ fontSize: 18, color: 'text.auxiliary' }}
+                          sx={{ fontSize: 18, color: 'text.tertiary' }}
                         />
                       </IconButton>
                       <IconButton
@@ -156,7 +156,7 @@ const Login = () => {
                       >
                         <Icon
                           type='icon-icon_tool_close'
-                          sx={{ fontSize: 14, color: 'text.auxiliary' }}
+                          sx={{ fontSize: 14, color: 'text.tertiary' }}
                         />
                       </IconButton>
                     </Stack>

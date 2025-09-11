@@ -12,7 +12,7 @@ import {
 } from '@dnd-kit/core';
 import { rectSortingStrategy, SortableContext } from '@dnd-kit/sortable';
 import { Box, Button } from '@mui/material';
-import { Icon } from 'ct-mui';
+import { Icon } from '@ctzhian/ui';
 import { FC, useCallback, useState } from 'react';
 import { Control, FieldErrors, useFieldArray } from 'react-hook-form';
 import Item from './Item';

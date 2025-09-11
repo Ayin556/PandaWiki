@@ -49,7 +49,7 @@ const AreaMap = ({ tab }: { tab: ActiveTab }) => {
     <Card
       sx={{
         flex: 1,
-        bgcolor: 'background.paper2',
+        bgcolor: 'background.paper3',
         position: 'relative',
       }}
     >
@@ -73,7 +73,7 @@ const AreaMap = ({ tab }: { tab: ActiveTab }) => {
           fontSize: 12,
           width: 100,
           textAlign: 'right',
-          color: 'text.auxiliary',
+          color: 'text.tertiary',
         }}
       >
         {TimeList.find(item => item.value === tab)?.label || ''}
@@ -102,7 +102,7 @@ const AreaMap = ({ tab }: { tab: ActiveTab }) => {
                 sx={{ fontSize: 12 }}
               >
                 <Stack>{it.name}</Stack>
-                <Box sx={{ fontFamily: 'Gbold' }}>{it.count}</Box>
+                <Box sx={{ fontWeight: 700 }}>{it.count}</Box>
               </Stack>
             ))}
           </Stack>

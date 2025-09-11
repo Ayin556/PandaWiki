@@ -13,7 +13,7 @@ import {
   Stack,
   TextField,
 } from '@mui/material';
-import { Message } from 'ct-mui';
+import { message } from '@ctzhian/ui';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { FormItem, SettingCardItem } from './Common';
@@ -63,7 +63,7 @@ const CardFooter = ({ id, data, refresh }: CardFooterProps) => {
       },
     ).then(() => {
       refresh(value as FooterSetting);
-      Message.success('保存成功');
+      message.success('保存成功');
       setIsEdit(false);
     });
   });

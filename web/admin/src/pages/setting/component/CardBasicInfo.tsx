@@ -3,7 +3,7 @@ import { DomainKnowledgeBaseDetail } from '@/request/types';
 import { FormItem, SettingCardItem } from './Common';
 import { validateUrl } from '@/utils';
 import { TextField } from '@mui/material';
-import { Message } from 'ct-mui';
+import { message } from '@ctzhian/ui';
 import { useEffect, useState } from 'react';
 
 const CardBasicInfo = ({
@@ -26,12 +26,12 @@ const CardBasicInfo = ({
         id: kb.id!,
         access_settings: { ...kb.access_settings, base_url: url },
       }).then(() => {
-        Message.success('保存成功');
+        message.success('保存成功');
         setIsEdit(false);
         refresh();
       });
     } catch (e) {
-      Message.error('请输入正确的网址');
+      message.error('请输入正确的网址');
     }
   };
 

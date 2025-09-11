@@ -5,8 +5,8 @@ import { getApiV1UserList } from '@/request/User';
 import { ConstsUserRole, V1UserListItemResp } from '@/request/types';
 import { useAppSelector } from '@/store';
 import { Box, Button, Stack, Tooltip } from '@mui/material';
-import { Table } from 'ct-mui';
-import { ColumnType } from 'ct-mui/dist/Table';
+import { Table } from '@ctzhian/ui';
+import { ColumnType } from '@ctzhian/ui/dist/Table';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import MemberAdd from './MemberAdd';
@@ -83,7 +83,7 @@ const Member = () => {
                     修改安装目录下
                     <Box
                       sx={{
-                        fontFamily: 'Gbold',
+                        fontWeight: 700,
                         bgcolor: 'background.paper',
                         px: 1.5,
                         py: 0.25,
@@ -96,7 +96,7 @@ const Member = () => {
                     文件中的
                     <Box
                       sx={{
-                        fontFamily: 'Gbold',
+                        fontWeight: 700,
                         bgcolor: 'background.paper',
                         px: 1.5,
                         py: 0.25,
@@ -112,7 +112,7 @@ const Member = () => {
                     执行
                     <Box
                       sx={{
-                        fontFamily: 'Gbold',
+                        fontWeight: 700,
                         bgcolor: 'background.paper',
                         px: 1.5,
                         py: 0.25,
@@ -130,7 +130,7 @@ const Member = () => {
               <Button
                 size='small'
                 sx={{
-                  color: 'text.auxiliary',
+                  color: 'text.tertiary',
                   cursor: 'not-allowed',
                   p: 0,
                   minWidth: 'auto',
@@ -233,7 +233,7 @@ const Member = () => {
                 sx={{
                   fontSize: 12,
                   lineHeight: '20px',
-                  color: 'text.auxiliary',
+                  color: 'text.tertiary',
                 }}
               >
                 暂无数据

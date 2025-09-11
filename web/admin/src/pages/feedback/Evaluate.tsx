@@ -7,8 +7,8 @@ import { tableSx } from '@/constant/styles';
 import { useURLSearchParams } from '@/hooks';
 import { useAppSelector } from '@/store';
 import { Box, Stack, Tooltip } from '@mui/material';
-import { Ellipsis, Icon, Table } from 'ct-mui';
-import { ColumnsType } from 'ct-mui/dist/Table';
+import { Ellipsis, Icon, Table } from '@ctzhian/ui';
+import { ColumnsType } from '@ctzhian/ui/dist/Table';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import Detail from './Detail';
@@ -54,7 +54,7 @@ const Evaluate = () => {
                 {text}
               </Ellipsis>
             </Stack>
-            <Box sx={{ color: 'text.auxiliary', fontSize: 12 }}>
+            <Box sx={{ color: 'text.tertiary', fontSize: 12 }}>
               {AppType[record.app_type as keyof typeof AppType]?.label || '-'}
             </Box>
           </>
@@ -134,7 +134,7 @@ const Evaluate = () => {
               </Box>
             </Stack>
             {user?.email && (
-              <Box sx={{ color: 'text.auxiliary' }}>{user?.email}</Box>
+              <Box sx={{ color: 'text.tertiary' }}>{user?.email}</Box>
             )}
           </Box>
         );
@@ -153,7 +153,7 @@ const Evaluate = () => {
         return (
           <>
             <Box>{text}</Box>
-            <Box sx={{ color: 'text.auxiliary', fontSize: 12 }}>
+            <Box sx={{ color: 'text.tertiary', fontSize: 12 }}>
               {country === '中国' ? `${province}-${city}` : `${country}`}
             </Box>
           </>

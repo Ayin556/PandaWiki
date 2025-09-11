@@ -27,7 +27,7 @@ import {
   alpha,
   ButtonBase,
 } from '@mui/material';
-import { Ellipsis, Table, Modal, Icon, Message } from 'ct-mui';
+import { Ellipsis, Table, Modal, Icon, message } from '@ctzhian/ui';
 import dayjs from 'dayjs';
 import { useEffect, useState, useMemo } from 'react';
 
@@ -187,7 +187,7 @@ const Comments = ({
       },
       onOk: () => {
         deleteApiV1CommentList({ ids: [id] }).then(() => {
-          Message.success('删除成功');
+          message.success('删除成功');
           if (page === 1) {
             getData({});
           } else {
@@ -208,7 +208,7 @@ const Comments = ({
           ids: [id],
           status: DomainCommentStatus.CommentStatusReject,
         }).then(() => {
-          Message.success('拒绝成功');
+          message.success('拒绝成功');
           getData({});
         });
       },
@@ -225,7 +225,7 @@ const Comments = ({
           ids: [id],
           status: DomainCommentStatus.CommentStatusAccepted,
         }).then(() => {
-          Message.success('通过成功');
+          message.success('通过成功');
           getData({});
         });
       },
@@ -290,7 +290,7 @@ const Comments = ({
         return (
           <>
             <Box>{ip}</Box>
-            <Box sx={{ color: 'text.auxiliary', fontSize: 12 }}>
+            <Box sx={{ color: 'text.tertiary', fontSize: 12 }}>
               {country === '中国' ? `${province}-${city}` : `${country}`}
             </Box>
           </>

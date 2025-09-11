@@ -16,7 +16,7 @@ import {
   PaletteColor,
   alpha,
 } from '@mui/material';
-import { Ellipsis, Message } from 'ct-mui';
+import { Ellipsis, message } from '@ctzhian/ui';
 import dayjs from 'dayjs';
 import {
   SimpleTreeItemWrapper,
@@ -339,7 +339,7 @@ const TreeItem = React.forwardRef<
                           name: value,
                           emoji,
                         }).then(() => {
-                          Message.success('更新成功');
+                          message.success('更新成功');
                           const temp = [...items];
                           updateTree(temp, item.id, {
                             ...item,
@@ -353,7 +353,7 @@ const TreeItem = React.forwardRef<
                         });
                       } else {
                         if (value === '') {
-                          Message.error('文档名称不能为空');
+                          message.error('文档名称不能为空');
                           return;
                         }
                         postApiV1Node({
@@ -364,7 +364,7 @@ const TreeItem = React.forwardRef<
                           type: item.type,
                           emoji,
                         }).then(res => {
-                          Message.success('创建成功');
+                          message.success('创建成功');
                           const temp = [...items];
                           const newItem = {
                             ...item,
@@ -434,7 +434,7 @@ const TreeItem = React.forwardRef<
                             kb_id: id,
                             emoji: value,
                           });
-                          Message.success('更新成功');
+                          message.success('更新成功');
                           const temp = [...items];
                           updateTree(temp, item.id, {
                             ...item,
@@ -444,7 +444,7 @@ const TreeItem = React.forwardRef<
                           });
                           setItems(temp);
                         } catch (error) {
-                          Message.error('更新失败');
+                          message.error('更新失败');
                         }
                       }}
                     />

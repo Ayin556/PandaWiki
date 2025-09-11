@@ -11,7 +11,7 @@ import {
   styled,
   Autocomplete,
 } from '@mui/material';
-import { Message } from 'ct-mui';
+import { message } from '@ctzhian/ui';
 import {
   DomainAppDetailResp,
   DomainKnowledgeBaseDetail,
@@ -65,7 +65,7 @@ const WatermarkForm = ({
         },
       },
     ).then(() => {
-      Message.success('保存成功');
+      message.success('保存成功');
       setWatermarkIsEdit(false);
       refresh();
     });
@@ -177,7 +177,7 @@ const VerificationForm = ({
         },
       },
     ).then(() => {
-      Message.success('保存成功');
+      message.success('保存成功');
       setIsEdit(false);
       refresh();
     });
@@ -275,7 +275,7 @@ const KeywordsForm = ({ kb }: { kb: DomainKnowledgeBaseDetail }) => {
       block_words: data.block_words,
     });
 
-    Message.success('保存成功');
+    message.success('保存成功');
     setIsEdit(false);
   });
 
@@ -375,7 +375,7 @@ const CopyForm = ({
       },
     ).then(() => {
       refresh();
-      Message.success('保存成功');
+      message.success('保存成功');
       setIsEdit(false);
     });
   });

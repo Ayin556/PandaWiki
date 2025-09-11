@@ -3,7 +3,7 @@ import { V1NodeDetailResp } from '@/request';
 import { postApiV1Node, putApiV1NodeDetail } from '@/request/Node';
 import { useAppSelector } from '@/store';
 import { Box, TextField } from '@mui/material';
-import { Message, Modal } from 'ct-mui';
+import { message, Modal } from '@ctzhian/ui';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
@@ -51,7 +51,7 @@ const DocAddByCustomText = ({
         name: value.name,
         emoji: value.emoji,
       }).then(() => {
-        Message.success('修改成功');
+        message.success('修改成功');
         reset();
         handleClose();
         refresh?.();
@@ -70,7 +70,7 @@ const DocAddByCustomText = ({
         type,
         emoji: value.emoji,
       }).then(({ id }) => {
-        Message.success('创建成功');
+        message.success('创建成功');
         reset();
         handleClose();
         refresh?.();

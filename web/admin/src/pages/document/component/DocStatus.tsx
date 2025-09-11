@@ -6,7 +6,7 @@ import { convertToTree } from '@/utils/drag';
 import { filterEmptyFolders } from '@/utils/tree';
 import ErrorIcon from '@mui/icons-material/Error';
 import { Stack, Typography } from '@mui/material';
-import { Message, Modal } from 'ct-mui';
+import { message, Modal } from '@ctzhian/ui';
 
 interface DocStatusProps {
   open: boolean;
@@ -44,7 +44,7 @@ const DocStatus = ({
       kb_id,
       action: status,
     }).then(() => {
-      Message.success('更新成功');
+      message.success('更新成功');
       onClose();
       refresh?.();
     });
@@ -85,7 +85,7 @@ const DocStatus = ({
           sx={{
             mt: 2,
             py: 1,
-            bgcolor: 'background.paper2',
+            bgcolor: 'background.paper3',
             '& .dndkit-drag-handle': {
               top: '-2px !important',
             },
