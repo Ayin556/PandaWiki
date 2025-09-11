@@ -636,3 +636,39 @@ export const IconDark = (props: SvgIconProps) => {
 };
 
 IconDark.displayName = 'IconDark';
+
+export const IconToc = (props: SvgIconProps) => {
+  return (
+    <SvgIcon
+      viewBox='0 0 1024 1024'
+      version='1.1'
+      xmlns='http://www.w3.org/2000/svg'
+      {...props}
+    >
+      <path
+        d='M153.6 256h716.8a51.2 51.2 0 0 0 0-102.4H153.6a51.2 51.2 0 0 0 0 102.4z m512 204.8h-512a51.2 51.2 0 0 0 0 102.4h512a51.2 51.2 0 0 0 0-102.4z m-204.8 307.2H153.6a51.2 51.2 0 0 0 0 102.4h307.2a51.2 51.2 0 0 0 0-102.4z'
+        p-id='14840'
+      ></path>
+    </SvgIcon>
+  );
+};
+
+IconToc.displayName = 'icon-neirongdagang';
+
+export const IconMulu = (props: SvgIconProps) => {
+  return (
+    <SvgIcon
+      viewBox='0 0 1024 1024'
+      version='1.1'
+      xmlns='http://www.w3.org/2000/svg'
+      {...props}
+    >
+      <path
+        d='M874.642286 761.929143a51.785143 51.785143 0 1 1 0 103.570286H149.357714a51.785143 51.785143 0 1 1 0-103.570286h725.284572z m4.681143-386.267429a31.085714 31.085714 0 0 1 47.177142 26.697143v200.996572a31.085714 31.085714 0 0 1-47.177142 26.697142L711.826286 529.554286a31.085714 31.085714 0 0 1 0-53.394286l167.497143-100.498286zM512 450.998857a51.785143 51.785143 0 0 1 0 103.643429H149.357714a51.785143 51.785143 0 1 1 0-103.570286H512z m362.642286-310.857143a51.785143 51.785143 0 1 1 0 103.643429H149.357714a51.785143 51.785143 0 1 1 0-103.570286h725.284572z'
+        p-id='7647'
+      ></path>
+    </SvgIcon>
+  );
+};
+
+IconMulu.displayName = 'icon-mulu';

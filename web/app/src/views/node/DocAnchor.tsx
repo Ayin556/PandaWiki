@@ -1,18 +1,23 @@
 'use client';
 
+import { IconToc } from '@/components/icons';
 import useScroll from '@/utils/useScroll';
-import { Box } from '@mui/material';
+import { Box, Stack } from '@mui/material';
 import { TocItem, TocList } from '@yu-cq/tiptap';
-import { useState } from 'react';
+import { useMemo } from 'react';
 
 interface DocAnchorProps {
   headings: TocList;
 }
 
+interface TreeHeading extends TocItem {
+  children: TreeHeading[];
+}
+
 const HeadingSx = [
+  { fontWeight: 400, color: 'text.primary' },
   { fontWeight: 400, color: 'text.secondary' },
   { fontWeight: 400, color: 'text.tertiary' },
-  { fontWeight: 400, color: 'text.disabled' },
 ];
 
 const DocAnchor = ({ headings }: DocAnchorProps) => {
@@ -20,11 +25,95 @@ const DocAnchor = ({ headings }: DocAnchorProps) => {
     headings,
     document.querySelector('#scroll-container') as HTMLDivElement,
   );
-  const [expand, setExpand] = useState(true);
 
   const levels = Array.from(
     new Set(headings?.map(it => it.level).sort((a, b) => a - b)),
   ).slice(0, 3);
+
+  const treeHeadings = useMemo(() => {
+    // 首先筛选出前三级标题
+    const filteredHeadings = headings.filter(heading =>
+      levels.includes(heading.level),
+    );
+
+    // 构建树结构的函数
+    const buildTree = (items: TocItem[]): TreeHeading[] => {
+      const result: TreeHeading[] = [];
+      const stack: TreeHeading[] = [];
+
+      for (const item of items) {
+        const treeItem: TreeHeading = {
+          ...item,
+          children: [],
+        };
+
+        // 找到正确的父级位置
+        while (
+          stack.length > 0 &&
+          stack[stack.length - 1].level >= treeItem.level
+        ) {
+          stack.pop();
+        }
+
+        if (stack.length === 0) {
+          // 顶级标题
+          result.push(treeItem);
+        } else {
+          // 作为子标题添加到父级
+          stack[stack.length - 1].children.push(treeItem);
+        }
+
+        stack.push(treeItem);
+      }
+
+      return result;
+    };
+
+    return buildTree(filteredHeadings);
+  }, [headings, levels]);
+
+  // 递归渲染树结构的函数
+  const renderTreeHeadings = (items: TreeHeading[]): React.ReactNode => {
+    return items.map(heading => {
+      const levelIndex = levels.indexOf(heading.level);
+
+      return (
+        <Stack gap={'8px'} key={heading.id}>
+          <Box
+            sx={{
+              cursor: 'pointer',
+              ...HeadingSx[levelIndex],
+              color:
+                activeHeading?.id === heading.id
+                  ? 'primary.main'
+                  : HeadingSx[levelIndex].color,
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              ':hover': {
+                color: 'primary.main',
+              },
+            }}
+            onClick={e => handleClick(e, heading)}
+          >
+            {heading.textContent}
+          </Box>
+          {heading.children.length > 0 && (
+            <Stack
+              gap={'8px'}
+              sx={{
+                borderLeft: '1px solid',
+                borderColor: 'rgba(115,112,118,0.05)',
+                pl: 3,
+              }}
+            >
+              {renderTreeHeadings(heading.children)}
+            </Stack>
+          )}
+        </Stack>
+      );
+    });
+  };
 
   const handleClick = (
     e: React.MouseEvent<HTMLDivElement>,
@@ -54,79 +143,60 @@ const DocAnchor = ({ headings }: DocAnchorProps) => {
   return (
     <Box
       sx={{
-        fontSize: 12,
         position: 'sticky',
         zIndex: 5,
-        top: 96,
-        right: 16,
-        width: 200,
+        top: 114,
+        flexShrink: 0,
+        width: 264,
+        maxHeight: 'calc(100vh - 164px)',
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        '&::-webkit-scrollbar': {
+          display: 'none',
+        },
+        msOverflowStyle: 'none',
+        scrollbarWidth: 'none',
       }}
     >
-      {headings.length > 0 && (
+      <Stack
+        direction={'row'}
+        alignItems={'center'}
+        gap={1}
+        sx={{
+          lineHeight: '32px',
+          fontSize: 14,
+          pb: 1,
+        }}
+      >
+        <IconToc sx={{ fontSize: 16, cursor: 'pointer' }} />
         <Box
           sx={{
-            bgcolor: 'background.paper2',
-            borderRadius: '10px',
-            border: '1px solid',
-            borderColor: 'divider',
-            padding: '16px',
-            backdropFilter: 'blur(8px)',
+            lineHeight: '22px',
+            fontWeight: 'bold',
           }}
         >
-          <Box
-            sx={{
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              mb: 1,
-              color: 'text.secondary',
-            }}
-          >
-            内容大纲
-          </Box>
-          <Box
-            sx={{
-              maxHeight: 'calc(100vh - 200px)',
-              overflowY: 'auto',
-              overflowX: 'hidden',
-              lineHeight: '32px',
-              '&::-webkit-scrollbar': {
-                display: 'none',
-              },
-
-              msOverflowStyle: 'none',
-              scrollbarWidth: 'none',
-            }}
-          >
-            {headings
-              .filter(it => levels.includes(it.level))
-              .map(heading => {
-                const idx = levels.indexOf(heading.level);
-                return (
-                  <Box
-                    key={heading.id}
-                    sx={{
-                      cursor: 'pointer',
-                      pl: idx * 2,
-                      ...HeadingSx[idx],
-                      color:
-                        activeHeading?.id === heading.id
-                          ? 'primary.main'
-                          : HeadingSx[idx].color,
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      ':hover': {
-                        color: 'primary.main',
-                      },
-                    }}
-                    onClick={e => handleClick(e, heading)}
-                  >
-                    {heading.textContent}
-                  </Box>
-                );
-              })}
-          </Box>
+          内容大纲
         </Box>
+      </Stack>
+      {headings.length > 0 && (
+        <Stack
+          gap={'8px'}
+          sx={{
+            pr: 3,
+            height: 'calc(100vh - 194px)',
+            overflowY: 'auto',
+            overflowX: 'hidden',
+            fontSize: 14,
+            lineHeight: '24px',
+            '&::-webkit-scrollbar': {
+              display: 'none',
+            },
+            msOverflowStyle: 'none',
+            scrollbarWidth: 'none',
+          }}
+        >
+          {renderTreeHeadings(treeHeadings)}
+        </Stack>
       )}
     </Box>
   );

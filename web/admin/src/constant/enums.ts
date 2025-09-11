@@ -767,7 +767,7 @@ export const EditionType = {
 
 export const DocWidth = {
   'full': {
-    label: '全宽',
+    label: '自适应',
     value: 0,
   },
   'wide': {
@@ -776,6 +776,6 @@ export const DocWidth = {
   },
   'normal': {
     label: '常规',
-    value: 892,
+    value: 880,
   }
 }

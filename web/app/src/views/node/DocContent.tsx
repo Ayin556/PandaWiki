@@ -1,6 +1,6 @@
 'use client';
 
-import { KBDetail, NodeDetail } from '@/assets/type';
+import { NodeDetail } from '@/assets/type';
 import FeedbackDialog from '@/components/feedbackModal';
 import { IconFile, IconFolder } from '@/components/icons';
 import TextSelectionTooltip from '@/components/textSelectionTooltip';
@@ -20,7 +20,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { useParams } from 'next/navigation';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 // @ts-ignore
@@ -31,16 +31,18 @@ dayjs.locale('zh-cn');
 
 const DocContent = ({
   info,
+  docWidth,
   editorRef,
   commentList: propsCommentList,
   characterCount,
 }: {
+  docWidth?: string;
   info?: NodeDetail;
   editorRef: UseTiptapReturn;
   commentList?: any[];
   characterCount?: number;
 }) => {
-  const { mobile = false, authInfo, kbDetail } = useStore();
+  const { mobile = false, authInfo, kbDetail, catalogWidth } = useStore();
   const params = useParams() || {};
   const [commentLoading, setCommentLoading] = useState(false);
   const docId = params.id as string;
@@ -67,10 +69,6 @@ const DocContent = ({
     selectedText: string;
     screenshot?: string;
   }>({ selectedText: '' });
-
-  const docWidth = useMemo(() => {
-    return info?.meta?.doc_width || 'full';
-  }, [info]);
 
   // 使用划词功能hook
   const {
@@ -198,8 +196,6 @@ const DocContent = ({
             : DocWidth[docWidth as keyof typeof DocWidth].value,
         wordBreak: 'break-all',
         color: 'text.primary',
-        mx: 'auto',
-        px: 10,
         position: 'relative',
         zIndex: 1,
         '& ::selection': {
@@ -208,7 +204,16 @@ const DocContent = ({
             0.2,
           )} !important`,
         },
+        ...(docWidth === 'full' &&
+          !mobile && {
+            flexGrow: 1,
+          }),
+        ...(docWidth !== 'full' &&
+          !mobile && {
+            maxWidth: `calc(100% - ${catalogWidth}px - 265px - 160px)`,
+          }),
         ...(mobile && {
+          mx: 'auto',
           marginTop: 3,
           width: '100%',
           px: 3,
@@ -223,11 +228,11 @@ const DocContent = ({
         alignItems={'flex-start'}
         gap={1}
         sx={{
-          mb: 2,
-          fontSize: 28,
-          lineHeight: '40px',
-          fontWeight: '700',
+          fontSize: 30,
+          lineHeight: '36px',
+          fontWeight: 'bold',
           color: 'text.primary',
+          mb: '10px',
         }}
       >
         {info?.meta?.emoji ? (
@@ -244,7 +249,7 @@ const DocContent = ({
         alignItems='center'
         gap={1}
         sx={{
-          fontSize: 12,
+          fontSize: 14,
           mb: 4,
           color: 'text.tertiary',
         }}
@@ -271,13 +276,16 @@ const DocContent = ({
             borderColor: 'divider',
             borderRadius: '10px',
             bgcolor: 'background.paper2',
-            p: 2,
+            p: '20px',
             fontSize: 14,
             lineHeight: '28px',
-            color: 'text.secondary',
+            backdropFilter: 'blur(5px)',
           }}
         >
-          {info?.meta?.summary}
+          <Box sx={{ fontWeight: 'bold', mb: 2, lineHeight: '22px' }}>
+            内容摘要
+          </Box>
+          <Box>{info?.meta?.summary}</Box>
         </Box>
       )}
       <Box
