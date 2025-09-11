@@ -11,16 +11,19 @@ import (
 )
 
 type CreationUsecase struct {
-	llm    *LLMUsecase
-	model  *ModelUsecase
-	logger *log.Logger
+	llm      *LLMUsecase
+	model    *ModelUsecase
+	logger   *log.Logger
+	modelkit *modelkit.ModelKit
 }
 
 func NewCreationUsecase(logger *log.Logger, llm *LLMUsecase, model *ModelUsecase) *CreationUsecase {
+	modelkit := modelkit.NewModelKit(logger.Logger)
 	return &CreationUsecase{
-		llm:    llm,
-		model:  model,
-		logger: logger.WithModule("usecase.creation"),
+		llm:      llm,
+		model:    model,
+		logger:   logger.WithModule("usecase.creation"),
+		modelkit: modelkit,
 	}
 }
 
@@ -35,7 +38,7 @@ func (u *CreationUsecase) TextCreation(ctx context.Context, req *domain.TextReq,
 	if err != nil {
 		return fmt.Errorf("failed to convert model to modelkit model: %w", err)
 	}
-	chatModel, err := modelkit.GetChatModel(ctx, modelkitModel)
+	chatModel, err := u.modelkit.GetChatModel(ctx, modelkitModel)
 	if err != nil {
 		return fmt.Errorf("get chat model failed: %w", err)
 	}
