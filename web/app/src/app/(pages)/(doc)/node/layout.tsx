@@ -1,36 +1,28 @@
 'use client';
 
-import { useStore } from '@/provider';
+import { FooterSetting } from '@/assets/type';
 import { FooterProvider } from '@/components/footer';
 import Header from '@/components/header';
-import Catalog from '@/views/node/Catalog';
-import { Box, Stack } from '@mui/material';
+import { useStore } from '@/provider';
 import CatalogH5 from '@/views/node/CatalogH5';
-import { FooterSetting } from '@/assets/type';
+import { Box, Stack } from '@mui/material';
 
 const PCLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <Stack direction='row'>
-      <Catalog />
+    <Stack sx={{ height: '100vh', overflow: 'auto' }} id='scroll-container'>
+      <Header />
       <Stack
-        sx={{ flex: 1, height: '100vh', overflow: 'auto' }}
-        id='scroll-container'
+        sx={{
+          position: 'relative',
+          zIndex: 1,
+          pt: '50px',
+          pb: 10,
+          px: 5,
+        }}
       >
-        <Header />
-        <Stack
-          sx={{
-            flex: 1,
-            pt: 4,
-            position: 'relative',
-            zIndex: 1,
-            pb: 10,
-          }}
-        >
-          {children}
-        </Stack>
-
-        <FooterProvider />
+        {children}
       </Stack>
+      <FooterProvider />
     </Stack>
   );
 };

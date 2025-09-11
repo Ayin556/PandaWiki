@@ -1,11 +1,11 @@
 // app/ThemeWrapper.tsx (客户端组件)
 'use client';
 
-import { ThemeProvider } from 'ct-mui';
-import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
-import { Box } from '@mui/material';
 import StoreProvider from '@/provider';
 import { darkTheme, lightTheme } from '@/theme';
+import { Box } from '@mui/material';
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
+import { ThemeProvider } from 'ct-mui';
 import { useEffect, useState } from 'react';
 
 export default function ThemeWrapper({
@@ -30,7 +30,6 @@ export default function ThemeWrapper({
 
     // 监听自定义主题切换事件
     const handleThemeChange = (e: CustomEvent) => {
-      console.log('theme change', e.detail);
       if (e.detail.theme === 'dark' || e.detail.theme === 'light') {
         setThemeMode(e.detail.theme);
       }

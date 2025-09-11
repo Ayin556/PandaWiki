@@ -415,8 +415,10 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
         }}
       >
         <Box sx={{
-          width: docWidth === 'full' ? `calc(100vw - 160px - ${catalogOpen ? 292 : 0}px - ${fixedToc ? 292 : 0}px)`
+          width: docWidth === 'full'
+            ? `calc(100vw - 160px - ${catalogOpen ? 292 : 0}px - ${fixedToc ? 292 : 0}px)`
             : DocWidth[docWidth as keyof typeof DocWidth].value,
+          maxWidth: '100%',
           p: '72px 80px 150px',
           mt: '102px',
           mx: 'auto',

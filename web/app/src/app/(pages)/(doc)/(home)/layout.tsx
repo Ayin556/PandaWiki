@@ -1,6 +1,6 @@
+import Catalog from '@/components/catalog';
 import { FooterProvider } from '@/components/footer';
 import Header from '@/components/header';
-import Catalog from '@/views/node/Catalog';
 import { Stack } from '@mui/material';
 
 const Layout = ({ children }: { children: React.ReactNode }) => {

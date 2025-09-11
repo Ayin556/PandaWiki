@@ -219,7 +219,7 @@ const Header = ({
                     key: 'full',
                     label: <StyledMenuSelect>
                       <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'} sx={{ width: '100%' }}>
-                        全宽
+                        自适应
                         {docWidth === 'full' && <Icon type='icon-duihao1' sx={{ color: 'primary.main', fontSize: 14, mr: -1, mt: -0.5 }} />}
                       </Stack>
                     </StyledMenuSelect>,

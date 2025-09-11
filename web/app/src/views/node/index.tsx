@@ -7,7 +7,8 @@ import { ConstsCopySetting } from '@/request/types';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { Fab, Stack, Zoom } from '@mui/material';
 import { TocList, useTiptap } from '@yu-cq/tiptap';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import Catalog from './Catalog';
 import DocAnchor from './DocAnchor';
 import DocContent from './DocContent';
 
@@ -27,6 +28,10 @@ const Doc = ({ node }: { node?: NodeDetail }) => {
       setCharacterCount((editor.storage as any).characterCount.characters());
     },
   });
+
+  const docWidth = useMemo(() => {
+    return node?.meta?.doc_width || 'full';
+  }, [node]);
 
   const [showScrollTop, setShowScrollTop] = useState(false);
 
@@ -66,11 +71,15 @@ const Doc = ({ node }: { node?: NodeDetail }) => {
   return (
     <Stack
       direction='row'
-      justifyContent='space-between'
+      justifyContent='center'
       alignItems='flex-start'
+      gap={'96px'}
     >
+      {!mobile && <Catalog docWidth={docWidth} />}
+
       <DocContent
         info={node}
+        docWidth={docWidth}
         editorRef={editorRef}
         characterCount={characterCount}
       />

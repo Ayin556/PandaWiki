@@ -12,15 +12,15 @@ export const VisitSceneEnums = {
 
 export const DocWidth = {
   full: {
-    label: '全宽',
+    label: '自适应',
     value: 0,
   },
   wide: {
     label: '超宽',
-    value: 1127,
+    value: 967,
   },
   normal: {
     label: '常规',
-    value: 892,
+    value: 720,
   },
 };
