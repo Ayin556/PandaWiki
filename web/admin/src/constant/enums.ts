@@ -320,6 +320,22 @@ export const ModelProvider = {
   //   modelDocumentUrl: 'https://github.com/settings/tokens',
   //   defaultBaseUrl: 'https://models.github.ai/catalog',
   // },
+  Xinference: {
+    label: 'Xinference',
+    cn: 'Xinference',
+    icon: 'icon-Xinference',
+    urlWrite: true,
+    secretRequired: false,
+    customHeader: false,
+    chat: true,
+    code: true,
+    embedding: true,
+    rerank: true,
+    analysis: true,
+    modelDocumentUrl:
+      'https://inference.readthedocs.io/zh-cn/v1.2.0/getting_started/installation.html#installation',
+    defaultBaseUrl: 'http://172.17.0.1:9997',
+  },
   Yi: {
     label: 'Yi',
     cn: '零一万物',
@@ -766,16 +782,16 @@ export const EditionType = {
 };
 
 export const DocWidth = {
-  'full': {
+  full: {
     label: '自适应',
     value: 0,
   },
-  'wide': {
+  wide: {
     label: '超宽',
     value: 1127,
   },
-  'normal': {
+  normal: {
     label: '常规',
     value: 880,
-  }
-}
+  },
+};
