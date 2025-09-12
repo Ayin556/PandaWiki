@@ -231,6 +231,16 @@ export interface GithubComChaitinPandaWikiProApiAuthV1AuthGroupMoveReq {
   prev_id?: number;
 }
 
+export interface GithubComChaitinPandaWikiProApiAuthV1AuthGroupSyncReq {
+  kb_id?: string;
+  source_type: 'dingtalk' | 'wecom';
+}
+
+export type GithubComChaitinPandaWikiProApiAuthV1AuthGroupSyncResp = Record<
+  string,
+  any
+>;
+
 export interface GithubComChaitinPandaWikiProApiAuthV1AuthGroupTreeItem {
   auth_ids?: number[];
   children?: GithubComChaitinPandaWikiProApiAuthV1AuthGroupTreeItem[];

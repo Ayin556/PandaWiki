@@ -1013,7 +1013,11 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
       {enabled === '2' &&
         source_type !== EXTEND_CONSTS_SOURCE_TYPE.SourceTypePassword && (
           <>
-            <UserGroup memberList={memberList} enabled={enabled} />
+            <UserGroup
+              memberList={memberList}
+              enabled={enabled}
+              sourceType={source_type}
+            />
             <SettingCardItem title='成员'>
               <Table
                 columns={columns}
