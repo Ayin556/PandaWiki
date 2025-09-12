@@ -333,7 +333,7 @@ const DocPropertiesModal = ({
                   fullWidth
                   multiple
                   options={userGroups}
-                  getOptionLabel={option => option.name!}
+                  getOptionLabel={option => option.path!}
                   onChange={(_, value) => {
                     field.onChange(value);
                   }}
@@ -390,7 +390,7 @@ const DocPropertiesModal = ({
                   fullWidth
                   multiple
                   options={userGroups}
-                  getOptionLabel={option => option.name!}
+                  getOptionLabel={option => option.path!}
                   onChange={(_, value) => {
                     field.onChange(value);
                   }}
@@ -447,7 +447,7 @@ const DocPropertiesModal = ({
                   fullWidth
                   multiple
                   options={userGroups}
-                  getOptionLabel={option => option.name!}
+                  getOptionLabel={option => option.path!}
                   onChange={(_, value) => {
                     field.onChange(value);
                   }}

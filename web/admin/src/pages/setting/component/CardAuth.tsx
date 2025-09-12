@@ -1,6 +1,7 @@
 import { AuthSetting } from '@/api/type';
 import { ConstsSourceType } from '@/request/pro/types';
 import dayjs from 'dayjs';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import {
   Box,
   FormControlLabel,
@@ -238,16 +239,17 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
     {
       title: '用户名',
       dataIndex: 'username',
-      render: (text: string) => {
+      render: (text: string, record) => {
         return (
           <Stack direction={'row'} alignItems={'center'} gap={1}>
-            {sourceTypeIcon[source_type as keyof typeof sourceTypeIcon] && (
-              <Icon
-                type={
-                  sourceTypeIcon[source_type as keyof typeof sourceTypeIcon]
-                }
-                sx={{ fontSize: 16 }}
+            {record.avatar_url ? (
+              <img
+                src={record.avatar_url}
+                width={16}
+                style={{ borderRadius: '50%' }}
               />
+            ) : (
+              <AccountCircleIcon sx={{ fontSize: 16 }} />
             )}
             {text}
           </Stack>
@@ -1017,6 +1019,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
               memberList={memberList}
               enabled={enabled}
               sourceType={source_type}
+              getAuth={getAuth}
             />
             <SettingCardItem title='成员'>
               <Table
