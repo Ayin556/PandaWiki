@@ -11,7 +11,7 @@ import { Box, Stack } from '@mui/material';
 const PCLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <Stack sx={{ height: '100vh', overflow: 'auto' }} id='scroll-container'>
-      <Header />
+      <Header isDocPage={true} />
       <Stack
         direction='row'
         justifyContent='center'
@@ -29,7 +29,7 @@ const PCLayout = ({ children }: { children: React.ReactNode }) => {
         <Catalog />
         {children}
       </Stack>
-      <FooterProvider />
+      <FooterProvider isDocPage={true} />
     </Stack>
   );
 };
