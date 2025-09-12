@@ -7,9 +7,9 @@ on:
       - admin-*
       - app-*
     tags:
-      - "admin-v[0-9]+.[0-9]+.[0-9]+*"
-      - "app-v[0-9]+.[0-9]+.[0-9]+*"
-      - "v[0-9]+.[0-9]+.[0-9]+*"
+      - 'admin-v[0-9]+.[0-9]+.[0-9]+*'
+      - 'app-v[0-9]+.[0-9]+.[0-9]+*'
+      - 'v[0-9]+.[0-9]+.[0-9]+*'
   pull_request:
     branches:
       - main
@@ -50,7 +50,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: '20'
 
       - name: Install pnpm
         uses: pnpm/action-setup@v2
@@ -75,19 +75,15 @@ jobs:
           cd web
           pnpm install --frozen-lockfile --prefer-offline
 
+      - name: Setup Env for admin
+        run: |
+          cd web/admin
+          echo "VITE_APP_VERSION=${{ needs.version.outputs.version }}" >> .env.production
+
       - name: Build admin and app (parallel)
         run: |
-          set -e
-          (
-            cd web/admin
-            echo "VITE_APP_VERSION=${{ needs.version.outputs.version }}" >> .env.production
-            pnpm run build
-          ) &
-          (
-            cd web/app
-            pnpm run build
-          ) &
-          wait
+          cd web
+          pnpm run build
 
       - name: 'Tar admin files'
         run: tar -cvf web/admin/dist.tar web/admin/dist
@@ -110,8 +106,6 @@ jobs:
           path: web/app/dist.tar
           if-no-files-found: error
           include-hidden-files: true
-
-      
 
   package:
     needs: [build, version]

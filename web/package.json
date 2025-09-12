@@ -4,8 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "icon": "pnpm --filter @panda-wiki/icons icon",
-    "prepare": "cd ../ && husky web/.husky"
+    "prepare": "cd ../ && husky web/.husky",
+    "build": "pnpm --parallel --filter panda-wiki-admin --filter panda-wiki-app build",
+    "dev": "pnpm --parallel --filter admin --filter app dev"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,css,scss,md,mdx,json,yml,yaml,mjs,cjs}": "prettier --write"
