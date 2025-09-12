@@ -47,10 +47,10 @@ const lightPalette: PaletteOptions = {
     paper3: '#F8F9FA',
   },
   text: {
-    primary: '#21222D',
-    secondary: 'rgba(33,34,45, 0.7)',
-    tertiary: 'rgba(33,34,45, 0.5)',
-    disabled: 'rgba(33,34,45, 0.3)',
+    primary: '#171c19',
+    secondary: '#3f4441',
+    tertiary: '#717572',
+    disabled: '#6e7781',
   },
   divider: '#ECEEF1',
 };

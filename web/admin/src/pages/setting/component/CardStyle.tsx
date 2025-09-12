@@ -15,6 +15,7 @@ import {
   RadioGroup,
   Select,
   Stack,
+  Tooltip,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -126,24 +127,31 @@ const CardStyle = ({ id, data, refresh }: CardStyleProps) => {
                 setIsEdit(true);
               }}
             >
-              <Stack alignItems='center' sx={{ width: 100, mr: 2 }}>
-                <img src={doc_width_full} width={100} alt='自适应' />
+              <Stack alignItems='center' sx={{ width: 120, mr: 2 }}>
+                <img src={doc_width_full} width={120} alt='全屏' />
                 <FormControlLabel
                   value={'full'}
                   control={<Radio size='small' />}
-                  label={<Box>自适应</Box>}
+                  label={<Box>全屏</Box>}
                 />
               </Stack>
-              <Stack alignItems='center' sx={{ width: 100, mr: 2 }}>
-                <img src={doc_width_wide} width={100} alt='超宽' />
+              <Stack
+                alignItems='center'
+                sx={{ width: 120, mr: 2, cursor: 'pointer' }}
+              >
+                <Tooltip placement='top' title='适配内容宽度：1120px' arrow>
+                  <img src={doc_width_wide} width={120} alt='超宽' />
+                </Tooltip>
                 <FormControlLabel
                   value={'wide'}
                   control={<Radio size='small' />}
                   label={<Box>超宽</Box>}
                 />
               </Stack>
-              <Stack alignItems='center' sx={{ width: 100 }}>
-                <img src={doc_width_normal} width={100} alt='常规' />
+              <Stack alignItems='center' sx={{ width: 120, cursor: 'pointer' }}>
+                <Tooltip placement='top' title='适配内容宽度：880px' arrow>
+                  <img src={doc_width_normal} width={120} alt='常规' />
+                </Tooltip>
                 <FormControlLabel
                   value={'normal'}
                   control={<Radio size='small' />}

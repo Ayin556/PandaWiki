@@ -1,9 +1,9 @@
 import { ITreeItem } from '@/assets/type';
-import { IconArrowDown, IconFile, IconFolder } from '@/components/icons';
+import { IconArrowDown } from '@/components/icons';
 import { useStore } from '@/provider';
 import { addOpacityToColor, highlightText } from '@/utils';
-import { Box, Stack, useTheme } from '@mui/material';
 import { Ellipsis } from '@ctzhian/ui';
+import { Box, Stack, useTheme } from '@mui/material';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 
@@ -25,22 +25,25 @@ const CatalogFolder = ({
   const router = useRouter();
 
   return (
-    <Box key={item.id}>
+    <Stack key={item.id} gap={0.5}>
       <Stack
         direction='row'
         alignItems='center'
         justifyContent='space-between'
+        gap={0.5}
         sx={{
           position: 'relative',
           lineHeight: '40px',
           cursor: 'pointer',
           borderRadius: '10px',
-          color: activeId === item.id ? 'primary.main' : 'inherit',
+          color: activeId === item.id ? 'primary.main' : 'text.tertiary',
           bgcolor:
             activeId === item.id
               ? addOpacityToColor(theme.palette.primary.main, 0.08)
               : 'transparent',
+          transition: 'all 0.2s ease-in-out',
           '&:hover': {
+            color: activeId === item.id ? 'primary.main' : 'text.primary',
             bgcolor:
               activeId === item.id
                 ? addOpacityToColor(theme.palette.primary.main, 0.08)
@@ -64,13 +67,13 @@ const CatalogFolder = ({
         {item.type === 2 ? (
           <Box sx={{ flex: 1 }}>
             <Link href={`/node/${item.id}`} prefetch={false}>
-              <Box sx={{ pl: (depth - 0.5) * 2, pr: 1 }}>
+              <Box sx={{ pl: depth * 2, pr: 1 }}>
                 <Stack direction='row' alignItems='center' gap={1}>
-                  {item.emoji ? (
+                  {/* {item.emoji ? (
                     <Box sx={{ flexShrink: 0, fontSize: 14 }}>{item.emoji}</Box>
                   ) : (
                     <IconFile sx={{ flexShrink: 0, fontSize: 12 }} />
-                  )}
+                  )} */}
                   <Ellipsis sx={{ flex: 1, width: 0, pr: 1 }}>
                     {highlightText(item.name, searchTerm)}
                   </Ellipsis>
@@ -83,16 +86,16 @@ const CatalogFolder = ({
             direction='row'
             alignItems='center'
             justifyContent={'space-between'}
-            sx={{ flex: 1, pl: (depth - 0.5) * 2, pr: 1 }}
+            sx={{ flex: 1, pl: depth * 2, pr: 1 }}
           >
             <Stack direction='row' alignItems='center' gap={1} sx={{ flex: 1 }}>
-              {item.emoji ? (
+              {/* {item.emoji ? (
                 <Box sx={{ flexShrink: 0, fontSize: 12 }}>{item.emoji}</Box>
               ) : item.type === 1 ? (
                 <IconFolder sx={{ flexShrink: 0, fontSize: 12 }} />
               ) : (
                 <IconFile sx={{ flexShrink: 0, fontSize: 12 }} />
-              )}
+              )} */}
               <Ellipsis sx={{ flex: 1, width: 0, pr: 1 }}>
                 {highlightText(item.name, searchTerm)}
               </Ellipsis>
@@ -110,7 +113,7 @@ const CatalogFolder = ({
         )}
       </Stack>
       {item.children && item.children.length > 0 && item.expanded && (
-        <>
+        <Stack gap={0.5}>
           {item.children.map(child => (
             <CatalogFolder
               key={child.id}
@@ -119,9 +122,9 @@ const CatalogFolder = ({
               searchTerm={searchTerm}
             />
           ))}
-        </>
+        </Stack>
       )}
-    </Box>
+    </Stack>
   );
 };
 
