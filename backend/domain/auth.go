@@ -35,14 +35,17 @@ func (Auth) TableName() string {
 }
 
 type AuthGroup struct {
-	ID        uint          `json:"id" gorm:"primaryKey;autoIncrement"`
-	Name      string        `json:"name" gorm:"uniqueIndex;size:100;not null"`
-	KbID      string        `json:"kb_id,omitempty" gorm:"column:kb_id;not null"`
-	ParentID  *uint         `json:"parent_id" gorm:"column:parent_id"`
-	Position  float64       `json:"position"`
-	AuthIDs   pq.Int64Array `json:"auth_ids" gorm:"type:int[]"`
-	CreatedAt time.Time     `json:"created_at"`
-	UpdatedAt time.Time     `json:"updated_at"`
+	ID           uint              `json:"id" gorm:"primaryKey;autoIncrement"`
+	Name         string            `json:"name" gorm:"uniqueIndex;size:100;not null"`
+	KbID         string            `json:"kb_id,omitempty" gorm:"column:kb_id;not null"`
+	ParentID     *uint             `json:"parent_id" gorm:"column:parent_id"`
+	Position     float64           `json:"position"`
+	AuthIDs      pq.Int64Array     `json:"auth_ids" gorm:"type:int[]"`
+	CreatedAt    time.Time         `json:"created_at"`
+	UpdatedAt    time.Time         `json:"updated_at"`
+	SyncId       string            `json:"sync_id"`
+	SyncParentId string            `json:"sync_parent_id"`
+	SourceType   consts.SourceType `json:"source_type" gorm:"column:source_type;not null"`
 
 	// 关联字段
 	Parent   *AuthGroup  `json:"parent,omitempty" gorm:"-"`
