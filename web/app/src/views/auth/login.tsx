@@ -454,14 +454,7 @@ export default function Login() {
           </Stack>
         </Box>
       </Box>
-      <Box
-        sx={{
-          maxWidth: '1200px',
-          margin: '0 auto',
-        }}
-      >
-        <FooterProvider showBrand={false} />
-      </Box>
+      <FooterProvider showBrand={false} />
     </>
   );
 }

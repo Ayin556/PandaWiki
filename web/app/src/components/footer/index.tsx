@@ -384,9 +384,6 @@ const Footer = ({
   return (
     <Box
       id='footer'
-      style={{
-        width: `calc(100% - 16px)`,
-      }}
       sx={{
         px: '15%',
         fontSize: '12px',
