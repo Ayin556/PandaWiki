@@ -7,9 +7,9 @@ on:
       - admin-*
       - app-*
     tags:
-      - "admin-v[0-9]+.[0-9]+.[0-9]+*"
-      - "app-v[0-9]+.[0-9]+.[0-9]+*"
-      - "v[0-9]+.[0-9]+.[0-9]+*"
+      - 'admin-v[0-9]+.[0-9]+.[0-9]+*'
+      - 'app-v[0-9]+.[0-9]+.[0-9]+*'
+      - 'v[0-9]+.[0-9]+.[0-9]+*'
   pull_request:
     branches:
       - main
@@ -50,7 +50,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: '20'
 
       - name: Install pnpm
         uses: pnpm/action-setup@v2
@@ -83,11 +83,28 @@ jobs:
             echo "VITE_APP_VERSION=${{ needs.version.outputs.version }}" >> .env.production
             pnpm run build
           ) &
+          admin_pid=$!
           (
             cd web/app
             pnpm run build
           ) &
-          wait
+          app_pid=$!
+
+          # 等待所有后台进程完成并检查退出状态
+          wait $admin_pid
+          admin_exit_code=$?
+          wait $app_pid
+          app_exit_code=$?
+
+          # 如果任何一个构建失败，退出整个步骤
+          if [ $admin_exit_code -ne 0 ]; then
+            echo "Admin build failed with exit code $admin_exit_code"
+            exit $admin_exit_code
+          fi
+          if [ $app_exit_code -ne 0 ]; then
+            echo "App build failed with exit code $app_exit_code"
+            exit $app_exit_code
+          fi
 
       - name: 'Tar admin files'
         run: tar -cvf web/admin/dist.tar web/admin/dist
@@ -110,8 +127,6 @@ jobs:
           path: web/app/dist.tar
           if-no-files-found: error
           include-hidden-files: true
-
-      
 
   package:
     needs: [build, version]
