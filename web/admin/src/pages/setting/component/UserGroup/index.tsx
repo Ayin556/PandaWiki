@@ -7,9 +7,9 @@ import { Stack, Button } from '@mui/material';
 import { Box } from '@mui/material';
 import { postApiProV1AuthGroupSync } from '@/request/pro/AuthOrg';
 import {
-  GithubComChaitinPandaWikiProApiAuthV1AuthGroupListItem,
   GithubComChaitinPandaWikiProApiAuthV1AuthItem,
   ConstsSourceType,
+  GithubComChaitinPandaWikiProApiAuthV1AuthGroupTreeItem,
 } from '@/request/pro/types';
 import UserGroupModal from '../UserGroupModal';
 import { useAppSelector } from '@/store';
@@ -24,18 +24,25 @@ interface UserGroupProps {
   enabled: string;
   memberList: GithubComChaitinPandaWikiProApiAuthV1AuthItem[];
   sourceType: ConstsSourceType;
+  getAuth: () => void;
 }
 
-const UserGroup = ({ enabled, memberList, sourceType }: UserGroupProps) => {
+const UserGroup = ({
+  enabled,
+  memberList,
+  sourceType,
+  getAuth,
+}: UserGroupProps) => {
   const { license, kb_id } = useAppSelector(state => state.config);
   const [userGroupModalOpen, setUserGroupModalOpen] = useState(false);
   const [userGroupModalType, setUserGroupModalType] = useState<'add' | 'edit'>(
     'add',
   );
+  const [syncLoading, setSyncLoading] = useState(false);
   const [userGroupModalData, setUserGroupModalData] =
-    useState<GithubComChaitinPandaWikiProApiAuthV1AuthGroupListItem>();
+    useState<GithubComChaitinPandaWikiProApiAuthV1AuthGroupTreeItem>();
   const [userGroupTree, setUserGroupTree] = useState<
-    GithubComChaitinPandaWikiProApiAuthV1AuthGroupListItem[]
+    GithubComChaitinPandaWikiProApiAuthV1AuthGroupTreeItem[]
   >([]);
 
   const isEnterprise = useMemo(() => {
@@ -94,12 +101,24 @@ const UserGroup = ({ enabled, memberList, sourceType }: UserGroupProps) => {
   };
 
   const handleSync = () => {
-    postApiProV1AuthGroupSync({
-      kb_id,
-      source_type: sourceType as 'dingtalk',
-    }).then(() => {
-      message.success('同步成功');
-      getUserGroup();
+    Modal.confirm({
+      title: '同步组织架构和成员',
+      content: '确定要同步组织架构和成员吗？',
+      onOk: async () => {
+        setSyncLoading(true);
+        await postApiProV1AuthGroupSync({
+          kb_id,
+          source_type: sourceType as 'dingtalk',
+        })
+          .then(() => {
+            message.success('同步成功');
+            getUserGroup();
+            getAuth();
+          })
+          .finally(() => {
+            setSyncLoading(false);
+          });
+      },
     });
   };
 
@@ -113,17 +132,22 @@ const UserGroup = ({ enabled, memberList, sourceType }: UserGroupProps) => {
           </Tooltip>
         )
       }
-      extra={
-        isEnterprise &&
-        [
-          ConstsSourceType.SourceTypeWeCom,
-          ConstsSourceType.SourceTypeDingTalk,
-        ].includes(sourceType as ConstsSourceType) && (
-          <Button color='primary' size='small' onClick={handleSync}>
-            同步组织架构和成员
-          </Button>
-        )
-      }
+      // extra={
+      //   isEnterprise &&
+      //   [
+      //     ConstsSourceType.SourceTypeWeCom,
+      //     ConstsSourceType.SourceTypeDingTalk,
+      //   ].includes(sourceType as ConstsSourceType) && (
+      //     <Button
+      //       color='primary'
+      //       size='small'
+      //       onClick={handleSync}
+      //       loading={syncLoading}
+      //     >
+      //       同步组织架构和成员
+      //     </Button>
+      //   )
+      // }
     >
       <Box
         sx={{
@@ -136,7 +160,7 @@ const UserGroup = ({ enabled, memberList, sourceType }: UserGroupProps) => {
         }}
       >
         <GroupTree
-          data={userGroupTree}
+          data={userGroupTree.filter(it => !it.sync_id)}
           onMove={handleMove}
           onDelete={onDeleteUserGroup}
           onClickMembers={item => {
@@ -144,6 +168,7 @@ const UserGroup = ({ enabled, memberList, sourceType }: UserGroupProps) => {
               id: item.id,
               name: item.name,
               auth_ids: item.auth_ids,
+              sync_id: item.sync_id,
             });
             setUserGroupModalOpen(true);
             setUserGroupModalType('edit');
@@ -153,9 +178,23 @@ const UserGroup = ({ enabled, memberList, sourceType }: UserGroupProps) => {
               id: item.id,
               name: item.name,
               auth_ids: item.auth_ids,
+              sync_id: item.sync_id,
             });
             setUserGroupModalOpen(true);
             setUserGroupModalType(type);
+          }}
+        />
+        <GroupTree
+          data={userGroupTree.filter(it => it.sync_id)}
+          sync
+          onSync={handleSync}
+          onClickMembers={item => {
+            setUserGroupModalData({
+              id: item.id,
+              name: item.name,
+              auth_ids: item.auth_ids,
+              sync_id: item.sync_id,
+            });
           }}
         />
       </Box>

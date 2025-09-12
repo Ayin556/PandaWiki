@@ -6,7 +6,15 @@ import React, {
   useContext,
 } from 'react';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { Box, Stack, IconButton, Menu, MenuItem } from '@mui/material';
+import {
+  Box,
+  Stack,
+  IconButton,
+  Menu,
+  MenuItem,
+  Button,
+  ButtonBase,
+} from '@mui/material';
 import dayjs from 'dayjs';
 import NoData from '@/assets/images/nodata.png';
 import { DndContext } from '@dnd-kit/core';
@@ -34,6 +42,7 @@ type TreeNode = {
   children?: TreeNode[];
   isRoot?: boolean;
   count?: number;
+  sync_id?: string;
 };
 
 export interface GroupTreeProps {
@@ -52,6 +61,8 @@ export interface GroupTreeProps {
     item: GithubComChaitinPandaWikiProApiAuthV1AuthGroupTreeItem,
     type: 'add' | 'edit',
   ) => void;
+  sync?: boolean;
+  onSync?: () => void;
 }
 
 interface IContext {
@@ -62,6 +73,8 @@ interface IContext {
     event: React.MouseEvent<HTMLElement>,
     item: TreeNode,
   ) => void;
+  sync: boolean;
+  onSync: () => void;
 }
 
 const AppContext = createContext<IContext | null>(null);
@@ -77,6 +90,7 @@ const mapToTree = (
     parentId: parentId ?? parentId,
     auth_ids: it.auth_ids,
     count: it.count,
+    sync_id: it.sync_id,
     children: mapToTree(it.children || [], it.id!),
   }));
 };
@@ -88,7 +102,7 @@ const TreeItem = React.forwardRef<
   const { item } = props;
   const context = useContext(AppContext);
   if (!context) throw new Error('TreeItem 必须在 AppContext.Provider 内部使用');
-  const { onClickMembers, handleMenuOpen } = context;
+  const { onClickMembers, handleMenuOpen, sync, onSync } = context;
   return (
     <Box
       sx={[
@@ -108,6 +122,7 @@ const TreeItem = React.forwardRef<
           <div
             {...props.handleProps}
             className={'dnd-sortable-tree_simple_handle'}
+            style={sync ? { background: 'none' } : {}}
           />
         ) : (
           <div />
@@ -159,18 +174,36 @@ const TreeItem = React.forwardRef<
                 ) : (
                   <Box />
                 )}
-                <Box
-                  onClick={e => e.stopPropagation()}
-                  onMouseDown={e => e.stopPropagation()}
-                  onPointerDown={e => e.stopPropagation()}
-                >
-                  <IconButton
-                    size='small'
-                    onClick={e => handleMenuOpen(e, item)}
+
+                {!sync && (
+                  <Box
+                    onClick={e => e.stopPropagation()}
+                    onMouseDown={e => e.stopPropagation()}
+                    onPointerDown={e => e.stopPropagation()}
                   >
-                    <Icon type='icon-gengduo' />
-                  </IconButton>
-                </Box>
+                    <IconButton
+                      size='small'
+                      onClick={e => handleMenuOpen(e, item)}
+                    >
+                      <Icon type='icon-gengduo' />
+                    </IconButton>
+                  </Box>
+                )}
+                {sync && item.isRoot && (
+                  <Box
+                    sx={{
+                      fontSize: 14,
+                      color: 'primary.main',
+                      cursor: 'pointer',
+                    }}
+                    onClick={e => {
+                      e.stopPropagation();
+                      onSync?.();
+                    }}
+                  >
+                    同步
+                  </Box>
+                )}
               </Stack>
             </Stack>
           </SimpleTreeItemWrapper>
@@ -180,7 +213,14 @@ const TreeItem = React.forwardRef<
   );
 });
 
-const GroupTree = ({ data, onDelete, onMove, onEdit }: GroupTreeProps) => {
+const GroupTree = ({
+  data,
+  onDelete,
+  onMove,
+  onEdit,
+  sync = false,
+  onSync,
+}: GroupTreeProps) => {
   const itemsData = useMemo(() => mapToTree(data), [data]);
   const { kbDetail } = useAppSelector(state => state.config);
 
@@ -191,7 +231,7 @@ const GroupTree = ({ data, onDelete, onMove, onEdit }: GroupTreeProps) => {
     return [
       {
         id: 'root',
-        name: kbDetail.name || '根用户组',
+        name: sync ? '同步用户组' : '自定义用户组',
         parentId: null,
         isRoot: true,
         children: attachRootParent(itemsData),
@@ -268,7 +308,9 @@ const GroupTree = ({ data, onDelete, onMove, onEdit }: GroupTreeProps) => {
   };
 
   return (
-    <AppContext.Provider value={{ onClickMembers, handleMenuOpen }}>
+    <AppContext.Provider
+      value={{ onClickMembers, handleMenuOpen, sync, onSync }}
+    >
       <GroupModal
         open={isModalOpen}
         onCancel={handleModalClose}
@@ -277,6 +319,7 @@ const GroupTree = ({ data, onDelete, onMove, onEdit }: GroupTreeProps) => {
       <DndContext>
         <SortableTree
           items={items.map(it => ({ ...it }))}
+          disableSorting={sync}
           onItemsChanged={(newItems, reason: ItemChangedReason<TreeNode>) => {
             if (reason.type === 'dropped') {
               const { parentId, id } = reason.draggedItem;
