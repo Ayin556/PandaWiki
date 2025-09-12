@@ -1,20 +1,23 @@
 'use client';
 
-import logo from '@/assets/images/logo.png';
+import logo from '@/assets/images/footer-logo.png';
 import { KBDetail } from '@/assets/type';
 import { useStore } from '@/provider';
 import { Box, Divider, Stack } from '@mui/material';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { IconPhone, IconWechat } from '../icons';
 import Overlay from './Overlay';
+import { DocWidth } from '@/constant';
 
 const Footer = ({
   showBrand = true,
   fullWidth = false,
   kbDetail,
   mobile,
+  isDocPage = false,
+  catalogWidth,
 }: {
   kbDetail?: KBDetail;
   mobile?: boolean;
@@ -22,6 +25,7 @@ const Footer = ({
   catalogWidth?: number;
   showBrand?: boolean;
   fullWidth?: boolean;
+  isDocPage?: boolean;
 }) => {
   const [curOverlayType, setCurOverlayType] = useState('');
   const [open, setOpen] = useState(false);
@@ -33,8 +37,10 @@ const Footer = ({
     phone: '',
     text: '',
   });
+  const docWidth = useMemo(() => {
+    return kbDetail?.settings?.theme_and_style?.doc_width || 'full';
+  }, [kbDetail]);
   const footerSetting = kbDetail?.settings?.footer_settings;
-  console.log(footerSetting);
   const customStyle = kbDetail?.settings?.web_app_custom_style;
   if (mobile)
     return (
@@ -275,35 +281,43 @@ const Footer = ({
               {footerSetting?.icp}
             </Box>
           )}
-          <Stack
-            direction={'row'}
-            alignItems={'center'}
-            gap={0.5}
-            sx={{ height: 40, lineHeight: '40px', color: '#FFFFFF' }}
-          >
-            本网站由
-            <Link
-              href={'https://pandawiki.docs.baizhi.cloud/'}
-              target='_blank'
-              prefetch={false}
+          {customStyle?.show_brand_info !== false && (
+            <Stack
+              direction={'row'}
+              alignItems={'center'}
+              gap={0.5}
+              sx={{
+                height: 40,
+                lineHeight: '40px',
+                color: 'rgba(255, 255, 255, 0.30)',
+              }}
             >
-              <Stack
-                direction={'row'}
-                alignItems={'center'}
-                gap={0.5}
-                sx={{
-                  cursor: 'pointer',
-                  '&:hover': {
-                    color: 'primary.main',
-                  },
-                }}
+              本网站由
+              <Link
+                href={'https://pandawiki.docs.baizhi.cloud/'}
+                target='_blank'
+                prefetch={false}
               >
-                <Image src={logo.src} alt='PandaWiki' width={16} height={16} />
-                <Box sx={{ fontWeight: 'bold' }}>PandaWiki</Box>
-              </Stack>
-            </Link>
-            提供技术支持
-          </Stack>
+                <Stack
+                  direction={'row'}
+                  alignItems={'center'}
+                  gap={0.5}
+                  sx={{
+                    cursor: 'pointer',
+                  }}
+                >
+                  <Image
+                    src={logo.src}
+                    alt='PandaWiki'
+                    width={16}
+                    height={16}
+                  />
+                  <Box sx={{ fontWeight: 'bold' }}>PandaWiki</Box>
+                </Stack>
+              </Link>
+              提供技术支持
+            </Stack>
+          )}
         </Box>
         <Overlay open={open} onClose={setOpen}>
           <Stack
@@ -384,250 +398,271 @@ const Footer = ({
   return (
     <Box
       id='footer'
+      style={{
+        width: '100%',
+      }}
       sx={{
-        px: '15%',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
         fontSize: '12px',
         zIndex: 1,
         color: '#fff',
         bgcolor: 'background.footer',
-        ...(footerSetting?.footer_style === 'complex' &&
-          showBrand && {
-            borderTop: '1px solid',
-            borderColor: 'divider',
-          }),
+        ...(showBrand && {
+          borderTop: '1px solid',
+          borderColor: 'divider',
+        }),
         ...(fullWidth && {
           maxWidth: '1200px',
           mx: 'auto',
         }),
       }}
     >
-      {showBrand && (
-        <Box
-          py={
-            customStyle?.footer_show_intro
-              ? 6
-              : (footerSetting?.brand_groups?.length || 0) > 0
+      <Box
+        sx={{
+          width: '100%',
+          ...(!isDocPage && {
+            px: '15%',
+          }),
+          ...(isDocPage &&
+            !mobile && {
+              ...(docWidth === 'full' && {
+                px: 5,
+              }),
+              ...(docWidth === 'wide' && {
+                maxWidth: `calc(${catalogWidth}px + 192px + 264px + ${DocWidth.wide.value}px)`,
+              }),
+              ...(docWidth === 'normal' && {
+                maxWidth: `calc(${catalogWidth}px + 192px + 264px + ${DocWidth.normal.value}px)`,
+              }),
+            }),
+        }}
+      >
+        {showBrand && (
+          <Box
+            py={
+              customStyle?.footer_show_intro
                 ? 6
-                : 0
-          }
-        >
-          <Stack
-            direction={'row'}
-            gap={10}
-            justifyContent={
-              customStyle?.footer_show_intro === false ? 'center' : 'flex-start'
+                : (footerSetting?.brand_groups?.length || 0) > 0
+                  ? 6
+                  : 0
             }
           >
-            {customStyle?.footer_show_intro !== false && (
-              <Stack
-                direction={'column'}
-                sx={{ width: '30%', minWidth: 200 }}
-                gap={3}
-              >
-                {footerSetting?.brand_name && (
-                  <Stack direction={'row'} alignItems={'center'} gap={1}>
-                    {footerSetting?.brand_logo && (
-                      <img
-                        src={footerSetting.brand_logo}
-                        alt='PandaWiki'
-                        height={24}
-                      />
-                    )}
-                    <Box
-                      sx={{
-                        fontWeight: 'bold',
-                        lineHeight: '32px',
-                        fontSize: 20,
-                      }}
-                    >
-                      {footerSetting?.brand_name}
-                    </Box>
-                  </Stack>
-                )}
-                {footerSetting?.brand_desc && (
-                  <Box
-                    sx={{
-                      fontSize: 12,
-                      lineHeight: '26px',
-                      color: 'rgba(255, 255, 255, 0.7)',
-                    }}
-                  >
-                    {footerSetting.brand_desc}
-                  </Box>
-                )}
-                <Stack direction={'column'} gap={'26px'}>
-                  {customStyle?.social_media_accounts?.map((account, index) => {
-                    return (
-                      <Stack
-                        direction={'row'}
-                        key={index}
-                        sx={{
-                          position: 'relative',
-                          '&:hover': { color: '#fff' },
-                          '&:hover .popup': { display: 'flex !important' },
-                          color: 'rgba(255, 255, 255, 0.70)',
-                          cursor: 'default',
-                        }}
-                        gap={1}
-                      >
-                        {account.channel === 'wechat_oa' && (
-                          <IconWechat
-                            sx={{ fontSize: '20px', color: 'inherit' }}
-                          ></IconWechat>
-                        )}
-                        {account.channel === 'phone' && (
-                          <IconPhone
-                            sx={{ fontSize: '20px', color: 'inherit' }}
-                          ></IconPhone>
-                        )}
-
-                        <Box
-                          sx={{
-                            lineHeight: '24px',
-                            fontSize: '12px',
-                            color: 'inherit',
-                          }}
-                        >
-                          {account.text}
-                        </Box>
-                        {account.channel === 'wechat_oa' &&
-                          (account?.text || account?.icon) && (
-                            <Stack
-                              className={'popup'}
-                              direction={'column'}
-                              alignItems={'center'}
-                              bgcolor={'#fff'}
-                              p={1.5}
-                              sx={{
-                                position: 'absolute',
-                                bottom: '100%',
-                                transform: 'translateY(-10px)',
-                                left: 0,
-                                boxShadow:
-                                  ' 0px 4px 8px 0px rgba(255,255,255,0.25)',
-                                borderRadius: '4px',
-                              }}
-                              gap={1}
-                              display={'none'}
-                              zIndex={999}
-                            >
-                              {account.icon && (
-                                <img
-                                  src={account.icon}
-                                  width={120}
-                                  height={120}
-                                ></img>
-                              )}
-                              {account.text && (
-                                <Box
-                                  sx={{
-                                    fontSize: '12px',
-                                    lineHeight: '16px',
-                                    color: '#21222D',
-                                    maxWidth: '120px',
-                                    textAlign: 'center',
-                                  }}
-                                >
-                                  {account.text}
-                                </Box>
-                              )}
-                            </Stack>
-                          )}
-                        {account.channel === 'phone' && account?.phone && (
-                          <Stack
-                            className={'popup'}
-                            bgcolor={'#fff'}
-                            px={1.5}
-                            py={1}
-                            sx={{
-                              position: 'absolute',
-                              bottom: '100%',
-                              transform: 'translateY(-10px)',
-                              left: 0,
-                              boxShadow:
-                                ' 0px 4px 8px 0px rgba(255,255,255,0.25)',
-                              borderRadius: '4px',
-                            }}
-                            display={'none'}
-                            zIndex={999}
-                          >
-                            {account.phone && (
-                              <Box
-                                sx={{
-                                  fontSize: '12px',
-                                  lineHeight: '16px',
-                                  color: '#21222D',
-                                  textAlign: 'center',
-                                }}
-                              >
-                                {account.phone}
-                              </Box>
-                            )}
-                          </Stack>
-                        )}
-                      </Stack>
-                    );
-                  })}
-                </Stack>
-              </Stack>
-            )}
-
             <Stack
               direction={'row'}
-              width={'100%'}
+              gap={10}
               justifyContent={
-                (footerSetting?.brand_groups?.length || 0) > 1
-                  ? 'space-around'
+                customStyle?.footer_show_intro === false
+                  ? 'center'
                   : 'flex-start'
               }
             >
-              {footerSetting?.brand_groups?.map(group => (
+              {customStyle?.footer_show_intro !== false && (
                 <Stack
-                  gap={1.5}
-                  key={group.name}
-                  sx={{
-                    fontSize: 12,
-                    lineHeight: '22px',
-                    minWidth: '100px',
-                    '& a:hover': {
-                      color: 'primary.main',
-                    },
-                  }}
+                  direction={'column'}
+                  sx={{ width: '30%', minWidth: 200 }}
+                  gap={3}
                 >
-                  <Box
+                  {footerSetting?.brand_name && (
+                    <Stack direction={'row'} alignItems={'center'} gap={1}>
+                      {footerSetting?.brand_logo && (
+                        <img
+                          src={footerSetting.brand_logo}
+                          alt='PandaWiki'
+                          height={24}
+                        />
+                      )}
+                      <Box
+                        sx={{
+                          fontWeight: 'bold',
+                          lineHeight: '32px',
+                          fontSize: 20,
+                        }}
+                      >
+                        {footerSetting?.brand_name}
+                      </Box>
+                    </Stack>
+                  )}
+                  {footerSetting?.brand_desc && (
+                    <Box
+                      sx={{
+                        fontSize: 12,
+                        lineHeight: '26px',
+                        color: 'rgba(255, 255, 255, 0.7)',
+                      }}
+                    >
+                      {footerSetting.brand_desc}
+                    </Box>
+                  )}
+                  <Stack direction={'column'} gap={'26px'}>
+                    {customStyle?.social_media_accounts?.map(
+                      (account, index) => {
+                        return (
+                          <Stack
+                            direction={'row'}
+                            key={index}
+                            sx={{
+                              position: 'relative',
+                              '&:hover': { color: '#fff' },
+                              '&:hover .popup': { display: 'flex !important' },
+                              color: 'rgba(255, 255, 255, 0.70)',
+                              cursor: 'default',
+                            }}
+                            gap={1}
+                          >
+                            {account.channel === 'wechat_oa' && (
+                              <IconWechat
+                                sx={{ fontSize: '20px', color: 'inherit' }}
+                              ></IconWechat>
+                            )}
+                            {account.channel === 'phone' && (
+                              <IconPhone
+                                sx={{ fontSize: '20px', color: 'inherit' }}
+                              ></IconPhone>
+                            )}
+
+                            <Box
+                              sx={{
+                                lineHeight: '24px',
+                                fontSize: '12px',
+                                color: 'inherit',
+                              }}
+                            >
+                              {account.text}
+                            </Box>
+                            {account.channel === 'wechat_oa' &&
+                              (account?.text || account?.icon) && (
+                                <Stack
+                                  className={'popup'}
+                                  direction={'column'}
+                                  alignItems={'center'}
+                                  bgcolor={'#fff'}
+                                  p={1.5}
+                                  sx={{
+                                    position: 'absolute',
+                                    bottom: '100%',
+                                    transform: 'translateY(-10px)',
+                                    left: 0,
+                                    boxShadow:
+                                      ' 0px 4px 8px 0px rgba(255,255,255,0.25)',
+                                    borderRadius: '4px',
+                                  }}
+                                  gap={1}
+                                  display={'none'}
+                                  zIndex={999}
+                                >
+                                  {account.icon && (
+                                    <img
+                                      src={account.icon}
+                                      width={120}
+                                      height={120}
+                                    ></img>
+                                  )}
+                                  {account.text && (
+                                    <Box
+                                      sx={{
+                                        fontSize: '12px',
+                                        lineHeight: '16px',
+                                        color: '#21222D',
+                                        maxWidth: '120px',
+                                        textAlign: 'center',
+                                      }}
+                                    >
+                                      {account.text}
+                                    </Box>
+                                  )}
+                                </Stack>
+                              )}
+                            {account.channel === 'phone' && account?.phone && (
+                              <Stack
+                                className={'popup'}
+                                bgcolor={'#fff'}
+                                px={1.5}
+                                py={1}
+                                sx={{
+                                  position: 'absolute',
+                                  bottom: '100%',
+                                  transform: 'translateY(-10px)',
+                                  left: 0,
+                                  boxShadow:
+                                    ' 0px 4px 8px 0px rgba(255,255,255,0.25)',
+                                  borderRadius: '4px',
+                                }}
+                                display={'none'}
+                                zIndex={999}
+                              >
+                                {account.phone && (
+                                  <Box
+                                    sx={{
+                                      fontSize: '12px',
+                                      lineHeight: '16px',
+                                      color: '#21222D',
+                                      textAlign: 'center',
+                                    }}
+                                  >
+                                    {account.phone}
+                                  </Box>
+                                )}
+                              </Stack>
+                            )}
+                          </Stack>
+                        );
+                      },
+                    )}
+                  </Stack>
+                </Stack>
+              )}
+
+              <Stack
+                direction={'row'}
+                width={'100%'}
+                justifyContent={
+                  (footerSetting?.brand_groups?.length || 0) > 1
+                    ? 'space-around'
+                    : 'flex-start'
+                }
+              >
+                {footerSetting?.brand_groups?.map(group => (
+                  <Stack
+                    gap={1.5}
+                    key={group.name}
                     sx={{
-                      fontSize: 14,
-                      lineHeight: '24px',
-                      mb: 1,
+                      fontSize: 12,
+                      lineHeight: '22px',
+                      minWidth: '100px',
+                      '& a:hover': {
+                        color: 'primary.main',
+                      },
                     }}
                   >
-                    {group.name}
-                  </Box>
-                  {group.links?.map(link => (
-                    <Box color={'rgba(255, 255, 255, 0.50)'} key={link.name}>
-                      <Link
-                        href={link?.url || ''}
-                        target='_blank'
-                        key={link.name}
-                        prefetch={false}
-                      >
-                        {link.name}
-                      </Link>
+                    <Box
+                      sx={{
+                        fontSize: 14,
+                        lineHeight: '24px',
+                        mb: 1,
+                      }}
+                    >
+                      {group.name}
                     </Box>
-                  ))}
-                </Stack>
-              ))}
+                    {group.links?.map(link => (
+                      <Box color={'rgba(255, 255, 255, 0.50)'} key={link.name}>
+                        <Link
+                          href={link?.url || ''}
+                          target='_blank'
+                          key={link.name}
+                          prefetch={false}
+                        >
+                          {link.name}
+                        </Link>
+                      </Box>
+                    ))}
+                  </Stack>
+                ))}
+              </Stack>
             </Stack>
-          </Stack>
-        </Box>
-      )}
-      <Box
-        sx={{
-          height: 40,
-          lineHeight: '40px',
-          textAlign: 'center',
-        }}
-      >
+          </Box>
+        )}
         {!(
           customStyle?.footer_show_intro === false &&
           footerSetting?.brand_groups.length === 0
@@ -640,79 +675,97 @@ const Footer = ({
             }}
           ></Stack>
         )}
-
-        <Stack
-          direction={'row'}
-          alignItems={'center'}
-          justifyContent={'center'}
+        <Box
+          sx={{
+            height: 40,
+            lineHeight: '40px',
+            textAlign: 'center',
+          }}
         >
           <Stack
             direction={'row'}
             alignItems={'center'}
-            gap={1}
-            sx={{ color: 'rgba(255, 255, 255, 0.30)' }}
+            justifyContent={'center'}
           >
-            {!!footerSetting?.corp_name && (
-              <Box>{footerSetting?.corp_name}</Box>
-            )}
-            {!!footerSetting?.icp && (
-              <>
-                <Divider orientation='vertical' sx={{ mx: 0.5, height: 16 }} />
-                <Link
-                  href={`https://beian.miit.gov.cn/`}
-                  target='_blank'
-                  prefetch={false}
-                >
-                  {footerSetting?.icp}
-                </Link>
-              </>
-            )}
-            {(customStyle?.show_brand_info || true) && (
-              <>
-                {(footerSetting?.corp_name || footerSetting?.icp) && (
+            <Stack
+              direction={'row'}
+              alignItems={'center'}
+              gap={1}
+              sx={{ color: 'rgba(255, 255, 255, 0.30)' }}
+            >
+              {!!footerSetting?.corp_name && (
+                <Box>{footerSetting?.corp_name}</Box>
+              )}
+              {!!footerSetting?.icp && (
+                <>
                   <Divider
                     orientation='vertical'
-                    sx={{ mx: 0.5, height: 16 }}
+                    sx={{
+                      mx: 0.5,
+                      height: 16,
+                      borderColor: 'rgba(255, 255, 255, 0.30)',
+                    }}
                   />
-                )}
-                <Stack
-                  direction={'row'}
-                  alignItems={'center'}
-                  gap={0.5}
-                  sx={{ color: '#fff' }}
-                >
-                  本网站由
                   <Link
-                    href={'https://pandawiki.docs.baizhi.cloud/'}
-                    prefetch={false}
+                    href={`https://beian.miit.gov.cn/`}
                     target='_blank'
+                    prefetch={false}
                   >
-                    <Stack
-                      direction={'row'}
-                      alignItems={'center'}
-                      gap={0.5}
-                      sx={{
-                        cursor: 'pointer',
-                        '&:hover': {
-                          color: 'primary.main',
-                        },
-                      }}
-                    >
-                      <Image
-                        src={logo.src}
-                        alt='PandaWiki'
-                        width={16}
-                        height={16}
-                      />
-                      <Box sx={{ fontWeight: 'bold' }}>PandaWiki</Box>
-                    </Stack>
+                    {footerSetting?.icp}
                   </Link>
-                  提供技术支持
-                </Stack>
-              </>
-            )}
+                </>
+              )}
+              {customStyle?.show_brand_info !== false && (
+                <>
+                  {(footerSetting?.corp_name || footerSetting?.icp) && (
+                    <Divider
+                      orientation='vertical'
+                      sx={{
+                        mx: 0.5,
+                        height: 16,
+                        borderColor: 'rgba(255, 255, 255, 0.30)',
+                      }}
+                    />
+                  )}
+                  <Stack
+                    direction={'row'}
+                    alignItems={'center'}
+                    gap={0.5}
+                    sx={{ color: 'rgba(255, 255, 255, 0.30)' }}
+                  >
+                    本网站由
+                    <Link
+                      href={'https://pandawiki.docs.baizhi.cloud/'}
+                      prefetch={false}
+                      target='_blank'
+                    >
+                      <Stack
+                        direction={'row'}
+                        alignItems={'center'}
+                        gap={0.5}
+                        sx={{
+                          cursor: 'pointer',
+                          '&:hover': {
+                            color: 'primary.main',
+                          },
+                        }}
+                      >
+                        <Image
+                          src={logo.src}
+                          alt='PandaWiki'
+                          width={16}
+                          height={16}
+                        />
+                        <Box sx={{ fontWeight: 'bold' }}>PandaWiki</Box>
+                      </Stack>
+                    </Link>
+                    提供技术支持
+                  </Stack>
+                </>
+              )}
+            </Stack>
           </Stack>
-        </Stack>
+        </Box>
       </Box>
     </Box>
   );
@@ -721,9 +774,11 @@ const Footer = ({
 export const FooterProvider = ({
   showBrand = true,
   fullWidth = false,
+  isDocPage = false,
 }: {
   showBrand?: boolean;
   fullWidth?: boolean;
+  isDocPage?: boolean;
 }) => {
   const { kbDetail, mobile = false, catalogShow, catalogWidth } = useStore();
   return (
@@ -734,6 +789,7 @@ export const FooterProvider = ({
       mobile={mobile}
       catalogShow={catalogShow}
       catalogWidth={catalogWidth}
+      isDocPage={isDocPage}
     />
   );
 };
