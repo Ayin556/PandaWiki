@@ -74,7 +74,7 @@ interface IContext {
     item: TreeNode,
   ) => void;
   sync: boolean;
-  onSync: () => void;
+  onSync?: () => void;
 }
 
 const AppContext = createContext<IContext | null>(null);
