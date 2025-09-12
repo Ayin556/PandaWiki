@@ -75,36 +75,15 @@ jobs:
           cd web
           pnpm install --frozen-lockfile --prefer-offline
 
+      - name: Setup Env for admin
+        run: |
+          cd web/admin
+          echo "VITE_APP_VERSION=${{ needs.version.outputs.version }}" >> .env.production
+
       - name: Build admin and app (parallel)
         run: |
-          set -e
-          (
-            cd web/admin
-            echo "VITE_APP_VERSION=${{ needs.version.outputs.version }}" >> .env.production
-            pnpm run build
-          ) &
-          admin_pid=$!
-          (
-            cd web/app
-            pnpm run build
-          ) &
-          app_pid=$!
-
-          # 等待所有后台进程完成并检查退出状态
-          wait $admin_pid
-          admin_exit_code=$?
-          wait $app_pid
-          app_exit_code=$?
-
-          # 如果任何一个构建失败，退出整个步骤
-          if [ $admin_exit_code -ne 0 ]; then
-            echo "Admin build failed with exit code $admin_exit_code"
-            exit $admin_exit_code
-          fi
-          if [ $app_exit_code -ne 0 ]; then
-            echo "App build failed with exit code $app_exit_code"
-            exit $app_exit_code
-          fi
+          cd web
+          pnpm run build
 
       - name: 'Tar admin files'
         run: tar -cvf web/admin/dist.tar web/admin/dist

@@ -24,6 +24,14 @@ const toCamelCase = str => {
     .replace(/^./, match => match.toUpperCase());
 };
 
+// 将SVG属性从短横线命名法转换为驼峰命名法
+const convertSvgAttributes = (content: string): string => {
+  return content.replace(/(\w+)-(\w+)=/g, (match, p1, p2) => {
+    const camelCase = p1 + p2.charAt(0).toUpperCase() + p2.slice(1);
+    return `${camelCase}=`;
+  });
+};
+
 const extractSVGs = async svgString => {
   const svgMatch = svgString.match(
     /window\._iconfont_svg_string_.*?'(<svg>.*<\/svg>)'/,
@@ -56,6 +64,9 @@ const extractSVGs = async svgString => {
     const formattedName = toCamelCase(id);
     const fileName = `${formattedName}.tsx`;
 
+    // 转换SVG属性为驼峰命名法
+    const convertedContent = convertSvgAttributes(content);
+
     // 生成 React/JSX 组件代码
     const reactComponentCode = `import React from 'react';
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon';
@@ -66,7 +77,7 @@ const ${formattedName} = (props: SvgIconProps) => (
     viewBox='${viewBox}'
     {...props}
   >
-    ${content}
+    ${convertedContent}
   </SvgIcon>
 );
 
