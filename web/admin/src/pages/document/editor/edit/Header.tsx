@@ -236,7 +236,7 @@ const Header = ({
               //             justifyContent={'space-between'}
               //             sx={{ width: '100%' }}
               //           >
-              //             自适应
+              //             全屏
               //             {docWidth === 'full' && (
               //               <Icon
               //                 type='icon-duihao1'

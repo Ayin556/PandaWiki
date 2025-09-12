@@ -41,91 +41,105 @@ const Catalog = () => {
   if (mobile) return null;
 
   return (
-    <Box
+    <Stack
+      flexShrink={0}
+      alignItems={docWidth === 'full' ? 'flex-start' : 'flex-end'}
       sx={{
         position: 'sticky',
         top: 114,
-        flexShrink: 0,
         maxHeight: 'calc(100vh - 164px)',
         zIndex: 9,
         fontSize: 14,
         width: catalogWidth,
+        maxWidth: catalogWidth,
+        minWidth: 24,
+        overflow: 'hidden',
         transition: 'width 0.3s ease-in-out',
         ...(!catalogShow &&
           docWidth === 'full' && {
-            width: 0,
+            width: 24,
           }),
       }}
     >
-      <Box
-        sx={{
-          width: '100%',
-          transition: 'width 0.3s ease-in-out',
-          float: docWidth === 'full' ? 'left' : 'right',
-          ...(!catalogShow && {
-            width: 0,
-          }),
-        }}
-      >
+      {!catalogShow ? (
         <Stack
           direction={'row'}
-          alignItems={'center'}
-          gap={1}
+          justifyContent={'flex-end'}
           sx={{
-            mb: 1,
-            px: 1,
             height: '22px',
+            mb: 2,
+            ...(docWidth === 'full' ? { ml: 1 } : { mr: 1 }),
           }}
         >
           <Tooltip title={catalogShow ? null : '展开目录'} arrow>
             <IconMulu
-              sx={{ fontSize: 16, cursor: 'pointer' }}
+              sx={{
+                fontSize: 16,
+                cursor: 'pointer',
+                mr: 1,
+                height: 22,
+                lineHeight: '22px',
+              }}
               onClick={() => setCatalogShow?.(!catalogShow)}
             />
           </Tooltip>
+        </Stack>
+      ) : (
+        <Stack
+          direction={'row'}
+          alignItems={'center'}
+          justifyContent={'space-between'}
+          gap={1}
+          sx={{
+            width: '100%',
+            mb: 2,
+            pl: 2,
+            pr: 1,
+            height: '22px',
+          }}
+        >
           <Box
             sx={{
               fontWeight: 'bold',
               width: '30px',
-              opacity: 1,
               wordBreak: 'keep-all',
-              transition: 'opacity 0.2s ease-in-out',
-              ...(!catalogShow && {
-                opacity: 0,
-              }),
             }}
           >
             目录
           </Box>
+          <IconMulu
+            sx={{ fontSize: 16, cursor: 'pointer' }}
+            onClick={() => setCatalogShow?.(!catalogShow)}
+          />
         </Stack>
-        <Box
-          sx={{
-            maxHeight: 'calc(100vh - 194px)',
-            overflowY: 'auto',
-            overflowX: 'hidden',
-            width: '100%',
-            opacity: 1,
-            transition: 'opacity 0.2s ease-in-out',
-            ...(!catalogShow && {
-              opacity: 0,
-            }),
-            '&::-webkit-scrollbar': {
-              display: 'none',
-            },
-            msOverflowStyle: 'none',
-            scrollbarWidth: 'none',
-          }}
-        >
-          {tree.map(item => (
-            <CatalogFolder
-              key={item.id}
-              item={item}
-              searchTerm={debouncedSearchTerm}
-            />
-          ))}
-        </Box>
-      </Box>
-    </Box>
+      )}
+      <Stack
+        gap={0.5}
+        sx={{
+          maxHeight: 'calc(100vh - 202px)',
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          width: '100%',
+          transition: 'width 0.3s ease-in-out',
+          ...(!catalogShow && {
+            width: 0,
+          }),
+          '&::-webkit-scrollbar': {
+            display: 'none',
+          },
+          msOverflowStyle: 'none',
+          scrollbarWidth: 'none',
+        }}
+      >
+        {tree.map(item => (
+          <CatalogFolder
+            key={item.id}
+            item={item}
+            searchTerm={debouncedSearchTerm}
+          />
+        ))}
+      </Stack>
+    </Stack>
   );
 };
 

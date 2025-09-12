@@ -1,6 +1,5 @@
 'use client';
 
-import { IconToc } from '@/components/icons';
 import useScroll from '@/utils/useScroll';
 import { Box, Stack } from '@mui/material';
 import { TocItem, TocList } from '@yu-cq/tiptap';
@@ -88,13 +87,17 @@ const DocAnchor = ({ headings }: DocAnchorProps) => {
                   color:
                     activeHeading?.id === heading.id
                       ? 'primary.main'
-                      : HeadingSx[levelIndex].color,
+                      : 'inherit',
                   whiteSpace: 'nowrap',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   ':hover': {
-                    color: 'primary.main',
+                    color:
+                      activeHeading?.id === heading.id
+                        ? 'primary.main'
+                        : 'text.primary',
                   },
+                  transition: 'all 0.2s ease-in-out',
                 }}
                 onClick={e => handleClick(e, heading)}
               >
@@ -151,17 +154,9 @@ const DocAnchor = ({ headings }: DocAnchorProps) => {
         top: 114,
         flexShrink: 0,
         width: 264,
-        maxHeight: 'calc(100vh - 164px)',
-        overflowY: 'auto',
-        overflowX: 'hidden',
-        '&::-webkit-scrollbar': {
-          display: 'none',
-        },
-        msOverflowStyle: 'none',
-        scrollbarWidth: 'none',
       }}
     >
-      <Stack
+      {/* <Stack
         direction={'row'}
         alignItems={'center'}
         gap={1}
@@ -180,16 +175,17 @@ const DocAnchor = ({ headings }: DocAnchorProps) => {
         >
           内容大纲
         </Box>
-      </Stack>
+      </Stack> */}
       {headings.length > 0 && (
         <Stack
           gap={'8px'}
           sx={{
             pr: 3,
-            maxHeight: 'calc(100vh - 194px)',
+            maxHeight: 'calc(100vh - 164px)',
             overflowY: 'auto',
             overflowX: 'hidden',
             fontSize: 14,
+            color: 'text.tertiary',
             lineHeight: '24px',
             '&::-webkit-scrollbar': {
               display: 'none',

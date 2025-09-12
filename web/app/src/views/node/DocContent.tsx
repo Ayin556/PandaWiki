@@ -195,10 +195,6 @@ const DocContent = ({
       id='doc-content'
       ref={docContentRef}
       sx={theme => ({
-        width:
-          docWidth === 'full'
-            ? 'calc(100% - 424px)'
-            : DocWidth[docWidth as keyof typeof DocWidth].value,
         wordBreak: 'break-all',
         color: 'text.primary',
         position: 'relative',
@@ -215,6 +211,7 @@ const DocContent = ({
           }),
         ...(docWidth !== 'full' &&
           !mobile && {
+            width: DocWidth[docWidth as keyof typeof DocWidth].value,
             maxWidth: `calc(100% - ${catalogWidth}px - 265px - 192px)`,
           }),
         ...(mobile && {
@@ -301,7 +298,7 @@ const DocContent = ({
             color: 'text.primary',
             '.tableWrapper': {
               transition: 'width 0.3s ease-in-out',
-              width: `calc(100vw - 537px - ${catalogShow ? catalogWidth : 0}px)`,
+              width: `calc(100vw - 80px - 264px - 192px - 8px - ${catalogShow ? catalogWidth : 26}px)`,
               overflowX: 'auto',
             },
           },

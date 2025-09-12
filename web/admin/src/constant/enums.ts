@@ -783,12 +783,12 @@ export const EditionType = {
 
 export const DocWidth = {
   full: {
-    label: '自适应',
+    label: '全屏',
     value: 0,
   },
   wide: {
     label: '超宽',
-    value: 1127,
+    value: 1120,
   },
   normal: {
     label: '常规',
