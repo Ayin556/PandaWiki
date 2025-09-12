@@ -1,17 +1,30 @@
-import Catalog from '@/components/catalog';
+import Catalog from '@/views/node/Catalog';
 import { FooterProvider } from '@/components/footer';
 import Header from '@/components/header';
 import { Stack } from '@mui/material';
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <Stack direction='row'>
-      <Catalog />
-      <Stack sx={{ flex: 1, height: '100vh', overflow: 'auto' }}>
-        <Header />
+    <Stack sx={{ height: '100vh', overflow: 'auto' }} id='scroll-container'>
+      <Header />
+      <Stack
+        direction='row'
+        justifyContent='center'
+        alignItems='flex-start'
+        gap={2}
+        sx={{
+          flex: 1,
+          position: 'relative',
+          zIndex: 1,
+          // pt: '50px',
+          pb: 10,
+          pl: 5,
+        }}
+      >
+        <Catalog />
         {children}
-        <FooterProvider />
       </Stack>
+      <FooterProvider />
     </Stack>
   );
 };

@@ -282,6 +282,7 @@ const Chat = ({
         pt: 4,
         px: 10,
         minHeight: '100vh',
+        flex: 1,
       }}
     >
       <Stack

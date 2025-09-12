@@ -23,6 +23,7 @@ const PCLayout = ({ children }: { children: React.ReactNode }) => {
           pt: '50px',
           pb: 10,
           px: 5,
+          flex: 1,
         }}
       >
         <Catalog />
