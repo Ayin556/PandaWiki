@@ -144,7 +144,7 @@ func (c *Client) GetAccessTokenByCode(code string) (string, error) {
 	}
 	response, err := c.oauthClient.GetUserToken(request)
 	if err != nil {
-		return "", fmt.Errorf("获取用户access token失败: %w", err)
+		return "", fmt.Errorf("failed to get user access token: %w", err)
 	}
 	accessToken := tea.StringValue(response.Body.AccessToken)
 	return accessToken, nil
@@ -179,7 +179,7 @@ func (c *Client) GetAccessToken() (string, error) {
 		return "", tryErr
 	}
 	accessToken := *response.Body.AccessToken
-	c.logger.Info("get access token", log.String("access_token", accessToken), log.Int("expire_in", int(*response.Body.ExpireIn)))
+	c.logger.Debug("get access token", log.String("access_token", accessToken), log.Int("expire_in", int(*response.Body.ExpireIn)))
 
 	if err := c.cache.Set(ctx, cacheKey, accessToken, time.Duration(*response.Body.ExpireIn-300)*time.Second).Err(); err != nil {
 		c.logger.Warn("failed to set cache", log.Error(err))
@@ -189,38 +189,38 @@ func (c *Client) GetAccessToken() (string, error) {
 }
 
 func (c *Client) GetUserInfoByCode(code string) (*UserInfo, error) {
-
 	req, err := http.NewRequest("GET", userInfoUrl, nil)
 	if err != nil {
-		return nil, fmt.Errorf("创建GET请求失败: %w", err)
+		return nil, fmt.Errorf("failed to create GET request: %w", err)
 	}
+
 	accessToken, err := c.GetAccessTokenByCode(code)
 	if err != nil {
 		return nil, err
 	}
 
-	// 设置请求头
+	// Set request headers
 	req.Header.Set("x-acs-dingtalk-access-token", accessToken)
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("发送GET请求失败: %w", err)
+		return nil, fmt.Errorf("failed to send GET request: %w", err)
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, fmt.Errorf("读取响应体失败: %w", err)
+		return nil, fmt.Errorf("failed to read response body: %w", err)
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("钉钉API返回错误状态: %s, 响应: %s", resp.Status, string(body))
+		return nil, fmt.Errorf("DingTalk API returned non-200 status: %s, response: %s", resp.Status, string(body))
 	}
 
 	var userInfo UserInfo
 	if err := json.Unmarshal(body, &userInfo); err != nil {
-		return nil, fmt.Errorf("解析JSON响应失败: %w", err)
+		return nil, fmt.Errorf("failed to unmarshal JSON response: %w", err)
 	}
 
 	return &userInfo, nil
@@ -238,34 +238,34 @@ func (c *Client) GetDepartmentList() (*DepartmentListRsp, error) {
 
 	req, err := http.NewRequest(http.MethodGet, requestURL, nil)
 	if err != nil {
-		return nil, fmt.Errorf("创建请求失败: %w", err)
+		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
 
 	req.Header.Set("Content-Type", "application/json")
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("发送请求失败: %w", err)
+		return nil, fmt.Errorf("failed to send request: %w", err)
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, fmt.Errorf("读取响应体失败: %w", err)
+		return nil, fmt.Errorf("failed to read response body: %w", err)
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("钉钉API返错误状态: %s, 响应: %s", resp.Status, string(body))
+		return nil, fmt.Errorf("DingTalk API returned non-200 status: %s, response: %s", resp.Status, string(body))
 	}
 
-	c.logger.Info("DepartmentListUrl:", log.String("body", string(body)))
+	c.logger.Debug("DepartmentListUrl:", log.String("body", string(body)))
 	var departmentListRsp DepartmentListRsp
 	if err := json.Unmarshal(body, &departmentListRsp); err != nil {
-		return nil, fmt.Errorf("解析JSON响应失败: %w", err)
+		return nil, fmt.Errorf("failed to unmarshal JSON response: %w", err)
 	}
 
 	if departmentListRsp.Errcode != 0 {
-		return nil, fmt.Errorf("钉钉API返回错误: errcode=%d", departmentListRsp.Errcode)
+		return nil, fmt.Errorf("DingTalk API error: errcode=%d", departmentListRsp.Errcode)
 	}
 
 	return &departmentListRsp, nil
@@ -310,39 +310,39 @@ func (c *Client) GetUserList(deptID int) (*GetUserListResp, error) {
 
 	jsonData, err := json.Marshal(bodyMap)
 	if err != nil {
-		return nil, fmt.Errorf("marshal request body failed: %w", err)
+		return nil, fmt.Errorf("failed to marshal request body: %w", err)
 	}
 
 	req, err := http.NewRequest(http.MethodPost, requestURL, bytes.NewBuffer(jsonData))
 	if err != nil {
-		return nil, fmt.Errorf("创建请求失败: %w", err)
+		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
 
 	req.Header.Set("Content-Type", "application/json")
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("发送请求失败: %w", err)
+		return nil, fmt.Errorf("failed to send request: %w", err)
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, fmt.Errorf("读取响应体失败: %w", err)
+		return nil, fmt.Errorf("failed to read response body: %w", err)
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("钉钉API返错误状态: %s, 响应: %s", resp.Status, string(body))
+		return nil, fmt.Errorf("DingTalk API returned non-200 status: %s, response: %s", resp.Status, string(body))
 	}
 
-	c.logger.Info("GetUserList:", log.String("body", string(body)))
+	c.logger.Debug("GetUserList:", log.String("body", string(body)))
 	var getUserListResp GetUserListResp
 	if err := json.Unmarshal(body, &getUserListResp); err != nil {
-		return nil, fmt.Errorf("解析JSON响应失败: %w", err)
+		return nil, fmt.Errorf("failed to unmarshal JSON response: %w", err)
 	}
 
 	if getUserListResp.Errcode != 0 {
-		return nil, fmt.Errorf("钉钉API返回错误: errcode=%d", getUserListResp.Errcode)
+		return nil, fmt.Errorf("DingTalk API error: errcode=%d", getUserListResp.Errcode)
 	}
 
 	return &getUserListResp, nil
