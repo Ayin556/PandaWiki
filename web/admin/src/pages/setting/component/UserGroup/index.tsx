@@ -3,12 +3,13 @@ import { SettingCardItem } from '../Common';
 import { Tooltip } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import { Modal, message } from '@ctzhian/ui';
-import NoData from '@/assets/images/nodata.png';
-import { Stack } from '@mui/material';
+import { Stack, Button } from '@mui/material';
 import { Box } from '@mui/material';
+import { postApiProV1AuthGroupSync } from '@/request/pro/AuthOrg';
 import {
   GithubComChaitinPandaWikiProApiAuthV1AuthGroupListItem,
   GithubComChaitinPandaWikiProApiAuthV1AuthItem,
+  ConstsSourceType,
 } from '@/request/pro/types';
 import UserGroupModal from '../UserGroupModal';
 import { useAppSelector } from '@/store';
@@ -22,9 +23,10 @@ import GroupTree from './GroupTree';
 interface UserGroupProps {
   enabled: string;
   memberList: GithubComChaitinPandaWikiProApiAuthV1AuthItem[];
+  sourceType: ConstsSourceType;
 }
 
-const UserGroup = ({ enabled, memberList }: UserGroupProps) => {
+const UserGroup = ({ enabled, memberList, sourceType }: UserGroupProps) => {
   const { license, kb_id } = useAppSelector(state => state.config);
   const [userGroupModalOpen, setUserGroupModalOpen] = useState(false);
   const [userGroupModalType, setUserGroupModalType] = useState<'add' | 'edit'>(
@@ -91,6 +93,16 @@ const UserGroup = ({ enabled, memberList }: UserGroupProps) => {
     getUserGroup();
   };
 
+  const handleSync = () => {
+    postApiProV1AuthGroupSync({
+      kb_id,
+      source_type: sourceType as 'dingtalk',
+    }).then(() => {
+      message.success('同步成功');
+      getUserGroup();
+    });
+  };
+
   return (
     <SettingCardItem
       title='用户组'
@@ -99,6 +111,17 @@ const UserGroup = ({ enabled, memberList }: UserGroupProps) => {
           <Tooltip title='企业版可用' placement='top' arrow>
             <InfoIcon sx={{ color: 'text.secondary', fontSize: 14, ml: 1 }} />
           </Tooltip>
+        )
+      }
+      extra={
+        isEnterprise &&
+        [
+          ConstsSourceType.SourceTypeWeCom,
+          ConstsSourceType.SourceTypeDingTalk,
+        ].includes(sourceType as ConstsSourceType) && (
+          <Button color='primary' size='small' onClick={handleSync}>
+            同步组织架构和成员
+          </Button>
         )
       }
     >
