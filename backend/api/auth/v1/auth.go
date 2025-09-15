@@ -14,6 +14,7 @@ type AuthGetReq struct {
 type AuthGetResp struct {
 	ClientID     string            `json:"client_id"`
 	ClientSecret string            `json:"client_secret"`
+	Proxy        string            `json:"proxy"`
 	SourceType   consts.SourceType `json:"source_type"`
 	Auths        []AuthItem        `json:"auths"`
 }
@@ -33,6 +34,7 @@ type AuthSetReq struct {
 	SourceType   consts.SourceType `query:"source_type"  json:"source_type" validate:"required,oneof=github"`
 	ClientID     string            `json:"client_id"`
 	ClientSecret string            `json:"client_secret"`
+	Proxy        string            `json:"proxy"`
 }
 
 type AuthSetResp struct{}

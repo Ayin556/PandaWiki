@@ -7273,6 +7273,9 @@ const docTemplate = `{
                 "client_secret": {
                     "type": "string"
                 },
+                "proxy": {
+                    "type": "string"
+                },
                 "source_type": {
                     "$ref": "#/definitions/consts.SourceType"
                 }
@@ -7553,6 +7556,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "kb_id": {
+                    "type": "string"
+                },
+                "proxy": {
                     "type": "string"
                 },
                 "source_type": {

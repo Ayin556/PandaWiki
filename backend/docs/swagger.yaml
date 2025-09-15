@@ -2082,6 +2082,8 @@ definitions:
         type: string
       client_secret:
         type: string
+      proxy:
+        type: string
       source_type:
         $ref: '#/definitions/consts.SourceType'
     type: object
@@ -2268,6 +2270,8 @@ definitions:
       client_secret:
         type: string
       kb_id:
+        type: string
+      proxy:
         type: string
       source_type:
         allOf:

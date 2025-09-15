@@ -58,6 +58,7 @@ func (u *AuthUsecase) SetAuth(ctx context.Context, req v1.AuthSetReq) error {
 		AuthSetting: domain.AuthSetting{
 			ClientID:     req.ClientID,
 			ClientSecret: req.ClientSecret,
+			Proxy:        req.Proxy,
 		},
 		KbID:       req.KBID,
 		SourceType: req.SourceType,
@@ -108,6 +109,7 @@ func (u *AuthUsecase) GetAuth(ctx context.Context, kbID string, sourceType const
 		ClientID:     authConfig.AuthSetting.ClientID,
 		ClientSecret: authConfig.AuthSetting.ClientSecret,
 		SourceType:   authConfig.SourceType,
+		Proxy:        authConfig.AuthSetting.Proxy,
 		Auths:        as,
 	}
 	return resp, nil

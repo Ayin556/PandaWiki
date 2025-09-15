@@ -84,6 +84,7 @@ func (AuthConfig) TableName() string {
 type AuthSetting struct {
 	ClientID     string `json:"client_id,omitempty"`
 	ClientSecret string `json:"client_secret,omitempty"`
+	Proxy        string `json:"proxy,omitempty"`
 }
 
 type AuthInfo struct {

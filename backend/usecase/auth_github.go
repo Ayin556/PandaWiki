@@ -19,7 +19,7 @@ func (u *AuthUsecase) getGitHubClient(ctx context.Context, kbId, redirectURI str
 
 	authSetting := authConfig.AuthSetting
 
-	return oauth.NewGithubClient(ctx, u.logger, authSetting.ClientID, authSetting.ClientSecret, redirectURI)
+	return oauth.NewGithubClient(ctx, u.logger, authSetting.ClientID, authSetting.ClientSecret, redirectURI, authSetting.Proxy)
 }
 
 func (u *AuthUsecase) GenerateGitHubAuthUrl(ctx context.Context, req shareV1.AuthGitHubReq) (string, error) {
