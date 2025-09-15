@@ -8,7 +8,7 @@ import { Box, Stack, TextField, Tooltip } from '@mui/material';
 import { Editor, TocList, useTiptap, UseTiptapReturn } from '@ctzhian/tiptap';
 import { Icon, message } from '@ctzhian/ui';
 import dayjs from 'dayjs';
-import { debounce } from 'lodash';
+import { debounce } from 'lodash-es';
 import { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate, useOutletContext } from 'react-router-dom';
 // import { WebsocketProvider } from 'y-websocket';
