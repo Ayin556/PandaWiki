@@ -6,7 +6,7 @@ import { Stack } from '@mui/material';
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <Stack sx={{ height: '100vh', overflow: 'auto' }} id='scroll-container'>
-      <Header />
+      <Header isDocPage={true} isWelcomePage={true} />
       <Stack
         direction='row'
         justifyContent='center'
@@ -24,7 +24,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         <Catalog />
         {children}
       </Stack>
-      <FooterProvider />
+      <FooterProvider isDocPage={true} isWelcomePage={true} />
     </Stack>
   );
 };

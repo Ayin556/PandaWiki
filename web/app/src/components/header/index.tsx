@@ -12,15 +12,17 @@ import NavBtns from './NavBtns';
 import { DocWidth } from '@/constant/index';
 interface HeaderProps {
   isDocPage?: boolean;
+  isWelcomePage?: boolean;
 }
-const Header = ({ isDocPage = false }: HeaderProps) => {
+const Header = ({ isDocPage = false, isWelcomePage = false }: HeaderProps) => {
   const router = useRouter();
   const pathname = usePathname();
   const { mobile = false, kbDetail, catalogShow, catalogWidth } = useStore();
   const [searchValue, setSearchValue] = useState('');
   const docWidth = useMemo(() => {
+    if (isWelcomePage) return 'full';
     return kbDetail?.settings?.theme_and_style?.doc_width || 'full';
-  }, [kbDetail]);
+  }, [kbDetail, isWelcomePage]);
   const handleSearch = () => {
     if (searchValue.trim()) {
       sessionStorage.setItem('chat_search_query', searchValue.trim());
