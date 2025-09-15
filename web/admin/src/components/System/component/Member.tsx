@@ -4,9 +4,9 @@ import { tableSx } from '@/constant/styles';
 import { getApiV1UserList } from '@/request/User';
 import { ConstsUserRole, V1UserListItemResp } from '@/request/types';
 import { useAppSelector } from '@/store';
-import { Box, Button, Stack, Tooltip } from '@mui/material';
 import { Table } from '@ctzhian/ui';
 import { ColumnType } from '@ctzhian/ui/dist/Table';
+import { Box, Button, Stack, Tooltip } from '@mui/material';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import MemberAdd from './MemberAdd';
@@ -72,6 +72,11 @@ const Member = () => {
           {record.account === 'admin' ? (
             <Tooltip
               arrow
+              slotProps={{
+                tooltip: {
+                  sx: { maxWidth: 360 },
+                },
+              }}
               title={
                 <Box>
                   <Stack
