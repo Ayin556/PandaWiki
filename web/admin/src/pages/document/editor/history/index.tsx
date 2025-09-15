@@ -7,6 +7,7 @@ import {
   getApiProV1NodeReleaseList,
 } from '@/request/pro';
 import { useAppSelector } from '@/store';
+import { Editor, useTiptap } from '@ctzhian/tiptap';
 import { Icon } from '@ctzhian/ui';
 import {
   alpha,
@@ -16,7 +17,6 @@ import {
   Stack,
   useTheme,
 } from '@mui/material';
-import { Editor, useTiptap } from '@yu-cq/tiptap';
 import { useEffect, useState } from 'react';
 import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
 import { WrapContext } from '..';

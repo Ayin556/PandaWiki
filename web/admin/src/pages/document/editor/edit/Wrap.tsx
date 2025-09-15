@@ -5,8 +5,8 @@ import { V1NodeDetailResp } from '@/request/types';
 import { Box, Stack, TextField, Tooltip } from '@mui/material';
 // import { Collaboration } from '@tiptap/extension-collaboration';
 // import { CollaborationCaret } from '@tiptap/extension-collaboration-caret';
+import { Editor, TocList, useTiptap, UseTiptapReturn } from '@ctzhian/tiptap';
 import { Icon, message } from '@ctzhian/ui';
-import { Editor, TocList, useTiptap, UseTiptapReturn } from '@yu-cq/tiptap';
 import dayjs from 'dayjs';
 import { debounce } from 'lodash';
 import { useCallback, useEffect, useState } from 'react';
@@ -597,6 +597,7 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
                 slotProps={{
                   input: {
                     sx: {
+                      bgcolor: 'background.paper2',
                       fontSize: 14,
                       lineHeight: '28px',
                       letterSpacing: '1px',

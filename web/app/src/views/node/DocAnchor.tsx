@@ -1,8 +1,8 @@
 'use client';
 
 import useScroll from '@/utils/useScroll';
+import { TocItem, TocList } from '@ctzhian/tiptap';
 import { Box, Stack } from '@mui/material';
-import { TocItem, TocList } from '@yu-cq/tiptap';
 import { useMemo } from 'react';
 
 interface DocAnchorProps {

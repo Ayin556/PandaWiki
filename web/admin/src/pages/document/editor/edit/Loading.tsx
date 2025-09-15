@@ -1,6 +1,6 @@
-import { Box, Skeleton, Stack } from '@mui/material';
-import { useTiptap } from '@yu-cq/tiptap';
+import { useTiptap } from '@ctzhian/tiptap';
 import { Icon } from '@ctzhian/ui';
+import { Box, Skeleton, Stack } from '@mui/material';
 import { useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { WrapContext } from '..';

@@ -1,4 +1,3 @@
-import { Box, Drawer, IconButton, Stack } from '@mui/material';
 import {
   H1Icon,
   H2Icon,
@@ -7,8 +6,9 @@ import {
   H5Icon,
   H6Icon,
   TocList,
-} from '@yu-cq/tiptap';
+} from '@ctzhian/tiptap';
 import { Ellipsis, Icon } from '@ctzhian/ui';
+import { Box, Drawer, IconButton, Stack } from '@mui/material';
 import { useState } from 'react';
 
 interface TocProps {

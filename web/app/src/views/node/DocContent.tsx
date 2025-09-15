@@ -13,9 +13,9 @@ import {
   postShareV1Comment,
 } from '@/request/ShareComment';
 import { base64ToFile } from '@/utils';
+import { Editor, UseTiptapReturn } from '@ctzhian/tiptap';
 import { message } from '@ctzhian/ui';
 import { Box, Button, Divider, Stack, TextField, alpha } from '@mui/material';
-import { Editor, UseTiptapReturn } from '@yu-cq/tiptap';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -46,7 +46,7 @@ const DocContent = ({
     catalogWidth,
     catalogShow,
   } = useStore();
-  console.log(catalogWidth);
+
   const params = useParams() || {};
   const [commentLoading, setCommentLoading] = useState(false);
   const docId = params.id as string;
@@ -295,10 +295,13 @@ const DocContent = ({
         sx={{
           mt: 6,
           '.tiptap.ProseMirror': {
-            color: 'text.primary',
             '.tableWrapper': {
               transition: 'width 0.3s ease-in-out',
-              width: `calc(100vw - 80px - 264px - 192px - 8px - ${catalogShow ? catalogWidth : 26}px)`,
+              width:
+                docWidth === 'full'
+                  ? `calc(100vw - 80px - 264px - 192px - 8px - ${catalogShow ? catalogWidth : 26}px)`
+                  : DocWidth[docWidth as keyof typeof DocWidth].value,
+              maxWidth: `calc(100vw - 80px - 264px - 192px - 8px - ${catalogShow ? catalogWidth : 26}px)`,
               overflowX: 'auto',
             },
           },
