@@ -124,11 +124,6 @@ const Catalog = () => {
           ...(!catalogShow && {
             width: 0,
           }),
-          '&::-webkit-scrollbar': {
-            display: 'none',
-          },
-          msOverflowStyle: 'none',
-          scrollbarWidth: 'none',
         }}
       >
         {tree.map(item => (

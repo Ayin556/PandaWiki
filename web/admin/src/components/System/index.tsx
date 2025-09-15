@@ -10,9 +10,9 @@ import {
 import { useAppDispatch, useAppSelector } from '@/store';
 import { setModelList, setModelStatus } from '@/store/slices/config';
 import { addOpacityToColor } from '@/utils';
+import { Icon, message, Modal } from '@ctzhian/ui';
 import { Box, Button, Stack, Switch, Tooltip, useTheme } from '@mui/material';
 import { ModelModal } from '@yokowu/modelkit-ui';
-import { Icon, message, Modal } from '@ctzhian/ui';
 import { useEffect, useState } from 'react';
 import LottieIcon from '../LottieIcon';
 import Member from './component/Member';
@@ -180,6 +180,7 @@ const System = () => {
                     尚未配置，
                   </Box>
                   <Button
+                    color='primary'
                     sx={{ minWidth: 0, px: 0, height: '20px' }}
                     onClick={() => {
                       setAddOpen(true);
@@ -398,6 +399,7 @@ const System = () => {
                     尚未配置，
                   </Box>
                   <Button
+                    color='primary'
                     sx={{ minWidth: 0, px: 0, height: '20px' }}
                     onClick={() => {
                       setAddOpen(true);
@@ -620,6 +622,7 @@ const System = () => {
                     尚未配置，
                   </Box>
                   <Button
+                    color='primary'
                     sx={{ minWidth: 0, px: 0, height: '20px' }}
                     onClick={() => {
                       setAddOpen(true);
@@ -837,6 +840,7 @@ const System = () => {
                     尚未配置，
                   </Box>
                   <Button
+                    color='primary'
                     sx={{ minWidth: 0, px: 0, height: '20px' }}
                     onClick={() => {
                       setAddOpen(true);
