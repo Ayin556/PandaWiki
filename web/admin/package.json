@@ -22,7 +22,7 @@
     "@reduxjs/toolkit": "^2.5.0",
     "@tiptap/extension-collaboration": "^3.3.0",
     "@tiptap/extension-collaboration-caret": "^3.3.0",
-    "@yu-cq/tiptap": "0.4.0",
+    "@ctzhian/tiptap": "0.5.5",
     "axios": "^1.7.9",
     "dnd-kit-sortable-tree": "^0.1.73",
     "echarts": "^5.6.0",

@@ -1,5 +1,9 @@
+import {
+  AiGenerate2Icon,
+  EditorToolbar,
+  UseTiptapReturn,
+} from '@ctzhian/tiptap';
 import { Box } from '@mui/material';
-import { AiGenerate2Icon, EditorToolbar, UseTiptapReturn } from '@yu-cq/tiptap';
 
 interface ToolbarProps {
   editorRef: UseTiptapReturn;

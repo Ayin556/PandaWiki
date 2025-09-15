@@ -1,7 +1,7 @@
 import SSEClient from '@/utils/fetch';
-import { Box, Divider, Stack } from '@mui/material';
-import { Editor, useTiptap, UseTiptapReturn } from '@yu-cq/tiptap';
+import { Editor, useTiptap, UseTiptapReturn } from '@ctzhian/tiptap';
 import { Modal } from '@ctzhian/ui';
+import { Box, Divider, Stack } from '@mui/material';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface AIGenerateProps {

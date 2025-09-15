@@ -1,8 +1,8 @@
 import { V1NodeDetailResp } from '@/request/types';
 import { useAppSelector } from '@/store';
+import { Editor, useTiptap } from '@ctzhian/tiptap';
 import Collaboration from '@tiptap/extension-collaboration';
 import CollaborationCaret from '@tiptap/extension-collaboration-caret';
-import { Editor, useTiptap } from '@yu-cq/tiptap';
 import { useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { WebsocketProvider } from 'y-websocket';

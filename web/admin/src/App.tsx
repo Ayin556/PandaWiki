@@ -1,15 +1,15 @@
 import router from '@/router';
 import { useAppDispatch } from '@/store';
+import { theme } from '@/themes';
 import { ThemeProvider } from '@ctzhian/ui';
 import { useEffect } from 'react';
 import { useLocation, useRoutes } from 'react-router-dom';
-import { theme } from '@/themes';
 
 import { getApiV1License } from './request/pro/License';
 
 import { setLicense } from './store/slices/config';
 
-import '@yu-cq/tiptap/dist/index.css';
+import '@ctzhian/tiptap/dist/index.css';
 
 function App() {
   const location = useLocation();

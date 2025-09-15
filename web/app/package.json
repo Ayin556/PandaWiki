@@ -18,7 +18,7 @@
     "@sentry/nextjs": "^10.8.0",
     "@types/markdown-it": "13.0.1",
     "@vscode/markdown-it-katex": "^1.1.2",
-    "@yu-cq/tiptap": "0.4.0",
+    "@ctzhian/tiptap": "0.5.5",
     "ahooks": "^3.9.0",
     "axios": "^1.9.0",
     "highlight.js": "^11.11.1",

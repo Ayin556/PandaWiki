@@ -1,4 +1,4 @@
-import { TocItem, TocList } from '@yu-cq/tiptap';
+import { TocItem, TocList } from '@ctzhian/tiptap';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 const useScroll = (headings: TocList, domId: string) => {
