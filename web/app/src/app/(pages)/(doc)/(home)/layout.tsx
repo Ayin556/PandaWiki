@@ -1,3 +1,4 @@
+'use client';
 import Catalog from '@/views/node/Catalog';
 import { FooterProvider } from '@/components/footer';
 import Header from '@/components/header';
@@ -16,9 +17,11 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           flex: 1,
           position: 'relative',
           zIndex: 1,
-          // pt: '50px',
           pb: 10,
           pl: 5,
+          '@media (max-width: 1200px)': {
+            pl: 0,
+          },
         }}
       >
         <Catalog />

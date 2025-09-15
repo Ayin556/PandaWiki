@@ -57,6 +57,7 @@ const Footer = ({
             bgcolor: 'background.footer',
             borderTop: '1px solid',
             borderColor: 'divider',
+            width: '100%',
           }}
         >
           {showBrand && (
@@ -64,7 +65,7 @@ const Footer = ({
               pt={
                 customStyle?.footer_show_intro
                   ? 5
-                  : (footerSetting?.brand_groups.length || 0) > 0
+                  : (footerSetting?.brand_groups?.length || 0) > 0
                     ? 5
                     : 0
               }
@@ -247,7 +248,7 @@ const Footer = ({
           )}
           {!(
             customStyle?.footer_show_intro === false &&
-            footerSetting?.brand_groups.length === 0
+            footerSetting?.brand_groups?.length === 0
           ) && (
             <Stack
               sx={{
@@ -662,7 +663,7 @@ const Footer = ({
         )}
         {!(
           customStyle?.footer_show_intro === false &&
-          footerSetting?.brand_groups.length === 0
+          footerSetting?.brand_groups?.length === 0
         ) && (
           <Stack
             sx={{

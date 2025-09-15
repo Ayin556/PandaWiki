@@ -72,13 +72,20 @@ const Member = () => {
           {record.account === 'admin' ? (
             <Tooltip
               arrow
+              slotProps={{
+                tooltip: {
+                  sx: {
+                    maxWidth: 'none',
+                  },
+                },
+              }}
               title={
                 <Box>
                   <Stack
                     direction={'row'}
                     alignItems={'center'}
                     gap={1}
-                    sx={{ mb: 1 }}
+                    sx={{ mb: 1, whiteSpace: 'nowrap' }}
                   >
                     修改安装目录下
                     <Box
