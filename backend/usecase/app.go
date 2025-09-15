@@ -480,6 +480,19 @@ func (u *AppUsecase) GetWebAppInfo(ctx context.Context, kbID string) (*domain.Ap
 		app.Settings.CaptchaSettings.CommentStatus = consts.CaptchaStatusEnable
 	}
 
+	showBrandInfo := app.Settings.WebAppCustomSettings.ShowBrandInfo
+	show := true
+	if showBrandInfo != nil {
+		if !*showBrandInfo {
+			licenseEdition, _ := ctx.Value(consts.ContextKeyEdition).(consts.LicenseEdition)
+			if licenseEdition < consts.LicenseEditionEnterprise {
+				appInfo.Settings.WebAppCustomSettings.ShowBrandInfo = &show
+			}
+		}
+	} else {
+		appInfo.Settings.WebAppCustomSettings.ShowBrandInfo = &show
+	}
+
 	return appInfo, nil
 }
 

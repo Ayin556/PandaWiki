@@ -10,6 +10,7 @@ import (
 	offConfig "github.com/silenceper/wechat/v2/officialaccount/config"
 	"github.com/silenceper/wechat/v2/officialaccount/message"
 
+	"github.com/chaitin/panda-wiki/consts"
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/handler"
 	"github.com/chaitin/panda-wiki/log"
@@ -70,7 +71,8 @@ func (h *ShareAppHandler) GetWebAppInfo(c echo.Context) error {
 	if kbID == "" {
 		return h.NewResponseWithError(c, "kb_id is required", nil)
 	}
-	appInfo, err := h.usecase.GetWebAppInfo(c.Request().Context(), kbID)
+	ctx := context.WithValue(c.Request().Context(), consts.ContextKeyEdition, consts.GetLicenseEdition(c))
+	appInfo, err := h.usecase.GetWebAppInfo(ctx, kbID)
 	if err != nil {
 		return h.NewResponseWithError(c, err.Error(), err)
 	}
