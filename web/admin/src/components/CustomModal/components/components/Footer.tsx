@@ -2,7 +2,7 @@ import { Box, IconButton, Stack } from '@mui/material';
 import { AppSetting } from '@/api';
 import { Icon } from '@ctzhian/ui';
 import { Option } from '../config/FooterConfig';
-import Logo from '@/assets/images/logo-dark.png';
+import Logo from '@/assets/images/footer-logo.png';
 import Overlay from '../basicComponents/Overlay';
 import { useState } from 'react';
 interface FooterProps {
@@ -290,7 +290,7 @@ const Footer = ({ settings, renderMode, options }: FooterProps) => {
                 </Stack>
               </>
             )}
-            {show_brand_info && (
+            {show_brand_info !== false && (
               <>
                 {(icp || corp_name) && (
                   <Stack
@@ -309,15 +309,16 @@ const Footer = ({ settings, renderMode, options }: FooterProps) => {
                   sx={{
                     fontSize: '12px',
                     lineHeight: '24px',
-                    color: '#FFFFFF',
+                    color: 'rgba(255, 255, 255, 0.30)',
                   }}
                   // onClick={() => {
                   //   window.open('https://pandawiki.docs.baizhi.cloud/');
                   // }}
                   gap={0.5}
                 >
+                  本网站由
                   <img src={Logo} alt='PandaWiki' width={16} height={16} />
-                  本网站由 PandaWiki 提供技术支持
+                  PandaWiki 提供技术支持
                 </Stack>
               </>
             )}
@@ -545,14 +546,14 @@ const Footer = ({ settings, renderMode, options }: FooterProps) => {
                   {icp}
                 </Stack>
               )}
-              {show_brand_info && (
+              {show_brand_info !== false && (
                 <Stack
                   direction={'row'}
                   alignItems={'center'}
                   sx={{
                     fontSize: '12px',
                     lineHeight: '24px',
-                    color: '#FFFFFF',
+                    color: 'rgba(255, 255, 255, 0.30)',
                   }}
                   // onClick={() => {
                   //   window.open('https://pandawiki.docs.baizhi.cloud/');
