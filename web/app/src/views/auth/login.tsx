@@ -9,6 +9,7 @@ import {
   postShareProV1AuthOauth,
   postShareProV1AuthWecom,
 } from '@/request/pro/ShareAuth';
+import { postShareV1AuthGithub } from '@/request/ShareAuth';
 import {
   getShareV1AuthGet,
   postShareV1AuthLoginSimple,
@@ -24,14 +25,17 @@ import {
   IconFeishu,
   IconLDAP,
   IconLock,
-  IconOAuth,
-  IconGitHub,
   IconPassword,
   IconQiyeweixin,
   IconUser,
 } from '@/components/icons';
+import { IconGitHub1 } from '@panda-wiki/icons';
 import { useStore } from '@/provider';
-import { ConstsSourceType, ConstsAuthType } from '@/request/types';
+import {
+  ConstsSourceType,
+  ConstsAuthType,
+  ConstsLicenseEdition,
+} from '@/request/types';
 import {
   Box,
   Button,
@@ -42,7 +46,7 @@ import {
 } from '@mui/material';
 import { message } from '@ctzhian/ui';
 import Image from 'next/image';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export default function Login() {
@@ -51,6 +55,7 @@ export default function Login() {
   const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(false);
   const [authType, setAuthType] = useState<ConstsAuthType>();
+  const [licenseEdition, setLicenseEdition] = useState<ConstsLicenseEdition>();
   const [sourceType, setSourceType] = useState<ConstsSourceType>();
   const { kbDetail, themeMode, mobile = false, setNodeList } = useStore();
   const redirectUrl =
@@ -137,11 +142,19 @@ export default function Login() {
 
   const handleGitHubLogin = () => {
     clearCookie();
-    postShareProV1AuthGithub({
-      redirect_url: redirectUrl,
-    }).then(res => {
-      window.location.href = res.url || '/';
-    });
+    if (licenseEdition === ConstsLicenseEdition.LicenseEditionFree) {
+      postShareV1AuthGithub({
+        redirect_url: redirectUrl,
+      }).then(res => {
+        window.location.href = res.url || '/';
+      });
+    } else {
+      postShareProV1AuthGithub({
+        redirect_url: redirectUrl,
+      }).then(res => {
+        window.location.href = res.url || '/';
+      });
+    }
   };
 
   const handleCASLogin = () => {
@@ -176,6 +189,7 @@ export default function Login() {
     getShareV1AuthGet({}).then(res => {
       setAuthType(res?.auth_type);
       setSourceType(res?.source_type);
+      setLicenseEdition(res?.license_edition);
       if (res?.auth_type === ConstsAuthType.AuthTypeNull) {
         window.open(redirectUrl, '_self');
       }
@@ -312,7 +326,7 @@ export default function Login() {
                     fullWidth
                     variant='contained'
                     onClick={handleGitHubLogin}
-                    startIcon={<IconGitHub />}
+                    startIcon={<IconGitHub1 />}
                     sx={{ height: '50px', fontSize: 16 }}
                   >
                     登录

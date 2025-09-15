@@ -215,6 +215,7 @@ export interface GithubComChaitinPandaWikiProApiAuthV1AuthGroupListItem {
   id?: number;
   name?: string;
   parent_id?: number;
+  path?: string;
   position?: number;
 }
 
@@ -251,6 +252,7 @@ export interface GithubComChaitinPandaWikiProApiAuthV1AuthGroupTreeItem {
   name?: string;
   parent_id?: number;
   position?: number;
+  sync_id: string;
 }
 
 export interface GithubComChaitinPandaWikiProApiAuthV1AuthGroupTreeResp {

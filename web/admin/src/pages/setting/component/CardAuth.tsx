@@ -26,6 +26,8 @@ import {
   deleteApiProV1AuthDelete,
 } from '@/request/pro/Auth';
 
+import { getApiV1AuthGet, postApiV1AuthSet } from '@/request/Auth';
+
 import { message, Table, Icon, Modal } from '@ctzhian/ui';
 import { ColumnType } from '@ctzhian/ui/dist/Table';
 import { useEffect, useMemo, useState, useRef } from 'react';
@@ -77,6 +79,7 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
       email_field: '',
       cas_url: '',
       cas_version: '2',
+      proxy: '',
       // ldap
       bind_dn: '',
       bind_password: '',
@@ -113,30 +116,40 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
           is_forbidden: value.enabled === '3',
         },
       }),
-      value.enabled === '2' && isPro
-        ? postApiProV1AuthSet({
-            kb_id,
-            source_type: value.source_type as ConstsSourceType,
-            client_id: value.client_id,
-            client_secret: value.client_secret,
-            agent_id: value.agent_id,
-            token_url: value.token_url,
-            authorize_url: value.authorize_url,
-            scopes: value.scopes,
-            user_info_url: value.user_info_url,
-            id_field: value.id_field,
-            name_field: value.name_field,
-            avatar_field: value.avatar_field,
-            email_field: value.email_field,
-            cas_url: value.cas_url,
-            cas_version: value.cas_version,
-            // ldap
-            bind_dn: value.bind_dn,
-            bind_password: value.bind_password,
-            ldap_server_url: value.ldap_server_url,
-            user_base_dn: value.user_base_dn,
-            user_filter: value.user_filter,
-          })
+      value.enabled === '2' &&
+      source_type !== EXTEND_CONSTS_SOURCE_TYPE.SourceTypePassword
+        ? isPro
+          ? postApiProV1AuthSet({
+              kb_id,
+              source_type: value.source_type as ConstsSourceType,
+              client_id: value.client_id,
+              client_secret: value.client_secret,
+              agent_id: value.agent_id,
+              token_url: value.token_url,
+              authorize_url: value.authorize_url,
+              scopes: value.scopes,
+              user_info_url: value.user_info_url,
+              id_field: value.id_field,
+              name_field: value.name_field,
+              avatar_field: value.avatar_field,
+              email_field: value.email_field,
+              cas_url: value.cas_url,
+              cas_version: value.cas_version,
+              proxy: value.proxy,
+              // ldap
+              bind_dn: value.bind_dn,
+              bind_password: value.bind_password,
+              ldap_server_url: value.ldap_server_url,
+              user_base_dn: value.user_base_dn,
+              user_filter: value.user_filter,
+            })
+          : postApiV1AuthSet({
+              kb_id,
+              source_type: value.source_type as 'github',
+              client_id: value.client_id,
+              client_secret: value.client_secret,
+              proxy: value.proxy,
+            })
         : Promise.resolve(),
     ]).then(() => {
       refresh({
@@ -160,7 +173,10 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
     const source_type = isPro
       ? kb.access_settings?.source_type ||
         EXTEND_CONSTS_SOURCE_TYPE.SourceTypePassword
-      : EXTEND_CONSTS_SOURCE_TYPE.SourceTypePassword;
+      : kb.access_settings?.source_type ===
+          EXTEND_CONSTS_SOURCE_TYPE.SourceTypeGitHub
+        ? EXTEND_CONSTS_SOURCE_TYPE.SourceTypeGitHub
+        : EXTEND_CONSTS_SOURCE_TYPE.SourceTypePassword;
     setValue('source_type', source_type);
     sourceTypeRef.current = source_type;
   }, [kb, isPro]);
@@ -179,36 +195,50 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
   }, [kb]);
 
   const getAuth = () => {
-    getApiProV1AuthGet({
-      kb_id,
-      source_type: source_type as ConstsSourceType,
-    }).then(res => {
-      if (!res) return;
-      setMemberList(res.auths || []);
-      setValue('client_id', res.client_id!);
-      setValue('client_secret', res.client_secret!);
-      setValue('agent_id', res.agent_id!);
-      setValue('scopes', res.scopes || []);
-      setValue('token_url', res.token_url!);
-      setValue('authorize_url', res.authorize_url!);
-      setValue('user_info_url', res.user_info_url!);
-      setValue('id_field', res.id_field!);
-      setValue('name_field', res.name_field!);
-      setValue('avatar_field', res.avatar_field!);
-      setValue('email_field', res.email_field!);
-      setValue('cas_url', res.cas_url!);
-      setValue('cas_version', res.cas_version!);
-      // ldap
-      setValue('bind_dn', res.bind_dn!);
-      setValue('bind_password', res.bind_password!);
-      setValue('ldap_server_url', res.ldap_server_url!);
-      setValue('user_base_dn', res.user_base_dn!);
-      setValue('user_filter', res.user_filter!);
-    });
+    if (isPro) {
+      getApiProV1AuthGet({
+        kb_id,
+        source_type: source_type as ConstsSourceType,
+      }).then(res => {
+        if (!res) return;
+        setMemberList(res.auths || []);
+        setValue('client_id', res.client_id!);
+        setValue('client_secret', res.client_secret!);
+        setValue('agent_id', res.agent_id!);
+        setValue('scopes', res.scopes || []);
+        setValue('token_url', res.token_url!);
+        setValue('authorize_url', res.authorize_url!);
+        setValue('user_info_url', res.user_info_url!);
+        setValue('id_field', res.id_field!);
+        setValue('name_field', res.name_field!);
+        setValue('avatar_field', res.avatar_field!);
+        setValue('email_field', res.email_field!);
+        setValue('cas_url', res.cas_url!);
+        setValue('cas_version', res.cas_version!);
+        setValue('proxy', res.proxy!);
+        // ldap
+        setValue('bind_dn', res.bind_dn!);
+        setValue('bind_password', res.bind_password!);
+        setValue('ldap_server_url', res.ldap_server_url!);
+        setValue('user_base_dn', res.user_base_dn!);
+        setValue('user_filter', res.user_filter!);
+      });
+    } else if (source_type === EXTEND_CONSTS_SOURCE_TYPE.SourceTypeGitHub) {
+      getApiV1AuthGet({
+        kb_id,
+        source_type: source_type as ConstsSourceType,
+      }).then(res => {
+        if (!res) return;
+        setMemberList(res.auths || []);
+        setValue('client_id', res.client_id!);
+        setValue('client_secret', res.client_secret!);
+        setValue('proxy', res.proxy!);
+      });
+    }
   };
 
   useEffect(() => {
-    if (!isPro || !kb_id || enabled !== '2') return;
+    if (!kb_id || enabled !== '2') return;
     getAuth();
   }, [kb_id, isPro, source_type, enabled]);
 
@@ -325,6 +355,23 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
                 placeholder='请输入'
                 error={!!errors.client_secret}
                 helperText={errors.client_secret?.message}
+                onChange={e => {
+                  field.onChange(e.target.value);
+                  setIsEdit(true);
+                }}
+              />
+            )}
+          />
+        </FormItem>
+        <FormItem label='代理地址'>
+          <Controller
+            control={control}
+            name='proxy'
+            render={({ field }) => (
+              <TextField
+                {...field}
+                fullWidth
+                placeholder='请输入'
                 onChange={e => {
                   field.onChange(e.target.value);
                   setIsEdit(true);

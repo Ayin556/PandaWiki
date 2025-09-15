@@ -169,6 +169,7 @@ export interface GithubComChaitinPandaWikiProApiAuthV1AuthGetResp {
   /** LDAP特定配置 */
   ldap_server_url?: string;
   name_field?: string;
+  proxy?: string;
   scopes?: string[];
   source_type?: ConstsSourceType;
   token_url?: string;
@@ -297,6 +298,7 @@ export interface GithubComChaitinPandaWikiProApiAuthV1AuthSetReq {
   /** LDAP特定配置 */
   ldap_server_url?: string;
   name_field?: string;
+  proxy?: string;
   scopes?: string[];
   source_type?: ConstsSourceType;
   token_url?: string;
