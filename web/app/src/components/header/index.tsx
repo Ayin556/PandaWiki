@@ -70,14 +70,9 @@ const Header = ({ isDocPage = false, isWelcomePage = false }: HeaderProps) => {
           }),
           ...(isDocPage &&
             !mobile && {
-              ...(docWidth === 'full' && {
-                px: 5,
-              }),
-              ...(docWidth === 'wide' && {
-                maxWidth: `calc(${catalogWidth}px + 192px + 264px + ${DocWidth.wide.value}px)`,
-              }),
-              ...(docWidth === 'normal' && {
-                maxWidth: `calc(${catalogWidth}px + 192px + 264px + ${DocWidth.normal.value}px)`,
+              maxWidth: `calc(100vw - 80px)`,
+              ...(docWidth !== 'full' && {
+                width: `calc(${catalogWidth}px + 192px + 264px + ${DocWidth[docWidth as keyof typeof DocWidth].value}px)`,
               }),
             }),
         }}
