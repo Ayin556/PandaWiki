@@ -4,26 +4,38 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"net/url"
 
 	"golang.org/x/oauth2"
 
+	"github.com/chaitin/panda-wiki/consts"
 	"github.com/chaitin/panda-wiki/log"
 )
 
 const (
-	githubAuthorizeURL = "https://github.com/login/oauth/authorize"
-	githubTokenURL     = "https://github.com/login/oauth/access_token"
-	githubUserInfoURL  = "https://api.github.com/user"
-	githubUserEmailURL = "https://api.github.com/user/emails"
-	githubCallbackPath = "/share/pro/v1/openapi/github/callback"
+	githubAuthorizeURL    = "https://github.com/login/oauth/authorize"
+	githubTokenURL        = "https://github.com/login/oauth/access_token"
+	githubUserInfoURL     = "https://api.github.com/user"
+	githubUserEmailURL    = "https://api.github.com/user/emails"
+	githubCallbackPathPro = "/share/pro/v1/openapi/github/callback"
+	githubCallbackPath    = "/share/v1/openapi/github/callback"
 )
 
 func NewGithubClient(ctx context.Context, logger *log.Logger, clientID, clientSecret, redirectURI string) (*Client, error) {
+	licenseEdition, ok := ctx.Value(consts.ContextKeyEdition).(consts.LicenseEdition)
+	if !ok {
+		return nil, fmt.Errorf("ctx get license failed")
+	}
 
 	redirectURL, _ := url.Parse(redirectURI)
 	redirectURL.Path = githubCallbackPath
+
+	if licenseEdition > consts.LicenseEditionFree {
+		redirectURL.Path = githubCallbackPathPro
+	}
+
 	redirectURI = redirectURL.String()
 
 	config := Config{

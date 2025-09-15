@@ -63,7 +63,7 @@ func createApp() (*App, error) {
 	}
 	ipAddressRepo := ipdb2.NewIPAddressRepo(ipdbIPDB, logger)
 	geoRepo := cache2.NewGeoCache(cacheCache, db, logger)
-	authRepo := pg2.NewAuthRepo(db, logger)
+	authRepo := pg2.NewAuthRepo(db, logger, cacheCache)
 	statUseCase := usecase.NewStatUseCase(statRepository, nodeRepository, conversationRepository, appRepository, ipAddressRepo, geoRepo, authRepo, knowledgeBaseRepository, logger)
 	statCronHandler, err := mq2.NewStatCronHandler(logger, statRepository, statUseCase)
 	if err != nil {

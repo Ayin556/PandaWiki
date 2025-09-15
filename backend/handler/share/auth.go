@@ -1,10 +1,13 @@
 package share
 
 import (
+	"context"
+
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo/v4"
 
 	v1 "github.com/chaitin/panda-wiki/api/share/v1"
+	"github.com/chaitin/panda-wiki/consts"
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/handler"
 	"github.com/chaitin/panda-wiki/log"
@@ -14,8 +17,9 @@ import (
 
 type ShareAuthHandler struct {
 	*handler.BaseHandler
-	logger    *log.Logger
-	kbUsecase *usecase.KnowledgeBaseUsecase
+	logger      *log.Logger
+	kbUsecase   *usecase.KnowledgeBaseUsecase
+	authUsecase *usecase.AuthUsecase
 }
 
 func NewShareAuthHandler(
@@ -23,11 +27,13 @@ func NewShareAuthHandler(
 	baseHandler *handler.BaseHandler,
 	logger *log.Logger,
 	kbUsecase *usecase.KnowledgeBaseUsecase,
+	authUsecase *usecase.AuthUsecase,
 ) *ShareAuthHandler {
 	h := &ShareAuthHandler{
 		BaseHandler: baseHandler,
 		logger:      logger.WithModule("handler.share.auth"),
 		kbUsecase:   kbUsecase,
+		authUsecase: authUsecase,
 	}
 
 	shareAuthMiddleware := middleware.NewShareAuthMiddleware(logger, kbUsecase)
@@ -35,6 +41,7 @@ func NewShareAuthHandler(
 	share := e.Group("share/v1/auth", shareAuthMiddleware.CheckForbidden)
 	share.GET("/get", h.AuthGet)
 	share.POST("/login/simple", h.AuthLoginSimple)
+	share.POST("/github", h.AuthGitHub)
 	return h
 }
 
@@ -64,8 +71,9 @@ func (h *ShareAuthHandler) AuthGet(c echo.Context) error {
 	}
 
 	resp := &v1.AuthGetResp{
-		AuthType:   kb.AccessSettings.GetAuthType(),
-		SourceType: kb.AccessSettings.SourceType,
+		AuthType:       kb.AccessSettings.GetAuthType(),
+		SourceType:     kb.AccessSettings.SourceType,
+		LicenseEdition: consts.GetLicenseEdition(c),
 	}
 	return h.NewResponseWithData(c, resp)
 }
@@ -131,4 +139,45 @@ func (h *ShareAuthHandler) AuthLoginSimple(c echo.Context) error {
 	}
 
 	return h.NewResponseWithData(c, nil)
+}
+
+// AuthGitHub GitHub登录
+//
+//	@Tags			ShareAuth
+//	@Summary		GitHub登录
+//	@Description	GitHub登录
+//	@ID				v1-AuthGitHub
+//	@Accept			json
+//	@Produce		json
+//	@Param			X-KB-ID	header		string				true	"kb id"
+//	@Param			param	body		v1.AuthGitHubReq	true	"para"
+//	@Success		200		{object}	domain.PWResponse{data=v1.AuthGitHubResp}
+//	@Router			/share/v1/auth/github [post]
+func (h *ShareAuthHandler) AuthGitHub(c echo.Context) error {
+	ctx := context.WithValue(c.Request().Context(), consts.ContextKeyEdition, consts.GetLicenseEdition(c))
+
+	var req v1.AuthGitHubReq
+	if err := c.Bind(&req); err != nil {
+		return err
+	}
+
+	kbID := c.Request().Header.Get("X-KB-ID")
+	if kbID == "" {
+		return h.NewResponseWithError(c, "kb_id is required", nil)
+	}
+	req.KbID = kbID
+
+	valid, err := h.authUsecase.ValidateRedirectUrl(ctx, req.KbID, req.RedirectUrl)
+	if err != nil || !valid {
+		return h.NewResponseWithError(c, "invalid redirect url", err)
+	}
+
+	url, err := h.authUsecase.GenerateGitHubAuthUrl(ctx, req)
+	if err != nil {
+		return h.NewResponseWithError(c, "GenerateGitHubAuthUrl failed", err)
+	}
+
+	return h.NewResponseWithData(c, v1.AuthGitHubResp{
+		Url: url,
+	})
 }

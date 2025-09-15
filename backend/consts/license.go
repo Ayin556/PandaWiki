@@ -23,9 +23,12 @@ func GetLicenseEdition(c echo.Context) LicenseEdition {
 	return edition
 }
 
-func (e LicenseEdition) GetMaxAuth() int {
+func (e LicenseEdition) GetMaxAuth(sourceType SourceType) int {
 	switch e {
 	case LicenseEditionFree:
+		if sourceType == SourceTypeGitHub {
+			return 10
+		}
 		return 0
 	case LicenseEditionContributor:
 		return 10
