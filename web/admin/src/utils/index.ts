@@ -1,6 +1,6 @@
 import { MAC_SYMBOLS } from '@/constant/enums';
 import { message } from '@ctzhian/ui';
-import { isArray, isEmpty, isNil, isObject, pickBy } from 'lodash';
+import { isArray, isEmpty, isNil, isObject, pickBy } from 'lodash-es';
 
 export * from './render';
 

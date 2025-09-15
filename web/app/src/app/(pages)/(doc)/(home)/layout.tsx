@@ -24,7 +24,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           },
         }}
       >
-        <Catalog />
+        <Catalog sx={{ mt: '42px' }} />
         {children}
       </Stack>
       <FooterProvider isDocPage={true} isWelcomePage={true} />
