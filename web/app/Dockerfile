@@ -7,7 +7,7 @@ RUN addgroup -g 1001 -S nodejs && \
 WORKDIR /app
 
 # 复制 public 目录
-COPY --chown=nextjs:nodejs public ./public
+COPY --chown=nextjs:nodejs public ./app/public
 
 # 复制 standalone 构建输出到工作目录（包含可能的额外 app 子目录）
 COPY --chown=nextjs:nodejs dist/standalone ./

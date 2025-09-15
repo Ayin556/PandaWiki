@@ -66,7 +66,7 @@ const Member = () => {
     {
       title: '',
       dataIndex: 'action',
-      width: 120,
+      width: 140,
       render: (_, record) => (
         <Stack direction={'row'} gap={2}>
           {record.account === 'admin' ? (
@@ -143,6 +143,7 @@ const Member = () => {
             <Button
               size='small'
               sx={{ p: 0, minWidth: 'auto' }}
+              color='primary'
               onClick={() => {
                 setCurUser(record);
                 setCurType('reset-password');

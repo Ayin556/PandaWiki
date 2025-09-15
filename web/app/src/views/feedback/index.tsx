@@ -190,7 +190,7 @@ const Feedback = () => {
           zIndex: 1000,
         }}
       >
-        <Footer showBrand={false} fullWidth={true} />
+        <Footer showBrand={false} />
       </Box>
     </>
   );

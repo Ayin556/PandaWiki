@@ -14,6 +14,7 @@ import {
   Autocomplete,
   Chip,
 } from '@mui/material';
+import Avatar from '@/components/Avatar';
 import NoData from '@/assets/images/nodata.png';
 import { putApiV1KnowledgeBaseDetail } from '@/request/KnowledgeBase';
 import { DomainKnowledgeBaseDetail } from '@/request/types';
@@ -44,12 +45,6 @@ const EXTEND_CONSTS_SOURCE_TYPE = {
 
 type ExtendConstsSourceType =
   (typeof EXTEND_CONSTS_SOURCE_TYPE)[keyof typeof EXTEND_CONSTS_SOURCE_TYPE];
-
-const sourceTypeIcon = {
-  [ConstsSourceType.SourceTypeDingTalk]: 'icon-dingdingjiqiren',
-  [ConstsSourceType.SourceTypeFeishu]: 'icon-feishujiqiren',
-  [ConstsSourceType.SourceTypeWeCom]: 'icon-qiyeweixinjiqiren',
-};
 
 const CardAuth = ({ kb, refresh }: CardAuthProps) => {
   const { license, kb_id } = useAppSelector(state => state.config);
@@ -242,15 +237,11 @@ const CardAuth = ({ kb, refresh }: CardAuthProps) => {
       render: (text: string, record) => {
         return (
           <Stack direction={'row'} alignItems={'center'} gap={1}>
-            {record.avatar_url ? (
-              <img
-                src={record.avatar_url}
-                width={16}
-                style={{ borderRadius: '50%' }}
-              />
-            ) : (
-              <AccountCircleIcon sx={{ fontSize: 16 }} />
-            )}
+            <Avatar
+              src={record.avatar_url}
+              sx={{ width: 20, height: 20, borderRadius: '50%' }}
+            />
+
             {text}
           </Stack>
         );
