@@ -13,7 +13,6 @@ import { DocWidth } from '@/constant';
 
 const Footer = ({
   showBrand = true,
-  fullWidth = false,
   kbDetail,
   mobile,
   isDocPage = false,
@@ -24,7 +23,6 @@ const Footer = ({
   catalogShow?: boolean;
   catalogWidth?: number;
   showBrand?: boolean;
-  fullWidth?: boolean;
   isDocPage?: boolean;
 }) => {
   const [curOverlayType, setCurOverlayType] = useState('');
@@ -413,10 +411,6 @@ const Footer = ({
           borderTop: '1px solid',
           borderColor: 'divider',
         }),
-        ...(fullWidth && {
-          maxWidth: '1200px',
-          mx: 'auto',
-        }),
       }}
     >
       <Box
@@ -773,18 +767,15 @@ const Footer = ({
 
 export const FooterProvider = ({
   showBrand = true,
-  fullWidth = false,
   isDocPage = false,
 }: {
   showBrand?: boolean;
-  fullWidth?: boolean;
   isDocPage?: boolean;
 }) => {
   const { kbDetail, mobile = false, catalogShow, catalogWidth } = useStore();
   return (
     <Footer
       showBrand={showBrand}
-      fullWidth={fullWidth}
       kbDetail={kbDetail}
       mobile={mobile}
       catalogShow={catalogShow}

@@ -109,7 +109,7 @@ const System = () => {
       </Box>
       <Modal
         title='系统配置'
-        width={1000}
+        width={1100}
         open={open}
         closable={!disabledClose}
         disableEscapeKeyDown={disabledClose}

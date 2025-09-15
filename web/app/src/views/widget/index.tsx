@@ -331,6 +331,7 @@ const Widget = () => {
                             borderBottom: '1px solid',
                             borderColor: 'divider',
                             cursor: 'pointer',
+                            color: 'text.primary',
                             '&:hover': {
                               color: 'primary.main',
                             },
@@ -376,6 +377,7 @@ const Widget = () => {
           height: 24,
           fontSize: 12,
           bgcolor: themeMode === 'light' ? 'light.main' : 'dark.light',
+          color: 'text.primary',
           a: {
             color: 'primary.main',
           },

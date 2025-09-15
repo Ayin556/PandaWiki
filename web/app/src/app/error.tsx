@@ -21,7 +21,7 @@ export default function Error({
       <Stack flex={1} justifyContent='center' alignItems='center'>
         <ErrorComponent error={error} reset={reset} />
       </Stack>
-      <FooterProvider showBrand={false} fullWidth={true} />
+      <FooterProvider showBrand={false} />
     </Stack>
   );
 }
