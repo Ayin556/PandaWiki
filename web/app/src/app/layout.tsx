@@ -1,15 +1,15 @@
+import ErrorComponent from '@/components/error';
+import StoreProvider from '@/provider';
 import { getShareV1AppWebInfo } from '@/request/ShareApp';
 import { getShareProV1AuthInfo } from '@/request/pro/ShareAuth';
-import StoreProvider from '@/provider';
 import { darkTheme, lightTheme } from '@/theme';
+import { ThemeProvider } from '@ctzhian/ui';
 import { Box } from '@mui/material';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
-import { ThemeProvider } from '@ctzhian/ui';
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import { headers } from 'next/headers';
 import { getSelectorsByUserAgent } from 'react-device-detect';
-import ErrorComponent from '@/components/error';
 import './globals.css';
 
 const gilory = localFont({
@@ -90,7 +90,9 @@ const Layout = async ({
 
   return (
     <html lang='en'>
-      <body className={`${gilory.variable}`}>
+      <body
+        className={`${gilory.variable} ${themeMode === 'dark' ? 'dark' : ''}`}
+      >
         <AppRouterCacheProvider>
           <ThemeProvider theme={themeMode === 'dark' ? darkTheme : lightTheme}>
             <StoreProvider
