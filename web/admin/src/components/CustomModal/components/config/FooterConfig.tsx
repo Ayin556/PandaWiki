@@ -112,7 +112,10 @@ const FooterConfig = ({ data, setIsEdit, isEdit }: FooterConfigProps) => {
       );
       setValue(
         'footer_show_intro',
-        appPreviewData.settings?.web_app_custom_style?.footer_show_intro,
+        appPreviewData.settings?.web_app_custom_style?.footer_show_intro ===
+          false
+          ? false
+          : true,
       );
     } else if (data?.settings) {
       setValue('corp_name', data.settings?.footer_settings?.corp_name || '');
@@ -134,7 +137,9 @@ const FooterConfig = ({ data, setIsEdit, isEdit }: FooterConfigProps) => {
       );
       setValue(
         'footer_show_intro',
-        data.settings.web_app_custom_style.footer_show_intro,
+        data.settings.web_app_custom_style.footer_show_intro === false
+          ? false
+          : true,
       );
     }
   }, [data]);
@@ -544,7 +549,7 @@ const FooterConfig = ({ data, setIsEdit, isEdit }: FooterConfigProps) => {
                     sx={{ marginLeft: 'auto' }}
                     {...field}
                     disabled={!isEnterprise}
-                    checked={field?.value}
+                    checked={field?.value === false ? false : true}
                     onChange={e => {
                       field.onChange(e.target.checked);
                       setIsEdit(true);
