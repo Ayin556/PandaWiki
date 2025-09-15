@@ -1,4 +1,4 @@
-import { Box, IconButton, Stack } from '@mui/material';
+import { Box, Stack } from '@mui/material';
 import { AppSetting } from '@/api';
 import { Icon } from '@ctzhian/ui';
 import { Option } from '../config/FooterConfig';
@@ -193,7 +193,6 @@ const Footer = ({ settings, renderMode, options }: FooterProps) => {
                 </Stack>
               </Stack>
             )}
-
             <Stack
               direction={'row'}
               width={'100%'}

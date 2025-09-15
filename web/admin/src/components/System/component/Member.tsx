@@ -74,7 +74,9 @@ const Member = () => {
               arrow
               slotProps={{
                 tooltip: {
-                  sx: { maxWidth: 360 },
+                  sx: {
+                    maxWidth: 'none',
+                  },
                 },
               }}
               title={
@@ -83,7 +85,7 @@ const Member = () => {
                     direction={'row'}
                     alignItems={'center'}
                     gap={1}
-                    sx={{ mb: 1 }}
+                    sx={{ mb: 1, whiteSpace: 'nowrap' }}
                   >
                     修改安装目录下
                     <Box

@@ -17,6 +17,7 @@ const Footer = ({
   mobile,
   isDocPage = false,
   catalogWidth,
+  isWelcomePage = false,
 }: {
   kbDetail?: KBDetail;
   mobile?: boolean;
@@ -24,6 +25,7 @@ const Footer = ({
   catalogWidth?: number;
   showBrand?: boolean;
   isDocPage?: boolean;
+  isWelcomePage?: boolean;
 }) => {
   const [curOverlayType, setCurOverlayType] = useState('');
   const [open, setOpen] = useState(false);
@@ -36,8 +38,9 @@ const Footer = ({
     text: '',
   });
   const docWidth = useMemo(() => {
+    if (isWelcomePage) return 'full';
     return kbDetail?.settings?.theme_and_style?.doc_width || 'full';
-  }, [kbDetail]);
+  }, [kbDetail, isWelcomePage]);
   const footerSetting = kbDetail?.settings?.footer_settings;
   const customStyle = kbDetail?.settings?.web_app_custom_style;
   if (mobile)
@@ -54,6 +57,7 @@ const Footer = ({
             bgcolor: 'background.footer',
             borderTop: '1px solid',
             borderColor: 'divider',
+            width: '100%',
           }}
         >
           {showBrand && (
@@ -61,7 +65,7 @@ const Footer = ({
               pt={
                 customStyle?.footer_show_intro
                   ? 5
-                  : (footerSetting?.brand_groups.length || 0) > 0
+                  : (footerSetting?.brand_groups?.length || 0) > 0
                     ? 5
                     : 0
               }
@@ -244,7 +248,7 @@ const Footer = ({
           )}
           {!(
             customStyle?.footer_show_intro === false &&
-            footerSetting?.brand_groups.length === 0
+            footerSetting?.brand_groups?.length === 0
           ) && (
             <Stack
               sx={{
@@ -659,7 +663,7 @@ const Footer = ({
         )}
         {!(
           customStyle?.footer_show_intro === false &&
-          footerSetting?.brand_groups.length === 0
+          footerSetting?.brand_groups?.length === 0
         ) && (
           <Stack
             sx={{
@@ -768,9 +772,11 @@ const Footer = ({
 export const FooterProvider = ({
   showBrand = true,
   isDocPage = false,
+  isWelcomePage = false,
 }: {
   showBrand?: boolean;
   isDocPage?: boolean;
+  isWelcomePage?: boolean;
 }) => {
   const { kbDetail, mobile = false, catalogShow, catalogWidth } = useStore();
   return (
@@ -781,6 +787,7 @@ export const FooterProvider = ({
       catalogShow={catalogShow}
       catalogWidth={catalogWidth}
       isDocPage={isDocPage}
+      isWelcomePage={isWelcomePage}
     />
   );
 };
