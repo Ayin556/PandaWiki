@@ -10,13 +10,15 @@
  * ---------------------------------------------------------------
  */
 
-import httpRequest, { ContentType, RequestParams } from "./httpClient";
+import httpRequest, { ContentType, RequestParams } from './httpClient';
 import {
   DomainPWResponse,
   DomainResponse,
-  V1AuthGetResp,
+  GithubComChaitinPandaWikiApiShareV1AuthGetResp,
+  V1AuthGitHubReq,
+  V1AuthGitHubResp,
   V1AuthLoginSimpleReq,
-} from "./types";
+} from './types';
 
 /**
  * @description AuthGet
@@ -26,7 +28,7 @@ import {
  * @summary AuthGet
  * @request GET:/share/v1/auth/get
  * @response `200` `(DomainPWResponse & {
-    data?: V1AuthGetResp,
+    data?: GithubComChaitinPandaWikiApiShareV1AuthGetResp,
 
 })` OK
  */
@@ -34,13 +36,43 @@ import {
 export const getShareV1AuthGet = (params: RequestParams = {}) =>
   httpRequest<
     DomainPWResponse & {
-      data?: V1AuthGetResp;
+      data?: GithubComChaitinPandaWikiApiShareV1AuthGetResp;
     }
   >({
     path: `/share/v1/auth/get`,
-    method: "GET",
+    method: 'GET',
     type: ContentType.Json,
-    format: "json",
+    format: 'json',
+    ...params,
+  });
+
+/**
+ * @description GitHub登录
+ *
+ * @tags ShareAuth
+ * @name PostShareV1AuthGithub
+ * @summary GitHub登录
+ * @request POST:/share/v1/auth/github
+ * @response `200` `(DomainPWResponse & {
+    data?: V1AuthGitHubResp,
+
+})` OK
+ */
+
+export const postShareV1AuthGithub = (
+  param: V1AuthGitHubReq,
+  params: RequestParams = {},
+) =>
+  httpRequest<
+    DomainPWResponse & {
+      data?: V1AuthGitHubResp;
+    }
+  >({
+    path: `/share/v1/auth/github`,
+    method: 'POST',
+    body: param,
+    type: ContentType.Json,
+    format: 'json',
     ...params,
   });
 
@@ -60,9 +92,9 @@ export const postShareV1AuthLoginSimple = (
 ) =>
   httpRequest<DomainResponse>({
     path: `/share/v1/auth/login/simple`,
-    method: "POST",
+    method: 'POST',
     body: param,
     type: ContentType.Json,
-    format: "json",
+    format: 'json',
     ...params,
   });

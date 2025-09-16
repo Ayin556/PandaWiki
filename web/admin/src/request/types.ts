@@ -147,6 +147,16 @@ export enum ConstsNodeAccessPerm {
   NodeAccessPermClosed = 'closed',
 }
 
+/** @format int32 */
+export enum ConstsLicenseEdition {
+  /** 开源版 */
+  LicenseEditionFree = 0,
+  /** 联创版 */
+  LicenseEditionContributor = 1,
+  /** 企业版 */
+  LicenseEditionEnterprise = 2,
+}
+
 export enum ConstsCopySetting {
   /** 无限制 */
   CopySettingNone = '',
@@ -1143,6 +1153,25 @@ export interface DomainYuqueResp {
   title?: string;
 }
 
+export interface GithubComChaitinPandaWikiApiAuthV1AuthGetResp {
+  auths?: V1AuthItem[];
+  client_id?: string;
+  client_secret?: string;
+  proxy?: string;
+  source_type?: ConstsSourceType;
+}
+
+export interface GithubComChaitinPandaWikiApiShareV1AuthGetResp {
+  auth_type?: ConstsAuthType;
+  license_edition?: ConstsLicenseEdition;
+  source_type?: ConstsSourceType;
+}
+
+export type GithubComChaitinPandaWikiApiShareV1GitHubCallbackResp = Record<
+  string,
+  any
+>;
+
 export interface GithubComChaitinPandaWikiDomainCheckModelReq {
   api_header?: string;
   api_key?: string;
@@ -1207,13 +1236,35 @@ export interface ShareShareCommentLists {
   total?: number;
 }
 
-export interface V1AuthGetResp {
-  auth_type?: ConstsAuthType;
+export interface V1AuthGitHubReq {
+  kb_id?: string;
+  redirect_url?: string;
+}
+
+export interface V1AuthGitHubResp {
+  url?: string;
+}
+
+export interface V1AuthItem {
+  avatar_url?: string;
+  created_at?: string;
+  id?: number;
+  ip?: string;
+  last_login_time?: string;
   source_type?: ConstsSourceType;
+  username?: string;
 }
 
 export interface V1AuthLoginSimpleReq {
   password: string;
+}
+
+export interface V1AuthSetReq {
+  client_id?: string;
+  client_secret?: string;
+  kb_id?: string;
+  proxy?: string;
+  source_type: 'github';
 }
 
 export interface V1CommentLists {
@@ -1369,6 +1420,31 @@ export interface GetApiV1AppDetailParams {
   kb_id: string;
   /** app type */
   type: string;
+}
+
+export interface DeleteApiV1AuthDeleteParams {
+  id?: number;
+  kb_id?: string;
+}
+
+export interface GetApiV1AuthGetParams {
+  kb_id?: string;
+  source_type:
+    | 'dingtalk'
+    | 'feishu'
+    | 'wecom'
+    | 'oauth'
+    | 'github'
+    | 'cas'
+    | 'ldap'
+    | 'widget'
+    | 'dingtalk_bot'
+    | 'feishu_bot'
+    | 'wechat_bot'
+    | 'wechat_service_bot'
+    | 'discord_bot'
+    | 'wechat_official_account'
+    | 'openai_api';
 }
 
 export interface GetApiV1CommentParams {
@@ -1588,4 +1664,9 @@ export interface GetShareV1NodeDetailParams {
   id: string;
   /** format */
   format: string;
+}
+
+export interface GetShareV1OpenapiGithubCallbackParams {
+  code?: string;
+  state?: string;
 }
