@@ -15,7 +15,7 @@ import type {
   ListModelReq as UIGetModelNameData,
   ModelListItem as UIModelListItem,
   UpdateModelReq as UIUpdateModelData,
-} from '@yokowu/modelkit-ui';
+} from '@ctzhian/modelkit';
 const modelkitModelTypeToLocal = (
   modelType: string,
 ): 'chat' | 'embedding' | 'rerank' | 'analysis' => {

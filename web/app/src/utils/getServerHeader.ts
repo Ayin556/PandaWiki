@@ -8,9 +8,7 @@ export async function getServerHeader(): Promise<Record<string, string>> {
   const allCookies = cookieStore.getAll();
   const cookieHeader = allCookies
     .map(cookie => {
-      const value = cookie.value;
-      const needsEncoding = /[^\u0000-\u007F]/.test(value);
-      const safeValue = needsEncoding ? encodeURIComponent(value) : value;
+      const safeValue = encodeURI(cookie.value);
       return `${cookie.name}=${safeValue}`;
     })
     .join('; ');

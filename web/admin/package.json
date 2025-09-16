@@ -14,7 +14,7 @@
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,css,scss,md,mdx,json,yml,yaml,mjs,cjs}\""
   },
   "dependencies": {
-    "@yokowu/modelkit-ui": "2.3.1",
+    "@ctzhian/modelkit": "0.0.3",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",

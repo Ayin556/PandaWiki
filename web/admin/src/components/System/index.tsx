@@ -12,10 +12,13 @@ import { setModelList, setModelStatus } from '@/store/slices/config';
 import { addOpacityToColor } from '@/utils';
 import { Icon, message, Modal } from '@ctzhian/ui';
 import { Box, Button, Stack, Switch, Tooltip, useTheme } from '@mui/material';
-import { ModelModal } from '@yokowu/modelkit-ui';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, lazy, Suspense } from 'react';
 import LottieIcon from '../LottieIcon';
 import Member from './component/Member';
+
+const ModelModal = lazy(() =>
+  import('@ctzhian/modelkit').then(m => ({ default: m.ModelModal })),
+);
 
 const System = () => {
   const theme = useTheme();
@@ -34,6 +37,24 @@ const System = () => {
     useState<GithubComChaitinPandaWikiDomainModelListItem | null>(null);
   const [analysisModelData, setAnalysisModelData] =
     useState<GithubComChaitinPandaWikiDomainModelListItem | null>(null);
+
+  const [openingAdd, setOpeningAdd] = useState<
+    'chat' | 'embedding' | 'rerank' | 'analysis' | null
+  >(null);
+
+  const handleOpenAdd = async (
+    type: 'chat' | 'embedding' | 'rerank' | 'analysis',
+  ) => {
+    try {
+      setOpeningAdd(type);
+      // 预加载 modal 代码分块，避免首次打开白屏
+      await import('@ctzhian/modelkit');
+      setAddType(type);
+      setAddOpen(true);
+    } finally {
+      setOpeningAdd(null);
+    }
+  };
 
   const disabledClose =
     !chatModelData || !embeddingModelData || !rerankModelData;
@@ -182,10 +203,8 @@ const System = () => {
                   <Button
                     color='primary'
                     sx={{ minWidth: 0, px: 0, height: '20px' }}
-                    onClick={() => {
-                      setAddOpen(true);
-                      setAddType('chat');
-                    }}
+                    loading={openingAdd === 'chat'}
+                    onClick={() => handleOpenAdd('chat')}
                   >
                     去添加
                   </Button>
@@ -326,10 +345,8 @@ const System = () => {
                     <Button
                       size='small'
                       variant='outlined'
-                      onClick={() => {
-                        setAddOpen(true);
-                        setAddType('chat');
-                      }}
+                      loading={openingAdd === 'chat'}
+                      onClick={() => handleOpenAdd('chat')}
                     >
                       修改
                     </Button>
@@ -401,10 +418,8 @@ const System = () => {
                   <Button
                     color='primary'
                     sx={{ minWidth: 0, px: 0, height: '20px' }}
-                    onClick={() => {
-                      setAddOpen(true);
-                      setAddType('embedding');
-                    }}
+                    loading={openingAdd === 'embedding'}
+                    onClick={() => handleOpenAdd('embedding')}
                   >
                     去添加
                   </Button>
@@ -549,10 +564,8 @@ const System = () => {
                     <Button
                       size='small'
                       variant='outlined'
-                      onClick={() => {
-                        setAddOpen(true);
-                        setAddType('embedding');
-                      }}
+                      loading={openingAdd === 'embedding'}
+                      onClick={() => handleOpenAdd('embedding')}
                     >
                       修改
                     </Button>
@@ -624,10 +637,8 @@ const System = () => {
                   <Button
                     color='primary'
                     sx={{ minWidth: 0, px: 0, height: '20px' }}
-                    onClick={() => {
-                      setAddOpen(true);
-                      setAddType('rerank');
-                    }}
+                    loading={openingAdd === 'rerank'}
+                    onClick={() => handleOpenAdd('rerank')}
                   >
                     去添加
                   </Button>
@@ -767,10 +778,8 @@ const System = () => {
                     <Button
                       size='small'
                       variant='outlined'
-                      onClick={() => {
-                        setAddOpen(true);
-                        setAddType('rerank');
-                      }}
+                      loading={openingAdd === 'rerank'}
+                      onClick={() => handleOpenAdd('rerank')}
                     >
                       修改
                     </Button>
@@ -842,10 +851,8 @@ const System = () => {
                   <Button
                     color='primary'
                     sx={{ minWidth: 0, px: 0, height: '20px' }}
-                    onClick={() => {
-                      setAddOpen(true);
-                      setAddType('analysis');
-                    }}
+                    loading={openingAdd === 'analysis'}
+                    onClick={() => handleOpenAdd('analysis')}
                   >
                     去添加
                   </Button>
@@ -997,10 +1004,8 @@ const System = () => {
                     <Button
                       size='small'
                       variant='outlined'
-                      onClick={() => {
-                        setAddOpen(true);
-                        setAddType('analysis');
-                      }}
+                      loading={openingAdd === 'analysis'}
+                      onClick={() => handleOpenAdd('analysis')}
                     >
                       修改
                     </Button>
@@ -1011,25 +1016,29 @@ const System = () => {
           </Card>
         </Stack>
       </Modal>
-      <ModelModal
-        open={addOpen}
-        model_type={addType}
-        data={
-          addType === 'chat'
-            ? convertLocalModelToUIModel(chatModelData)
-            : addType === 'embedding'
-              ? convertLocalModelToUIModel(embeddingModelData)
-              : addType === 'rerank'
-                ? convertLocalModelToUIModel(rerankModelData)
-                : convertLocalModelToUIModel(analysisModelData)
-        }
-        onClose={() => setAddOpen(false)}
-        refresh={getModelList}
-        modelService={modelService}
-        language='zh-CN'
-        messageComponent={message}
-        is_close_model_remark={true}
-      />
+      {addOpen && (
+        <Suspense fallback={null}>
+          <ModelModal
+            open={addOpen}
+            model_type={addType}
+            data={
+              addType === 'chat'
+                ? convertLocalModelToUIModel(chatModelData)
+                : addType === 'embedding'
+                  ? convertLocalModelToUIModel(embeddingModelData)
+                  : addType === 'rerank'
+                    ? convertLocalModelToUIModel(rerankModelData)
+                    : convertLocalModelToUIModel(analysisModelData)
+            }
+            onClose={() => setAddOpen(false)}
+            refresh={getModelList}
+            modelService={modelService}
+            language='zh-CN'
+            messageComponent={message}
+            is_close_model_remark={true}
+          />
+        </Suspense>
+      )}
     </>
   );
 };
