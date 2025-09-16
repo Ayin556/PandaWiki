@@ -27,7 +27,7 @@ const (
 func NewGithubClient(ctx context.Context, logger *log.Logger, clientID, clientSecret, redirectURI, proxyURL string) (*Client, error) {
 	licenseEdition, ok := ctx.Value(consts.ContextKeyEdition).(consts.LicenseEdition)
 	if !ok {
-		return nil, fmt.Errorf("ctx get license failed")
+		return nil, fmt.Errorf("failed to retrieve license edition from context")
 	}
 
 	redirectURL, _ := url.Parse(redirectURI)

@@ -41,13 +41,8 @@ func (u *AuthUsecase) GenerateGitHubAuthUrl(ctx context.Context, req shareV1.Aut
 }
 
 func (u *AuthUsecase) GitHubCallback(ctx context.Context, req shareV1.GitHubCallbackReq) (*domain.Auth, string, error) {
-	statInfoBytes, err := u.cache.Get(ctx, req.State).Result()
-	if err != nil || statInfoBytes == "" {
-		return nil, "", err
-	}
 
-	var statInfo StateInfo
-	err = json.Unmarshal([]byte(statInfoBytes), &statInfo)
+	statInfo, err := u.getStateInfo(ctx, req.State)
 	if err != nil {
 		return nil, "", err
 	}
@@ -79,4 +74,22 @@ func (u *AuthUsecase) GitHubCallback(ctx context.Context, req shareV1.GitHubCall
 	}
 
 	return auth, statInfo.RedirectUrl, err
+}
+
+func (u *AuthUsecase) getStateInfo(ctx context.Context, state string) (*StateInfo, error) {
+	statInfoBytes, err := u.cache.Get(ctx, state).Result()
+	if err != nil {
+		return nil, err
+	}
+	if statInfoBytes == "" {
+		return nil, fmt.Errorf("state info not found")
+	}
+
+	var statInfo StateInfo
+	err = json.Unmarshal([]byte(statInfoBytes), &statInfo)
+	if err != nil {
+		return nil, err
+	}
+
+	return &statInfo, nil
 }

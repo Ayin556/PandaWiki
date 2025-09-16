@@ -206,15 +206,13 @@ func (r *AuthRepo) CreateAuthConfig(ctx context.Context, authConfig *domain.Auth
 			First(&existing).Error
 
 		if err != nil {
-			// 未找到则创建
-			if err.Error() == "record not found" {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
 				if err := tx.Model(&domain.AuthConfig{}).
 					Create(authConfig).Error; err != nil {
 					return err
 				}
 				return nil
 			}
-			// 其他错误直接返回
 			return err
 		}
 
@@ -318,7 +316,7 @@ func (r *AuthRepo) GetOrCreateAuth(ctx context.Context, auth *domain.Auth, sourc
 			"last_login_time": time.Now(),
 			"user_info":       auth.UserInfo,
 		}
-		if err := r.db.Model(&domain.Auth{}).Where("id = ?", existing.ID).Updates(updateMap).Error; err != nil {
+		if err := tx.Model(&domain.Auth{}).Where("id = ?", existing.ID).Updates(updateMap).Error; err != nil {
 			return err
 		}
 
