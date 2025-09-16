@@ -61,6 +61,25 @@ definitions:
     - CopySettingNone
     - CopySettingAppend
     - CopySettingDisabled
+  consts.LicenseEdition:
+    enum:
+    - 0
+    - 1
+    - 2
+    format: int32
+    type: integer
+    x-enum-comments:
+      LicenseEditionContributor: 联创版
+      LicenseEditionEnterprise: 企业版
+      LicenseEditionFree: 开源版
+    x-enum-descriptions:
+    - 开源版
+    - 联创版
+    - 企业版
+    x-enum-varnames:
+    - LicenseEditionFree
+    - LicenseEditionContributor
+    - LicenseEditionEnterprise
   consts.NodeAccessPerm:
     enum:
     - open
@@ -2053,6 +2072,32 @@ definitions:
       title:
         type: string
     type: object
+  github_com_chaitin_panda-wiki_api_auth_v1.AuthGetResp:
+    properties:
+      auths:
+        items:
+          $ref: '#/definitions/v1.AuthItem'
+        type: array
+      client_id:
+        type: string
+      client_secret:
+        type: string
+      proxy:
+        type: string
+      source_type:
+        $ref: '#/definitions/consts.SourceType'
+    type: object
+  github_com_chaitin_panda-wiki_api_share_v1.AuthGetResp:
+    properties:
+      auth_type:
+        $ref: '#/definitions/consts.AuthType'
+      license_edition:
+        $ref: '#/definitions/consts.LicenseEdition'
+      source_type:
+        $ref: '#/definitions/consts.SourceType'
+    type: object
+  github_com_chaitin_panda-wiki_api_share_v1.GitHubCallbackResp:
+    type: object
   github_com_chaitin_panda-wiki_domain.CheckModelReq:
     properties:
       api_header:
@@ -2182,12 +2227,34 @@ definitions:
       total:
         type: integer
     type: object
-  v1.AuthGetResp:
+  v1.AuthGitHubReq:
     properties:
-      auth_type:
-        $ref: '#/definitions/consts.AuthType'
+      kb_id:
+        type: string
+      redirect_url:
+        type: string
+    type: object
+  v1.AuthGitHubResp:
+    properties:
+      url:
+        type: string
+    type: object
+  v1.AuthItem:
+    properties:
+      avatar_url:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      ip:
+        type: string
+      last_login_time:
+        type: string
       source_type:
         $ref: '#/definitions/consts.SourceType'
+      username:
+        type: string
     type: object
   v1.AuthLoginSimpleReq:
     properties:
@@ -2195,6 +2262,24 @@ definitions:
         type: string
     required:
     - password
+    type: object
+  v1.AuthSetReq:
+    properties:
+      client_id:
+        type: string
+      client_secret:
+        type: string
+      kb_id:
+        type: string
+      proxy:
+        type: string
+      source_type:
+        allOf:
+        - $ref: '#/definitions/consts.SourceType'
+        enum:
+        - github
+    required:
+    - source_type
     type: object
   v1.CommentLists:
     properties:
@@ -2553,6 +2638,119 @@ paths:
       summary: Get app detail
       tags:
       - app
+  /api/v1/auth/delete:
+    delete:
+      consumes:
+      - application/json
+      description: 删除授权信息
+      operationId: v1-OpenAuthDelete
+      parameters:
+      - in: query
+        name: id
+        type: integer
+      - in: query
+        name: kb_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Response'
+      security:
+      - bearerAuth: []
+      summary: 删除授权信息
+      tags:
+      - Auth
+  /api/v1/auth/get:
+    get:
+      consumes:
+      - application/json
+      description: 获取授权信息
+      operationId: v1-OpenAuthGet
+      parameters:
+      - in: query
+        name: kb_id
+        type: string
+      - enum:
+        - dingtalk
+        - feishu
+        - wecom
+        - oauth
+        - github
+        - cas
+        - ldap
+        - widget
+        - dingtalk_bot
+        - feishu_bot
+        - wechat_bot
+        - wechat_service_bot
+        - discord_bot
+        - wechat_official_account
+        - openai_api
+        in: query
+        name: source_type
+        required: true
+        type: string
+        x-enum-varnames:
+        - SourceTypeDingTalk
+        - SourceTypeFeishu
+        - SourceTypeWeCom
+        - SourceTypeOAuth
+        - SourceTypeGitHub
+        - SourceTypeCAS
+        - SourceTypeLDAP
+        - SourceTypeWidget
+        - SourceTypeDingtalkBot
+        - SourceTypeFeishuBot
+        - SourceTypeWechatBot
+        - SourceTypeWechatServiceBot
+        - SourceTypeDiscordBot
+        - SourceTypeWechatOfficialAccount
+        - SourceTypeOpenAIAPI
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.PWResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_chaitin_panda-wiki_api_auth_v1.AuthGetResp'
+              type: object
+      security:
+      - bearerAuth: []
+      summary: 获取授权信息
+      tags:
+      - Auth
+  /api/v1/auth/set:
+    post:
+      consumes:
+      - application/json
+      description: 设置授权信息
+      operationId: v1-OpenAuthSet
+      parameters:
+      - description: para
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/v1.AuthSetReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Response'
+      security:
+      - bearerAuth: []
+      summary: 设置授权信息
+      tags:
+      - Auth
   /api/v1/comment:
     get:
       consumes:
@@ -4439,11 +4637,44 @@ paths:
             - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/v1.AuthGetResp'
+                  $ref: '#/definitions/github_com_chaitin_panda-wiki_api_share_v1.AuthGetResp'
               type: object
       summary: AuthGet
       tags:
       - share_auth
+  /share/v1/auth/github:
+    post:
+      consumes:
+      - application/json
+      description: GitHub登录
+      operationId: v1-AuthGitHub
+      parameters:
+      - description: kb id
+        in: header
+        name: X-KB-ID
+        required: true
+        type: string
+      - description: para
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/v1.AuthGitHubReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.PWResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/v1.AuthGitHubResp'
+              type: object
+      summary: GitHub登录
+      tags:
+      - ShareAuth
   /share/v1/auth/login/simple:
     post:
       consumes:
@@ -4791,6 +5022,34 @@ paths:
       summary: 推荐卡片列表
       tags:
       - share_node
+  /share/v1/openapi/github/callback:
+    get:
+      consumes:
+      - application/json
+      description: GitHub回调
+      operationId: v1-GitHubCallback
+      parameters:
+      - in: query
+        name: code
+        type: string
+      - in: query
+        name: state
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.PWResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_chaitin_panda-wiki_api_share_v1.GitHubCallbackResp'
+              type: object
+      summary: GitHub回调
+      tags:
+      - ShareOpenapi
   /share/v1/stat/page:
     post:
       consumes:

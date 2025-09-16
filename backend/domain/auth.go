@@ -56,6 +56,37 @@ func (AuthGroup) TableName() string {
 	return "auth_groups"
 }
 
+type AuthConfig struct {
+	ID          uint              `gorm:"primaryKey;column:id"` // Unique identifier for the authentication configuration
+	KbID        string            `gorm:"column:kb_id;not null"  json:"kb_id"`
+	AuthSetting AuthSetting       `gorm:"type:jsonb" json:"auth_setting"`
+	SourceType  consts.SourceType `gorm:"column:source_type;not null;unique"`       // Unique type of authentication source (e.g., "github", "google")
+	CreatedAt   time.Time         `gorm:"column:created_at;not null;default:now()"` // Timestamp when the record was created
+	UpdatedAt   time.Time         `gorm:"column:updated_at;not null;default:now()"` // Timestamp when the record was last updated
+}
+
+func (s *AuthSetting) Scan(value any) error {
+	bytes, ok := value.([]byte)
+	if !ok {
+		return errors.New(fmt.Sprint("invalid AuthSetting type:", value))
+	}
+	return json.Unmarshal(bytes, s)
+}
+
+func (s AuthSetting) Value() (driver.Value, error) {
+	return json.Marshal(s)
+}
+
+func (AuthConfig) TableName() string {
+	return "auth_configs"
+}
+
+type AuthSetting struct {
+	ClientID     string `json:"client_id,omitempty"`
+	ClientSecret string `json:"client_secret,omitempty"`
+	Proxy        string `json:"proxy,omitempty"`
+}
+
 type AuthInfo struct {
 	ID           uint         `gorm:"column:id" json:"id,omitempty"`
 	AuthUserInfo AuthUserInfo `json:"auth_user_info" gorm:"type:jsonb"`
