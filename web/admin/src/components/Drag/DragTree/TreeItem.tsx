@@ -1,22 +1,23 @@
 import { ITreeItem } from '@/api';
-import { putApiV1NodeDetail, postApiV1Node } from '@/request/Node';
 import Emoji from '@/components/Emoji';
 import { treeSx } from '@/constant/styles';
+import { postApiV1Node, putApiV1NodeDetail } from '@/request/Node';
+import { ConstsNodeAccessPerm } from '@/request/types';
 import { useAppSelector } from '@/store';
 import { AppContext, updateTree } from '@/utils/drag';
 import { handleMultiSelect, updateAllParentStatus } from '@/utils/tree';
+import { Ellipsis, message } from '@ctzhian/ui';
 import {
   Box,
   Button,
   Checkbox,
+  PaletteColor,
   Stack,
   TextField,
-  styled,
   Theme,
-  PaletteColor,
   alpha,
+  styled,
 } from '@mui/material';
-import { Ellipsis, message } from '@ctzhian/ui';
 import dayjs from 'dayjs';
 import {
   SimpleTreeItemWrapper,
@@ -31,7 +32,6 @@ import React, {
   useState,
 } from 'react';
 import TreeMenu from './TreeMenu';
-import { ConstsNodeAccessPerm } from '@/request/types';
 
 const StyledTag = styled('div')<{ color: keyof Theme['palette'] }>(
   ({ theme, color }) => ({
@@ -325,6 +325,9 @@ const TreeItem = React.forwardRef<
                         bgcolor: 'background.paper',
                       },
                     }}
+                    onPointerDown={e => e.stopPropagation()}
+                    onMouseDown={e => e.stopPropagation()}
+                    onTouchStart={e => e.stopPropagation()}
                     onChange={e => setValue(e.target.value)}
                   />
                   <Button

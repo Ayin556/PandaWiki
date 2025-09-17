@@ -3,8 +3,9 @@ import { getApiV1NodeList } from '@/request/Node';
 import { DomainNodeListItemResp, V1NodeDetailResp } from '@/request/types';
 import { useAppSelector } from '@/store';
 import { convertToTree } from '@/utils/drag';
-import { alpha, Box, Stack, useTheme } from '@mui/material';
+import { filterEmptyFolders } from '@/utils/tree';
 import { Ellipsis, Icon } from '@ctzhian/ui';
+import { alpha, Box, Stack, useTheme } from '@mui/material';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import KBSwitch from './KBSwitch';
@@ -37,20 +38,35 @@ const Catalog = ({ curNode, setCatalogOpen }: CatalogProps) => {
     };
     getApiV1NodeList(params).then(res => {
       setNodeList(res);
-      const v = convertToTree(res || []);
+      const v = filterEmptyFolders(convertToTree(res || []));
       setData(v);
-      const getAllFolderIds = (items: ITreeItem[]): string[] => {
-        return items.reduce((acc: string[], item) => {
-          if (item.type === 1) {
-            acc.push(item.id);
-            if (item.children && item.children.length > 0) {
-              acc.push(...getAllFolderIds(item.children));
-            }
+      // 计算当前文档的所有父级文件夹，并默认展开
+      try {
+        const currentId = id as string;
+        if (!currentId) {
+          setExpandedFolders(new Set());
+          return;
+        }
+
+        const map = new Map<string, DomainNodeListItemResp>();
+        (res || []).forEach(item => {
+          if (item?.id) map.set(item.id, item);
+        });
+
+        const expanded = new Set<string>();
+        let cur = map.get(currentId);
+        while (cur && cur.parent_id) {
+          const parent = map.get(cur.parent_id);
+          if (!parent) break;
+          if (parent.type === 1 && parent.id) {
+            expanded.add(parent.id);
           }
-          return acc;
-        }, []);
-      };
-      setExpandedFolders(new Set(getAllFolderIds(v)));
+          cur = parent;
+        }
+        setExpandedFolders(expanded);
+      } catch (e) {
+        setExpandedFolders(new Set());
+      }
     });
   }, [kb_id]);
 
@@ -160,7 +176,7 @@ const Catalog = ({ curNode, setCatalogOpen }: CatalogProps) => {
         }
         return item;
       });
-      setData(convertToTree(newNodeList || []));
+      setData(filterEmptyFolders(convertToTree(newNodeList || [])));
     }
   }, [curNode, nodeList]);
 
@@ -227,11 +243,6 @@ const Catalog = ({ curNode, setCatalogOpen }: CatalogProps) => {
           fontSize: 14,
           overflowY: 'auto',
           overflowX: 'hidden',
-          '&::-webkit-scrollbar': {
-            display: 'none',
-          },
-          msOverflowStyle: 'none',
-          scrollbarWidth: 'none',
         }}
       >
         {renderTree(data)}
