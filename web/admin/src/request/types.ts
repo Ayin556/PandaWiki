@@ -242,6 +242,7 @@ export interface DomainAppSettings {
   captcha_settings?: ConstsCaptchaSettings;
   /** catalog settings */
   catalog_settings?: DomainCatalogSettings;
+  contribute_settings?: DomainContributeSettings;
   copy_setting?: '' | 'append' | 'disabled';
   /** seo */
   desc?: string;
@@ -316,6 +317,7 @@ export interface DomainAppSettingsResp {
   captcha_settings?: ConstsCaptchaSettings;
   /** catalog settings */
   catalog_settings?: DomainCatalogSettings;
+  contribute_settings?: DomainContributeSettings;
   copy_setting?: ConstsCopySetting;
   /** seo */
   desc?: string;
@@ -451,6 +453,10 @@ export interface DomainCommentReq {
   parent_id?: string;
   root_id?: string;
   user_name?: string;
+}
+
+export interface DomainContributeSettings {
+  is_enable?: boolean;
 }
 
 export interface DomainConversationDetailResp {

@@ -56,6 +56,17 @@ export enum ConstsLicenseEdition {
   LicenseEditionEnterprise = 2,
 }
 
+export enum ConstsContributeType {
+  ContributeTypeAdd = 'add',
+  ContributeTypeEdit = 'edit',
+}
+
+export enum ConstsContributeStatus {
+  ContributeStatusPending = 'pending',
+  ContributeStatusApproved = 'approved',
+  ContributeStatusRejected = 'rejected',
+}
+
 export interface DomainCommentModerateListReq {
   ids: string[];
   status: DomainCommentStatus;
@@ -169,6 +180,7 @@ export interface GithubComChaitinPandaWikiProApiAuthV1AuthGetResp {
   /** LDAP特定配置 */
   ldap_server_url?: string;
   name_field?: string;
+  proxy?: string;
   scopes?: string[];
   source_type?: ConstsSourceType;
   token_url?: string;
@@ -297,6 +309,7 @@ export interface GithubComChaitinPandaWikiProApiAuthV1AuthSetReq {
   /** LDAP特定配置 */
   ldap_server_url?: string;
   name_field?: string;
+  proxy?: string;
   scopes?: string[];
   source_type?: ConstsSourceType;
   token_url?: string;
@@ -305,6 +318,72 @@ export interface GithubComChaitinPandaWikiProApiAuthV1AuthSetReq {
   /** 用户查询过滤器 */
   user_filter?: string;
   user_info_url?: string;
+}
+
+export interface GithubComChaitinPandaWikiProApiContributeV1ContributeAuditReq {
+  id: string;
+  kb_id: string;
+  parent_id?: string;
+  position?: number;
+  status: 'approved' | 'rejected';
+}
+
+export interface GithubComChaitinPandaWikiProApiContributeV1ContributeAuditResp {
+  message?: string;
+}
+
+export interface GithubComChaitinPandaWikiProApiContributeV1ContributeDetailResp {
+  audit_time?: string;
+  audit_user_id?: string;
+  auth_id?: number;
+  auth_name?: string;
+  content?: string;
+  created_at?: string;
+  id?: string;
+  kb_id?: string;
+  meta?: GithubComChaitinPandaWikiProApiContributeV1NodeMeta;
+  node_id?: string;
+  node_name?: string;
+  /** edit类型时返回原始node信息 */
+  original_node?: GithubComChaitinPandaWikiProApiContributeV1OriginalNodeInfo;
+  reason?: string;
+  status?: ConstsContributeStatus;
+  type?: ConstsContributeType;
+  updated_at?: string;
+}
+
+export interface GithubComChaitinPandaWikiProApiContributeV1ContributeItem {
+  audit_time?: string;
+  audit_user_id?: string;
+  auth_id?: number;
+  auth_name?: string;
+  created_at?: string;
+  id?: string;
+  kb_id?: string;
+  meta?: GithubComChaitinPandaWikiProApiContributeV1NodeMeta;
+  node_id?: string;
+  node_name?: string;
+  reason?: string;
+  status?: ConstsContributeStatus;
+  type?: ConstsContributeType;
+  updated_at?: string;
+}
+
+export interface GithubComChaitinPandaWikiProApiContributeV1ContributeListResp {
+  list?: GithubComChaitinPandaWikiProApiContributeV1ContributeItem[];
+  total?: number;
+}
+
+export interface GithubComChaitinPandaWikiProApiContributeV1NodeMeta {
+  doc_width?: string;
+  emoji?: string;
+}
+
+export interface GithubComChaitinPandaWikiProApiContributeV1OriginalNodeInfo {
+  content?: string;
+  id?: string;
+  meta?: GithubComChaitinPandaWikiProApiContributeV1NodeMeta;
+  name?: string;
 }
 
 export interface GithubComChaitinPandaWikiProApiShareV1AuthCASReq {
@@ -395,12 +474,32 @@ export type GithubComChaitinPandaWikiProApiShareV1FeishuCallbackResp = Record<
   any
 >;
 
+export interface GithubComChaitinPandaWikiProApiShareV1FileUploadResp {
+  key?: string;
+}
+
 export type GithubComChaitinPandaWikiProApiShareV1GitHubCallbackResp = Record<
   string,
   any
 >;
 
 export type GithubComChaitinPandaWikiProApiShareV1OAuthCallbackResp = Record<
+  string,
+  any
+>;
+
+export interface GithubComChaitinPandaWikiProApiShareV1SubmitContributeReq {
+  content?: string;
+  doc_width?: string;
+  emoji?: string;
+  kb_id?: string;
+  name?: string;
+  node_id?: string;
+  reason?: string;
+  type: 'add' | 'edit';
+}
+
+export type GithubComChaitinPandaWikiProApiShareV1SubmitContributeResp = Record<
   string,
   any
 >;
@@ -503,6 +602,22 @@ export interface GetApiProV1BlockParams {
   kb_id: string;
 }
 
+export interface GetApiProV1ContributeDetailParams {
+  id: string;
+  kb_id: string;
+}
+
+export interface GetApiProV1ContributeListParams {
+  auth_name?: string;
+  kb_id?: string;
+  node_name?: string;
+  /** @min 1 */
+  page: number;
+  /** @min 1 */
+  per_page: number;
+  status?: 'pending' | 'approved' | 'rejected';
+}
+
 export interface GetApiProV1DocumentListParams {
   kb_id: string;
   /** @min 1 */
@@ -556,6 +671,11 @@ export interface PostShareProV1DocumentFeedbackPayload {
    * @format binary
    */
   image?: File;
+}
+
+export interface PostShareProV1FileUploadPayload {
+  /** File */
+  file: File;
 }
 
 export interface GetShareProV1OpenapiCasCallbackParams {

@@ -265,3 +265,21 @@ export const getRedirectUrl = () => {
     : new URL('/', location.origin);
   return redirectUrl as URL;
 };
+
+export const MAC_SYMBOLS = {
+  ctrl: '⌘',
+  alt: '⌥',
+  shift: '⇧',
+};
+
+export const isMac = () =>
+  typeof navigator !== 'undefined' &&
+  navigator.platform.toLowerCase().includes('mac');
+
+export const getShortcutKeyText = (shortcutKey: string[]) => {
+  return shortcutKey
+    ?.map(it =>
+      isMac() ? MAC_SYMBOLS[it as keyof typeof MAC_SYMBOLS] || it : it,
+    )
+    .join('+');
+};

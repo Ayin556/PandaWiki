@@ -34,6 +34,14 @@ const MENUS = [
     ],
   },
   {
+    label: '贡献',
+    value: '/contribution',
+    pathname: 'contribution',
+    icon: 'icon-gongxian',
+    show: true,
+    perms: [ConstsUserKBPermission.UserKBPermissionFullControl],
+  },
+  {
     label: '问答',
     value: '/conversation',
     pathname: 'conversation',

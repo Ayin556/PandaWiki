@@ -1,4 +1,3 @@
-import { putApiV1App } from '@/request/App';
 import { useAppSelector } from '@/store';
 import InfoIcon from '@mui/icons-material/Info';
 import {
@@ -20,7 +19,7 @@ import { useEffect, useState } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import { message } from '@ctzhian/ui';
 import { FormItem, SettingCard, SettingCardItem } from './Common';
-import { getApiV1AppDetail } from '@/request/App';
+import { getApiV1AppDetail, putApiV1App } from '@/request/App';
 
 interface CardCommentProps {
   kb: DomainKnowledgeBaseDetail;
@@ -344,6 +343,94 @@ const DocumentCorrection = ({
   );
 };
 
+const DocumentContribution = ({
+  data,
+  refresh,
+}: {
+  data: DomainAppDetailResp;
+  refresh: () => void;
+}) => {
+  const [isEdit, setIsEdit] = useState(false);
+  const { license, kb_id } = useAppSelector(state => state.config);
+  const { control, handleSubmit, setValue } = useForm({
+    defaultValues: {
+      is_enable: false,
+    },
+  });
+
+  const onSubmit = handleSubmit(formData => {
+    putApiV1App(
+      { id: data.id! },
+      {
+        kb_id,
+        settings: {
+          ...data.settings,
+          contribute_settings: {
+            is_enable: formData.is_enable,
+          },
+        },
+      },
+    ).then(() => {
+      message.success('保存成功');
+      setIsEdit(false);
+      refresh();
+    });
+  });
+
+  const isPro = license.edition === 1 || license.edition === 2;
+  useEffect(() => {
+    setValue(
+      'is_enable',
+      // @ts-expect-error 忽略类型错误
+      data?.settings?.contribute_settings?.is_enable,
+    );
+  }, [data]);
+
+  return (
+    <SettingCardItem
+      title={
+        <>
+          文档贡献
+          {!isPro && (
+            <Tooltip title='联创版和企业版可用' placement='top' arrow>
+              <InfoIcon sx={{ color: 'text.secondary', fontSize: 14 }} />
+            </Tooltip>
+          )}
+        </>
+      }
+      isEdit={isEdit}
+      onSubmit={onSubmit}
+    >
+      <Controller
+        control={control}
+        name='is_enable'
+        render={({ field }) => (
+          <RadioGroup
+            row
+            {...field}
+            value={isPro ? field.value : undefined}
+            onChange={e => {
+              setIsEdit(true);
+              field.onChange(e.target.value === 'true');
+            }}
+          >
+            <FormControlLabel
+              value={true}
+              control={<Radio size='small' disabled={!isPro} />}
+              label={<StyledRadioLabel>启用</StyledRadioLabel>}
+            />
+            <FormControlLabel
+              value={false}
+              control={<Radio size='small' disabled={!isPro} />}
+              label={<StyledRadioLabel>禁用</StyledRadioLabel>}
+            />
+          </RadioGroup>
+        )}
+      />
+    </SettingCardItem>
+  );
+};
+
 const CardFeedback = ({ kb }: CardCommentProps) => {
   const [info, setInfo] = useState<DomainAppDetailResp | null>(null);
 
@@ -363,6 +450,7 @@ const CardFeedback = ({ kb }: CardCommentProps) => {
       <AIQuestion data={info} refresh={getInfo} />
       <DocumentComments data={info} refresh={getInfo} />
       <DocumentCorrection data={info} refresh={getInfo} />
+      <DocumentContribution data={info} refresh={getInfo} />
     </SettingCard>
   );
 };
