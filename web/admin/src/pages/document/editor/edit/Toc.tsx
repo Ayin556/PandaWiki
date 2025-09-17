@@ -34,7 +34,8 @@ const HeadingSx = [
 ];
 
 const Toc = ({ headings, fixed, setFixed }: TocProps) => {
-  const [open, setOpen] = useState(false);
+  const storageTocOpen = localStorage.getItem('toc-open');
+  const [open, setOpen] = useState(!!storageTocOpen);
   const levels = Array.from(
     new Set(headings.map(it => it.originalLevel).sort((a, b) => a - b)),
   ).slice(0, 3);
@@ -122,6 +123,9 @@ const Toc = ({ headings, fixed, setFixed }: TocProps) => {
             onClick={() => {
               if (fixed) {
                 setOpen(false);
+                localStorage.removeItem('toc-open');
+              } else {
+                localStorage.setItem('toc-open', 'true');
               }
               setFixed(!fixed);
             }}

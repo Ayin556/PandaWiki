@@ -6,7 +6,7 @@ import { addExpandState } from '@/utils/drag';
 import { Box, Stack, SxProps, Tooltip } from '@mui/material';
 import { useDebounce } from 'ahooks';
 import { useParams } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import CatalogFolder from './CatalogFolder';
 
 const Catalog = ({ sx }: { sx?: SxProps }) => {
@@ -37,6 +37,24 @@ const Catalog = ({ sx }: { sx?: SxProps }) => {
     );
     return filterTreeBySearch(originalTree, debouncedSearchTerm);
   }, [debouncedSearchTerm]);
+
+  const listRef = useRef<HTMLDivElement>(null);
+  const hasScrolledRef = useRef(false);
+
+  useEffect(() => {
+    if (hasScrolledRef.current) return;
+    if (!id || !catalogShow) return;
+    // 等待子项渲染完成后再滚动
+    const scrollToActive = () => {
+      const el = document.getElementById(`catalog-item-${id}`);
+      if (el) {
+        el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        hasScrolledRef.current = true;
+      }
+    };
+    const raf = requestAnimationFrame(scrollToActive);
+    return () => cancelAnimationFrame(raf);
+  }, [id, catalogShow]);
 
   if (mobile) return null;
 
@@ -126,6 +144,7 @@ const Catalog = ({ sx }: { sx?: SxProps }) => {
             width: 0,
           }),
         }}
+        ref={listRef}
       >
         {tree.map(item => (
           <CatalogFolder
