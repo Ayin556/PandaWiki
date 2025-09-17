@@ -137,20 +137,26 @@ export default function ContributionPage() {
         render: (text: string, record) => {
           return (
             <Stack direction='row' alignItems='center' gap={1}>
-              {record.type === ConstsContributeType.ContributeTypeAdd && (
-                <Box
-                  sx={{
-                    transform: 'scale(0.8)',
-                    fontSize: 12,
-                    color: 'light.main',
-                    px: 0.5,
-                    borderRadius: 1,
-                    bgcolor: 'error.main',
-                  }}
-                >
-                  new
-                </Box>
-              )}
+              <Box
+                sx={{
+                  transform: 'scale(0.85)',
+                  fontSize: 12,
+                  color: 'light.main',
+                  p: '2px 4px',
+                  borderRadius: 1,
+                  flexShrink: 0,
+                  lineHeight: 1,
+                  bgcolor:
+                    record.type !== ConstsContributeType.ContributeTypeAdd
+                      ? 'error.main'
+                      : 'info.main',
+                }}
+              >
+                {record.type === ConstsContributeType.ContributeTypeAdd
+                  ? '新增'
+                  : '编辑'}
+              </Box>
+
               <Ellipsis
                 className='primary-color'
                 sx={{ cursor: 'pointer' }}
@@ -221,6 +227,7 @@ export default function ContributionPage() {
               label={s.label}
               color={s.color}
               variant='outlined'
+              size='small'
               onClick={() => {
                 setPreviewRow(record);
                 setOpen(true);

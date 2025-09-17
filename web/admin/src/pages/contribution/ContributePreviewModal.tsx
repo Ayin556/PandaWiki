@@ -88,7 +88,40 @@ export default function ContributePreviewModal(
           </Box>
         </Stack>
       }
-      footer={null}
+      footer={
+        !(
+          row?.type === ConstsContributeType.ContributeTypeEdit &&
+          (row?.status === ConstsContributeStatus.ContributeStatusPending ||
+            row?.status === ConstsContributeStatus.ContributeStatusRejected)
+        ) ? (
+          <Stack
+            direction='row'
+            gap={1}
+            justifyContent='flex-end'
+            sx={{ p: 3 }}
+          >
+            {row?.status === ConstsContributeStatus.ContributeStatusPending ? (
+              <>
+                <Button
+                  size='small'
+                  variant='outlined'
+                  color='error'
+                  onClick={onReject}
+                >
+                  拒绝
+                </Button>
+                <Button size='small' variant='contained' onClick={onAccept}>
+                  采纳
+                </Button>
+              </>
+            ) : (
+              <Button onClick={onClose} size='small' variant='contained'>
+                关闭
+              </Button>
+            )}
+          </Stack>
+        ) : null
+      }
     >
       <Stack direction='row' sx={{ overflow: 'hidden', height: '100%' }}>
         <Stack
@@ -137,100 +170,111 @@ export default function ContributePreviewModal(
             )}
         </Stack>
 
-        <Stack justifyContent='space-between' sx={{ width: 220, pl: 2 }}>
-          <Box>
-            <Typography sx={{ fontSize: 16, fontWeight: 600, pb: 2 }}>
-              对比
-            </Typography>
-            <Stack gap={2}>
-              <Button
-                size='large'
-                variant={activeTab === 'diff' ? 'contained' : 'outlined'}
-                fullWidth
-                onClick={() => handleTabChange('diff')}
-                sx={{
-                  justifyContent: 'flex-start',
-                  textAlign: 'left',
-                  borderRadius: '10px',
-                  py: 1.5,
-                }}
-              >
-                <Stack alignItems='flex-start' spacing={0.25}>
-                  <Box>差异对比</Box>
-                  <Typography variant='caption' sx={{ opacity: 0.8 }}>
-                    直观查看变更点
-                  </Typography>
-                </Stack>
-              </Button>
-
-              <Button
-                size='large'
-                variant={activeTab === 'content' ? 'contained' : 'outlined'}
-                fullWidth
-                onClick={() => handleTabChange('content')}
-                sx={{
-                  justifyContent: 'flex-start',
-                  textAlign: 'left',
-                  borderRadius: '10px',
-                  py: 1.5,
-                }}
-              >
-                <Stack alignItems='flex-start' spacing={0.25}>
-                  <Box>修改后</Box>
-                  <Typography variant='caption' sx={{ opacity: 0.8 }}>
-                    当前候选内容
-                  </Typography>
-                </Stack>
-              </Button>
-
-              <Button
-                size='large'
-                variant={activeTab === 'old_content' ? 'contained' : 'outlined'}
-                fullWidth
-                onClick={() => handleTabChange('old_content')}
-                sx={{
-                  justifyContent: 'flex-start',
-                  textAlign: 'left',
-                  borderRadius: '10px',
-                  py: 1.5,
-                }}
-              >
-                <Stack alignItems='flex-start' spacing={0.25}>
-                  <Box>修改前</Box>
-                  <Typography variant='caption' sx={{ opacity: 0.8 }}>
-                    原始文档内容
-                  </Typography>
-                </Stack>
-              </Button>
-            </Stack>
-          </Box>
-
-          <Box>
-            <Divider sx={{ my: 3 }} />
-            <Stack direction='row' gap={1} justifyContent='flex-end'>
-              {row?.status ===
-              ConstsContributeStatus.ContributeStatusPending ? (
-                <>
+        {row?.type === ConstsContributeType.ContributeTypeEdit &&
+          (row?.status === ConstsContributeStatus.ContributeStatusPending ||
+            row?.status ===
+              ConstsContributeStatus.ContributeStatusRejected) && (
+            <Stack justifyContent='space-between' sx={{ width: 220, pl: 2 }}>
+              <Box>
+                <Typography sx={{ fontSize: 16, fontWeight: 600, pb: 2 }}>
+                  对比
+                </Typography>
+                <Stack gap={2}>
                   <Button
-                    size='small'
-                    variant='outlined'
-                    color='error'
-                    onClick={onReject}
+                    size='large'
+                    variant={activeTab === 'diff' ? 'contained' : 'outlined'}
+                    fullWidth
+                    onClick={() => handleTabChange('diff')}
+                    sx={{
+                      justifyContent: 'flex-start',
+                      textAlign: 'left',
+                      borderRadius: '10px',
+                      py: 1.5,
+                    }}
                   >
-                    拒绝
+                    <Stack alignItems='flex-start' spacing={0.25}>
+                      <Box>差异对比</Box>
+                      <Typography variant='caption' sx={{ opacity: 0.8 }}>
+                        直观查看变更点
+                      </Typography>
+                    </Stack>
                   </Button>
-                  <Button size='small' variant='contained' onClick={onAccept}>
-                    采纳
+
+                  <Button
+                    size='large'
+                    variant={activeTab === 'content' ? 'contained' : 'outlined'}
+                    fullWidth
+                    onClick={() => handleTabChange('content')}
+                    sx={{
+                      justifyContent: 'flex-start',
+                      textAlign: 'left',
+                      borderRadius: '10px',
+                      py: 1.5,
+                    }}
+                  >
+                    <Stack alignItems='flex-start' spacing={0.25}>
+                      <Box>修改后</Box>
+                      <Typography variant='caption' sx={{ opacity: 0.8 }}>
+                        当前候选内容
+                      </Typography>
+                    </Stack>
                   </Button>
-                </>
-              ) : (
-                <Button onClick={onClose} size='small' variant='contained'>
-                  关闭
-                </Button>
-              )}
+
+                  <Button
+                    size='large'
+                    variant={
+                      activeTab === 'old_content' ? 'contained' : 'outlined'
+                    }
+                    fullWidth
+                    onClick={() => handleTabChange('old_content')}
+                    sx={{
+                      justifyContent: 'flex-start',
+                      textAlign: 'left',
+                      borderRadius: '10px',
+                      py: 1.5,
+                    }}
+                  >
+                    <Stack alignItems='flex-start' spacing={0.25}>
+                      <Box>修改前</Box>
+                      <Typography variant='caption' sx={{ opacity: 0.8 }}>
+                        原始文档内容
+                      </Typography>
+                    </Stack>
+                  </Button>
+                </Stack>
+              </Box>
+
+              <Box>
+                <Divider sx={{ my: 3 }} />
+                <Stack direction='row' gap={1} justifyContent='flex-end'>
+                  {row?.status ===
+                  ConstsContributeStatus.ContributeStatusPending ? (
+                    <>
+                      <Button
+                        size='small'
+                        variant='outlined'
+                        color='error'
+                        onClick={onReject}
+                      >
+                        拒绝
+                      </Button>
+                      <Button
+                        size='small'
+                        variant='contained'
+                        onClick={onAccept}
+                      >
+                        采纳
+                      </Button>
+                    </>
+                  ) : (
+                    <Button onClick={onClose} size='small' variant='contained'>
+                      关闭
+                    </Button>
+                  )}
+                </Stack>
+              </Box>
             </Stack>
-          </Box>
-        </Stack>
+          )}
       </Stack>
     </Modal>
   );
