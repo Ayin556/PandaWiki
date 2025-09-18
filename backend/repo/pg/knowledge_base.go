@@ -295,7 +295,15 @@ func (r *KnowledgeBaseRepository) SyncKBAccessSettingsToCaddy(ctx context.Contex
 	return nil
 }
 
-func (r *KnowledgeBaseRepository) CreateKnowledgeBase(ctx context.Context, maxKB int, kb *domain.KnowledgeBase, user *domain.User) error {
+func (r *KnowledgeBaseRepository) CreateKnowledgeBase(ctx context.Context, maxKB int, kb *domain.KnowledgeBase) error {
+	authInfo := domain.GetAuthInfoFromCtx(ctx)
+	if authInfo == nil {
+		return fmt.Errorf("authInfo not found in context")
+	}
+	if authInfo.IsToken {
+		return fmt.Errorf("this api not support token call")
+	}
+
 	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		if err := tx.Create(kb).Error; err != nil {
 			return err
@@ -362,11 +370,19 @@ func (r *KnowledgeBaseRepository) CreateKnowledgeBase(ctx context.Context, maxKB
 		}).Error; err != nil {
 			return err
 		}
+		var user domain.User
+		err := r.db.WithContext(ctx).
+			Where("id = ?", authInfo.UserId).
+			First(&user).Error
+		if err != nil {
+			return err
+		}
 
-		if user.Role == consts.UserRoleUser {
+		// 非管理员用户需要user到kb创建映射关系
+		if user.Role != consts.UserRoleAdmin {
 			if err := r.CreateKBUser(ctx, &domain.KBUsers{
 				KBId:   kb.ID,
-				UserId: user.ID,
+				UserId: authInfo.UserId,
 				Perm:   consts.UserKBPermissionFullControl,
 			}); err != nil {
 				return err
@@ -427,38 +443,53 @@ func (r *KnowledgeBaseRepository) GetKnowledgeBaseIds(ctx context.Context) ([]st
 	return ids, nil
 }
 
-func (r *KnowledgeBaseRepository) GetKnowledgeBaseListByUserId(ctx context.Context, userId string) ([]*domain.KnowledgeBaseListItem, error) {
-	var user domain.User
-	err := r.db.WithContext(ctx).
-		Where("id = ?", userId).
-		First(&user).Error
-	if err != nil {
-		return nil, err
-	}
+func (r *KnowledgeBaseRepository) GetKnowledgeBaseListByUserId(ctx context.Context) ([]*domain.KnowledgeBaseListItem, error) {
 	kbs := make([]*domain.KnowledgeBaseListItem, 0)
+	authInfo := domain.GetAuthInfoFromCtx(ctx)
+	if authInfo == nil {
+		return nil, fmt.Errorf("authInfo not found in context")
+	}
 
-	if user.Role == consts.UserRoleAdmin {
+	if authInfo.IsToken {
 		if err := r.db.WithContext(ctx).
 			Model(&domain.KnowledgeBase{}).
+			Where("id = ?", authInfo.KBId).
 			Order("created_at ASC").
 			Find(&kbs).Error; err != nil {
 			return nil, err
 		}
 	} else {
-		var kbIDs []string
-		if err := r.db.WithContext(ctx).
-			Table("kb_users").
-			Where("user_id = ?", userId).
-			Pluck("kb_id", &kbIDs).Error; err != nil {
+		var user domain.User
+		err := r.db.WithContext(ctx).
+			Where("id = ?", authInfo.UserId).
+			First(&user).Error
+		if err != nil {
 			return nil, err
 		}
-		if len(kbIDs) > 0 {
+
+		if user.Role == consts.UserRoleAdmin {
 			if err := r.db.WithContext(ctx).
 				Model(&domain.KnowledgeBase{}).
-				Where("id IN ?", kbIDs).
 				Order("created_at ASC").
 				Find(&kbs).Error; err != nil {
 				return nil, err
+			}
+		} else {
+			var kbIDs []string
+			if err := r.db.WithContext(ctx).
+				Table("kb_users").
+				Where("user_id = ?", authInfo.UserId).
+				Pluck("kb_id", &kbIDs).Error; err != nil {
+				return nil, err
+			}
+			if len(kbIDs) > 0 {
+				if err := r.db.WithContext(ctx).
+					Model(&domain.KnowledgeBase{}).
+					Where("id IN ?", kbIDs).
+					Order("created_at ASC").
+					Find(&kbs).Error; err != nil {
+					return nil, err
+				}
 			}
 		}
 	}
@@ -682,27 +713,38 @@ func (r *KnowledgeBaseRepository) GetKBUser(ctx context.Context, kbId, userId st
 	return &users, err
 }
 
-func (r *KnowledgeBaseRepository) GetKBPermByUserId(ctx context.Context, kbId, userId string) (consts.UserKBPermission, error) {
+func (r *KnowledgeBaseRepository) GetKBPermByUserId(ctx context.Context, kbId string) (consts.UserKBPermission, error) {
+	authInfo := domain.GetAuthInfoFromCtx(ctx)
+	if authInfo == nil {
+		return "", fmt.Errorf("authInfo not found in context")
+	}
 
 	var (
 		user domain.User
 		perm consts.UserKBPermission
 	)
 
-	if err := r.db.WithContext(ctx).Model(&domain.User{}).Where("id = ?", userId).First(&user).Error; err != nil {
-		return perm, err
-	}
-	if user.Role == consts.UserRoleAdmin {
-		return consts.UserKBPermissionFullControl, nil
-	}
-
-	kbUser, err := r.GetKBUser(ctx, kbId, userId)
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return consts.UserKBPermissionNull, nil
+	if authInfo.IsToken {
+		if authInfo.KBId != kbId {
+			return "", errors.New("token kb permission denied")
 		}
-		return perm, err
-	}
 
-	return kbUser.Perm, nil
+		return authInfo.Permission, nil
+	} else {
+		if err := r.db.WithContext(ctx).Model(&domain.User{}).Where("id = ?", authInfo.UserId).First(&user).Error; err != nil {
+			return perm, err
+		}
+		if user.Role == consts.UserRoleAdmin {
+			return consts.UserKBPermissionFullControl, nil
+		}
+		kbUser, err := r.GetKBUser(ctx, kbId, authInfo.UserId)
+		if err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return consts.UserKBPermissionNull, nil
+			}
+			return perm, err
+		}
+
+		return kbUser.Perm, nil
+	}
 }
