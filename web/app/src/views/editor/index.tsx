@@ -14,6 +14,7 @@ export interface WrapContext {
   nodeDetail: V1NodeDetailResp | null;
   setNodeDetail: (detail: V1NodeDetailResp) => void;
   onSave: (content: string, reason: string) => void;
+  saveLoading: boolean;
 }
 
 const WrapContext = createContext<WrapContext | undefined>(undefined);
@@ -29,6 +30,7 @@ export const useWrapContext = () => {
 const DocEditor = () => {
   const { id } = useParams();
   const isWideScreen = useMediaQuery('(min-width:1400px)');
+  const [saveLoading, setSaveLoading] = useState(false);
   const [nodeDetail, setNodeDetail] = useState<V1NodeDetailResp | null>(
     id
       ? null
@@ -40,6 +42,7 @@ const DocEditor = () => {
   const [catalogOpen, setCatalogOpen] = useState(true);
 
   const onSave = (content: string, reason: string) => {
+    setSaveLoading(true);
     return postShareProV1ContributeSubmit({
       node_id: id ? id[0] : undefined,
       name: nodeDetail!.name,
@@ -50,10 +53,10 @@ const DocEditor = () => {
     }).then(() => {
       message.success('保存成功, 即将关闭页面');
       setTimeout(() => {
+        setSaveLoading(false);
         try {
           // 优先尝试直接关闭当前窗口
           window.close();
-
           // 若浏览器阻止关闭，则尽量离开当前页
           setTimeout(() => {
             // 仍未关闭时，尝试回退；若无历史则跳首页
@@ -95,6 +98,7 @@ const DocEditor = () => {
             nodeDetail,
             setNodeDetail,
             onSave,
+            saveLoading,
           }}
         >
           <Edit />

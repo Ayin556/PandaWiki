@@ -1,6 +1,7 @@
+'use effect';
 import React, { useEffect, useState } from 'react';
 import { Modal } from '@ctzhian/ui';
-import { Box, TextField, Typography, styled } from '@mui/material';
+import { Box, TextField, Typography, styled, FormLabel } from '@mui/material';
 import { IconErrorCorrection } from '@/components/icons';
 
 interface ConfirmModalProps {
@@ -47,47 +48,63 @@ const StyledContentBox = styled(Box)(({ theme }) => ({
   },
 }));
 
-const StyledLabel = styled(Typography)(({ theme }) => ({
-  fontSize: 14,
-  fontWeight: 500,
+export const StyledFormLabel = styled(FormLabel)(({ theme }) => ({
+  display: 'block',
   color: theme.palette.text.primary,
+  fontSize: 14,
+  fontWeight: 400,
   marginBottom: theme.spacing(1),
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 14,
+  },
 }));
 
 const ConfirmModal = ({ open, onCancel, onOk }: ConfirmModalProps) => {
   const [reason, setReason] = useState('');
+  const [reasonError, setReasonError] = useState(false);
 
   useEffect(() => {
     setReason('');
+    setReasonError(false);
   }, [open]);
+
+  const handleOk = () => {
+    if (!reason) {
+      setReasonError(true);
+      return;
+    }
+    onOk(reason);
+  };
 
   return (
     <Modal
       open={open}
-      onClose={onCancel}
+      onCancel={onCancel}
       title='确认提交'
-      okText='提交审核'
-      onOk={() => onOk(reason)}
+      okText='提交'
+      onOk={handleOk}
     >
       <StyledInfoBox>
         <StyledIconBox>
           <IconErrorCorrection sx={{ fontSize: 20 }} />
         </StyledIconBox>
         <StyledContentBox>
-          <Typography className='title'>文档审核流程</Typography>
+          <Typography className='title'>文档贡献流程</Typography>
           <Typography className='description'>
-            确认提交后，文档将进入审核状态。审核通过后将自动发布到知识库中，供其他用户查阅。
+            文档提交后将进入审核流程，你提交的内容在审核通过后会立即在前台展示，感谢你的贡献。
           </Typography>
         </StyledContentBox>
       </StyledInfoBox>
 
-      <StyledLabel>备注信息（可选）</StyledLabel>
+      <StyledFormLabel required>更新说明</StyledFormLabel>
       <TextField
         fullWidth
         multiline
         rows={3}
-        placeholder='请输入备注信息，帮助审核人员更好地理解您的修改...'
+        placeholder='请输入更新说明，帮助审核人员更好地理解您的修改...'
         value={reason}
+        helperText={reasonError ? '请输入更新说明' : ''}
+        error={reasonError}
         onChange={e => setReason(e.target.value)}
         sx={{
           '& .MuiOutlinedInput-root': {

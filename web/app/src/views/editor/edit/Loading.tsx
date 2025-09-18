@@ -42,7 +42,6 @@ const LoadingEditorWrap = () => {
           detail={{}}
           updateDetail={() => {}}
           handleSave={() => {}}
-          handleExport={() => {}}
         />
         {editorRef.editor && <Toolbar editorRef={editorRef} />}
       </Box>

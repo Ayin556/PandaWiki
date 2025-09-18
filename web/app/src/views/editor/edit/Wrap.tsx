@@ -40,33 +40,6 @@ const Wrap = ({ detail: defaultDetail = {} }: WrapProps) => {
     });
   };
 
-  const handleExport = async (type: string) => {
-    if (type === 'html') {
-      const html = editorRef.getHTML();
-      if (!html) return;
-      const blob = new Blob([html], { type: 'text/html' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${nodeDetail?.name}.html`;
-      a.click();
-      URL.revokeObjectURL(url);
-      message.success('导出成功');
-    }
-    if (type === 'md') {
-      const markdown = editorRef.getMarkdownByJSON();
-      if (!markdown) return;
-      const blob = new Blob([markdown], { type: 'text/markdown' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${nodeDetail?.name}.md`;
-      a.click();
-      URL.revokeObjectURL(url);
-      message.success('导出成功');
-    }
-  };
-
   const handleUpload = async (
     file: File,
     onProgress?: (progress: { progress: number }) => void,
@@ -177,7 +150,6 @@ const Wrap = ({ detail: defaultDetail = {} }: WrapProps) => {
           handleSave={async () => {
             setConfirmModalOpen(true);
           }}
-          handleExport={handleExport}
         />
         <Toolbar editorRef={editorRef} handleAiGenerate={handleAiGenerate} />
       </Box>
