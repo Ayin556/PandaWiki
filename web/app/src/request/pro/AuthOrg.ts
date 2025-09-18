@@ -10,12 +10,12 @@
  * ---------------------------------------------------------------
  */
 
-import httpRequest, { ContentType, RequestParams } from './httpClient';
+import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
   DomainResponse,
   GithubComChaitinPandaWikiProApiAuthV1AuthGroupSyncReq,
   GithubComChaitinPandaWikiProApiAuthV1AuthGroupSyncResp,
-} from './types';
+} from "./types";
 
 /**
  * @description 组织架构同步
@@ -41,10 +41,10 @@ export const postApiProV1AuthGroupSync = (
     }
   >({
     path: `/api/pro/v1/auth/group/sync`,
-    method: 'POST',
+    method: "POST",
     body: param,
     secure: true,
     type: ContentType.Json,
-    format: 'json',
+    format: "json",
     ...params,
   });

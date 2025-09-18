@@ -18,23 +18,15 @@ interface HeaderProps {
   detail: V1NodeDetailResp;
   updateDetail: (detail: V1NodeDetailResp) => void;
   handleSave: () => void;
-  handleExport: (type: string) => void;
 }
 
 const Header = ({ edit, detail, handleSave }: HeaderProps) => {
   const firstLoad = useRef(true);
 
-  const { catalogOpen, nodeDetail, setCatalogOpen } = useWrapContext();
-
-  const [showSaveTip, setShowSaveTip] = useState(false);
+  const { catalogOpen, nodeDetail, setCatalogOpen, saveLoading } =
+    useWrapContext();
 
   useEffect(() => {
-    if (nodeDetail?.updated_at && !firstLoad.current) {
-      setShowSaveTip(true);
-      setTimeout(() => {
-        setShowSaveTip(false);
-      }, 1500);
-    }
     firstLoad.current = false;
   }, [nodeDetail?.updated_at]);
 
@@ -102,7 +94,7 @@ const Header = ({ edit, detail, handleSave }: HeaderProps) => {
           <Button
             size='small'
             variant='contained'
-            disabled={!detail.name}
+            disabled={!detail.name || saveLoading}
             startIcon={<IconBaocun />}
             onClick={handleSave}
           >

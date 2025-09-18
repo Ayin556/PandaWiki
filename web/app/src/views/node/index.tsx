@@ -8,12 +8,13 @@ import { ConstsCopySetting } from '@/request/types';
 import { TocList, useTiptap } from '@ctzhian/tiptap';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useEffect, useMemo, useState } from 'react';
-import { Fab, Zoom, Stack } from '@mui/material';
+import { Fab, Zoom, Stack, Tooltip } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DocAnchor from './DocAnchor';
 import DocContent from './DocContent';
 import MenuIcon from '@mui/icons-material/Menu';
+import DocFab from '@/components/docFab';
 
 const Doc = ({ node }: { node?: NodeDetail }) => {
   const { kbDetail, mobile } = useStore();
@@ -60,18 +61,18 @@ const Doc = ({ node }: { node?: NodeDetail }) => {
 
   useEffect(() => {
     document
-      .querySelector('#scroll-container')!
-      .addEventListener('scroll', handleScroll);
+      .querySelector('#scroll-container')
+      ?.addEventListener('scroll', handleScroll);
     return () =>
       document
-        .querySelector('#scroll-container')!
-        .removeEventListener('scroll', handleScroll);
+        .querySelector('#scroll-container')
+        ?.removeEventListener('scroll', handleScroll);
   }, []);
 
   const scrollToTop = () => {
     document
-      .querySelector('#scroll-container')!
-      .scrollTo({ top: 0, behavior: 'smooth' });
+      .querySelector('#scroll-container')
+      ?.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   useEffect(() => {
@@ -93,77 +94,28 @@ const Doc = ({ node }: { node?: NodeDetail }) => {
 
       {!mobile && <DocAnchor headings={headings} />}
 
-      {!mobile && kbDetail?.settings.contribute_settings?.is_enable && (
-        <Stack
-          gap={1}
-          sx={{
-            position: 'fixed',
-            bottom: 20,
-            right: 16,
-            zIndex: 10000,
-          }}
-          onMouseLeave={() => setShowActions(false)}
-        >
-          <Zoom
-            in={showActions}
-            style={{ transitionDelay: showActions ? '100ms' : '0ms' }}
-          >
-            <Fab
-              color='primary'
-              size='small'
-              onClick={() => {
-                window.open(`/editor`, '_blank');
-              }}
-            >
-              <AddIcon />
-            </Fab>
-          </Zoom>
-          <Zoom
-            in={showActions}
-            style={{ transitionDelay: showActions ? '40ms' : '0ms' }}
-          >
-            <Fab
-              color='primary'
-              size='small'
-              onClick={() => {
-                window.open(`/editor/${docId}`, '_blank');
-              }}
-            >
-              <EditIcon />
-            </Fab>
-          </Zoom>
+      <DocFab />
+
+      {!mobile && (
+        <Zoom in={showScrollTop}>
           <Fab
             size='small'
+            onClick={scrollToTop}
             sx={{
-              backgroundColor: 'background.paper2',
-              color: 'text.secondary',
-              '&:hover': { backgroundColor: 'background.paper2' },
+              position: 'fixed',
+              bottom: 20,
+              right: 16,
+              zIndex: 10000,
+              backgroundColor: 'background.paper3',
+              color: 'text.primary',
+              '&:hover': {
+                backgroundColor: 'background.paper2',
+              },
             }}
-            onMouseEnter={() => setShowActions(true)}
           >
-            <MenuIcon
-              sx={{
-                transition: 'transform 200ms',
-                transform: showActions ? 'rotate(90deg)' : 'rotate(0deg)',
-              }}
-            />
+            <KeyboardArrowUpIcon sx={{ fontSize: 24 }} />
           </Fab>
-          <Zoom in={showScrollTop}>
-            <Fab
-              size='small'
-              onClick={scrollToTop}
-              sx={{
-                backgroundColor: 'background.paper3',
-                color: 'text.primary',
-                '&:hover': {
-                  backgroundColor: 'background.paper2',
-                },
-              }}
-            >
-              <KeyboardArrowUpIcon sx={{ fontSize: 24 }} />
-            </Fab>
-          </Zoom>
-        </Stack>
+        </Zoom>
       )}
     </>
   );

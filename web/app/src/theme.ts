@@ -101,6 +101,13 @@ const createComponentStyleOverrides = (
       },
     },
   },
+  MuiFormLabel: {
+    styleOverrides: {
+      asterisk: ({ theme }) => ({
+        color: theme.palette.error.main,
+      }),
+    },
+  },
 });
 
 const lightThemeOptions = [

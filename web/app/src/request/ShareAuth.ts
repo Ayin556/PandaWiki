@@ -10,7 +10,7 @@
  * ---------------------------------------------------------------
  */
 
-import httpRequest, { ContentType, RequestParams } from './httpClient';
+import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
   DomainPWResponse,
   DomainResponse,
@@ -18,7 +18,7 @@ import {
   V1AuthGitHubReq,
   V1AuthGitHubResp,
   V1AuthLoginSimpleReq,
-} from './types';
+} from "./types";
 
 /**
  * @description AuthGet
@@ -40,9 +40,9 @@ export const getShareV1AuthGet = (params: RequestParams = {}) =>
     }
   >({
     path: `/share/v1/auth/get`,
-    method: 'GET',
+    method: "GET",
     type: ContentType.Json,
-    format: 'json',
+    format: "json",
     ...params,
   });
 
@@ -69,10 +69,10 @@ export const postShareV1AuthGithub = (
     }
   >({
     path: `/share/v1/auth/github`,
-    method: 'POST',
+    method: "POST",
     body: param,
     type: ContentType.Json,
-    format: 'json',
+    format: "json",
     ...params,
   });
 
@@ -92,9 +92,9 @@ export const postShareV1AuthLoginSimple = (
 ) =>
   httpRequest<DomainResponse>({
     path: `/share/v1/auth/login/simple`,
-    method: 'POST',
+    method: "POST",
     body: param,
     type: ContentType.Json,
-    format: 'json',
+    format: "json",
     ...params,
   });
