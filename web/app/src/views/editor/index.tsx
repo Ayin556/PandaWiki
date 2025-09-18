@@ -51,7 +51,7 @@ const DocEditor = () => {
       reason,
       emoji: nodeDetail?.meta?.emoji,
       // @ts-ignore
-      token,
+      captcha_token: token,
     }).then(() => {
       message.success('保存成功, 即将关闭页面');
       setTimeout(() => {

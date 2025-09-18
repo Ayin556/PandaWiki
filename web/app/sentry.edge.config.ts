@@ -5,12 +5,15 @@
 
 import * as Sentry from '@sentry/nextjs';
 
-Sentry.init({
-  dsn: 'https://88c396fc9b383382005465cfc9120e5d@sentry.baizhi.cloud/5',
+// 只在生产环境下启用 Sentry
+if (process.env.NODE_ENV === 'production') {
+  Sentry.init({
+    dsn: 'https://88c396fc9b383382005465cfc9120e5d@sentry.baizhi.cloud/5',
 
-  // Enable logs to be sent to Sentry
-  enableLogs: true,
+    // Enable logs to be sent to Sentry
+    enableLogs: true,
 
-  // Setting this option to true will print useful information to the console while you're setting up Sentry.
-  debug: false,
-});
+    // Setting this option to true will print useful information to the console while you're setting up Sentry.
+    debug: false,
+  });
+}

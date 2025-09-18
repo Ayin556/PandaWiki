@@ -15,7 +15,10 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    Sentry.captureException(error);
+    // 只在生产环境下上报错误到 Sentry
+    if (process.env.NODE_ENV === 'production') {
+      Sentry.captureException(error);
+    }
   }, [error]);
 
   return (

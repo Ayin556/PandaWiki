@@ -17,8 +17,14 @@ export default function Page() {
 
   useEffect(() => {
     async function checkConnectivity() {
-      const result = await Sentry.diagnoseSdkConnectivity();
-      setIsConnected(result !== 'sentry-unreachable');
+      // 只在生产环境下检查 Sentry 连接性
+      if (process.env.NODE_ENV === 'production') {
+        const result = await Sentry.diagnoseSdkConnectivity();
+        setIsConnected(result !== 'sentry-unreachable');
+      } else {
+        // 开发环境下设置为未连接状态
+        setIsConnected(false);
+      }
     }
     checkConnectivity();
   }, []);
@@ -66,23 +72,32 @@ export default function Page() {
         <button
           type='button'
           onClick={async () => {
-            await Sentry.startSpan(
-              {
-                name: 'Example Frontend/Backend Span',
-                op: 'test',
-              },
-              async () => {
-                const res = await fetch('/api/sentry-example-api');
-                if (!res.ok) {
-                  setHasSentError(true);
-                }
-              },
-            );
+            // 只在生产环境下使用 Sentry
+            if (process.env.NODE_ENV === 'production') {
+              await Sentry.startSpan(
+                {
+                  name: 'Example Frontend/Backend Span',
+                  op: 'test',
+                },
+                async () => {
+                  const res = await fetch('/api/sentry-example-api');
+                  if (!res.ok) {
+                    setHasSentError(true);
+                  }
+                },
+              );
+            } else {
+              // 开发环境下直接调用 API
+              const res = await fetch('/api/sentry-example-api');
+              if (!res.ok) {
+                setHasSentError(true);
+              }
+            }
             throw new SentryExampleFrontendError(
               'This error is raised on the frontend of the example page.',
             );
           }}
-          disabled={!isConnected}
+          disabled={!isConnected && process.env.NODE_ENV === 'production'}
         >
           <span>Throw Sample Error</span>
         </button>
