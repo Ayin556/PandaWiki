@@ -390,10 +390,10 @@ func (u *AppUsecase) GetAppDetailByKBIDAndAppType(ctx context.Context, kbID stri
 		AIFeedbackSettings: app.Settings.AIFeedbackSettings,
 		// WebApp Custom Settings
 		WebAppCustomSettings: app.Settings.WebAppCustomSettings,
-		// captcha settings
-		CaptchaSettings: app.Settings.CaptchaSettings,
 		// openai api settings
 		OpenAIAPIBotSettings: app.Settings.OpenAIAPIBotSettings,
+		// disclaimer settings
+		DisclaimerSettings: app.Settings.DisclaimerSettings,
 
 		WatermarkContent:   app.Settings.WatermarkContent,
 		WatermarkSetting:   app.Settings.WatermarkSetting,
@@ -403,14 +403,6 @@ func (u *AppUsecase) GetAppDetailByKBIDAndAppType(ctx context.Context, kbID stri
 	// init ai feedback string
 	if app.Settings.AIFeedbackSettings.AIFeedbackType == nil {
 		appDetailResp.Settings.AIFeedbackSettings.AIFeedbackType = []string{"内容不准确", "没有帮助", "其他"}
-	}
-
-	// default enable captcha
-	if app.Settings.CaptchaSettings.ChatStatus == "" {
-		app.Settings.CaptchaSettings.ChatStatus = consts.CaptchaStatusEnable
-	}
-	if app.Settings.CaptchaSettings.CommentStatus == "" {
-		app.Settings.CaptchaSettings.CommentStatus = consts.CaptchaStatusEnable
 	}
 
 	// get recommend nodes
@@ -462,8 +454,8 @@ func (u *AppUsecase) GetWebAppInfo(ctx context.Context, kbID string) (*domain.Ap
 			AIFeedbackSettings: app.Settings.AIFeedbackSettings,
 			// WebApp Custom Settings
 			WebAppCustomSettings: app.Settings.WebAppCustomSettings,
-			// Captcha Settings
-			CaptchaSettings: app.Settings.CaptchaSettings,
+			// Disclaimer Settings
+			DisclaimerSettings: app.Settings.DisclaimerSettings,
 
 			WatermarkContent:   app.Settings.WatermarkContent,
 			WatermarkSetting:   app.Settings.WatermarkSetting,
@@ -475,25 +467,16 @@ func (u *AppUsecase) GetWebAppInfo(ctx context.Context, kbID string) (*domain.Ap
 	if app.Settings.AIFeedbackSettings.AIFeedbackType == nil {
 		appInfo.Settings.AIFeedbackSettings.AIFeedbackType = []string{"内容不准确", "没有帮助", "其他"}
 	}
-	// default enable captcha
-	if app.Settings.CaptchaSettings.ChatStatus == "" {
-		app.Settings.CaptchaSettings.ChatStatus = consts.CaptchaStatusEnable
-	}
-	if app.Settings.CaptchaSettings.CommentStatus == "" {
-		app.Settings.CaptchaSettings.CommentStatus = consts.CaptchaStatusEnable
-	}
-
-	showBrandInfo := app.Settings.WebAppCustomSettings.ShowBrandInfo
-	show := true
-	if showBrandInfo != nil {
-		if !*showBrandInfo {
-			licenseEdition, _ := ctx.Value(consts.ContextKeyEdition).(consts.LicenseEdition)
-			if licenseEdition < consts.LicenseEditionEnterprise {
-				appInfo.Settings.WebAppCustomSettings.ShowBrandInfo = &show
-			}
-		}
+	showBrand := true
+	defaultDisclaimer := "本回答由 PandaWiki 基于 AI 生成，仅供参考。"
+	licenseEdition, _ := ctx.Value(consts.ContextKeyEdition).(consts.LicenseEdition)
+	if licenseEdition < consts.LicenseEditionEnterprise {
+		appInfo.Settings.WebAppCustomSettings.ShowBrandInfo = &showBrand
+		appInfo.Settings.DisclaimerSettings.Content = &defaultDisclaimer
 	} else {
-		appInfo.Settings.WebAppCustomSettings.ShowBrandInfo = &show
+		if appInfo.Settings.DisclaimerSettings.Content == nil {
+			appInfo.Settings.DisclaimerSettings.Content = &defaultDisclaimer
+		}
 	}
 
 	return appInfo, nil

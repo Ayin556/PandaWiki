@@ -4147,46 +4147,6 @@ const docTemplate = `{
                 "AuthTypeEnterprise"
             ]
         },
-        "consts.CaptchaSettings": {
-            "type": "object",
-            "properties": {
-                "chat_status": {
-                    "enum": [
-                        "",
-                        "enable",
-                        "disable"
-                    ],
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/consts.CaptchaStatus"
-                        }
-                    ]
-                },
-                "comment_status": {
-                    "enum": [
-                        "",
-                        "enable",
-                        "disable"
-                    ],
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/consts.CaptchaStatus"
-                        }
-                    ]
-                }
-            }
-        },
-        "consts.CaptchaStatus": {
-            "type": "string",
-            "enum": [
-                "enable",
-                "disable"
-            ],
-            "x-enum-varnames": [
-                "CaptchaStatusEnable",
-                "CaptchaStatusDisable"
-            ]
-        },
         "consts.CopySetting": {
             "type": "string",
             "enum": [
@@ -4563,14 +4523,6 @@ const docTemplate = `{
                     "type": "array",
                     "items": {}
                 },
-                "captcha_settings": {
-                    "description": "Captcha settings",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/consts.CaptchaSettings"
-                        }
-                    ]
-                },
                 "catalog_settings": {
                     "description": "catalog settings",
                     "allOf": [
@@ -4610,6 +4562,14 @@ const docTemplate = `{
                 },
                 "dingtalk_bot_template_id": {
                     "type": "string"
+                },
+                "disclaimer_settings": {
+                    "description": "Disclaimer Settings",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.DisclaimerSettings"
+                        }
+                    ]
                 },
                 "discord_bot_is_enabled": {
                     "description": "DisCordBot",
@@ -4801,14 +4761,6 @@ const docTemplate = `{
                     "type": "array",
                     "items": {}
                 },
-                "captcha_settings": {
-                    "description": "Captcha Settings",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/consts.CaptchaSettings"
-                        }
-                    ]
-                },
                 "catalog_settings": {
                     "description": "catalog settings",
                     "allOf": [
@@ -4839,6 +4791,14 @@ const docTemplate = `{
                 },
                 "dingtalk_bot_template_id": {
                     "type": "string"
+                },
+                "disclaimer_settings": {
+                    "description": "Disclaimer Settings",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.DisclaimerSettings"
+                        }
+                    ]
                 },
                 "discord_bot_is_enabled": {
                     "description": "DisCordBot",
@@ -5621,6 +5581,14 @@ const docTemplate = `{
                             "$ref": "#/definitions/domain.NodeType"
                         }
                     ]
+                }
+            }
+        },
+        "domain.DisclaimerSettings": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
                 }
             }
         },

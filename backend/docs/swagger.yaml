@@ -18,31 +18,6 @@ definitions:
     - AuthTypeNull
     - AuthTypeSimple
     - AuthTypeEnterprise
-  consts.CaptchaSettings:
-    properties:
-      chat_status:
-        allOf:
-        - $ref: '#/definitions/consts.CaptchaStatus'
-        enum:
-        - ""
-        - enable
-        - disable
-      comment_status:
-        allOf:
-        - $ref: '#/definitions/consts.CaptchaStatus'
-        enum:
-        - ""
-        - enable
-        - disable
-    type: object
-  consts.CaptchaStatus:
-    enum:
-    - enable
-    - disable
-    type: string
-    x-enum-varnames:
-    - CaptchaStatusEnable
-    - CaptchaStatusDisable
   consts.CopySetting:
     enum:
     - ""
@@ -320,10 +295,6 @@ definitions:
       btns:
         items: {}
         type: array
-      captcha_settings:
-        allOf:
-        - $ref: '#/definitions/consts.CaptchaSettings'
-        description: Captcha settings
       catalog_settings:
         allOf:
         - $ref: '#/definitions/domain.CatalogSettings'
@@ -349,6 +320,10 @@ definitions:
         type: boolean
       dingtalk_bot_template_id:
         type: string
+      disclaimer_settings:
+        allOf:
+        - $ref: '#/definitions/domain.DisclaimerSettings'
+        description: Disclaimer Settings
       discord_bot_is_enabled:
         description: DisCordBot
         type: boolean
@@ -470,10 +445,6 @@ definitions:
       btns:
         items: {}
         type: array
-      captcha_settings:
-        allOf:
-        - $ref: '#/definitions/consts.CaptchaSettings'
-        description: Captcha Settings
       catalog_settings:
         allOf:
         - $ref: '#/definitions/domain.CatalogSettings'
@@ -494,6 +465,10 @@ definitions:
         type: boolean
       dingtalk_bot_template_id:
         type: string
+      disclaimer_settings:
+        allOf:
+        - $ref: '#/definitions/domain.DisclaimerSettings'
+        description: Disclaimer Settings
       discord_bot_is_enabled:
         description: DisCordBot
         type: boolean
@@ -1005,6 +980,11 @@ definitions:
     - kb_id
     - name
     - type
+    type: object
+  domain.DisclaimerSettings:
+    properties:
+      content:
+        type: string
     type: object
   domain.EnterpriseAuth:
     properties:
