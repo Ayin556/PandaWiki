@@ -10,19 +10,19 @@
  * ---------------------------------------------------------------
  */
 
-import { message } from '@ctzhian/ui';
+import { message } from "@ctzhian/ui";
 import type {
   AxiosInstance,
   AxiosRequestConfig,
   HeadersDefaults,
   ResponseType,
-} from 'axios';
-import axios from 'axios';
+} from "axios";
+import axios from "axios";
 
 export type QueryParamsType = Record<string | number, any>;
 
 export interface FullRequestParams
-  extends Omit<AxiosRequestConfig, 'data' | 'params' | 'url' | 'responseType'> {
+  extends Omit<AxiosRequestConfig, "data" | "params" | "url" | "responseType"> {
   /** set parameter to `true` for call `securityWorker` for this request */
   secure?: boolean;
   /** request path */
@@ -39,11 +39,11 @@ export interface FullRequestParams
 
 export type RequestParams = Omit<
   FullRequestParams,
-  'body' | 'method' | 'query' | 'path'
+  "body" | "method" | "query" | "path"
 >;
 
 export interface ApiConfig<SecurityDataType = unknown>
-  extends Omit<AxiosRequestConfig, 'data' | 'cancelToken'> {
+  extends Omit<AxiosRequestConfig, "data" | "cancelToken"> {
   securityWorker?: (
     securityData: SecurityDataType | null,
   ) => Promise<AxiosRequestConfig | void> | AxiosRequestConfig | void;
@@ -52,18 +52,18 @@ export interface ApiConfig<SecurityDataType = unknown>
 }
 
 export enum ContentType {
-  Json = 'application/json',
-  FormData = 'multipart/form-data',
-  UrlEncoded = 'application/x-www-form-urlencoded',
-  Text = 'text/plain',
+  Json = "application/json",
+  FormData = "multipart/form-data",
+  UrlEncoded = "application/x-www-form-urlencoded",
+  Text = "text/plain",
 }
 
 const redirectToLogin = () => {
   const redirectAfterLogin = encodeURIComponent(location.href);
   const search = `redirect=${redirectAfterLogin}`;
-  const pathname = location.pathname.startsWith('/user')
-    ? '/user/login'
-    : '/login';
+  const pathname = location.pathname.startsWith("/user")
+    ? "/user/login"
+    : "/login";
   window.location.href = `${pathname}?${search}`;
 };
 
@@ -72,7 +72,7 @@ type ExtractDataProp<T> = T extends { data?: infer U } ? U : T;
 export class HttpClient<SecurityDataType = unknown> {
   public instance: AxiosInstance;
   private securityData: SecurityDataType | null = null;
-  private securityWorker?: ApiConfig<SecurityDataType>['securityWorker'];
+  private securityWorker?: ApiConfig<SecurityDataType>["securityWorker"];
   private secure?: boolean;
   private format?: ResponseType;
 
@@ -85,30 +85,30 @@ export class HttpClient<SecurityDataType = unknown> {
     this.instance = axios.create({
       withCredentials: true,
       ...axiosConfig,
-      baseURL: axiosConfig.baseURL || '',
+      baseURL: axiosConfig.baseURL || "",
     });
     this.secure = secure;
     this.format = format;
     this.securityWorker = securityWorker;
     this.instance.interceptors.response.use(
-      response => {
+      (response) => {
         if (response.status === 200) {
           const res = response.data;
           if (res.success) {
             return res.data;
           }
-          message.error(res.message || '网络异常');
+          message.error(res.message || "网络异常");
           return Promise.reject(res);
         }
         message.error(response.statusText);
         return Promise.reject(response);
       },
-      error => {
+      (error) => {
         if (error.response?.status === 401) {
-          window.location.href = '/login';
-          localStorage.removeItem('panda_wiki_token');
+          window.location.href = "/login";
+          localStorage.removeItem("panda_wiki_token");
         }
-        message.error(error.response?.statusText || '网络异常');
+        message.error(error.response?.statusText || "网络异常");
         return Promise.reject(error.response);
       },
     );
@@ -141,7 +141,7 @@ export class HttpClient<SecurityDataType = unknown> {
   }
 
   protected stringifyFormItem(formItem: unknown) {
-    if (typeof formItem === 'object' && formItem !== null) {
+    if (typeof formItem === "object" && formItem !== null) {
       return JSON.stringify(formItem);
     } else {
       return `${formItem}`;
@@ -176,7 +176,7 @@ export class HttpClient<SecurityDataType = unknown> {
     ...params
   }: FullRequestParams): Promise<ExtractDataProp<T>> => {
     const secureParams =
-      ((typeof secure === 'boolean' ? secure : this.secure) &&
+      ((typeof secure === "boolean" ? secure : this.secure) &&
         this.securityWorker &&
         (await this.securityWorker(this.securityData))) ||
       {};
@@ -187,7 +187,7 @@ export class HttpClient<SecurityDataType = unknown> {
       type === ContentType.FormData &&
       body &&
       body !== null &&
-      typeof body === 'object'
+      typeof body === "object"
     ) {
       body = this.createFormData(body as Record<string, unknown>);
     }
@@ -196,11 +196,11 @@ export class HttpClient<SecurityDataType = unknown> {
       type === ContentType.Text &&
       body &&
       body !== null &&
-      typeof body !== 'string'
+      typeof body !== "string"
     ) {
       body = JSON.stringify(body);
     }
-    const token = localStorage.getItem('panda_wiki_token') || '';
+    const token = localStorage.getItem("panda_wiki_token") || "";
 
     return this.instance.request({
       ...requestParams,
@@ -208,7 +208,7 @@ export class HttpClient<SecurityDataType = unknown> {
         Authorization: `Bearer ${token}`,
         ...(requestParams.headers || {}),
         ...(type && type !== ContentType.FormData
-          ? { 'Content-Type': type }
+          ? { "Content-Type": type }
           : {}),
       },
       params: query,
@@ -218,4 +218,4 @@ export class HttpClient<SecurityDataType = unknown> {
     });
   };
 }
-export default new HttpClient({ format: 'json' }).request;
+export default new HttpClient({ format: "json" }).request;

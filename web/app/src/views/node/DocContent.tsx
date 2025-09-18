@@ -1,18 +1,13 @@
 'use client';
 
 import { NodeDetail } from '@/assets/type';
-import FeedbackDialog from '@/components/feedbackModal';
 import { IconFile, IconFolder } from '@/components/icons';
-import TextSelectionTooltip from '@/components/textSelectionTooltip';
 import { DocWidth } from '@/constant';
-import { useTextSelection } from '@/hooks/useTextSelection';
 import { useStore } from '@/provider';
-import { postShareProV1DocumentFeedback } from '@/request/pro/DocumentFeedback';
 import {
   getShareV1CommentList,
   postShareV1Comment,
 } from '@/request/ShareComment';
-import { base64ToFile } from '@/utils';
 import { Editor, UseTiptapReturn } from '@ctzhian/tiptap';
 import { message } from '@ctzhian/ui';
 import { Box, Button, Divider, Stack, TextField, alpha } from '@mui/material';
@@ -67,60 +62,6 @@ const DocContent = ({
   const contentInputRef = useRef<HTMLInputElement>(null);
   const [contentFocused, setContentFocused] = useState(false);
 
-  // 反馈弹窗状态
-  const [feedbackDialogOpen, setFeedbackDialogOpen] = useState(false);
-  const [feedbackData, setFeedbackData] = useState<{
-    selectedText: string;
-    screenshot?: string;
-  }>({ selectedText: '' });
-
-  // 使用划词功能hook
-  const {
-    selectedText,
-    tooltipAnchor,
-    tooltipOpen,
-    screenshot,
-    isCapturingScreenshot,
-    containerRef: docContentRef,
-    handleFeedbackSuggestion,
-    clearSelection,
-  } = useTextSelection({
-    onFeedback: (text: string, screenshotData?: string) => {
-      // 打开反馈弹窗
-      setFeedbackData({
-        selectedText: text,
-        screenshot: screenshotData,
-      });
-      setFeedbackDialogOpen(true);
-    },
-    isEnabled: appDetail?.document_feedback_is_enabled,
-  });
-
-  // 关闭反馈弹窗
-  const handleFeedbackDialogClose = () => {
-    setFeedbackDialogOpen(false);
-    setFeedbackData({ selectedText: '' });
-    // 清理选择状态
-    clearSelection();
-  };
-
-  // 提交反馈
-  const handleFeedbackSubmit = async (data: {
-    correction_suggestion: string;
-  }) => {
-    return await postShareProV1DocumentFeedback({
-      content: feedbackData.selectedText,
-      correction_suggestion: data.correction_suggestion,
-      node_id: docId,
-      image: feedbackData.screenshot
-        ? base64ToFile(
-            feedbackData.screenshot!,
-            `${info?.name || 'screenshot'}.png`,
-          )
-        : undefined,
-    });
-  };
-
   const getComment = async () => {
     const res = await getShareV1CommentList({ id: docId });
     setCommentList(res.data ?? []);
@@ -140,20 +81,18 @@ const DocContent = ({
     async (data: { content: string; name: string }) => {
       setCommentLoading(true);
       let token = '';
-      // @ts-ignore
-      if (kbDetail?.settings?.captcha_settings?.comment_status === 'enable') {
-        const Cap = (await import('@cap.js/widget')).default;
-        const cap = new Cap({
-          apiEndpoint: '/share/v1/captcha/',
-        });
-        try {
-          const solution = await cap.solve();
-          token = solution.token;
-        } catch (error) {
-          message.error('验证失败');
-          console.log(error, 'error---------');
-          return;
-        }
+
+      const Cap = (await import('@cap.js/widget')).default;
+      const cap = new Cap({
+        apiEndpoint: '/share/v1/captcha/',
+      });
+      try {
+        const solution = await cap.solve();
+        token = solution.token;
+      } catch (error) {
+        message.error('验证失败');
+        console.log(error, 'error---------');
+        return;
       }
 
       await postShareV1Comment({
@@ -193,7 +132,6 @@ const DocContent = ({
   return (
     <Box
       id='doc-content'
-      ref={docContentRef}
       sx={theme => ({
         wordBreak: 'break-all',
         color: 'text.primary',
@@ -431,24 +369,6 @@ const DocContent = ({
           </Stack>
         </>
       )}
-
-      {/* 划词提示tooltip */}
-      <TextSelectionTooltip
-        open={tooltipOpen}
-        selectedText={selectedText}
-        anchorPosition={tooltipAnchor}
-        onFeedbackClick={handleFeedbackSuggestion}
-        isCapturingScreenshot={isCapturingScreenshot}
-      />
-
-      {/* 反馈弹窗 */}
-      <FeedbackDialog
-        open={feedbackDialogOpen}
-        onClose={handleFeedbackDialogClose}
-        selectedText={feedbackData.selectedText}
-        screenshot={feedbackData.screenshot}
-        onSubmit={handleFeedbackSubmit}
-      />
     </Box>
   );
 };

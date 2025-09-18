@@ -217,7 +217,8 @@ const ChatResult = ({
                   mt: 2,
                 }}
               >
-                本回答由 PandaWiki 基于 AI 生成，仅供参考。
+                <Box>{kbDetail?.settings?.disclaimer_settings?.content}</Box>
+
                 <Stack direction='row' gap={3} alignItems='center'>
                   <span>生成于 {dayjs(item.update_time).fromNow()}</span>
 

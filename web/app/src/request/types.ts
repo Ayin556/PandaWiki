@@ -166,11 +166,6 @@ export enum ConstsCopySetting {
   CopySettingDisabled = "disabled",
 }
 
-export enum ConstsCaptchaStatus {
-  CaptchaStatusEnable = "enable",
-  CaptchaStatusDisable = "disable",
-}
-
 export enum ConstsAuthType {
   /** 无认证 */
   AuthTypeNull = "",
@@ -178,11 +173,6 @@ export enum ConstsAuthType {
   AuthTypeSimple = "simple",
   /** 企业认证 */
   AuthTypeEnterprise = "enterprise",
-}
-
-export interface ConstsCaptchaSettings {
-  chat_status?: "" | "enable" | "disable";
-  comment_status?: "" | "enable" | "disable";
 }
 
 export interface ConstsRedeemCaptchaReq {
@@ -238,8 +228,6 @@ export interface DomainAppSettings {
   auto_sitemap?: boolean;
   body_code?: string;
   btns?: unknown[];
-  /** Captcha settings */
-  captcha_settings?: ConstsCaptchaSettings;
   /** catalog settings */
   catalog_settings?: DomainCatalogSettings;
   contribute_settings?: DomainContributeSettings;
@@ -251,6 +239,8 @@ export interface DomainAppSettings {
   /** DingTalkBot */
   dingtalk_bot_is_enabled?: boolean;
   dingtalk_bot_template_id?: string;
+  /** Disclaimer Settings */
+  disclaimer_settings?: DomainDisclaimerSettings;
   /** DisCordBot */
   discord_bot_is_enabled?: boolean;
   discord_bot_token?: string;
@@ -313,8 +303,6 @@ export interface DomainAppSettingsResp {
   auto_sitemap?: boolean;
   body_code?: string;
   btns?: unknown[];
-  /** Captcha Settings */
-  captcha_settings?: ConstsCaptchaSettings;
   /** catalog settings */
   catalog_settings?: DomainCatalogSettings;
   contribute_settings?: DomainContributeSettings;
@@ -326,6 +314,8 @@ export interface DomainAppSettingsResp {
   /** DingTalkBot */
   dingtalk_bot_is_enabled?: boolean;
   dingtalk_bot_template_id?: string;
+  /** Disclaimer Settings */
+  disclaimer_settings?: DomainDisclaimerSettings;
   /** DisCordBot */
   discord_bot_is_enabled?: boolean;
   discord_bot_token?: string;
@@ -577,6 +567,10 @@ export interface DomainCreateNodeReq {
   parent_id?: string;
   position?: number;
   type: 1 | 2;
+}
+
+export interface DomainDisclaimerSettings {
+  content?: string;
 }
 
 export interface DomainEnterpriseAuth {
