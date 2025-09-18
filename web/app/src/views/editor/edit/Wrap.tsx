@@ -283,12 +283,12 @@ const Wrap = ({ detail: defaultDetail = {} }: WrapProps) => {
       <ConfirmModal
         open={confirmModalOpen}
         onCancel={() => setConfirmModalOpen(false)}
-        onOk={async (reason: string) => {
+        onOk={async (reason: string, token: string) => {
           const value = editorRef.getHTML();
           updateDetail({
             content: value,
           });
-          await onSave(value, reason);
+          await onSave(value, reason, token);
           setConfirmModalOpen(false);
         }}
       />

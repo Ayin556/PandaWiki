@@ -13,7 +13,7 @@ export interface WrapContext {
   setCatalogOpen: (open: boolean) => void;
   nodeDetail: V1NodeDetailResp | null;
   setNodeDetail: (detail: V1NodeDetailResp) => void;
-  onSave: (content: string, reason: string) => void;
+  onSave: (content: string, reason: string, token: string) => void;
   saveLoading: boolean;
 }
 
@@ -41,7 +41,7 @@ const DocEditor = () => {
   );
   const [catalogOpen, setCatalogOpen] = useState(true);
 
-  const onSave = (content: string, reason: string) => {
+  const onSave = (content: string, reason: string, token: string) => {
     setSaveLoading(true);
     return postShareProV1ContributeSubmit({
       node_id: id ? id[0] : undefined,
@@ -50,6 +50,8 @@ const DocEditor = () => {
       type: id ? 'edit' : 'add',
       reason,
       emoji: nodeDetail?.meta?.emoji,
+      // @ts-ignore
+      token,
     }).then(() => {
       message.success('保存成功, 即将关闭页面');
       setTimeout(() => {

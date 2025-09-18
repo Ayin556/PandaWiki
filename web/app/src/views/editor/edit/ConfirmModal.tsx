@@ -1,13 +1,13 @@
 'use effect';
 import React, { useEffect, useState } from 'react';
-import { Modal } from '@ctzhian/ui';
+import { Modal, message } from '@ctzhian/ui';
 import { Box, TextField, Typography, styled, FormLabel } from '@mui/material';
 import { IconErrorCorrection } from '@/components/icons';
 
 interface ConfirmModalProps {
   open: boolean;
   onCancel: () => void;
-  onOk: (reason: string) => Promise<void>;
+  onOk: (reason: string, token: string) => Promise<void>;
 }
 
 const StyledInfoBox = styled(Box)(({ theme }) => ({
@@ -68,12 +68,25 @@ const ConfirmModal = ({ open, onCancel, onOk }: ConfirmModalProps) => {
     setReasonError(false);
   }, [open]);
 
-  const handleOk = () => {
+  const handleOk = async () => {
     if (!reason) {
       setReasonError(true);
       return;
     }
-    onOk(reason);
+    let token = '';
+    const Cap = (await import('@cap.js/widget')).default;
+    const cap = new Cap({
+      apiEndpoint: '/share/v1/captcha/',
+    });
+    try {
+      const solution = await cap.solve();
+      token = solution.token;
+    } catch (error) {
+      message.error('验证失败');
+      console.log(error, 'error---------');
+      return;
+    }
+    return onOk(reason, token);
   };
 
   return (
