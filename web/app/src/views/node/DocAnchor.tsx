@@ -3,7 +3,7 @@
 import useScroll from '@/utils/useScroll';
 import { TocItem, TocList } from '@ctzhian/tiptap';
 import { Box, Stack } from '@mui/material';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 
 interface DocAnchorProps {
   headings: TocList;
@@ -24,6 +24,9 @@ const DocAnchor = ({ headings }: DocAnchorProps) => {
     headings,
     'scroll-container',
   );
+  const activeId = activeHeading?.id;
+  const listRef = useRef<HTMLDivElement>(null);
+  const hasScrolledRef = useRef(false);
 
   const levels = Array.from(
     new Set(headings?.map(it => it.level).sort((a, b) => a - b)),
@@ -71,6 +74,18 @@ const DocAnchor = ({ headings }: DocAnchorProps) => {
     return buildTree(filteredHeadings);
   }, [headings, levels]);
 
+  useEffect(() => {
+    if (hasScrolledRef.current) return;
+    if (!activeId) return;
+    const container = listRef.current;
+    if (!container) return;
+    const el = document.getElementById(`doc-anchor-item-${activeId}`);
+    if (el) {
+      el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      hasScrolledRef.current = true;
+    }
+  }, [activeId, headings.length]);
+
   // 递归渲染树结构的函数
   const renderTreeHeadings = (items: TreeHeading[]): React.ReactNode => {
     return (
@@ -81,6 +96,7 @@ const DocAnchor = ({ headings }: DocAnchorProps) => {
           return (
             <Stack gap={'8px'} key={heading.id}>
               <Box
+                id={`doc-anchor-item-${heading.id}`}
                 sx={{
                   cursor: 'pointer',
                   ...HeadingSx[levelIndex],
@@ -193,6 +209,7 @@ const DocAnchor = ({ headings }: DocAnchorProps) => {
             msOverflowStyle: 'none',
             scrollbarWidth: 'none',
           }}
+          ref={listRef}
         >
           {renderTreeHeadings(treeHeadings) as any}
         </Stack>

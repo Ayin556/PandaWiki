@@ -35,6 +35,7 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
     useOutletContext<WrapContext>();
 
   // const connectCount = useRef(0);
+  const storageTocOpen = localStorage.getItem('toc-open');
 
   const isEnterprise = useMemo(() => {
     return license.edition === 2;
@@ -46,7 +47,7 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
   );
   const [characterCount, setCharacterCount] = useState(0);
   const [headings, setHeadings] = useState<TocList>([]);
-  const [fixedToc, setFixedToc] = useState(false);
+  const [fixedToc, setFixedToc] = useState(!!storageTocOpen);
   // const [isSyncing, setIsSyncing] = useState(false);
   // const [connectError, setConnectError] = useState(false);
   // const [collaborativeUsers, setCollaborativeUsers] = useState<

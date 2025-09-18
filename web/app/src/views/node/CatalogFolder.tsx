@@ -52,6 +52,7 @@ const CatalogFolder = ({
                   : 'background.paper3',
           },
         }}
+        id={`catalog-item-${item.id}`}
         onClick={() => {
           if (item.type === 1) {
             item.expanded = !item.expanded;
