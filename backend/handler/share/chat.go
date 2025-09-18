@@ -9,7 +9,6 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	"github.com/chaitin/panda-wiki/consts"
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/handler"
 	"github.com/chaitin/panda-wiki/log"
@@ -91,14 +90,9 @@ func (h *ShareChatHandler) ChatMessage(c echo.Context) error {
 		return h.sendErrMsg(c, "invalid app type")
 	}
 	ctx := c.Request().Context()
-	appInfo, err := h.appUsecase.GetAppDetailByKBIDAndAppType(ctx, req.KBID, domain.AppTypeWeb)
-	if err != nil {
-		return h.sendErrMsg(c, "failed to get app info")
-	}
-	if appInfo.Settings.CaptchaSettings.ChatStatus == consts.CaptchaStatusEnable {
-		if !h.Captcha.ValidateToken(ctx, req.CaptchaToken) {
-			return h.sendErrMsg(c, "failed to validate captcha")
-		}
+	// validate captcha token
+	if !h.Captcha.ValidateToken(ctx, req.CaptchaToken) {
+		return h.sendErrMsg(c, "failed to validate captcha")
 	}
 
 	req.RemoteIP = c.RealIP()

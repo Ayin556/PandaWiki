@@ -139,15 +139,19 @@ type AppSettings struct {
 	AIFeedbackSettings AIFeedbackSettings `json:"ai_feedback_settings"`
 	// WebAppCustomStyle
 	WebAppCustomSettings WebAppCustomSettings `json:"web_app_custom_style"`
-	// Captcha settings
-	CaptchaSettings consts.CaptchaSettings `json:"captcha_settings"`
 	// OpenAI API Bot settings
 	OpenAIAPIBotSettings OpenAIAPIBotSettings `json:"openai_api_bot_settings"`
+	// Disclaimer Settings
+	DisclaimerSettings DisclaimerSettings `json:"disclaimer_settings"`
 
 	WatermarkContent   string                  `json:"watermark_content"`
 	WatermarkSetting   consts.WatermarkSetting `json:"watermark_setting" validate:"omitempty,oneof='' hidden visible"`
 	CopySetting        consts.CopySetting      `json:"copy_setting" validate:"omitempty,oneof='' append disabled"`
 	ContributeSettings ContributeSettings      `json:"contribute_settings"`
+}
+
+type DisclaimerSettings struct {
+	Content *string `json:"content"`
 }
 
 type ContributeSettings struct {
@@ -312,8 +316,6 @@ type AppSettingsResp struct {
 	AIFeedbackSettings AIFeedbackSettings `json:"ai_feedback_settings"`
 	// WebAppCustomStyle
 	WebAppCustomSettings WebAppCustomSettings `json:"web_app_custom_style"`
-	// Captcha Settings
-	CaptchaSettings consts.CaptchaSettings `json:"captcha_settings"`
 
 	WatermarkContent   string                  `json:"watermark_content"`
 	WatermarkSetting   consts.WatermarkSetting `json:"watermark_setting"`
@@ -322,6 +324,8 @@ type AppSettingsResp struct {
 
 	// OpenAI API settings
 	OpenAIAPIBotSettings OpenAIAPIBotSettings `json:"openai_api_bot_settings"`
+	// Disclaimer Settings
+	DisclaimerSettings DisclaimerSettings `json:"disclaimer_settings"`
 }
 
 func (s *AppSettingsResp) Scan(value any) error {

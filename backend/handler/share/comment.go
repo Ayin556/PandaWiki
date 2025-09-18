@@ -84,11 +84,9 @@ func (h *ShareCommentHandler) CreateComment(c echo.Context) error {
 	if !appInfo.Settings.WebAppCommentSettings.IsEnable {
 		return h.NewResponseWithError(c, "please check comment is open", nil)
 	}
-	// validate captcha token if captcha is enable for comment
-	if appInfo.Settings.CaptchaSettings.ChatStatus == consts.CaptchaStatusEnable {
-		if !h.Captcha.ValidateToken(ctx, req.CaptchaToken) {
-			return h.NewResponseWithError(c, "failed to validate captcha token", nil)
-		}
+	// validate captcha token
+	if !h.Captcha.ValidateToken(ctx, req.CaptchaToken) {
+		return h.NewResponseWithError(c, "failed to validate captcha token", nil)
 	}
 
 	remoteIP := c.RealIP()
