@@ -44,7 +44,7 @@ func NewModelUsecase(modelRepo *pg.ModelRepository, nodeRepo *pg.NodeRepository,
 func (u *ModelUsecase) initEmbeddingAndRerankModel(ctx context.Context) error {
 	isReady := false
 	// wait for raglite to be ready
-	for range 30 {
+	for range 60 {
 		models, err := u.ragStore.GetModelList(ctx)
 		if err != nil {
 			u.logger.Error("wait for raglite to be ready", log.Any("error", err))
@@ -181,11 +181,12 @@ func (u *ModelUsecase) Update(ctx context.Context, req *domain.UpdateModelReq) e
 	}
 	if req.Type == domain.ModelTypeEmbedding || req.Type == domain.ModelTypeRerank || req.Type == domain.ModelTypeAnalysis {
 		updateModel := &domain.Model{
-			ID:      req.ID,
-			Model:   req.Model,
-			Type:    req.Type,
-			BaseURL: req.BaseURL,
-			APIKey:  req.APIKey,
+			ID:       req.ID,
+			Model:    req.Model,
+			Type:     req.Type,
+			BaseURL:  req.BaseURL,
+			APIKey:   req.APIKey,
+			IsActive: true,
 		}
 		if req.Parameters != nil {
 			updateModel.Parameters = *req.Parameters
