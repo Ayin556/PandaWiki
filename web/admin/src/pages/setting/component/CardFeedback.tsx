@@ -149,14 +149,16 @@ const AIQuestion = ({
   refresh: () => void;
 }) => {
   const [isEdit, setIsEdit] = useState(false);
-  const { kb_id } = useAppSelector(state => state.config);
+  const { kb_id, license } = useAppSelector(state => state.config);
   const { control, handleSubmit, setValue } = useForm({
     defaultValues: {
       is_enabled: true,
       ai_feedback_type: [],
+      disclaimer: '',
     },
   });
   const [inputValue, setInputValue] = useState('');
+  const isEnterprise = license.edition === 2;
 
   const onSubmit = handleSubmit(formData => {
     putApiV1App(
@@ -166,7 +168,11 @@ const AIQuestion = ({
         settings: {
           ...data.settings,
           ai_feedback_settings: {
-            ...formData,
+            is_enabled: formData.is_enabled,
+            ai_feedback_type: formData.ai_feedback_type,
+          },
+          disclaimer_settings: {
+            content: formData.disclaimer,
           },
         },
       },
@@ -187,6 +193,10 @@ const AIQuestion = ({
       'ai_feedback_type',
       // @ts-expect-error 忽略类型错误
       data.settings?.ai_feedback_settings?.ai_feedback_type || [],
+    );
+    setValue(
+      'disclaimer',
+      data.settings?.disclaimer_settings?.content as string,
     );
   }, [data]);
 
@@ -249,96 +259,25 @@ const AIQuestion = ({
           )}
         />{' '}
       </FormItem>
-    </SettingCardItem>
-  );
-};
-
-const DocumentCorrection = ({
-  data,
-  refresh,
-}: {
-  data: DomainAppDetailResp;
-  refresh: () => void;
-}) => {
-  const [isEdit, setIsEdit] = useState(false);
-  const { license, kb_id } = useAppSelector(state => state.config);
-  const { control, handleSubmit, setValue } = useForm({
-    defaultValues: {
-      document_feedback_is_enabled: 0,
-    },
-  });
-
-  const onSubmit = handleSubmit(formData => {
-    console.log(data);
-    putApiV1App(
-      { id: data.id! },
-      {
-        kb_id,
-        settings: {
-          ...data.settings,
-          document_feedback_is_enabled: Boolean(
-            formData.document_feedback_is_enabled,
-          ),
-        },
-      },
-    ).then(() => {
-      message.success('保存成功');
-      setIsEdit(false);
-      refresh();
-    });
-  });
-
-  const isPro = license.edition === 1 || license.edition === 2;
-
-  useEffect(() => {
-    setValue(
-      'document_feedback_is_enabled',
-      // @ts-expect-error 忽略类型错误
-      +data?.settings?.document_feedback_is_enabled,
-    );
-  }, [data]);
-
-  return (
-    <SettingCardItem
-      title={
-        <>
-          文档纠错
-          {!isPro && (
-            <Tooltip title='联创版和企业版可用' placement='top' arrow>
-              <InfoIcon sx={{ color: 'text.secondary', fontSize: 14 }} />
-            </Tooltip>
+      <FormItem label='免责声明' tooltip={!isEnterprise && '企业版可用'}>
+        <Controller
+          control={control}
+          name='disclaimer'
+          render={({ field }) => (
+            <TextField
+              {...field}
+              fullWidth
+              value={field.value || ''}
+              disabled={!isEnterprise}
+              placeholder='请输入免责声明'
+              onChange={e => {
+                setIsEdit(true);
+                field.onChange(e.target.value);
+              }}
+            ></TextField>
           )}
-        </>
-      }
-      isEdit={isEdit}
-      onSubmit={onSubmit}
-    >
-      <Controller
-        control={control}
-        name='document_feedback_is_enabled'
-        render={({ field }) => (
-          <RadioGroup
-            row
-            {...field}
-            value={isPro ? field.value : undefined}
-            onChange={e => {
-              setIsEdit(true);
-              field.onChange(+e.target.value as 1 | 0);
-            }}
-          >
-            <FormControlLabel
-              value={1}
-              control={<Radio size='small' disabled={!isPro} />}
-              label={<StyledRadioLabel>启用</StyledRadioLabel>}
-            />
-            <FormControlLabel
-              value={0}
-              control={<Radio size='small' disabled={!isPro} />}
-              label={<StyledRadioLabel>禁用</StyledRadioLabel>}
-            />
-          </RadioGroup>
-        )}
-      />
+        />
+      </FormItem>
     </SettingCardItem>
   );
 };
@@ -449,7 +388,6 @@ const CardFeedback = ({ kb }: CardCommentProps) => {
     <SettingCard title='反馈'>
       <AIQuestion data={info} refresh={getInfo} />
       <DocumentComments data={info} refresh={getInfo} />
-      <DocumentCorrection data={info} refresh={getInfo} />
       <DocumentContribution data={info} refresh={getInfo} />
     </SettingCard>
   );

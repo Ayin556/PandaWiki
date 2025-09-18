@@ -10,14 +10,14 @@
  * ---------------------------------------------------------------
  */
 
-import httpRequest, { ContentType, RequestParams } from './httpClient';
+import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
   DomainGetNodeReleaseDetailResp,
   DomainNodeReleaseListItem,
   DomainPWResponse,
   GetApiProV1NodeReleaseDetailParams,
   GetApiProV1NodeReleaseListParams,
-} from './types';
+} from "./types";
 
 /**
  * @description Get Node Release Detail
@@ -42,10 +42,10 @@ export const getApiProV1NodeReleaseDetail = (
     }
   >({
     path: `/api/pro/v1/node/release/detail`,
-    method: 'GET',
+    method: "GET",
     query: query,
     type: ContentType.Json,
-    format: 'json',
+    format: "json",
     ...params,
   });
 
@@ -72,9 +72,9 @@ export const getApiProV1NodeReleaseList = (
     }
   >({
     path: `/api/pro/v1/node/release/list`,
-    method: 'GET',
+    method: "GET",
     query: query,
     type: ContentType.Json,
-    format: 'json',
+    format: "json",
     ...params,
   });

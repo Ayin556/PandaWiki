@@ -10,7 +10,7 @@
  * ---------------------------------------------------------------
  */
 
-import httpRequest, { ContentType, RequestParams } from './httpClient';
+import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
   DeleteApiV1AuthDeleteParams,
   DomainPWResponse,
@@ -18,7 +18,7 @@ import {
   GetApiV1AuthGetParams,
   GithubComChaitinPandaWikiApiAuthV1AuthGetResp,
   V1AuthSetReq,
-} from './types';
+} from "./types";
 
 /**
  * @description 删除授权信息
@@ -37,11 +37,11 @@ export const deleteApiV1AuthDelete = (
 ) =>
   httpRequest<DomainResponse>({
     path: `/api/v1/auth/delete`,
-    method: 'DELETE',
+    method: "DELETE",
     query: query,
     secure: true,
     type: ContentType.Json,
-    format: 'json',
+    format: "json",
     ...params,
   });
 
@@ -69,11 +69,11 @@ export const getApiV1AuthGet = (
     }
   >({
     path: `/api/v1/auth/get`,
-    method: 'GET',
+    method: "GET",
     query: query,
     secure: true,
     type: ContentType.Json,
-    format: 'json',
+    format: "json",
     ...params,
   });
 
@@ -94,10 +94,10 @@ export const postApiV1AuthSet = (
 ) =>
   httpRequest<DomainResponse>({
     path: `/api/v1/auth/set`,
-    method: 'POST',
+    method: "POST",
     body: param,
     secure: true,
     type: ContentType.Json,
-    format: 'json',
+    format: "json",
     ...params,
   });

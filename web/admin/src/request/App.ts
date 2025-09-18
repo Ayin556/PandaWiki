@@ -10,7 +10,7 @@
  * ---------------------------------------------------------------
  */
 
-import httpRequest, { ContentType, RequestParams } from './httpClient';
+import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
   DeleteApiV1AppParams,
   DomainAppDetailResp,
@@ -19,7 +19,7 @@ import {
   DomainUpdateAppReq,
   GetApiV1AppDetailParams,
   PutApiV1AppParams,
-} from './types';
+} from "./types";
 
 /**
  * @description Update app
@@ -39,12 +39,12 @@ export const putApiV1App = (
 ) =>
   httpRequest<DomainResponse>({
     path: `/api/v1/app`,
-    method: 'PUT',
+    method: "PUT",
     query: query,
     body: app,
     secure: true,
     type: ContentType.Json,
-    format: 'json',
+    format: "json",
     ...params,
   });
 
@@ -65,7 +65,7 @@ export const deleteApiV1App = (
 ) =>
   httpRequest<DomainResponse>({
     path: `/api/v1/app`,
-    method: 'DELETE',
+    method: "DELETE",
     query: query,
     secure: true,
     type: ContentType.Json,
@@ -96,10 +96,10 @@ export const getApiV1AppDetail = (
     }
   >({
     path: `/api/v1/app/detail`,
-    method: 'GET',
+    method: "GET",
     query: query,
     secure: true,
     type: ContentType.Json,
-    format: 'json',
+    format: "json",
     ...params,
   });

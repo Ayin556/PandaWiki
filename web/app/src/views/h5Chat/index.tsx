@@ -12,6 +12,7 @@ import { copyText } from '@/utils';
 import LoadingIcon from '@/assets/images/loading.png';
 import Image from 'next/image';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { useStore } from '@/provider';
 
 interface Message {
   id: string;
@@ -218,6 +219,7 @@ const H5Chat: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [answer, setAnswer] = useState('');
   const [question, setQuestion] = useState('');
+  const { kbDetail } = useStore();
 
   const [showScrollTop, setShowScrollTop] = useState(false);
 
@@ -349,7 +351,9 @@ const H5Chat: React.FC = () => {
                         mt: 1,
                       }}
                     >
-                      本回答由 PandaWiki 基于 AI 生成，仅供参考。
+                      <Box>
+                        {kbDetail?.settings?.disclaimer_settings?.content}
+                      </Box>
                       <Stack
                         direction='row'
                         alignItems='center'

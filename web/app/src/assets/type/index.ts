@@ -1,4 +1,8 @@
-import { ConstsCopySetting, ConstsWatermarkSetting } from '@/request/types';
+import {
+  ConstsCopySetting,
+  ConstsWatermarkSetting,
+  DomainDisclaimerSettings,
+} from '@/request/types';
 
 export interface NavBtn {
   id: string;
@@ -73,6 +77,7 @@ export interface KBDetail {
     watermark_content?: string;
     watermark_setting?: ConstsWatermarkSetting;
     copy_setting?: ConstsCopySetting;
+    disclaimer_settings?: DomainDisclaimerSettings;
     web_app_custom_style: {
       allow_theme_switching?: boolean;
       header_search_placeholder?: string;

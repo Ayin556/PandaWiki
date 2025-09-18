@@ -19,7 +19,6 @@ import {
   ConstsCopySetting,
 } from '@/request/types';
 import { getApiProV1Block, postApiProV1Block } from '@/request/pro/Block';
-import { ConstsCaptchaSettings } from '@/request/types';
 
 const StyledRadioLabel = styled('div')(({ theme }) => ({
   width: 100,
@@ -138,117 +137,6 @@ const WatermarkForm = ({
           />
         </FormItem>
       )}
-    </SettingCardItem>
-  );
-};
-
-const VerificationForm = ({
-  data,
-  refresh,
-}: {
-  data?: DomainAppDetailResp;
-  refresh: () => void;
-}) => {
-  const { license, kb_id } = useAppSelector(state => state.config);
-  const [isEdit, setIsEdit] = useState(false);
-  const { control, handleSubmit, setValue } = useForm({
-    defaultValues: {
-      chat_status: '' as ConstsCaptchaSettings['chat_status'],
-      comment_status: '' as ConstsCaptchaSettings['comment_status'],
-    },
-  });
-
-  const isEnterprise = useMemo(() => {
-    return license.edition === 2;
-  }, [license]);
-
-  const handleSaveVerification = handleSubmit(values => {
-    if (!data?.id) return;
-    putApiV1App(
-      { id: data.id },
-      {
-        kb_id,
-        settings: {
-          ...data?.settings,
-          captcha_settings: {
-            chat_status: values.chat_status,
-            comment_status: values.comment_status,
-          },
-        },
-      },
-    ).then(() => {
-      message.success('保存成功');
-      setIsEdit(false);
-      refresh();
-    });
-  });
-
-  useEffect(() => {
-    if (!data) return;
-    setValue('chat_status', data.settings?.captcha_settings?.chat_status);
-    setValue('comment_status', data.settings?.captcha_settings?.comment_status);
-  }, [data]);
-
-  return (
-    <SettingCardItem
-      title='人机验证'
-      isEdit={isEdit}
-      onSubmit={handleSaveVerification}
-    >
-      <FormItem label='问答'>
-        <Controller
-          control={control}
-          name='chat_status'
-          render={({ field }) => (
-            <RadioGroup
-              row
-              {...field}
-              onChange={e => {
-                setIsEdit(true);
-                field.onChange(e.target.value);
-              }}
-            >
-              <FormControlLabel
-                value={'enable'}
-                control={<Radio size='small' />}
-                label={<StyledRadioLabel>需要验证码</StyledRadioLabel>}
-              />
-              <FormControlLabel
-                value={'disable'}
-                control={<Radio size='small' />}
-                label={<StyledRadioLabel>无需验证码</StyledRadioLabel>}
-              />
-            </RadioGroup>
-          )}
-        />
-      </FormItem>
-      <FormItem label='评论'>
-        <Controller
-          control={control}
-          name='comment_status'
-          render={({ field }) => (
-            <RadioGroup
-              row
-              {...field}
-              onChange={e => {
-                setIsEdit(true);
-                field.onChange(e.target.value);
-              }}
-            >
-              <FormControlLabel
-                value={'enable'}
-                control={<Radio size='small' />}
-                label={<StyledRadioLabel>需要验证码</StyledRadioLabel>}
-              />
-              <FormControlLabel
-                value={'disable'}
-                control={<Radio size='small' />}
-                label={<StyledRadioLabel>无需验证码</StyledRadioLabel>}
-              />
-            </RadioGroup>
-          )}
-        />
-      </FormItem>
     </SettingCardItem>
   );
 };
@@ -439,7 +327,6 @@ const CardSecurity = ({
 }) => {
   return (
     <SettingCard title='安全'>
-      <VerificationForm data={data} refresh={refresh} />
       <WatermarkForm data={data} refresh={refresh} />
       <CopyForm data={data} refresh={refresh} />
       <KeywordsForm kb={kb} />

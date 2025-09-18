@@ -56,21 +56,20 @@ const Chat = ({
     setIsUserScrolling(false);
 
     let token = '';
-    // @ts-ignore
-    if (kbDetail?.settings?.captcha_settings?.chat_status === 'enable') {
-      const Cap = (await import('@cap.js/widget')).default;
-      const cap = new Cap({
-        apiEndpoint: '/share/v1/captcha/',
-      });
-      try {
-        const solution = await cap.solve();
-        token = solution.token;
-      } catch (error) {
-        message.error('验证失败');
-        console.log(error, 'error---------');
-        return;
-      }
+
+    const Cap = (await import('@cap.js/widget')).default;
+    const cap = new Cap({
+      apiEndpoint: '/share/v1/captcha/',
+    });
+    try {
+      const solution = await cap.solve();
+      token = solution.token;
+    } catch (error) {
+      message.error('验证失败');
+      console.log(error, 'error---------');
+      return;
     }
+
     const reqData = {
       message: q,
       nonce: '',
