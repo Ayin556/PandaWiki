@@ -194,7 +194,10 @@ const AIQuestion = ({
       // @ts-expect-error 忽略类型错误
       data.settings?.ai_feedback_settings?.ai_feedback_type || [],
     );
-    setValue('disclaimer', data.settings?.disclaimer_settings?.content || '');
+    setValue(
+      'disclaimer',
+      data.settings?.disclaimer_settings?.content as string,
+    );
   }, [data]);
 
   return (
@@ -264,6 +267,7 @@ const AIQuestion = ({
             <TextField
               {...field}
               fullWidth
+              value={field.value || ''}
               disabled={!isEnterprise}
               placeholder='请输入免责声明'
               onChange={e => {
