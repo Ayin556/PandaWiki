@@ -9,9 +9,7 @@
     "build": "tsc -b && vite build",
     "build:analyze": "tsc -b && vite build -- --analyze",
     "icon": "node ./scripts/downLoadIcon.cjs",
-    "api": "cx-swagger-api",
-    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,css,scss,md,mdx,json,yml,yaml,mjs,cjs}\"",
-    "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,css,scss,md,mdx,json,yml,yaml,mjs,cjs}\""
+    "api": "cx-swagger-api"
   },
   "dependencies": {
     "@ctzhian/modelkit": "0.0.3",

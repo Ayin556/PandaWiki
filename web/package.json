@@ -11,7 +11,7 @@
     "dev": "pnpm --parallel --filter admin --filter app dev"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,css,scss,md,mdx,json,yml,yaml,mjs,cjs}": "prettier --write"
+    "**/*.{js,jsx,ts,tsx,css,scss,md,mdx,json,yml,yaml,mjs,cjs}": "prettier --write --ignore-path .prettierignore"
   },
   "keywords": [],
   "author": "",

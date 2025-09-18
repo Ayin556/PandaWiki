@@ -19,31 +19,31 @@ export enum DomainCommentStatus {
 
 export enum ConstsUserKBPermission {
   /** 无权限 */
-  UserKBPermissionNull = '',
+  UserKBPermissionNull = "",
   /** 完全控制 */
-  UserKBPermissionFullControl = 'full_control',
+  UserKBPermissionFullControl = "full_control",
   /** 文档管理 */
-  UserKBPermissionDocManage = 'doc_manage',
+  UserKBPermissionDocManage = "doc_manage",
   /** 数据运营 */
-  UserKBPermissionDataOperate = 'data_operate',
+  UserKBPermissionDataOperate = "data_operate",
 }
 
 export enum ConstsSourceType {
-  SourceTypeDingTalk = 'dingtalk',
-  SourceTypeFeishu = 'feishu',
-  SourceTypeWeCom = 'wecom',
-  SourceTypeOAuth = 'oauth',
-  SourceTypeGitHub = 'github',
-  SourceTypeCAS = 'cas',
-  SourceTypeLDAP = 'ldap',
-  SourceTypeWidget = 'widget',
-  SourceTypeDingtalkBot = 'dingtalk_bot',
-  SourceTypeFeishuBot = 'feishu_bot',
-  SourceTypeWechatBot = 'wechat_bot',
-  SourceTypeWechatServiceBot = 'wechat_service_bot',
-  SourceTypeDiscordBot = 'discord_bot',
-  SourceTypeWechatOfficialAccount = 'wechat_official_account',
-  SourceTypeOpenAIAPI = 'openai_api',
+  SourceTypeDingTalk = "dingtalk",
+  SourceTypeFeishu = "feishu",
+  SourceTypeWeCom = "wecom",
+  SourceTypeOAuth = "oauth",
+  SourceTypeGitHub = "github",
+  SourceTypeCAS = "cas",
+  SourceTypeLDAP = "ldap",
+  SourceTypeWidget = "widget",
+  SourceTypeDingtalkBot = "dingtalk_bot",
+  SourceTypeFeishuBot = "feishu_bot",
+  SourceTypeWechatBot = "wechat_bot",
+  SourceTypeWechatServiceBot = "wechat_service_bot",
+  SourceTypeDiscordBot = "discord_bot",
+  SourceTypeWechatOfficialAccount = "wechat_official_account",
+  SourceTypeOpenAIAPI = "openai_api",
 }
 
 /** @format int32 */
@@ -57,14 +57,14 @@ export enum ConstsLicenseEdition {
 }
 
 export enum ConstsContributeType {
-  ContributeTypeAdd = 'add',
-  ContributeTypeEdit = 'edit',
+  ContributeTypeAdd = "add",
+  ContributeTypeEdit = "edit",
 }
 
 export enum ConstsContributeStatus {
-  ContributeStatusPending = 'pending',
-  ContributeStatusApproved = 'approved',
-  ContributeStatusRejected = 'rejected',
+  ContributeStatusPending = "pending",
+  ContributeStatusApproved = "approved",
+  ContributeStatusRejected = "rejected",
 }
 
 export interface DomainCommentModerateListReq {
@@ -246,7 +246,7 @@ export interface GithubComChaitinPandaWikiProApiAuthV1AuthGroupMoveReq {
 
 export interface GithubComChaitinPandaWikiProApiAuthV1AuthGroupSyncReq {
   kb_id?: string;
-  source_type: 'dingtalk' | 'wecom';
+  source_type: "dingtalk" | "wecom";
 }
 
 export type GithubComChaitinPandaWikiProApiAuthV1AuthGroupSyncResp = Record<
@@ -325,7 +325,7 @@ export interface GithubComChaitinPandaWikiProApiContributeV1ContributeAuditReq {
   kb_id: string;
   parent_id?: string;
   position?: number;
-  status: 'approved' | 'rejected';
+  status: "approved" | "rejected";
 }
 
 export interface GithubComChaitinPandaWikiProApiContributeV1ContributeAuditResp {
@@ -357,6 +357,7 @@ export interface GithubComChaitinPandaWikiProApiContributeV1ContributeItem {
   audit_user_id?: string;
   auth_id?: number;
   auth_name?: string;
+  contribute_name?: string;
   created_at?: string;
   id?: string;
   kb_id?: string;
@@ -489,14 +490,13 @@ export type GithubComChaitinPandaWikiProApiShareV1OAuthCallbackResp = Record<
 >;
 
 export interface GithubComChaitinPandaWikiProApiShareV1SubmitContributeReq {
+  captcha_token: string;
   content?: string;
-  doc_width?: string;
   emoji?: string;
-  kb_id?: string;
   name?: string;
   node_id?: string;
-  reason?: string;
-  type: 'add' | 'edit';
+  reason: string;
+  type: "add" | "edit";
 }
 
 export type GithubComChaitinPandaWikiProApiShareV1SubmitContributeResp = Record<
@@ -521,7 +521,7 @@ export interface GithubComChaitinPandaWikiProApiTokenV1APITokenListItem {
 export interface GithubComChaitinPandaWikiProApiTokenV1CreateAPITokenReq {
   kb_id: string;
   name: string;
-  permission: 'full_control' | 'doc_manage' | 'data_operate';
+  permission: "full_control" | "doc_manage" | "data_operate";
 }
 
 export interface GithubComChaitinPandaWikiProApiTokenV1DeleteAPITokenReq {
@@ -533,7 +533,7 @@ export interface GithubComChaitinPandaWikiProApiTokenV1UpdateAPITokenReq {
   id: string;
   kb_id: string;
   name?: string;
-  permission?: 'full_control' | 'doc_manage' | 'data_operate';
+  permission?: "full_control" | "doc_manage" | "data_operate";
 }
 
 export interface GithubComChaitinPandaWikiProDomainBlockWords {
@@ -558,21 +558,21 @@ export interface DeleteApiProV1AuthDeleteParams {
 export interface GetApiProV1AuthGetParams {
   kb_id?: string;
   source_type?:
-    | 'dingtalk'
-    | 'feishu'
-    | 'wecom'
-    | 'oauth'
-    | 'github'
-    | 'cas'
-    | 'ldap'
-    | 'widget'
-    | 'dingtalk_bot'
-    | 'feishu_bot'
-    | 'wechat_bot'
-    | 'wechat_service_bot'
-    | 'discord_bot'
-    | 'wechat_official_account'
-    | 'openai_api';
+    | "dingtalk"
+    | "feishu"
+    | "wecom"
+    | "oauth"
+    | "github"
+    | "cas"
+    | "ldap"
+    | "widget"
+    | "dingtalk_bot"
+    | "feishu_bot"
+    | "wechat_bot"
+    | "wechat_service_bot"
+    | "discord_bot"
+    | "wechat_official_account"
+    | "openai_api";
 }
 
 export interface DeleteApiProV1AuthGroupDeleteParams {
@@ -615,7 +615,7 @@ export interface GetApiProV1ContributeListParams {
   page: number;
   /** @min 1 */
   per_page: number;
-  status?: 'pending' | 'approved' | 'rejected';
+  status?: "pending" | "approved" | "rejected";
 }
 
 export interface GetApiProV1DocumentListParams {
@@ -647,9 +647,9 @@ export interface GetApiProV1TokenListParams {
 
 export interface PostApiV1LicensePayload {
   /** license edition */
-  license_edition: 'contributor' | 'enterprise';
+  license_edition: "contributor" | "enterprise";
   /** license type */
-  license_type: 'file' | 'code';
+  license_type: "file" | "code";
   /**
    * license file
    * @format binary

@@ -10,12 +10,12 @@
  * ---------------------------------------------------------------
  */
 
-import httpRequest, { ContentType, RequestParams } from './httpClient';
+import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
   DomainPWResponse,
   GetShareV1OpenapiGithubCallbackParams,
   GithubComChaitinPandaWikiApiShareV1GitHubCallbackResp,
-} from './types';
+} from "./types";
 
 /**
  * @description GitHub回调
@@ -40,9 +40,9 @@ export const getShareV1OpenapiGithubCallback = (
     }
   >({
     path: `/share/v1/openapi/github/callback`,
-    method: 'GET',
+    method: "GET",
     query: query,
     type: ContentType.Json,
-    format: 'json',
+    format: "json",
     ...params,
   });
