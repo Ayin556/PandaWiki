@@ -71,12 +71,11 @@ const DocEditor = () => {
 
   useEffect(() => {
     if (!kb_id) {
-      getInfo();
       getKbList();
     } else {
       getInfo();
     }
-  }, []);
+  }, [kb_id]);
 
   return (
     <Stack

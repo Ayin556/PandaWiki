@@ -15,7 +15,7 @@
     "@emoji-mart/data": "^1.2.1",
     "@emoji-mart/react": "^1.1.1",
     "@cap.js/widget": "^0.1.26",
-    "@ctzhian/tiptap": "1.4.2",
+    "@ctzhian/tiptap": "1.5.3",
     "@emotion/cache": "^11.14.0",
     "@mui/material-nextjs": "^7.1.0",
     "@sentry/nextjs": "^10.8.0",
