@@ -82,8 +82,8 @@ importers:
         specifier: 0.0.3
         version: 0.0.3(242fe34ca7c06b10b730209e8ea7de25)
       '@ctzhian/tiptap':
-        specifier: 1.4.2
-        version: 1.4.2(42561c31a10eb30f673aaf995a455761)
+        specifier: 1.5.3
+        version: 1.5.3(42561c31a10eb30f673aaf995a455761)
       '@dnd-kit/core':
         specifier: ^6.3.1
         version: 6.3.1(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -224,8 +224,8 @@ importers:
         specifier: ^0.1.26
         version: 0.1.26
       '@ctzhian/tiptap':
-        specifier: 1.4.2
-        version: 1.4.2(42561c31a10eb30f673aaf995a455761)
+        specifier: 1.5.3
+        version: 1.5.3(42561c31a10eb30f673aaf995a455761)
       '@emoji-mart/data':
         specifier: ^1.2.1
         version: 1.2.1
@@ -507,8 +507,8 @@ packages:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
 
-  '@ctzhian/tiptap@1.4.2':
-    resolution: {integrity: sha512-SOO8HBw4xA9/lUrmc4MnUC7Fpz8VU9YqM91uwEBKLqCN+Y0D91OY91tUdiZzkM94LIE40qTciARcBMvQRKecuQ==}
+  '@ctzhian/tiptap@1.5.3':
+    resolution: {integrity: sha512-ZzzLkfo6t771y0NRDyPJxIsERmONAjQi6x+CyIpSTFPBn8k2+aX/qjH1L7zPM6bkszXfxcAnguhVaP9b+S4wIg==}
     peerDependencies:
       '@emotion/react': ^11
       '@emotion/styled': ^11
@@ -5958,7 +5958,7 @@ snapshots:
       - emojibase
       - happy-dom
 
-  '@ctzhian/tiptap@1.4.2(42561c31a10eb30f673aaf995a455761)':
+  '@ctzhian/tiptap@1.5.3(42561c31a10eb30f673aaf995a455761)':
     dependencies:
       '@emotion/react': 11.14.0(@types/react@19.1.12)(react@19.1.1)
       '@emotion/styled': 11.14.1(@emotion/react@11.14.0(@types/react@19.1.12)(react@19.1.1))(@types/react@19.1.12)(react@19.1.1)

@@ -10,7 +10,12 @@ import { Icon, message } from '@ctzhian/ui';
 import dayjs from 'dayjs';
 import { debounce } from 'lodash-es';
 import { useCallback, useEffect, useState } from 'react';
-import { useLocation, useNavigate, useOutletContext } from 'react-router-dom';
+import {
+  useLocation,
+  useNavigate,
+  useOutletContext,
+  useParams,
+} from 'react-router-dom';
 // import { WebsocketProvider } from 'y-websocket';
 // import * as Y from 'yjs';
 import { DocWidth } from '@/constant/enums';
@@ -28,6 +33,8 @@ interface WrapProps {
 }
 
 const Wrap = ({ detail: defaultDetail }: WrapProps) => {
+  const { id = '' } = useParams();
+
   const navigate = useNavigate();
   const { license } = useAppSelector(state => state.config);
   const state = useLocation().state as { node?: V1NodeDetailResp };
@@ -241,6 +248,16 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
     }
   }, [editorRef.editor]);
 
+  const changeCatalogItem = useCallback(() => {
+    if (editorRef && editorRef.editor) {
+      const html = editorRef.getHTML();
+      updateDetail({
+        content: html,
+      });
+      onSave(html);
+    }
+  }, [id, editorRef, onSave]);
+
   const handleGlobalSave = useCallback(
     (event: KeyboardEvent) => {
       if ((event.ctrlKey || event.metaKey) && event.key === 's') {
@@ -254,7 +271,7 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
         }
       }
     },
-    [editorRef, onSave],
+    [editorRef, onSave, id],
   );
 
   useEffect(() => {
@@ -362,6 +379,10 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
       if (editorRef) editorRef.editor.destroy();
     };
   }, []);
+
+  useEffect(() => {
+    if (id !== defaultDetail.id) changeCatalogItem();
+  }, [id]);
 
   return (
     <>
