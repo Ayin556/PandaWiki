@@ -737,6 +737,14 @@ definitions:
     - CommentStatusReject
     - CommentStatusPending
     - CommentStatusAccepted
+  domain.CompleteReq:
+    properties:
+      prefix:
+        description: For FIM (Fill in Middle) style completion
+        type: string
+      suffix:
+        type: string
+    type: object
   domain.ContributeSettings:
     properties:
       is_enable:
@@ -3364,6 +3372,29 @@ paths:
       summary: AnalysisYuqueExportFile
       tags:
       - crawler
+  /api/v1/creation/tab-complete:
+    post:
+      consumes:
+      - application/json
+      description: Tab-based document completion similar to AI coding's FIM (Fill
+        in Middle)
+      parameters:
+      - description: tab completion request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/domain.CompleteReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            type: string
+      summary: Tab-based document completion
+      tags:
+      - creation
   /api/v1/creation/text:
     post:
       consumes:

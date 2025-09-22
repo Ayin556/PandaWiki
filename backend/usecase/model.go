@@ -208,6 +208,10 @@ func (u *ModelUsecase) GetChatModel(ctx context.Context) (*domain.Model, error) 
 	return u.modelRepo.GetChatModel(ctx)
 }
 
+func (u *ModelUsecase) GetModelByType(ctx context.Context, modelType domain.ModelType) (*domain.Model, error) {
+	return u.modelRepo.GetModelByType(ctx, modelType)
+}
+
 func (u *ModelUsecase) UpdateUsage(ctx context.Context, modelID string, usage *schema.TokenUsage) error {
 	return u.modelRepo.UpdateUsage(ctx, modelID, usage)
 }
