@@ -445,6 +445,12 @@ export interface DomainCommentReq {
   user_name?: string;
 }
 
+export interface DomainCompleteReq {
+  /** For FIM (Fill in Middle) style completion */
+  prefix?: string;
+  suffix?: string;
+}
+
 export interface DomainContributeSettings {
   is_enable?: boolean;
 }
@@ -1387,6 +1393,7 @@ export interface V1UserInfoResp {
   account?: string;
   created_at?: string;
   id?: string;
+  is_token?: boolean;
   last_access?: string;
   role?: ConstsUserRole;
 }

@@ -77,11 +77,6 @@ export interface DomainCreatePromptReq {
   kb_id: string;
 }
 
-export interface DomainDeleteDocumentFeedbackReq {
-  /** @minItems 1 */
-  ids: string[];
-}
-
 export interface DomainDocumentFeedbackInfo {
   /** user */
   auth_user_id?: number;
@@ -524,11 +519,6 @@ export interface GithubComChaitinPandaWikiProApiTokenV1CreateAPITokenReq {
   permission: "full_control" | "doc_manage" | "data_operate";
 }
 
-export interface GithubComChaitinPandaWikiProApiTokenV1DeleteAPITokenReq {
-  id: string;
-  kb_id: string;
-}
-
 export interface GithubComChaitinPandaWikiProApiTokenV1UpdateAPITokenReq {
   id: string;
   kb_id: string;
@@ -618,6 +608,11 @@ export interface GetApiProV1ContributeListParams {
   status?: "pending" | "approved" | "rejected";
 }
 
+export interface DeleteApiProV1DocumentFeedbackParams {
+  /** @minItems 1 */
+  ids: string[];
+}
+
 export interface GetApiProV1DocumentListParams {
   kb_id: string;
   /** @min 1 */
@@ -637,6 +632,11 @@ export interface GetApiProV1NodeReleaseListParams {
 
 export interface GetApiProV1PromptParams {
   /** knowledge base ID */
+  kb_id: string;
+}
+
+export interface DeleteApiProV1TokenDeleteParams {
+  id: string;
   kb_id: string;
 }
 
