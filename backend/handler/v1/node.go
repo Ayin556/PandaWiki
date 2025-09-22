@@ -65,6 +65,12 @@ func NewNodeHandler(
 //	@Success		200		{object}	domain.PWResponse{data=map[string]string}
 //	@Router			/api/v1/node [post]
 func (h *NodeHandler) CreateNode(c echo.Context) error {
+	ctx := c.Request().Context()
+	authInfo := domain.GetAuthInfoFromCtx(ctx)
+	if authInfo == nil {
+		return h.NewResponseWithError(c, "authInfo not found in context", nil)
+	}
+
 	req := &domain.CreateNodeReq{}
 	if err := c.Bind(req); err != nil {
 		return h.NewResponseWithError(c, "request body is invalid", err)
@@ -77,12 +83,7 @@ func (h *NodeHandler) CreateNode(c echo.Context) error {
 		req.MaxNode = maxNode.(int)
 	}
 
-	userId, ok := h.auth.MustGetUserID(c)
-	if !ok {
-		return h.NewResponseWithError(c, "not found user", nil)
-	}
-
-	id, err := h.usecase.Create(c.Request().Context(), req, userId)
+	id, err := h.usecase.Create(c.Request().Context(), req, authInfo.UserId)
 	if err != nil {
 		return h.NewResponseWithError(c, "create node failed", err)
 	}
@@ -187,6 +188,12 @@ func (h *NodeHandler) NodeAction(c echo.Context) error {
 //	@Success		200		{object}	domain.Response
 //	@Router			/api/v1/node/detail [put]
 func (h *NodeHandler) UpdateNodeDetail(c echo.Context) error {
+	ctx := c.Request().Context()
+	authInfo := domain.GetAuthInfoFromCtx(ctx)
+	if authInfo == nil {
+		return h.NewResponseWithError(c, "authInfo not found in context", nil)
+	}
+
 	req := &domain.UpdateNodeReq{}
 	if err := c.Bind(req); err != nil {
 		return h.NewResponseWithError(c, "request body is invalid", err)
@@ -194,14 +201,8 @@ func (h *NodeHandler) UpdateNodeDetail(c echo.Context) error {
 	if err := c.Validate(req); err != nil {
 		return h.NewResponseWithError(c, "validate request body failed", err)
 	}
-	ctx := c.Request().Context()
 
-	userId, ok := h.auth.MustGetUserID(c)
-	if !ok {
-		return h.NewResponseWithError(c, "not found user", nil)
-	}
-
-	if err := h.usecase.Update(ctx, req, userId); err != nil {
+	if err := h.usecase.Update(ctx, req, authInfo.UserId); err != nil {
 		return h.NewResponseWithError(c, "update node detail failed", err)
 	}
 	return h.NewResponseWithData(c, nil)

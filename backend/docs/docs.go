@@ -7964,6 +7964,9 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
+                "is_token": {
+                    "type": "boolean"
+                },
                 "last_access": {
                     "type": "string"
                 },
