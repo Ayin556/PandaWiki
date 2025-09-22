@@ -39,6 +39,7 @@ func (r *AuthRepo) GetAuthUserinfoByIDs(ctx context.Context, authIDs []uint) (ma
 	err := r.db.WithContext(ctx).Table("auths").
 		Select("id,user_info as auth_user_info").
 		Where("id IN (?) ", authIDs).
+		Where("source_type NOT IN (?)", consts.BotSourceTypes).
 		Find(&authUserInfo).Error
 	if err != nil {
 		return nil, err
