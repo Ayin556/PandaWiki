@@ -160,6 +160,7 @@ func (m *JWTMiddleware) ValidateKBUserPerm(perm consts.UserKBPermission) echo.Mi
 			if authInfo.IsToken {
 
 				if authInfo.KBId != kbId {
+					m.logger.Error("ValidateKBUserPerm ValidateTokenKBPerm kbId", "authInfo.KBId", authInfo.KBId, "kbId", kbId)
 					return c.JSON(http.StatusForbidden, domain.PWResponse{
 						Success: false,
 						Message: "Unauthorized ValidateTokenKBPerm kbId",
@@ -233,18 +234,19 @@ func (m *JWTMiddleware) MustGetUserID(c echo.Context) (string, bool) {
 func GetKbID(c echo.Context) (string, error) {
 	switch c.Request().Method {
 	case http.MethodGet, http.MethodDelete:
-
-		kbId := c.QueryParam("kb_id")
-		if kbId != "" {
-			return kbId, nil
-		}
-
+		var kbId string
 		if strings.Contains(c.Request().URL.Path, "knowledge_base") {
 			kbId = c.QueryParam("id")
 			if kbId != "" {
 				return kbId, nil
 			}
 		}
+
+		kbId = c.QueryParam("kb_id")
+		if kbId != "" {
+			return kbId, nil
+		}
+
 		return "", nil
 
 	case http.MethodPost, http.MethodPatch, http.MethodPut:
@@ -258,13 +260,14 @@ func GetKbID(c echo.Context) (string, error) {
 
 		var m map[string]interface{}
 		if err := json.Unmarshal(bodyBytes, &m); err == nil {
-			if id, exists := m["kb_id"].(string); exists && id != "" {
-				return id, nil
-			}
 			if strings.Contains(c.Request().URL.Path, "knowledge_base") {
 				if id, exists := m["id"].(string); exists && id != "" {
 					return id, nil
 				}
+			}
+
+			if id, exists := m["kb_id"].(string); exists && id != "" {
+				return id, nil
 			}
 		}
 		return "", nil
