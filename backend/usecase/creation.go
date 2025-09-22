@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	modelkit "github.com/chaitin/ModelKit/v2/usecase"
 	"github.com/chaitin/panda-wiki/domain"
@@ -77,4 +78,89 @@ func (u *CreationUsecase) TextCreation(ctx context.Context, req *domain.TextReq,
 		return fmt.Errorf("chat with llm failed: %w", err)
 	}
 	return nil
+}
+
+func (u *CreationUsecase) TabComplete(ctx context.Context, req *domain.CompleteReq) (string, error) {
+	// For FIM (Fill in Middle) style completion, we need to handle prefix and suffix
+	if req.Prefix != "" || req.Suffix != "" {
+		// System prompt for article continuation
+		systemPrompt := `
+你是集成在编辑器里的“内联续写”模型。任务是在光标处续写用户的文章，使其自然衔接并提升表达质量。
+
+严格遵循：
+1) 仅输出续写内容；不要复述已给文本；不要解释、不要前后标记、不要问答式措辞。
+2) 充分利用上下文：<PREFIX> 是光标前文本，<SUFFIX> 是光标后文本（如有）。
+   - 与 <PREFIX> 连贯一致，不改变已确立的观点、时间线、叙述视角与称谓。
+   - 不与 <SUFFIX> 冲突；如需要，使用最少字数平滑过渡到 <SUFFIX>。
+3) 维持原文语言与风格：语言保持与 <PREFIX> 一致（默认中文）；语气={tone}；受众={audience}；体裁={genre}。
+   - 保留现有格式与排版（段落/列表/小标题/标点样式）。
+   - 术语与专有名词前后一致。
+4) 质量要求：推进论点或叙事，避免空话与陈词滥调；尽量给出具体细节/例证/因果逻辑。
+   - 涉及事实时力求准确；不要编造具体个人信息、机密或不可核实的数据。
+5) 长度控制：不超过 50 字 或 2 句话，尽量在句子或自然段边界收尾，避免半句戛然而止。
+6) 约束：
+   - 不重复 <PREFIX> 末尾与 <SUFFIX> 开头的文本。
+   - 沿用当前段落缩进与标点风格（中英文空格、引号、数字样式保持一致）。
+   - 不与用户对话，不提出问题，除非 <PREFIX> 已采用此写法。
+7) 安全与合规：避免违法、仇恨、歧视、隐私泄露与危险内容输出。
+
+输入格式（FIM）：
+<FIM_PREFIX><PREFIX><FIM_SUFFIX><SUFFIX><FIM_MIDDLE>
+
+输出：仅为紧接光标位置的续写文本。
+`
+
+		model, err := u.model.GetModelByType(ctx, domain.ModelTypeAnalysis)
+		if err != nil {
+			u.logger.Error("get chat model failed", log.Error(err))
+			return "", domain.ErrModelNotConfigured
+		}
+
+		modelkitModel, err := model.ToModelkitModel()
+		if err != nil {
+			return "", fmt.Errorf("failed to convert model to modelkit model: %w", err)
+		}
+		chatModel, err := u.modelkit.GetChatModel(ctx, modelkitModel)
+		if err != nil {
+			return "", fmt.Errorf("get chat model failed: %w", err)
+		}
+
+		// Build FIM prompt with special tokens
+		prompt := fmt.Sprintf("%s%s%s%s%s", domain.FIMPrefix, req.Prefix, domain.FIMSuffix, req.Suffix, domain.FIMMiddle)
+
+		// Prepare model parameters similar to the reference implementation
+		// TODO: These parameters should be configurable
+		_ = 128  // maxTokens
+		_ = 0.2  // temperature
+		_ = 0.95 // topP
+
+		// Build the message with FIM prompt
+		messages := []*schema.Message{
+			{
+				Role:    "system",
+				Content: systemPrompt,
+			},
+			{
+				Role:    "user",
+				Content: prompt,
+			},
+		}
+
+		// For FIM-style completion, we collect the response in a string instead of streaming
+		var result strings.Builder
+		onChunk := func(ctx context.Context, dataType, chunk string) error {
+			result.WriteString(chunk)
+			return nil
+		}
+
+		usage := &schema.TokenUsage{}
+		err = u.llm.ChatWithAgent(ctx, chatModel, messages, usage, onChunk)
+		if err != nil {
+			return "", fmt.Errorf("chat with llm failed: %w", err)
+		}
+
+		completion := result.String()
+		return completion, nil
+	}
+	return "", nil
 }

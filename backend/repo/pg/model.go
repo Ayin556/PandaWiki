@@ -86,6 +86,17 @@ func (r *ModelRepository) GetChatModel(ctx context.Context) (*domain.Model, erro
 	return &model, nil
 }
 
+func (r *ModelRepository) GetModelByType(ctx context.Context, modelType domain.ModelType) (*domain.Model, error) {
+	var model domain.Model
+	if err := r.db.WithContext(ctx).
+		Model(&domain.Model{}).
+		Where("type = ?", modelType).
+		First(&model).Error; err != nil {
+		return nil, err
+	}
+	return &model, nil
+}
+
 func (r *ModelRepository) UpdateUsage(ctx context.Context, modelID string, usage *schema.TokenUsage) error {
 	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		// update model usage

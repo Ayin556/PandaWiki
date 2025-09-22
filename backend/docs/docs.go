@@ -1358,6 +1358,40 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/creation/tab-complete": {
+            "post": {
+                "description": "Tab-based document completion similar to AI coding's FIM (Fill in Middle)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "creation"
+                ],
+                "summary": "Tab-based document completion",
+                "parameters": [
+                    {
+                        "description": "tab completion request",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.CompleteReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/creation/text": {
             "post": {
                 "description": "Text creation",
@@ -5202,6 +5236,18 @@ const docTemplate = `{
                 "CommentStatusPending",
                 "CommentStatusAccepted"
             ]
+        },
+        "domain.CompleteReq": {
+            "type": "object",
+            "properties": {
+                "prefix": {
+                    "description": "For FIM (Fill in Middle) style completion",
+                    "type": "string"
+                },
+                "suffix": {
+                    "type": "string"
+                }
+            }
         },
         "domain.ContributeSettings": {
             "type": "object",
