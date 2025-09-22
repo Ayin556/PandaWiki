@@ -15,8 +15,9 @@ import (
 	echoSwagger "github.com/swaggo/echo-swagger"
 	middlewareOtel "go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho"
 
-	"github.com/chaitin/panda-wiki/config"
 	_ "github.com/chaitin/panda-wiki/docs"
+
+	"github.com/chaitin/panda-wiki/config"
 	"github.com/chaitin/panda-wiki/log"
 	PWMiddleware "github.com/chaitin/panda-wiki/middleware"
 )
@@ -60,6 +61,8 @@ func NewEcho(
 	e := echo.New()
 	e.HideBanner = true
 	e.HidePort = true
+
+	e.Binder = &MyBinder{}
 
 	if os.Getenv("ENV") == "local" {
 		e.Debug = true
@@ -122,4 +125,23 @@ func NewEcho(
 	e.Use(sessionMiddleware.Session())
 
 	return e
+}
+
+type MyBinder struct {
+	echo.DefaultBinder
+}
+
+func (b *MyBinder) Bind(i interface{}, c echo.Context) (err error) {
+	if err := b.BindPathParams(c, i); err != nil {
+		return err
+	}
+
+	method := c.Request().Method
+	if method == http.MethodGet || method == http.MethodDelete || method == http.MethodHead {
+		if err = b.BindQueryParams(c, i); err != nil {
+			return err
+		}
+		return nil
+	}
+	return b.BindBody(c, i)
 }
