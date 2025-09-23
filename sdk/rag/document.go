@@ -367,45 +367,40 @@ func (c *Client) UploadDocumentTextAndParse(ctx context.Context, datasetID strin
 
 // UpdateDocumentText 更新文档内容
 // 使用新的 content 接口直接更新文档内容
-func (c *Client) UpdateDocumentText(ctx context.Context, datasetID string, documentID string, content string, filename string) (*Document, error) {
+func (c *Client) UpdateDocumentText(ctx context.Context, datasetID string, documentID string, content string, filename string) error {
 	// 创建临时文件
 	tmpFile, err := os.CreateTemp("", "update_*")
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer os.Remove(tmpFile.Name())
 	defer tmpFile.Close()
 
 	// 写入内容到临时文件
 	if _, err := tmpFile.WriteString(content); err != nil {
-		return nil, err
+		return err
 	}
 	if err := tmpFile.Sync(); err != nil {
-		return nil, err
+		return err
 	}
 
 	// 重新打开文件以确保内容被写入
 	tmpFile.Close()
 	tmpFile, err = os.Open(tmpFile.Name())
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer tmpFile.Close()
-
-	fileInfo, err := tmpFile.Stat()
-	if err != nil {
-		return nil, err
-	}
 
 	var b bytes.Buffer
 	w := multipart.NewWriter(&b)
 
 	fw, err := w.CreateFormFile("file", filename)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	if _, err := io.Copy(fw, tmpFile); err != nil {
-		return nil, err
+		return err
 	}
 
 	w.Close()
@@ -413,31 +408,26 @@ func (c *Client) UpdateDocumentText(ctx context.Context, datasetID string, docum
 	urlPath := fmt.Sprintf("datasets/%s/documents/%s/content", datasetID, documentID)
 	req, err := http.NewRequestWithContext(ctx, "PUT", c.baseURL.JoinPath(urlPath).String(), &b)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	req.Header.Set("Content-Type", w.FormDataContentType())
 	req.Header.Set("Authorization", "Bearer "+c.apiKey)
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode >= 400 {
 		body, _ := io.ReadAll(resp.Body)
-		return nil, fmt.Errorf("更新文档内容失败: %s, 状态码: %d, 响应: %s", parseErrorResponse(resp), resp.StatusCode, string(body))
+		return fmt.Errorf("更新文档内容失败: %s, 状态码: %d, 响应: %s", parseErrorResponse(resp), resp.StatusCode, string(body))
 	}
 
 	var result map[string]interface{}
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
-		return nil, err
+		return err
 	}
 
-	doc, err := c.GetDocument(ctx, datasetID, documentID)
-	if err != nil {
-		return nil, fmt.Errorf("更新成功但获取文档信息失败: %w", err)
-	}
-
-	return doc, nil
+	return nil
 }
