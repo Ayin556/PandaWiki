@@ -108,7 +108,9 @@ export class HttpClient<SecurityDataType = unknown> {
           window.location.href = "/login";
           localStorage.removeItem("panda_wiki_token");
         }
-        message.error(error.response?.statusText || "网络异常");
+        if (error.code !== "ERR_CANCELED") {
+          message.error(error.response?.statusText || "网络异常");
+        }
         return Promise.reject(error.response);
       },
     );
