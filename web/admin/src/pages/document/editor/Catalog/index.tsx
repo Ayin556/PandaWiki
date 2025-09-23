@@ -146,7 +146,7 @@ const Catalog = ({ curNode, setCatalogOpen }: CatalogProps) => {
             </Box>
           )}
           {item.emoji ? (
-            <Box sx={{ fontSize: 13, flexShrink: 0 }}>{item.emoji}</Box>
+            <Box sx={{ fontSize: 14, flexShrink: 0 }}>{item.emoji}</Box>
           ) : (
             <Icon
               type={item.type === 1 ? 'icon-wenjianjia' : 'icon-wenjian'}

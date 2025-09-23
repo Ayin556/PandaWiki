@@ -1,6 +1,6 @@
 import { uploadFile } from '@/api';
 import Emoji from '@/components/Emoji';
-import { putApiV1NodeDetail } from '@/request';
+import { postApiV1CreationTabComplete, putApiV1NodeDetail } from '@/request';
 import { V1NodeDetailResp } from '@/request/types';
 import { Box, Stack, TextField, Tooltip } from '@mui/material';
 // import { Collaboration } from '@tiptap/extension-collaboration';
@@ -9,7 +9,7 @@ import { Editor, TocList, useTiptap, UseTiptapReturn } from '@ctzhian/tiptap';
 import { Icon, message } from '@ctzhian/ui';
 import dayjs from 'dayjs';
 import { debounce } from 'lodash-es';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   useLocation,
   useNavigate,
@@ -43,6 +43,10 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
 
   // const connectCount = useRef(0);
   const storageTocOpen = localStorage.getItem('toc-open');
+
+  const postApiV1CreationTabCompleteController = useRef<AbortController | null>(
+    null,
+  );
 
   const isEnterprise = useMemo(() => {
     return license.edition === 2;
@@ -170,6 +174,33 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
     setCharacterCount((editor.storage as any).characterCount.characters());
   };
 
+  const handleAiWritingGetSuggestion = async ({
+    prefix,
+    suffix,
+  }: {
+    prefix: string;
+    suffix: string;
+  }): Promise<string> => {
+    if (postApiV1CreationTabCompleteController.current) {
+      postApiV1CreationTabCompleteController.current.abort();
+    }
+    postApiV1CreationTabCompleteController.current = new AbortController();
+    const signal = postApiV1CreationTabCompleteController.current.signal;
+
+    const suggestion = await postApiV1CreationTabComplete(
+      {
+        prefix: prefix.length > 300 ? prefix.slice(-300) : prefix,
+        suffix: suffix.slice(0, 300),
+      },
+      {
+        signal,
+      },
+    );
+    return new Promise(resolve => {
+      resolve(suggestion || '');
+    });
+  };
+
   // const doc = useMemo(() => new Y.Doc(), [defaultDetail.id]);
   // const yprovider = useMemo(
   //   () =>
@@ -233,6 +264,7 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
     onUpload: handleUpload,
     onUpdate: handleUpdate,
     onTocUpdate: handleTocUpdate,
+    onAiWritingGetSuggestion: handleAiWritingGetSuggestion,
   });
 
   const handleAiGenerate = useCallback(() => {
