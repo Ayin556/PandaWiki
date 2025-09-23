@@ -63,9 +63,13 @@ func (h *RAGMQHandler) HandleNodeContentVectorRequest(ctx context.Context, msg t
 
 	case "upsert":
 		h.logger.Debug("upsert node content vector request", "request", request)
-		nodeRelease, err := h.nodeRepo.GetNodeReleaseByID(ctx, request.NodeReleaseID)
+		nodeRelease, err := h.nodeRepo.GetNodeReleaseWithDirPathByID(ctx, request.NodeReleaseID)
 		if err != nil {
 			h.logger.Error("get node content by ids failed", log.Error(err))
+			return nil
+		}
+		if nodeRelease.Type == domain.NodeTypeFolder {
+			h.logger.Info("node is folder, skip upsert", log.Any("node_release_id", request.NodeReleaseID))
 			return nil
 		}
 		kb, err := h.kbRepo.GetKnowledgeBaseByID(ctx, request.KBID)

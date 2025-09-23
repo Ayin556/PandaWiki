@@ -12,6 +12,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/samber/lo"
+	"github.com/samber/lo/mutable"
 
 	v1 "github.com/chaitin/panda-wiki/api/node/v1"
 	"github.com/chaitin/panda-wiki/consts"
@@ -301,6 +302,47 @@ func (r *NodeRepository) GetNodeByID(ctx context.Context, id string) (*domain.No
 	return node, nil
 }
 
+// buildNodePath builds the directory path for a node release by traversing up the parent hierarchy (max 5 levels)
+func (r *NodeRepository) buildNodePath(ctx context.Context, kbID string, nodeRelease *domain.NodeRelease) (string, error) {
+	// Build path by traversing up max 5 levels
+	var pathParts []string
+	currentParentNodeID := nodeRelease.ParentID
+
+	// Traverse up the parent hierarchy, max 5 levels
+	for i := 0; i < 5 && currentParentNodeID != ""; i++ {
+		// Get the parent node release (ordered by created time to get the latest)
+		var parentNodeRelease domain.NodeRelease
+		if err := r.db.WithContext(ctx).
+			Model(&domain.NodeRelease{}).
+			Where("node_id = ? AND kb_id = ?", currentParentNodeID, kbID).
+			Select("id, node_id, parent_id, name, type").
+			Order("created_at DESC").
+			First(&parentNodeRelease).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				break
+			}
+			return "", err
+		}
+
+		// Prepend current node name to path if it's a folder
+		if parentNodeRelease.Type == domain.NodeTypeFolder {
+			pathParts = append(pathParts, parentNodeRelease.Name)
+		}
+
+		// Move to parent's parent
+		currentParentNodeID = parentNodeRelease.ParentID
+	}
+
+	// Build the final path
+	if len(pathParts) == 0 {
+		return "/", nil
+	}
+
+	mutable.Reverse(pathParts)
+	path := "/" + strings.Join(pathParts, "/") + "/"
+	return path, nil
+}
+
 func (r *NodeRepository) GetNodeNameByNodeIDs(ctx context.Context, ids []string) (map[string]string, error) {
 	nodesMap := make(map[string]string)
 	for _, chunk := range lo.Chunk(ids, 1000) {
@@ -340,6 +382,36 @@ func (r *NodeRepository) GetLatestNodeReleaseByNodeID(ctx context.Context, nodeI
 		return nil, err
 	}
 	return nodeRelease, nil
+}
+
+// GetNodeReleaseWithDirPathByID gets a node release by ID and includes its directory path
+func (r *NodeRepository) GetNodeReleaseWithDirPathByID(ctx context.Context, id string) (*domain.NodeReleaseWithDirPath, error) {
+	// First get the node release
+	var nodeRelease *domain.NodeRelease
+	if err := r.db.WithContext(ctx).
+		Model(&domain.NodeRelease{}).
+		Where("id = ?", id).
+		First(&nodeRelease).Error; err != nil {
+		return nil, err
+	}
+	// don't build path for folders
+	if nodeRelease != nil && nodeRelease.Type == domain.NodeTypeFolder {
+		return &domain.NodeReleaseWithDirPath{
+			NodeRelease: nodeRelease,
+		}, nil
+	}
+
+	// Build the directory path
+	path, err := r.buildNodePath(ctx, nodeRelease.KBID, nodeRelease)
+	if err != nil {
+		r.logger.Error("failed to build node path", log.String("id", id), log.Error(err))
+	}
+
+	// Return the extended struct with path information
+	return &domain.NodeReleaseWithDirPath{
+		NodeRelease: nodeRelease,
+		Path:        path,
+	}, nil
 }
 
 func (r *NodeRepository) GetNodeReleasesByDocIDs(ctx context.Context, ids []string) (map[string]*domain.NodeRelease, error) {

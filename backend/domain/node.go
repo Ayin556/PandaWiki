@@ -268,6 +268,12 @@ type NodeRelease struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
+// NodeReleaseWithDirPath extends NodeRelease with directory path information
+type NodeReleaseWithDirPath struct {
+	*NodeRelease
+	Path string `json:"path"`
+}
+
 type BatchMoveReq struct {
 	IDs      []string `json:"ids" validate:"required"`
 	KBID     string   `json:"kb_id" validate:"required"`
