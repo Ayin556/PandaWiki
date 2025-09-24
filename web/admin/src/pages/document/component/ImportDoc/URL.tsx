@@ -1,7 +1,8 @@
 import { ImportDocListItem, ImportDocProps } from '@/api';
-import { postApiV1Node } from '@/request/Node';
 import { postApiV1CrawlerScrape } from '@/request/Crawler';
+import { postApiV1Node } from '@/request/Node';
 import { useAppSelector } from '@/store';
+import { Ellipsis, Icon, message, Modal } from '@ctzhian/ui';
 import {
   Box,
   Button,
@@ -10,7 +11,6 @@ import {
   Stack,
   TextField,
 } from '@mui/material';
-import { Ellipsis, Icon, message, Modal } from '@ctzhian/ui';
 import { useEffect, useState } from 'react';
 
 const StepText = {
@@ -64,7 +64,7 @@ const URLImport = ({
     const urls = url.split('\n');
     for (const url of urls) {
       newQueue.push(async () => {
-        const { title, content } = await postApiV1CrawlerScrape({ url, kb_id });
+        const { title, content } = await postApiV1CrawlerScrape({ url });
         setItems(prev => [
           { title: title || url, content: content!, url, success: -1, id: '' },
           ...prev,

@@ -2,11 +2,12 @@
 
 import { ConversationItem } from '@/assets/type';
 import Feedback from '@/components/feedback';
-import { useRouter } from 'next/navigation';
 import {
   IconArrowUp,
   IconCai,
   IconCaied,
+  IconCopy,
+  IconNewChat,
   IconZan,
   IconZaned,
 } from '@/components/icons';
@@ -14,9 +15,9 @@ import MarkDown from '@/components/markdown';
 import MarkDown2 from '@/components/markdown2';
 import { useStore } from '@/provider';
 import { postShareV1ChatFeedback } from '@/request/ShareChat';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { IconCopy, IconNewChat } from '@/components/icons';
 import { copyText } from '@/utils';
+import { message } from '@ctzhian/ui';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
   Accordion,
   AccordionDetails,
@@ -28,10 +29,10 @@ import {
   Stack,
   TextField,
 } from '@mui/material';
-import { message } from '@ctzhian/ui';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import ChatLoading from './ChatLoading';
 import { AnswerStatus } from './constant';
@@ -140,7 +141,7 @@ const ChatResult = ({
         msOverflowStyle: 'none',
         ...(mobile && {
           overflow: 'hidden',
-          height: 'calc(100vh - 180px)',
+          height: 'calc(100vh - 274px)',
         }),
       }}
     >
@@ -151,7 +152,7 @@ const ChatResult = ({
         sx={{
           ...(mobile && {
             overflow: 'auto',
-            height: 'calc(100vh - 280px)',
+            height: 'calc(100vh - 310px)',
           }),
         }}
       >
@@ -274,11 +275,11 @@ const ChatResult = ({
           left: 0,
           right: 0,
           bottom: 0,
-
           ...(mobile && {
             p: 0,
             left: 24,
             right: 24,
+            bottom: 24,
           }),
         }}
       >

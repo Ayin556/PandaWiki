@@ -1,5 +1,5 @@
 import { ITreeItem } from '@/assets/type';
-import { IconArrowDown } from '@/components/icons';
+import { IconArrowDown, IconFile, IconFolder } from '@/components/icons';
 import { useStore } from '@/provider';
 import { addOpacityToColor, highlightText } from '@/utils';
 import { Ellipsis } from '@ctzhian/ui';
@@ -36,7 +36,7 @@ const CatalogFolder = ({
           lineHeight: '40px',
           cursor: 'pointer',
           borderRadius: '10px',
-          color: activeId === item.id ? 'primary.main' : 'text.tertiary',
+          color: activeId === item.id ? 'primary.main' : 'text.primary',
           bgcolor:
             activeId === item.id
               ? addOpacityToColor(theme.palette.primary.main, 0.08)
@@ -70,11 +70,11 @@ const CatalogFolder = ({
             <Link href={`/node/${item.id}`} prefetch={false}>
               <Box sx={{ pl: depth * 2, pr: 1 }}>
                 <Stack direction='row' alignItems='center' gap={1}>
-                  {/* {item.emoji ? (
+                  {item.emoji ? (
                     <Box sx={{ flexShrink: 0, fontSize: 14 }}>{item.emoji}</Box>
                   ) : (
                     <IconFile sx={{ flexShrink: 0, fontSize: 12 }} />
-                  )} */}
+                  )}
                   <Ellipsis sx={{ flex: 1, width: 0, pr: 1 }}>
                     {highlightText(item.name, searchTerm)}
                   </Ellipsis>
@@ -90,13 +90,13 @@ const CatalogFolder = ({
             sx={{ flex: 1, pl: depth * 2, pr: 1 }}
           >
             <Stack direction='row' alignItems='center' gap={1} sx={{ flex: 1 }}>
-              {/* {item.emoji ? (
+              {item.emoji ? (
                 <Box sx={{ flexShrink: 0, fontSize: 12 }}>{item.emoji}</Box>
               ) : item.type === 1 ? (
                 <IconFolder sx={{ flexShrink: 0, fontSize: 12 }} />
               ) : (
                 <IconFile sx={{ flexShrink: 0, fontSize: 12 }} />
-              )} */}
+              )}
               <Ellipsis sx={{ flex: 1, width: 0, pr: 1 }}>
                 {highlightText(item.name, searchTerm)}
               </Ellipsis>

@@ -1,10 +1,11 @@
 import { ImportDocListItem, ImportDocProps } from '@/api';
-import { postApiV1Node } from '@/request/Node';
 import {
-  postApiV1CrawlerParseRss,
-  postApiV1CrawlerScrape,
+  postApiV1CrawlerRssParse,
+  postApiV1CrawlerRssScrape,
 } from '@/request/Crawler';
+import { postApiV1Node } from '@/request/Node';
 import { useAppSelector } from '@/store';
+import { Ellipsis, Icon, message, Modal } from '@ctzhian/ui';
 import {
   Box,
   Button,
@@ -13,7 +14,6 @@ import {
   Stack,
   TextField,
 } from '@mui/material';
-import { Ellipsis, Icon, message, Modal } from '@ctzhian/ui';
 import { useEffect, useState } from 'react';
 
 const StepText = {
@@ -46,6 +46,7 @@ const RSSImport = ({
   const [loading, setLoading] = useState(false);
   const [url, setUrl] = useState('');
   const [items, setItems] = useState<ImportDocListItem[]>([]);
+  const [id, setId] = useState<string>('');
   const [selectIds, setSelectIds] = useState<string[]>([]);
   const [requestQueue, setRequestQueue] = useState<(() => Promise<any>)[]>([]);
   const [isCancelled, setIsCancelled] = useState(false);
@@ -63,9 +64,10 @@ const RSSImport = ({
   };
 
   const handleURL = async () => {
-    const { items = [] } = await postApiV1CrawlerParseRss({ url });
+    const { list = [], id } = await postApiV1CrawlerRssParse({ url });
+    setId(id || '');
     setItems(
-      items.map(item => ({
+      list.map(item => ({
         title: item.title!,
         content: item.desc!,
         url: item.url!,
@@ -82,12 +84,11 @@ const RSSImport = ({
     const rssData = items.filter(item => selectIds.includes(item.url));
     for (const item of rssData) {
       newQueue.push(async () => {
-        const res = await postApiV1CrawlerScrape({ url: item.url, kb_id });
+        const res = await postApiV1CrawlerRssScrape({ url: item.url, id });
         setItems(prev => [
           {
             ...item,
             ...res,
-            title: res.title || item.title,
             success: -1,
             id: '',
           },

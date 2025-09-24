@@ -3,8 +3,8 @@
 import { ChunkResultItem, ConversationItem } from '@/assets/type';
 import { useStore } from '@/provider';
 import SSEClient from '@/utils/fetch';
-import { Box, Stack } from '@mui/material';
 import { message } from '@ctzhian/ui';
+import { Box, Stack } from '@mui/material';
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import ChatResult from './ChatResult';
@@ -251,7 +251,14 @@ const Chat = ({
 
   if (mobile) {
     return (
-      <Box sx={{ pt: 4, minHeight: '100vh', position: 'relative' }}>
+      <Box
+        sx={{
+          pt: 4,
+          minHeight: 'calc(100vh - 64px)',
+          position: 'relative',
+          flex: 1,
+        }}
+      >
         <ChatTab showType={showType} setShowType={setShowType} />
         <Box sx={{ mx: 3 }}>
           {showType === 'chat' ? (

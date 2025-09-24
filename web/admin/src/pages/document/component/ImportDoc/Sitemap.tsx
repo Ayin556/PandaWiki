@@ -1,10 +1,12 @@
-import { ImportDocListItem, ImportDocProps } from '@/api';
-import { postApiV1Node } from '@/request/Node';
+import { ImportDocProps } from '@/api';
+import { V1SitemapParseItem, V1SitemapScrapeResp } from '@/request';
 import {
-  postApiV1CrawlerParseSitemap,
-  postApiV1CrawlerScrape,
+  postApiV1CrawlerSitemapParse,
+  postApiV1CrawlerSitemapScrape,
 } from '@/request/Crawler';
+import { postApiV1Node } from '@/request/Node';
 import { useAppSelector } from '@/store';
+import { Ellipsis, Icon, message, Modal } from '@ctzhian/ui';
 import {
   Box,
   Button,
@@ -13,7 +15,6 @@ import {
   Stack,
   TextField,
 } from '@mui/material';
-import { Ellipsis, Icon, message, Modal } from '@ctzhian/ui';
 import { useEffect, useState } from 'react';
 
 const StepText = {
@@ -35,6 +36,11 @@ const StepText = {
   },
 };
 
+interface ItemsType extends V1SitemapScrapeResp, V1SitemapParseItem {
+  success: number;
+  id: string;
+}
+
 const SitemapImport = ({
   open,
   refresh,
@@ -45,7 +51,7 @@ const SitemapImport = ({
   const [step, setStep] = useState<keyof typeof StepText>('pull');
   const [loading, setLoading] = useState(false);
   const [url, setUrl] = useState('');
-  const [items, setItems] = useState<ImportDocListItem[]>([]);
+  const [items, setItems] = useState<ItemsType[]>([]);
   const [selectIds, setSelectIds] = useState<string[]>([]);
   const [requestQueue, setRequestQueue] = useState<(() => Promise<any>)[]>([]);
   const [isCancelled, setIsCancelled] = useState(false);
@@ -64,17 +70,19 @@ const SitemapImport = ({
 
   const handleURL = async () => {
     const newQueue: (() => Promise<any>)[] = [];
-    const res = await postApiV1CrawlerParseSitemap({ url });
-    const urls = res.items?.map(item => item.url) || [];
-    for (const url of urls) {
+    const res = await postApiV1CrawlerSitemapParse({ url });
+    const id = res.id || '';
+    const parseData = res.list || [];
+    for (const parseItem of parseData) {
       newQueue.push(async () => {
-        const res = await postApiV1CrawlerScrape({ url: url!, kb_id });
+        const { content = '' } = await postApiV1CrawlerSitemapScrape({
+          url: parseItem.url!,
+          id,
+        });
         setItems(prev => [
           {
-            ...res,
-            content: res.content!,
-            title: res.title!,
-            url: url!,
+            content,
+            ...parseItem,
             success: -1,
             id: '',
           },
@@ -249,7 +257,7 @@ const SitemapImport = ({
                   if (selectIds.length === items.length) {
                     setSelectIds([]);
                   } else {
-                    setSelectIds(items.map(item => item.url));
+                    setSelectIds(items.map(item => item.url!));
                   }
                 }}
               />
@@ -321,13 +329,13 @@ const SitemapImport = ({
                     size='small'
                     id={item.url}
                     sx={{ flexShrink: 0, p: 0, m: 0 }}
-                    checked={selectIds.includes(item.url)}
+                    checked={selectIds.includes(item.url!)}
                     onChange={() => {
                       setSelectIds(prev => {
-                        if (prev.includes(item.url)) {
-                          return prev.filter(it => it !== item.url);
+                        if (prev.includes(item.url!)) {
+                          return prev.filter(it => it !== item.url!);
                         }
-                        return [...prev, item.url];
+                        return [...prev, item.url!];
                       });
                     }}
                   />
@@ -378,7 +386,7 @@ const SitemapImport = ({
                         ),
                       );
                       postApiV1Node({
-                        name: item.title,
+                        name: item.title || '',
                         content: item.content,
                         parent_id: parentId || undefined,
                         type: 2,
