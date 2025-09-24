@@ -1197,7 +1197,6 @@ export interface V1FeishuGetDocReq {
   doc_id: string;
   file_type?: string;
   id: string;
-  kb_id: string;
   space_id?: string;
 }
 

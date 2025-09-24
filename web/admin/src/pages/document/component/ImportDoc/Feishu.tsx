@@ -100,8 +100,8 @@ const FeishuImport = ({
             const res = await postApiV1CrawlerFeishuGetDoc({
               doc_id: item.doc_id || '',
               id: item._id || '',
-              kb_id,
-              ...getValues(),
+              file_type: item.file_type || '',
+              space_id: item.space_id || '',
             });
             const nodeRes = await postApiV1Node({
               name: item.title || '',
