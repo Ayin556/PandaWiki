@@ -4,7 +4,7 @@ import DarkBG from '@/assets/images/dark-bgi.png';
 import LightBG from '@/assets/images/light-bgi.png';
 import { IconSearch } from '@/components/icons';
 import { useStore } from '@/provider';
-import { V1RecommendNodeListItem } from '@/request/types';
+import { V1NodeItem } from '@/request/types';
 import { Box, TextField } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -12,11 +12,7 @@ import CatalogH5 from '../node/CatalogH5';
 import NodeList from './NodeList';
 import QuestionList from './QuestionList';
 
-const Home = ({
-  recommendNodes,
-}: {
-  recommendNodes: V1RecommendNodeListItem[];
-}) => {
+const Home = ({ recommendNodes }: { recommendNodes: V1NodeItem[] }) => {
   const { mobile = false, kbDetail, themeMode = 'light' } = useStore();
 
   const themeAndStyleSetting = kbDetail?.settings?.theme_and_style;

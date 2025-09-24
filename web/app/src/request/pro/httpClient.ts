@@ -262,7 +262,6 @@ export class HttpClient<SecurityDataType = unknown> {
       },
     ).then(async (response) => {
       if (response.status === 401) {
-        console.log("response 401:", response);
         if (typeof window === "undefined") {
           const pathname = await getServerPathname();
           if (!pathnameWhiteList.includes(pathname)) {

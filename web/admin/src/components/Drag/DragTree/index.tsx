@@ -18,6 +18,7 @@ const DragTree = ({
   onSelectChange,
   supportSelect = true,
   relativeSelect = true,
+  disabled,
 }: DragTreeProps) => {
   const [items, setItems] = useState<TreeItems<ITreeItem>>(data);
   const { kb_id } = useAppSelector(state => state.config);
@@ -38,6 +39,7 @@ const DragTree = ({
         onSelectChange,
         supportSelect,
         relativeSelect,
+        disabled,
       }}
     >
       <DndContext>

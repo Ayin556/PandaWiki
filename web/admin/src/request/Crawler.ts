@@ -390,11 +390,11 @@ export const postApiV1CrawlerNotionScrape = (
   });
 
 /**
- * @description Scrape
+ * @description Retrieve the result of a previously started scraping task
  *
  * @tags crawler
  * @name GetApiV1CrawlerResult
- * @summary Scrape
+ * @summary Get Crawler Result
  * @request GET:/api/v1/crawler/result
  * @response `200` `(DomainPWResponse & {
     data?: V1CrawlerResultResp,

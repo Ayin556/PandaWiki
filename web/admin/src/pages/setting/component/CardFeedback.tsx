@@ -12,6 +12,7 @@ import {
   TextField,
   styled,
   Tooltip,
+  Chip,
 } from '@mui/material';
 
 import { Controller, useForm } from 'react-hook-form';
@@ -219,6 +220,19 @@ const AIQuestion = ({
                 setIsEdit(true);
                 const newValues = [...new Set(newValue as string[])];
                 field.onChange(newValues);
+              }}
+              renderValue={(value, getTagProps) => {
+                return value.map((option, index: number) => {
+                  return (
+                    <Chip
+                      variant='outlined'
+                      size='small'
+                      label={<Box sx={{ fontSize: '12px' }}>{option}</Box>}
+                      {...getTagProps({ index })}
+                      key={index}
+                    />
+                  );
+                });
               }}
               renderInput={params => (
                 <TextField

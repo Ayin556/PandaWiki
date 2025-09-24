@@ -59,10 +59,6 @@ const CatalogFolder = ({
             setTree?.(tree => [...(tree || [])]);
             return;
           }
-          if (item.type === 2) {
-            router.push(`/node/${item.id}`);
-            return;
-          }
         }}
       >
         {item.type === 2 ? (

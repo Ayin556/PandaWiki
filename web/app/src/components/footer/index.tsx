@@ -11,7 +11,9 @@ import { IconPhone, IconWechat } from '../icons';
 import Overlay from './Overlay';
 import { DocWidth } from '@/constant';
 
-const Footer = ({
+import { Footer } from '@panda-wiki/ui';
+
+const Footer1 = ({
   showBrand = true,
   kbDetail,
   mobile,
@@ -773,16 +775,25 @@ export const FooterProvider = ({
   isDocPage?: boolean;
   isWelcomePage?: boolean;
 }) => {
-  const { kbDetail, mobile = false, catalogShow, catalogWidth } = useStore();
+  const { mobile = false, catalogWidth, kbDetail } = useStore();
+
+  const docWidth = useMemo(() => {
+    if (isWelcomePage) return 'full';
+    return kbDetail?.settings?.theme_and_style?.doc_width || 'full';
+  }, [kbDetail, isWelcomePage]);
+  const footerSetting = kbDetail?.settings?.footer_settings;
+  const customStyle = kbDetail?.settings?.web_app_custom_style;
+
   return (
     <Footer
-      showBrand={showBrand}
-      kbDetail={kbDetail}
       mobile={mobile}
-      catalogShow={catalogShow}
       catalogWidth={catalogWidth}
+      showBrand={showBrand}
       isDocPage={isDocPage}
-      isWelcomePage={isWelcomePage}
+      logo={logo.src}
+      docWidth={docWidth}
+      footerSetting={footerSetting || undefined}
+      customStyle={customStyle}
     />
   );
 };

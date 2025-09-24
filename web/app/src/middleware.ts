@@ -82,12 +82,14 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     '/',
+    '/home',
     '/share/:path*',
     '/chat/:path*',
     '/widget',
     '/welcome',
     '/auth/login',
     '/node/:path*',
+    '/node',
     // '/client/:path*',
   ],
 };

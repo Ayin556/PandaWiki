@@ -1,14 +1,10 @@
 import { RecommendNode } from '@/assets/type';
 import { useStore } from '@/provider';
-import { V1RecommendNodeListItem } from '@/request/types';
+import { V1NodeItem } from '@/request/types';
 import { Stack } from '@mui/material';
 import NodeCard from './NodeCard';
 
-const NodeList = ({
-  recommendNodes,
-}: {
-  recommendNodes: V1RecommendNodeListItem[];
-}) => {
+const NodeList = ({ recommendNodes }: { recommendNodes: V1NodeItem[] }) => {
   const { mobile = false, kbDetail } = useStore();
 
   return (
@@ -29,7 +25,7 @@ const NodeList = ({
         }),
       }}
     >
-      {recommendNodes.map((item: V1RecommendNodeListItem) => (
+      {recommendNodes.map((item: V1NodeItem) => (
         <NodeCard key={item.id} node={item} />
       ))}
     </Stack>

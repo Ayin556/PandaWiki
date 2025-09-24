@@ -3,7 +3,7 @@ import { getShareV1NodeRecommendList } from '@/request/ShareNode';
 
 const HomePage = async () => {
   const data = await getShareV1NodeRecommendList({});
-  return <Home recommendNodes={data || []} />;
+  return <Home recommendNodes={data?.node_recommends || []} />;
 };
 
 export default HomePage;

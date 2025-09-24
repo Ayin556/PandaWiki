@@ -283,3 +283,19 @@ export const getShortcutKeyText = (shortcutKey: string[]) => {
     )
     .join('+');
 };
+
+export const deepSearchFirstNode = (
+  tree: ITreeItem[],
+): ITreeItem | undefined => {
+  for (const node of tree) {
+    if (node.type === 2) {
+      return node;
+    }
+    if (node.children) {
+      const result = deepSearchFirstNode(node.children);
+      if (result) {
+        return result;
+      }
+    }
+  }
+};

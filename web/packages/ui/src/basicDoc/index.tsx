@@ -1,0 +1,136 @@
+'use client';
+
+import React from 'react';
+import { styled, Grid } from '@mui/material';
+import {
+  StyledTopicBox,
+  StyledTopicTitle,
+  StyledTopicInner,
+  StyledTopicContainer,
+} from '../component/styledCommon';
+import IconWenjian from '@panda-wiki/icons/IconWenjian';
+import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
+
+interface BasicDocProps {
+  mobile?: boolean;
+  title?: string;
+  bgColor?: string;
+  titleColor?: string;
+  items?: {
+    id: string;
+    name: string;
+    summary: string;
+  }[];
+  baseUrl?: string;
+}
+
+const StyledBasicDocItem = styled('div')(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'flex-start',
+  justifyContent: 'space-between',
+  gap: theme.spacing(2),
+  padding: theme.spacing(3.5, 2.5),
+  backgroundColor: theme.palette.background.paper,
+  borderRadius: '8px',
+  boxShadow: '0px 5px 20px 0px rgba(33,34,45,0.05)',
+  border: `1px solid ${theme.palette.divider}`,
+  transition: 'all 0.2s ease',
+  ...theme.applyStyles('dark', {
+    backgroundColor: '#242425',
+  }),
+  '&:hover': {
+    transform: 'translateY(-5px)',
+    boxShadow: '0px 10px 20px 0px rgba(0,0,5px,0.15)',
+  },
+  width: '100%',
+}));
+
+const StyledBasicDocItemTitle = styled('h3')(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  gap: theme.spacing(1),
+  fontSize: 20,
+  fontWeight: 700,
+  color: theme.palette.text.primary,
+  width: '100%',
+}));
+const StyledBasicDocItemName = styled('span')(({ theme }) => ({
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+  minWidth: 0,
+}));
+
+const StyledBasicDocItemSummary = styled('div')(({ theme }) => ({
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  WebkitLineClamp: 4,
+  display: '-webkit-box',
+  WebkitBoxOrient: 'vertical',
+  flex: '1 0 auto',
+  fontSize: 14,
+  fontWeight: 400,
+  height: 80,
+  // @ts-ignore
+  color: theme.palette.text.tertiary,
+}));
+
+const StyledBasicDocItemMore = styled('a')(({ theme }) => ({
+  display: 'flex',
+  width: '100%',
+  alignItems: 'center',
+  justifyContent: 'flex-end',
+  gap: theme.spacing(1),
+  color: theme.palette.primary.main,
+  fontSize: 14,
+  fontWeight: 400,
+  cursor: 'pointer',
+}));
+
+const BasicDoc: React.FC<BasicDocProps> = React.memo(
+  ({ title, items = [], mobile, baseUrl = '', bgColor, titleColor }) => {
+    const size =
+      typeof mobile === 'boolean' ? (mobile ? 12 : 4) : { xs: 12, md: 4 };
+
+    return (
+      <StyledTopicContainer>
+        <StyledTopicInner sx={{ backgroundColor: bgColor }}>
+          <StyledTopicBox>
+            <StyledTopicTitle sx={{ color: titleColor }}>
+              {title}
+            </StyledTopicTitle>
+            <Grid container spacing={3} sx={{ width: '100%' }}>
+              {items.map((item, index) => (
+                <Grid size={size} key={index}>
+                  <StyledBasicDocItem>
+                    <StyledBasicDocItemTitle>
+                      <IconWenjian sx={{ fontSize: 16, flexShrink: 0 }} />
+                      <StyledBasicDocItemName>
+                        {item.name}
+                      </StyledBasicDocItemName>
+                    </StyledBasicDocItemTitle>
+                    <StyledBasicDocItemSummary>
+                      {item.summary}
+                    </StyledBasicDocItemSummary>
+                    <StyledBasicDocItemMore
+                      href={`${baseUrl}/node/${item.id}`}
+                      target='_blank'
+                    >
+                      查看更多
+                      <ArrowForwardRoundedIcon
+                        sx={{ fontSize: 16, flexShrink: 0 }}
+                      />
+                    </StyledBasicDocItemMore>
+                  </StyledBasicDocItem>
+                </Grid>
+              ))}
+            </Grid>
+          </StyledTopicBox>
+        </StyledTopicInner>
+      </StyledTopicContainer>
+    );
+  },
+);
+
+export default BasicDoc;

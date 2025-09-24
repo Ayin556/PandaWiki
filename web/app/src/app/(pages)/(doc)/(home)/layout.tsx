@@ -8,6 +8,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <Stack sx={{ height: '100vh', overflow: 'auto' }} id='scroll-container'>
       <Header isDocPage={true} isWelcomePage={true} />
+
       <Stack
         direction='row'
         justifyContent='center'
@@ -27,6 +28,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         <Catalog sx={{ mt: '42px' }} />
         {children}
       </Stack>
+
       <DocFab />
       <FooterProvider isDocPage={true} isWelcomePage={true} />
     </Stack>

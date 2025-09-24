@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Box, Paper, Fade, Stack, Fab, Zoom } from '@mui/material';
 import { styled, alpha } from '@mui/material/styles';
@@ -208,7 +208,7 @@ const ChatLoading = ({ onClick }: { onClick: () => void }) => {
   );
 };
 
-const H5Chat: React.FC = () => {
+const H5Chat = () => {
   const searchParams = useSearchParams();
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const sseClientRef = useRef<SSEClient<{
