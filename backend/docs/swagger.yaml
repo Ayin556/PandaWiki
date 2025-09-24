@@ -254,6 +254,15 @@ definitions:
       title:
         type: string
     type: object
+  domain.AnydocUploadResp:
+    properties:
+      code:
+        type: integer
+      data:
+        type: string
+      err:
+        type: string
+    type: object
   domain.AppDetailResp:
     properties:
       id:
@@ -1003,6 +1012,8 @@ definitions:
     properties:
       content:
         type: string
+      id:
+        type: string
       title:
         type: string
     type: object
@@ -1054,44 +1065,6 @@ definitions:
       icp:
         type: string
     type: object
-  domain.GetDocsReq:
-    properties:
-      integration:
-        type: string
-      kb_id:
-        type: string
-      pages:
-        items:
-          $ref: '#/definitions/domain.PageInfo'
-        type: array
-    required:
-    - kb_id
-    type: object
-  domain.GetDocxReq:
-    properties:
-      app_id:
-        type: string
-      app_secret:
-        type: string
-      kb_id:
-        type: string
-      sources:
-        items:
-          $ref: '#/definitions/domain.Source'
-        type: array
-      user_access_token:
-        type: string
-    required:
-    - kb_id
-    - sources
-    type: object
-  domain.GetDocxResp:
-    properties:
-      content:
-        type: string
-      title:
-        type: string
-    type: object
   domain.GetKBReleaseListResp:
     properties:
       data:
@@ -1130,22 +1103,6 @@ definitions:
         items:
           $ref: '#/definitions/domain.ProviderModelListItem'
         type: array
-    type: object
-  domain.GetSpaceListReq:
-    properties:
-      app_id:
-        type: string
-      app_secret:
-        type: string
-      user_access_token:
-        type: string
-    type: object
-  domain.GetSpaceListResp:
-    properties:
-      name:
-        type: string
-      space_id:
-        type: string
     type: object
   domain.HotBrowser:
     properties:
@@ -1437,13 +1394,6 @@ definitions:
     x-enum-varnames:
     - NodeTypeFolder
     - NodeTypeDocument
-  domain.NotnionGetListReq:
-    properties:
-      cation_title:
-        type: string
-      integration:
-        type: string
-    type: object
   domain.ObjectUploadResp:
     properties:
       key:
@@ -1641,24 +1591,6 @@ definitions:
       success:
         type: boolean
     type: object
-  domain.Page:
-    properties:
-      content:
-        type: string
-      id:
-        type: string
-      parent_id:
-        type: string
-      title:
-        type: string
-    type: object
-  domain.PageInfo:
-    properties:
-      id:
-        type: string
-      title:
-        type: string
-    type: object
   domain.PaginatedResult-array_domain_ConversationMessageListItem:
     properties:
       data:
@@ -1667,31 +1599,6 @@ definitions:
         type: array
       total:
         type: integer
-    type: object
-  domain.ParseURLItem:
-    properties:
-      desc:
-        type: string
-      published:
-        type: string
-      title:
-        type: string
-      url:
-        type: string
-    type: object
-  domain.ParseURLReq:
-    properties:
-      url:
-        type: string
-    required:
-    - url
-    type: object
-  domain.ParseURLResp:
-    properties:
-      items:
-        items:
-          $ref: '#/definitions/domain.ParseURLItem'
-        type: array
     type: object
   domain.ProviderModelListItem:
     properties:
@@ -1737,68 +1644,6 @@ definitions:
     x-enum-varnames:
     - Like
     - DisLike
-  domain.ScrapeReq:
-    properties:
-      kb_id:
-        type: string
-      url:
-        type: string
-    required:
-    - kb_id
-    type: object
-  domain.ScrapeResp:
-    properties:
-      content:
-        type: string
-      title:
-        type: string
-    type: object
-  domain.SearchDocxReq:
-    properties:
-      app_id:
-        type: string
-      app_secret:
-        type: string
-      user_access_token:
-        type: string
-    type: object
-  domain.SearchDocxResp:
-    properties:
-      name:
-        type: string
-      obj_token:
-        type: string
-      obj_type:
-        type: integer
-      url:
-        type: string
-    type: object
-  domain.SearchWikiReq:
-    properties:
-      app_id:
-        type: string
-      app_secret:
-        type: string
-      query:
-        type: string
-      space_id:
-        type: string
-      user_access_token:
-        type: string
-    type: object
-  domain.SearchWikiResp:
-    properties:
-      obj_token:
-        type: string
-      obj_type:
-        type: integer
-      space_id:
-        type: string
-      title:
-        type: string
-      url:
-        type: string
-    type: object
   domain.ShareCommentListItem:
     properties:
       content:
@@ -1871,15 +1716,6 @@ definitions:
       phone:
         type: string
       text:
-        type: string
-    type: object
-  domain.Source:
-    properties:
-      obj_token:
-        type: string
-      obj_type:
-        type: integer
-      url:
         type: string
     type: object
   domain.StatPageReq:
@@ -2053,18 +1889,11 @@ definitions:
       theme_mode:
         type: string
     type: object
-  domain.WikiJSResp:
+  domain.YuqueResp:
     properties:
       content:
         type: string
       id:
-        type: integer
-      title:
-        type: string
-    type: object
-  domain.YuqueResp:
-    properties:
-      content:
         type: string
       title:
         type: string
@@ -2326,6 +2155,105 @@ definitions:
     required:
     - user_id
     type: object
+  v1.FeishuGetDocReq:
+    properties:
+      doc_id:
+        type: string
+      file_type:
+        type: string
+      id:
+        type: string
+      space_id:
+        type: string
+    required:
+    - doc_id
+    - id
+    type: object
+  v1.FeishuGetDocResp:
+    properties:
+      content:
+        type: string
+    type: object
+  v1.FeishuListCloudDocReq:
+    properties:
+      app_id:
+        type: string
+      app_secret:
+        type: string
+      user_access_token:
+        type: string
+    required:
+    - app_id
+    - app_secret
+    - user_access_token
+    type: object
+  v1.FeishuListCloudDocResp:
+    properties:
+      doc_id:
+        type: string
+      file_type:
+        type: string
+      id:
+        type: string
+      space_id:
+        type: string
+      title:
+        type: string
+    required:
+    - doc_id
+    - id
+    type: object
+  v1.FeishuSearchWikiReq:
+    properties:
+      app_id:
+        type: string
+      app_secret:
+        type: string
+      space_id:
+        type: string
+      user_access_token:
+        type: string
+    required:
+    - app_id
+    - app_secret
+    - user_access_token
+    type: object
+  v1.FeishuSearchWikiResp:
+    properties:
+      doc_id:
+        type: string
+      file_type:
+        type: string
+      id:
+        type: string
+      space_id:
+        type: string
+      title:
+        type: string
+    required:
+    - doc_id
+    - id
+    type: object
+  v1.FeishuSpaceListReq:
+    properties:
+      app_id:
+        type: string
+      app_secret:
+        type: string
+      user_access_token:
+        type: string
+    required:
+    - app_id
+    - app_secret
+    - user_access_token
+    type: object
+  v1.FeishuSpaceListResp:
+    properties:
+      name:
+        type: string
+      space_id:
+        type: string
+    type: object
   v1.KBUserInviteReq:
     properties:
       kb_id:
@@ -2466,6 +2394,39 @@ definitions:
           $ref: '#/definitions/domain.NodeGroupDetail'
         type: array
     type: object
+  v1.NotionParseItem:
+    properties:
+      id:
+        type: string
+      title:
+        type: string
+    type: object
+  v1.NotionParseReq:
+    properties:
+      integration:
+        type: string
+    type: object
+  v1.NotionParseResp:
+    properties:
+      docs:
+        items:
+          $ref: '#/definitions/v1.NotionParseItem'
+        type: array
+      id:
+        type: string
+    type: object
+  v1.NotionScrapeReq:
+    properties:
+      doc_id:
+        type: string
+      id:
+        type: string
+    type: object
+  v1.NotionScrapeResp:
+    properties:
+      content:
+        type: string
+    type: object
   v1.RecommendNodeListItem:
     properties:
       emoji:
@@ -2497,6 +2458,95 @@ definitions:
     required:
     - id
     - new_password
+    type: object
+  v1.RssParseItem:
+    properties:
+      desc:
+        type: string
+      title:
+        type: string
+      url:
+        type: string
+    type: object
+  v1.RssParseReq:
+    properties:
+      url:
+        type: string
+    required:
+    - url
+    type: object
+  v1.RssParseResp:
+    properties:
+      id:
+        type: string
+      list:
+        items:
+          $ref: '#/definitions/v1.RssParseItem'
+        type: array
+    type: object
+  v1.RssScrapeReq:
+    properties:
+      id:
+        type: string
+      url:
+        type: string
+    required:
+    - url
+    type: object
+  v1.RssScrapeResp:
+    properties:
+      content:
+        type: string
+    type: object
+  v1.ScrapeReq:
+    properties:
+      url:
+        type: string
+    type: object
+  v1.ScrapeResp:
+    properties:
+      content:
+        type: string
+      title:
+        type: string
+    type: object
+  v1.SitemapParseItem:
+    properties:
+      title:
+        type: string
+      url:
+        type: string
+    type: object
+  v1.SitemapParseReq:
+    properties:
+      url:
+        type: string
+    required:
+    - url
+    type: object
+  v1.SitemapParseResp:
+    properties:
+      id:
+        type: string
+      list:
+        items:
+          $ref: '#/definitions/v1.SitemapParseItem'
+        type: array
+    type: object
+  v1.SitemapScrapeReq:
+    properties:
+      id:
+        type: string
+      url:
+        type: string
+    required:
+    - id
+    - url
+    type: object
+  v1.SitemapScrapeResp:
+    properties:
+      content:
+        type: string
     type: object
   v1.StatCountResp:
     properties:
@@ -2543,6 +2593,15 @@ definitions:
         items:
           $ref: '#/definitions/v1.UserListItemResp'
         type: array
+    type: object
+  v1.WikiJSResp:
+    properties:
+      content:
+        type: string
+      id:
+        type: string
+      title:
+        type: string
     type: object
 info:
   contact: {}
@@ -2993,7 +3052,7 @@ paths:
     post:
       consumes:
       - multipart/form-data
-      description: QpubConvert
+      description: EpubConvert
       parameters:
       - description: file
         in: formData
@@ -3017,7 +3076,7 @@ paths:
                 data:
                   $ref: '#/definitions/domain.EpubResp'
               type: object
-      summary: QpubConvert
+      summary: EpubConvert
       tags:
       - crawler
   /api/v1/crawler/feishu/get_doc:
@@ -3031,7 +3090,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/domain.GetDocxReq'
+          $ref: '#/definitions/v1.FeishuGetDocReq'
       produces:
       - application/json
       responses:
@@ -3043,10 +3102,10 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/domain.GetDocxResp'
+                    $ref: '#/definitions/v1.FeishuGetDocResp'
                   type: array
               type: object
-      summary: FeishuGetDocx
+      summary: FeishuDoc
       tags:
       - crawler
   /api/v1/crawler/feishu/list_doc:
@@ -3060,7 +3119,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/domain.SearchDocxReq'
+          $ref: '#/definitions/v1.FeishuListCloudDocReq'
       produces:
       - application/json
       responses:
@@ -3072,10 +3131,10 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/domain.SearchDocxResp'
+                    $ref: '#/definitions/v1.FeishuListCloudDocResp'
                   type: array
               type: object
-      summary: FeishuListDoc
+      summary: FeishuListCloudDoc
       tags:
       - crawler
   /api/v1/crawler/feishu/list_spaces:
@@ -3089,7 +3148,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/domain.GetSpaceListReq'
+          $ref: '#/definitions/v1.FeishuSpaceListReq'
       produces:
       - application/json
       responses:
@@ -3101,7 +3160,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/domain.GetSpaceListResp'
+                    $ref: '#/definitions/v1.FeishuSpaceListResp'
                   type: array
               type: object
       summary: FeishuListSpaces
@@ -3118,7 +3177,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/domain.SearchWikiReq'
+          $ref: '#/definitions/v1.FeishuSearchWikiReq'
       produces:
       - application/json
       responses:
@@ -3130,24 +3189,51 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/domain.SearchWikiResp'
+                    $ref: '#/definitions/v1.FeishuSearchWikiResp'
                   type: array
               type: object
-      summary: FeishuSearchWiki
+      summary: FeishuWikiSearch
       tags:
       - crawler
-  /api/v1/crawler/notion/get_doc:
+  /api/v1/crawler/notion/parse:
     post:
       consumes:
       - application/json
-      description: GetDocs
+      description: NotionParse
+      parameters:
+      - description: Scrape
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/v1.NotionParseReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.PWResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/v1.NotionParseResp'
+              type: object
+      summary: NotionParse
+      tags:
+      - crawler
+  /api/v1/crawler/notion/scrape:
+    post:
+      consumes:
+      - application/json
+      description: NotionScrape
       parameters:
       - description: Get Docs
         in: body
         name: body
         required: true
         schema:
-          $ref: '#/definitions/domain.GetDocsReq'
+          $ref: '#/definitions/v1.NotionScrapeReq'
       produces:
       - application/json
       responses:
@@ -3159,42 +3245,13 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/domain.Page'
+                    $ref: '#/definitions/v1.NotionScrapeResp'
                   type: array
               type: object
-      summary: GetDocs
+      summary: NotionScrape
       tags:
       - crawler
-  /api/v1/crawler/notion/get_list:
-    post:
-      consumes:
-      - application/json
-      description: NotionGetList
-      parameters:
-      - description: Notion Get List
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/domain.NotnionGetListReq'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/domain.PWResponse'
-            - properties:
-                data:
-                  items:
-                    $ref: '#/definitions/domain.PageInfo'
-                  type: array
-              type: object
-      summary: NotionGetList
-      tags:
-      - crawler
-  /api/v1/crawler/parse_rss:
+  /api/v1/crawler/rss/parse:
     post:
       consumes:
       - application/json
@@ -3205,7 +3262,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/domain.ParseURLReq'
+          $ref: '#/definitions/v1.RssParseReq'
       produces:
       - application/json
       responses:
@@ -3216,23 +3273,23 @@ paths:
             - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/domain.ParseURLResp'
+                  $ref: '#/definitions/v1.RssParseResp'
               type: object
       summary: Parse RSS
       tags:
       - crawler
-  /api/v1/crawler/parse_sitemap:
+  /api/v1/crawler/rss/scrape:
     post:
       consumes:
       - application/json
-      description: Parse Sitemap
+      description: RSSScrape
       parameters:
       - description: Parse URL
         in: body
         name: body
         required: true
         schema:
-          $ref: '#/definitions/domain.ParseURLReq'
+          $ref: '#/definitions/v1.RssScrapeReq'
       produces:
       - application/json
       responses:
@@ -3243,9 +3300,9 @@ paths:
             - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/domain.ParseURLResp'
+                  $ref: '#/definitions/v1.RssScrapeResp'
               type: object
-      summary: Parse Sitemap
+      summary: RSSScrape
       tags:
       - crawler
   /api/v1/crawler/scrape:
@@ -3259,7 +3316,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/domain.ScrapeReq'
+          $ref: '#/definitions/v1.ScrapeReq'
       produces:
       - application/json
       responses:
@@ -3270,9 +3327,63 @@ paths:
             - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/domain.ScrapeResp'
+                  $ref: '#/definitions/v1.ScrapeResp'
               type: object
       summary: Scrape
+      tags:
+      - crawler
+  /api/v1/crawler/sitemap/parse:
+    post:
+      consumes:
+      - application/json
+      description: Parse Sitemap
+      parameters:
+      - description: Parse URL
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/v1.SitemapParseReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.PWResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/v1.SitemapParseResp'
+              type: object
+      summary: Parse Sitemap
+      tags:
+      - crawler
+  /api/v1/crawler/sitemap/scrape:
+    post:
+      consumes:
+      - application/json
+      description: SitemapScrape
+      parameters:
+      - description: Parse URL
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/v1.SitemapScrapeReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.PWResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/v1.SitemapScrapeResp'
+              type: object
+      summary: SitemapScrape
       tags:
       - crawler
   /api/v1/crawler/siyuan/analysis_export_file:
@@ -3335,7 +3446,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/domain.WikiJSResp'
+                    $ref: '#/definitions/v1.WikiJSResp'
                   type: array
               type: object
       summary: AnalysisWikijsExportFile
@@ -3440,6 +3551,30 @@ paths:
           schema:
             $ref: '#/definitions/domain.ObjectUploadResp'
       summary: Upload File
+      tags:
+      - file
+  /api/v1/file/upload/anydoc:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload Anydoc File
+      parameters:
+      - description: File
+        in: formData
+        name: file
+        required: true
+        type: file
+      - description: File Path
+        in: formData
+        name: path
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.AnydocUploadResp'
+      summary: Upload Anydoc File
       tags:
       - file
   /api/v1/knowledge_base:

@@ -2,31 +2,25 @@ package v1
 
 import (
 	"fmt"
-	"io"
 
 	"github.com/labstack/echo/v4"
 
+	v1 "github.com/chaitin/panda-wiki/api/crawler/v1"
 	"github.com/chaitin/panda-wiki/config"
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/handler"
 	"github.com/chaitin/panda-wiki/log"
 	"github.com/chaitin/panda-wiki/middleware"
 	"github.com/chaitin/panda-wiki/usecase"
-	"github.com/chaitin/panda-wiki/utils"
 )
 
 type CrawlerHandler struct {
 	*handler.BaseHandler
-	logger            *log.Logger
-	usecase           *usecase.CrawlerUsecase
-	notnionUsecase    *usecase.NotionUseCase
-	epubUsecase       *usecase.EpubUsecase
-	config            *config.Config
-	wikijsUsecase     *usecase.WikiJSUsecase
-	feishuUseCase     *usecase.FeishuUseCase
-	confluenceusecase *usecase.ConfluenceUsecase
-	yuqueusecase      *usecase.YuqueUsecase
-	siyuanusecase     *usecase.SiYuanUsecase
+	logger        *log.Logger
+	usecase       *usecase.CrawlerUsecase
+	config        *config.Config
+	siyuanUsecase *usecase.SiYuanUsecase
+	fileUsecase   *usecase.FileUsecase
 }
 
 func NewCrawlerHandler(echo *echo.Echo,
@@ -35,174 +29,97 @@ func NewCrawlerHandler(echo *echo.Echo,
 	logger *log.Logger,
 	config *config.Config,
 	usecase *usecase.CrawlerUsecase,
-	notnionUsecase *usecase.NotionUseCase,
-	epubUsecase *usecase.EpubUsecase,
-	wikijsUsecase *usecase.WikiJSUsecase,
-	feishuUseCase *usecase.FeishuUseCase,
-	confluenceusecase *usecase.ConfluenceUsecase,
-	yuqueusecase *usecase.YuqueUsecase,
 	siyuanusecase *usecase.SiYuanUsecase,
+	fileUsecase *usecase.FileUsecase,
 ) *CrawlerHandler {
 	h := &CrawlerHandler{
-		BaseHandler:       baseHandler,
-		logger:            logger.WithModule("handler.v1.crawler"),
-		config:            config,
-		usecase:           usecase,
-		notnionUsecase:    notnionUsecase,
-		epubUsecase:       epubUsecase,
-		wikijsUsecase:     wikijsUsecase,
-		feishuUseCase:     feishuUseCase,
-		confluenceusecase: confluenceusecase,
-		yuqueusecase:      yuqueusecase,
-		siyuanusecase:     siyuanusecase,
+		BaseHandler:   baseHandler,
+		logger:        logger.WithModule("handler.v1.crawler"),
+		config:        config,
+		usecase:       usecase,
+		siyuanUsecase: siyuanusecase,
+		fileUsecase:   fileUsecase,
 	}
 	group := echo.Group("/api/v1/crawler", auth.Authorize)
-	group.POST("/parse_rss", h.ParseRSS)
-	group.POST("/parse_sitemap", h.ParseSitemap)
 	group.POST("/scrape", h.Scrape)
-	// notion app
-	group.POST("/notion/get_list", h.NotionGetList)
-	group.POST("/notion/get_doc", h.GetDocs)
 	//  epub
-	group.POST("/epub/convert", h.QpubConvert)
+	group.POST("/epub/convert", h.EpubConvert)
 	// wikijs
 	group.POST("/wikijs/analysis_export_file", h.AnalysisWikijsExportFile)
 	// feishu
 	group.POST("/feishu/list_spaces", h.FeishuListSpaces)
-	group.POST("/feishu/list_doc", h.FeishuListDoc)
-	group.POST("/feishu/search_wiki", h.FeishuSearchWiki)
-	group.POST("/feishu/get_doc", h.FeishuGetDoc)
+	group.POST("/feishu/list_doc", h.FeishuListCloudDoc)
+	group.POST("/feishu/search_wiki", h.FeishuWikiSearch)
+	group.POST("/feishu/get_doc", h.FeishuDoc)
 	// confluence
 	group.POST("/confluence/analysis_export_file", h.AnalysisConfluenceExportFile)
 	// yuque
 	group.POST("/yuque/analysis_export_file", h.AnalysisYuqueExportFile)
 	// siyuan
 	group.POST("/siyuan/analysis_export_file", h.AnalysisSiyuanExportFile)
+	// rss
+	group.POST("/rss/parse", h.RSSParse)
+	group.POST("/rss/scrape", h.RSSScrape)
+	// sitemap
+	group.POST("/sitemap/parse", h.SitemapParse)
+	group.POST("/sitemap/scrape", h.SitemapScrape)
+	// notion
+	group.POST("/notion/parse", h.NotionParse)
+	group.POST("/notion/scrape", h.NotionScrape)
+
 	return h
 }
 
-// NotionGetList
+// NotionParse
 //
-//	@Summary		NotionGetList
-//	@Description	NotionGetList
+//	@Summary		NotionParse
+//	@Description	NotionParse
 //	@Tags			crawler
 //	@Accept			json
 //	@Produce		json
-//	@Param			body	body		domain.NotnionGetListReq	true	"Notion Get List"
-//	@Success		200		{object}	domain.PWResponse{data=[]domain.PageInfo}
-//	@Router			/api/v1/crawler/notion/get_list [post]
-func (h *CrawlerHandler) NotionGetList(c echo.Context) error {
-	var req domain.NotnionGetListReq
+//	@Param			body	body		v1.NotionParseReq	true	"Scrape"
+//	@Success		200		{object}	domain.PWResponse{data=v1.NotionParseResp}
+//	@Router			/api/v1/crawler/notion/parse [post]
+func (h *CrawlerHandler) NotionParse(c echo.Context) error {
+	var req v1.NotionParseReq
 	if err := c.Bind(&req); err != nil {
 		return h.NewResponseWithError(c, "request body is invalid", err)
 	}
 	if err := c.Validate(req); err != nil {
 		return h.NewResponseWithError(c, "validate request body failed", err)
 	}
-	resp, err := h.notnionUsecase.GetList(c.Request().Context(), req.Intregration, req.CationTitle)
-	// notnion := usecase.NewNotionClient(req.Intregration, h.logger)
-	// resp, err := notnion.GetList(c.Request().Context(), req.CationTitle)
+
+	resp, err := h.usecase.NotionGetDocList(c.Request().Context(), req.Integration)
 	if err != nil {
 		return h.NewResponseWithError(c, "parse notion failed", err)
 	}
 	return h.NewResponseWithData(c, resp)
 }
 
-// GetDocs
+// NotionScrape
 //
-//	@Summary		GetDocs
-//	@Description	GetDocs
+//	@Summary		NotionScrape
+//	@Description	NotionScrape
 //	@Tags			crawler
 //	@Accept			json
 //	@Produce		json
-//	@Param			body	body		domain.GetDocsReq	true	"Get Docs"
-//	@Success		200		{object}	domain.PWResponse{data=[]domain.Page}
-//	@Router			/api/v1/crawler/notion/get_doc [post]
-func (h *CrawlerHandler) GetDocs(c echo.Context) error {
-	var req domain.GetDocsReq
+//	@Param			body	body		v1.NotionScrapeReq	true	"Get Docs"
+//	@Success		200		{object}	domain.PWResponse{data=[]v1.NotionScrapeResp}
+//	@Router			/api/v1/crawler/notion/scrape [post]
+func (h *CrawlerHandler) NotionScrape(c echo.Context) error {
+	var req v1.NotionScrapeReq
 	if err := c.Bind(&req); err != nil {
 		return h.NewResponseWithError(c, "request body failed", err)
 	}
 	if err := c.Validate(req); err != nil {
 		return h.NewResponseWithError(c, "validate request body failed", err)
 	}
-	resp, err := h.notnionUsecase.GetDocs(c.Request().Context(), req)
-	// resp, err := usecase.NewNotionClient(req.Integration, h.logger).GetPagesContent(req.PageIDs)
+
+	resp, err := h.usecase.NotionGetDoc(c.Request().Context(), req)
 	if err != nil {
 		return h.NewResponseWithError(c, "get Docs failed", err)
 	}
 	return h.NewResponseWithData(c, resp)
-}
-
-// Parse RSS
-//
-//	@Summary		Parse RSS
-//	@Description	Parse RSS
-//	@Tags			crawler
-//	@Accept			json
-//	@Produce		json
-//	@Param			body	body		domain.ParseURLReq	true	"Parse URL"
-//	@Success		200		{object}	domain.PWResponse{data=domain.ParseURLResp}
-//	@Router			/api/v1/crawler/parse_rss [post]
-func (h *CrawlerHandler) ParseRSS(c echo.Context) error {
-	var req domain.ParseURLReq
-	if err := c.Bind(&req); err != nil {
-		return h.NewResponseWithError(c, "request body is invalid", err)
-	}
-	if err := c.Validate(req); err != nil {
-		return h.NewResponseWithError(c, "validate request body failed", err)
-	}
-
-	feed, err := utils.ParseFeed(req.URL)
-	if err != nil {
-		return h.NewResponseWithError(c, "parse rss url failed", err)
-	}
-	items := make([]domain.ParseURLItem, 0)
-	for _, item := range feed.Items {
-		items = append(items, domain.ParseURLItem{
-			URL:       item.Link,
-			Title:     item.Title,
-			Desc:      item.Description,
-			Published: item.Published,
-		})
-	}
-	return h.NewResponseWithData(c, domain.ParseURLResp{
-		Items: items,
-	})
-}
-
-// Parse Sitemap
-//
-//	@Summary		Parse Sitemap
-//	@Description	Parse Sitemap
-//	@Tags			crawler
-//	@Accept			json
-//	@Produce		json
-//	@Param			body	body		domain.ParseURLReq	true	"Parse URL"
-//	@Success		200		{object}	domain.PWResponse{data=domain.ParseURLResp}
-//	@Router			/api/v1/crawler/parse_sitemap [post]
-func (h *CrawlerHandler) ParseSitemap(c echo.Context) error {
-	var req domain.ParseURLReq
-	if err := c.Bind(&req); err != nil {
-		return h.NewResponseWithError(c, "request body is invalid", err)
-	}
-	if err := c.Validate(req); err != nil {
-		return h.NewResponseWithError(c, "validate request body failed", err)
-	}
-
-	links, err := utils.ParseSitemap(req.URL)
-	if err != nil {
-		return h.NewResponseWithError(c, "parse sitemap url failed", err)
-	}
-	items := make([]domain.ParseURLItem, 0)
-	for _, link := range links {
-		items = append(items, domain.ParseURLItem{
-			URL: link,
-		})
-	}
-	return h.NewResponseWithData(c, domain.ParseURLResp{
-		Items: items,
-	})
 }
 
 // Scrape
@@ -212,28 +129,28 @@ func (h *CrawlerHandler) ParseSitemap(c echo.Context) error {
 //	@Tags			crawler
 //	@Accept			json
 //	@Produce		json
-//	@Param			body	body		domain.ScrapeReq	true	"Scrape"
-//	@Success		200		{object}	domain.PWResponse{data=domain.ScrapeResp}
+//	@Param			body	body		v1.ScrapeReq	true	"Scrape"
+//	@Success		200		{object}	domain.PWResponse{data=v1.ScrapeResp}
 //	@Router			/api/v1/crawler/scrape [post]
 func (h *CrawlerHandler) Scrape(c echo.Context) error {
-	var req domain.ScrapeReq
+	var req v1.ScrapeReq
 	if err := c.Bind(&req); err != nil {
 		return h.NewResponseWithError(c, "request body is invalid", err)
 	}
 	if err := c.Validate(req); err != nil {
 		return h.NewResponseWithError(c, "validate request body failed", err)
 	}
-	resp, err := h.usecase.ScrapeURL(c.Request().Context(), req.URL, req.KbID)
+	resp, err := h.usecase.ScrapeURL(c.Request().Context(), req.URL)
 	if err != nil {
 		return h.NewResponseWithError(c, "scrape url failed", err)
 	}
 	return h.NewResponseWithData(c, resp)
 }
 
-// QpubConvert
+// EpubConvert
 //
-//	@Summary		QpubConvert
-//	@Description	QpubConvert
+//	@Summary		EpubConvert
+//	@Description	EpubConvert
 //	@Tags			crawler
 //	@Accept			multipart/form-data
 //	@Produce		json
@@ -241,23 +158,31 @@ func (h *CrawlerHandler) Scrape(c echo.Context) error {
 //	@Param			kb_id	formData	string	true	"kb_id"
 //	@Success		200		{object}	domain.PWResponse{data=domain.EpubResp}
 //	@Router			/api/v1/crawler/epub/convert [post]
-func (h *CrawlerHandler) QpubConvert(c echo.Context) error {
-	// upload a file
+func (h *CrawlerHandler) EpubConvert(c echo.Context) error {
+	ctx := c.Request().Context()
+
+	file, err := c.FormFile("file")
+	if err != nil {
+		return h.NewResponseWithError(c, "get file failed", err)
+	}
 	var req domain.EpubReq
 	req.KbID = c.FormValue("kb_id")
 	if err := c.Validate(req); err != nil {
 		return h.NewResponseWithError(c, "validate failed", err)
 	}
+	fileUrl, err := h.fileUsecase.UploadFileGetUrl(ctx, req.KbID, file)
+	if err != nil {
+		return h.NewResponseWithError(c, "upload failed", err)
+	}
 
-	f, err := c.FormFile("file")
+	h.logger.Info("EpubConvert UploadFile successfully", "fileUrl", fileUrl)
+
+	resp, err := h.usecase.EpubHandle(c.Request().Context(), fileUrl, file.Filename)
 	if err != nil {
-		return h.NewResponseWithError(c, "get file failed", err)
+		return h.NewResponseWithError(c, "analysis export file failed", err)
 	}
-	resq, err := h.epubUsecase.Convert(c.Request().Context(), req.KbID, f)
-	if err != nil {
-		return h.NewResponseWithError(c, "convert failed", err)
-	}
-	return h.NewResponseWithData(c, resq)
+
+	return h.NewResponseWithData(c, resp)
 }
 
 // AnalysisWikijsExportFile
@@ -269,23 +194,33 @@ func (h *CrawlerHandler) QpubConvert(c echo.Context) error {
 //	@Produce		json
 //	@Param			file	formData	file	true	"file"
 //	@Param			kb_id	formData	string	true	"kb_id"
-//	@Success		200		{object}	domain.PWResponse{data=[]domain.WikiJSResp}
+//	@Success		200		{object}	domain.PWResponse{data=[]v1.WikiJSResp}
 //	@Router			/api/v1/crawler/wikijs/analysis_export_file [post]
 func (h *CrawlerHandler) AnalysisWikijsExportFile(c echo.Context) error {
-	f, err := c.FormFile("file")
+	ctx := c.Request().Context()
+
+	file, err := c.FormFile("file")
 	if err != nil {
 		return h.NewResponseWithError(c, "get file failed", err)
 	}
-	var req domain.WikiJSReq
-	req.KBID = c.FormValue("kb_id")
+	var req v1.WikiJSReq
+	req.KbID = c.FormValue("kb_id")
 	if err := c.Validate(req); err != nil {
 		return h.NewResponseWithError(c, "validate failed", err)
 	}
-	res, err := h.wikijsUsecase.AnalysisExportFile(c.Request().Context(), f, req.KBID)
+	fileUrl, err := h.fileUsecase.UploadFileGetUrl(ctx, req.KbID, file)
+	if err != nil {
+		return h.NewResponseWithError(c, "upload failed", err)
+	}
+
+	h.logger.Info("AnalysisConfluenceExportFile UploadFile successfully", "fileUrl", fileUrl)
+
+	resp, err := h.usecase.WikijsHandle(c.Request().Context(), fileUrl, file.Filename)
 	if err != nil {
 		return h.NewResponseWithError(c, "analysis export file failed", err)
 	}
-	return h.NewResponseWithData(c, res)
+
+	return h.NewResponseWithData(c, resp)
 }
 
 // FeishuListSpaces
@@ -295,90 +230,90 @@ func (h *CrawlerHandler) AnalysisWikijsExportFile(c echo.Context) error {
 //	@Tags			crawler
 //	@Accept			json
 //	@Produce		json
-//	@Param			body	body		domain.GetSpaceListReq	true	"List Spaces"
-//	@Success		200		{object}	domain.PWResponse{data=[]domain.GetSpaceListResp}
+//	@Param			body	body		v1.FeishuSpaceListReq	true	"List Spaces"
+//	@Success		200		{object}	domain.PWResponse{data=[]v1.FeishuSpaceListResp}
 //	@Router			/api/v1/crawler/feishu/list_spaces [post]
 func (h *CrawlerHandler) FeishuListSpaces(c echo.Context) error {
-	var req *domain.GetSpaceListReq
+	var req *v1.FeishuSpaceListReq
 	if err := c.Bind(&req); err != nil {
 		return h.NewResponseWithError(c, "request body is invalid", err)
 	}
 	if err := c.Validate(req); err != nil {
 		return h.NewResponseWithError(c, "validate request body failed", err)
 	}
-	resp, err := h.feishuUseCase.GetSpacelist(c.Request().Context(), req)
+	resp, err := h.usecase.FeishuListSpace(c.Request().Context(), req)
 	if err != nil {
 		return h.NewResponseWithError(c, fmt.Sprintf("list spaces failed %s", err.Error()), err)
 	}
 	return h.NewResponseWithData(c, resp)
 }
 
-// FeishuListDoc godoc
+// FeishuListCloudDoc
 //
-//	@Summary		FeishuListDoc
+//	@Summary		FeishuListCloudDoc
 //	@Description	List Docx in Feishu Spaces
 //	@Tags			crawler
 //	@Accept			json
 //	@Produce		json
-//	@Param			body	body		domain.SearchDocxReq	true	"Search Docx"
-//	@Success		200		{object}	domain.PWResponse{data=[]domain.SearchDocxResp}
+//	@Param			body	body		v1.FeishuListCloudDocReq	true	"Search Docx"
+//	@Success		200		{object}	domain.PWResponse{data=[]v1.FeishuListCloudDocResp}
 //	@Router			/api/v1/crawler/feishu/list_doc [post]
-func (h *CrawlerHandler) FeishuListDoc(c echo.Context) error {
-	var req *domain.SearchDocxReq
+func (h *CrawlerHandler) FeishuListCloudDoc(c echo.Context) error {
+	var req *v1.FeishuListCloudDocReq
 	if err := c.Bind(&req); err != nil {
 		return h.NewResponseWithError(c, "request body is invalid", err)
 	}
 	if err := c.Validate(req); err != nil {
 		return h.NewResponseWithError(c, "validate request body failed", err)
 	}
-	resp, err := h.feishuUseCase.ListDocx(c.Request().Context(), req)
+	resp, err := h.usecase.FeishuListCloudDoc(c.Request().Context(), req)
 	if err != nil {
-		return h.NewResponseWithError(c, fmt.Sprintf("search docx failed %s", err.Error()), err)
+		return h.NewResponseWithError(c, fmt.Sprintf("list spaces failed %s", err.Error()), err)
 	}
 	return h.NewResponseWithData(c, resp)
 }
 
-// FeishuSearchWiki
+// FeishuWikiSearch
 //
-//	@Summary		FeishuSearchWiki
+//	@Summary		FeishuWikiSearch
 //	@Description	Search Wiki in Feishu Spaces
 //	@Tags			crawler
 //	@Accept			json
 //	@Produce		json
-//	@Param			body	body		domain.SearchWikiReq	true	"Search Wiki"
-//	@Success		200		{object}	domain.PWResponse{data=[]domain.SearchWikiResp}
+//	@Param			body	body		v1.FeishuSearchWikiReq	true	"Search Wiki"
+//	@Success		200		{object}	domain.PWResponse{data=[]v1.FeishuSearchWikiResp}
 //	@Router			/api/v1/crawler/feishu/search_wiki [post]
-func (h *CrawlerHandler) FeishuSearchWiki(c echo.Context) error {
-	var req *domain.SearchWikiReq
+func (h *CrawlerHandler) FeishuWikiSearch(c echo.Context) error {
+	var req *v1.FeishuSearchWikiReq
 	if err := c.Bind(&req); err != nil {
 		return h.NewResponseWithError(c, "request body is invalid", err)
 	}
-	resp, err := h.feishuUseCase.SearchWiki(c.Request().Context(), req)
+	resp, err := h.usecase.FeishuSearchWiki(c.Request().Context(), req)
 	if err != nil {
 		return h.NewResponseWithError(c, fmt.Sprintf("search wiki failed %s", err.Error()), err)
 	}
 	return h.NewResponseWithData(c, resp)
 }
 
-// FeishuGetDocx
+// FeishuDoc
 //
-//	@Summary		FeishuGetDocx
+//	@Summary		FeishuDoc
 //	@Description	Get Docx in Feishu Spaces
 //	@Tags			crawler
 //	@Accept			json
 //	@Produce		json
-//	@Param			body	body		domain.GetDocxReq	true	"Get Docx"
-//	@Success		200		{object}	domain.PWResponse{data=[]domain.GetDocxResp}
+//	@Param			body	body		v1.FeishuGetDocReq	true	"Get Docx"
+//	@Success		200		{object}	domain.PWResponse{data=[]v1.FeishuGetDocResp}
 //	@Router			/api/v1/crawler/feishu/get_doc [post]
-func (h *CrawlerHandler) FeishuGetDoc(c echo.Context) error {
-	var req *domain.GetDocxReq
+func (h *CrawlerHandler) FeishuDoc(c echo.Context) error {
+	var req *v1.FeishuGetDocReq
 	if err := c.Bind(&req); err != nil {
 		return h.NewResponseWithError(c, "request body is invalid", err)
 	}
 	if err := c.Validate(req); err != nil {
 		return h.NewResponseWithError(c, "validate request body failed", err)
 	}
-	resp, err := h.feishuUseCase.GetDoc(c.Request().Context(), req)
+	resp, err := h.usecase.FeishuGetDoc(c.Request().Context(), req)
 	if err != nil {
 		return h.NewResponseWithError(c, fmt.Sprintf("get docx failed %s", err.Error()), err)
 	}
@@ -397,28 +332,31 @@ func (h *CrawlerHandler) FeishuGetDoc(c echo.Context) error {
 //	@Success		200		{object}	domain.PWResponse{data=[]domain.AnalysisConfluenceResp}
 //	@Router			/api/v1/crawler/confluence/analysis_export_file [post]
 func (h *CrawlerHandler) AnalysisConfluenceExportFile(c echo.Context) error {
-	f, err := c.FormFile("file")
+	ctx := c.Request().Context()
+
+	file, err := c.FormFile("file")
 	if err != nil {
 		return h.NewResponseWithError(c, "get file failed", err)
 	}
+
 	var req domain.AnalysisConfluenceReq
 	req.KbID = c.FormValue("kb_id")
 	if err := c.Validate(req); err != nil {
 		return h.NewResponseWithError(c, "validate failed", err)
 	}
-	file, err := f.Open()
+
+	fileUrl, err := h.fileUsecase.UploadFileGetUrl(ctx, req.KbID, file)
 	if err != nil {
-		return h.NewResponseWithError(c, "open file failed", err)
+		return h.NewResponseWithError(c, "upload failed", err)
 	}
-	defer file.Close()
-	data, err := io.ReadAll(file)
-	if err != nil {
-		return h.NewResponseWithError(c, "read file failed", err)
-	}
-	resp, err := h.confluenceusecase.Analysis(c.Request().Context(), data, req.KbID)
+
+	h.logger.Info("AnalysisConfluenceExportFile UploadFile successfully", "fileUrl", fileUrl)
+
+	resp, err := h.usecase.ConfluenceHandle(c.Request().Context(), fileUrl, file.Filename)
 	if err != nil {
 		return h.NewResponseWithError(c, "analysis confluence export file failed", err)
 	}
+
 	return h.NewResponseWithData(c, resp)
 }
 
@@ -434,7 +372,9 @@ func (h *CrawlerHandler) AnalysisConfluenceExportFile(c echo.Context) error {
 //	@Success		200		{object}	domain.PWResponse{data=[]domain.YuqueResp}
 //	@Router			/api/v1/crawler/yuque/analysis_export_file [post]
 func (h *CrawlerHandler) AnalysisYuqueExportFile(c echo.Context) error {
-	f, err := c.FormFile("file")
+	ctx := c.Request().Context()
+
+	file, err := c.FormFile("file")
 	if err != nil {
 		return h.NewResponseWithError(c, "get file failed", err)
 	}
@@ -443,10 +383,18 @@ func (h *CrawlerHandler) AnalysisYuqueExportFile(c echo.Context) error {
 	if err := c.Validate(req); err != nil {
 		return h.NewResponseWithError(c, "validate failed", err)
 	}
-	resp, err := h.yuqueusecase.AnalysisExportFile(c.Request().Context(), f, req.KbID)
+	fileUrl, err := h.fileUsecase.UploadFileGetUrl(ctx, req.KbID, file)
+	if err != nil {
+		return h.NewResponseWithError(c, "upload failed", err)
+	}
+
+	h.logger.Info("AnalysisYuqueExportFile UploadFile successfully", "fileUrl", fileUrl)
+
+	resp, err := h.usecase.YuqueHandle(c.Request().Context(), fileUrl, file.Filename)
 	if err != nil {
 		return h.NewResponseWithError(c, "analysis yuque export file failed", err)
 	}
+
 	return h.NewResponseWithData(c, resp)
 }
 
@@ -471,9 +419,113 @@ func (h *CrawlerHandler) AnalysisSiyuanExportFile(c echo.Context) error {
 	if err := c.Validate(req); err != nil {
 		return h.NewResponseWithError(c, "validate failed", err)
 	}
-	resp, err := h.siyuanusecase.AnalysisExportFile(c.Request().Context(), f, req.KBID)
+	resp, err := h.siyuanUsecase.AnalysisExportFile(c.Request().Context(), f, req.KBID)
 	if err != nil {
 		return h.NewResponseWithError(c, fmt.Sprintf("analysis file failed%s", err.Error()), err)
+	}
+	return h.NewResponseWithData(c, resp)
+}
+
+// RSSParse
+//
+//	@Tags			crawler
+//	@Summary		Parse RSS
+//	@Description	Parse RSS
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body		v1.RssParseReq	true	"Parse URL"
+//	@Success		200		{object}	domain.PWResponse{data=v1.RssParseResp}
+//	@Router			/api/v1/crawler/rss/parse [post]
+func (h *CrawlerHandler) RSSParse(c echo.Context) error {
+	var req v1.RssParseReq
+	if err := c.Bind(&req); err != nil {
+		return h.NewResponseWithError(c, "request body is invalid", err)
+	}
+	if err := c.Validate(req); err != nil {
+		return h.NewResponseWithError(c, "validate request body failed", err)
+	}
+
+	resp, err := h.usecase.GetRSSParse(c.Request().Context(), &req)
+	if err != nil {
+		return h.NewResponseWithError(c, "get Docs failed", err)
+	}
+	return h.NewResponseWithData(c, resp)
+}
+
+// RSSScrape
+//
+//	@Tags			crawler
+//	@Summary		RSSScrape
+//	@Description	RSSScrape
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body		v1.RssScrapeReq	true	"Parse URL"
+//	@Success		200		{object}	domain.PWResponse{data=v1.RssScrapeResp}
+//	@Router			/api/v1/crawler/rss/scrape [post]
+func (h *CrawlerHandler) RSSScrape(c echo.Context) error {
+	var req v1.RssScrapeReq
+	if err := c.Bind(&req); err != nil {
+		return h.NewResponseWithError(c, "request body is invalid", err)
+	}
+	if err := c.Validate(req); err != nil {
+		return h.NewResponseWithError(c, "validate request body failed", err)
+	}
+
+	resp, err := h.usecase.GetRssDoc(c.Request().Context(), &req)
+	if err != nil {
+		return h.NewResponseWithError(c, "get Docs failed", err)
+	}
+	return h.NewResponseWithData(c, resp)
+}
+
+// SitemapParse
+//
+//	@Tags			crawler
+//	@Summary		Parse Sitemap
+//	@Description	Parse Sitemap
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body		v1.SitemapParseReq	true	"Parse URL"
+//	@Success		200		{object}	domain.PWResponse{data=SitemapParseResp}
+//	@Router			/api/v1/crawler/sitemap/parse [post]
+func (h *CrawlerHandler) SitemapParse(c echo.Context) error {
+	var req v1.SitemapParseReq
+	if err := c.Bind(&req); err != nil {
+		return h.NewResponseWithError(c, "request body is invalid", err)
+	}
+	if err := c.Validate(req); err != nil {
+		return h.NewResponseWithError(c, "validate request body failed", err)
+	}
+
+	resp, err := h.usecase.SitemapGetUrls(c.Request().Context(), req.URL)
+	if err != nil {
+		return h.NewResponseWithError(c, "parse sitemap url failed", err)
+	}
+	return h.NewResponseWithData(c, resp)
+}
+
+// SitemapScrape
+//
+//	@Tags			crawler
+//	@Summary		SitemapScrape
+//	@Description	SitemapScrape
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body		v1.SitemapScrapeReq	true	"Parse URL"
+//	@Success		200		{object}	domain.PWResponse{data=v1.SitemapScrapeResp}
+//	@Router			/api/v1/crawler/sitemap/scrape [post]
+func (h *CrawlerHandler) SitemapScrape(c echo.Context) error {
+	var req v1.SitemapScrapeReq
+	if err := c.Bind(&req); err != nil {
+		return h.NewResponseWithError(c, "request body is invalid", err)
+	}
+	if err := c.Validate(req); err != nil {
+		return h.NewResponseWithError(c, "validate request body failed", err)
+	}
+
+	resp, err := h.usecase.SitemapGetDoc(c.Request().Context(), &req)
+	if err != nil {
+		return h.NewResponseWithError(c, "parse sitemap url failed", err)
 	}
 	return h.NewResponseWithData(c, resp)
 }

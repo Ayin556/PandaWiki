@@ -349,3 +349,13 @@ func (m *Localloader) LoadTiktokenBpe(_ string) (map[string]int, error) {
 	res, err := a.LoadTiktokenBpe("cl100k_base.tiktoken")
 	return res, err
 }
+
+func GetFileNameWithoutExt(path string) string {
+	filename := filepath.Base(path)
+	return strings.TrimSuffix(filename, filepath.Ext(filename))
+}
+
+func IsUUID(s string) bool {
+	_, err := uuid.Parse(s)
+	return err == nil
+}

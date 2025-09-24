@@ -715,7 +715,7 @@ const docTemplate = `{
         },
         "/api/v1/crawler/epub/convert": {
             "post": {
-                "description": "QpubConvert",
+                "description": "EpubConvert",
                 "consumes": [
                     "multipart/form-data"
                 ],
@@ -725,7 +725,7 @@ const docTemplate = `{
                 "tags": [
                     "crawler"
                 ],
-                "summary": "QpubConvert",
+                "summary": "EpubConvert",
                 "parameters": [
                     {
                         "type": "file",
@@ -776,7 +776,7 @@ const docTemplate = `{
                 "tags": [
                     "crawler"
                 ],
-                "summary": "FeishuGetDocx",
+                "summary": "FeishuDoc",
                 "parameters": [
                     {
                         "description": "Get Docx",
@@ -784,7 +784,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.GetDocxReq"
+                            "$ref": "#/definitions/v1.FeishuGetDocReq"
                         }
                     }
                 ],
@@ -802,7 +802,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/domain.GetDocxResp"
+                                                "$ref": "#/definitions/v1.FeishuGetDocResp"
                                             }
                                         }
                                     }
@@ -825,7 +825,7 @@ const docTemplate = `{
                 "tags": [
                     "crawler"
                 ],
-                "summary": "FeishuListDoc",
+                "summary": "FeishuListCloudDoc",
                 "parameters": [
                     {
                         "description": "Search Docx",
@@ -833,7 +833,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.SearchDocxReq"
+                            "$ref": "#/definitions/v1.FeishuListCloudDocReq"
                         }
                     }
                 ],
@@ -851,7 +851,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/domain.SearchDocxResp"
+                                                "$ref": "#/definitions/v1.FeishuListCloudDocResp"
                                             }
                                         }
                                     }
@@ -882,7 +882,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.GetSpaceListReq"
+                            "$ref": "#/definitions/v1.FeishuSpaceListReq"
                         }
                     }
                 ],
@@ -900,7 +900,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/domain.GetSpaceListResp"
+                                                "$ref": "#/definitions/v1.FeishuSpaceListResp"
                                             }
                                         }
                                     }
@@ -923,7 +923,7 @@ const docTemplate = `{
                 "tags": [
                     "crawler"
                 ],
-                "summary": "FeishuSearchWiki",
+                "summary": "FeishuWikiSearch",
                 "parameters": [
                     {
                         "description": "Search Wiki",
@@ -931,7 +931,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.SearchWikiReq"
+                            "$ref": "#/definitions/v1.FeishuSearchWikiReq"
                         }
                     }
                 ],
@@ -949,7 +949,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/domain.SearchWikiResp"
+                                                "$ref": "#/definitions/v1.FeishuSearchWikiResp"
                                             }
                                         }
                                     }
@@ -960,9 +960,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/crawler/notion/get_doc": {
+        "/api/v1/crawler/notion/parse": {
             "post": {
-                "description": "GetDocs",
+                "description": "NotionParse",
                 "consumes": [
                     "application/json"
                 ],
@@ -972,7 +972,53 @@ const docTemplate = `{
                 "tags": [
                     "crawler"
                 ],
-                "summary": "GetDocs",
+                "summary": "NotionParse",
+                "parameters": [
+                    {
+                        "description": "Scrape",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.NotionParseReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.PWResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/v1.NotionParseResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/crawler/notion/scrape": {
+            "post": {
+                "description": "NotionScrape",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "crawler"
+                ],
+                "summary": "NotionScrape",
                 "parameters": [
                     {
                         "description": "Get Docs",
@@ -980,7 +1026,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.GetDocsReq"
+                            "$ref": "#/definitions/v1.NotionScrapeReq"
                         }
                     }
                 ],
@@ -998,7 +1044,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/domain.Page"
+                                                "$ref": "#/definitions/v1.NotionScrapeResp"
                                             }
                                         }
                                     }
@@ -1009,56 +1055,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/crawler/notion/get_list": {
-            "post": {
-                "description": "NotionGetList",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "crawler"
-                ],
-                "summary": "NotionGetList",
-                "parameters": [
-                    {
-                        "description": "Notion Get List",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/domain.NotnionGetListReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/domain.PWResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/domain.PageInfo"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/crawler/parse_rss": {
+        "/api/v1/crawler/rss/parse": {
             "post": {
                 "description": "Parse RSS",
                 "consumes": [
@@ -1078,7 +1075,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.ParseURLReq"
+                            "$ref": "#/definitions/v1.RssParseReq"
                         }
                     }
                 ],
@@ -1094,7 +1091,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/domain.ParseURLResp"
+                                            "$ref": "#/definitions/v1.RssParseResp"
                                         }
                                     }
                                 }
@@ -1104,9 +1101,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/crawler/parse_sitemap": {
+        "/api/v1/crawler/rss/scrape": {
             "post": {
-                "description": "Parse Sitemap",
+                "description": "RSSScrape",
                 "consumes": [
                     "application/json"
                 ],
@@ -1116,7 +1113,7 @@ const docTemplate = `{
                 "tags": [
                     "crawler"
                 ],
-                "summary": "Parse Sitemap",
+                "summary": "RSSScrape",
                 "parameters": [
                     {
                         "description": "Parse URL",
@@ -1124,7 +1121,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.ParseURLReq"
+                            "$ref": "#/definitions/v1.RssScrapeReq"
                         }
                     }
                 ],
@@ -1140,7 +1137,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/domain.ParseURLResp"
+                                            "$ref": "#/definitions/v1.RssScrapeResp"
                                         }
                                     }
                                 }
@@ -1170,7 +1167,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.ScrapeReq"
+                            "$ref": "#/definitions/v1.ScrapeReq"
                         }
                     }
                 ],
@@ -1186,7 +1183,99 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/domain.ScrapeResp"
+                                            "$ref": "#/definitions/v1.ScrapeResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/crawler/sitemap/parse": {
+            "post": {
+                "description": "Parse Sitemap",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "crawler"
+                ],
+                "summary": "Parse Sitemap",
+                "parameters": [
+                    {
+                        "description": "Parse URL",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.SitemapParseReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.PWResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/v1.SitemapParseResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/crawler/sitemap/scrape": {
+            "post": {
+                "description": "SitemapScrape",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "crawler"
+                ],
+                "summary": "SitemapScrape",
+                "parameters": [
+                    {
+                        "description": "Parse URL",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.SitemapScrapeReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.PWResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/v1.SitemapScrapeResp"
                                         }
                                     }
                                 }
@@ -1293,7 +1382,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/domain.WikiJSResp"
+                                                "$ref": "#/definitions/v1.WikiJSResp"
                                             }
                                         }
                                     }
@@ -1456,6 +1545,42 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/domain.ObjectUploadResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/file/upload/anydoc": {
+            "post": {
+                "description": "Upload Anydoc File",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "tags": [
+                    "file"
+                ],
+                "summary": "Upload Anydoc File",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "File",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "File Path",
+                        "name": "path",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.AnydocUploadResp"
                         }
                     }
                 }
@@ -4493,6 +4618,20 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.AnydocUploadResp": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "type": "string"
+                },
+                "err": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.AppDetailResp": {
             "type": "object",
             "properties": {
@@ -5652,6 +5791,9 @@ const docTemplate = `{
                 "content": {
                     "type": "string"
                 },
+                "id": {
+                    "type": "string"
+                },
                 "title": {
                     "type": "string"
                 }
@@ -5731,64 +5873,6 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.GetDocsReq": {
-            "type": "object",
-            "required": [
-                "kb_id"
-            ],
-            "properties": {
-                "integration": {
-                    "type": "string"
-                },
-                "kb_id": {
-                    "type": "string"
-                },
-                "pages": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/domain.PageInfo"
-                    }
-                }
-            }
-        },
-        "domain.GetDocxReq": {
-            "type": "object",
-            "required": [
-                "kb_id",
-                "sources"
-            ],
-            "properties": {
-                "app_id": {
-                    "type": "string"
-                },
-                "app_secret": {
-                    "type": "string"
-                },
-                "kb_id": {
-                    "type": "string"
-                },
-                "sources": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/domain.Source"
-                    }
-                },
-                "user_access_token": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.GetDocxResp": {
-            "type": "object",
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
         "domain.GetKBReleaseListResp": {
             "type": "object",
             "properties": {
@@ -5846,31 +5930,6 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/domain.ProviderModelListItem"
                     }
-                }
-            }
-        },
-        "domain.GetSpaceListReq": {
-            "type": "object",
-            "properties": {
-                "app_id": {
-                    "type": "string"
-                },
-                "app_secret": {
-                    "type": "string"
-                },
-                "user_access_token": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.GetSpaceListResp": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "space_id": {
-                    "type": "string"
                 }
             }
         },
@@ -6317,17 +6376,6 @@ const docTemplate = `{
                 "NodeTypeDocument"
             ]
         },
-        "domain.NotnionGetListReq": {
-            "type": "object",
-            "properties": {
-                "cation_title": {
-                    "type": "string"
-                },
-                "integration": {
-                    "type": "string"
-                }
-            }
-        },
         "domain.ObjectUploadResp": {
             "type": "object",
             "properties": {
@@ -6631,34 +6679,6 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.Page": {
-            "type": "object",
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "parent_id": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.PageInfo": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
         "domain.PaginatedResult-array_domain_ConversationMessageListItem": {
             "type": "object",
             "properties": {
@@ -6670,45 +6690,6 @@ const docTemplate = `{
                 },
                 "total": {
                     "type": "integer"
-                }
-            }
-        },
-        "domain.ParseURLItem": {
-            "type": "object",
-            "properties": {
-                "desc": {
-                    "type": "string"
-                },
-                "published": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "url": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.ParseURLReq": {
-            "type": "object",
-            "required": [
-                "url"
-            ],
-            "properties": {
-                "url": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.ParseURLResp": {
-            "type": "object",
-            "properties": {
-                "items": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/domain.ParseURLItem"
-                    }
                 }
             }
         },
@@ -6777,102 +6758,6 @@ const docTemplate = `{
                 "Like",
                 "DisLike"
             ]
-        },
-        "domain.ScrapeReq": {
-            "type": "object",
-            "required": [
-                "kb_id"
-            ],
-            "properties": {
-                "kb_id": {
-                    "type": "string"
-                },
-                "url": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.ScrapeResp": {
-            "type": "object",
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.SearchDocxReq": {
-            "type": "object",
-            "properties": {
-                "app_id": {
-                    "type": "string"
-                },
-                "app_secret": {
-                    "type": "string"
-                },
-                "user_access_token": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.SearchDocxResp": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "obj_token": {
-                    "type": "string"
-                },
-                "obj_type": {
-                    "type": "integer"
-                },
-                "url": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.SearchWikiReq": {
-            "type": "object",
-            "properties": {
-                "app_id": {
-                    "type": "string"
-                },
-                "app_secret": {
-                    "type": "string"
-                },
-                "query": {
-                    "type": "string"
-                },
-                "space_id": {
-                    "type": "string"
-                },
-                "user_access_token": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.SearchWikiResp": {
-            "type": "object",
-            "properties": {
-                "obj_token": {
-                    "type": "string"
-                },
-                "obj_type": {
-                    "type": "integer"
-                },
-                "space_id": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "url": {
-                    "type": "string"
-                }
-            }
         },
         "domain.ShareCommentListItem": {
             "type": "object",
@@ -6986,20 +6871,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "text": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.Source": {
-            "type": "object",
-            "properties": {
-                "obj_token": {
-                    "type": "string"
-                },
-                "obj_type": {
-                    "type": "integer"
-                },
-                "url": {
                     "type": "string"
                 }
             }
@@ -7261,24 +7132,13 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.WikiJSResp": {
+        "domain.YuqueResp": {
             "type": "object",
             "properties": {
                 "content": {
                     "type": "string"
                 },
                 "id": {
-                    "type": "integer"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.YuqueResp": {
-            "type": "object",
-            "properties": {
-                "content": {
                     "type": "string"
                 },
                 "title": {
@@ -7676,6 +7536,154 @@ const docTemplate = `{
                 }
             }
         },
+        "v1.FeishuGetDocReq": {
+            "type": "object",
+            "required": [
+                "doc_id",
+                "id"
+            ],
+            "properties": {
+                "doc_id": {
+                    "type": "string"
+                },
+                "file_type": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "space_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.FeishuGetDocResp": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.FeishuListCloudDocReq": {
+            "type": "object",
+            "required": [
+                "app_id",
+                "app_secret",
+                "user_access_token"
+            ],
+            "properties": {
+                "app_id": {
+                    "type": "string"
+                },
+                "app_secret": {
+                    "type": "string"
+                },
+                "user_access_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.FeishuListCloudDocResp": {
+            "type": "object",
+            "required": [
+                "doc_id",
+                "id"
+            ],
+            "properties": {
+                "doc_id": {
+                    "type": "string"
+                },
+                "file_type": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "space_id": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.FeishuSearchWikiReq": {
+            "type": "object",
+            "required": [
+                "app_id",
+                "app_secret",
+                "user_access_token"
+            ],
+            "properties": {
+                "app_id": {
+                    "type": "string"
+                },
+                "app_secret": {
+                    "type": "string"
+                },
+                "space_id": {
+                    "type": "string"
+                },
+                "user_access_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.FeishuSearchWikiResp": {
+            "type": "object",
+            "required": [
+                "doc_id",
+                "id"
+            ],
+            "properties": {
+                "doc_id": {
+                    "type": "string"
+                },
+                "file_type": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "space_id": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.FeishuSpaceListReq": {
+            "type": "object",
+            "required": [
+                "app_id",
+                "app_secret",
+                "user_access_token"
+            ],
+            "properties": {
+                "app_id": {
+                    "type": "string"
+                },
+                "app_secret": {
+                    "type": "string"
+                },
+                "user_access_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.FeishuSpaceListResp": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "space_id": {
+                    "type": "string"
+                }
+            }
+        },
         "v1.KBUserInviteReq": {
             "type": "object",
             "required": [
@@ -7887,6 +7895,58 @@ const docTemplate = `{
                 }
             }
         },
+        "v1.NotionParseItem": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.NotionParseReq": {
+            "type": "object",
+            "properties": {
+                "integration": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.NotionParseResp": {
+            "type": "object",
+            "properties": {
+                "docs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.NotionParseItem"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.NotionScrapeReq": {
+            "type": "object",
+            "properties": {
+                "doc_id": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.NotionScrapeResp": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                }
+            }
+        },
         "v1.RecommendNodeListItem": {
             "type": "object",
             "properties": {
@@ -7932,6 +7992,145 @@ const docTemplate = `{
                 "new_password": {
                     "type": "string",
                     "minLength": 8
+                }
+            }
+        },
+        "v1.RssParseItem": {
+            "type": "object",
+            "properties": {
+                "desc": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.RssParseReq": {
+            "type": "object",
+            "required": [
+                "url"
+            ],
+            "properties": {
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.RssParseResp": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.RssParseItem"
+                    }
+                }
+            }
+        },
+        "v1.RssScrapeReq": {
+            "type": "object",
+            "required": [
+                "url"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.RssScrapeResp": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.ScrapeReq": {
+            "type": "object",
+            "properties": {
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.ScrapeResp": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.SitemapParseItem": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.SitemapParseReq": {
+            "type": "object",
+            "required": [
+                "url"
+            ],
+            "properties": {
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.SitemapParseResp": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.SitemapParseItem"
+                    }
+                }
+            }
+        },
+        "v1.SitemapScrapeReq": {
+            "type": "object",
+            "required": [
+                "id",
+                "url"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.SitemapScrapeResp": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
                 }
             }
         },
@@ -8003,6 +8202,20 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/v1.UserListItemResp"
                     }
+                }
+            }
+        },
+        "v1.WikiJSResp": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
                 }
             }
         }
