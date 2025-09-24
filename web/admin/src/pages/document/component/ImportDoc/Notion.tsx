@@ -1,10 +1,11 @@
 import { ImportDocListItem, ImportDocProps } from '@/api';
-import { postApiV1Node } from '@/request/Node';
 import {
-  postApiV1CrawlerNotionGetDoc,
-  postApiV1CrawlerNotionGetList,
+  postApiV1CrawlerNotionParse,
+  postApiV1CrawlerNotionScrape,
 } from '@/request/Crawler';
+import { postApiV1Node } from '@/request/Node';
 import { useAppSelector } from '@/store';
+import { Ellipsis, Icon, message, Modal } from '@ctzhian/ui';
 import {
   Box,
   Button,
@@ -13,7 +14,6 @@ import {
   Stack,
   TextField,
 } from '@mui/material';
-import { Ellipsis, Icon, message, Modal } from '@ctzhian/ui';
 import { useEffect, useState } from 'react';
 
 const StepText = {
@@ -45,6 +45,7 @@ const NotionImport = ({
   const [step, setStep] = useState<keyof typeof StepText>('pull');
   const [loading, setLoading] = useState(false);
   const [url, setUrl] = useState('');
+  const [id, setId] = useState<string>('');
   const [items, setItems] = useState<ImportDocListItem[]>([]);
   const [selectIds, setSelectIds] = useState<string[]>([]);
   const [requestQueue, setRequestQueue] = useState<(() => Promise<any>)[]>([]);
@@ -63,9 +64,12 @@ const NotionImport = ({
   };
 
   const handleURL = async () => {
-    const data = await postApiV1CrawlerNotionGetList({ integration: url });
+    const { docs = [], id = '' } = await postApiV1CrawlerNotionParse({
+      integration: url,
+    });
+    setId(id);
     setItems(
-      data.map(item => ({
+      docs.map(item => ({
         title: item.title!,
         content: '',
         url: item.id!,
@@ -82,10 +86,9 @@ const NotionImport = ({
     const notionData = items.filter(item => selectIds.includes(item.url));
     for (const item of notionData) {
       newQueue.push(async () => {
-        const res = await postApiV1CrawlerNotionGetDoc({
-          pages: [{ id: item.url, title: item.title }],
-          integration: url,
-          kb_id,
+        const res = await postApiV1CrawlerNotionScrape({
+          id,
+          doc_id: item.url,
         });
         setItems(prev => [
           { ...item, ...res[0], success: -1, id: '' },

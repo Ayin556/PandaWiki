@@ -1,16 +1,14 @@
+import { ImportDocByFeishuFormData, ImportDocProps } from '@/api';
+import { V1FeishuListCloudDocResp } from '@/request';
 import {
-  ImportDocByFeishuFormData,
-  ImportDocListItem,
-  ImportDocProps,
-} from '@/api';
-import { postApiV1Node } from '@/request/Node';
-import {
-  postApiV1CrawlerFeishuListDoc,
   postApiV1CrawlerFeishuGetDoc,
-  postApiV1CrawlerFeishuSearchWiki,
+  postApiV1CrawlerFeishuListDoc,
   postApiV1CrawlerFeishuListSpaces,
+  postApiV1CrawlerFeishuSearchWiki,
 } from '@/request/Crawler';
+import { postApiV1Node } from '@/request/Node';
 import { useAppSelector } from '@/store';
+import { Ellipsis, Icon, message, Modal } from '@ctzhian/ui';
 import {
   Box,
   Button,
@@ -19,7 +17,6 @@ import {
   Stack,
   TextField,
 } from '@mui/material';
-import { Ellipsis, Icon, message, Modal } from '@ctzhian/ui';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
@@ -43,10 +40,9 @@ const FeishuImport = ({
     { space_id: string; name: string; done: boolean; loading: boolean }[]
   >([]);
   const [items, setItems] = useState<
-    (ImportDocListItem & {
-      space_id: string;
-      obj_token: string;
-      obj_type: number;
+    (V1FeishuListCloudDocResp & {
+      success: -1 | 0 | 1;
+      _id: string;
     })[]
   >([]);
   const [selectIds, setSelectIds] = useState<string[]>([]);
@@ -83,14 +79,14 @@ const FeishuImport = ({
     const newItems = [...items];
     setItems(
       newItems.map(it => {
-        if (it.success === -1 && !it.id && selectIds.includes(it.url)) {
+        if (it.success === -1 && !it.id && selectIds.includes(it.doc_id)) {
           return { ...it, success: 0 };
         }
         return it;
       }),
     );
     const feishuItems = newItems.filter(
-      it => it.success === -1 && !it.id && selectIds.includes(it.url),
+      it => it.success === -1 && !it.id && selectIds.includes(it.doc_id),
     );
     if (feishuItems.length === 0) {
       setStep('done');
@@ -102,18 +98,13 @@ const FeishuImport = ({
         newQueue.push(async () => {
           try {
             const res = await postApiV1CrawlerFeishuGetDoc({
-              sources: [
-                {
-                  url: item.url,
-                  obj_token: item.obj_token,
-                  obj_type: item.obj_type,
-                },
-              ],
+              doc_id: item.doc_id || '',
+              id: item._id || '',
               kb_id,
               ...getValues(),
             });
             const nodeRes = await postApiV1Node({
-              name: res[0].title || item.url.toString() || '',
+              name: item.title || '',
               content: res[0].content || '',
               parent_id: parentId || undefined,
               type: 2,
@@ -121,7 +112,7 @@ const FeishuImport = ({
             });
             message.success(item?.title + '导入成功');
             setItems(prev => {
-              const idx = prev.findIndex(it => it.url === item.url);
+              const idx = prev.findIndex(it => it.doc_id === item.doc_id);
               if (idx === -1) {
                 return prev;
               }
@@ -160,14 +151,10 @@ const FeishuImport = ({
         if (res2.length > 0) {
           setItems(
             res2.map(item => ({
-              title: item.name || item.url!.toString(),
-              content: '',
-              url: item.url!,
-              success: -1,
+              ...item,
+              _id: item.id,
               id: '',
-              space_id: '',
-              obj_token: item.obj_token!,
-              obj_type: item.obj_type!,
+              success: -1,
             })),
           );
         }
@@ -193,7 +180,7 @@ const FeishuImport = ({
   };
 
   const renderItem = (
-    item: ImportDocListItem & { space_id: string },
+    item: V1FeishuListCloudDocResp & { success: 0 | 1 | -1 },
     idx: number,
   ) => {
     return (
@@ -201,7 +188,7 @@ const FeishuImport = ({
         direction={'row'}
         alignItems={'center'}
         gap={1}
-        key={item.url}
+        key={item.doc_id}
         sx={{
           px: 2,
           pl: '44px',
@@ -226,15 +213,15 @@ const FeishuImport = ({
         ) : item.id === '' ? (
           <Checkbox
             size='small'
-            id={item.url}
+            id={item.doc_id}
             sx={{ flexShrink: 0, p: 0, m: 0 }}
-            checked={selectIds.includes(item.url)}
+            checked={selectIds.includes(item.doc_id)}
             onChange={() => {
               setSelectIds(prev => {
-                if (prev.includes(item.url)) {
-                  return prev.filter(it => it !== item.url);
+                if (prev.includes(item.doc_id)) {
+                  return prev.filter(it => it !== item.doc_id);
                 }
-                return [...prev, item.url];
+                return [...prev, item.doc_id];
               });
             }}
           />
@@ -261,14 +248,14 @@ const FeishuImport = ({
         <Box
           component='label'
           sx={{ flexGrow: 1, cursor: 'pointer', width: 0 }}
-          htmlFor={item.url}
+          htmlFor={item.doc_id}
         >
-          <Ellipsis sx={{ fontSize: 14 }}>{item.title || item.url}</Ellipsis>
-          {item.content && (
+          <Ellipsis sx={{ fontSize: 14 }}>{item.title || item.doc_id}</Ellipsis>
+          {/* {item.content && (
             <Ellipsis sx={{ fontSize: 12, color: 'text.tertiary' }}>
               {item.content}
             </Ellipsis>
-          )}
+          )} */}
         </Box>
         {item.id === '-1' ? (
           <Button
@@ -277,12 +264,13 @@ const FeishuImport = ({
             onClick={() => {
               setItems(prev =>
                 prev.map(it =>
-                  it.url === item.url ? { ...it, success: 0, id: '' } : it,
+                  it.doc_id === item.doc_id
+                    ? { ...it, success: 0, id: '' }
+                    : it,
                 ),
               );
               postApiV1Node({
-                name: item.title,
-                content: item.content,
+                name: item.title || '',
                 parent_id: parentId || undefined,
                 type: 2,
                 kb_id,
@@ -291,7 +279,7 @@ const FeishuImport = ({
                   message.success(item.title + '导入成功');
                   setItems(prev =>
                     prev.map(it =>
-                      it.url === item.url
+                      it.doc_id === item.doc_id
                         ? { ...it, success: 1, id: res.id }
                         : it,
                     ),
@@ -502,7 +490,7 @@ const FeishuImport = ({
                   if (selectIds.length === items.length) {
                     setSelectIds([]);
                   } else {
-                    setSelectIds(items.map(item => item.url));
+                    setSelectIds(items.map(item => item.doc_id));
                   }
                 }}
               />
@@ -547,15 +535,15 @@ const FeishuImport = ({
                           .length > 0 &&
                         items
                           .filter(it => it.space_id === item.space_id)
-                          .every(it => selectIds.includes(it.url))
+                          .every(it => selectIds.includes(it.doc_id))
                       }
                       onChange={() => {
                         const spaceItems = items.filter(
                           it => it.space_id === item.space_id,
                         );
-                        const spaceUrls = spaceItems.map(it => it.url);
+                        const spaceUrls = spaceItems.map(it => it.doc_id);
                         const isAll = spaceItems.every(it =>
-                          selectIds.includes(it.url),
+                          selectIds.includes(it.doc_id),
                         );
                         if (isAll) {
                           setSelectIds(
@@ -599,14 +587,10 @@ const FeishuImport = ({
                             setItems(prev => [
                               ...prev,
                               ...(res || []).map(it => ({
-                                title: it.title!,
-                                content: '',
-                                url: it.url!,
-                                success: -1 as const,
+                                ...it,
+                                _id: it.id,
                                 id: '',
-                                space_id: item.space_id,
-                                obj_token: it.obj_token!,
-                                obj_type: it.obj_type!,
+                                success: -1 as const,
                               })),
                             ]);
                             if ((res || []).length > 0) setStep('import');
@@ -712,18 +696,24 @@ const FeishuImport = ({
                   size='small'
                   sx={{ flexShrink: 0, p: 0, m: 0 }}
                   id='feishu-cloud-select-checkbox'
-                  disabled={items.filter(it => it.space_id === '').length === 0}
+                  disabled={
+                    items.filter(it => it.space_id === 'cloud_disk').length ===
+                    0
+                  }
                   checked={
-                    items.filter(it => it.space_id === '').length > 0 &&
+                    items.filter(it => it.space_id === 'cloud_disk').length >
+                      0 &&
                     items
-                      .filter(it => it.space_id === '')
-                      .every(it => selectIds.includes(it.url))
+                      .filter(it => it.space_id === 'cloud_disk')
+                      .every(it => selectIds.includes(it.doc_id))
                   }
                   onChange={() => {
-                    const spaceItems = items.filter(it => it.space_id === '');
-                    const spaceUrls = spaceItems.map(it => it.url);
+                    const spaceItems = items.filter(
+                      it => it.space_id === 'cloud_disk',
+                    );
+                    const spaceUrls = spaceItems.map(it => it.doc_id);
                     const isAll = spaceItems.every(it =>
-                      selectIds.includes(it.url),
+                      selectIds.includes(it.doc_id),
                     );
                     if (isAll) {
                       setSelectIds(
@@ -745,9 +735,9 @@ const FeishuImport = ({
                 </Ellipsis>
               </Stack>
             </Stack>
-            {items.filter(it => it.space_id === '').length > 0 ? (
+            {items.filter(it => it.space_id === 'cloud_disk').length > 0 ? (
               items
-                .filter(it => it.space_id === '')
+                .filter(it => it.space_id === 'cloud_disk')
                 .map((it, idx) => renderItem(it, idx))
             ) : (
               <Box

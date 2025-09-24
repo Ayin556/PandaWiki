@@ -207,6 +207,12 @@ export interface DomainAnalysisConfluenceResp {
   title?: string;
 }
 
+export interface DomainAnydocUploadResp {
+  code?: number;
+  data?: string;
+  err?: string;
+}
+
 export interface DomainAppDetailResp {
   id?: string;
   kb_id?: string;
@@ -585,6 +591,7 @@ export interface DomainEnterpriseAuth {
 
 export interface DomainEpubResp {
   content?: string;
+  id?: string;
   title?: string;
 }
 
@@ -618,25 +625,6 @@ export interface DomainFooterSettings {
   icp?: string;
 }
 
-export interface DomainGetDocsReq {
-  integration?: string;
-  kb_id: string;
-  pages?: DomainPageInfo[];
-}
-
-export interface DomainGetDocxReq {
-  app_id?: string;
-  app_secret?: string;
-  kb_id: string;
-  sources: DomainSource[];
-  user_access_token?: string;
-}
-
-export interface DomainGetDocxResp {
-  content?: string;
-  title?: string;
-}
-
 export interface DomainGetKBReleaseListResp {
   data?: DomainKBReleaseListItemResp[];
   total?: number;
@@ -652,17 +640,6 @@ export interface DomainGetProviderModelListReq {
 
 export interface DomainGetProviderModelListResp {
   models?: DomainProviderModelListItem[];
-}
-
-export interface DomainGetSpaceListReq {
-  app_id?: string;
-  app_secret?: string;
-  user_access_token?: string;
-}
-
-export interface DomainGetSpaceListResp {
-  name?: string;
-  space_id?: string;
 }
 
 export interface DomainHotBrowser {
@@ -807,11 +784,6 @@ export interface DomainNodeSummaryReq {
   kb_id: string;
 }
 
-export interface DomainNotnionGetListReq {
-  cation_title?: string;
-  integration?: string;
-}
-
 export interface DomainObjectUploadResp {
   key?: string;
 }
@@ -921,36 +893,9 @@ export interface DomainPWResponse {
   success?: boolean;
 }
 
-export interface DomainPage {
-  content?: string;
-  id?: string;
-  parent_id?: string;
-  title?: string;
-}
-
-export interface DomainPageInfo {
-  id?: string;
-  title?: string;
-}
-
 export interface DomainPaginatedResultArrayDomainConversationMessageListItem {
   data?: DomainConversationMessageListItem[];
   total?: number;
-}
-
-export interface DomainParseURLItem {
-  desc?: string;
-  published?: string;
-  title?: string;
-  url?: string;
-}
-
-export interface DomainParseURLReq {
-  url: string;
-}
-
-export interface DomainParseURLResp {
-  items?: DomainParseURLItem[];
 }
 
 export interface DomainProviderModelListItem {
@@ -973,45 +918,6 @@ export interface DomainResponse {
   data?: unknown;
   message?: string;
   success?: boolean;
-}
-
-export interface DomainScrapeReq {
-  kb_id: string;
-  url?: string;
-}
-
-export interface DomainScrapeResp {
-  content?: string;
-  title?: string;
-}
-
-export interface DomainSearchDocxReq {
-  app_id?: string;
-  app_secret?: string;
-  user_access_token?: string;
-}
-
-export interface DomainSearchDocxResp {
-  name?: string;
-  obj_token?: string;
-  obj_type?: number;
-  url?: string;
-}
-
-export interface DomainSearchWikiReq {
-  app_id?: string;
-  app_secret?: string;
-  query?: string;
-  space_id?: string;
-  user_access_token?: string;
-}
-
-export interface DomainSearchWikiResp {
-  obj_token?: string;
-  obj_type?: number;
-  space_id?: string;
-  title?: string;
-  url?: string;
 }
 
 export interface DomainShareCommentListItem {
@@ -1057,12 +963,6 @@ export interface DomainSocialMediaAccount {
   link?: string;
   phone?: string;
   text?: string;
-}
-
-export interface DomainSource {
-  obj_token?: string;
-  obj_type?: number;
-  url?: string;
 }
 
 export interface DomainStatPageReq {
@@ -1148,14 +1048,9 @@ export interface DomainWidgetBotSettings {
   theme_mode?: string;
 }
 
-export interface DomainWikiJSResp {
-  content?: string;
-  id?: number;
-  title?: string;
-}
-
 export interface DomainYuqueResp {
   content?: string;
+  id?: string;
   title?: string;
 }
 
@@ -1298,6 +1193,58 @@ export interface V1DeleteUserReq {
   user_id: string;
 }
 
+export interface V1FeishuGetDocReq {
+  doc_id: string;
+  file_type?: string;
+  id: string;
+  kb_id: string;
+  space_id?: string;
+}
+
+export interface V1FeishuGetDocResp {
+  content?: string;
+}
+
+export interface V1FeishuListCloudDocReq {
+  app_id: string;
+  app_secret: string;
+  user_access_token: string;
+}
+
+export interface V1FeishuListCloudDocResp {
+  doc_id: string;
+  file_type?: string;
+  id: string;
+  space_id?: string;
+  title?: string;
+}
+
+export interface V1FeishuSearchWikiReq {
+  app_id: string;
+  app_secret: string;
+  space_id?: string;
+  user_access_token: string;
+}
+
+export interface V1FeishuSearchWikiResp {
+  doc_id: string;
+  file_type?: string;
+  id: string;
+  space_id?: string;
+  title?: string;
+}
+
+export interface V1FeishuSpaceListReq {
+  app_id: string;
+  app_secret: string;
+  user_access_token: string;
+}
+
+export interface V1FeishuSpaceListResp {
+  name?: string;
+  space_id?: string;
+}
+
 export interface V1KBUserInviteReq {
   kb_id: string;
   perm: "full_control" | "doc_manage" | "data_operate";
@@ -1365,6 +1312,29 @@ export interface V1NodePermissionResp {
   visitable_groups?: DomainNodeGroupDetail[];
 }
 
+export interface V1NotionParseItem {
+  id?: string;
+  title?: string;
+}
+
+export interface V1NotionParseReq {
+  integration?: string;
+}
+
+export interface V1NotionParseResp {
+  docs?: V1NotionParseItem[];
+  id?: string;
+}
+
+export interface V1NotionScrapeReq {
+  doc_id?: string;
+  id?: string;
+}
+
+export interface V1NotionScrapeResp {
+  content?: string;
+}
+
 export interface V1RecommendNodeListItem {
   emoji?: string;
   id?: string;
@@ -1380,6 +1350,62 @@ export interface V1ResetPasswordReq {
   id: string;
   /** @minLength 8 */
   new_password: string;
+}
+
+export interface V1RssParseItem {
+  desc?: string;
+  title?: string;
+  url?: string;
+}
+
+export interface V1RssParseReq {
+  url: string;
+}
+
+export interface V1RssParseResp {
+  id?: string;
+  list?: V1RssParseItem[];
+}
+
+export interface V1RssScrapeReq {
+  id?: string;
+  url: string;
+}
+
+export interface V1RssScrapeResp {
+  content?: string;
+}
+
+export interface V1ScrapeReq {
+  url?: string;
+}
+
+export interface V1ScrapeResp {
+  content?: string;
+  title?: string;
+}
+
+export interface V1SitemapParseItem {
+  title?: string;
+  url?: string;
+}
+
+export interface V1SitemapParseReq {
+  url: string;
+}
+
+export interface V1SitemapParseResp {
+  id?: string;
+  list?: V1SitemapParseItem[];
+}
+
+export interface V1SitemapScrapeReq {
+  id: string;
+  url: string;
+}
+
+export interface V1SitemapScrapeResp {
+  content?: string;
 }
 
 export interface V1StatCountResp {
@@ -1408,6 +1434,12 @@ export interface V1UserListItemResp {
 
 export interface V1UserListResp {
   users?: V1UserListItemResp[];
+}
+
+export interface V1WikiJSResp {
+  content?: string;
+  id?: string;
+  title?: string;
 }
 
 export interface PutApiV1AppParams {
@@ -1555,6 +1587,16 @@ export interface PostApiV1FileUploadPayload {
   file: File;
   /** Knowledge Base ID */
   kb_id?: string;
+}
+
+export interface PostApiV1FileUploadAnydocPayload {
+  /**
+   * File
+   * @format binary
+   */
+  file: File;
+  /** File Path */
+  path: string;
 }
 
 export interface GetApiV1KnowledgeBaseDetailParams {

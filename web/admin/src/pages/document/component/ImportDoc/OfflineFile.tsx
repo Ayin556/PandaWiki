@@ -1,9 +1,10 @@
 import { ImportDocListItem, ImportDocProps, uploadFile } from '@/api';
-import { postApiV1Node } from '@/request/Node';
-import { postApiV1CrawlerScrape } from '@/request/Crawler';
 import Upload from '@/components/UploadFile/Drag';
+import { postApiV1CrawlerScrape } from '@/request/Crawler';
+import { postApiV1Node } from '@/request/Node';
 import { useAppSelector } from '@/store';
 import { formatByte } from '@/utils';
+import { Ellipsis, Icon, message, Modal } from '@ctzhian/ui';
 import { Close } from '@mui/icons-material';
 import {
   Box,
@@ -19,7 +20,6 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import { Ellipsis, Icon, message, Modal } from '@ctzhian/ui';
 import { useState } from 'react';
 import { FileRejection } from 'react-dropzone';
 
@@ -127,7 +127,7 @@ const OfflineFileImport = ({
       setStep('pull-done');
       setTimeout(async () => {
         for (const { url, title } of urls) {
-          const res = await postApiV1CrawlerScrape({ url, kb_id });
+          const res = await postApiV1CrawlerScrape({ url });
           setItems(prev => [
             {
               ...res,

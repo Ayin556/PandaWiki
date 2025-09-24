@@ -1,4 +1,4 @@
-import { ITreeItem, NodeListItem } from '@/api';
+import { ITreeItem } from '@/api';
 import {
   TreeMenuItem,
   TreeMenuOptions,
@@ -200,3 +200,19 @@ export function getSiblingItemIds(
 
   return result;
 }
+
+export const collapseAllFolders = (
+  list: TreeItems<ITreeItem>,
+  collapsed: boolean,
+): TreeItems<ITreeItem> => {
+  return list.map(it => ({
+    ...it,
+    collapsed: it.type === 1 ? collapsed : it.collapsed,
+    children: it.children
+      ? (collapseAllFolders(
+          it.children as TreeItems<ITreeItem>,
+          collapsed,
+        ) as ITreeItem[])
+      : it.children,
+  }));
+};
