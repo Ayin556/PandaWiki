@@ -2,6 +2,7 @@
 
 import Logo from '@/assets/images/logo.png';
 import { IconSearch } from '@/components/icons';
+import { DocWidth } from '@/constant/index';
 import { useStore } from '@/provider';
 import { Box, Button, IconButton, Stack, TextField } from '@mui/material';
 import Image from 'next/image';
@@ -9,7 +10,6 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import NavBtns from './NavBtns';
-import { DocWidth } from '@/constant/index';
 interface HeaderProps {
   isDocPage?: boolean;
   isWelcomePage?: boolean;
@@ -53,7 +53,6 @@ const Header = ({ isDocPage = false, isWelcomePage = false }: HeaderProps) => {
         borderBottom: '1px solid',
         borderColor: 'divider',
         ...(mobile && {
-          left: 0,
           pl: 3,
           pr: 1,
         }),
@@ -65,9 +64,10 @@ const Header = ({ isDocPage = false, isWelcomePage = false }: HeaderProps) => {
         justifyContent='space-between'
         sx={{
           width: '100%',
-          ...(!isDocPage && {
-            px: '15%',
-          }),
+          ...(!mobile &&
+            !isDocPage && {
+              px: '15%',
+            }),
           ...(isDocPage &&
             !mobile && {
               maxWidth: `calc(100vw - 80px)`,
