@@ -1,10 +1,10 @@
-package domain
+package v1
 
 type WikiJSReq struct {
-	KBID string `json:"kb_id" validate:"required"`
+	KbID string `json:"kb_id" validate:"required"`
 }
 type WikiJSPage struct {
-	Id          int    `json:"id"`
+	Id          string `json:"id"`
 	Description string `json:"description"`
 	Title       string `json:"title"`
 	ContentType string `json:"contentType"`
@@ -13,7 +13,7 @@ type WikiJSPage struct {
 }
 
 type WikiJSResp struct {
-	Id      int    `json:"id"`
+	ID      string `json:"id"`
 	Title   string `json:"title"`
 	Content string `json:"content"`
 }

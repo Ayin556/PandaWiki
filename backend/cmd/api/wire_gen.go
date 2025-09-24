@@ -117,18 +117,16 @@ func createApp() (*App, error) {
 	fileHandler := v1.NewFileHandler(echo, baseHandler, logger, authMiddleware, minioClient, configConfig, fileUsecase)
 	modelHandler := v1.NewModelHandler(echo, baseHandler, logger, authMiddleware, modelUsecase, llmUsecase)
 	conversationHandler := v1.NewConversationHandler(echo, baseHandler, logger, authMiddleware, conversationUsecase)
-	crawlerUsecase, err := usecase.NewCrawlerUsecase(logger)
+	mqConsumer, err := mq.NewMQConsumer(configConfig, logger)
 	if err != nil {
 		return nil, err
 	}
-	notionUseCase := usecase.NewNotionUsecase(logger, minioClient)
-	epubUsecase := usecase.NewEpubUsecase(logger, minioClient)
-	wikiJSUsecase := usecase.NewWikiJSUsecase(logger, fileUsecase)
-	feishuUseCase := usecase.NewFeishuUseCase(logger, minioClient, crawlerUsecase)
-	confluenceUsecase := usecase.NewConfluenceUsecase(logger, minioClient, crawlerUsecase, fileUsecase)
-	yuqueUsecase := usecase.NewYuqueUsecase(logger, fileUsecase)
-	siYuanUsecase := usecase.NewShiYuanUsecase(logger, fileUsecase)
-	crawlerHandler := v1.NewCrawlerHandler(echo, baseHandler, authMiddleware, logger, configConfig, crawlerUsecase, notionUseCase, epubUsecase, wikiJSUsecase, feishuUseCase, confluenceUsecase, yuqueUsecase, siYuanUsecase)
+	crawlerUsecase, err := usecase.NewCrawlerUsecase(logger, mqConsumer, cacheCache)
+	if err != nil {
+		return nil, err
+	}
+	siYuanUsecase := usecase.NewSiYuanUsecase(logger, fileUsecase)
+	crawlerHandler := v1.NewCrawlerHandler(echo, baseHandler, authMiddleware, logger, configConfig, crawlerUsecase, siYuanUsecase, fileUsecase)
 	creationUsecase := usecase.NewCreationUsecase(logger, llmUsecase, modelUsecase)
 	creationHandler := v1.NewCreationHandler(echo, baseHandler, logger, creationUsecase)
 	statRepository := pg2.NewStatRepository(db, cacheCache)

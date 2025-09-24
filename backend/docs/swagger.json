@@ -708,7 +708,7 @@
         },
         "/api/v1/crawler/epub/convert": {
             "post": {
-                "description": "QpubConvert",
+                "description": "EpubConvert",
                 "consumes": [
                     "multipart/form-data"
                 ],
@@ -718,7 +718,7 @@
                 "tags": [
                     "crawler"
                 ],
-                "summary": "QpubConvert",
+                "summary": "EpubConvert",
                 "parameters": [
                     {
                         "type": "file",
@@ -769,7 +769,7 @@
                 "tags": [
                     "crawler"
                 ],
-                "summary": "FeishuGetDocx",
+                "summary": "FeishuDoc",
                 "parameters": [
                     {
                         "description": "Get Docx",
@@ -777,7 +777,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.GetDocxReq"
+                            "$ref": "#/definitions/v1.FeishuGetDocReq"
                         }
                     }
                 ],
@@ -795,7 +795,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/domain.GetDocxResp"
+                                                "$ref": "#/definitions/v1.FeishuGetDocResp"
                                             }
                                         }
                                     }
@@ -818,7 +818,7 @@
                 "tags": [
                     "crawler"
                 ],
-                "summary": "FeishuListDoc",
+                "summary": "FeishuListCloudDoc",
                 "parameters": [
                     {
                         "description": "Search Docx",
@@ -826,7 +826,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.SearchDocxReq"
+                            "$ref": "#/definitions/v1.FeishuListCloudDocReq"
                         }
                     }
                 ],
@@ -844,7 +844,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/domain.SearchDocxResp"
+                                                "$ref": "#/definitions/v1.FeishuListCloudDocResp"
                                             }
                                         }
                                     }
@@ -875,7 +875,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.GetSpaceListReq"
+                            "$ref": "#/definitions/v1.FeishuSpaceListReq"
                         }
                     }
                 ],
@@ -893,7 +893,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/domain.GetSpaceListResp"
+                                                "$ref": "#/definitions/v1.FeishuSpaceListResp"
                                             }
                                         }
                                     }
@@ -916,7 +916,7 @@
                 "tags": [
                     "crawler"
                 ],
-                "summary": "FeishuSearchWiki",
+                "summary": "FeishuWikiSearch",
                 "parameters": [
                     {
                         "description": "Search Wiki",
@@ -924,7 +924,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.SearchWikiReq"
+                            "$ref": "#/definitions/v1.FeishuSearchWikiReq"
                         }
                     }
                 ],
@@ -942,7 +942,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/domain.SearchWikiResp"
+                                                "$ref": "#/definitions/v1.FeishuSearchWikiResp"
                                             }
                                         }
                                     }
@@ -953,9 +953,9 @@
                 }
             }
         },
-        "/api/v1/crawler/notion/get_doc": {
+        "/api/v1/crawler/notion/parse": {
             "post": {
-                "description": "GetDocs",
+                "description": "NotionParse",
                 "consumes": [
                     "application/json"
                 ],
@@ -965,7 +965,53 @@
                 "tags": [
                     "crawler"
                 ],
-                "summary": "GetDocs",
+                "summary": "NotionParse",
+                "parameters": [
+                    {
+                        "description": "Scrape",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.NotionParseReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.PWResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/v1.NotionParseResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/crawler/notion/scrape": {
+            "post": {
+                "description": "NotionScrape",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "crawler"
+                ],
+                "summary": "NotionScrape",
                 "parameters": [
                     {
                         "description": "Get Docs",
@@ -973,7 +1019,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.GetDocsReq"
+                            "$ref": "#/definitions/v1.NotionScrapeReq"
                         }
                     }
                 ],
@@ -991,7 +1037,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/domain.Page"
+                                                "$ref": "#/definitions/v1.NotionScrapeResp"
                                             }
                                         }
                                     }
@@ -1002,56 +1048,7 @@
                 }
             }
         },
-        "/api/v1/crawler/notion/get_list": {
-            "post": {
-                "description": "NotionGetList",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "crawler"
-                ],
-                "summary": "NotionGetList",
-                "parameters": [
-                    {
-                        "description": "Notion Get List",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/domain.NotnionGetListReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/domain.PWResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/domain.PageInfo"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/crawler/parse_rss": {
+        "/api/v1/crawler/rss/parse": {
             "post": {
                 "description": "Parse RSS",
                 "consumes": [
@@ -1071,7 +1068,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.ParseURLReq"
+                            "$ref": "#/definitions/v1.RssParseReq"
                         }
                     }
                 ],
@@ -1087,7 +1084,7 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/domain.ParseURLResp"
+                                            "$ref": "#/definitions/v1.RssParseResp"
                                         }
                                     }
                                 }
@@ -1097,9 +1094,9 @@
                 }
             }
         },
-        "/api/v1/crawler/parse_sitemap": {
+        "/api/v1/crawler/rss/scrape": {
             "post": {
-                "description": "Parse Sitemap",
+                "description": "RSSScrape",
                 "consumes": [
                     "application/json"
                 ],
@@ -1109,7 +1106,7 @@
                 "tags": [
                     "crawler"
                 ],
-                "summary": "Parse Sitemap",
+                "summary": "RSSScrape",
                 "parameters": [
                     {
                         "description": "Parse URL",
@@ -1117,7 +1114,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.ParseURLReq"
+                            "$ref": "#/definitions/v1.RssScrapeReq"
                         }
                     }
                 ],
@@ -1133,7 +1130,7 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/domain.ParseURLResp"
+                                            "$ref": "#/definitions/v1.RssScrapeResp"
                                         }
                                     }
                                 }
@@ -1163,7 +1160,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.ScrapeReq"
+                            "$ref": "#/definitions/v1.ScrapeReq"
                         }
                     }
                 ],
@@ -1179,7 +1176,99 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/domain.ScrapeResp"
+                                            "$ref": "#/definitions/v1.ScrapeResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/crawler/sitemap/parse": {
+            "post": {
+                "description": "Parse Sitemap",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "crawler"
+                ],
+                "summary": "Parse Sitemap",
+                "parameters": [
+                    {
+                        "description": "Parse URL",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.SitemapParseReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.PWResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/v1.SitemapParseResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/crawler/sitemap/scrape": {
+            "post": {
+                "description": "SitemapScrape",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "crawler"
+                ],
+                "summary": "SitemapScrape",
+                "parameters": [
+                    {
+                        "description": "Parse URL",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.SitemapScrapeReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.PWResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/v1.SitemapScrapeResp"
                                         }
                                     }
                                 }
@@ -1286,7 +1375,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/domain.WikiJSResp"
+                                                "$ref": "#/definitions/v1.WikiJSResp"
                                             }
                                         }
                                     }
@@ -1449,6 +1538,42 @@
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/domain.ObjectUploadResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/file/upload/anydoc": {
+            "post": {
+                "description": "Upload Anydoc File",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "tags": [
+                    "file"
+                ],
+                "summary": "Upload Anydoc File",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "File",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "File Path",
+                        "name": "path",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.AnydocUploadResp"
                         }
                     }
                 }
@@ -4486,6 +4611,20 @@
                 }
             }
         },
+        "domain.AnydocUploadResp": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "type": "string"
+                },
+                "err": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.AppDetailResp": {
             "type": "object",
             "properties": {
@@ -5645,6 +5784,9 @@
                 "content": {
                     "type": "string"
                 },
+                "id": {
+                    "type": "string"
+                },
                 "title": {
                     "type": "string"
                 }
@@ -5724,64 +5866,6 @@
                 }
             }
         },
-        "domain.GetDocsReq": {
-            "type": "object",
-            "required": [
-                "kb_id"
-            ],
-            "properties": {
-                "integration": {
-                    "type": "string"
-                },
-                "kb_id": {
-                    "type": "string"
-                },
-                "pages": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/domain.PageInfo"
-                    }
-                }
-            }
-        },
-        "domain.GetDocxReq": {
-            "type": "object",
-            "required": [
-                "kb_id",
-                "sources"
-            ],
-            "properties": {
-                "app_id": {
-                    "type": "string"
-                },
-                "app_secret": {
-                    "type": "string"
-                },
-                "kb_id": {
-                    "type": "string"
-                },
-                "sources": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/domain.Source"
-                    }
-                },
-                "user_access_token": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.GetDocxResp": {
-            "type": "object",
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
         "domain.GetKBReleaseListResp": {
             "type": "object",
             "properties": {
@@ -5839,31 +5923,6 @@
                     "items": {
                         "$ref": "#/definitions/domain.ProviderModelListItem"
                     }
-                }
-            }
-        },
-        "domain.GetSpaceListReq": {
-            "type": "object",
-            "properties": {
-                "app_id": {
-                    "type": "string"
-                },
-                "app_secret": {
-                    "type": "string"
-                },
-                "user_access_token": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.GetSpaceListResp": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "space_id": {
-                    "type": "string"
                 }
             }
         },
@@ -6310,17 +6369,6 @@
                 "NodeTypeDocument"
             ]
         },
-        "domain.NotnionGetListReq": {
-            "type": "object",
-            "properties": {
-                "cation_title": {
-                    "type": "string"
-                },
-                "integration": {
-                    "type": "string"
-                }
-            }
-        },
         "domain.ObjectUploadResp": {
             "type": "object",
             "properties": {
@@ -6624,34 +6672,6 @@
                 }
             }
         },
-        "domain.Page": {
-            "type": "object",
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "parent_id": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.PageInfo": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
         "domain.PaginatedResult-array_domain_ConversationMessageListItem": {
             "type": "object",
             "properties": {
@@ -6663,45 +6683,6 @@
                 },
                 "total": {
                     "type": "integer"
-                }
-            }
-        },
-        "domain.ParseURLItem": {
-            "type": "object",
-            "properties": {
-                "desc": {
-                    "type": "string"
-                },
-                "published": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "url": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.ParseURLReq": {
-            "type": "object",
-            "required": [
-                "url"
-            ],
-            "properties": {
-                "url": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.ParseURLResp": {
-            "type": "object",
-            "properties": {
-                "items": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/domain.ParseURLItem"
-                    }
                 }
             }
         },
@@ -6770,102 +6751,6 @@
                 "Like",
                 "DisLike"
             ]
-        },
-        "domain.ScrapeReq": {
-            "type": "object",
-            "required": [
-                "kb_id"
-            ],
-            "properties": {
-                "kb_id": {
-                    "type": "string"
-                },
-                "url": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.ScrapeResp": {
-            "type": "object",
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.SearchDocxReq": {
-            "type": "object",
-            "properties": {
-                "app_id": {
-                    "type": "string"
-                },
-                "app_secret": {
-                    "type": "string"
-                },
-                "user_access_token": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.SearchDocxResp": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "obj_token": {
-                    "type": "string"
-                },
-                "obj_type": {
-                    "type": "integer"
-                },
-                "url": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.SearchWikiReq": {
-            "type": "object",
-            "properties": {
-                "app_id": {
-                    "type": "string"
-                },
-                "app_secret": {
-                    "type": "string"
-                },
-                "query": {
-                    "type": "string"
-                },
-                "space_id": {
-                    "type": "string"
-                },
-                "user_access_token": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.SearchWikiResp": {
-            "type": "object",
-            "properties": {
-                "obj_token": {
-                    "type": "string"
-                },
-                "obj_type": {
-                    "type": "integer"
-                },
-                "space_id": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "url": {
-                    "type": "string"
-                }
-            }
         },
         "domain.ShareCommentListItem": {
             "type": "object",
@@ -6979,20 +6864,6 @@
                     "type": "string"
                 },
                 "text": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.Source": {
-            "type": "object",
-            "properties": {
-                "obj_token": {
-                    "type": "string"
-                },
-                "obj_type": {
-                    "type": "integer"
-                },
-                "url": {
                     "type": "string"
                 }
             }
@@ -7254,24 +7125,13 @@
                 }
             }
         },
-        "domain.WikiJSResp": {
+        "domain.YuqueResp": {
             "type": "object",
             "properties": {
                 "content": {
                     "type": "string"
                 },
                 "id": {
-                    "type": "integer"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.YuqueResp": {
-            "type": "object",
-            "properties": {
-                "content": {
                     "type": "string"
                 },
                 "title": {
@@ -7669,6 +7529,154 @@
                 }
             }
         },
+        "v1.FeishuGetDocReq": {
+            "type": "object",
+            "required": [
+                "doc_id",
+                "id"
+            ],
+            "properties": {
+                "doc_id": {
+                    "type": "string"
+                },
+                "file_type": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "space_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.FeishuGetDocResp": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.FeishuListCloudDocReq": {
+            "type": "object",
+            "required": [
+                "app_id",
+                "app_secret",
+                "user_access_token"
+            ],
+            "properties": {
+                "app_id": {
+                    "type": "string"
+                },
+                "app_secret": {
+                    "type": "string"
+                },
+                "user_access_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.FeishuListCloudDocResp": {
+            "type": "object",
+            "required": [
+                "doc_id",
+                "id"
+            ],
+            "properties": {
+                "doc_id": {
+                    "type": "string"
+                },
+                "file_type": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "space_id": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.FeishuSearchWikiReq": {
+            "type": "object",
+            "required": [
+                "app_id",
+                "app_secret",
+                "user_access_token"
+            ],
+            "properties": {
+                "app_id": {
+                    "type": "string"
+                },
+                "app_secret": {
+                    "type": "string"
+                },
+                "space_id": {
+                    "type": "string"
+                },
+                "user_access_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.FeishuSearchWikiResp": {
+            "type": "object",
+            "required": [
+                "doc_id",
+                "id"
+            ],
+            "properties": {
+                "doc_id": {
+                    "type": "string"
+                },
+                "file_type": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "space_id": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.FeishuSpaceListReq": {
+            "type": "object",
+            "required": [
+                "app_id",
+                "app_secret",
+                "user_access_token"
+            ],
+            "properties": {
+                "app_id": {
+                    "type": "string"
+                },
+                "app_secret": {
+                    "type": "string"
+                },
+                "user_access_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.FeishuSpaceListResp": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "space_id": {
+                    "type": "string"
+                }
+            }
+        },
         "v1.KBUserInviteReq": {
             "type": "object",
             "required": [
@@ -7880,6 +7888,58 @@
                 }
             }
         },
+        "v1.NotionParseItem": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.NotionParseReq": {
+            "type": "object",
+            "properties": {
+                "integration": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.NotionParseResp": {
+            "type": "object",
+            "properties": {
+                "docs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.NotionParseItem"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.NotionScrapeReq": {
+            "type": "object",
+            "properties": {
+                "doc_id": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.NotionScrapeResp": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                }
+            }
+        },
         "v1.RecommendNodeListItem": {
             "type": "object",
             "properties": {
@@ -7925,6 +7985,145 @@
                 "new_password": {
                     "type": "string",
                     "minLength": 8
+                }
+            }
+        },
+        "v1.RssParseItem": {
+            "type": "object",
+            "properties": {
+                "desc": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.RssParseReq": {
+            "type": "object",
+            "required": [
+                "url"
+            ],
+            "properties": {
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.RssParseResp": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.RssParseItem"
+                    }
+                }
+            }
+        },
+        "v1.RssScrapeReq": {
+            "type": "object",
+            "required": [
+                "url"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.RssScrapeResp": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.ScrapeReq": {
+            "type": "object",
+            "properties": {
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.ScrapeResp": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.SitemapParseItem": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.SitemapParseReq": {
+            "type": "object",
+            "required": [
+                "url"
+            ],
+            "properties": {
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.SitemapParseResp": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.SitemapParseItem"
+                    }
+                }
+            }
+        },
+        "v1.SitemapScrapeReq": {
+            "type": "object",
+            "required": [
+                "id",
+                "url"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.SitemapScrapeResp": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
                 }
             }
         },
@@ -7996,6 +8195,20 @@
                     "items": {
                         "$ref": "#/definitions/v1.UserListItemResp"
                     }
+                }
+            }
+        },
+        "v1.WikiJSResp": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
                 }
             }
         }

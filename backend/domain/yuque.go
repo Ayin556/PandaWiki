@@ -5,6 +5,7 @@ type YuqueReq struct {
 }
 
 type YuqueResp struct {
+	ID      string `json:"id"`
 	Content string `json:"content"`
 	Title   string `json:"title"`
 }

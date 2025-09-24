@@ -24,7 +24,7 @@ type SiYuanUsecase struct {
 	fileusecase *FileUsecase
 }
 
-func NewShiYuanUsecase(logger *log.Logger, fileusecase *FileUsecase) *SiYuanUsecase {
+func NewSiYuanUsecase(logger *log.Logger, fileusecase *FileUsecase) *SiYuanUsecase {
 	return &SiYuanUsecase{
 		logger:      logger.WithModule("usecase.siyuanUsecase"),
 		fileusecase: fileusecase,
