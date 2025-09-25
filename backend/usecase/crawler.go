@@ -85,46 +85,56 @@ func (u *CrawlerUsecase) ScrapeURL(ctx context.Context, targetURL string) (*v1.S
 	}, nil
 }
 
-func (u *CrawlerUsecase) ConfluenceHandle(ctx context.Context, targetURL, filename string) ([]domain.AnalysisConfluenceResp, error) {
-
+func (u *CrawlerUsecase) ConfluenceParse(ctx context.Context, targetURL, filename string) (*v1.ConfluenceParseResp, error) {
 	id := utils.GetFileNameWithoutExt(targetURL)
 	if !utils.IsUUID(id) {
 		id = uuid.New().String()
 	}
 
-	confluenceListResp, err := u.anydocClient.ConfluenceListDocs(ctx, targetURL, filename, id)
+	docs, err := u.anydocClient.ConfluenceListDocs(ctx, targetURL, filename, id)
 	if err != nil {
 		return nil, err
 	}
 
-	var results []domain.AnalysisConfluenceResp
-
-	for _, doc := range confluenceListResp.Data.Docs {
-		exportResp, err := u.anydocClient.ConfluenceExportDoc(ctx, id, doc.ID)
-		if err != nil {
-			u.logger.Error("export confluence doc failed", "doc_id", doc.ID, "error", err)
-			continue
-		}
-
-		taskRes, err := u.anydocClient.TaskWaitForCompletion(ctx, exportResp.Data)
-		if err != nil {
-			u.logger.Error("wait for task completion failed", "task_id", exportResp.Data, "error", err)
-			continue
-		}
-
-		fileBytes, err := u.anydocClient.DownloadDoc(ctx, taskRes.Markdown)
-		if err != nil {
-			u.logger.Error("download doc failed", "markdown_path", taskRes.Markdown, "error", err)
-			continue
-		}
-
-		results = append(results, domain.AnalysisConfluenceResp{
-			ID:      doc.ID,
-			Title:   doc.Title,
-			Content: string(fileBytes),
+	items := make([]v1.ConfluenceParseItem, 0, len(docs.Data.Docs))
+	for _, doc := range docs.Data.Docs {
+		items = append(items, v1.ConfluenceParseItem{
+			ID:    doc.ID,
+			Title: doc.Title,
+			URL:   doc.URL,
 		})
 	}
-	return results, nil
+
+	result := &v1.ConfluenceParseResp{
+		ID:   id,
+		Docs: items,
+	}
+
+	return result, nil
+}
+
+// ConfluenceScrape 根据文档ID列表抓取具体内容
+func (u *CrawlerUsecase) ConfluenceScrape(ctx context.Context, req *v1.ConfluenceScrapeReq) (*v1.ConfluenceScrapeResp, error) {
+
+	exportResp, err := u.anydocClient.ConfluenceExportDoc(ctx, req.ID, req.DocID)
+	if err != nil {
+		u.logger.Error("export confluence doc failed", "doc_id", req.DocID, "error", err)
+		return nil, err
+	}
+
+	taskRes, err := u.anydocClient.TaskWaitForCompletion(ctx, exportResp.Data)
+	if err != nil {
+		u.logger.Error("wait for task completion failed", "task_id", exportResp.Data, "error", err)
+		return nil, err
+	}
+
+	fileBytes, err := u.anydocClient.DownloadDoc(ctx, taskRes.Markdown)
+	if err != nil {
+		u.logger.Error("download doc failed", "markdown_path", taskRes.Markdown, "error", err)
+		return nil, err
+	}
+
+	return &v1.ConfluenceScrapeResp{Content: string(fileBytes)}, nil
 }
 
 func (u *CrawlerUsecase) YuqueHandle(ctx context.Context, targetURL, filename string) ([]domain.YuqueResp, error) {

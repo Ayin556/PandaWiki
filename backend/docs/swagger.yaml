@@ -245,15 +245,6 @@ definitions:
           type: string
         type: array
     type: object
-  domain.AnalysisConfluenceResp:
-    properties:
-      content:
-        type: string
-      id:
-        type: string
-      title:
-        type: string
-    type: object
   domain.AnydocUploadResp:
     properties:
       code:
@@ -2116,6 +2107,39 @@ definitions:
       total:
         type: integer
     type: object
+  v1.ConfluenceParseItem:
+    properties:
+      id:
+        type: string
+      title:
+        type: string
+      url:
+        type: string
+    type: object
+  v1.ConfluenceParseResp:
+    properties:
+      docs:
+        items:
+          $ref: '#/definitions/v1.ConfluenceParseItem'
+        type: array
+      id:
+        type: string
+    type: object
+  v1.ConfluenceScrapeReq:
+    properties:
+      doc_id:
+        type: string
+      id:
+        type: string
+    required:
+    - doc_id
+    - id
+    type: object
+  v1.ConfluenceScrapeResp:
+    properties:
+      content:
+        type: string
+    type: object
   v1.ConversationListItems:
     properties:
       data:
@@ -3015,11 +3039,11 @@ paths:
       summary: GetMessageFeedBackList
       tags:
       - Message
-  /api/v1/crawler/confluence/analysis_export_file:
+  /api/v1/crawler/confluence/parse:
     post:
       consumes:
-      - application/json
-      description: Analyze Confluence Export File
+      - multipart/form-data
+      description: Parse Confluence Export File and return document list
       parameters:
       - description: file
         in: formData
@@ -3041,11 +3065,36 @@ paths:
             - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/domain.AnalysisConfluenceResp'
-                  type: array
+                  $ref: '#/definitions/v1.ConfluenceParseResp'
               type: object
-      summary: AnalysisConfluenceExportFile
+      summary: ConfluenceParse
+      tags:
+      - crawler
+  /api/v1/crawler/confluence/scrape:
+    post:
+      consumes:
+      - application/json
+      description: Scrape specific Confluence documents by ID
+      parameters:
+      - description: Scrape Request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/v1.ConfluenceScrapeReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.PWResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/v1.ConfluenceScrapeResp'
+              type: object
+      summary: ConfluenceScrape
       tags:
       - crawler
   /api/v1/crawler/epub/convert:

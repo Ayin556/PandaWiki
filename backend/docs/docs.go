@@ -659,11 +659,11 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/crawler/confluence/analysis_export_file": {
+        "/api/v1/crawler/confluence/parse": {
             "post": {
-                "description": "Analyze Confluence Export File",
+                "description": "Parse Confluence Export File and return document list",
                 "consumes": [
-                    "application/json"
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -671,7 +671,7 @@ const docTemplate = `{
                 "tags": [
                     "crawler"
                 ],
-                "summary": "AnalysisConfluenceExportFile",
+                "summary": "ConfluenceParse",
                 "parameters": [
                     {
                         "type": "file",
@@ -700,10 +700,53 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/domain.AnalysisConfluenceResp"
-                                            }
+                                            "$ref": "#/definitions/v1.ConfluenceParseResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/crawler/confluence/scrape": {
+            "post": {
+                "description": "Scrape specific Confluence documents by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "crawler"
+                ],
+                "summary": "ConfluenceScrape",
+                "parameters": [
+                    {
+                        "description": "Scrape Request",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.ConfluenceScrapeReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.PWResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/v1.ConfluenceScrapeResp"
                                         }
                                     }
                                 }
@@ -4604,20 +4647,6 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.AnalysisConfluenceResp": {
-            "type": "object",
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
         "domain.AnydocUploadResp": {
             "type": "object",
             "properties": {
@@ -7472,6 +7501,57 @@ const docTemplate = `{
                 },
                 "total": {
                     "type": "integer"
+                }
+            }
+        },
+        "v1.ConfluenceParseItem": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.ConfluenceParseResp": {
+            "type": "object",
+            "properties": {
+                "docs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.ConfluenceParseItem"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.ConfluenceScrapeReq": {
+            "type": "object",
+            "required": [
+                "doc_id",
+                "id"
+            ],
+            "properties": {
+                "doc_id": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.ConfluenceScrapeResp": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
                 }
             }
         },

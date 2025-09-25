@@ -51,8 +51,7 @@ func NewCrawlerHandler(echo *echo.Echo,
 	group.POST("/feishu/list_doc", h.FeishuListCloudDoc)
 	group.POST("/feishu/search_wiki", h.FeishuWikiSearch)
 	group.POST("/feishu/get_doc", h.FeishuDoc)
-	// confluence
-	group.POST("/confluence/analysis_export_file", h.AnalysisConfluenceExportFile)
+
 	// yuque
 	group.POST("/yuque/analysis_export_file", h.AnalysisYuqueExportFile)
 	// siyuan
@@ -66,6 +65,9 @@ func NewCrawlerHandler(echo *echo.Echo,
 	// notion
 	group.POST("/notion/parse", h.NotionParse)
 	group.POST("/notion/scrape", h.NotionScrape)
+	// confluence
+	group.POST("/confluence/parse", h.ConfluenceParse)
+	group.POST("/confluence/scrape", h.ConfluenceScrape)
 
 	return h
 }
@@ -320,18 +322,18 @@ func (h *CrawlerHandler) FeishuDoc(c echo.Context) error {
 	return h.NewResponseWithData(c, resp)
 }
 
-// AnalysisConfluenceExportFile
+// ConfluenceParse
 //
-//	@Summary		AnalysisConfluenceExportFile
-//	@Description	Analyze Confluence Export File
+//	@Summary		ConfluenceParse
+//	@Description	Parse Confluence Export File and return document list
 //	@Tags			crawler
-//	@Accept			json
+//	@Accept			multipart/form-data
 //	@Produce		json
 //	@Param			file	formData	file	true	"file"
 //	@Param			kb_id	formData	string	true	"kb_id"
-//	@Success		200		{object}	domain.PWResponse{data=[]domain.AnalysisConfluenceResp}
-//	@Router			/api/v1/crawler/confluence/analysis_export_file [post]
-func (h *CrawlerHandler) AnalysisConfluenceExportFile(c echo.Context) error {
+//	@Success		200		{object}	domain.PWResponse{data=v1.ConfluenceParseResp}
+//	@Router			/api/v1/crawler/confluence/parse [post]
+func (h *CrawlerHandler) ConfluenceParse(c echo.Context) error {
 	ctx := c.Request().Context()
 
 	file, err := c.FormFile("file")
@@ -339,7 +341,7 @@ func (h *CrawlerHandler) AnalysisConfluenceExportFile(c echo.Context) error {
 		return h.NewResponseWithError(c, "get file failed", err)
 	}
 
-	var req domain.AnalysisConfluenceReq
+	var req v1.ConfluenceParseReq
 	req.KbID = c.FormValue("kb_id")
 	if err := c.Validate(req); err != nil {
 		return h.NewResponseWithError(c, "validate failed", err)
@@ -350,13 +352,39 @@ func (h *CrawlerHandler) AnalysisConfluenceExportFile(c echo.Context) error {
 		return h.NewResponseWithError(c, "upload failed", err)
 	}
 
-	h.logger.Info("AnalysisConfluenceExportFile UploadFile successfully", "fileUrl", fileUrl)
+	h.logger.Info("ConfluenceParse UploadFile successfully", "fileUrl", fileUrl)
 
-	resp, err := h.usecase.ConfluenceHandle(c.Request().Context(), fileUrl, file.Filename)
+	resp, err := h.usecase.ConfluenceParse(c.Request().Context(), fileUrl, file.Filename)
 	if err != nil {
-		return h.NewResponseWithError(c, "analysis confluence export file failed", err)
+		return h.NewResponseWithError(c, "parse confluence export file failed", err)
 	}
 
+	return h.NewResponseWithData(c, resp)
+}
+
+// ConfluenceScrape
+//
+//	@Tags			crawler
+//	@Summary		ConfluenceScrape
+//	@Description	Scrape specific Confluence documents by ID
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body		v1.ConfluenceScrapeReq	true	"Scrape Request"
+//	@Success		200		{object}	domain.PWResponse{data=v1.ConfluenceScrapeResp}
+//	@Router			/api/v1/crawler/confluence/scrape [post]
+func (h *CrawlerHandler) ConfluenceScrape(c echo.Context) error {
+	var req v1.ConfluenceScrapeReq
+	if err := c.Bind(&req); err != nil {
+		return h.NewResponseWithError(c, "request body is invalid", err)
+	}
+	if err := c.Validate(req); err != nil {
+		return h.NewResponseWithError(c, "validate request body failed", err)
+	}
+
+	resp, err := h.usecase.ConfluenceScrape(c.Request().Context(), &req)
+	if err != nil {
+		return h.NewResponseWithError(c, "scrape confluence docs failed", err)
+	}
 	return h.NewResponseWithData(c, resp)
 }
 
