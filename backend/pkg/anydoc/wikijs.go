@@ -115,7 +115,7 @@ func (c *Client) WikijsListDocs(ctx context.Context, wikijsURL, filename, uuid s
 }
 
 // WikijsExportDoc 导出 Wikijs 文档
-func (c *Client) WikijsExportDoc(ctx context.Context, uuid, docID string) (*WikijsExportDocResponse, error) {
+func (c *Client) WikijsExportDoc(ctx context.Context, uuid, docID, kbId string) (*WikijsExportDocResponse, error) {
 	u, err := url.Parse(crawlerServiceHost)
 	if err != nil {
 		return nil, err
@@ -131,7 +131,7 @@ func (c *Client) WikijsExportDoc(ctx context.Context, uuid, docID string) (*Wiki
 			"http": map[string]interface{}{
 				"url": apiUploaderUrl,
 			},
-			"dir": uploaderDir,
+			"dir": fmt.Sprintf("/%s", kbId),
 		},
 	}
 

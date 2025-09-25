@@ -142,7 +142,7 @@ func (h *CrawlerHandler) Scrape(c echo.Context) error {
 	if err := c.Validate(req); err != nil {
 		return h.NewResponseWithError(c, "validate request body failed", err)
 	}
-	resp, err := h.usecase.ScrapeURL(c.Request().Context(), req.URL)
+	resp, err := h.usecase.ScrapeURL(c.Request().Context(), req.URL, req.KbID)
 	if err != nil {
 		return h.NewResponseWithError(c, "scrape url failed", err)
 	}
@@ -179,7 +179,7 @@ func (h *CrawlerHandler) EpubConvert(c echo.Context) error {
 
 	h.logger.Info("EpubConvert UploadFile successfully", "fileUrl", fileUrl)
 
-	resp, err := h.usecase.EpubHandle(c.Request().Context(), fileUrl, file.Filename)
+	resp, err := h.usecase.EpubHandle(c.Request().Context(), fileUrl, file.Filename, req.KbID)
 	if err != nil {
 		return h.NewResponseWithError(c, "analysis export file failed", err)
 	}
@@ -217,7 +217,7 @@ func (h *CrawlerHandler) AnalysisWikijsExportFile(c echo.Context) error {
 
 	h.logger.Info("AnalysisConfluenceExportFile UploadFile successfully", "fileUrl", fileUrl)
 
-	resp, err := h.usecase.WikijsHandle(c.Request().Context(), fileUrl, file.Filename)
+	resp, err := h.usecase.WikijsHandle(c.Request().Context(), fileUrl, file.Filename, req.KbID)
 	if err != nil {
 		return h.NewResponseWithError(c, "analysis export file failed", err)
 	}
@@ -418,7 +418,7 @@ func (h *CrawlerHandler) AnalysisYuqueExportFile(c echo.Context) error {
 
 	h.logger.Info("AnalysisYuqueExportFile UploadFile successfully", "fileUrl", fileUrl)
 
-	resp, err := h.usecase.YuqueHandle(c.Request().Context(), fileUrl, file.Filename)
+	resp, err := h.usecase.YuqueHandle(c.Request().Context(), fileUrl, file.Filename, req.KbID)
 	if err != nil {
 		return h.NewResponseWithError(c, "analysis yuque export file failed", err)
 	}

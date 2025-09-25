@@ -115,7 +115,7 @@ func (c *Client) ConfluenceListDocs(ctx context.Context, confluenceURL, filename
 }
 
 // ConfluenceExportDoc 导出 Confluence 文档
-func (c *Client) ConfluenceExportDoc(ctx context.Context, uuid, docID string) (*ConfluenceExportDocResponse, error) {
+func (c *Client) ConfluenceExportDoc(ctx context.Context, uuid, docID, kbId string) (*ConfluenceExportDocResponse, error) {
 	u, err := url.Parse(crawlerServiceHost)
 	if err != nil {
 		return nil, err
@@ -131,7 +131,7 @@ func (c *Client) ConfluenceExportDoc(ctx context.Context, uuid, docID string) (*
 			"http": map[string]interface{}{
 				"url": apiUploaderUrl,
 			},
-			"dir": uploaderDir,
+			"dir": fmt.Sprintf("/%s", kbId),
 		},
 	}
 

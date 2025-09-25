@@ -1,7 +1,7 @@
 package v1
 
 type NotionParseReq struct {
-	Integration string `json:"integration"`
+	Integration string `json:"integration" validate:"required"`
 }
 type NotionParseResp struct {
 	ID   string            `json:"id"`
@@ -14,8 +14,9 @@ type NotionParseItem struct {
 }
 
 type NotionScrapeReq struct {
-	ID    string `json:"id"`
-	DocId string `json:"doc_id"`
+	KbID  string `json:"kb_id" validate:"required"`
+	ID    string `json:"id" validate:"required"`
+	DocId string `json:"doc_id" validate:"required"`
 }
 
 type NotionScrapeResp struct {
