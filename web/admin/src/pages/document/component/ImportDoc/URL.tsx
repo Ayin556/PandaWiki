@@ -64,7 +64,7 @@ const URLImport = ({
     const urls = url.split('\n');
     for (const url of urls) {
       newQueue.push(async () => {
-        const { title, content } = await postApiV1CrawlerScrape({ url });
+        const { title, content } = await postApiV1CrawlerScrape({ url, kb_id });
         setItems(prev => [
           { title: title || url, content: content!, url, success: -1, id: '' },
           ...prev,

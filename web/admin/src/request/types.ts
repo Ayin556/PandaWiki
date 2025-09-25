@@ -1181,6 +1181,7 @@ export interface V1ConfluenceParseResp {
 export interface V1ConfluenceScrapeReq {
   doc_id: string;
   id: string;
+  kb_id: string;
 }
 
 export interface V1ConfluenceScrapeResp {
@@ -1211,6 +1212,7 @@ export interface V1FeishuGetDocReq {
   doc_id: string;
   file_type?: string;
   id: string;
+  kb_id: string;
   space_id?: string;
 }
 
@@ -1331,7 +1333,7 @@ export interface V1NotionParseItem {
 }
 
 export interface V1NotionParseReq {
-  integration?: string;
+  integration: string;
 }
 
 export interface V1NotionParseResp {
@@ -1340,8 +1342,9 @@ export interface V1NotionParseResp {
 }
 
 export interface V1NotionScrapeReq {
-  doc_id?: string;
-  id?: string;
+  doc_id: string;
+  id: string;
+  kb_id: string;
 }
 
 export interface V1NotionScrapeResp {
@@ -1381,7 +1384,8 @@ export interface V1RssParseResp {
 }
 
 export interface V1RssScrapeReq {
-  id?: string;
+  id: string;
+  kb_id: string;
   url: string;
 }
 
@@ -1390,7 +1394,8 @@ export interface V1RssScrapeResp {
 }
 
 export interface V1ScrapeReq {
-  url?: string;
+  kb_id: string;
+  url: string;
 }
 
 export interface V1ScrapeResp {
@@ -1414,6 +1419,7 @@ export interface V1SitemapParseResp {
 
 export interface V1SitemapScrapeReq {
   id: string;
+  kb_id: string;
   url: string;
 }
 
