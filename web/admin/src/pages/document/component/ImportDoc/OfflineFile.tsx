@@ -127,7 +127,7 @@ const OfflineFileImport = ({
       setStep('pull-done');
       setTimeout(async () => {
         for (const { url, title } of urls) {
-          const res = await postApiV1CrawlerScrape({ url });
+          const res = await postApiV1CrawlerScrape({ url, kb_id });
           setItems(prev => [
             {
               ...res,

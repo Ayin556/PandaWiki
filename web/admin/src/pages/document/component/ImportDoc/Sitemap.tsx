@@ -78,6 +78,7 @@ const SitemapImport = ({
         const { content = '' } = await postApiV1CrawlerSitemapScrape({
           url: parseItem.url!,
           id,
+          kb_id,
         });
         setItems(prev => [
           {

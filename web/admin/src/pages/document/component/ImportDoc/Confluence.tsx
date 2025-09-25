@@ -135,6 +135,7 @@ const ImportDocConfluence = ({
       newQueue.push(async () => {
         const res = await postApiV1CrawlerConfluenceScrape({
           id,
+          kb_id,
           doc_id: item.url || '',
         });
         setItems(prev => [

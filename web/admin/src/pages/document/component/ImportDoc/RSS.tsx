@@ -84,7 +84,11 @@ const RSSImport = ({
     const rssData = items.filter(item => selectIds.includes(item.url));
     for (const item of rssData) {
       newQueue.push(async () => {
-        const res = await postApiV1CrawlerRssScrape({ url: item.url, id });
+        const res = await postApiV1CrawlerRssScrape({
+          url: item.url,
+          id,
+          kb_id,
+        });
         setItems(prev => [
           {
             ...item,

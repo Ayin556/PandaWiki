@@ -88,6 +88,7 @@ const NotionImport = ({
       newQueue.push(async () => {
         const res = await postApiV1CrawlerNotionScrape({
           id,
+          kb_id,
           doc_id: item.url,
         });
         setItems(prev => [
