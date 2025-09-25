@@ -116,7 +116,7 @@ func (c *Client) GetUrlList(ctx context.Context, targetURL, id string) (*GetUrlL
 	return &scrapeResp.Data, nil
 }
 
-func (c *Client) UrlExport(ctx context.Context, id, docID string) (*UrlExportRes, error) {
+func (c *Client) UrlExport(ctx context.Context, id, docID, kbId string) (*UrlExportRes, error) {
 
 	u, err := url.Parse(crawlerServiceHost)
 	if err != nil {
@@ -133,7 +133,7 @@ func (c *Client) UrlExport(ctx context.Context, id, docID string) (*UrlExportRes
 			"http": map[string]interface{}{
 				"url": apiUploaderUrl,
 			},
-			"dir": uploaderDir,
+			"dir": fmt.Sprintf("/%s", kbId),
 		},
 	}
 

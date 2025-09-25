@@ -103,7 +103,7 @@ func (c *Client) SitemapListDocs(ctx context.Context, uuid, xmlUrl string) (*Sit
 }
 
 // SitemapExportDoc 导出 Sitemap 文档
-func (c *Client) SitemapExportDoc(ctx context.Context, uuid, docID string) (*SitemapExportDocResponse, error) {
+func (c *Client) SitemapExportDoc(ctx context.Context, uuid, docID, kbId string) (*SitemapExportDocResponse, error) {
 	u, err := url.Parse(crawlerServiceHost)
 	if err != nil {
 		return nil, err
@@ -119,7 +119,7 @@ func (c *Client) SitemapExportDoc(ctx context.Context, uuid, docID string) (*Sit
 			"http": map[string]interface{}{
 				"url": apiUploaderUrl,
 			},
-			"dir": uploaderDir,
+			"dir": fmt.Sprintf("/%s", kbId),
 		},
 	}
 

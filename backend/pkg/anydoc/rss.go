@@ -103,7 +103,7 @@ func (c *Client) RssListDocs(ctx context.Context, uuid, xmlUrl string) (*RssList
 }
 
 // RssExportDoc 导出 Rss 文档
-func (c *Client) RssExportDoc(ctx context.Context, uuid, docID string) (*RssExportDocResponse, error) {
+func (c *Client) RssExportDoc(ctx context.Context, uuid, docID, kbId string) (*RssExportDocResponse, error) {
 	u, err := url.Parse(crawlerServiceHost)
 	if err != nil {
 		return nil, err
@@ -119,7 +119,7 @@ func (c *Client) RssExportDoc(ctx context.Context, uuid, docID string) (*RssExpo
 			"http": map[string]interface{}{
 				"url": apiUploaderUrl,
 			},
-			"dir": uploaderDir,
+			"dir": fmt.Sprintf("/%s", kbId),
 		},
 	}
 

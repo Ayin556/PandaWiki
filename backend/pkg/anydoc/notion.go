@@ -90,7 +90,7 @@ func (c *Client) NotionListDocs(ctx context.Context, secret, uuid string) (*Noti
 }
 
 // NotionExportDoc 导出 Notion 文档
-func (c *Client) NotionExportDoc(ctx context.Context, uuid, docID string) (*NotionExportDocResponse, error) {
+func (c *Client) NotionExportDoc(ctx context.Context, uuid, docID, kbId string) (*NotionExportDocResponse, error) {
 	u, err := url.Parse(crawlerServiceHost)
 	if err != nil {
 		return nil, err
@@ -106,7 +106,7 @@ func (c *Client) NotionExportDoc(ctx context.Context, uuid, docID string) (*Noti
 			"http": map[string]interface{}{
 				"url": apiUploaderUrl,
 			},
-			"dir": uploaderDir,
+			"dir": fmt.Sprintf("/%s", kbId),
 		},
 	}
 

@@ -115,7 +115,7 @@ func (c *Client) EpubpListDocs(ctx context.Context, epubpURL, filename, uuid str
 }
 
 // EpubpExportDoc 导出 Epubp 文档
-func (c *Client) EpubpExportDoc(ctx context.Context, uuid, docID string) (*EpubpExportDocResponse, error) {
+func (c *Client) EpubpExportDoc(ctx context.Context, uuid, docID, kbId string) (*EpubpExportDocResponse, error) {
 	u, err := url.Parse(crawlerServiceHost)
 	if err != nil {
 		return nil, err
@@ -131,7 +131,7 @@ func (c *Client) EpubpExportDoc(ctx context.Context, uuid, docID string) (*Epubp
 			"http": map[string]interface{}{
 				"url": apiUploaderUrl,
 			},
-			"dir": uploaderDir,
+			"dir": fmt.Sprintf("/%s", kbId),
 		},
 	}
 

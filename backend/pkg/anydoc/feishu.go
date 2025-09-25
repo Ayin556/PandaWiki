@@ -115,7 +115,7 @@ func (c *Client) FeishuListDocs(ctx context.Context, uuid, appId, appSecret, acc
 }
 
 // FeishuExportDoc 导出 Feishu 文档
-func (c *Client) FeishuExportDoc(ctx context.Context, uuid, docID, fileType, spaceId string) (*FeishuExportDocResponse, error) {
+func (c *Client) FeishuExportDoc(ctx context.Context, uuid, docID, fileType, spaceId, kbId string) (*FeishuExportDocResponse, error) {
 	u, err := url.Parse(crawlerServiceHost)
 	if err != nil {
 		return nil, err
@@ -133,7 +133,7 @@ func (c *Client) FeishuExportDoc(ctx context.Context, uuid, docID, fileType, spa
 			"http": map[string]interface{}{
 				"url": apiUploaderUrl,
 			},
-			"dir": uploaderDir,
+			"dir": fmt.Sprintf("/%s", kbId),
 		},
 	}
 

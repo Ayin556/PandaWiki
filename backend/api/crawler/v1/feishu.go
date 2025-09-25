@@ -40,6 +40,7 @@ type FeishuListCloudDocResp struct {
 }
 
 type FeishuGetDocReq struct {
+	KbID     string `json:"kb_id" validate:"required"`
 	ID       string `json:"id" validate:"required"`
 	DocId    string `json:"doc_id" validate:"required"`
 	FileType string `json:"file_type"`

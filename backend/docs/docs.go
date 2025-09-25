@@ -7536,13 +7536,17 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "doc_id",
-                "id"
+                "id",
+                "kb_id"
             ],
             "properties": {
                 "doc_id": {
                     "type": "string"
                 },
                 "id": {
+                    "type": "string"
+                },
+                "kb_id": {
                     "type": "string"
                 }
             }
@@ -7620,7 +7624,8 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "doc_id",
-                "id"
+                "id",
+                "kb_id"
             ],
             "properties": {
                 "doc_id": {
@@ -7630,6 +7635,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
+                    "type": "string"
+                },
+                "kb_id": {
                     "type": "string"
                 },
                 "space_id": {
@@ -7988,6 +7996,9 @@ const docTemplate = `{
         },
         "v1.NotionParseReq": {
             "type": "object",
+            "required": [
+                "integration"
+            ],
             "properties": {
                 "integration": {
                     "type": "string"
@@ -8010,11 +8021,19 @@ const docTemplate = `{
         },
         "v1.NotionScrapeReq": {
             "type": "object",
+            "required": [
+                "doc_id",
+                "id",
+                "kb_id"
+            ],
             "properties": {
                 "doc_id": {
                     "type": "string"
                 },
                 "id": {
+                    "type": "string"
+                },
+                "kb_id": {
                     "type": "string"
                 }
             }
@@ -8117,10 +8136,15 @@ const docTemplate = `{
         "v1.RssScrapeReq": {
             "type": "object",
             "required": [
+                "id",
+                "kb_id",
                 "url"
             ],
             "properties": {
                 "id": {
+                    "type": "string"
+                },
+                "kb_id": {
                     "type": "string"
                 },
                 "url": {
@@ -8138,7 +8162,14 @@ const docTemplate = `{
         },
         "v1.ScrapeReq": {
             "type": "object",
+            "required": [
+                "kb_id",
+                "url"
+            ],
             "properties": {
+                "kb_id": {
+                    "type": "string"
+                },
                 "url": {
                     "type": "string"
                 }
@@ -8195,10 +8226,14 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "id",
+                "kb_id",
                 "url"
             ],
             "properties": {
                 "id": {
+                    "type": "string"
+                },
+                "kb_id": {
                     "type": "string"
                 },
                 "url": {

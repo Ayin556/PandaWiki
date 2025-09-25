@@ -107,7 +107,7 @@ func (c *Client) YuqueListDocs(ctx context.Context, yuqueURL, filename, uuid str
 }
 
 // YuqueExportDoc 导出 Yuque 文档
-func (c *Client) YuqueExportDoc(ctx context.Context, uuid, docID string) (*YuqueExportDocResponse, error) {
+func (c *Client) YuqueExportDoc(ctx context.Context, uuid, docID, kbId string) (*YuqueExportDocResponse, error) {
 	u, err := url.Parse(crawlerServiceHost)
 	if err != nil {
 		return nil, err
@@ -123,7 +123,7 @@ func (c *Client) YuqueExportDoc(ctx context.Context, uuid, docID string) (*Yuque
 			"http": map[string]interface{}{
 				"url": apiUploaderUrl,
 			},
-			"dir": uploaderDir,
+			"dir": fmt.Sprintf("/%s", kbId),
 		},
 	}
 

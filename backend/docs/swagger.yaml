@@ -2131,9 +2131,12 @@ definitions:
         type: string
       id:
         type: string
+      kb_id:
+        type: string
     required:
     - doc_id
     - id
+    - kb_id
     type: object
   v1.ConfluenceScrapeResp:
     properties:
@@ -2187,11 +2190,14 @@ definitions:
         type: string
       id:
         type: string
+      kb_id:
+        type: string
       space_id:
         type: string
     required:
     - doc_id
     - id
+    - kb_id
     type: object
   v1.FeishuGetDocResp:
     properties:
@@ -2429,6 +2435,8 @@ definitions:
     properties:
       integration:
         type: string
+    required:
+    - integration
     type: object
   v1.NotionParseResp:
     properties:
@@ -2445,6 +2453,12 @@ definitions:
         type: string
       id:
         type: string
+      kb_id:
+        type: string
+    required:
+    - doc_id
+    - id
+    - kb_id
     type: object
   v1.NotionScrapeResp:
     properties:
@@ -2512,9 +2526,13 @@ definitions:
     properties:
       id:
         type: string
+      kb_id:
+        type: string
       url:
         type: string
     required:
+    - id
+    - kb_id
     - url
     type: object
   v1.RssScrapeResp:
@@ -2524,8 +2542,13 @@ definitions:
     type: object
   v1.ScrapeReq:
     properties:
+      kb_id:
+        type: string
       url:
         type: string
+    required:
+    - kb_id
+    - url
     type: object
   v1.ScrapeResp:
     properties:
@@ -2561,10 +2584,13 @@ definitions:
     properties:
       id:
         type: string
+      kb_id:
+        type: string
       url:
         type: string
     required:
     - id
+    - kb_id
     - url
     type: object
   v1.SitemapScrapeResp:

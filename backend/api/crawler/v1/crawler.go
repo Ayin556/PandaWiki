@@ -1,7 +1,8 @@
 package v1
 
 type ScrapeReq struct {
-	URL string `json:"url"`
+	URL  string `json:"url" validate:"required"`
+	KbID string `json:"kb_id" validate:"required"`
 }
 
 type ScrapeResp struct {
@@ -24,8 +25,9 @@ type SitemapParseItem struct {
 }
 
 type SitemapScrapeReq struct {
-	ID  string `json:"id" validate:"required"`
-	URL string `json:"url" validate:"required"`
+	KbID string `json:"kb_id" validate:"required"`
+	ID   string `json:"id" validate:"required"`
+	URL  string `json:"url" validate:"required"`
 }
 
 type SitemapScrapeResp struct {
@@ -48,8 +50,9 @@ type RssParseItem struct {
 }
 
 type RssScrapeReq struct {
-	ID  string `json:"id"`
-	URL string `json:"url" validate:"required"`
+	KbID string `json:"kb_id" validate:"required"`
+	ID   string `json:"id" validate:"required"`
+	URL  string `json:"url" validate:"required"`
 }
 
 type RssScrapeResp struct {

@@ -16,6 +16,7 @@ type ConfluenceParseResp struct {
 }
 
 type ConfluenceScrapeReq struct {
+	KbID  string `json:"kb_id" validate:"required"`
 	ID    string `json:"id" validate:"required"`
 	DocID string `json:"doc_id" validate:"required"`
 }

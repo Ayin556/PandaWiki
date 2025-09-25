@@ -45,7 +45,7 @@ func NewCrawlerUsecase(logger *log.Logger, mqConsumer mq.MQConsumer, cache *cach
 	}, nil
 }
 
-func (u *CrawlerUsecase) ScrapeURL(ctx context.Context, targetURL string) (*v1.ScrapeResp, error) {
+func (u *CrawlerUsecase) ScrapeURL(ctx context.Context, targetURL, kbID string) (*v1.ScrapeResp, error) {
 	if strings.HasPrefix(targetURL, "/static-file") {
 		targetURL = "https://panda-wiki-nginx:8080" + targetURL
 	}
@@ -64,7 +64,7 @@ func (u *CrawlerUsecase) ScrapeURL(ctx context.Context, targetURL string) (*v1.S
 		return nil, errors.New("get getUrlRes Docs failed")
 	}
 
-	urlExportRes, err := u.anydocClient.UrlExport(ctx, id, getUrlRes.Docs[0].Id)
+	urlExportRes, err := u.anydocClient.UrlExport(ctx, id, getUrlRes.Docs[0].Id, kbID)
 	if err != nil {
 		return nil, err
 	}
@@ -116,7 +116,7 @@ func (u *CrawlerUsecase) ConfluenceParse(ctx context.Context, targetURL, filenam
 // ConfluenceScrape 根据文档ID列表抓取具体内容
 func (u *CrawlerUsecase) ConfluenceScrape(ctx context.Context, req *v1.ConfluenceScrapeReq) (*v1.ConfluenceScrapeResp, error) {
 
-	exportResp, err := u.anydocClient.ConfluenceExportDoc(ctx, req.ID, req.DocID)
+	exportResp, err := u.anydocClient.ConfluenceExportDoc(ctx, req.ID, req.DocID, req.KbID)
 	if err != nil {
 		u.logger.Error("export confluence doc failed", "doc_id", req.DocID, "error", err)
 		return nil, err
@@ -137,7 +137,7 @@ func (u *CrawlerUsecase) ConfluenceScrape(ctx context.Context, req *v1.Confluenc
 	return &v1.ConfluenceScrapeResp{Content: string(fileBytes)}, nil
 }
 
-func (u *CrawlerUsecase) YuqueHandle(ctx context.Context, targetURL, filename string) ([]domain.YuqueResp, error) {
+func (u *CrawlerUsecase) YuqueHandle(ctx context.Context, targetURL, filename, kbID string) ([]domain.YuqueResp, error) {
 
 	id := utils.GetFileNameWithoutExt(targetURL)
 	if !utils.IsUUID(id) {
@@ -152,7 +152,7 @@ func (u *CrawlerUsecase) YuqueHandle(ctx context.Context, targetURL, filename st
 	var results []domain.YuqueResp
 
 	for _, doc := range yuqueListResp.Data.Docs {
-		exportResp, err := u.anydocClient.YuqueExportDoc(ctx, id, doc.ID)
+		exportResp, err := u.anydocClient.YuqueExportDoc(ctx, id, doc.ID, kbID)
 		if err != nil {
 			u.logger.Error("export yuque doc failed", "doc_id", doc.ID, "error", err)
 			continue
@@ -179,7 +179,7 @@ func (u *CrawlerUsecase) YuqueHandle(ctx context.Context, targetURL, filename st
 	return results, nil
 }
 
-func (u *CrawlerUsecase) WikijsHandle(ctx context.Context, targetURL, filename string) ([]v1.WikiJSResp, error) {
+func (u *CrawlerUsecase) WikijsHandle(ctx context.Context, targetURL, filename, kbID string) ([]v1.WikiJSResp, error) {
 
 	id := utils.GetFileNameWithoutExt(targetURL)
 	if !utils.IsUUID(id) {
@@ -194,7 +194,7 @@ func (u *CrawlerUsecase) WikijsHandle(ctx context.Context, targetURL, filename s
 	var results []v1.WikiJSResp
 
 	for _, doc := range wikijsListResp.Data.Docs {
-		exportResp, err := u.anydocClient.WikijsExportDoc(ctx, id, doc.ID)
+		exportResp, err := u.anydocClient.WikijsExportDoc(ctx, id, doc.ID, kbID)
 		if err != nil {
 			u.logger.Error("export doc failed", "doc_id", doc.ID, "error", err)
 			continue
@@ -221,7 +221,7 @@ func (u *CrawlerUsecase) WikijsHandle(ctx context.Context, targetURL, filename s
 	return results, nil
 }
 
-func (u *CrawlerUsecase) EpubHandle(ctx context.Context, targetURL, filename string) (*domain.EpubResp, error) {
+func (u *CrawlerUsecase) EpubHandle(ctx context.Context, targetURL, filename, kbID string) (*domain.EpubResp, error) {
 
 	id := utils.GetFileNameWithoutExt(targetURL)
 	if !utils.IsUUID(id) {
@@ -238,7 +238,7 @@ func (u *CrawlerUsecase) EpubHandle(ctx context.Context, targetURL, filename str
 	}
 
 	doc := epubListResp.Data.Docs[0]
-	exportResp, err := u.anydocClient.EpubpExportDoc(ctx, id, doc.ID)
+	exportResp, err := u.anydocClient.EpubpExportDoc(ctx, id, doc.ID, kbID)
 	if err != nil {
 		u.logger.Error("export doc failed", "doc_id", doc.ID, "error", err)
 		return nil, err
@@ -292,7 +292,7 @@ func (u *CrawlerUsecase) NotionGetDocList(ctx context.Context, integration strin
 func (u *CrawlerUsecase) NotionGetDoc(ctx context.Context, req v1.NotionScrapeReq) ([]v1.NotionScrapeResp, error) {
 	var results []v1.NotionScrapeResp
 
-	exportResp, err := u.anydocClient.NotionExportDoc(ctx, req.ID, req.DocId)
+	exportResp, err := u.anydocClient.NotionExportDoc(ctx, req.ID, req.DocId, req.KbID)
 	if err != nil {
 		u.logger.Error("export doc failed", "doc_id", req.DocId, "error", err)
 		return nil, err
@@ -345,7 +345,7 @@ func (u *CrawlerUsecase) SitemapGetUrls(ctx context.Context, xmlUrl string) (*v1
 
 func (u *CrawlerUsecase) SitemapGetDoc(ctx context.Context, req *v1.SitemapScrapeReq) (*v1.SitemapScrapeResp, error) {
 
-	urlExportRes, err := u.anydocClient.SitemapExportDoc(ctx, req.ID, req.URL)
+	urlExportRes, err := u.anydocClient.SitemapExportDoc(ctx, req.ID, req.URL, req.KbID)
 	if err != nil {
 		return nil, err
 	}
@@ -390,7 +390,7 @@ func (u *CrawlerUsecase) GetRSSParse(ctx context.Context, req *v1.RssParseReq) (
 
 func (u *CrawlerUsecase) GetRssDoc(ctx context.Context, req *v1.RssScrapeReq) (*v1.RssScrapeResp, error) {
 
-	urlExportRes, err := u.anydocClient.RssExportDoc(ctx, req.ID, req.URL)
+	urlExportRes, err := u.anydocClient.RssExportDoc(ctx, req.ID, req.URL, req.KbID)
 	if err != nil {
 		return nil, err
 	}

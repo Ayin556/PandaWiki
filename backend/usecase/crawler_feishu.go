@@ -74,7 +74,7 @@ func (u *CrawlerUsecase) FeishuSearchWiki(ctx context.Context, req *v1.FeishuSea
 
 func (u *CrawlerUsecase) FeishuGetDoc(ctx context.Context, req *v1.FeishuGetDocReq) ([]v1.FeishuGetDocResp, error) {
 
-	exportResp, err := u.anydocClient.FeishuExportDoc(ctx, req.ID, req.DocId, req.FileType, req.SpaceId)
+	exportResp, err := u.anydocClient.FeishuExportDoc(ctx, req.ID, req.DocId, req.FileType, req.SpaceId, req.KbID)
 	if err != nil {
 		u.logger.Error("export doc failed", "doc_id", req.DocId, "error", err)
 		return nil, err
