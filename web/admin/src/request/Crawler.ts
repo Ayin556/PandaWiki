@@ -12,16 +12,18 @@
 
 import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
-  DomainAnalysisConfluenceResp,
   DomainEpubResp,
   DomainPWResponse,
   DomainSiYuanResp,
   DomainYuqueResp,
-  PostApiV1CrawlerConfluenceAnalysisExportFilePayload,
+  PostApiV1CrawlerConfluenceParsePayload,
   PostApiV1CrawlerEpubConvertPayload,
   PostApiV1CrawlerSiyuanAnalysisExportFilePayload,
   PostApiV1CrawlerWikijsAnalysisExportFilePayload,
   PostApiV1CrawlerYuqueAnalysisExportFilePayload,
+  V1ConfluenceParseResp,
+  V1ConfluenceScrapeReq,
+  V1ConfluenceScrapeResp,
   V1FeishuGetDocReq,
   V1FeishuGetDocResp,
   V1FeishuListCloudDocReq,
@@ -48,31 +50,61 @@ import {
 } from "./types";
 
 /**
- * @description Analyze Confluence Export File
+ * @description Parse Confluence Export File and return document list
  *
  * @tags crawler
- * @name PostApiV1CrawlerConfluenceAnalysisExportFile
- * @summary AnalysisConfluenceExportFile
- * @request POST:/api/v1/crawler/confluence/analysis_export_file
+ * @name PostApiV1CrawlerConfluenceParse
+ * @summary ConfluenceParse
+ * @request POST:/api/v1/crawler/confluence/parse
  * @response `200` `(DomainPWResponse & {
-    data?: (DomainAnalysisConfluenceResp)[],
+    data?: V1ConfluenceParseResp,
 
 })` OK
  */
 
-export const postApiV1CrawlerConfluenceAnalysisExportFile = (
-  data: PostApiV1CrawlerConfluenceAnalysisExportFilePayload,
+export const postApiV1CrawlerConfluenceParse = (
+  data: PostApiV1CrawlerConfluenceParsePayload,
   params: RequestParams = {},
 ) =>
   httpRequest<
     DomainPWResponse & {
-      data?: DomainAnalysisConfluenceResp[];
+      data?: V1ConfluenceParseResp;
     }
   >({
-    path: `/api/v1/crawler/confluence/analysis_export_file`,
+    path: `/api/v1/crawler/confluence/parse`,
     method: "POST",
     body: data,
     type: ContentType.FormData,
+    format: "json",
+    ...params,
+  });
+
+/**
+ * @description Scrape specific Confluence documents by ID
+ *
+ * @tags crawler
+ * @name PostApiV1CrawlerConfluenceScrape
+ * @summary ConfluenceScrape
+ * @request POST:/api/v1/crawler/confluence/scrape
+ * @response `200` `(DomainPWResponse & {
+    data?: V1ConfluenceScrapeResp,
+
+})` OK
+ */
+
+export const postApiV1CrawlerConfluenceScrape = (
+  body: V1ConfluenceScrapeReq,
+  params: RequestParams = {},
+) =>
+  httpRequest<
+    DomainPWResponse & {
+      data?: V1ConfluenceScrapeResp;
+    }
+  >({
+    path: `/api/v1/crawler/confluence/scrape`,
+    method: "POST",
+    body: body,
+    type: ContentType.Json,
     format: "json",
     ...params,
   });

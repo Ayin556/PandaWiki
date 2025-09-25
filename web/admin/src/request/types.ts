@@ -201,12 +201,6 @@ export interface DomainAccessSettings {
   trusted_proxies?: string[];
 }
 
-export interface DomainAnalysisConfluenceResp {
-  content?: string;
-  id?: string;
-  title?: string;
-}
-
 export interface DomainAnydocUploadResp {
   code?: number;
   data?: string;
@@ -1173,6 +1167,26 @@ export interface V1CommentLists {
   total?: number;
 }
 
+export interface V1ConfluenceParseItem {
+  id?: string;
+  title?: string;
+  url?: string;
+}
+
+export interface V1ConfluenceParseResp {
+  docs?: V1ConfluenceParseItem[];
+  id?: string;
+}
+
+export interface V1ConfluenceScrapeReq {
+  doc_id: string;
+  id: string;
+}
+
+export interface V1ConfluenceScrapeResp {
+  content?: string;
+}
+
 export interface V1ConversationListItems {
   data?: DomainConversationListItem[];
   total?: number;
@@ -1528,7 +1542,7 @@ export interface GetApiV1ConversationMessageListParams {
   per_page: number;
 }
 
-export interface PostApiV1CrawlerConfluenceAnalysisExportFilePayload {
+export interface PostApiV1CrawlerConfluenceParsePayload {
   /**
    * file
    * @format binary
