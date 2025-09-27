@@ -241,6 +241,10 @@ const DocContent = ({
                   : DocWidth[docWidth as keyof typeof DocWidth].value,
               maxWidth: `calc(100vw - 80px - 264px - 192px - 8px - ${catalogShow ? catalogWidth : 26}px)`,
               overflowX: 'auto',
+              ...(mobile && {
+                width: '100%',
+                maxWidth: '100%',
+              }),
             },
           },
         }}
