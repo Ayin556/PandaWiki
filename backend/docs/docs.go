@@ -7420,7 +7420,7 @@ const docTemplate = `{
                         "placeholder": {
                             "type": "string"
                         },
-                        "sub_title": {
+                        "subtitle": {
                             "type": "string"
                         },
                         "subtitle_color": {

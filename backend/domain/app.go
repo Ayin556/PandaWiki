@@ -157,7 +157,7 @@ type WebAppLandingSettings struct {
 		Title            string   `json:"title"`
 		TitleColor       string   `json:"title_color"`
 		TitleFontSize    int      `json:"title_font_size"`
-		Subtitle         string   `json:"sub_title"`
+		Subtitle         string   `json:"subtitle"`
 		Placeholder      string   `json:"placeholder"`
 		SubtitleColor    string   `json:"subtitle_color"`
 		SubtitleFontSize int      `json:"subtitle_font_size"`
