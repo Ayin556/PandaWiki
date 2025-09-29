@@ -179,48 +179,6 @@ func (u *CrawlerUsecase) YuqueHandle(ctx context.Context, targetURL, filename, k
 	return results, nil
 }
 
-func (u *CrawlerUsecase) WikijsHandle(ctx context.Context, targetURL, filename, kbID string) ([]v1.WikiJSResp, error) {
-
-	id := utils.GetFileNameWithoutExt(targetURL)
-	if !utils.IsUUID(id) {
-		id = uuid.New().String()
-	}
-
-	wikijsListResp, err := u.anydocClient.WikijsListDocs(ctx, targetURL, filename, id)
-	if err != nil {
-		return nil, err
-	}
-
-	var results []v1.WikiJSResp
-
-	for _, doc := range wikijsListResp.Data.Docs {
-		exportResp, err := u.anydocClient.WikijsExportDoc(ctx, id, doc.ID, kbID)
-		if err != nil {
-			u.logger.Error("export doc failed", "doc_id", doc.ID, "error", err)
-			continue
-		}
-
-		taskRes, err := u.anydocClient.TaskWaitForCompletion(ctx, exportResp.Data)
-		if err != nil {
-			u.logger.Error("wait for task completion failed", "task_id", exportResp.Data, "error", err)
-			continue
-		}
-
-		fileBytes, err := u.anydocClient.DownloadDoc(ctx, taskRes.Markdown)
-		if err != nil {
-			u.logger.Error("download doc failed", "markdown_path", taskRes.Markdown, "error", err)
-			continue
-		}
-
-		results = append(results, v1.WikiJSResp{
-			ID:      doc.ID,
-			Title:   doc.Title,
-			Content: string(fileBytes),
-		})
-	}
-	return results, nil
-}
-
 func (u *CrawlerUsecase) EpubHandle(ctx context.Context, targetURL, filename, kbID string) (*domain.EpubResp, error) {
 
 	id := utils.GetFileNameWithoutExt(targetURL)
@@ -408,4 +366,158 @@ func (u *CrawlerUsecase) GetRssDoc(ctx context.Context, req *v1.RssScrapeReq) (*
 	return &v1.RssScrapeResp{
 		Content: string(fileBytes),
 	}, nil
+}
+
+func (u *CrawlerUsecase) SiyuanParse(ctx context.Context, targetURL, filename string) (*v1.SiyuanParseResp, error) {
+	id := utils.GetFileNameWithoutExt(targetURL)
+	if !utils.IsUUID(id) {
+		id = uuid.New().String()
+	}
+
+	docs, err := u.anydocClient.SiyuanListDocs(ctx, targetURL, filename, id)
+	if err != nil {
+		return nil, err
+	}
+
+	items := make([]v1.SiyuanParseItem, 0, len(docs.Data.Docs))
+	for _, doc := range docs.Data.Docs {
+		items = append(items, v1.SiyuanParseItem{
+			ID:    doc.ID,
+			Title: doc.Title,
+			URL:   doc.URL,
+		})
+	}
+
+	result := &v1.SiyuanParseResp{
+		ID:   id,
+		Docs: items,
+	}
+
+	return result, nil
+}
+
+// SiyuanScrape 根据文档ID列表抓取具体内容
+func (u *CrawlerUsecase) SiyuanScrape(ctx context.Context, req *v1.SiyuanScrapeReq) (*v1.SiyuanScrapeResp, error) {
+
+	exportResp, err := u.anydocClient.SiyuanExportDoc(ctx, req.ID, req.DocID, req.KbID)
+	if err != nil {
+		u.logger.Error("export Siyuan doc failed", "doc_id", req.DocID, "error", err)
+		return nil, err
+	}
+
+	taskRes, err := u.anydocClient.TaskWaitForCompletion(ctx, exportResp.Data)
+	if err != nil {
+		u.logger.Error("wait for task completion failed", "task_id", exportResp.Data, "error", err)
+		return nil, err
+	}
+
+	fileBytes, err := u.anydocClient.DownloadDoc(ctx, taskRes.Markdown)
+	if err != nil {
+		u.logger.Error("download doc failed", "markdown_path", taskRes.Markdown, "error", err)
+		return nil, err
+	}
+
+	return &v1.SiyuanScrapeResp{Content: string(fileBytes)}, nil
+}
+
+func (u *CrawlerUsecase) MindocParse(ctx context.Context, targetURL, filename string) (*v1.MindocParseResp, error) {
+	id := utils.GetFileNameWithoutExt(targetURL)
+	if !utils.IsUUID(id) {
+		id = uuid.New().String()
+	}
+
+	docs, err := u.anydocClient.MindocListDocs(ctx, targetURL, filename, id)
+	if err != nil {
+		return nil, err
+	}
+
+	items := make([]v1.MindocParseItem, 0, len(docs.Data.Docs))
+	for _, doc := range docs.Data.Docs {
+		items = append(items, v1.MindocParseItem{
+			ID:    doc.ID,
+			Title: doc.Title,
+			URL:   doc.URL,
+		})
+	}
+
+	result := &v1.MindocParseResp{
+		ID:   id,
+		Docs: items,
+	}
+
+	return result, nil
+}
+
+// MindocScrape 根据文档ID列表抓取具体内容
+func (u *CrawlerUsecase) MindocScrape(ctx context.Context, req *v1.MindocScrapeReq) (*v1.MindocScrapeResp, error) {
+
+	exportResp, err := u.anydocClient.MindocExportDoc(ctx, req.ID, req.DocID, req.KbID)
+	if err != nil {
+		u.logger.Error("export Mindoc doc failed", "doc_id", req.DocID, "error", err)
+		return nil, err
+	}
+
+	taskRes, err := u.anydocClient.TaskWaitForCompletion(ctx, exportResp.Data)
+	if err != nil {
+		u.logger.Error("wait for task completion failed", "task_id", exportResp.Data, "error", err)
+		return nil, err
+	}
+
+	fileBytes, err := u.anydocClient.DownloadDoc(ctx, taskRes.Markdown)
+	if err != nil {
+		u.logger.Error("download doc failed", "markdown_path", taskRes.Markdown, "error", err)
+		return nil, err
+	}
+
+	return &v1.MindocScrapeResp{Content: string(fileBytes)}, nil
+}
+
+func (u *CrawlerUsecase) WikijsParse(ctx context.Context, targetURL, filename string) (*v1.WikijsParseResp, error) {
+	id := utils.GetFileNameWithoutExt(targetURL)
+	if !utils.IsUUID(id) {
+		id = uuid.New().String()
+	}
+
+	docs, err := u.anydocClient.WikijsListDocs(ctx, targetURL, filename, id)
+	if err != nil {
+		return nil, err
+	}
+
+	items := make([]v1.WikijsParseItem, 0, len(docs.Data.Docs))
+	for _, doc := range docs.Data.Docs {
+		items = append(items, v1.WikijsParseItem{
+			ID:    doc.ID,
+			Title: doc.Title,
+		})
+	}
+
+	result := &v1.WikijsParseResp{
+		ID:   id,
+		Docs: items,
+	}
+
+	return result, nil
+}
+
+func (u *CrawlerUsecase) WikijsScrape(ctx context.Context, req *v1.WikijsScrapeReq) (*v1.WikijsScrapeResp, error) {
+
+	exportResp, err := u.anydocClient.WikijsExportDoc(ctx, req.ID, req.DocID, req.KbID)
+	if err != nil {
+		u.logger.Error("export Wikijs doc failed", "doc_id", req.DocID, "error", err)
+		return nil, err
+	}
+
+	taskRes, err := u.anydocClient.TaskWaitForCompletion(ctx, exportResp.Data)
+	if err != nil {
+		u.logger.Error("wait for task completion failed", "task_id", exportResp.Data, "error", err)
+		return nil, err
+	}
+
+	fileBytes, err := u.anydocClient.DownloadDoc(ctx, taskRes.Markdown)
+	if err != nil {
+		u.logger.Error("download doc failed", "markdown_path", taskRes.Markdown, "error", err)
+		return nil, err
+	}
+
+	return &v1.WikijsScrapeResp{Content: string(fileBytes)}, nil
 }

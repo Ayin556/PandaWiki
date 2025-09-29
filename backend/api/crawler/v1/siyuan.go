@@ -1,25 +1,26 @@
 package v1
 
-type WikijsParseReq struct {
+type SiyuanParseReq struct {
 	KbID string `json:"kb_id" validate:"required"`
 }
 
-type WikijsParseItem struct {
+type SiyuanParseItem struct {
 	ID    string `json:"id"`
 	Title string `json:"title"`
+	URL   string `json:"url"`
 }
 
-type WikijsParseResp struct {
+type SiyuanParseResp struct {
 	ID   string            `json:"id"`
-	Docs []WikijsParseItem `json:"docs"`
+	Docs []SiyuanParseItem `json:"docs"`
 }
 
-type WikijsScrapeReq struct {
+type SiyuanScrapeReq struct {
 	KbID  string `json:"kb_id" validate:"required"`
 	ID    string `json:"id" validate:"required"`
 	DocID string `json:"doc_id" validate:"required"`
 }
 
-type WikijsScrapeResp struct {
+type SiyuanScrapeResp struct {
 	Content string `json:"content"`
 }

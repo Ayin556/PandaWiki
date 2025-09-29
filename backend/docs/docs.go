@@ -1003,6 +1003,103 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/crawler/mindoc/parse": {
+            "post": {
+                "description": "Parse Mindoc Export File and return document list",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "crawler"
+                ],
+                "summary": "MindocParse",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "file",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "kb_id",
+                        "name": "kb_id",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.PWResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/v1.MindocParseResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/crawler/mindoc/scrape": {
+            "post": {
+                "description": "Scrape specific Mindoc documents by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "crawler"
+                ],
+                "summary": "MindocScrape",
+                "parameters": [
+                    {
+                        "description": "Scrape Request",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.MindocScrapeReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.PWResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/v1.MindocScrapeResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/crawler/notion/parse": {
             "post": {
                 "description": "NotionParse",
@@ -1328,63 +1425,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/crawler/siyuan/analysis_export_file": {
+        "/api/v1/crawler/siyuan/parse": {
             "post": {
-                "description": "Analyze SiYuan Export File",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "crawler"
-                ],
-                "summary": "AnalysisSiyuanExportFile",
-                "parameters": [
-                    {
-                        "type": "file",
-                        "description": "file",
-                        "name": "file",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "kb_id",
-                        "name": "kb_id",
-                        "in": "formData",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/domain.PWResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/domain.SiYuanResp"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/crawler/wikijs/analysis_export_file": {
-            "post": {
-                "description": "AnalysisWikijsExportFile",
+                "description": "Parse Siyuan Export File and return document list",
                 "consumes": [
                     "multipart/form-data"
                 ],
@@ -1394,7 +1437,7 @@ const docTemplate = `{
                 "tags": [
                     "crawler"
                 ],
-                "summary": "AnalysisWikijsExportFile",
+                "summary": "SiyuanParse",
                 "parameters": [
                     {
                         "type": "file",
@@ -1423,10 +1466,150 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/v1.WikiJSResp"
-                                            }
+                                            "$ref": "#/definitions/v1.SiyuanParseResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/crawler/siyuan/scrape": {
+            "post": {
+                "description": "Scrape specific Siyuan documents by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "crawler"
+                ],
+                "summary": "SiyuanScrape",
+                "parameters": [
+                    {
+                        "description": "Scrape Request",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.SiyuanScrapeReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.PWResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/v1.SiyuanScrapeResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/crawler/wikijs/parse": {
+            "post": {
+                "description": "Parse Wikijs Export File and return document list",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "crawler"
+                ],
+                "summary": "WikijsParse",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "file",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "kb_id",
+                        "name": "kb_id",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.PWResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/v1.WikijsParseResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/crawler/wikijs/scrape": {
+            "post": {
+                "description": "Scrape specific Wikijs documents by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "crawler"
+                ],
+                "summary": "WikijsScrape",
+                "parameters": [
+                    {
+                        "description": "Scrape Request",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.WikijsScrapeReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.PWResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/v1.WikijsScrapeResp"
                                         }
                                     }
                                 }
@@ -6859,20 +7042,6 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.SiYuanResp": {
-            "type": "object",
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
         "domain.SimpleAuth": {
             "type": "object",
             "properties": {
@@ -7868,6 +8037,61 @@ const docTemplate = `{
                 }
             }
         },
+        "v1.MindocParseItem": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.MindocParseResp": {
+            "type": "object",
+            "properties": {
+                "docs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.MindocParseItem"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.MindocScrapeReq": {
+            "type": "object",
+            "required": [
+                "doc_id",
+                "id",
+                "kb_id"
+            ],
+            "properties": {
+                "doc_id": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "kb_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.MindocScrapeResp": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                }
+            }
+        },
         "v1.NodeDetailResp": {
             "type": "object",
             "properties": {
@@ -8249,6 +8473,61 @@ const docTemplate = `{
                 }
             }
         },
+        "v1.SiyuanParseItem": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.SiyuanParseResp": {
+            "type": "object",
+            "properties": {
+                "docs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.SiyuanParseItem"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.SiyuanScrapeReq": {
+            "type": "object",
+            "required": [
+                "doc_id",
+                "id",
+                "kb_id"
+            ],
+            "properties": {
+                "doc_id": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "kb_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.SiyuanScrapeResp": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                }
+            }
+        },
         "v1.StatCountResp": {
             "type": "object",
             "properties": {
@@ -8320,16 +8599,54 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.WikiJSResp": {
+        "v1.WikijsParseItem": {
             "type": "object",
             "properties": {
-                "content": {
+                "id": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.WikijsParseResp": {
+            "type": "object",
+            "properties": {
+                "docs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.WikijsParseItem"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.WikijsScrapeReq": {
+            "type": "object",
+            "required": [
+                "doc_id",
+                "id",
+                "kb_id"
+            ],
+            "properties": {
+                "doc_id": {
                     "type": "string"
                 },
                 "id": {
                     "type": "string"
                 },
-                "title": {
+                "kb_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.WikijsScrapeResp": {
+            "type": "object",
+            "properties": {
+                "content": {
                     "type": "string"
                 }
             }
