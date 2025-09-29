@@ -2707,13 +2707,38 @@ definitions:
           $ref: '#/definitions/v1.UserListItemResp'
         type: array
     type: object
-  v1.WikiJSResp:
+  v1.WikijsParseItem:
     properties:
-      content:
-        type: string
       id:
         type: string
       title:
+        type: string
+    type: object
+  v1.WikijsParseResp:
+    properties:
+      docs:
+        items:
+          $ref: '#/definitions/v1.WikijsParseItem'
+        type: array
+      id:
+        type: string
+    type: object
+  v1.WikijsScrapeReq:
+    properties:
+      doc_id:
+        type: string
+      id:
+        type: string
+      kb_id:
+        type: string
+    required:
+    - doc_id
+    - id
+    - kb_id
+    type: object
+  v1.WikijsScrapeResp:
+    properties:
+      content:
         type: string
     type: object
 info:
@@ -3640,11 +3665,11 @@ paths:
       summary: SiyuanScrape
       tags:
       - crawler
-  /api/v1/crawler/wikijs/analysis_export_file:
+  /api/v1/crawler/wikijs/parse:
     post:
       consumes:
       - multipart/form-data
-      description: AnalysisWikijsExportFile
+      description: Parse Wikijs Export File and return document list
       parameters:
       - description: file
         in: formData
@@ -3666,11 +3691,36 @@ paths:
             - $ref: '#/definitions/domain.PWResponse'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/v1.WikiJSResp'
-                  type: array
+                  $ref: '#/definitions/v1.WikijsParseResp'
               type: object
-      summary: AnalysisWikijsExportFile
+      summary: WikijsParse
+      tags:
+      - crawler
+  /api/v1/crawler/wikijs/scrape:
+    post:
+      consumes:
+      - application/json
+      description: Scrape specific Wikijs documents by ID
+      parameters:
+      - description: Scrape Request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/v1.WikijsScrapeReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.PWResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/v1.WikijsScrapeResp'
+              type: object
+      summary: WikijsScrape
       tags:
       - crawler
   /api/v1/crawler/yuque/analysis_export_file:

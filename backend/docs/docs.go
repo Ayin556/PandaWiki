@@ -1522,9 +1522,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/crawler/wikijs/analysis_export_file": {
+        "/api/v1/crawler/wikijs/parse": {
             "post": {
-                "description": "AnalysisWikijsExportFile",
+                "description": "Parse Wikijs Export File and return document list",
                 "consumes": [
                     "multipart/form-data"
                 ],
@@ -1534,7 +1534,7 @@ const docTemplate = `{
                 "tags": [
                     "crawler"
                 ],
-                "summary": "AnalysisWikijsExportFile",
+                "summary": "WikijsParse",
                 "parameters": [
                     {
                         "type": "file",
@@ -1563,10 +1563,53 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/v1.WikiJSResp"
-                                            }
+                                            "$ref": "#/definitions/v1.WikijsParseResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/crawler/wikijs/scrape": {
+            "post": {
+                "description": "Scrape specific Wikijs documents by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "crawler"
+                ],
+                "summary": "WikijsScrape",
+                "parameters": [
+                    {
+                        "description": "Scrape Request",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.WikijsScrapeReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.PWResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/v1.WikijsScrapeResp"
                                         }
                                     }
                                 }
@@ -8556,16 +8599,54 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.WikiJSResp": {
+        "v1.WikijsParseItem": {
             "type": "object",
             "properties": {
-                "content": {
+                "id": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.WikijsParseResp": {
+            "type": "object",
+            "properties": {
+                "docs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.WikijsParseItem"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.WikijsScrapeReq": {
+            "type": "object",
+            "required": [
+                "doc_id",
+                "id",
+                "kb_id"
+            ],
+            "properties": {
+                "doc_id": {
                     "type": "string"
                 },
                 "id": {
                     "type": "string"
                 },
-                "title": {
+                "kb_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.WikijsScrapeResp": {
+            "type": "object",
+            "properties": {
+                "content": {
                     "type": "string"
                 }
             }

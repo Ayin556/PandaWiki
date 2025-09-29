@@ -41,8 +41,7 @@ func NewCrawlerHandler(echo *echo.Echo,
 	group.POST("/scrape", h.Scrape)
 	//  epub
 	group.POST("/epub/convert", h.EpubConvert)
-	// wikijs
-	group.POST("/wikijs/analysis_export_file", h.AnalysisWikijsExportFile)
+
 	// feishu
 	group.POST("/feishu/list_spaces", h.FeishuListSpaces)
 	group.POST("/feishu/list_doc", h.FeishuListCloudDoc)
@@ -69,6 +68,10 @@ func NewCrawlerHandler(echo *echo.Echo,
 	// mindoc
 	group.POST("/mindoc/parse", h.MindocParse)
 	group.POST("/mindoc/scrape", h.MindocScrape)
+	// wikijs
+	group.POST("/wikijs/parse", h.WikijsParse)
+	group.POST("/wikijs/scrape", h.WikijsScrape)
+
 	return h
 }
 
@@ -180,44 +183,6 @@ func (h *CrawlerHandler) EpubConvert(c echo.Context) error {
 	h.logger.Info("EpubConvert UploadFile successfully", "fileUrl", fileUrl)
 
 	resp, err := h.usecase.EpubHandle(c.Request().Context(), fileUrl, file.Filename, req.KbID)
-	if err != nil {
-		return h.NewResponseWithError(c, "analysis export file failed", err)
-	}
-
-	return h.NewResponseWithData(c, resp)
-}
-
-// AnalysisWikijsExportFile
-//
-//	@Summary		AnalysisWikijsExportFile
-//	@Description	AnalysisWikijsExportFile
-//	@Tags			crawler
-//	@Accept			multipart/form-data
-//	@Produce		json
-//	@Param			file	formData	file	true	"file"
-//	@Param			kb_id	formData	string	true	"kb_id"
-//	@Success		200		{object}	domain.PWResponse{data=[]v1.WikiJSResp}
-//	@Router			/api/v1/crawler/wikijs/analysis_export_file [post]
-func (h *CrawlerHandler) AnalysisWikijsExportFile(c echo.Context) error {
-	ctx := c.Request().Context()
-
-	file, err := c.FormFile("file")
-	if err != nil {
-		return h.NewResponseWithError(c, "get file failed", err)
-	}
-	var req v1.WikiJSReq
-	req.KbID = c.FormValue("kb_id")
-	if err := c.Validate(req); err != nil {
-		return h.NewResponseWithError(c, "validate failed", err)
-	}
-	fileUrl, err := h.fileUsecase.UploadFileGetUrl(ctx, req.KbID, file)
-	if err != nil {
-		return h.NewResponseWithError(c, "upload failed", err)
-	}
-
-	h.logger.Info("AnalysisConfluenceExportFile UploadFile successfully", "fileUrl", fileUrl)
-
-	resp, err := h.usecase.WikijsHandle(c.Request().Context(), fileUrl, file.Filename, req.KbID)
 	if err != nil {
 		return h.NewResponseWithError(c, "analysis export file failed", err)
 	}
@@ -658,6 +623,72 @@ func (h *CrawlerHandler) MindocScrape(c echo.Context) error {
 	resp, err := h.usecase.MindocScrape(c.Request().Context(), &req)
 	if err != nil {
 		return h.NewResponseWithError(c, "scrape Mindoc docs failed", err)
+	}
+	return h.NewResponseWithData(c, resp)
+}
+
+// WikijsParse
+//
+//	@Summary		WikijsParse
+//	@Description	Parse Wikijs Export File and return document list
+//	@Tags			crawler
+//	@Accept			multipart/form-data
+//	@Produce		json
+//	@Param			file	formData	file	true	"file"
+//	@Param			kb_id	formData	string	true	"kb_id"
+//	@Success		200		{object}	domain.PWResponse{data=v1.WikijsParseResp}
+//	@Router			/api/v1/crawler/wikijs/parse [post]
+func (h *CrawlerHandler) WikijsParse(c echo.Context) error {
+	ctx := c.Request().Context()
+
+	file, err := c.FormFile("file")
+	if err != nil {
+		return h.NewResponseWithError(c, "get file failed", err)
+	}
+
+	var req v1.WikijsParseReq
+	req.KbID = c.FormValue("kb_id")
+	if err := c.Validate(req); err != nil {
+		return h.NewResponseWithError(c, "validate failed", err)
+	}
+
+	fileUrl, err := h.fileUsecase.UploadFileGetUrl(ctx, req.KbID, file)
+	if err != nil {
+		return h.NewResponseWithError(c, "upload failed", err)
+	}
+
+	h.logger.Info("WikijsParse UploadFile successfully", "fileUrl", fileUrl)
+
+	resp, err := h.usecase.WikijsParse(c.Request().Context(), fileUrl, file.Filename)
+	if err != nil {
+		return h.NewResponseWithError(c, "parse Wikijs export file failed", err)
+	}
+
+	return h.NewResponseWithData(c, resp)
+}
+
+// WikijsScrape
+//
+//	@Tags			crawler
+//	@Summary		WikijsScrape
+//	@Description	Scrape specific Wikijs documents by ID
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body		v1.WikijsScrapeReq	true	"Scrape Request"
+//	@Success		200		{object}	domain.PWResponse{data=v1.WikijsScrapeResp}
+//	@Router			/api/v1/crawler/wikijs/scrape [post]
+func (h *CrawlerHandler) WikijsScrape(c echo.Context) error {
+	var req v1.WikijsScrapeReq
+	if err := c.Bind(&req); err != nil {
+		return h.NewResponseWithError(c, "request body is invalid", err)
+	}
+	if err := c.Validate(req); err != nil {
+		return h.NewResponseWithError(c, "validate request body failed", err)
+	}
+
+	resp, err := h.usecase.WikijsScrape(c.Request().Context(), &req)
+	if err != nil {
+		return h.NewResponseWithError(c, "scrape Wikijs docs failed", err)
 	}
 	return h.NewResponseWithData(c, resp)
 }

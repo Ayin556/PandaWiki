@@ -1,19 +1,25 @@
 package v1
 
-type WikiJSReq struct {
+type WikijsParseReq struct {
 	KbID string `json:"kb_id" validate:"required"`
 }
-type WikiJSPage struct {
-	Id          string `json:"id"`
-	Description string `json:"description"`
-	Title       string `json:"title"`
-	ContentType string `json:"contentType"`
-	Content     string `json:"content"`
-	Render      string `json:"render"`
+
+type WikijsParseItem struct {
+	ID    string `json:"id"`
+	Title string `json:"title"`
 }
 
-type WikiJSResp struct {
-	ID      string `json:"id"`
-	Title   string `json:"title"`
+type WikijsParseResp struct {
+	ID   string            `json:"id"`
+	Docs []WikijsParseItem `json:"docs"`
+}
+
+type WikijsScrapeReq struct {
+	KbID  string `json:"kb_id" validate:"required"`
+	ID    string `json:"id" validate:"required"`
+	DocID string `json:"doc_id" validate:"required"`
+}
+
+type WikijsScrapeResp struct {
 	Content string `json:"content"`
 }
