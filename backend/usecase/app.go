@@ -21,6 +21,7 @@ import (
 type AppUsecase struct {
 	repo          *pg.AppRepository
 	authRepo      *pg.AuthRepo
+	nodeRepo      *pg.NodeRepository
 	nodeUsecase   *NodeUsecase
 	chatUsecase   *ChatUsecase
 	logger        *log.Logger
@@ -37,6 +38,7 @@ type AppUsecase struct {
 func NewAppUsecase(
 	repo *pg.AppRepository,
 	authRepo *pg.AuthRepo,
+	nodeRepo *pg.NodeRepository,
 	nodeUsecase *NodeUsecase,
 	logger *log.Logger,
 	config *config.Config,
@@ -48,6 +50,7 @@ func NewAppUsecase(
 		nodeUsecase:  nodeUsecase,
 		chatUsecase:  chatUsecase,
 		authRepo:     authRepo,
+		nodeRepo:     nodeRepo,
 		logger:       logger.WithModule("usecase.app"),
 		config:       config,
 		cache:        cache,

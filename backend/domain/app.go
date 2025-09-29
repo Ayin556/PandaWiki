@@ -171,16 +171,22 @@ type WebAppLandingSettings struct {
 		} `json:"btns"`
 	} `json:"banner_config"`
 	BasicDocConfig struct {
-		Title string   `json:"title"`
-		List  []string `json:"list"`
+		Title      string   `json:"title"`
+		TitleColor string   `json:"title_color"`
+		BgColor    string   `json:"bg_color"`
+		List       []string `json:"list"`
 	} `json:"basic_doc_config"`
 	DirDocConfig struct {
-		Title string   `json:"title"`
-		List  []string `json:"list"`
+		Title      string   `json:"title"`
+		TitleColor string   `json:"title_color"`
+		BgColor    string   `json:"bg_color"`
+		List       []string `json:"list"`
 	} `json:"dir_doc_config"`
 	SimpleDocConfig struct {
-		Title string   `json:"title"`
-		List  []string `json:"list"`
+		Title      string   `json:"title"`
+		TitleColor string   `json:"title_color"`
+		BgColor    string   `json:"bg_color"`
+		List       []string `json:"list"`
 	} `json:"simple_doc_config"`
 	CarouselConfig struct {
 		Title string `json:"title"`
@@ -192,8 +198,10 @@ type WebAppLandingSettings struct {
 		} `json:"list"`
 	} `json:"carousel_config"`
 	FaqConfig struct {
-		Title string `json:"title"`
-		List  []struct {
+		Title      string `json:"title"`
+		TitleColor string `json:"title_color"`
+		BgColor    string `json:"bg_color"`
+		List       []struct {
 			ID       string `json:"id"`
 			Question string `json:"question"`
 			Link     string `json:"link"`

@@ -1918,11 +1918,15 @@ definitions:
         type: object
       basic_doc_config:
         properties:
+          bg_color:
+            type: string
           list:
             items:
               type: string
             type: array
           title:
+            type: string
+          title_color:
             type: string
         type: object
       carousel_config:
@@ -1949,15 +1953,21 @@ definitions:
         type: array
       dir_doc_config:
         properties:
+          bg_color:
+            type: string
           list:
             items:
               type: string
             type: array
           title:
             type: string
+          title_color:
+            type: string
         type: object
       faq_config:
         properties:
+          bg_color:
+            type: string
           list:
             items:
               properties:
@@ -1971,14 +1981,20 @@ definitions:
             type: array
           title:
             type: string
+          title_color:
+            type: string
         type: object
       simple_doc_config:
         properties:
+          bg_color:
+            type: string
           list:
             items:
               type: string
             type: array
           title:
+            type: string
+          title_color:
             type: string
         type: object
     type: object
@@ -2522,6 +2538,27 @@ definitions:
       updated_at:
         type: string
     type: object
+  v1.NodeItem:
+    properties:
+      emoji:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      parent_id:
+        type: string
+      position:
+        type: number
+      recommend_nodes:
+        items:
+          $ref: '#/definitions/domain.RecommendNodeListResp'
+        type: array
+      summary:
+        type: string
+      type:
+        $ref: '#/definitions/domain.NodeType'
+    type: object
   v1.NodePermissionEditReq:
     properties:
       answerable_groups:
@@ -2575,6 +2612,25 @@ definitions:
           $ref: '#/definitions/domain.NodeGroupDetail'
         type: array
     type: object
+  v1.NodeRecommendListResp:
+    properties:
+      basic_docs:
+        items:
+          $ref: '#/definitions/v1.NodeItem'
+        type: array
+      dir_docs:
+        items:
+          $ref: '#/definitions/v1.NodeItem'
+        type: array
+      node_recommends:
+        items:
+          $ref: '#/definitions/v1.NodeItem'
+        type: array
+      simple_docs:
+        items:
+          $ref: '#/definitions/v1.NodeItem'
+        type: array
+    type: object
   v1.NotionParseItem:
     properties:
       id:
@@ -2615,27 +2671,6 @@ definitions:
     properties:
       content:
         type: string
-    type: object
-  v1.RecommendNodeListItem:
-    properties:
-      emoji:
-        type: string
-      id:
-        type: string
-      name:
-        type: string
-      parent_id:
-        type: string
-      position:
-        type: number
-      recommend_nodes:
-        items:
-          $ref: '#/definitions/domain.RecommendNodeListResp'
-        type: array
-      summary:
-        type: string
-      type:
-        $ref: '#/definitions/domain.NodeType'
     type: object
   v1.ResetPasswordReq:
     properties:
@@ -5590,9 +5625,7 @@ paths:
             - $ref: '#/definitions/domain.Response'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/v1.RecommendNodeListItem'
-                  type: array
+                  $ref: '#/definitions/v1.NodeRecommendListResp'
               type: object
       summary: 推荐卡片列表
       tags:
