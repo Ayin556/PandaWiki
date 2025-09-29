@@ -940,12 +940,6 @@ export interface DomainShareConversationMessage {
   role?: SchemaRoleType;
 }
 
-export interface DomainSiYuanResp {
-  content?: string;
-  id?: number;
-  title?: string;
-}
-
 export interface DomainSimpleAuth {
   enabled?: boolean;
   password?: string;
@@ -1288,6 +1282,27 @@ export interface V1LoginResp {
   token?: string;
 }
 
+export interface V1MindocParseItem {
+  id?: string;
+  title?: string;
+  url?: string;
+}
+
+export interface V1MindocParseResp {
+  docs?: V1MindocParseItem[];
+  id?: string;
+}
+
+export interface V1MindocScrapeReq {
+  doc_id: string;
+  id: string;
+  kb_id: string;
+}
+
+export interface V1MindocScrapeResp {
+  content?: string;
+}
+
 export interface V1NodeDetailResp {
   content?: string;
   created_at?: string;
@@ -1427,6 +1442,27 @@ export interface V1SitemapScrapeResp {
   content?: string;
 }
 
+export interface V1SiyuanParseItem {
+  id?: string;
+  title?: string;
+  url?: string;
+}
+
+export interface V1SiyuanParseResp {
+  docs?: V1SiyuanParseItem[];
+  id?: string;
+}
+
+export interface V1SiyuanScrapeReq {
+  doc_id: string;
+  id: string;
+  kb_id: string;
+}
+
+export interface V1SiyuanScrapeResp {
+  content?: string;
+}
+
 export interface V1StatCountResp {
   conversation_count?: number;
   ip_count?: number;
@@ -1455,10 +1491,24 @@ export interface V1UserListResp {
   users?: V1UserListItemResp[];
 }
 
-export interface V1WikiJSResp {
-  content?: string;
+export interface V1WikijsParseItem {
   id?: string;
   title?: string;
+}
+
+export interface V1WikijsParseResp {
+  docs?: V1WikijsParseItem[];
+  id?: string;
+}
+
+export interface V1WikijsScrapeReq {
+  doc_id: string;
+  id: string;
+  kb_id: string;
+}
+
+export interface V1WikijsScrapeResp {
+  content?: string;
 }
 
 export interface PutApiV1AppParams {
@@ -1568,7 +1618,7 @@ export interface PostApiV1CrawlerEpubConvertPayload {
   kb_id: string;
 }
 
-export interface PostApiV1CrawlerSiyuanAnalysisExportFilePayload {
+export interface PostApiV1CrawlerMindocParsePayload {
   /**
    * file
    * @format binary
@@ -1578,7 +1628,17 @@ export interface PostApiV1CrawlerSiyuanAnalysisExportFilePayload {
   kb_id: string;
 }
 
-export interface PostApiV1CrawlerWikijsAnalysisExportFilePayload {
+export interface PostApiV1CrawlerSiyuanParsePayload {
+  /**
+   * file
+   * @format binary
+   */
+  file: File;
+  /** kb_id */
+  kb_id: string;
+}
+
+export interface PostApiV1CrawlerWikijsParsePayload {
   /**
    * file
    * @format binary

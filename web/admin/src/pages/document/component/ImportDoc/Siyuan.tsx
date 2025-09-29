@@ -1,6 +1,9 @@
 import { ImportDocListItem, ImportDocProps } from '@/api';
 import { postApiV1Node } from '@/request/Node';
-import { postApiV1CrawlerSiyuanAnalysisExportFile } from '@/request/Crawler';
+import {
+  postApiV1CrawlerSiyuanParse,
+  postApiV1CrawlerSiyuanScrape,
+} from '@/request/Crawler';
 import Upload from '@/components/UploadFile/Drag';
 import { useAppSelector } from '@/store';
 import { formatByte } from '@/utils';
@@ -20,7 +23,7 @@ import {
   Typography,
 } from '@mui/material';
 import { Ellipsis, Icon, message, Modal } from '@ctzhian/ui';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FileRejection } from 'react-dropzone';
 
 const StepText = {
@@ -53,6 +56,9 @@ const ImportDocSiyuan = ({
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState<ImportDocListItem[]>([]);
   const [selectIds, setSelectIds] = useState<string[]>([]);
+  const [id, setId] = useState<string>('');
+  const [requestQueue, setRequestQueue] = useState<(() => Promise<any>)[]>([]);
+  const [isCancelled, setIsCancelled] = useState(false);
 
   const [acceptedFiles, setAcceptedFiles] = useState<File[]>([]);
   const [rejectedFiles, setRejectedFiles] = useState<FileRejection[]>([]);
@@ -75,6 +81,8 @@ const ImportDocSiyuan = ({
   };
 
   const handleCancel = () => {
+    setIsCancelled(true);
+    setRequestQueue([]);
     setStep('pull');
     setItems([]);
     setSelectIds([]);
@@ -94,16 +102,17 @@ const ImportDocSiyuan = ({
     setCurrentFileIndex(0);
     try {
       for (let i = 0; i < acceptedFiles.length; i++) {
-        const pages = await postApiV1CrawlerSiyuanAnalysisExportFile({
+        const { id = '', docs = [] } = await postApiV1CrawlerSiyuanParse({
           file: acceptedFiles[i],
           kb_id,
         });
-        for (const page of pages) {
+        setId(id);
+        for (const page of docs) {
           setItems(prev => [
             {
-              url: page.title! + i,
+              url: page.id!,
               title: page.title!,
-              content: page.content!,
+              content: '',
               success: -1,
               id: '',
             },
@@ -111,11 +120,36 @@ const ImportDocSiyuan = ({
           ]);
         }
       }
-      setStep('import');
+      setStep('pull-done');
       setLoading(false);
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const handleSelectedExportedData = async () => {
+    const newQueue: (() => Promise<any>)[] = [];
+    const confluenceData = items.filter(item => selectIds.includes(item.url));
+    for (const item of confluenceData) {
+      newQueue.push(async () => {
+        const res = await postApiV1CrawlerSiyuanScrape({
+          id,
+          kb_id,
+          doc_id: item.url || '',
+        });
+        setItems(prev => [
+          {
+            ...item,
+            ...(res || {}),
+            success: -1,
+            id: '',
+          },
+          ...prev,
+        ]);
+      });
+    }
+    setStep('import');
+    setRequestQueue(newQueue);
   };
 
   const handleOk = async () => {
@@ -125,6 +159,11 @@ const ImportDocSiyuan = ({
     } else if (step === 'pull') {
       setLoading(true);
       handleFile();
+    } else if (step === 'pull-done') {
+      setLoading(true);
+      setItems([]);
+      setIsCancelled(false);
+      handleSelectedExportedData();
     } else if (step === 'import') {
       if (selectIds.length === 0) {
         message.error('请选择要导入的文档');
@@ -175,6 +214,43 @@ const ImportDocSiyuan = ({
       }
     }
   };
+
+  const processUrl = async () => {
+    if (isCancelled) {
+      setItems([]);
+    }
+    if (requestQueue.length === 0 || isCancelled) {
+      setLoading(false);
+      setRequestQueue([]);
+      return;
+    }
+
+    setLoading(true);
+    const newQueue = [...requestQueue];
+    const requests = newQueue.splice(0, 2);
+
+    try {
+      await Promise.all(requests.map(request => request()));
+      if (newQueue.length > 0 && !isCancelled) {
+        setRequestQueue(newQueue);
+      } else {
+        setLoading(false);
+        setRequestQueue([]);
+      }
+    } catch (error) {
+      console.error('请求执行出错:', error);
+      if (newQueue.length > 0 && !isCancelled) {
+        setRequestQueue(newQueue);
+      } else {
+        setLoading(false);
+        setRequestQueue([]);
+      }
+    }
+  };
+
+  useEffect(() => {
+    processUrl();
+  }, [requestQueue.length, isCancelled]);
 
   return (
     <Modal
