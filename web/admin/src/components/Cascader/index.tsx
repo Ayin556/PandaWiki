@@ -135,9 +135,7 @@ const Cascader: React.FC<CascaderProps> = ({
               >
                 <Stack alignItems='center' gap={1} direction='row'>
                   {item.icon}
-                  <Typography sx={{ flexShrink: 0, ...item.textSx }}>
-                    {item.label}
-                  </Typography>
+                  <Box sx={{ flexShrink: 0, ...item.textSx }}>{item.label}</Box>
                   {item.extra}
                   {item.children?.length ? arrowIcon : null}
                 </Stack>

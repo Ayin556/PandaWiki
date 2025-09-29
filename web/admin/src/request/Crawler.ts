@@ -14,12 +14,12 @@ import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
   DomainEpubResp,
   DomainPWResponse,
-  DomainSiYuanResp,
   DomainYuqueResp,
   PostApiV1CrawlerConfluenceParsePayload,
   PostApiV1CrawlerEpubConvertPayload,
-  PostApiV1CrawlerSiyuanAnalysisExportFilePayload,
-  PostApiV1CrawlerWikijsAnalysisExportFilePayload,
+  PostApiV1CrawlerMindocParsePayload,
+  PostApiV1CrawlerSiyuanParsePayload,
+  PostApiV1CrawlerWikijsParsePayload,
   PostApiV1CrawlerYuqueAnalysisExportFilePayload,
   V1ConfluenceParseResp,
   V1ConfluenceScrapeReq,
@@ -32,6 +32,9 @@ import {
   V1FeishuSearchWikiResp,
   V1FeishuSpaceListReq,
   V1FeishuSpaceListResp,
+  V1MindocParseResp,
+  V1MindocScrapeReq,
+  V1MindocScrapeResp,
   V1NotionParseReq,
   V1NotionParseResp,
   V1NotionScrapeReq,
@@ -46,7 +49,12 @@ import {
   V1SitemapParseResp,
   V1SitemapScrapeReq,
   V1SitemapScrapeResp,
-  V1WikiJSResp,
+  V1SiyuanParseResp,
+  V1SiyuanScrapeReq,
+  V1SiyuanScrapeResp,
+  V1WikijsParseResp,
+  V1WikijsScrapeReq,
+  V1WikijsScrapeResp,
 } from "./types";
 
 /**
@@ -252,6 +260,66 @@ export const postApiV1CrawlerFeishuSearchWiki = (
     }
   >({
     path: `/api/v1/crawler/feishu/search_wiki`,
+    method: "POST",
+    body: body,
+    type: ContentType.Json,
+    format: "json",
+    ...params,
+  });
+
+/**
+ * @description Parse Mindoc Export File and return document list
+ *
+ * @tags crawler
+ * @name PostApiV1CrawlerMindocParse
+ * @summary MindocParse
+ * @request POST:/api/v1/crawler/mindoc/parse
+ * @response `200` `(DomainPWResponse & {
+    data?: V1MindocParseResp,
+
+})` OK
+ */
+
+export const postApiV1CrawlerMindocParse = (
+  data: PostApiV1CrawlerMindocParsePayload,
+  params: RequestParams = {},
+) =>
+  httpRequest<
+    DomainPWResponse & {
+      data?: V1MindocParseResp;
+    }
+  >({
+    path: `/api/v1/crawler/mindoc/parse`,
+    method: "POST",
+    body: data,
+    type: ContentType.FormData,
+    format: "json",
+    ...params,
+  });
+
+/**
+ * @description Scrape specific Mindoc documents by ID
+ *
+ * @tags crawler
+ * @name PostApiV1CrawlerMindocScrape
+ * @summary MindocScrape
+ * @request POST:/api/v1/crawler/mindoc/scrape
+ * @response `200` `(DomainPWResponse & {
+    data?: V1MindocScrapeResp,
+
+})` OK
+ */
+
+export const postApiV1CrawlerMindocScrape = (
+  body: V1MindocScrapeReq,
+  params: RequestParams = {},
+) =>
+  httpRequest<
+    DomainPWResponse & {
+      data?: V1MindocScrapeResp;
+    }
+  >({
+    path: `/api/v1/crawler/mindoc/scrape`,
     method: "POST",
     body: body,
     type: ContentType.Json,
@@ -470,28 +538,28 @@ export const postApiV1CrawlerSitemapScrape = (
   });
 
 /**
- * @description Analyze SiYuan Export File
+ * @description Parse Siyuan Export File and return document list
  *
  * @tags crawler
- * @name PostApiV1CrawlerSiyuanAnalysisExportFile
- * @summary AnalysisSiyuanExportFile
- * @request POST:/api/v1/crawler/siyuan/analysis_export_file
+ * @name PostApiV1CrawlerSiyuanParse
+ * @summary SiyuanParse
+ * @request POST:/api/v1/crawler/siyuan/parse
  * @response `200` `(DomainPWResponse & {
-    data?: (DomainSiYuanResp)[],
+    data?: V1SiyuanParseResp,
 
 })` OK
  */
 
-export const postApiV1CrawlerSiyuanAnalysisExportFile = (
-  data: PostApiV1CrawlerSiyuanAnalysisExportFilePayload,
+export const postApiV1CrawlerSiyuanParse = (
+  data: PostApiV1CrawlerSiyuanParsePayload,
   params: RequestParams = {},
 ) =>
   httpRequest<
     DomainPWResponse & {
-      data?: DomainSiYuanResp[];
+      data?: V1SiyuanParseResp;
     }
   >({
-    path: `/api/v1/crawler/siyuan/analysis_export_file`,
+    path: `/api/v1/crawler/siyuan/parse`,
     method: "POST",
     body: data,
     type: ContentType.FormData,
@@ -500,31 +568,91 @@ export const postApiV1CrawlerSiyuanAnalysisExportFile = (
   });
 
 /**
- * @description AnalysisWikijsExportFile
+ * @description Scrape specific Siyuan documents by ID
  *
  * @tags crawler
- * @name PostApiV1CrawlerWikijsAnalysisExportFile
- * @summary AnalysisWikijsExportFile
- * @request POST:/api/v1/crawler/wikijs/analysis_export_file
+ * @name PostApiV1CrawlerSiyuanScrape
+ * @summary SiyuanScrape
+ * @request POST:/api/v1/crawler/siyuan/scrape
  * @response `200` `(DomainPWResponse & {
-    data?: (V1WikiJSResp)[],
+    data?: V1SiyuanScrapeResp,
 
 })` OK
  */
 
-export const postApiV1CrawlerWikijsAnalysisExportFile = (
-  data: PostApiV1CrawlerWikijsAnalysisExportFilePayload,
+export const postApiV1CrawlerSiyuanScrape = (
+  body: V1SiyuanScrapeReq,
   params: RequestParams = {},
 ) =>
   httpRequest<
     DomainPWResponse & {
-      data?: V1WikiJSResp[];
+      data?: V1SiyuanScrapeResp;
     }
   >({
-    path: `/api/v1/crawler/wikijs/analysis_export_file`,
+    path: `/api/v1/crawler/siyuan/scrape`,
+    method: "POST",
+    body: body,
+    type: ContentType.Json,
+    format: "json",
+    ...params,
+  });
+
+/**
+ * @description Parse Wikijs Export File and return document list
+ *
+ * @tags crawler
+ * @name PostApiV1CrawlerWikijsParse
+ * @summary WikijsParse
+ * @request POST:/api/v1/crawler/wikijs/parse
+ * @response `200` `(DomainPWResponse & {
+    data?: V1WikijsParseResp,
+
+})` OK
+ */
+
+export const postApiV1CrawlerWikijsParse = (
+  data: PostApiV1CrawlerWikijsParsePayload,
+  params: RequestParams = {},
+) =>
+  httpRequest<
+    DomainPWResponse & {
+      data?: V1WikijsParseResp;
+    }
+  >({
+    path: `/api/v1/crawler/wikijs/parse`,
     method: "POST",
     body: data,
     type: ContentType.FormData,
+    format: "json",
+    ...params,
+  });
+
+/**
+ * @description Scrape specific Wikijs documents by ID
+ *
+ * @tags crawler
+ * @name PostApiV1CrawlerWikijsScrape
+ * @summary WikijsScrape
+ * @request POST:/api/v1/crawler/wikijs/scrape
+ * @response `200` `(DomainPWResponse & {
+    data?: V1WikijsScrapeResp,
+
+})` OK
+ */
+
+export const postApiV1CrawlerWikijsScrape = (
+  body: V1WikijsScrapeReq,
+  params: RequestParams = {},
+) =>
+  httpRequest<
+    DomainPWResponse & {
+      data?: V1WikijsScrapeResp;
+    }
+  >({
+    path: `/api/v1/crawler/wikijs/scrape`,
+    method: "POST",
+    body: body,
+    type: ContentType.Json,
     format: "json",
     ...params,
   });
