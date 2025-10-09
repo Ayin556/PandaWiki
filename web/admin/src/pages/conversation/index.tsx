@@ -1,15 +1,15 @@
-import { DomainConversationListItem } from '@/request/types';
-import { getApiV1Conversation } from '@/request/Conversation';
 import Logo from '@/assets/images/logo.png';
 import NoData from '@/assets/images/nodata.png';
 import Card from '@/components/Card';
 import { AppType } from '@/constant/enums';
 import { tableSx } from '@/constant/styles';
 import { useURLSearchParams } from '@/hooks';
+import { getApiV1Conversation } from '@/request/Conversation';
+import { DomainConversationListItem } from '@/request/types';
 import { useAppSelector } from '@/store';
-import { Box, Stack } from '@mui/material';
 import { Ellipsis, Icon, Table } from '@ctzhian/ui';
 import { ColumnType } from '@ctzhian/ui/dist/Table';
+import { Box, Stack } from '@mui/material';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import Detail from './Detail';
@@ -20,7 +20,7 @@ const Conversation = () => {
   const [searchParams, setSearchParams] = useURLSearchParams();
   const conversion_id = searchParams.get('conversion_id') || '';
   const page = Number(searchParams.get('page') || '1');
-  const pageSize = Number(searchParams.get('page_size') || '20');
+  const pageSize = Number(searchParams.get('pageSize') || '20');
   const subject = searchParams.get('subject') || '';
   const remoteIp = searchParams.get('remote_ip') || '';
   const [data, setData] = useState<DomainConversationListItem[]>([]);
@@ -144,6 +144,7 @@ const Conversation = () => {
   }, [conversion_id]);
 
   useEffect(() => {
+    console.log(page, pageSize, subject, remoteIp, kb_id);
     if (kb_id) getData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, pageSize, subject, remoteIp, kb_id]);
