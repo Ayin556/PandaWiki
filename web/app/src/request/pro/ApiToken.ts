@@ -12,11 +12,11 @@
 
 import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
+  DeleteApiProV1TokenDeleteParams,
   DomainPWResponse,
   GetApiProV1TokenListParams,
   GithubComChaitinPandaWikiProApiTokenV1APITokenListItem,
   GithubComChaitinPandaWikiProApiTokenV1CreateAPITokenReq,
-  GithubComChaitinPandaWikiProApiTokenV1DeleteAPITokenReq,
   GithubComChaitinPandaWikiProApiTokenV1UpdateAPITokenReq,
 } from "./types";
 
@@ -57,13 +57,13 @@ export const postApiProV1TokenCreate = (
  */
 
 export const deleteApiProV1TokenDelete = (
-  request: GithubComChaitinPandaWikiProApiTokenV1DeleteAPITokenReq,
+  query: DeleteApiProV1TokenDeleteParams,
   params: RequestParams = {},
 ) =>
   httpRequest<DomainPWResponse>({
     path: `/api/pro/v1/token/delete`,
     method: "DELETE",
-    body: request,
+    query: query,
     secure: true,
     type: ContentType.Json,
     format: "json",

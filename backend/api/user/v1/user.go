@@ -55,5 +55,5 @@ type ResetPasswordReq struct {
 }
 
 type DeleteUserReq struct {
-	UserID string `json:"user_id" validate:"required"`
+	UserID string `json:"user_id" query:"user_id" validate:"required"`
 }

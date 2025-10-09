@@ -1198,10 +1198,6 @@ export interface V1CreateUserResp {
   id?: string;
 }
 
-export interface V1DeleteUserReq {
-  user_id: string;
-}
-
 export interface V1FeishuGetDocReq {
   doc_id: string;
   file_type?: string;
@@ -1760,6 +1756,10 @@ export interface GetApiV1StatInstantPagesParams {
 export interface GetApiV1StatRefererHostsParams {
   day?: 1 | 7 | 30 | 90;
   kb_id: string;
+}
+
+export interface DeleteApiV1UserDeleteParams {
+  user_id: string;
 }
 
 export interface GetShareV1AppWechatServiceAnswerParams {

@@ -3552,13 +3552,10 @@ const docTemplate = `{
                 "summary": "DeleteUser",
                 "parameters": [
                     {
-                        "description": "DeleteUser Request",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/v1.DeleteUserReq"
-                        }
+                        "type": "string",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -7774,17 +7771,6 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "id": {
-                    "type": "string"
-                }
-            }
-        },
-        "v1.DeleteUserReq": {
-            "type": "object",
-            "required": [
-                "user_id"
-            ],
-            "properties": {
-                "user_id": {
                     "type": "string"
                 }
             }
