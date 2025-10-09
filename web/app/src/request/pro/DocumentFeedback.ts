@@ -12,7 +12,7 @@
 
 import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
-  DomainDeleteDocumentFeedbackReq,
+  DeleteApiProV1DocumentFeedbackParams,
   DomainPWResponse,
   DomainResponse,
   GetApiProV1DocumentListParams,
@@ -31,13 +31,13 @@ import {
  */
 
 export const deleteApiProV1DocumentFeedback = (
-  req: DomainDeleteDocumentFeedbackReq,
+  query: DeleteApiProV1DocumentFeedbackParams,
   params: RequestParams = {},
 ) =>
   httpRequest<DomainResponse>({
     path: `/api/pro/v1/document/feedback`,
     method: "DELETE",
-    body: req,
+    query: query,
     type: ContentType.Json,
     format: "json",
     ...params,

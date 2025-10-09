@@ -2166,13 +2166,6 @@ definitions:
       id:
         type: string
     type: object
-  v1.DeleteUserReq:
-    properties:
-      user_id:
-        type: string
-    required:
-    - user_id
-    type: object
   v1.FeishuGetDocReq:
     properties:
       doc_id:
@@ -4895,12 +4888,10 @@ paths:
       - application/json
       description: DeleteUser
       parameters:
-      - description: DeleteUser Request
-        in: body
-        name: body
+      - in: query
+        name: user_id
         required: true
-        schema:
-          $ref: '#/definitions/v1.DeleteUserReq'
+        type: string
       produces:
       - application/json
       responses:

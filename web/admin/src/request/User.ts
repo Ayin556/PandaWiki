@@ -12,11 +12,11 @@
 
 import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
+  DeleteApiV1UserDeleteParams,
   DomainPWResponse,
   DomainResponse,
   V1CreateUserReq,
   V1CreateUserResp,
-  V1DeleteUserReq,
   V1LoginReq,
   V1LoginResp,
   V1ResetPasswordReq,
@@ -83,13 +83,13 @@ export const postApiV1UserCreate = (
  */
 
 export const deleteApiV1UserDelete = (
-  body: V1DeleteUserReq,
+  query: DeleteApiV1UserDeleteParams,
   params: RequestParams = {},
 ) =>
   httpRequest<DomainResponse>({
     path: `/api/v1/user/delete`,
     method: "DELETE",
-    body: body,
+    query: query,
     type: ContentType.Json,
     format: "json",
     ...params,

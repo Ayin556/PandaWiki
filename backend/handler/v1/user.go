@@ -213,7 +213,7 @@ func (h *UserHandler) ResetPassword(c echo.Context) error {
 //	@Tags			user
 //	@Accept			json
 //	@Produce		json
-//	@Param			body	body		v1.DeleteUserReq	true	"DeleteUser Request"
+//	@Param			params	query		v1.DeleteUserReq	true	"DeleteUser Request"
 //	@Success		200		{object}	domain.Response
 //	@Router			/api/v1/user/delete [delete]
 func (h *UserHandler) DeleteUser(c echo.Context) error {
