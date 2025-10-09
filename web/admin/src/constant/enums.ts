@@ -56,6 +56,14 @@ export const AppType = {
     label: 'Discord 机器人',
     icon: 'icon-a-discordjiqiren',
   },
+  8: {
+    label: '微信公众号',
+    icon: 'icon-weixingongzhonghao-daiyanse',
+  },
+  9: {
+    label: '问答机器人 API',
+    icon: 'icon-Wendajiqiren',
+  },
 };
 
 export const AnswerStatus = {
