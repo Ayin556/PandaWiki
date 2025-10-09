@@ -26,6 +26,8 @@ class SSEClient<T> {
     this.controller = new AbortController();
     const { url, headers, onOpen, onError, onComplete } = this.options;
 
+    const token = localStorage.getItem('panda_wiki_token') || '';
+
     const timeoutDuration = 300000;
     const timeoutId = setTimeout(() => {
       this.unsubscribe();
@@ -37,6 +39,7 @@ class SSEClient<T> {
       headers: {
         'Content-Type': 'application/json',
         Accept: 'text/event-stream',
+        Authorization: `Bearer ${token}`,
         ...headers,
       },
       body,
