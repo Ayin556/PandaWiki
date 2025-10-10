@@ -19,7 +19,7 @@ import (
 	"github.com/chaitin/panda-wiki/pkg/bot"
 )
 
-func NewWechatConfig(ctx context.Context, CorpID, Token, EncodingAESKey string, kbid string, secret string, againtid string, logger *log.Logger) (*WechatConfig, error) {
+func NewWechatConfig(ctx context.Context, CorpID, Token, EncodingAESKey string, kbid string, secret string, agentID string, logger *log.Logger) (*WechatConfig, error) {
 	return &WechatConfig{
 		Ctx:            ctx,
 		CorpID:         CorpID,
@@ -27,7 +27,7 @@ func NewWechatConfig(ctx context.Context, CorpID, Token, EncodingAESKey string, 
 		EncodingAESKey: EncodingAESKey,
 		kbID:           kbid,
 		Secret:         secret,
-		AgentID:        againtid,
+		AgentID:        agentID,
 		logger:         logger,
 	}, nil
 }
@@ -55,7 +55,7 @@ func (cfg *WechatConfig) Wechat(msg ReceivedMessage, getQA bot.GetQAFun, userinf
 	if err != nil {
 		return err
 	}
-	err = cfg.Processmessage(msg, getQA, token, userinfo)
+	err = cfg.ProcessMessage(msg, getQA, token, userinfo)
 	if err != nil {
 		cfg.logger.Error("send to ai failed!", log.Error(err))
 		return err
@@ -64,7 +64,7 @@ func (cfg *WechatConfig) Wechat(msg ReceivedMessage, getQA bot.GetQAFun, userinf
 }
 
 // forwardToBackend
-func (cfg *WechatConfig) Processmessage(msg ReceivedMessage, GetQA bot.GetQAFun, token string, userinfo *UserInfo) error {
+func (cfg *WechatConfig) ProcessMessage(msg ReceivedMessage, GetQA bot.GetQAFun, token string, userinfo *UserInfo) error {
 	// 1. get ai channel
 	id, err := uuid.NewV7()
 	if err != nil {
@@ -218,6 +218,19 @@ func (cfg *WechatConfig) SendResponse(msg ReceivedMessage, content string) ([]by
 }
 
 func (cfg *WechatConfig) GetAccessToken() (string, error) {
+	// Generate cache key based on app credentials
+	cacheKey := getTokenCacheKey(cfg.kbID, cfg.AgentID)
+
+	// Get or create token cache for this app
+	tokenCacheMapMutex.Lock()
+	tokenCache, exists := tokenCacheMap[cacheKey]
+	if !exists {
+		tokenCache = &TokenCache{}
+		tokenCacheMap[cacheKey] = tokenCache
+	}
+	tokenCacheMapMutex.Unlock()
+
+	// Lock the specific token cache for this app
 	tokenCache.Mutex.Lock()
 	defer tokenCache.Mutex.Unlock()
 

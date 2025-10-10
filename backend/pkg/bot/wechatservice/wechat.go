@@ -273,6 +273,19 @@ func (cfg *WechatServiceConfig) SendMessage(jsonData []byte, token string) error
 }
 
 func (cfg *WechatServiceConfig) GetAccessToken() (string, error) {
+	// Generate cache key based on app credentials
+	cacheKey := getTokenCacheKey(cfg.kbID, cfg.Secret)
+
+	// Get or create token cache for this app
+	tokenCacheMapMutex.Lock()
+	tokenCache, exists := tokenCacheMap[cacheKey]
+	if !exists {
+		tokenCache = &TokenCache{}
+		tokenCacheMap[cacheKey] = tokenCache
+	}
+	tokenCacheMapMutex.Unlock()
+
+	// Lock the specific token cache for this app
 	tokenCache.Mutex.Lock()
 	defer tokenCache.Mutex.Unlock()
 

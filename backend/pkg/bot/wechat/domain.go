@@ -86,7 +86,14 @@ type TokenCache struct {
 	Mutex       sync.Mutex
 }
 
-var tokenCache *TokenCache = &TokenCache{}
+// Map-based token cache keyed by kb & agentID
+var tokenCacheMap = make(map[string]*TokenCache)
+var tokenCacheMapMutex = sync.Mutex{}
+
+// Generate a key for the token cache based on kb & agentID
+func getTokenCacheKey(kbID, agentID string) string {
+	return kbID + ":" + agentID
+}
 
 // media
 // Upload file response
