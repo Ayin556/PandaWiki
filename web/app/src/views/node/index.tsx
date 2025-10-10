@@ -105,9 +105,6 @@ const Doc = ({ node }: { node?: NodeDetail }) => {
               marginTop: 3,
               width: '100%',
               px: 3,
-              table: {
-                minWidth: 'auto !important',
-              },
             }),
           }}
         >
