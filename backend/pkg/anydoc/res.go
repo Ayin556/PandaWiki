@@ -29,7 +29,7 @@ type TaskRes struct {
 		TaskId     string `json:"task_id"`
 		PlatformId string `json:"platform_id"`
 		DocId      string `json:"doc_id"`
-		Status     string `json:"status"`
+		Status     Status `json:"status"`
 		Err        string `json:"err"`
 		Markdown   string `json:"markdown"`
 		Json       string `json:"json"`
