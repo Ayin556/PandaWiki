@@ -1,5 +1,8 @@
 import { ImportDocListItem, ImportDocProps } from '@/api';
-import { postApiV1CrawlerScrape } from '@/request/Crawler';
+import {
+  getApiV1CrawlerResult,
+  postApiV1CrawlerScrape,
+} from '@/request/Crawler';
 import { postApiV1Node } from '@/request/Node';
 import { useAppSelector } from '@/store';
 import { Ellipsis, Icon, message, Modal } from '@ctzhian/ui';
@@ -60,16 +63,56 @@ const URLImport = ({
   };
 
   const handleURL = async () => {
+    const urls = url.split('\n').filter(u => u.trim());
+    try {
+      setStep('pull-done');
+      setTimeout(async () => {
+        for (const url of urls) {
+          const res = await postApiV1CrawlerScrape({ url, kb_id });
+          setItems(prev => [
+            {
+              content: '',
+              url: res.task_id!,
+              title: res.title!,
+              success: -1,
+              id: '',
+            },
+            ...prev,
+          ]);
+        }
+        setLoading(false);
+      }, 0);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleSelectedExportedData = async () => {
     const newQueue: (() => Promise<any>)[] = [];
-    const urls = url.split('\n');
-    for (const url of urls) {
-      newQueue.push(async () => {
-        const { title, content } = await postApiV1CrawlerScrape({ url, kb_id });
-        setItems(prev => [
-          { title: title || url, content: content!, url, success: -1, id: '' },
-          ...prev,
-        ]);
-      });
+    const selected = items.filter(item => selectIds.includes(item.url));
+    for (const item of selected) {
+      const request = async () => {
+        const poll = async (): Promise<void> => {
+          const res = await getApiV1CrawlerResult({ task_id: item.url });
+          if (res.status === 'completed') {
+            setItems(prev => [
+              { ...item, content: res.content || '', success: -1, id: '' },
+              ...prev,
+            ]);
+          } else if (res.status === 'failed') {
+            setItems(prev => [
+              { ...item, content: '', success: -1, id: '-1' },
+              ...prev,
+            ]);
+          } else {
+            // pending，等待 1s 后重试
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            await poll(); // 递归调用直到成功或失败
+          }
+        };
+        await poll();
+      };
+      newQueue.push(request);
     }
     setStep('import');
     setRequestQueue(newQueue);
@@ -83,6 +126,11 @@ const URLImport = ({
       setLoading(true);
       setIsCancelled(false);
       handleURL();
+    } else if (step === 'pull-done') {
+      setLoading(true);
+      setItems([]);
+      setIsCancelled(false);
+      handleSelectedExportedData();
     } else if (step === 'import') {
       if (selectIds.length === 0) {
         message.error('请选择要导入的文档');

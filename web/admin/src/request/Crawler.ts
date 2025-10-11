@@ -15,6 +15,7 @@ import {
   DomainEpubResp,
   DomainPWResponse,
   DomainYuqueResp,
+  GetApiV1CrawlerResultParams,
   PostApiV1CrawlerConfluenceParsePayload,
   PostApiV1CrawlerEpubConvertPayload,
   PostApiV1CrawlerMindocParsePayload,
@@ -24,6 +25,7 @@ import {
   V1ConfluenceParseResp,
   V1ConfluenceScrapeReq,
   V1ConfluenceScrapeResp,
+  V1CrawlerResultResp,
   V1FeishuGetDocReq,
   V1FeishuGetDocResp,
   V1FeishuListCloudDocReq,
@@ -382,6 +384,36 @@ export const postApiV1CrawlerNotionScrape = (
     path: `/api/v1/crawler/notion/scrape`,
     method: "POST",
     body: body,
+    type: ContentType.Json,
+    format: "json",
+    ...params,
+  });
+
+/**
+ * @description Scrape
+ *
+ * @tags crawler
+ * @name GetApiV1CrawlerResult
+ * @summary Scrape
+ * @request GET:/api/v1/crawler/result
+ * @response `200` `(DomainPWResponse & {
+    data?: V1CrawlerResultResp,
+
+})` OK
+ */
+
+export const getApiV1CrawlerResult = (
+  query: GetApiV1CrawlerResultParams,
+  params: RequestParams = {},
+) =>
+  httpRequest<
+    DomainPWResponse & {
+      data?: V1CrawlerResultResp;
+    }
+  >({
+    path: `/api/v1/crawler/result`,
+    method: "GET",
+    query: query,
     type: ContentType.Json,
     format: "json",
     ...params,

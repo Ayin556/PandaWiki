@@ -1,7 +1,6 @@
-import { formatByte } from '@/utils';
+import { Icon } from '@ctzhian/ui';
 import { Upload as UploadIcon } from '@mui/icons-material';
 import { Box, Button, Stack, Typography, useTheme } from '@mui/material';
-import { Icon, message } from '@ctzhian/ui';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { FileRejection, useDropzone } from 'react-dropzone';
 
@@ -87,12 +86,18 @@ const Upload = ({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              fontSize: 13,
             }}
           >
             <Button
               variant='text'
-              size='small'
-              sx={{ minWidth: 'auto', p: 0, ml: 1 }}
+              sx={{
+                fontSize: 13,
+                minWidth: 'auto',
+                p: 0,
+                ml: 1,
+                lineHeight: 1,
+              }}
             >
               点击浏览文件
             </Button>

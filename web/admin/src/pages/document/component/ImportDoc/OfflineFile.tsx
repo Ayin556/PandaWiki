@@ -1,6 +1,9 @@
 import { ImportDocListItem, ImportDocProps, uploadFile } from '@/api';
 import Upload from '@/components/UploadFile/Drag';
-import { postApiV1CrawlerScrape } from '@/request/Crawler';
+import {
+  getApiV1CrawlerResult,
+  postApiV1CrawlerScrape,
+} from '@/request/Crawler';
 import { postApiV1Node } from '@/request/Node';
 import { useAppSelector } from '@/store';
 import { formatByte } from '@/utils';
@@ -20,12 +23,12 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FileRejection } from 'react-dropzone';
 
 const StepText = {
   pull: {
-    okText: '拉取数据',
+    okText: '导入文件',
     showCancel: true,
   },
   'pull-done': {
@@ -55,6 +58,7 @@ const OfflineFileImport = ({
   const [items, setItems] = useState<ImportDocListItem[]>([]);
   const [selectIds, setSelectIds] = useState<string[]>([]);
   const [isCancelled, setIsCancelled] = useState(false);
+  const [requestQueue, setRequestQueue] = useState<(() => Promise<any>)[]>([]);
 
   const [acceptedFiles, setAcceptedFiles] = useState<File[]>([]);
   const [rejectedFiles, setRejectedFiles] = useState<FileRejection[]>([]);
@@ -78,6 +82,7 @@ const OfflineFileImport = ({
 
   const handleCancel = () => {
     setIsCancelled(true);
+    setRequestQueue([]);
     setStep('pull');
     setItems([]);
     setSelectIds([]);
@@ -130,9 +135,8 @@ const OfflineFileImport = ({
           const res = await postApiV1CrawlerScrape({ url, kb_id });
           setItems(prev => [
             {
-              ...res,
-              content: res.content!,
-              url,
+              content: '',
+              url: res.task_id!,
               title: title || res.title!,
               success: -1,
               id: '',
@@ -140,13 +144,81 @@ const OfflineFileImport = ({
             ...prev,
           ]);
         }
-        setStep('import');
         setLoading(false);
       }, 0);
     } catch (error) {
       console.error(error);
     }
   };
+
+  const handleSelectedExportedData = async () => {
+    const newQueue: (() => Promise<any>)[] = [];
+    const selected = items.filter(item => selectIds.includes(item.url));
+    for (const item of selected) {
+      const request = async () => {
+        const poll = async (): Promise<void> => {
+          const res = await getApiV1CrawlerResult({ task_id: item.url });
+          if (res.status === 'completed') {
+            setItems(prev => [
+              { ...item, content: res.content || '', success: -1, id: '' },
+              ...prev,
+            ]);
+          } else if (res.status === 'failed') {
+            setItems(prev => [
+              { ...item, content: '', success: -1, id: '-1' },
+              ...prev,
+            ]);
+          } else {
+            // pending，等待 1s 后重试
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            await poll(); // 递归调用直到成功或失败
+          }
+        };
+        await poll();
+      };
+      newQueue.push(request);
+    }
+    setStep('import');
+    setRequestQueue(newQueue);
+  };
+
+  const processUrl = async () => {
+    if (isCancelled) {
+      setItems([]);
+    }
+    if (requestQueue.length === 0 || isCancelled) {
+      setLoading(false);
+      setRequestQueue([]);
+      return;
+    }
+
+    setLoading(true);
+    const newQueue = [...requestQueue];
+    const requests = newQueue.splice(0, 2);
+
+    try {
+      await Promise.all(requests.map(request => request()));
+      if (newQueue.length > 0 && !isCancelled) {
+        setRequestQueue(newQueue);
+      } else {
+        setLoading(false);
+        setRequestQueue([]);
+      }
+    } catch (error) {
+      console.error('请求执行出错:', error);
+      if (newQueue.length > 0 && !isCancelled) {
+        setRequestQueue(newQueue);
+      } else {
+        setLoading(false);
+        setRequestQueue([]);
+      }
+    }
+  };
+
+  useEffect(() => {
+    processUrl();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [requestQueue.length, isCancelled]);
 
   const handleOk = async () => {
     if (step === 'done') {
@@ -156,6 +228,11 @@ const OfflineFileImport = ({
       setLoading(true);
       setIsCancelled(false);
       handleFile();
+    } else if (step === 'pull-done') {
+      setLoading(true);
+      setItems([]);
+      setIsCancelled(false);
+      handleSelectedExportedData();
     } else if (step === 'import') {
       if (selectIds.length === 0) {
         message.error('请选择要导入的文档');
