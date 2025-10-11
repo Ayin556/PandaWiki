@@ -11,6 +11,7 @@ const nextConfig: NextConfig = {
       fullUrl: true,
     },
   },
+  transpilePackages: ['mermaid'],
   async headers() {
     return [
       {
