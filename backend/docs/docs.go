@@ -1195,6 +1195,49 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/crawler/result": {
+            "get": {
+                "description": "Retrieve the result of a previously started scraping task",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "crawler"
+                ],
+                "summary": "Get Crawler Result",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "task_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.PWResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/v1.CrawlerResultResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/crawler/rss/parse": {
             "post": {
                 "description": "Parse RSS",
@@ -4552,6 +4595,19 @@ const docTemplate = `{
                 "CopySettingDisabled"
             ]
         },
+        "consts.CrawlerStatus": {
+            "type": "string",
+            "enum": [
+                "pending",
+                "completed",
+                "failed"
+            ],
+            "x-enum-varnames": [
+                "CrawlerStatusPending",
+                "CrawlerStatusCompleted",
+                "CrawlerStatusFailed"
+            ]
+        },
         "consts.LicenseEdition": {
             "type": "integer",
             "format": "int32",
@@ -7739,6 +7795,20 @@ const docTemplate = `{
                 }
             }
         },
+        "v1.CrawlerResultResp": {
+            "type": "object",
+            "required": [
+                "status"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/consts.CrawlerStatus"
+                }
+            }
+        },
         "v1.CreateUserReq": {
             "type": "object",
             "required": [
@@ -8388,7 +8458,7 @@ const docTemplate = `{
         "v1.ScrapeResp": {
             "type": "object",
             "properties": {
-                "content": {
+                "task_id": {
                     "type": "string"
                 },
                 "title": {

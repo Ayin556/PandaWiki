@@ -36,6 +36,16 @@ definitions:
     - CopySettingNone
     - CopySettingAppend
     - CopySettingDisabled
+  consts.CrawlerStatus:
+    enum:
+    - pending
+    - completed
+    - failed
+    type: string
+    x-enum-varnames:
+    - CrawlerStatusPending
+    - CrawlerStatusCompleted
+    - CrawlerStatusFailed
   consts.LicenseEdition:
     enum:
     - 0
@@ -2143,6 +2153,15 @@ definitions:
       total:
         type: integer
     type: object
+  v1.CrawlerResultResp:
+    properties:
+      content:
+        type: string
+      status:
+        $ref: '#/definitions/consts.CrawlerStatus'
+    required:
+    - status
+    type: object
   v1.CreateUserReq:
     properties:
       account:
@@ -2572,7 +2591,7 @@ definitions:
     type: object
   v1.ScrapeResp:
     properties:
-      content:
+      task_id:
         type: string
       title:
         type: string
@@ -3463,6 +3482,31 @@ paths:
                   type: array
               type: object
       summary: NotionScrape
+      tags:
+      - crawler
+  /api/v1/crawler/result:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the result of a previously started scraping task
+      parameters:
+      - in: query
+        name: task_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.PWResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/v1.CrawlerResultResp'
+              type: object
+      summary: Get Crawler Result
       tags:
       - crawler
   /api/v1/crawler/rss/parse:

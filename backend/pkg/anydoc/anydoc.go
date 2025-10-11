@@ -238,7 +238,7 @@ func (c *Client) TaskListPoll(ctx context.Context, ids []string) (*TaskRes, erro
 		if err != nil {
 			return nil, err
 		}
-		if resp.Data[0].Status == string(StatusCompleted) {
+		if resp.Data[0].Status == StatusCompleted {
 			return resp, nil
 		}
 		depth++

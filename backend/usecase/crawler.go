@@ -11,6 +11,7 @@ import (
 	"github.com/google/uuid"
 
 	v1 "github.com/chaitin/panda-wiki/api/crawler/v1"
+	"github.com/chaitin/panda-wiki/consts"
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/log"
 	"github.com/chaitin/panda-wiki/mq"
@@ -69,20 +70,41 @@ func (u *CrawlerUsecase) ScrapeURL(ctx context.Context, targetURL, kbID string) 
 		return nil, err
 	}
 
-	taskRes, err := u.anydocClient.TaskWaitForCompletion(ctx, urlExportRes.Data)
-	if err != nil {
-		return nil, err
-	}
-
-	fileBytes, err := u.anydocClient.DownloadDoc(ctx, taskRes.Markdown)
-	if err != nil {
-		return nil, err
-	}
-
 	return &v1.ScrapeResp{
-		Title:   getUrlRes.Docs[0].Title,
-		Content: string(fileBytes),
+		Title:  getUrlRes.Docs[0].Title,
+		TaskId: urlExportRes.Data,
 	}, nil
+}
+
+func (u *CrawlerUsecase) ScrapeGetResult(ctx context.Context, taskId string) (*v1.CrawlerResultResp, error) {
+	taskRes, err := u.anydocClient.TaskList(ctx, []string{taskId})
+	if err != nil {
+		return nil, err
+	}
+	switch taskRes.Data[0].Status {
+	case anydoc.StatusPending, anydoc.StatusInProgress:
+		return &v1.CrawlerResultResp{
+			Status: consts.CrawlerStatusPending,
+		}, nil
+
+	case anydoc.StatusFailed:
+		return &v1.CrawlerResultResp{
+			Status: consts.CrawlerStatusFailed,
+		}, fmt.Errorf("file crawl failed: %s", taskRes.Data[0].Err)
+
+	case anydoc.StatusCompleted:
+		fileBytes, err := u.anydocClient.DownloadDoc(ctx, taskRes.Data[0].Markdown)
+		if err != nil {
+			return nil, err
+		}
+		return &v1.CrawlerResultResp{
+			Status:  consts.CrawlerStatusCompleted,
+			Content: string(fileBytes),
+		}, nil
+
+	default:
+		return nil, fmt.Errorf("unsupported task status : %s", taskRes.Data[0].Status)
+	}
 }
 
 func (u *CrawlerUsecase) ConfluenceParse(ctx context.Context, targetURL, filename string) (*v1.ConfluenceParseResp, error) {

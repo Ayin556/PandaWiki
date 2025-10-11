@@ -39,7 +39,9 @@ func NewCrawlerHandler(echo *echo.Echo,
 	}
 	group := echo.Group("/api/v1/crawler", auth.Authorize)
 	group.POST("/scrape", h.Scrape)
-	//  epub
+	group.GET("/result", h.CrawlerResult)
+
+	// epub
 	group.POST("/epub/convert", h.EpubConvert)
 
 	// feishu
@@ -147,6 +149,32 @@ func (h *CrawlerHandler) Scrape(c echo.Context) error {
 	}
 	resp, err := h.usecase.ScrapeURL(c.Request().Context(), req.URL, req.KbID)
 	if err != nil {
+		return h.NewResponseWithError(c, "scrape url failed", err)
+	}
+	return h.NewResponseWithData(c, resp)
+}
+
+// CrawlerResult
+//
+//	@Summary		Get Crawler Result
+//	@Description	Retrieve the result of a previously started scraping task
+//	@Tags			crawler
+//	@Accept			json
+//	@Produce		json
+//	@Param			param	query		v1.CrawlerResultReq	true	"Crawler Result Request"
+//	@Success		200		{object}	domain.PWResponse{data=v1.CrawlerResultResp}
+//	@Router			/api/v1/crawler/result [get]
+func (h *CrawlerHandler) CrawlerResult(c echo.Context) error {
+	var req v1.CrawlerResultReq
+	if err := c.Bind(&req); err != nil {
+		return h.NewResponseWithError(c, "request params is invalid", err)
+	}
+	if err := c.Validate(req); err != nil {
+		return h.NewResponseWithError(c, "validate request body failed", err)
+	}
+	resp, err := h.usecase.ScrapeGetResult(c.Request().Context(), req.TaskId)
+	if err != nil {
+		h.logger.Error("get scrape result failed", log.Error(err))
 		return h.NewResponseWithError(c, "scrape url failed", err)
 	}
 	return h.NewResponseWithData(c, resp)

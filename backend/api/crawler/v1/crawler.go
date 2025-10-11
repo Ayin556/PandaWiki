@@ -1,15 +1,25 @@
 package v1
 
+import "github.com/chaitin/panda-wiki/consts"
+
 type ScrapeReq struct {
 	URL  string `json:"url" validate:"required"`
 	KbID string `json:"kb_id" validate:"required"`
 }
 
 type ScrapeResp struct {
-	Title   string `json:"title"`
-	Content string `json:"content"`
+	TaskId string `json:"task_id"`
+	Title  string `json:"title"`
 }
 
+type CrawlerResultReq struct {
+	TaskId string `json:"task_id"  query:"task_id" validate:"required"`
+}
+
+type CrawlerResultResp struct {
+	Status  consts.CrawlerStatus `json:"status" validate:"required"`
+	Content string               `json:"content"`
+}
 type SitemapParseReq struct {
 	URL string `json:"url" validate:"required"`
 }
