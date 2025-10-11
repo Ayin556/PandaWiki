@@ -200,6 +200,22 @@ export default function ContributionPage() {
         },
       },
       {
+        dataIndex: 'remote_ip',
+        title: '来源 IP',
+        width: 200,
+        render: (text: string, record) => {
+          const { city = '', country = '', province = '' } = record.ip_address!;
+          return (
+            <>
+              <Box>{text}</Box>
+              <Box sx={{ color: 'text.tertiary', fontSize: 12 }}>
+                {country === '中国' ? `${province}-${city}` : `${country}`}
+              </Box>
+            </>
+          );
+        },
+      },
+      {
         dataIndex: 'created_at',
         title: '时间',
         width: 180,
