@@ -355,11 +355,13 @@ export interface GithubComChaitinPandaWikiProApiContributeV1ContributeItem {
   contribute_name?: string;
   created_at?: string;
   id?: string;
+  ip_address?: DomainIPAddress;
   kb_id?: string;
   meta?: GithubComChaitinPandaWikiProApiContributeV1NodeMeta;
   node_id?: string;
   node_name?: string;
   reason?: string;
+  remote_ip?: string;
   status?: ConstsContributeStatus;
   type?: ConstsContributeType;
   updated_at?: string;
