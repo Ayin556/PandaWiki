@@ -1,7 +1,7 @@
 import react from '@vitejs/plugin-react';
 import path from 'path';
-import { defineConfig, loadEnv } from 'vite';
 import { visualizer } from 'rollup-plugin-visualizer';
+import { defineConfig, loadEnv } from 'vite';
 
 export default defineConfig(({ command, mode }) => {
   // 加载环境变量 - 第二个参数是目录路径，不是文件名
@@ -29,6 +29,10 @@ export default defineConfig(({ command, mode }) => {
         },
       },
       host: '0.0.0.0',
+    },
+    esbuild: {
+      // 保留函数和类名，避免第三方库依赖 constructor.name 的逻辑在压缩后失效
+      keepNames: true,
     },
     plugins: [
       react(),
