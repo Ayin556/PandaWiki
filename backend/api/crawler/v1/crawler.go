@@ -20,6 +20,21 @@ type CrawlerResultResp struct {
 	Status  consts.CrawlerStatus `json:"status" validate:"required"`
 	Content string               `json:"content"`
 }
+
+type CrawlerResultsReq struct {
+	TaskIds []string `json:"task_ids"  validate:"required"`
+}
+
+type CrawlerResultsResp struct {
+	Status consts.CrawlerStatus `json:"status"`
+	List   []CrawlerResultItem  `json:"list"`
+}
+type CrawlerResultItem struct {
+	TaskId  string               `json:"task_id"`
+	Status  consts.CrawlerStatus `json:"status"`
+	Content string               `json:"content"`
+}
+
 type SitemapParseReq struct {
 	URL string `json:"url" validate:"required"`
 }

@@ -7,7 +7,6 @@ import (
 
 	v1 "github.com/chaitin/panda-wiki/api/crawler/v1"
 	"github.com/chaitin/panda-wiki/config"
-	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/handler"
 	"github.com/chaitin/panda-wiki/log"
 	"github.com/chaitin/panda-wiki/middleware"
@@ -40,9 +39,7 @@ func NewCrawlerHandler(echo *echo.Echo,
 	group := echo.Group("/api/v1/crawler", auth.Authorize)
 	group.POST("/scrape", h.Scrape)
 	group.GET("/result", h.CrawlerResult)
-
-	// epub
-	group.POST("/epub/convert", h.EpubConvert)
+	group.POST("/results", h.CrawlerResults)
 
 	// feishu
 	group.POST("/feishu/list_spaces", h.FeishuListSpaces)
@@ -50,8 +47,10 @@ func NewCrawlerHandler(echo *echo.Echo,
 	group.POST("/feishu/search_wiki", h.FeishuWikiSearch)
 	group.POST("/feishu/get_doc", h.FeishuDoc)
 
+	// epub
+	group.POST("/epub/parse", h.EpubParse)
 	// yuque
-	group.POST("/yuque/analysis_export_file", h.AnalysisYuqueExportFile)
+	group.POST("/yuque/parse", h.YuqueParse)
 	// rss
 	group.POST("/rss/parse", h.RSSParse)
 	group.POST("/rss/scrape", h.RSSScrape)
@@ -111,7 +110,7 @@ func (h *CrawlerHandler) NotionParse(c echo.Context) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			body	body		v1.NotionScrapeReq	true	"Get Docs"
-//	@Success		200		{object}	domain.PWResponse{data=[]v1.NotionScrapeResp}
+//	@Success		200		{object}	domain.PWResponse{data=v1.NotionScrapeResp}
 //	@Router			/api/v1/crawler/notion/scrape [post]
 func (h *CrawlerHandler) NotionScrape(c echo.Context) error {
 	var req v1.NotionScrapeReq
@@ -175,46 +174,86 @@ func (h *CrawlerHandler) CrawlerResult(c echo.Context) error {
 	resp, err := h.usecase.ScrapeGetResult(c.Request().Context(), req.TaskId)
 	if err != nil {
 		h.logger.Error("get scrape result failed", log.Error(err))
-		return h.NewResponseWithError(c, "scrape url failed", err)
+		return h.NewResponseWithError(c, "get scrape result failed", err)
 	}
 	return h.NewResponseWithData(c, resp)
 }
 
-// EpubConvert
+// CrawlerResults
 //
-//	@Summary		EpubConvert
-//	@Description	EpubConvert
+//	@Summary		Get Crawler Results
+//	@Description	Retrieve the results of a previously started scraping task
 //	@Tags			crawler
-//	@Accept			multipart/form-data
+//	@Accept			json
 //	@Produce		json
-//	@Param			file	formData	file	true	"file"
-//	@Param			kb_id	formData	string	true	"kb_id"
-//	@Success		200		{object}	domain.PWResponse{data=domain.EpubResp}
-//	@Router			/api/v1/crawler/epub/convert [post]
-func (h *CrawlerHandler) EpubConvert(c echo.Context) error {
-	ctx := c.Request().Context()
-
-	file, err := c.FormFile("file")
-	if err != nil {
-		return h.NewResponseWithError(c, "get file failed", err)
+//	@Param			param	body		v1.CrawlerResultsReq	true	"Crawler Results Request"
+//	@Success		200		{object}	domain.PWResponse{data=v1.CrawlerResultsResp}
+//	@Router			/api/v1/crawler/results [post]
+func (h *CrawlerHandler) CrawlerResults(c echo.Context) error {
+	var req v1.CrawlerResultsReq
+	if err := c.Bind(&req); err != nil {
+		return h.NewResponseWithError(c, "request params is invalid", err)
 	}
-	var req domain.EpubReq
-	req.KbID = c.FormValue("kb_id")
 	if err := c.Validate(req); err != nil {
-		return h.NewResponseWithError(c, "validate failed", err)
+		return h.NewResponseWithError(c, "validate request body failed", err)
 	}
-	fileUrl, err := h.fileUsecase.UploadFileGetUrl(ctx, req.KbID, file)
+	resp, err := h.usecase.ScrapeGetResults(c.Request().Context(), req.TaskIds)
 	if err != nil {
-		return h.NewResponseWithError(c, "upload failed", err)
+		h.logger.Error("get scrape results failed", log.Error(err))
+		return h.NewResponseWithError(c, "get scrape results failed", err)
+	}
+	return h.NewResponseWithData(c, resp)
+}
+
+// EpubParse
+//
+//	@Tags			crawler
+//	@Summary		EpubParse
+//	@Description	EpubParse
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body		v1.EpubParseReq	true	"Parse URL"
+//	@Success		200		{object}	domain.PWResponse{data=v1.EpubParseResp}
+//	@Router			/api/v1/crawler/epub/parse [post]
+func (h *CrawlerHandler) EpubParse(c echo.Context) error {
+	var req v1.EpubParseReq
+	if err := c.Bind(&req); err != nil {
+		return h.NewResponseWithError(c, "request body is invalid", err)
+	}
+	if err := c.Validate(req); err != nil {
+		return h.NewResponseWithError(c, "validate request body failed", err)
 	}
 
-	h.logger.Info("EpubConvert UploadFile successfully", "fileUrl", fileUrl)
-
-	resp, err := h.usecase.EpubHandle(c.Request().Context(), fileUrl, file.Filename, req.KbID)
+	resp, err := h.usecase.EpubParse(c.Request().Context(), &req)
 	if err != nil {
-		return h.NewResponseWithError(c, "analysis export file failed", err)
+		return h.NewResponseWithError(c, "get Docs failed", err)
+	}
+	return h.NewResponseWithData(c, resp)
+}
+
+// YuqueParse
+//
+//	@Tags			crawler
+//	@Summary		YuqueParse
+//	@Description	YuqueParse
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body		v1.YuqueParseReq	true	"Parse URL"
+//	@Success		200		{object}	domain.PWResponse{data=v1.YuqueParseResp}
+//	@Router			/api/v1/crawler/yuque/parse [post]
+func (h *CrawlerHandler) YuqueParse(c echo.Context) error {
+	var req v1.YuqueParseReq
+	if err := c.Bind(&req); err != nil {
+		return h.NewResponseWithError(c, "request body is invalid", err)
+	}
+	if err := c.Validate(req); err != nil {
+		return h.NewResponseWithError(c, "validate request body failed", err)
 	}
 
+	resp, err := h.usecase.YuqueParse(c.Request().Context(), &req)
+	if err != nil {
+		return h.NewResponseWithError(c, "get Docs failed", err)
+	}
 	return h.NewResponseWithData(c, resp)
 }
 
@@ -298,7 +337,7 @@ func (h *CrawlerHandler) FeishuWikiSearch(c echo.Context) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			body	body		v1.FeishuGetDocReq	true	"Get Docx"
-//	@Success		200		{object}	domain.PWResponse{data=[]v1.FeishuGetDocResp}
+//	@Success		200		{object}	domain.PWResponse{data=v1.FeishuGetDocResp}
 //	@Router			/api/v1/crawler/feishu/get_doc [post]
 func (h *CrawlerHandler) FeishuDoc(c echo.Context) error {
 	var req *v1.FeishuGetDocReq
@@ -378,44 +417,6 @@ func (h *CrawlerHandler) ConfluenceScrape(c echo.Context) error {
 	if err != nil {
 		return h.NewResponseWithError(c, "scrape confluence docs failed", err)
 	}
-	return h.NewResponseWithData(c, resp)
-}
-
-// AnalysisYuqueExportFile
-//
-//	@Summary		AnalysisYuqueExportFile
-//	@Description	Analyze Yuque Export File
-//	@Tags			crawler
-//	@Accept			json
-//	@Produce		json
-//	@Param			file	formData	file	true	"file"
-//	@Param			kb_id	formData	string	true	"kb_id"
-//	@Success		200		{object}	domain.PWResponse{data=[]domain.YuqueResp}
-//	@Router			/api/v1/crawler/yuque/analysis_export_file [post]
-func (h *CrawlerHandler) AnalysisYuqueExportFile(c echo.Context) error {
-	ctx := c.Request().Context()
-
-	file, err := c.FormFile("file")
-	if err != nil {
-		return h.NewResponseWithError(c, "get file failed", err)
-	}
-	var req domain.YuqueReq
-	req.KbID = c.FormValue("kb_id")
-	if err := c.Validate(req); err != nil {
-		return h.NewResponseWithError(c, "validate failed", err)
-	}
-	fileUrl, err := h.fileUsecase.UploadFileGetUrl(ctx, req.KbID, file)
-	if err != nil {
-		return h.NewResponseWithError(c, "upload failed", err)
-	}
-
-	h.logger.Info("AnalysisYuqueExportFile UploadFile successfully", "fileUrl", fileUrl)
-
-	resp, err := h.usecase.YuqueHandle(c.Request().Context(), fileUrl, file.Filename, req.KbID)
-	if err != nil {
-		return h.NewResponseWithError(c, "analysis yuque export file failed", err)
-	}
-
 	return h.NewResponseWithData(c, resp)
 }
 

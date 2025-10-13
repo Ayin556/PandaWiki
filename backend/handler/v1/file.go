@@ -66,7 +66,8 @@ func (h *FileHandler) Upload(c echo.Context) error {
 	}
 
 	return h.NewResponseWithData(c, domain.ObjectUploadResp{
-		Key: key,
+		Key:      key,
+		Filename: file.Filename,
 	})
 }
 

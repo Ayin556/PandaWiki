@@ -72,7 +72,7 @@ func (u *CrawlerUsecase) FeishuSearchWiki(ctx context.Context, req *v1.FeishuSea
 	return results, nil
 }
 
-func (u *CrawlerUsecase) FeishuGetDoc(ctx context.Context, req *v1.FeishuGetDocReq) ([]v1.FeishuGetDocResp, error) {
+func (u *CrawlerUsecase) FeishuGetDoc(ctx context.Context, req *v1.FeishuGetDocReq) (*v1.FeishuGetDocResp, error) {
 
 	exportResp, err := u.anydocClient.FeishuExportDoc(ctx, req.ID, req.DocId, req.FileType, req.SpaceId, req.KbID)
 	if err != nil {
@@ -92,10 +92,7 @@ func (u *CrawlerUsecase) FeishuGetDoc(ctx context.Context, req *v1.FeishuGetDocR
 		return nil, err
 	}
 
-	results := make([]v1.FeishuGetDocResp, 0)
-	results = append(results, v1.FeishuGetDocResp{
+	return &v1.FeishuGetDocResp{
 		Content: string(fileBytes),
-	})
-
-	return results, nil
+	}, nil
 }
