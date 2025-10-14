@@ -92,6 +92,7 @@ const convertUICheckToLocalCheck = (
     api_key: uiCheck.api_key || '',
     api_header: uiCheck.api_header || '',
     api_version: uiCheck.api_version || '',
+    parameters: uiCheck.param || {},
   };
 };
 
