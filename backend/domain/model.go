@@ -96,6 +96,7 @@ type UpdateModelReq struct {
 
 type CheckModelReq struct {
 	BaseModelInfo
+	Parameters *ModelParam `json:"parameters"`
 }
 
 type ModelParam struct {
