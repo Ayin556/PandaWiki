@@ -396,7 +396,7 @@ func (u *NodeUsecase) GetNodeRecommendListByKBID(ctx context.Context, kbID strin
 			Name:           node.Name,
 			Type:           node.Type,
 			Summary:        node.Summary,
-			ParentID:       node.Summary,
+			ParentID:       node.ParentID,
 			Position:       node.Position,
 			Emoji:          node.Emoji,
 			RecommendNodes: node.RecommendNodes,

@@ -4605,6 +4605,25 @@ const docTemplate = `{
                 "CrawlerStatusFailed"
             ]
         },
+        "consts.HomePageSetting": {
+            "type": "string",
+            "enum": [
+                "doc",
+                "custom"
+            ],
+            "x-enum-comments": {
+                "HomePageSettingCustom": "自定义首页",
+                "HomePageSettingDoc": "文档页面"
+            },
+            "x-enum-descriptions": [
+                "文档页面",
+                "自定义首页"
+            ],
+            "x-enum-varnames": [
+                "HomePageSettingDoc",
+                "HomePageSettingCustom"
+            ]
+        },
         "consts.LicenseEdition": {
             "type": "integer",
             "format": "int32",
@@ -5039,6 +5058,9 @@ const docTemplate = `{
                     "description": "inject code",
                     "type": "string"
                 },
+                "home_page_setting": {
+                    "$ref": "#/definitions/consts.HomePageSetting"
+                },
                 "icon": {
                     "type": "string"
                 },
@@ -5275,6 +5297,9 @@ const docTemplate = `{
                 "head_code": {
                     "description": "inject code",
                     "type": "string"
+                },
+                "home_page_setting": {
+                    "$ref": "#/definitions/consts.HomePageSetting"
                 },
                 "icon": {
                     "type": "string"
@@ -6429,6 +6454,9 @@ const docTemplate = `{
                 },
                 "support_prompt_cache": {
                     "type": "boolean"
+                },
+                "temperature": {
+                    "type": "number"
                 }
             }
         },

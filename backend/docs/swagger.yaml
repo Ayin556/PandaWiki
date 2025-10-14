@@ -46,6 +46,20 @@ definitions:
     - CrawlerStatusPending
     - CrawlerStatusCompleted
     - CrawlerStatusFailed
+  consts.HomePageSetting:
+    enum:
+    - doc
+    - custom
+    type: string
+    x-enum-comments:
+      HomePageSettingCustom: 自定义首页
+      HomePageSettingDoc: 文档页面
+    x-enum-descriptions:
+    - 文档页面
+    - 自定义首页
+    x-enum-varnames:
+    - HomePageSettingDoc
+    - HomePageSettingCustom
   consts.LicenseEdition:
     enum:
     - 0
@@ -356,6 +370,8 @@ definitions:
       head_code:
         description: inject code
         type: string
+      home_page_setting:
+        $ref: '#/definitions/consts.HomePageSetting'
       icon:
         type: string
       keyword:
@@ -505,6 +521,8 @@ definitions:
       head_code:
         description: inject code
         type: string
+      home_page_setting:
+        $ref: '#/definitions/consts.HomePageSetting'
       icon:
         type: string
       keyword:
@@ -1255,6 +1273,8 @@ definitions:
         type: boolean
       support_prompt_cache:
         type: boolean
+      temperature:
+        type: number
     type: object
   domain.ModelType:
     enum:

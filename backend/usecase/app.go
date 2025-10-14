@@ -404,10 +404,14 @@ func (u *AppUsecase) GetAppDetailByKBIDAndAppType(ctx context.Context, kbID stri
 		WatermarkSetting:   app.Settings.WatermarkSetting,
 		CopySetting:        app.Settings.CopySetting,
 		ContributeSettings: app.Settings.ContributeSettings,
+		HomePageSetting:    app.Settings.HomePageSetting,
 	}
 	// init ai feedback string
 	if app.Settings.AIFeedbackSettings.AIFeedbackType == nil {
 		appDetailResp.Settings.AIFeedbackSettings.AIFeedbackType = []string{"内容不准确", "没有帮助", "其他"}
+	}
+	if appDetailResp.Settings.HomePageSetting == "" {
+		appDetailResp.Settings.HomePageSetting = consts.HomePageSettingDoc
 	}
 
 	// get recommend nodes
@@ -468,11 +472,15 @@ func (u *AppUsecase) GetWebAppInfo(ctx context.Context, kbID string) (*domain.Ap
 			WatermarkSetting:   app.Settings.WatermarkSetting,
 			CopySetting:        app.Settings.CopySetting,
 			ContributeSettings: app.Settings.ContributeSettings,
+			HomePageSetting:    app.Settings.HomePageSetting,
 		},
 	}
 	// init ai feedback string
 	if app.Settings.AIFeedbackSettings.AIFeedbackType == nil {
 		appInfo.Settings.AIFeedbackSettings.AIFeedbackType = []string{"内容不准确", "没有帮助", "其他"}
+	}
+	if app.Settings.HomePageSetting == "" {
+		appInfo.Settings.HomePageSetting = consts.HomePageSettingDoc
 	}
 	showBrand := true
 	defaultDisclaimer := "本回答由 PandaWiki 基于 AI 生成，仅供参考。"

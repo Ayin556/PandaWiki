@@ -150,6 +150,7 @@ type AppSettings struct {
 	WatermarkSetting   consts.WatermarkSetting `json:"watermark_setting" validate:"omitempty,oneof='' hidden visible"`
 	CopySetting        consts.CopySetting      `json:"copy_setting" validate:"omitempty,oneof='' append disabled"`
 	ContributeSettings ContributeSettings      `json:"contribute_settings"`
+	HomePageSetting    consts.HomePageSetting  `json:"home_page_setting"`
 }
 
 type WebAppLandingSettings struct {
@@ -388,6 +389,7 @@ type AppSettingsResp struct {
 	DisclaimerSettings DisclaimerSettings `json:"disclaimer_settings"`
 	// WebApp Landing Settings
 	WebAppLandingSettings *WebAppLandingSettings `json:"web_app_landing_settings,omitempty"`
+	HomePageSetting       consts.HomePageSetting `json:"home_page_setting"`
 }
 
 func (s *AppSettingsResp) Scan(value any) error {
