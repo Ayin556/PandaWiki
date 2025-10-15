@@ -18,6 +18,7 @@ export interface DragTreeProps {
   onSelectChange?: (value: string[], id?: string) => void;
   relativeSelect?: boolean;
   traverseFolder?: boolean;
+  disabled?: (value: ITreeItem) => boolean;
 }
 
 // 定义上下文类型

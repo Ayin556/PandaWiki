@@ -157,6 +157,13 @@ export enum ConstsLicenseEdition {
   LicenseEditionEnterprise = 2,
 }
 
+export enum ConstsHomePageSetting {
+  /** 文档页面 */
+  HomePageSettingDoc = "doc",
+  /** 自定义首页 */
+  HomePageSettingCustom = "custom",
+}
+
 export enum ConstsCrawlerStatus {
   CrawlerStatusPending = "pending",
   CrawlerStatusCompleted = "completed",
@@ -260,6 +267,7 @@ export interface DomainAppSettings {
   footer_settings?: DomainFooterSettings;
   /** inject code */
   head_code?: string;
+  home_page_setting?: ConstsHomePageSetting;
   icon?: string;
   keyword?: string;
   /** OpenAI API Bot settings */
@@ -337,6 +345,7 @@ export interface DomainAppSettingsResp {
   footer_settings?: DomainFooterSettings;
   /** inject code */
   head_code?: string;
+  home_page_setting?: ConstsHomePageSetting;
   icon?: string;
   keyword?: string;
   /** OpenAI API settings */
@@ -726,6 +735,7 @@ export interface DomainModelParam {
   support_computer_use?: boolean;
   support_images?: boolean;
   support_prompt_cache?: boolean;
+  temperature?: number;
 }
 
 export interface DomainMoveNodeReq {

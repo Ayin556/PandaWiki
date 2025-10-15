@@ -4,7 +4,7 @@ import { Component } from '../../index';
 import { DomainAppDetailResp } from '@/request/types';
 
 interface ConfigBarProps {
-  curComponent: string;
+  curComponent: Component;
   components: Component[];
   setIsEdit: Dispatch<SetStateAction<boolean>>;
   data: DomainAppDetailResp | null | undefined;
@@ -17,7 +17,7 @@ const ConfigBar = ({
   data,
   isEdit,
 }: ConfigBarProps) => {
-  const curConfig = components.find(c => c.name === curComponent);
+  const curConfig = components.find(c => c.name === curComponent.name);
   return (
     <Stack
       sx={{
@@ -42,11 +42,7 @@ const ConfigBar = ({
             pb: 4,
           }}
         >
-          <curConfig.component
-            setIsEdit={setIsEdit}
-            data={data}
-            isEdit={isEdit}
-          />
+          <curConfig.config setIsEdit={setIsEdit} data={data} isEdit={isEdit} />
         </Stack>
       ) : null}
     </Stack>

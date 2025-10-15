@@ -1,49 +1,84 @@
 import { useAppSelector } from '@/store';
-import {
-  Box,
-  Stack,
-  Typography,
-  useColorScheme,
-  createTheme,
-} from '@mui/material';
+import { Box, Stack, useColorScheme, createTheme } from '@mui/material';
 import { ThemeProvider } from '@ctzhian/ui';
 
-import { Dispatch, SetStateAction, useMemo, useState, useEffect } from 'react';
-import { AppDetail, AppSetting } from '@/api';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import componentStyleOverrides from '@/themes/override';
-import light from '../theme/light';
-import dark from '../theme/dark';
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  memo,
+  useRef,
+  useState,
+} from 'react';
+import { handleComponentProps } from '../utils';
 import { themeOptions } from '@/themes';
+import { IconShanchu } from '@panda-wiki/icons';
 import { Component } from '..';
-import { options } from './config/FooterConfig';
+import {
+  DndContext,
+  DragEndEvent,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  useSortable,
+  arrayMove,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import type { CSSProperties, MouseEvent } from 'react';
 
 interface ShowContentProps {
   curComponent: Component;
-  setCurComponent: Dispatch<SetStateAction<string>>;
+  setCurComponent: Dispatch<SetStateAction<Component>>;
   renderMode: 'pc' | 'mobile';
   scale: number;
+  components: Component[];
+  setComponents: Dispatch<SetStateAction<Component[]>>;
+  setIsEdit?: Dispatch<SetStateAction<boolean>>;
+  baseUrl: string;
 }
 
-const ShowContent = ({
-  setCurComponent,
-  curComponent,
-  renderMode,
-  scale,
-}: ShowContentProps) => {
-  const { appPreviewData } = useAppSelector(state => state.config);
-  const { mode, setMode } = useColorScheme();
-  useEffect(() => {
-    setMode(appPreviewData?.settings?.theme_mode as 'light' | 'dark');
-  }, [appPreviewData?.settings?.theme_mode]);
+interface SortableItemProps {
+  item: Component;
+  renderMode: 'pc' | 'mobile';
+  // 预先缓存好的渲染 props，避免父组件每次重新计算
+  cachedProps?: Record<string, unknown>;
+  isHighlighted: boolean;
+  onSelect: (item: Component) => void;
+  onDelete?: (item: Component) => void;
+  baseUrl: string;
+}
 
-  // 渲染带高亮边框的组件
-  const renderHighlightedComponent = (
-    componentName: string,
-    component: React.ReactNode,
-  ) => {
-    const isHighlighted = curComponent.name === componentName;
+const SortableItem = memo(
+  ({
+    item,
+    renderMode,
+    cachedProps,
+    isHighlighted,
+    onSelect,
+    onDelete,
+    baseUrl,
+  }: SortableItemProps) => {
+    const {
+      attributes,
+      listeners,
+      setNodeRef,
+      transform,
+      transition,
+      isDragging,
+    } = useSortable({ id: item.name, disabled: !!item.fixed });
+    const style: CSSProperties = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+      opacity: isDragging ? 0.9 : 1,
+      cursor: isDragging ? 'move' : undefined,
+    };
 
     return (
       <Box
@@ -52,58 +87,253 @@ const ShowContent = ({
           border: isHighlighted ? '2px solid #5F58FE' : '2px solid transparent',
           borderRadius: '0px',
           padding: '2px',
-          cursor: 'pointer',
+          cursor: item.fixed ? 'default' : 'move',
           '&:hover': {
             border: isHighlighted ? '2px solid #5F58FE' : '2px dashed #5F58FE',
           },
         }}
-        // 添加自定义属性用于标识组件
-        data-component={componentName}
-        onClick={e => {
-          setCurComponent(componentName);
-        }}
+        data-component={item.name}
+        ref={setNodeRef}
+        style={style}
+        {...(!item.fixed ? { ...attributes, ...listeners } : {})}
+        onClick={() => onSelect(item)}
       >
-        {component}
+        <item.component
+          mobile={renderMode === 'mobile'}
+          docWidth={renderMode === 'pc' ? 'full' : 'normal'}
+          {...(cachedProps || {})}
+          baseUrl={baseUrl}
+        />
         {isHighlighted && (
-          <Typography
+          <Stack
+            direction={'row'}
+            alignItems={'center'}
+            gap={2}
             sx={{
               position: 'absolute',
               left: '-2px',
-              ...(curComponent.name === 'footer'
+              ...(item?.name === 'footer'
                 ? { top: '-24px' }
                 : { bottom: '-24px' }),
               fontWeight: 400,
-              lineHeight: '22px',
-              bgcolor: '#5F58FE',
               color: '#FFFFFF',
               fontSize: '14px',
-              padding: '1px 16px',
               zIndex: 20,
             }}
           >
-            {curComponent.title}
-          </Typography>
+            <Box sx={{ bgcolor: '#5F58FE', padding: '1px 16px', height: 24 }}>
+              {item?.title}
+            </Box>
+            {!item.fixed && (
+              <Stack
+                justifyContent='center'
+                alignItems='center'
+                sx={{ bgcolor: '#5F58FE', height: 24, px: 0.5 }}
+                onClick={(e: MouseEvent<HTMLDivElement>) => {
+                  e.stopPropagation();
+                  onDelete?.(item);
+                }}
+              >
+                <IconShanchu sx={{ fontSize: '16px' }} />
+              </Stack>
+            )}
+          </Stack>
         )}
       </Box>
     );
+  },
+  // (prev, next) => {
+  //   if (!isSameItemShallow(prev.item, next.item)) return false;
+  //   if (prev.isHighlighted !== next.isHighlighted) return false;
+  //   if (prev.renderMode !== next.renderMode) return false;
+  //   // 仅当缓存 props 引用变化时重渲染
+  //   if (prev.cachedProps !== next.cachedProps) return false;
+  //   return true;
+  // },
+);
+
+const ShowContent = ({
+  setCurComponent,
+  curComponent,
+  renderMode,
+  scale,
+  components,
+  setComponents,
+  setIsEdit,
+  baseUrl,
+}: ShowContentProps) => {
+  const { appPreviewData } = useAppSelector(state => state.config);
+  const { setMode } = useColorScheme();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isComponentClickRef = useRef(false);
+
+  useEffect(() => {
+    setMode(appPreviewData?.settings?.theme_mode as 'light' | 'dark');
+  }, [appPreviewData?.settings?.theme_mode, setMode]);
+
+  const handleScroll = () => {
+    const targetElement = containerRef.current?.querySelector(
+      `[data-component="${curComponent.name}"]`,
+    );
+    if (targetElement) {
+      targetElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+        inline: 'nearest',
+      });
+    }
+    if (!targetElement) {
+      setTimeout(() => {
+        handleScroll();
+      }, 100);
+    }
   };
+
+  // 滚动到当前选中的组件（仅在组件真正改变时）
+  useEffect(() => {
+    if (
+      !curComponent?.name ||
+      !containerRef.current ||
+      isComponentClickRef.current
+    ) {
+      isComponentClickRef.current = false;
+      return;
+    }
+    handleScroll();
+  }, [curComponent]);
+
+  const handleSelect = useCallback(
+    (item: Component) => {
+      setCurComponent(item);
+      isComponentClickRef.current = true;
+    },
+    [setCurComponent],
+  );
+
+  const handleDelete = useCallback(
+    (item: Component) => {
+      const filterComponents = components.filter(c => c.name !== item.name);
+      if (curComponent?.name === item.name) {
+        setCurComponent(filterComponents[0]);
+      }
+      setComponents(filterComponents);
+      setIsEdit?.(true);
+    },
+    [components, curComponent?.name, setComponents, setCurComponent, setIsEdit],
+  );
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+  );
+
+  const nonFixedIds = useMemo(
+    () => components.filter(c => !c.fixed).map(c => c.name),
+    [components],
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over) return;
+    if (active.id === over.id) return;
+
+    const nonFixedItems = components.filter(c => !c.fixed);
+    const fromIdx = nonFixedItems.findIndex(c => c.name === active.id);
+    const toIdx = nonFixedItems.findIndex(c => c.name === over.id);
+    if (fromIdx === -1 || toIdx === -1) return;
+
+    const newNonFixed = arrayMove(nonFixedItems, fromIdx, toIdx);
+
+    const result: Component[] = [];
+    let cursor = 0;
+    for (let i = 0; i < components.length; i++) {
+      const cur = components[i];
+      if (cur.fixed) {
+        result.push(cur);
+      } else {
+        result.push(newNonFixed[cursor]);
+        cursor += 1;
+      }
+    }
+    setComponents(result);
+    const newCur = result.find(c => c.name === curComponent.name);
+    if (newCur) setCurComponent(newCur);
+    if (setIsEdit) setIsEdit(true);
+  };
+
+  // app settings 引用：作为传递给子组件的 props 变化依据
+  const appSettings = appPreviewData?.settings;
+
+  // 每个组件项的 props 缓存，仅在必要时更新
+  const propsCacheRef = useRef<
+    Record<string, Record<string, unknown> | undefined>
+  >({});
+  const [cacheTick, setCacheTick] = useState(0);
+
+  // 初始化/同步缓存（新增、删除）
+  useEffect(() => {
+    const nextKeys = new Set(components.map(c => c.name));
+    // 新增项：补齐缓存
+    components.forEach(c => {
+      if (!propsCacheRef.current[c.name]) {
+        propsCacheRef.current[c.name] =
+          handleComponentProps(c.name, appSettings) || {};
+      }
+    });
+    // 移除项：清理缓存
+    Object.keys(propsCacheRef.current).forEach(k => {
+      if (!nextKeys.has(k)) delete propsCacheRef.current[k];
+    });
+    setCacheTick(t => t + 1);
+  }, [appSettings, components]);
+
+  // appSettings 变化时，只更新当前高亮组件的缓存，其他组件沿用旧 props
+  useEffect(() => {
+    if (!curComponent?.name) return;
+    propsCacheRef.current[curComponent.name] =
+      handleComponentProps(curComponent.name, appSettings) || {};
+    setCacheTick(t => t + 1);
+  }, [appSettings, curComponent?.name]);
+
+  // 渲染项缓存：仅在关键签名或必要依赖变更时重建
+  const renderedItems = useMemo(() => {
+    return components.map(item =>
+      propsCacheRef.current[item.name] ? (
+        <SortableItem
+          key={item.name}
+          item={item}
+          renderMode={renderMode}
+          cachedProps={propsCacheRef.current[item.name]}
+          isHighlighted={curComponent?.name === item.name}
+          onSelect={handleSelect}
+          onDelete={handleDelete}
+          baseUrl={baseUrl}
+        />
+      ) : null,
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    renderMode,
+    curComponent?.name,
+    handleSelect,
+    handleDelete,
+    cacheTick,
+    baseUrl,
+  ]);
 
   return (
     <Stack
+      ref={containerRef}
+      className='show-content-container'
       sx={{
         flex: 1,
         flexShrink: 0,
-        height: '95%',
-        marginTop: '20px',
-        width: '100%',
-        overflowX: 'auto',
-        overflowY: 'auto',
-        borderRight: '1px solid #ECEEF1',
-        borderLeft: '1px solid #ECEEF1',
-        borderTop: '1px solid #ECEEF1',
+        my: '20px',
+        border: '1px solid #ECEEF1',
         '&::-webkit-scrollbar': {
           height: '8px', // 滚动条高度
         },
+        overflow: 'auto',
+
         '&::-webkit-scrollbar-thumb': {
           background: '#888', // 滑块颜色
           borderRadius: '4px',
@@ -117,54 +347,27 @@ const ShowContent = ({
           margin: '0 auto',
           boxShadow:
             renderMode === 'pc' ? null : '0 10px 15px -3px rgb(0 0 0 / 0.1)',
-          height: '100%',
-          overflowX: renderMode === 'pc' ? 'auto' : 'hidden',
-          overflowY: 'auto',
-          borderRight: '1px solid #ECEEF1',
-          borderLeft: '1px solid #ECEEF1',
-          borderTop: '1px solid #ECEEF1',
-          '&::-webkit-scrollbar': {
-            height: '6px', // 滚动条高度
-          },
+          // minHeight: '800px',
+          // height: '100%',
+          bgcolor: 'background.default',
+          position: 'relative',
+          transform: `scale(${scale})`,
+          transformOrigin: 'center center',
+          transition: 'transform 0.2s ease',
         }}
       >
-        <Stack
-          sx={{
-            minWidth: renderMode === 'pc' ? `1200px` : '375px',
-            width: renderMode === 'pc' ? `100%` : '375px',
-            margin: '0 auto',
-            boxShadow:
-              renderMode === 'pc' ? null : '0 10px 15px -3px rgb(0 0 0 / 0.1)',
-            minHeight: '800px',
-            height: '100%',
-            overflowX: renderMode === 'pc' ? 'auto' : 'hidden',
-            overflowY: 'auto',
-            position: 'relative',
-            bgcolor: 'background.default',
-            transform: `scale(${scale})`,
-            transformOrigin: 'left top',
-            transition: 'transform 0.2s ease',
-          }}
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
         >
-          {/* Header预览部分 */}
-          {renderHighlightedComponent(
-            'header',
-            <Header
-              settings={appPreviewData?.settings!}
-              renderMode={renderMode}
-            />,
-          )}
-          <Box sx={{ flex: 1 }} /> {/* 添加一个弹性空间 */}
-          {/* Footer预览部分 */}
-          {renderHighlightedComponent(
-            'footer',
-            <Footer
-              settings={appPreviewData?.settings!}
-              renderMode={renderMode}
-              options={options}
-            />,
-          )}
-        </Stack>
+          <SortableContext
+            items={nonFixedIds}
+            strategy={verticalListSortingStrategy}
+          >
+            {renderedItems}
+          </SortableContext>
+        </DndContext>
       </Stack>
     </Stack>
   );
@@ -173,7 +376,7 @@ const ShowContent = ({
 const ThemeWrapper = ({ children }: { children: React.ReactNode }) => {
   return (
     <ThemeProvider
-      theme={createTheme(...(themeOptions as any))}
+      theme={createTheme(...(themeOptions as Parameters<typeof createTheme>))}
       storageManager={null}
     >
       {children}

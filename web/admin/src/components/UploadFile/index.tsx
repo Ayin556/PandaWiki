@@ -13,6 +13,7 @@ interface UploadFileProps {
   accept: string;
   onChange: (url: string) => void;
   width?: number;
+  height?: number;
 }
 
 const UploadFile = ({
@@ -23,6 +24,7 @@ const UploadFile = ({
   accept,
   type,
   width,
+  height,
   disabled = false,
 }: UploadFileProps) => {
   const [preview, setPreview] = useState<string>(value);
@@ -152,7 +154,7 @@ const UploadFile = ({
         htmlFor={id || name}
         sx={{
           width: width || 190,
-          height: width || 173.26,
+          height: height || width || 173.26,
           borderRadius: '10px',
           border: '1px solid',
           borderColor: 'background.paper3',

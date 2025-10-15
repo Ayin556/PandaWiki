@@ -14,7 +14,7 @@ import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
   DomainResponse,
   GetShareV1NodeDetailParams,
-  V1RecommendNodeListItem,
+  V1NodeRecommendListResp,
 } from "./types";
 
 /**
@@ -67,7 +67,7 @@ export const getShareV1NodeList = (params: RequestParams = {}) =>
  * @summary 推荐卡片列表
  * @request GET:/share/v1/node/recommend/list
  * @response `200` `(DomainResponse & {
-    data?: (V1RecommendNodeListItem)[],
+    data?: V1NodeRecommendListResp,
 
 })` OK
  */
@@ -75,7 +75,7 @@ export const getShareV1NodeList = (params: RequestParams = {}) =>
 export const getShareV1NodeRecommendList = (params: RequestParams = {}) =>
   httpRequest<
     DomainResponse & {
-      data?: V1RecommendNodeListItem[];
+      data?: V1NodeRecommendListResp;
     }
   >({
     path: `/share/v1/node/recommend/list`,

@@ -2,6 +2,10 @@ import { parsePathname } from '@/utils';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { postShareV1StatPage } from '@/request/ShareStat';
+import { getShareV1NodeList } from '@/request/ShareNode';
+import { getShareV1AppWebInfo } from '@/request/ShareApp';
+import { filterEmptyFolders, convertToTree } from '@/utils/drag';
+import { deepSearchFirstNode } from '@/utils';
 
 const StatPage = {
   welcome: 1,
@@ -9,6 +13,17 @@ const StatPage = {
   chat: 3,
   auth: 4,
 } as const;
+
+const getFirstNode = async () => {
+  const nodeListResult: any = await getShareV1NodeList();
+  const tree = filterEmptyFolders(convertToTree(nodeListResult || []));
+  return deepSearchFirstNode(tree);
+};
+
+const getHomePath = async () => {
+  const info = await getShareV1AppWebInfo();
+  return info?.settings?.home_page_setting;
+};
 
 export async function middleware(
   request: NextRequest,
@@ -19,14 +34,19 @@ export async function middleware(
   const { page, id } = parsePathname(url.pathname);
   try {
     // 获取节点列表
-    // const nodeListResult = await apiClient.serverGetNodeList(kb_id, authToken);
-    // if (nodeListResult.status === 401 && !url.pathname.startsWith('/auth')) {
-    //   const loginUrl = new URL('/auth/login', request.url);
-    //   loginUrl.searchParams.set('redirect', url.pathname);
-    //   return NextResponse.redirect(loginUrl);
-    // }
     if (url.pathname === '/') {
-      return NextResponse.redirect(new URL('/welcome', request.url));
+      const homePath = await getHomePath();
+      if (homePath === 'custom') {
+        return NextResponse.rewrite(new URL('/home', request.url));
+      } else {
+        const [firstNode] = await Promise.all([getFirstNode(), getHomePath()]);
+        if (firstNode) {
+          return NextResponse.rewrite(
+            new URL(`/node/${firstNode.id}`, request.url),
+          );
+        }
+        return NextResponse.rewrite(new URL('/node', request.url));
+      }
     }
 
     // 页面上报
@@ -48,7 +68,19 @@ export async function middleware(
 
     return NextResponse.next();
   } catch (error) {
-    console.log(error);
+    if (
+      typeof error === 'object' &&
+      error !== null &&
+      'message' in error &&
+      error.message === 'NEXT_REDIRECT'
+    ) {
+      return NextResponse.redirect(
+        new URL(
+          `/auth/login?redirect=${encodeURIComponent(url.pathname + url.search)}`,
+          request.url,
+        ),
+      );
+    }
   }
 
   return NextResponse.next();

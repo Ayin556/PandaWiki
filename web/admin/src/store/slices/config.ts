@@ -17,13 +17,10 @@ export interface config {
   kb_c: boolean;
   modelStatus: boolean;
   kbDetail: DomainKnowledgeBaseDetail;
-  appPreviewData:
-    | (Omit<DomainAppDetailResp, 'settings'> & {
-        settings: Partial<AppSetting>;
-      })
-    | null;
+  appPreviewData: DomainAppDetailResp | null;
   refreshAdminRequest: () => void;
 }
+
 const initialState: config = {
   user: {
     id: '',

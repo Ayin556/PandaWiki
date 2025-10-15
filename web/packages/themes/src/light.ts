@@ -27,6 +27,7 @@ const lightPalette: PaletteOptions = {
     dark: '#0C53B7',
     contrastText: '#fff',
   },
+  divider: '#ECEEF1',
   dark: {
     dark: '#000',
     main: '#14141B',
@@ -53,7 +54,6 @@ const lightPalette: PaletteOptions = {
     tertiary: '#717572',
     disabled: '#6e7781',
   },
-  divider: '#ECEEF1',
 };
 
 export default lightPalette;

@@ -28,6 +28,7 @@ const darkPalette: PaletteOptions = {
     dark: '#0C53B7',
     contrastText: '#fff',
   },
+  divider: '#313131',
   disabled: {
     main: '#666',
   },
@@ -54,7 +55,6 @@ const darkPalette: PaletteOptions = {
     tertiary: 'rgba(255, 255, 255, 0.5)',
     disabled: 'rgba(255, 255, 255, 0.3)',
   },
-  divider: '#525770',
 };
 
 export default darkPalette;

@@ -14,6 +14,7 @@ interface AddRecommendContentProps {
   selected: string[];
   onChange: (value: string[]) => void;
   onClose: () => void;
+  disabled?: (value: ITreeItem) => boolean;
 }
 
 const AddRecommendContent = ({
@@ -21,6 +22,7 @@ const AddRecommendContent = ({
   selected,
   onChange,
   onClose,
+  disabled,
 }: AddRecommendContentProps) => {
   const [list, setList] = useState<ITreeItem[]>([]);
   const [loading, setLoading] = useState(false);
@@ -76,6 +78,7 @@ const AddRecommendContent = ({
           onSelectChange={value => {
             setSelectedIds(value);
           }}
+          disabled={disabled}
           relativeSelect={false}
         />
       ) : (

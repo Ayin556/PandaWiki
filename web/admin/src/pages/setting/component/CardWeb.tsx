@@ -41,7 +41,19 @@ const CardWeb = ({ kb, refresh }: CardWebProps) => {
       <CardListen kb={kb} refresh={refresh} />
       <CardProxy kb={kb} refresh={refresh} />
       <CardBasicInfo kb={kb} refresh={refresh} />
-      <CardCustom></CardCustom>
+      <CardCustom
+        kb={kb}
+        refresh={value => {
+          setInfo({
+            ...info,
+            settings: {
+              ...info.settings,
+              ...value,
+            },
+          });
+        }}
+        info={info}
+      ></CardCustom>
       <CardAuth kb={kb} refresh={refresh} />
       <CardStyle
         id={info.id}

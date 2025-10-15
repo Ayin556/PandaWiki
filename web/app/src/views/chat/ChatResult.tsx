@@ -51,6 +51,7 @@ interface ChatResultProps {
   setConversation: (conversation: ConversationItem[]) => void;
   setThinking: (thinking: keyof typeof AnswerStatus) => void;
   onReset: () => void;
+  isScrolling?: boolean;
 }
 
 const ChatResult = ({
@@ -64,6 +65,7 @@ const ChatResult = ({
   setThinking,
   setConversation,
   onReset,
+  isScrolling = true,
 }: ChatResultProps) => {
   const router = useRouter();
   const [input, setInput] = useState('');
@@ -120,40 +122,28 @@ const ChatResult = ({
   }, [answer, conversation]);
 
   useEffect(() => {
-    if (!loading) {
+    if (!loading && isScrolling) {
       setTimeout(() => {
         scrollToBottom();
       });
     }
-  }, [loading]);
+  }, [loading, isScrolling]);
 
   return (
-    <Box
-      className={!mobile ? 'conversation-container' : ''}
-      sx={{
-        height: 'calc(100vh - 266px)',
-        overflow: 'auto',
-        '&::-webkit-scrollbar': {
-          display: 'none',
-        },
-        mb: 0,
-        scrollbarWidth: 'none',
-        msOverflowStyle: 'none',
-        ...(mobile && {
-          overflow: 'hidden',
-          height: 'calc(100vh - 274px)',
-        }),
-      }}
-    >
+    <>
       <Stack
         direction='column'
         gap={2}
-        className={mobile ? 'conversation-container' : ''}
+        className='conversation-container'
         sx={{
-          ...(mobile && {
-            overflow: 'auto',
-            height: 'calc(100vh - 310px)',
-          }),
+          height: 'calc(100vh - 264px)',
+          overflow: 'auto',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+          '&::-webkit-scrollbar': {
+            display: 'none',
+          },
+          mb: 2,
         }}
       >
         {conversation.map((item, index) => (
@@ -271,19 +261,9 @@ const ChatResult = ({
           display: 'flex',
           flexDirection: 'column',
           gap: 1,
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          bottom: 0,
-          ...(mobile && {
-            p: 0,
-            left: 24,
-            right: 24,
-            bottom: 24,
-          }),
         }}
       >
-        {conversation.length > 0 && (
+        {/* {conversation.length > 0 && (
           <Button
             variant='outlined'
             sx={{ alignSelf: 'center' }}
@@ -295,7 +275,7 @@ const ChatResult = ({
             <IconNewChat sx={{ fontSize: 18, mr: 1 }} />
             开启新会话
           </Button>
-        )}
+        )} */}
         <Box
           sx={{
             bgcolor:
@@ -406,7 +386,7 @@ const ChatResult = ({
         onSubmit={handleScore}
         data={conversationItem}
       />
-    </Box>
+    </>
   );
 };
 

@@ -15,7 +15,8 @@ const SearchResult = ({
   const { mobile = false } = useStore();
 
   return (
-    <Box
+    <Stack
+      gap={3}
       sx={{
         height: 'calc(100vh - 254px)',
         overflow: 'auto',
@@ -24,22 +25,17 @@ const SearchResult = ({
         },
         msOverflowStyle: 'none',
         scrollbarWidth: 'none',
-        ...(mobile && {
-          height: 'calc(100vh - 181px)',
-          border: '1px solid',
-          borderColor: 'divider',
-          borderRadius: '10px',
-          px: 3,
-          py: 1,
-        }),
       }}
     >
       {list.map(item => (
         <Box
           key={item.node_id}
           sx={{
-            borderBottom: '1px dashed',
+            border: '1px solid',
             borderColor: 'divider',
+            p: 2,
+            borderRadius: '10px',
+            bgcolor: 'background.paper3',
           }}
         >
           <Link href={`/node/${item.node_id}`} target='_blank' prefetch={false}>
@@ -50,7 +46,6 @@ const SearchResult = ({
               justifyContent='space-between'
               sx={theme => ({
                 borderRadius: '10px',
-                py: '14px',
                 cursor: 'pointer',
                 '&:hover': {
                   '.hover-primary': {
@@ -102,7 +97,7 @@ const SearchResult = ({
           </Stack>
         </Box>
       )}
-    </Box>
+    </Stack>
   );
 };
 

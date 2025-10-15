@@ -110,6 +110,7 @@ const TreeItem = React.forwardRef<
     menu,
     relativeSelect = true,
     refresh,
+    disabled,
   } = context;
 
   const [value, setValue] = useState(item.name);
@@ -264,6 +265,7 @@ const TreeItem = React.forwardRef<
         {supportSelect && (
           <Checkbox
             sx={{
+              visibility: disabled?.(item) ? 'hidden' : 'visible',
               flexShrink: 0,
               color: 'text.disabled',
               width: '35px',
@@ -274,6 +276,7 @@ const TreeItem = React.forwardRef<
               e.stopPropagation();
               handleSelectChange(item.id);
             }}
+            disabled={disabled?.(item)}
           />
         )}
         <Box sx={{ flex: 1 }}>
