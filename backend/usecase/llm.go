@@ -96,47 +96,14 @@ func (u *LLMUsecase) FormatConversationMessages(
 				schema.SystemMessage(systemPrompt),
 				schema.UserMessage(domain.UserQuestionFormatter),
 			)
-			// query dataset id from kb
 			kb, err := u.kbRepo.GetKnowledgeBaseByID(ctx, kbID)
 			if err != nil {
 				return nil, nil, fmt.Errorf("get kb failed: %w", err)
 			}
-			// get related documents from raglite
-			records, err := u.rag.QueryRecords(ctx, []string{kb.DatasetID}, question, groupIDs, historyMessages[:len(historyMessages)-1])
+			rankedNodes, err := u.GetRankNodes(ctx, []string{kb.DatasetID}, question, groupIDs, historyMessages[:len(historyMessages)-1])
 			if err != nil {
-				return nil, nil, fmt.Errorf("get records from raglite failed: %w", err)
+				return nil, nil, fmt.Errorf("get rank nodes failed: %w", err)
 			}
-			u.logger.Info("get related documents from raglite", log.Any("record_count", len(records)))
-			rankedNodesMap := make(map[string]*domain.RankedNodeChunks)
-			// get raw node by doc_id
-			if len(records) > 0 {
-				docIDs := lo.Uniq(lo.Map(records, func(item *domain.NodeContentChunk, _ int) string {
-					return item.DocID
-				}))
-				u.logger.Info("docIDs", log.Any("docIDs", docIDs))
-				docIDNode, err := u.nodeRepo.GetNodeReleasesByDocIDs(ctx, docIDs)
-				if err != nil {
-					return nil, nil, fmt.Errorf("get nodes by ids failed: %w", err)
-				}
-				u.logger.Info("get nodes by ids", log.Any("docIDNode", docIDNode))
-				for _, record := range records {
-					if nodeChunk, ok := rankedNodesMap[record.DocID]; !ok {
-						if docNode, ok := docIDNode[record.DocID]; ok {
-							rankNodeChunk := &domain.RankedNodeChunks{
-								NodeID:      docNode.NodeID,
-								NodeName:    docNode.Name,
-								NodeSummary: docNode.Meta.Summary,
-								Chunks:      []*domain.NodeContentChunk{record},
-							}
-							rankedNodes = append(rankedNodes, rankNodeChunk)
-							rankedNodesMap[record.DocID] = rankNodeChunk
-						}
-					} else {
-						nodeChunk.Chunks = append(nodeChunk.Chunks, record)
-					}
-				}
-			}
-			u.logger.Debug("ranked nodes", log.Int("rankedNodesCount", len(rankedNodes)))
 			documents := domain.FormatNodeChunks(rankedNodes, kb.AccessSettings.BaseURL)
 			u.logger.Debug("documents", log.String("documents", documents))
 
@@ -328,4 +295,45 @@ func (u *LLMUsecase) SplitByTokenLimit(text string, maxTokens int) ([]string, er
 	}
 
 	return result, nil
+}
+
+func (u *LLMUsecase) GetRankNodes(ctx context.Context, datasetIDs []string, question string, groupIDs []int, historyMessages []*schema.Message) ([]*domain.RankedNodeChunks, error) {
+	var rankedNodes []*domain.RankedNodeChunks
+	// get related documents from raglite
+	records, err := u.rag.QueryRecords(ctx, datasetIDs, question, groupIDs, historyMessages)
+	if err != nil {
+		return nil, fmt.Errorf("get records from raglite failed: %w", err)
+	}
+	u.logger.Info("get related documents from raglite", log.Any("record_count", len(records)))
+	rankedNodesMap := make(map[string]*domain.RankedNodeChunks)
+	// get raw node by doc_id
+	if len(records) > 0 {
+		docIDs := lo.Uniq(lo.Map(records, func(item *domain.NodeContentChunk, _ int) string {
+			return item.DocID
+		}))
+		u.logger.Info("node chunk doc ids", log.Any("docIDs", docIDs))
+		docIDNode, err := u.nodeRepo.GetNodeReleasesByDocIDs(ctx, docIDs)
+		if err != nil {
+			return nil, fmt.Errorf("get nodes by ids failed: %w", err)
+		}
+		u.logger.Info("get node release by doc ids", log.Any("docIDNode", lo.Keys(docIDNode)))
+		for _, record := range records {
+			if nodeChunk, ok := rankedNodesMap[record.DocID]; !ok {
+				if docNode, ok := docIDNode[record.DocID]; ok {
+					rankNodeChunk := &domain.RankedNodeChunks{
+						NodeID:      docNode.NodeID,
+						NodeName:    docNode.Name,
+						NodeSummary: docNode.Meta.Summary,
+						NodeEmoji:   docNode.Meta.Emoji,
+						Chunks:      []*domain.NodeContentChunk{record},
+					}
+					rankedNodes = append(rankedNodes, rankNodeChunk)
+					rankedNodesMap[record.DocID] = rankNodeChunk
+				}
+			} else {
+				nodeChunk.Chunks = append(nodeChunk.Chunks, record)
+			}
+		}
+	}
+	return rankedNodes, nil
 }

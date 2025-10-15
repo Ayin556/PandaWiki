@@ -704,6 +704,22 @@ definitions:
     - app_type
     - message
     type: object
+  domain.ChatSearchReq:
+    properties:
+      captcha_token:
+        type: string
+      message:
+        type: string
+    required:
+    - message
+    type: object
+  domain.ChatSearchResp:
+    properties:
+      node_result:
+        items:
+          $ref: '#/definitions/domain.NodeContentChunkSSE'
+        type: array
+    type: object
   domain.CommentInfo:
     properties:
       auth_user_id:
@@ -1296,6 +1312,17 @@ definitions:
     - action
     - ids
     - kb_id
+    type: object
+  domain.NodeContentChunkSSE:
+    properties:
+      emoji:
+        type: string
+      name:
+        type: string
+      node_id:
+        type: string
+      summary:
+        type: string
     type: object
   domain.NodeGroupDetail:
     properties:
@@ -5536,6 +5563,33 @@ paths:
       summary: ChatMessage
       tags:
       - share_chat
+  /share/v1/chat/search:
+    post:
+      consumes:
+      - application/json
+      description: ChatSearch
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.ChatSearchReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.ChatSearchResp'
+              type: object
+      summary: ChatSearch
+      tags:
+      - share_chat_search
   /share/v1/chat/widget:
     post:
       consumes:

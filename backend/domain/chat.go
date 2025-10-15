@@ -66,3 +66,17 @@ func (m MessageFrom) String() string {
 		return "unknown"
 	}
 }
+
+type ChatSearchReq struct {
+	Message      string `json:"message" validate:"required"`
+	CaptchaToken string `json:"captcha_token"`
+
+	KBID string `json:"-" validate:"required"`
+
+	RemoteIP   string `json:"-"`
+	AuthUserID uint   `json:"-"`
+}
+
+type ChatSearchResp struct {
+	NodeResult []NodeContentChunkSSE `json:"node_result"`
+}

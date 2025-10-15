@@ -167,6 +167,7 @@ type RankedNodeChunks struct {
 	NodeID      string
 	NodeName    string
 	NodeSummary string
+	NodeEmoji   string
 	Chunks      []*NodeContentChunk
 }
 
@@ -185,6 +186,7 @@ type NodeContentChunkSSE struct {
 	NodeID  string `json:"node_id"`
 	Name    string `json:"name"`
 	Summary string `json:"summary"`
+	Emoji   string `json:"emoji"`
 }
 
 type RecommendNodeListResp struct {

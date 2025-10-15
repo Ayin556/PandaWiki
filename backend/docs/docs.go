@@ -4185,6 +4185,52 @@ const docTemplate = `{
                 }
             }
         },
+        "/share/v1/chat/search": {
+            "post": {
+                "description": "ChatSearch",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "share_chat_search"
+                ],
+                "summary": "ChatSearch",
+                "parameters": [
+                    {
+                        "description": "request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.ChatSearchReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/domain.ChatSearchResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/share/v1/chat/widget": {
             "post": {
                 "description": "ChatWidget",
@@ -5600,6 +5646,31 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.ChatSearchReq": {
+            "type": "object",
+            "required": [
+                "message"
+            ],
+            "properties": {
+                "captcha_token": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.ChatSearchResp": {
+            "type": "object",
+            "properties": {
+                "node_result": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.NodeContentChunkSSE"
+                    }
+                }
+            }
+        },
         "domain.CommentInfo": {
             "type": "object",
             "properties": {
@@ -6509,6 +6580,23 @@ const docTemplate = `{
                     }
                 },
                 "kb_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.NodeContentChunkSSE": {
+            "type": "object",
+            "properties": {
+                "emoji": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "node_id": {
+                    "type": "string"
+                },
+                "summary": {
                     "type": "string"
                 }
             }

@@ -58,6 +58,7 @@ func NewShareChatHandler(
 			}
 		})
 	share.POST("/message", h.ChatMessage, h.ShareAuthMiddleware.Authorize)
+	share.POST("/search", h.ChatSearch, h.ShareAuthMiddleware.Authorize)
 	share.POST("/completions", h.ChatCompletions)
 	share.POST("/widget", h.ChatWidget)
 	share.POST("/feedback", h.FeedBack)
@@ -438,4 +439,48 @@ func generateID() string {
 
 func stringPtr(s string) *string {
 	return &s
+}
+
+// ChatMessage chat search
+//
+//	@Summary		ChatSearch
+//	@Description	ChatSearch
+//	@Tags			share_chat_search
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		domain.ChatSearchReq	true	"request"
+//	@Success		200		{object}	domain.Response{data=domain.ChatSearchResp}
+//	@Router			/share/v1/chat/search [post]
+func (h *ShareChatHandler) ChatSearch(c echo.Context) error {
+	var req domain.ChatSearchReq
+	if err := c.Bind(&req); err != nil {
+		return h.NewResponseWithError(c, "parse request failed", err)
+	}
+	req.KBID = c.Request().Header.Get("X-KB-ID") // get from caddy header
+	if err := c.Validate(&req); err != nil {
+		return h.NewResponseWithError(c, "validate request failed", err)
+	}
+	ctx := c.Request().Context()
+	// validate captcha token
+	if !h.Captcha.ValidateToken(ctx, req.CaptchaToken) {
+		return h.NewResponseWithError(c, "invalid captcha token", nil)
+	}
+
+	req.RemoteIP = c.RealIP()
+
+	// get user info --> no enterprise is nil
+	userID := c.Get("user_id")
+	if userID != nil {
+		if userIDValue, ok := userID.(uint); ok {
+			req.AuthUserID = userIDValue
+		} else {
+			return h.NewResponseWithError(c, "invalid user id type", nil)
+		}
+	}
+
+	resp, err := h.chatUsecase.Search(ctx, &req)
+	if err != nil {
+		return h.NewResponseWithError(c, "failed to search docs", err)
+	}
+	return h.NewResponseWithData(c, resp)
 }
