@@ -1012,6 +1012,7 @@ definitions:
         - embedding
         - rerank
         - analysis
+        - analysis-vl
     required:
     - base_url
     - model
@@ -1128,6 +1129,7 @@ definitions:
         - embedding
         - rerank
         - analysis
+        - analysis-vl
     required:
     - base_url
     - provider
@@ -1274,12 +1276,14 @@ definitions:
     - embedding
     - rerank
     - analysis
+    - analysis-vl
     type: string
     x-enum-varnames:
     - ModelTypeChat
     - ModelTypeEmbedding
     - ModelTypeRerank
     - ModelTypeAnalysis
+    - ModelTypeAnalysisVL
   domain.MoveNodeReq:
     properties:
       id:
@@ -1836,6 +1840,7 @@ definitions:
         - embedding
         - rerank
         - analysis
+        - analysis-vl
     required:
     - base_url
     - id
@@ -2087,6 +2092,7 @@ definitions:
         - embedding
         - rerank
         - analysis
+        - analysis-vl
     required:
     - base_url
     - model

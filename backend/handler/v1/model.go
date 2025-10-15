@@ -159,7 +159,7 @@ func (h *ModelHandler) CheckModel(c echo.Context) error {
 	ctx := c.Request().Context()
 	modelType := req.Type
 	switch req.Type {
-	case domain.ModelTypeAnalysis: // for rag analysis
+	case domain.ModelTypeAnalysis, domain.ModelTypeAnalysisVL: // for rag analysis
 		modelType = domain.ModelTypeChat
 	default:
 	}
