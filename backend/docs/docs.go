@@ -756,11 +756,11 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/crawler/epub/convert": {
+        "/api/v1/crawler/epub/parse": {
             "post": {
-                "description": "EpubConvert",
+                "description": "EpubParse",
                 "consumes": [
-                    "multipart/form-data"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -768,21 +768,16 @@ const docTemplate = `{
                 "tags": [
                     "crawler"
                 ],
-                "summary": "EpubConvert",
+                "summary": "EpubParse",
                 "parameters": [
                     {
-                        "type": "file",
-                        "description": "file",
-                        "name": "file",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "kb_id",
-                        "name": "kb_id",
-                        "in": "formData",
-                        "required": true
+                        "description": "Parse URL",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.EpubParseReq"
+                        }
                     }
                 ],
                 "responses": {
@@ -797,7 +792,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/domain.EpubResp"
+                                            "$ref": "#/definitions/v1.EpubParseResp"
                                         }
                                     }
                                 }
@@ -843,10 +838,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/v1.FeishuGetDocResp"
-                                            }
+                                            "$ref": "#/definitions/v1.FeishuGetDocResp"
                                         }
                                     }
                                 }
@@ -1182,10 +1174,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/v1.NotionScrapeResp"
-                                            }
+                                            "$ref": "#/definitions/v1.NotionScrapeResp"
                                         }
                                     }
                                 }
@@ -1229,6 +1218,52 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "$ref": "#/definitions/v1.CrawlerResultResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/crawler/results": {
+            "post": {
+                "description": "Retrieve the results of a previously started scraping task",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "crawler"
+                ],
+                "summary": "Get Crawler Results",
+                "parameters": [
+                    {
+                        "description": "Crawler Results Request",
+                        "name": "param",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.CrawlerResultsReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.PWResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/v1.CrawlerResultsResp"
                                         }
                                     }
                                 }
@@ -1662,9 +1697,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/crawler/yuque/analysis_export_file": {
+        "/api/v1/crawler/yuque/parse": {
             "post": {
-                "description": "Analyze Yuque Export File",
+                "description": "YuqueParse",
                 "consumes": [
                     "application/json"
                 ],
@@ -1674,21 +1709,16 @@ const docTemplate = `{
                 "tags": [
                     "crawler"
                 ],
-                "summary": "AnalysisYuqueExportFile",
+                "summary": "YuqueParse",
                 "parameters": [
                     {
-                        "type": "file",
-                        "description": "file",
-                        "name": "file",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "kb_id",
-                        "name": "kb_id",
-                        "in": "formData",
-                        "required": true
+                        "description": "Parse URL",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.YuqueParseReq"
+                        }
                     }
                 ],
                 "responses": {
@@ -1703,10 +1733,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/domain.YuqueResp"
-                                            }
+                                            "$ref": "#/definitions/v1.YuqueParseResp"
                                         }
                                     }
                                 }
@@ -4596,11 +4623,13 @@ const docTemplate = `{
             "type": "string",
             "enum": [
                 "pending",
+                "in_process",
                 "completed",
                 "failed"
             ],
             "x-enum-varnames": [
                 "CrawlerStatusPending",
+                "CrawlerStatusInProcess",
                 "CrawlerStatusCompleted",
                 "CrawlerStatusFailed"
             ]
@@ -6013,7 +6042,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "parameters": {
-                    "$ref": "#/definitions/domain.ModelParam"
+                    "$ref": "#/definitions/github_com_chaitin_panda-wiki_domain.ModelParam"
                 },
                 "provider": {
                     "$ref": "#/definitions/github_com_chaitin_panda-wiki_domain.ModelProvider"
@@ -6085,20 +6114,6 @@ const docTemplate = `{
             "properties": {
                 "enabled": {
                     "type": "boolean"
-                }
-            }
-        },
-        "domain.EpubResp": {
-            "type": "object",
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
                 }
             }
         },
@@ -6434,32 +6449,6 @@ const docTemplate = `{
                 "MessageFromPrivate"
             ]
         },
-        "domain.ModelParam": {
-            "type": "object",
-            "properties": {
-                "context_window": {
-                    "type": "integer"
-                },
-                "max_tokens": {
-                    "type": "integer"
-                },
-                "r1_enabled": {
-                    "type": "boolean"
-                },
-                "support_computer_use": {
-                    "type": "boolean"
-                },
-                "support_images": {
-                    "type": "boolean"
-                },
-                "support_prompt_cache": {
-                    "type": "boolean"
-                },
-                "temperature": {
-                    "type": "number"
-                }
-            }
-        },
         "domain.ModelType": {
             "type": "string",
             "enum": [
@@ -6685,6 +6674,9 @@ const docTemplate = `{
         "domain.ObjectUploadResp": {
             "type": "object",
             "properties": {
+                "filename": {
+                    "type": "string"
+                },
                 "key": {
                     "type": "string"
                 }
@@ -7296,7 +7288,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "parameters": {
-                    "$ref": "#/definitions/domain.ModelParam"
+                    "$ref": "#/definitions/github_com_chaitin_panda-wiki_domain.ModelParam"
                 },
                 "provider": {
                     "$ref": "#/definitions/github_com_chaitin_panda-wiki_domain.ModelProvider"
@@ -7488,6 +7480,9 @@ const docTemplate = `{
                 "carousel_config": {
                     "type": "object",
                     "properties": {
+                        "bg_color": {
+                            "type": "string"
+                        },
                         "list": {
                             "type": "array",
                             "items": {
@@ -7609,20 +7604,6 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.YuqueResp": {
-            "type": "object",
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
         "github_com_chaitin_panda-wiki_api_auth_v1.AuthGetResp": {
             "type": "object",
             "properties": {
@@ -7688,6 +7669,9 @@ const docTemplate = `{
                 "model": {
                     "type": "string"
                 },
+                "parameters": {
+                    "$ref": "#/definitions/github_com_chaitin_panda-wiki_domain.ModelParam"
+                },
                 "provider": {
                     "$ref": "#/definitions/github_com_chaitin_panda-wiki_domain.ModelProvider"
                 },
@@ -7746,7 +7730,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "parameters": {
-                    "$ref": "#/definitions/domain.ModelParam"
+                    "$ref": "#/definitions/github_com_chaitin_panda-wiki_domain.ModelParam"
                 },
                 "prompt_tokens": {
                     "type": "integer"
@@ -7759,6 +7743,32 @@ const docTemplate = `{
                 },
                 "type": {
                     "$ref": "#/definitions/domain.ModelType"
+                }
+            }
+        },
+        "github_com_chaitin_panda-wiki_domain.ModelParam": {
+            "type": "object",
+            "properties": {
+                "context_window": {
+                    "type": "integer"
+                },
+                "max_tokens": {
+                    "type": "integer"
+                },
+                "r1_enabled": {
+                    "type": "boolean"
+                },
+                "support_computer_use": {
+                    "type": "boolean"
+                },
+                "support_images": {
+                    "type": "boolean"
+                },
+                "support_prompt_cache": {
+                    "type": "boolean"
+                },
+                "temperature": {
+                    "type": "number"
                 }
             }
         },
@@ -8021,6 +8031,20 @@ const docTemplate = `{
                 }
             }
         },
+        "v1.CrawlerResultItem": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/consts.CrawlerStatus"
+                },
+                "task_id": {
+                    "type": "string"
+                }
+            }
+        },
         "v1.CrawlerResultResp": {
             "type": "object",
             "required": [
@@ -8029,6 +8053,34 @@ const docTemplate = `{
             "properties": {
                 "content": {
                     "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/consts.CrawlerStatus"
+                }
+            }
+        },
+        "v1.CrawlerResultsReq": {
+            "type": "object",
+            "required": [
+                "task_ids"
+            ],
+            "properties": {
+                "task_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "v1.CrawlerResultsResp": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.CrawlerResultItem"
+                    }
                 },
                 "status": {
                     "$ref": "#/definitions/consts.CrawlerStatus"
@@ -8067,6 +8119,33 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.EpubParseReq": {
+            "type": "object",
+            "required": [
+                "filename",
+                "kb_id",
+                "key"
+            ],
+            "properties": {
+                "filename": {
+                    "type": "string"
+                },
+                "kb_id": {
+                    "type": "string"
+                },
+                "key": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.EpubParseResp": {
+            "type": "object",
+            "properties": {
+                "task_id": {
                     "type": "string"
                 }
             }
@@ -8959,6 +9038,47 @@ const docTemplate = `{
             "properties": {
                 "content": {
                     "type": "string"
+                }
+            }
+        },
+        "v1.YuqueParseItem": {
+            "type": "object",
+            "properties": {
+                "task_id": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.YuqueParseReq": {
+            "type": "object",
+            "required": [
+                "filename",
+                "kb_id",
+                "key"
+            ],
+            "properties": {
+                "filename": {
+                    "type": "string"
+                },
+                "kb_id": {
+                    "type": "string"
+                },
+                "key": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.YuqueParseResp": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.YuqueParseItem"
+                    }
                 }
             }
         }

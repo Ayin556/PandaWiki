@@ -190,8 +190,9 @@ type WebAppLandingSettings struct {
 		List       []string `json:"list"`
 	} `json:"simple_doc_config"`
 	CarouselConfig struct {
-		Title string `json:"title"`
-		List  []struct {
+		Title   string `json:"title"`
+		BgColor string `json:"bg_color"`
+		List    []struct {
 			ID    string `json:"id"`
 			Title string `json:"title"`
 			URL   string `json:"url"`
