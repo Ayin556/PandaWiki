@@ -1929,6 +1929,8 @@ definitions:
         type: object
       carousel_config:
         properties:
+          bg_color:
+            type: string
           list:
             items:
               properties:

@@ -7480,6 +7480,9 @@ const docTemplate = `{
                 "carousel_config": {
                     "type": "object",
                     "properties": {
+                        "bg_color": {
+                            "type": "string"
+                        },
                         "list": {
                             "type": "array",
                             "items": {

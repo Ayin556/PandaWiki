@@ -501,7 +501,7 @@ func (u *CrawlerUsecase) EpubParse(ctx context.Context, req *v1.EpubParseReq) (*
 	}
 
 	doc := epubListResp.Data.Docs[0]
-	exportResp, err := u.anydocClient.EpubpExportDoc(ctx, id, doc.ID, url)
+	exportResp, err := u.anydocClient.EpubpExportDoc(ctx, id, doc.ID, req.KbID)
 	if err != nil {
 		u.logger.Error("export doc failed", "doc_id", doc.ID, "error", err)
 		return nil, err
