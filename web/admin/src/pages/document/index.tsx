@@ -1,14 +1,18 @@
 import { ImportDocType, ITreeItem, NodeListFilterData } from '@/api';
 import Card from '@/components/Card';
+import Cascader from '@/components/Cascader';
 import DragTree from '@/components/Drag/DragTree';
 import {
   TreeMenuItem,
   TreeMenuOptions,
 } from '@/components/Drag/DragTree/TreeMenu';
 import { useURLSearchParams } from '@/hooks';
+import { getApiV1NodeList } from '@/request/Node';
+import { DomainNodeListItemResp } from '@/request/types';
 import { useAppSelector } from '@/store';
 import { addOpacityToColor } from '@/utils';
 import { convertToTree } from '@/utils/drag';
+import { Icon } from '@ctzhian/ui';
 import {
   Box,
   Button,
@@ -17,21 +21,17 @@ import {
   Stack,
   useTheme,
 } from '@mui/material';
-import { Icon } from '@ctzhian/ui';
-import Cascader from '@/components/Cascader';
-import { getApiV1NodeList } from '@/request/Node';
-import { DomainNodeListItemResp } from '@/request/types';
 import { useCallback, useEffect, useState } from 'react';
 import VersionPublish from '../release/components/VersionPublish';
+import AddDocByOther from './component/AddDocByOther';
 import DocAdd from './component/DocAdd';
 import DocDelete from './component/DocDelete';
+import DocPropertiesModal from './component/DocPropertiesModal';
 import DocSearch from './component/DocSearch';
 import DocStatus from './component/DocStatus';
 import DocSummary from './component/DocSummary';
-import ImportDoc from './component/ImportDoc';
 import MoveDocs from './component/MoveDocs';
 import Summary from './component/Summary';
-import DocPropertiesModal from './component/DocPropertiesModal';
 
 const Content = () => {
   const { kb_id } = useAppSelector(state => state.config);
@@ -445,7 +445,7 @@ const Content = () => {
         data={opraData}
         refresh={getData}
       />
-      <ImportDoc
+      <AddDocByOther
         type={key}
         open={urlOpen}
         onCancel={() => {

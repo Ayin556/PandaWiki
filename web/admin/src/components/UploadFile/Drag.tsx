@@ -37,7 +37,7 @@ interface UploadProps {
 }
 
 const Upload = ({
-  file = [],
+  file,
   onChange,
   type = 'select',
   accept,
@@ -46,13 +46,13 @@ const Upload = ({
 }: UploadProps) => {
   const theme = useTheme();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [dropFiles, setDropFiles] = useState<File[]>(file);
+  const [dropFiles, setDropFiles] = useState<File[]>(file || []);
 
   const onDrop = useCallback(
     (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
       const validFiles = acceptedFiles;
 
-      const newFiles = multiple ? [...file, ...validFiles] : validFiles;
+      const newFiles = multiple ? [...(file || []), ...validFiles] : validFiles;
       setDropFiles(newFiles);
       onChange(newFiles, rejectedFiles);
     },
@@ -85,7 +85,7 @@ const Upload = ({
   });
 
   useEffect(() => {
-    setDropFiles(file);
+    if (file) setDropFiles(file);
   }, [file]);
 
   return (
