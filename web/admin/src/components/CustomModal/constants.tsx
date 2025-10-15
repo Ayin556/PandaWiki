@@ -1,12 +1,11 @@
 import { lazy } from 'react';
-import bannerBg from '@/assets/images/banner-bg.png';
 import {
   IconMuluwendang,
   IconJichuwendang,
   IconJianyiwendang,
   IconChangjianwenti,
   IconLunbotu,
-} from '@Panda-wiki/icons';
+} from '@panda-wiki/icons';
 
 export const DEFAULT_DATA = {
   banner: {

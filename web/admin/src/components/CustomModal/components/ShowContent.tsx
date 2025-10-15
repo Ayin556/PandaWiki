@@ -14,7 +14,7 @@ import {
 } from 'react';
 import { handleComponentProps } from '../utils';
 import { themeOptions } from '@/themes';
-import { IconShanchu } from '@Panda-wiki/icons';
+import { IconShanchu } from '@panda-wiki/icons';
 import { Component } from '..';
 import {
   DndContext,

@@ -36,7 +36,7 @@ import {
   IconChangjianwenti,
   IconLunbotu,
   IconShanchu,
-} from '@Panda-wiki/icons';
+} from '@panda-wiki/icons';
 interface ComponentBarProps {
   components: Component[];
   setComponents: Dispatch<SetStateAction<Component[]>>;
