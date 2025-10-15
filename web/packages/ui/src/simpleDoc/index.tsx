@@ -42,7 +42,7 @@ const StyledSimpleDocItem = styled('a')(({ theme }) => ({
   '&:hover': {
     transform: 'translateY(-5px)',
     color: theme.palette.primary.main,
-    boxShadow: '0px 10px 20px 0px rgba(0,0,5px,0.15)',
+    boxShadow: '0px 10px 20px 0px rgba(0,0,5,0.15)',
   },
 }));
 
@@ -100,4 +100,4 @@ const SimpleDoc: React.FC<SimpleDocProps> = React.memo(
   },
 );
 
-export default React.memo(SimpleDoc);
+export default SimpleDoc;

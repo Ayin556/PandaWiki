@@ -42,7 +42,7 @@ const StyledDirDocItem = styled('div')(({ theme }) => ({
   transition: 'all 0.2s ease',
   '&:hover': {
     transform: 'translateY(-5px)',
-    boxShadow: '0px 10px 20px 0px rgba(0,0,5px,0.15)',
+    boxShadow: '0px 10px 20px 0px rgba(0,0,5,0.15)',
   },
   width: '100%',
 }));

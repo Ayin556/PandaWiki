@@ -1,5 +1,4 @@
 import { styled, SwitchProps, Switch, Box } from '@mui/material';
-import { Icon } from '@ctzhian/ui';
 import { IconDark, IconLight } from '../icons';
 
 const IOSSwitch = styled((props: SwitchProps) => (

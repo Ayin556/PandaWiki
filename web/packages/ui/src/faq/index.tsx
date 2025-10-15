@@ -84,4 +84,4 @@ const Faq: React.FC<FaqProps> = React.memo(
   },
 );
 
-export default React.memo(Faq);
+export default Faq;
