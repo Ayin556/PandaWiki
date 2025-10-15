@@ -166,6 +166,7 @@ export enum ConstsHomePageSetting {
 
 export enum ConstsCrawlerStatus {
   CrawlerStatusPending = "pending",
+  CrawlerStatusInProcess = "in_process",
   CrawlerStatusCompleted = "completed",
   CrawlerStatusFailed = "failed",
 }
@@ -430,6 +431,15 @@ export interface DomainChatRequest {
   nonce?: string;
 }
 
+export interface DomainChatSearchReq {
+  captcha_token?: string;
+  message: string;
+}
+
+export interface DomainChatSearchResp {
+  node_result?: DomainNodeContentChunkSSE[];
+}
+
 export interface DomainCommentInfo {
   auth_user_id?: number;
   /** avatar */
@@ -579,7 +589,7 @@ export interface DomainCreateModelReq {
   api_version?: string;
   base_url: string;
   model: string;
-  parameters?: DomainModelParam;
+  parameters?: GithubComChaitinPandaWikiDomainModelParam;
   provider: GithubComChaitinPandaWikiDomainModelProvider;
   type: "chat" | "embedding" | "rerank" | "analysis";
 }
@@ -600,12 +610,6 @@ export interface DomainDisclaimerSettings {
 
 export interface DomainEnterpriseAuth {
   enabled?: boolean;
-}
-
-export interface DomainEpubResp {
-  content?: string;
-  id?: string;
-  title?: string;
 }
 
 export interface DomainFeedBackInfo {
@@ -728,16 +732,6 @@ export interface DomainLink {
   url?: string;
 }
 
-export interface DomainModelParam {
-  context_window?: number;
-  max_tokens?: number;
-  r1_enabled?: boolean;
-  support_computer_use?: boolean;
-  support_images?: boolean;
-  support_prompt_cache?: boolean;
-  temperature?: number;
-}
-
 export interface DomainMoveNodeReq {
   id: string;
   kb_id: string;
@@ -750,6 +744,13 @@ export interface DomainNodeActionReq {
   action: "delete";
   ids: string[];
   kb_id: string;
+}
+
+export interface DomainNodeContentChunkSSE {
+  emoji?: string;
+  name?: string;
+  node_id?: string;
+  summary?: string;
 }
 
 export interface DomainNodeGroupDetail {
@@ -799,6 +800,7 @@ export interface DomainNodeSummaryReq {
 }
 
 export interface DomainObjectUploadResp {
+  filename?: string;
   key?: string;
 }
 
@@ -1010,7 +1012,7 @@ export interface DomainUpdateModelReq {
   id: string;
   is_active?: boolean;
   model: string;
-  parameters?: DomainModelParam;
+  parameters?: GithubComChaitinPandaWikiDomainModelParam;
   provider: GithubComChaitinPandaWikiDomainModelProvider;
   type: "chat" | "embedding" | "rerank" | "analysis";
 }
@@ -1074,6 +1076,7 @@ export interface DomainWebAppLandingSettings {
     title_color?: string;
   };
   carousel_config?: {
+    bg_color?: string;
     list?: {
       desc?: string;
       id?: string;
@@ -1114,12 +1117,6 @@ export interface DomainWidgetBotSettings {
   theme_mode?: string;
 }
 
-export interface DomainYuqueResp {
-  content?: string;
-  id?: string;
-  title?: string;
-}
-
 export interface GithubComChaitinPandaWikiApiAuthV1AuthGetResp {
   auths?: V1AuthItem[];
   client_id?: string;
@@ -1146,6 +1143,7 @@ export interface GithubComChaitinPandaWikiDomainCheckModelReq {
   api_version?: string;
   base_url: string;
   model: string;
+  parameters?: GithubComChaitinPandaWikiDomainModelParam;
   provider: GithubComChaitinPandaWikiDomainModelProvider;
   type: "chat" | "embedding" | "rerank" | "analysis";
 }
@@ -1165,11 +1163,21 @@ export interface GithubComChaitinPandaWikiDomainModelListItem {
   id?: string;
   is_active?: boolean;
   model?: string;
-  parameters?: DomainModelParam;
+  parameters?: GithubComChaitinPandaWikiDomainModelParam;
   prompt_tokens?: number;
   provider?: GithubComChaitinPandaWikiDomainModelProvider;
   total_tokens?: number;
   type?: DomainModelType;
+}
+
+export interface GithubComChaitinPandaWikiDomainModelParam {
+  context_window?: number;
+  max_tokens?: number;
+  r1_enabled?: boolean;
+  support_computer_use?: boolean;
+  support_images?: boolean;
+  support_prompt_cache?: boolean;
+  temperature?: number;
 }
 
 export interface GocapChallengeData {
@@ -1265,9 +1273,24 @@ export interface V1ConversationListItems {
   total?: number;
 }
 
+export interface V1CrawlerResultItem {
+  content?: string;
+  status?: ConstsCrawlerStatus;
+  task_id?: string;
+}
+
 export interface V1CrawlerResultResp {
   content?: string;
   status: ConstsCrawlerStatus;
+}
+
+export interface V1CrawlerResultsReq {
+  task_ids: string[];
+}
+
+export interface V1CrawlerResultsResp {
+  list?: V1CrawlerResultItem[];
+  status?: ConstsCrawlerStatus;
 }
 
 export interface V1CreateUserReq {
@@ -1279,6 +1302,16 @@ export interface V1CreateUserReq {
 
 export interface V1CreateUserResp {
   id?: string;
+}
+
+export interface V1EpubParseReq {
+  filename: string;
+  kb_id: string;
+  key: string;
+}
+
+export interface V1EpubParseResp {
+  task_id?: string;
 }
 
 export interface V1FeishuGetDocReq {
@@ -1597,6 +1630,21 @@ export interface V1WikijsScrapeResp {
   content?: string;
 }
 
+export interface V1YuqueParseItem {
+  task_id?: string;
+  title?: string;
+}
+
+export interface V1YuqueParseReq {
+  filename: string;
+  kb_id: string;
+  key: string;
+}
+
+export interface V1YuqueParseResp {
+  list?: V1YuqueParseItem[];
+}
+
 export interface PutApiV1AppParams {
   /** id */
   id: string;
@@ -1694,16 +1742,6 @@ export interface PostApiV1CrawlerConfluenceParsePayload {
   kb_id: string;
 }
 
-export interface PostApiV1CrawlerEpubConvertPayload {
-  /**
-   * file
-   * @format binary
-   */
-  file: File;
-  /** kb_id */
-  kb_id: string;
-}
-
 export interface PostApiV1CrawlerMindocParsePayload {
   /**
    * file
@@ -1729,16 +1767,6 @@ export interface PostApiV1CrawlerSiyuanParsePayload {
 }
 
 export interface PostApiV1CrawlerWikijsParsePayload {
-  /**
-   * file
-   * @format binary
-   */
-  file: File;
-  /** kb_id */
-  kb_id: string;
-}
-
-export interface PostApiV1CrawlerYuqueAnalysisExportFilePayload {
   /**
    * file
    * @format binary

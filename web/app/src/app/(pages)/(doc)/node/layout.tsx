@@ -20,8 +20,6 @@ const PCLayout = ({ children }: { children: React.ReactNode }) => {
         <Stack
           sx={{
             flex: 1,
-            position: 'relative',
-            zIndex: 1,
             justifyContent: 'center',
             alignItems: 'center',
             gap: 2,
@@ -62,6 +60,7 @@ const MobileLayout = ({
   children?: React.ReactNode;
   footerSetting?: FooterSetting | null;
 }) => {
+  const { tree } = useStore();
   return (
     <Stack
       sx={{
@@ -73,9 +72,31 @@ const MobileLayout = ({
     >
       <Box sx={{ flex: 1 }}>
         <Header />
-        <CatalogH5 />
-        {children}
+        {tree?.length === 0 ? (
+          <Stack
+            justifyContent='center'
+            alignItems='center'
+            gap={2}
+            sx={{
+              pt: '50px',
+              pb: 10,
+              px: 5,
+              flex: 1,
+            }}
+          >
+            <Image src={noDocImage} alt='暂无文档' width={280} />
+            <Box sx={{ fontSize: 14, color: 'text.tertiary' }}>
+              暂无文档, 请前往管理后台创建新文档
+            </Box>
+          </Stack>
+        ) : (
+          <>
+            <CatalogH5 />
+            {children}
+          </>
+        )}
       </Box>
+
       <Box
         sx={{
           mt: 5,
