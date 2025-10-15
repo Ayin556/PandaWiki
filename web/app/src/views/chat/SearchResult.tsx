@@ -1,15 +1,15 @@
-import { ChunkResultItem } from '@/assets/type';
 import { IconArrowUp } from '@/components/icons';
 import { useStore } from '@/provider';
 import { Box, Skeleton, Stack } from '@mui/material';
 import { Ellipsis } from '@ctzhian/ui';
 import Link from 'next/link';
+import { DomainNodeContentChunkSSE } from '@/request/types';
 
 const SearchResult = ({
   list,
   loading,
 }: {
-  list: ChunkResultItem[];
+  list: DomainNodeContentChunkSSE[];
   loading: boolean;
 }) => {
   const { mobile = false } = useStore();
@@ -55,9 +55,16 @@ const SearchResult = ({
               })}
             >
               <Box sx={{ width: 'calc(100% - 80px)' }}>
-                <Ellipsis className='hover-primary' sx={{ lineHeight: '24px' }}>
-                  {item.name}
-                </Ellipsis>
+                <Stack direction='row' alignItems='center' gap={1}>
+                  <Box>{item.emoji}</Box>
+                  <Ellipsis
+                    className='hover-primary'
+                    sx={{ lineHeight: '24px' }}
+                  >
+                    {item.name}
+                  </Ellipsis>
+                </Stack>
+
                 <Ellipsis
                   sx={{
                     fontSize: 12,

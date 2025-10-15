@@ -226,6 +226,7 @@ const AiQaModal = () => {
 
   useEffect(() => {
     const cid = searchParams.get('cid');
+    const ask = searchParams.get('ask');
     if (cid) {
       const conversation: ConversationItem[] = [];
       getShareV1ConversationDetail({
@@ -276,6 +277,10 @@ const AiQaModal = () => {
         setQaModalOpen?.(true);
         setIsScrolling(false);
       });
+    }
+    if (ask) {
+      window.sessionStorage.setItem('chat_search_query', ask);
+      setQaModalOpen?.(true);
     }
   }, []);
 

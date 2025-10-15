@@ -157,13 +157,6 @@ export enum ConstsLicenseEdition {
   LicenseEditionEnterprise = 2,
 }
 
-export enum ConstsHomePageSetting {
-  /** 文档页面 */
-  HomePageSettingDoc = "doc",
-  /** 自定义首页 */
-  HomePageSettingCustom = "custom",
-}
-
 export enum ConstsCrawlerStatus {
   CrawlerStatusPending = "pending",
   CrawlerStatusCompleted = "completed",
@@ -267,7 +260,6 @@ export interface DomainAppSettings {
   footer_settings?: DomainFooterSettings;
   /** inject code */
   head_code?: string;
-  home_page_setting?: ConstsHomePageSetting;
   icon?: string;
   keyword?: string;
   /** OpenAI API Bot settings */
@@ -286,8 +278,6 @@ export interface DomainAppSettings {
   web_app_comment_settings?: DomainWebAppCommentSettings;
   /** WebAppCustomStyle */
   web_app_custom_style?: DomainWebAppCustomSettings;
-  /** WebAppLandingSettings */
-  web_app_landing_settings?: DomainWebAppLandingSettings;
   wechat_app_agent_id?: string;
   wechat_app_corpid?: string;
   wechat_app_encodingaeskey?: string;
@@ -345,7 +335,6 @@ export interface DomainAppSettingsResp {
   footer_settings?: DomainFooterSettings;
   /** inject code */
   head_code?: string;
-  home_page_setting?: ConstsHomePageSetting;
   icon?: string;
   keyword?: string;
   /** OpenAI API settings */
@@ -364,8 +353,6 @@ export interface DomainAppSettingsResp {
   web_app_comment_settings?: DomainWebAppCommentSettings;
   /** WebAppCustomStyle */
   web_app_custom_style?: DomainWebAppCustomSettings;
-  /** WebApp Landing Settings */
-  web_app_landing_settings?: DomainWebAppLandingSettings;
   wechat_app_agent_id?: string;
   wechat_app_corpid?: string;
   wechat_app_encodingaeskey?: string;
@@ -428,6 +415,15 @@ export interface DomainChatRequest {
   conversation_id?: string;
   message: string;
   nonce?: string;
+}
+
+export interface DomainChatSearchReq {
+  captcha_token?: string;
+  message: string;
+}
+
+export interface DomainChatSearchResp {
+  node_result?: DomainNodeContentChunkSSE[];
 }
 
 export interface DomainCommentInfo {
@@ -579,7 +575,7 @@ export interface DomainCreateModelReq {
   api_version?: string;
   base_url: string;
   model: string;
-  parameters?: DomainModelParam;
+  parameters?: GithubComChaitinPandaWikiDomainModelParam;
   provider: GithubComChaitinPandaWikiDomainModelProvider;
   type: "chat" | "embedding" | "rerank" | "analysis";
 }
@@ -728,16 +724,6 @@ export interface DomainLink {
   url?: string;
 }
 
-export interface DomainModelParam {
-  context_window?: number;
-  max_tokens?: number;
-  r1_enabled?: boolean;
-  support_computer_use?: boolean;
-  support_images?: boolean;
-  support_prompt_cache?: boolean;
-  temperature?: number;
-}
-
 export interface DomainMoveNodeReq {
   id: string;
   kb_id: string;
@@ -750,6 +736,13 @@ export interface DomainNodeActionReq {
   action: "delete";
   ids: string[];
   kb_id: string;
+}
+
+export interface DomainNodeContentChunkSSE {
+  emoji?: string;
+  name?: string;
+  node_id?: string;
+  summary?: string;
 }
 
 export interface DomainNodeGroupDetail {
@@ -1010,7 +1003,7 @@ export interface DomainUpdateModelReq {
   id: string;
   is_active?: boolean;
   model: string;
-  parameters?: DomainModelParam;
+  parameters?: GithubComChaitinPandaWikiDomainModelParam;
   provider: GithubComChaitinPandaWikiDomainModelProvider;
   type: "chat" | "embedding" | "rerank" | "analysis";
 }
@@ -1047,64 +1040,6 @@ export interface DomainWebAppCustomSettings {
   header_search_placeholder?: string;
   show_brand_info?: boolean;
   social_media_accounts?: DomainSocialMediaAccount[];
-}
-
-export interface DomainWebAppLandingSettings {
-  banner_config?: {
-    bg_url?: string;
-    btns?: {
-      href?: string;
-      id?: string;
-      text?: string;
-      type?: string;
-    }[];
-    hot_search?: string[];
-    placeholder?: string;
-    subtitle?: string;
-    subtitle_color?: string;
-    subtitle_font_size?: number;
-    title?: string;
-    title_color?: string;
-    title_font_size?: number;
-  };
-  basic_doc_config?: {
-    bg_color?: string;
-    list?: string[];
-    title?: string;
-    title_color?: string;
-  };
-  carousel_config?: {
-    list?: {
-      desc?: string;
-      id?: string;
-      title?: string;
-      url?: string;
-    }[];
-    title?: string;
-  };
-  com_config_order?: string[];
-  dir_doc_config?: {
-    bg_color?: string;
-    list?: string[];
-    title?: string;
-    title_color?: string;
-  };
-  faq_config?: {
-    bg_color?: string;
-    list?: {
-      id?: string;
-      link?: string;
-      question?: string;
-    }[];
-    title?: string;
-    title_color?: string;
-  };
-  simple_doc_config?: {
-    bg_color?: string;
-    list?: string[];
-    title?: string;
-    title_color?: string;
-  };
 }
 
 export interface DomainWidgetBotSettings {
@@ -1146,6 +1081,7 @@ export interface GithubComChaitinPandaWikiDomainCheckModelReq {
   api_version?: string;
   base_url: string;
   model: string;
+  parameters?: GithubComChaitinPandaWikiDomainModelParam;
   provider: GithubComChaitinPandaWikiDomainModelProvider;
   type: "chat" | "embedding" | "rerank" | "analysis";
 }
@@ -1165,11 +1101,21 @@ export interface GithubComChaitinPandaWikiDomainModelListItem {
   id?: string;
   is_active?: boolean;
   model?: string;
-  parameters?: DomainModelParam;
+  parameters?: GithubComChaitinPandaWikiDomainModelParam;
   prompt_tokens?: number;
   provider?: GithubComChaitinPandaWikiDomainModelProvider;
   total_tokens?: number;
   type?: DomainModelType;
+}
+
+export interface GithubComChaitinPandaWikiDomainModelParam {
+  context_window?: number;
+  max_tokens?: number;
+  r1_enabled?: boolean;
+  support_computer_use?: boolean;
+  support_images?: boolean;
+  support_prompt_cache?: boolean;
+  temperature?: number;
 }
 
 export interface GocapChallengeData {
@@ -1396,17 +1342,6 @@ export interface V1NodeDetailResp {
   updated_at?: string;
 }
 
-export interface V1NodeItem {
-  emoji?: string;
-  id?: string;
-  name?: string;
-  parent_id?: string;
-  position?: number;
-  recommend_nodes?: DomainRecommendNodeListResp[];
-  summary?: string;
-  type?: DomainNodeType;
-}
-
 export interface V1NodePermissionEditReq {
   /** 可被问答 */
   answerable_groups?: number[];
@@ -1432,13 +1367,6 @@ export interface V1NodePermissionResp {
   visitable_groups?: DomainNodeGroupDetail[];
 }
 
-export interface V1NodeRecommendListResp {
-  basic_docs?: V1NodeItem[];
-  dir_docs?: V1NodeItem[];
-  node_recommends?: V1NodeItem[];
-  simple_docs?: V1NodeItem[];
-}
-
 export interface V1NotionParseItem {
   id?: string;
   title?: string;
@@ -1461,6 +1389,17 @@ export interface V1NotionScrapeReq {
 
 export interface V1NotionScrapeResp {
   content?: string;
+}
+
+export interface V1RecommendNodeListItem {
+  emoji?: string;
+  id?: string;
+  name?: string;
+  parent_id?: string;
+  position?: number;
+  recommend_nodes?: DomainRecommendNodeListResp[];
+  summary?: string;
+  type?: DomainNodeType;
 }
 
 export interface V1ResetPasswordReq {
