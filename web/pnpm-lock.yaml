@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@ctzhian/tiptap':
-        specifier: 1.7.2
-        version: 1.7.2(805c0b4339ef2fcf1999aae9febf6f38)
+        specifier: 1.7.3
+        version: 1.7.3(805c0b4339ef2fcf1999aae9febf6f38)
       '@ctzhian/ui':
         specifier: ^7.0.5
         version: 7.0.5(@emotion/react@11.14.0(@types/react@19.1.13)(react@19.1.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.1.13)(react@19.1.1))(@types/react@19.1.13)(react@19.1.1))(@mui/icons-material@7.3.2(@mui/material@7.3.2(@emotion/react@11.14.0(@types/react@19.1.13)(react@19.1.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.1.13)(react@19.1.1))(@types/react@19.1.13)(react@19.1.1))(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(@types/react@19.1.13)(react@19.1.1))(@mui/material@7.3.2(@emotion/react@11.14.0(@types/react@19.1.13)(react@19.1.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.1.13)(react@19.1.1))(@types/react@19.1.13)(react@19.1.1))(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(@mui/utils@7.3.2(@types/react@19.1.13)(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -183,6 +183,9 @@ importers:
       remark-math:
         specifier: ^6.0.0
         version: 6.0.0
+      uuid:
+        specifier: ^11.1.0
+        version: 11.1.0
       y-websocket:
         specifier: ^3.0.0
         version: 3.0.0(yjs@13.6.27)
@@ -502,8 +505,8 @@ packages:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
 
-  '@ctzhian/tiptap@1.7.2':
-    resolution: {integrity: sha512-giS3YCYLEz6TM5YL6cndXuAFZgzAB+Ah73icNNW19PHen71U0GnF9u92OXZYfsGbMRZS+CvdQLN4dRpLcluZCw==}
+  '@ctzhian/tiptap@1.7.3':
+    resolution: {integrity: sha512-xUp/+59YUqAZCGoKazpUADj7izH4oeKpZXXV7EBCKQN5WV39pth2bCyK4UwAbtA0eg8d9rjnUFKSeVCTt8GsGQ==}
     peerDependencies:
       '@emotion/react': ^11
       '@emotion/styled': ^11
@@ -5960,7 +5963,7 @@ snapshots:
       - react-native
       - typescript
 
-  '@ctzhian/tiptap@1.7.2(805c0b4339ef2fcf1999aae9febf6f38)':
+  '@ctzhian/tiptap@1.7.3(805c0b4339ef2fcf1999aae9febf6f38)':
     dependencies:
       '@emotion/react': 11.14.0(@types/react@19.1.13)(react@19.1.1)
       '@emotion/styled': 11.14.1(@emotion/react@11.14.0(@types/react@19.1.13)(react@19.1.1))(@types/react@19.1.13)(react@19.1.1)
@@ -7195,7 +7198,7 @@ snapshots:
       '@tiptap/pm': 3.5.3
     optional: true
 
-  '@tiptap/extension-bullet-list@3.6.1(@tiptap/extension-list@3.6.1(@tiptap/core@3.5.3(@tiptap/pm@3.5.3))(@tiptap/pm@3.5.3))':
+  '@tiptap/extension-bullet-list@3.6.1(@tiptap/extension-list@3.6.1(@tiptap/core@3.6.1(@tiptap/pm@3.6.1))(@tiptap/pm@3.6.1))':
     dependencies:
       '@tiptap/extension-list': 3.6.1(@tiptap/core@3.6.1(@tiptap/pm@3.6.1))(@tiptap/pm@3.6.1)
 
@@ -7347,11 +7350,11 @@ snapshots:
       '@tiptap/pm': 3.6.1
       linkifyjs: 4.3.2
 
-  '@tiptap/extension-list-item@3.6.1(@tiptap/extension-list@3.6.1(@tiptap/core@3.5.3(@tiptap/pm@3.5.3))(@tiptap/pm@3.5.3))':
+  '@tiptap/extension-list-item@3.6.1(@tiptap/extension-list@3.6.1(@tiptap/core@3.6.1(@tiptap/pm@3.6.1))(@tiptap/pm@3.6.1))':
     dependencies:
       '@tiptap/extension-list': 3.6.1(@tiptap/core@3.6.1(@tiptap/pm@3.6.1))(@tiptap/pm@3.6.1)
 
-  '@tiptap/extension-list-keymap@3.6.1(@tiptap/extension-list@3.6.1(@tiptap/core@3.5.3(@tiptap/pm@3.5.3))(@tiptap/pm@3.5.3))':
+  '@tiptap/extension-list-keymap@3.6.1(@tiptap/extension-list@3.6.1(@tiptap/core@3.6.1(@tiptap/pm@3.6.1))(@tiptap/pm@3.6.1))':
     dependencies:
       '@tiptap/extension-list': 3.6.1(@tiptap/core@3.6.1(@tiptap/pm@3.6.1))(@tiptap/pm@3.6.1)
 
@@ -7382,7 +7385,7 @@ snapshots:
       '@tiptap/core': 3.5.3(@tiptap/pm@3.5.3)
       '@tiptap/pm': 3.5.3
 
-  '@tiptap/extension-ordered-list@3.6.1(@tiptap/extension-list@3.6.1(@tiptap/core@3.5.3(@tiptap/pm@3.5.3))(@tiptap/pm@3.5.3))':
+  '@tiptap/extension-ordered-list@3.6.1(@tiptap/extension-list@3.6.1(@tiptap/core@3.6.1(@tiptap/pm@3.6.1))(@tiptap/pm@3.6.1))':
     dependencies:
       '@tiptap/extension-list': 3.6.1(@tiptap/core@3.6.1(@tiptap/pm@3.6.1))(@tiptap/pm@3.6.1)
 
@@ -7521,7 +7524,7 @@ snapshots:
       '@tiptap/core': 3.6.1(@tiptap/pm@3.6.1)
       '@tiptap/extension-blockquote': 3.6.1(@tiptap/core@3.6.1(@tiptap/pm@3.6.1))
       '@tiptap/extension-bold': 3.6.1(@tiptap/core@3.6.1(@tiptap/pm@3.6.1))
-      '@tiptap/extension-bullet-list': 3.6.1(@tiptap/extension-list@3.6.1(@tiptap/core@3.5.3(@tiptap/pm@3.5.3))(@tiptap/pm@3.5.3))
+      '@tiptap/extension-bullet-list': 3.6.1(@tiptap/extension-list@3.6.1(@tiptap/core@3.6.1(@tiptap/pm@3.6.1))(@tiptap/pm@3.6.1))
       '@tiptap/extension-code': 3.6.1(@tiptap/core@3.6.1(@tiptap/pm@3.6.1))
       '@tiptap/extension-code-block': 3.6.1(@tiptap/core@3.6.1(@tiptap/pm@3.6.1))(@tiptap/pm@3.6.1)
       '@tiptap/extension-document': 3.6.1(@tiptap/core@3.6.1(@tiptap/pm@3.6.1))
@@ -7533,9 +7536,9 @@ snapshots:
       '@tiptap/extension-italic': 3.6.1(@tiptap/core@3.6.1(@tiptap/pm@3.6.1))
       '@tiptap/extension-link': 3.6.1(@tiptap/core@3.6.1(@tiptap/pm@3.6.1))(@tiptap/pm@3.6.1)
       '@tiptap/extension-list': 3.6.1(@tiptap/core@3.6.1(@tiptap/pm@3.6.1))(@tiptap/pm@3.6.1)
-      '@tiptap/extension-list-item': 3.6.1(@tiptap/extension-list@3.6.1(@tiptap/core@3.5.3(@tiptap/pm@3.5.3))(@tiptap/pm@3.5.3))
-      '@tiptap/extension-list-keymap': 3.6.1(@tiptap/extension-list@3.6.1(@tiptap/core@3.5.3(@tiptap/pm@3.5.3))(@tiptap/pm@3.5.3))
-      '@tiptap/extension-ordered-list': 3.6.1(@tiptap/extension-list@3.6.1(@tiptap/core@3.5.3(@tiptap/pm@3.5.3))(@tiptap/pm@3.5.3))
+      '@tiptap/extension-list-item': 3.6.1(@tiptap/extension-list@3.6.1(@tiptap/core@3.6.1(@tiptap/pm@3.6.1))(@tiptap/pm@3.6.1))
+      '@tiptap/extension-list-keymap': 3.6.1(@tiptap/extension-list@3.6.1(@tiptap/core@3.6.1(@tiptap/pm@3.6.1))(@tiptap/pm@3.6.1))
+      '@tiptap/extension-ordered-list': 3.6.1(@tiptap/extension-list@3.6.1(@tiptap/core@3.6.1(@tiptap/pm@3.6.1))(@tiptap/pm@3.6.1))
       '@tiptap/extension-paragraph': 3.6.1(@tiptap/core@3.6.1(@tiptap/pm@3.6.1))
       '@tiptap/extension-strike': 3.6.1(@tiptap/core@3.6.1(@tiptap/pm@3.6.1))
       '@tiptap/extension-text': 3.6.1(@tiptap/core@3.6.1(@tiptap/pm@3.6.1))

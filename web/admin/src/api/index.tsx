@@ -6,18 +6,11 @@
 import request from './request';
 import {
   CheckModelData,
-  ConversationDistributionItem,
   CreateModelData,
-  HotDocsItem,
+  GetModelNameData,
   ModelListItem,
-  RefererHostItem,
-  StatInstantPageItme,
-  StatTypeItem,
-  TrendData,
-  UpdateAppDetailData,
   UpdateKnowledgeBaseData,
   UpdateModelData,
-  GetModelNameData,
 } from './type';
 
 export type * from './type';
@@ -37,7 +30,7 @@ export const uploadFile = (
     onUploadProgress?: (event: { progress: number }) => void;
     abortSignal?: AbortSignal;
   },
-): Promise<{ key: string }> =>
+): Promise<{ key: string; filename: string }> =>
   request({
     url: 'api/v1/file/upload',
     method: 'post',

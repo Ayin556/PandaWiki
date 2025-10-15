@@ -4,31 +4,55 @@ import { Box, Button, Stack, Typography, useTheme } from '@mui/material';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { FileRejection, useDropzone } from 'react-dropzone';
 
+// 文件扩展名到 MIME 类型的映射
+const FILE_EXTENSION_TO_MIME: Record<string, string> = {
+  // 文本文件
+  '.txt': 'text/plain',
+  '.md': 'text/markdown',
+  '.html': 'text/html',
+  // Office 文档
+  '.xls': 'application/vnd.ms-excel',
+  '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  '.docx':
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  '.pptx':
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  '.pdf': 'application/pdf',
+  // 压缩文件
+  '.zip': 'application/zip',
+  // 电子书
+  '.epub': 'application/epub+zip',
+  // 知识库导出文件
+  '.lakebook': 'application/octet-stream',
+};
+
 interface UploadProps {
   file?: File[];
   onChange: (acceptedFiles: File[], rejectedFiles: FileRejection[]) => void;
   type?: 'drag' | 'select';
   accept?: string;
+  acceptDisplay?: string; // 用于页面显示的文件格式文本
   size?: number;
   multiple?: boolean;
 }
 
 const Upload = ({
-  file = [],
+  file,
   onChange,
   type = 'select',
   accept,
+  acceptDisplay,
   multiple = true,
 }: UploadProps) => {
   const theme = useTheme();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [dropFiles, setDropFiles] = useState<File[]>(file);
+  const [dropFiles, setDropFiles] = useState<File[]>(file || []);
 
   const onDrop = useCallback(
     (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
       const validFiles = acceptedFiles;
 
-      const newFiles = multiple ? [...file, ...validFiles] : validFiles;
+      const newFiles = multiple ? [...(file || []), ...validFiles] : validFiles;
       setDropFiles(newFiles);
       onChange(newFiles, rejectedFiles);
     },
@@ -39,9 +63,19 @@ const Upload = ({
     onDrop,
     accept: accept
       ? accept.split(',').reduce((acc: Record<string, string[]>, item) => {
-          const [type, subtype] = item.trim().split('/');
-          if (!acc[type]) acc[type] = [];
-          if (subtype) acc[type].push(subtype);
+          const trimmedItem = item.trim();
+          if (trimmedItem) {
+            // 如果是文件扩展名（以 . 开头），转换为 MIME 类型
+            if (trimmedItem.startsWith('.')) {
+              const mimeType = FILE_EXTENSION_TO_MIME[trimmedItem];
+              if (mimeType) {
+                acc[mimeType] = [];
+              }
+            } else {
+              // 否则直接作为 MIME 类型使用
+              acc[trimmedItem] = [];
+            }
+          }
           return acc;
         }, {})
       : undefined,
@@ -51,7 +85,7 @@ const Upload = ({
   });
 
   useEffect(() => {
-    setDropFiles(file);
+    if (file) setDropFiles(file);
   }, [file]);
 
   return (
@@ -108,7 +142,7 @@ const Upload = ({
             color='text.secondary'
             sx={{ mt: 1, fontSize: 12 }}
           >
-            支持格式 {accept || '所有文件'}
+            支持格式 {acceptDisplay || accept || '所有文件'}
           </Typography>
           {/* {size && <Typography variant='body2' color='text.secondary' sx={{ mt: 0.5, fontSize: 12 }}>
             支持上传大小不超过 {formatByte(size)} 的文件

@@ -12,20 +12,20 @@
 
 import httpRequest, { ContentType, RequestParams } from "./httpClient";
 import {
-  DomainEpubResp,
   DomainPWResponse,
-  DomainYuqueResp,
   GetApiV1CrawlerResultParams,
   PostApiV1CrawlerConfluenceParsePayload,
-  PostApiV1CrawlerEpubConvertPayload,
   PostApiV1CrawlerMindocParsePayload,
   PostApiV1CrawlerSiyuanParsePayload,
   PostApiV1CrawlerWikijsParsePayload,
-  PostApiV1CrawlerYuqueAnalysisExportFilePayload,
   V1ConfluenceParseResp,
   V1ConfluenceScrapeReq,
   V1ConfluenceScrapeResp,
   V1CrawlerResultResp,
+  V1CrawlerResultsReq,
+  V1CrawlerResultsResp,
+  V1EpubParseReq,
+  V1EpubParseResp,
   V1FeishuGetDocReq,
   V1FeishuGetDocResp,
   V1FeishuListCloudDocReq,
@@ -57,6 +57,8 @@ import {
   V1WikijsParseResp,
   V1WikijsScrapeReq,
   V1WikijsScrapeResp,
+  V1YuqueParseReq,
+  V1YuqueParseResp,
 } from "./types";
 
 /**
@@ -120,31 +122,31 @@ export const postApiV1CrawlerConfluenceScrape = (
   });
 
 /**
- * @description EpubConvert
+ * @description EpubParse
  *
  * @tags crawler
- * @name PostApiV1CrawlerEpubConvert
- * @summary EpubConvert
- * @request POST:/api/v1/crawler/epub/convert
+ * @name PostApiV1CrawlerEpubParse
+ * @summary EpubParse
+ * @request POST:/api/v1/crawler/epub/parse
  * @response `200` `(DomainPWResponse & {
-    data?: DomainEpubResp,
+    data?: V1EpubParseResp,
 
 })` OK
  */
 
-export const postApiV1CrawlerEpubConvert = (
-  data: PostApiV1CrawlerEpubConvertPayload,
+export const postApiV1CrawlerEpubParse = (
+  body: V1EpubParseReq,
   params: RequestParams = {},
 ) =>
   httpRequest<
     DomainPWResponse & {
-      data?: DomainEpubResp;
+      data?: V1EpubParseResp;
     }
   >({
-    path: `/api/v1/crawler/epub/convert`,
+    path: `/api/v1/crawler/epub/parse`,
     method: "POST",
-    body: data,
-    type: ContentType.FormData,
+    body: body,
+    type: ContentType.Json,
     format: "json",
     ...params,
   });
@@ -157,7 +159,7 @@ export const postApiV1CrawlerEpubConvert = (
  * @summary FeishuDoc
  * @request POST:/api/v1/crawler/feishu/get_doc
  * @response `200` `(DomainPWResponse & {
-    data?: (V1FeishuGetDocResp)[],
+    data?: V1FeishuGetDocResp,
 
 })` OK
  */
@@ -168,7 +170,7 @@ export const postApiV1CrawlerFeishuGetDoc = (
 ) =>
   httpRequest<
     DomainPWResponse & {
-      data?: V1FeishuGetDocResp[];
+      data?: V1FeishuGetDocResp;
     }
   >({
     path: `/api/v1/crawler/feishu/get_doc`,
@@ -367,7 +369,7 @@ export const postApiV1CrawlerNotionParse = (
  * @summary NotionScrape
  * @request POST:/api/v1/crawler/notion/scrape
  * @response `200` `(DomainPWResponse & {
-    data?: (V1NotionScrapeResp)[],
+    data?: V1NotionScrapeResp,
 
 })` OK
  */
@@ -378,7 +380,7 @@ export const postApiV1CrawlerNotionScrape = (
 ) =>
   httpRequest<
     DomainPWResponse & {
-      data?: V1NotionScrapeResp[];
+      data?: V1NotionScrapeResp;
     }
   >({
     path: `/api/v1/crawler/notion/scrape`,
@@ -414,6 +416,36 @@ export const getApiV1CrawlerResult = (
     path: `/api/v1/crawler/result`,
     method: "GET",
     query: query,
+    type: ContentType.Json,
+    format: "json",
+    ...params,
+  });
+
+/**
+ * @description Retrieve the results of a previously started scraping task
+ *
+ * @tags crawler
+ * @name PostApiV1CrawlerResults
+ * @summary Get Crawler Results
+ * @request POST:/api/v1/crawler/results
+ * @response `200` `(DomainPWResponse & {
+    data?: V1CrawlerResultsResp,
+
+})` OK
+ */
+
+export const postApiV1CrawlerResults = (
+  param: V1CrawlerResultsReq,
+  params: RequestParams = {},
+) =>
+  httpRequest<
+    DomainPWResponse & {
+      data?: V1CrawlerResultsResp;
+    }
+  >({
+    path: `/api/v1/crawler/results`,
+    method: "POST",
+    body: param,
     type: ContentType.Json,
     format: "json",
     ...params,
@@ -690,31 +722,31 @@ export const postApiV1CrawlerWikijsScrape = (
   });
 
 /**
- * @description Analyze Yuque Export File
+ * @description YuqueParse
  *
  * @tags crawler
- * @name PostApiV1CrawlerYuqueAnalysisExportFile
- * @summary AnalysisYuqueExportFile
- * @request POST:/api/v1/crawler/yuque/analysis_export_file
+ * @name PostApiV1CrawlerYuqueParse
+ * @summary YuqueParse
+ * @request POST:/api/v1/crawler/yuque/parse
  * @response `200` `(DomainPWResponse & {
-    data?: (DomainYuqueResp)[],
+    data?: V1YuqueParseResp,
 
 })` OK
  */
 
-export const postApiV1CrawlerYuqueAnalysisExportFile = (
-  data: PostApiV1CrawlerYuqueAnalysisExportFilePayload,
+export const postApiV1CrawlerYuqueParse = (
+  body: V1YuqueParseReq,
   params: RequestParams = {},
 ) =>
   httpRequest<
     DomainPWResponse & {
-      data?: DomainYuqueResp[];
+      data?: V1YuqueParseResp;
     }
   >({
-    path: `/api/v1/crawler/yuque/analysis_export_file`,
+    path: `/api/v1/crawler/yuque/parse`,
     method: "POST",
-    body: data,
-    type: ContentType.FormData,
+    body: body,
+    type: ContentType.Json,
     format: "json",
     ...params,
   });

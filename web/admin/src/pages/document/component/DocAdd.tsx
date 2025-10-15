@@ -1,10 +1,10 @@
 import { ImportDocType } from '@/api';
+import Cascader from '@/components/Cascader';
 import { addOpacityToColor } from '@/utils';
 import { Box, Button, Stack, useTheme } from '@mui/material';
-import Cascader from '@/components/Cascader';
 import { useState } from 'react';
+import AddDocByOther from './AddDocByOther';
 import DocAddByCustomText from './DocAddByCustomText';
-import ImportDoc from './ImportDoc';
 
 interface InputContentProps {
   refresh: () => void;
@@ -164,7 +164,12 @@ const DocAdd = ({ refresh }: InputContentProps) => {
         }))}
         context={<Button variant='contained'>创建文档</Button>}
       />
-      <ImportDoc type={key} open={urlOpen} refresh={refresh} onCancel={close} />
+      <AddDocByOther
+        type={key}
+        open={urlOpen}
+        refresh={refresh}
+        onCancel={close}
+      />
       <DocAddByCustomText
         type={docFileKey}
         open={customDocOpen}
