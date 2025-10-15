@@ -361,3 +361,29 @@ func (u *ChatUsecase) replaceWithSimpleString(content string, filter *utils.DFA)
 	r1 := filter.Filter(content)
 	return r1
 }
+
+func (u *ChatUsecase) Search(ctx context.Context, req *domain.ChatSearchReq) (*domain.ChatSearchResp, error) {
+	groupIds, err := u.AuthRepo.GetAuthGroupIdsWithParentsByAuthId(ctx, req.AuthUserID)
+	if err != nil {
+		return nil, err
+	}
+	kb, err := u.kbRepo.GetKnowledgeBaseByID(ctx, req.KBID)
+	if err != nil {
+		return nil, err
+	}
+	rankedNodes, err := u.llmUsecase.GetRankNodes(ctx, []string{kb.DatasetID}, req.Message, groupIds, nil)
+	if err != nil {
+		return nil, err
+	}
+	resp := domain.ChatSearchResp{}
+	for _, node := range rankedNodes {
+		chunkResult := domain.NodeContentChunkSSE{
+			NodeID:  node.NodeID,
+			Name:    node.NodeName,
+			Summary: node.NodeSummary,
+			Emoji:   node.NodeEmoji,
+		}
+		resp.NodeResult = append(resp.NodeResult, chunkResult)
+	}
+	return &resp, nil
+}

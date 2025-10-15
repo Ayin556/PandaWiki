@@ -4158,6 +4158,52 @@ const docTemplate = `{
                 }
             }
         },
+        "/share/v1/chat/search": {
+            "post": {
+                "description": "ChatSearch",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "share_chat_search"
+                ],
+                "summary": "ChatSearch",
+                "parameters": [
+                    {
+                        "description": "request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.ChatSearchReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/domain.ChatSearchResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/share/v1/chat/widget": {
             "post": {
                 "description": "ChatWidget",
@@ -5533,6 +5579,31 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.ChatSearchReq": {
+            "type": "object",
+            "required": [
+                "message"
+            ],
+            "properties": {
+                "captcha_token": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.ChatSearchResp": {
+            "type": "object",
+            "properties": {
+                "node_result": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.NodeContentChunkSSE"
+                    }
+                }
+            }
+        },
         "domain.CommentInfo": {
             "type": "object",
             "properties": {
@@ -5975,7 +6046,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "parameters": {
-                    "$ref": "#/definitions/domain.ModelParam"
+                    "$ref": "#/definitions/github_com_chaitin_panda-wiki_domain.ModelParam"
                 },
                 "provider": {
                     "$ref": "#/definitions/github_com_chaitin_panda-wiki_domain.ModelProvider"
@@ -6396,29 +6467,6 @@ const docTemplate = `{
                 "MessageFromPrivate"
             ]
         },
-        "domain.ModelParam": {
-            "type": "object",
-            "properties": {
-                "context_window": {
-                    "type": "integer"
-                },
-                "max_tokens": {
-                    "type": "integer"
-                },
-                "r1_enabled": {
-                    "type": "boolean"
-                },
-                "support_computer_use": {
-                    "type": "boolean"
-                },
-                "support_images": {
-                    "type": "boolean"
-                },
-                "support_prompt_cache": {
-                    "type": "boolean"
-                }
-            }
-        },
         "domain.ModelType": {
             "type": "string",
             "enum": [
@@ -6479,6 +6527,23 @@ const docTemplate = `{
                     }
                 },
                 "kb_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.NodeContentChunkSSE": {
+            "type": "object",
+            "properties": {
+                "emoji": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "node_id": {
+                    "type": "string"
+                },
+                "summary": {
                     "type": "string"
                 }
             }
@@ -7255,7 +7320,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "parameters": {
-                    "$ref": "#/definitions/domain.ModelParam"
+                    "$ref": "#/definitions/github_com_chaitin_panda-wiki_domain.ModelParam"
                 },
                 "provider": {
                     "$ref": "#/definitions/github_com_chaitin_panda-wiki_domain.ModelProvider"
@@ -7462,6 +7527,9 @@ const docTemplate = `{
                 "model": {
                     "type": "string"
                 },
+                "parameters": {
+                    "$ref": "#/definitions/github_com_chaitin_panda-wiki_domain.ModelParam"
+                },
                 "provider": {
                     "$ref": "#/definitions/github_com_chaitin_panda-wiki_domain.ModelProvider"
                 },
@@ -7520,7 +7588,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "parameters": {
-                    "$ref": "#/definitions/domain.ModelParam"
+                    "$ref": "#/definitions/github_com_chaitin_panda-wiki_domain.ModelParam"
                 },
                 "prompt_tokens": {
                     "type": "integer"
@@ -7533,6 +7601,32 @@ const docTemplate = `{
                 },
                 "type": {
                     "$ref": "#/definitions/domain.ModelType"
+                }
+            }
+        },
+        "github_com_chaitin_panda-wiki_domain.ModelParam": {
+            "type": "object",
+            "properties": {
+                "context_window": {
+                    "type": "integer"
+                },
+                "max_tokens": {
+                    "type": "integer"
+                },
+                "r1_enabled": {
+                    "type": "boolean"
+                },
+                "support_computer_use": {
+                    "type": "boolean"
+                },
+                "support_images": {
+                    "type": "boolean"
+                },
+                "support_prompt_cache": {
+                    "type": "boolean"
+                },
+                "temperature": {
+                    "type": "number"
                 }
             }
         },
