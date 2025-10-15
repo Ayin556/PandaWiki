@@ -1,6 +1,8 @@
 package v1
 
 import (
+	"errors"
+
 	"github.com/labstack/echo/v4"
 
 	v1 "github.com/chaitin/panda-wiki/api/node/v1"
@@ -85,6 +87,9 @@ func (h *NodeHandler) CreateNode(c echo.Context) error {
 
 	id, err := h.usecase.Create(c.Request().Context(), req, authInfo.UserId)
 	if err != nil {
+		if errors.Is(err, domain.ErrMaxNodeLimitReached) {
+			return h.NewResponseWithError(c, "已达到最大文档数量限制，请升级到联创版或企业版", nil)
+		}
 		return h.NewResponseWithError(c, "create node failed", err)
 	}
 	return h.NewResponseWithData(c, map[string]any{
