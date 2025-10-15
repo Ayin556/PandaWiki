@@ -15,3 +15,10 @@ const (
 	WatermarkHidden   WatermarkSetting = "hidden"  // 隐形水印
 	WatermarkVisible  WatermarkSetting = "visible" // 显性水印
 )
+
+type HomePageSetting string
+
+const (
+	HomePageSettingDoc    HomePageSetting = "doc"    // 文档页面
+	HomePageSettingCustom HomePageSetting = "custom" // 自定义首页
+)

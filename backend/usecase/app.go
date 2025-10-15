@@ -21,6 +21,7 @@ import (
 type AppUsecase struct {
 	repo          *pg.AppRepository
 	authRepo      *pg.AuthRepo
+	nodeRepo      *pg.NodeRepository
 	nodeUsecase   *NodeUsecase
 	chatUsecase   *ChatUsecase
 	logger        *log.Logger
@@ -37,6 +38,7 @@ type AppUsecase struct {
 func NewAppUsecase(
 	repo *pg.AppRepository,
 	authRepo *pg.AuthRepo,
+	nodeRepo *pg.NodeRepository,
 	nodeUsecase *NodeUsecase,
 	logger *log.Logger,
 	config *config.Config,
@@ -48,6 +50,7 @@ func NewAppUsecase(
 		nodeUsecase:  nodeUsecase,
 		chatUsecase:  chatUsecase,
 		authRepo:     authRepo,
+		nodeRepo:     nodeRepo,
 		logger:       logger.WithModule("usecase.app"),
 		config:       config,
 		cache:        cache,
@@ -394,15 +397,21 @@ func (u *AppUsecase) GetAppDetailByKBIDAndAppType(ctx context.Context, kbID stri
 		OpenAIAPIBotSettings: app.Settings.OpenAIAPIBotSettings,
 		// disclaimer settings
 		DisclaimerSettings: app.Settings.DisclaimerSettings,
+		// webapp landing settings
+		WebAppLandingSettings: app.Settings.WebAppLandingSettings,
 
 		WatermarkContent:   app.Settings.WatermarkContent,
 		WatermarkSetting:   app.Settings.WatermarkSetting,
 		CopySetting:        app.Settings.CopySetting,
 		ContributeSettings: app.Settings.ContributeSettings,
+		HomePageSetting:    app.Settings.HomePageSetting,
 	}
 	// init ai feedback string
 	if app.Settings.AIFeedbackSettings.AIFeedbackType == nil {
 		appDetailResp.Settings.AIFeedbackSettings.AIFeedbackType = []string{"内容不准确", "没有帮助", "其他"}
+	}
+	if appDetailResp.Settings.HomePageSetting == "" {
+		appDetailResp.Settings.HomePageSetting = consts.HomePageSettingDoc
 	}
 
 	// get recommend nodes
@@ -456,16 +465,22 @@ func (u *AppUsecase) GetWebAppInfo(ctx context.Context, kbID string) (*domain.Ap
 			WebAppCustomSettings: app.Settings.WebAppCustomSettings,
 			// Disclaimer Settings
 			DisclaimerSettings: app.Settings.DisclaimerSettings,
+			// WebApp Landing Settings
+			WebAppLandingSettings: app.Settings.WebAppLandingSettings,
 
 			WatermarkContent:   app.Settings.WatermarkContent,
 			WatermarkSetting:   app.Settings.WatermarkSetting,
 			CopySetting:        app.Settings.CopySetting,
 			ContributeSettings: app.Settings.ContributeSettings,
+			HomePageSetting:    app.Settings.HomePageSetting,
 		},
 	}
 	// init ai feedback string
 	if app.Settings.AIFeedbackSettings.AIFeedbackType == nil {
 		appInfo.Settings.AIFeedbackSettings.AIFeedbackType = []string{"内容不准确", "没有帮助", "其他"}
+	}
+	if app.Settings.HomePageSetting == "" {
+		appInfo.Settings.HomePageSetting = consts.HomePageSettingDoc
 	}
 	showBrand := true
 	defaultDisclaimer := "本回答由 PandaWiki 基于 AI 生成，仅供参考。"
