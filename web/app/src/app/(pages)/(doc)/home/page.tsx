@@ -1,4 +1,4 @@
-import Welcome from '@/views/welcome';
+import Home from '@/views/home';
 import { FooterProvider } from '@/components/footer';
 import Header from '@/components/header';
 import { getShareV1NodeRecommendList } from '@/request/ShareNode';
@@ -18,7 +18,7 @@ const HomePage = async () => {
       justifyContent='space-between'
     >
       <Header isDocPage={true} isWelcomePage={true} />
-      <Welcome docs={docs} />
+      <Home docs={docs} />
       <FooterProvider isDocPage={true} isWelcomePage={true} />
     </Stack>
   );

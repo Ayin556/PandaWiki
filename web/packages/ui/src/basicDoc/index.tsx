@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { styled, Grid } from '@mui/material';
+import { styled, Grid, Box } from '@mui/material';
 import {
   StyledTopicBox,
   StyledTopicTitle,
@@ -10,6 +10,7 @@ import {
 } from '../component/styledCommon';
 import IconWenjian from '@panda-wiki/icons/IconWenjian';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
+import { useFadeInText, useCardAnimation } from '../hooks/useGsapAnimation';
 
 interface BasicDocProps {
   mobile?: boolean;
@@ -20,6 +21,7 @@ interface BasicDocProps {
     id: string;
     name: string;
     summary: string;
+    emoji?: string;
   }[];
   baseUrl?: string;
 }
@@ -44,6 +46,7 @@ const StyledBasicDocItem = styled('div')(({ theme }) => ({
     boxShadow: '0px 10px 20px 0px rgba(0,0,5,0.15)',
   },
   width: '100%',
+  opacity: 0,
 }));
 
 const StyledBasicDocItemTitle = styled('h3')(({ theme }) => ({
@@ -88,42 +91,63 @@ const StyledBasicDocItemMore = styled('a')(({ theme }) => ({
   cursor: 'pointer',
 }));
 
+// 单个卡片组件，带动画效果
+const BasicDocItem: React.FC<{
+  item: any;
+  index: number;
+  baseUrl: string;
+  size: any;
+}> = React.memo(({ item, index, baseUrl, size }) => {
+  const cardRef = useCardAnimation(0.2 + index * 0.1, 0.1);
+
+  return (
+    <Grid size={size} key={index}>
+      <StyledBasicDocItem ref={cardRef as React.Ref<HTMLDivElement>}>
+        <StyledBasicDocItemTitle>
+          {item.emoji ? (
+            <Box>{item.emoji}</Box>
+          ) : (
+            <IconWenjian sx={{ fontSize: 16, flexShrink: 0 }} />
+          )}
+          <StyledBasicDocItemName>{item.name}</StyledBasicDocItemName>
+        </StyledBasicDocItemTitle>
+        <StyledBasicDocItemSummary>{item.summary}</StyledBasicDocItemSummary>
+        <StyledBasicDocItemMore
+          href={`${baseUrl}/node/${item.id}`}
+          target='_blank'
+        >
+          查看更多
+          <ArrowForwardRoundedIcon sx={{ fontSize: 16, flexShrink: 0 }} />
+        </StyledBasicDocItemMore>
+      </StyledBasicDocItem>
+    </Grid>
+  );
+});
+
 const BasicDoc: React.FC<BasicDocProps> = React.memo(
   ({ title, items = [], mobile, baseUrl = '', bgColor, titleColor }) => {
     const size =
       typeof mobile === 'boolean' ? (mobile ? 12 : 4) : { xs: 12, md: 4 };
 
+    // 添加标题淡入动画
+    const titleRef = useFadeInText(0.2, 0.1);
+
     return (
       <StyledTopicContainer>
         <StyledTopicInner sx={{ backgroundColor: bgColor }}>
           <StyledTopicBox>
-            <StyledTopicTitle sx={{ color: titleColor }}>
+            <StyledTopicTitle ref={titleRef} sx={{ color: titleColor }}>
               {title}
             </StyledTopicTitle>
             <Grid container spacing={3} sx={{ width: '100%' }}>
               {items.map((item, index) => (
-                <Grid size={size} key={index}>
-                  <StyledBasicDocItem>
-                    <StyledBasicDocItemTitle>
-                      <IconWenjian sx={{ fontSize: 16, flexShrink: 0 }} />
-                      <StyledBasicDocItemName>
-                        {item.name}
-                      </StyledBasicDocItemName>
-                    </StyledBasicDocItemTitle>
-                    <StyledBasicDocItemSummary>
-                      {item.summary}
-                    </StyledBasicDocItemSummary>
-                    <StyledBasicDocItemMore
-                      href={`${baseUrl}/node/${item.id}`}
-                      target='_blank'
-                    >
-                      查看更多
-                      <ArrowForwardRoundedIcon
-                        sx={{ fontSize: 16, flexShrink: 0 }}
-                      />
-                    </StyledBasicDocItemMore>
-                  </StyledBasicDocItem>
-                </Grid>
+                <BasicDocItem
+                  key={index}
+                  item={item}
+                  index={index}
+                  baseUrl={baseUrl}
+                  size={size}
+                />
               ))}
             </Grid>
           </StyledTopicBox>

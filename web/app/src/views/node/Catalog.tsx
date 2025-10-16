@@ -47,8 +47,27 @@ const Catalog = ({ sx }: { sx?: SxProps }) => {
     // 等待子项渲染完成后再滚动
     const scrollToActive = () => {
       const el = document.getElementById(`catalog-item-${id}`);
-      if (el) {
-        el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      const container = listRef.current;
+      if (el && container) {
+        // 计算目标元素相对于滚动容器的位置
+        const containerRect = container.getBoundingClientRect();
+        const elementRect = el.getBoundingClientRect();
+
+        // 计算目标元素在容器中的相对位置
+        const elementTop =
+          elementRect.top - containerRect.top + container.scrollTop;
+        const containerHeight = container.clientHeight;
+        const elementHeight = el.offsetHeight;
+
+        // 计算滚动位置，让元素居中显示
+        const scrollTop = elementTop - containerHeight / 2 + elementHeight / 2;
+
+        // 平滑滚动到目标位置
+        container.scrollTo({
+          top: scrollTop,
+          behavior: 'smooth',
+        });
+
         hasScrolledRef.current = true;
       }
     };

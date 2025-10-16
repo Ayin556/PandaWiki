@@ -78,10 +78,16 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(
             }}
           >
             <Stack direction={'row'} alignItems={'center'} gap={1}>
-              <Icon
-                type={item.type === 1 ? 'icon-wenjianjia' : 'icon-wenjian'}
-                sx={{ fontSize: 14, color: '#2f80f7', flexShrink: 0 }}
-              />
+              {item.emoji ? (
+                <Box sx={{ fontSize: 14, color: '#2f80f7', flexShrink: 0 }}>
+                  {item.emoji}
+                </Box>
+              ) : (
+                <Icon
+                  type={item.type === 1 ? 'icon-wenjianjia' : 'icon-wenjian'}
+                  sx={{ fontSize: 14, color: '#2f80f7', flexShrink: 0 }}
+                />
+              )}
               <Ellipsis sx={{ flex: 1, width: 0, lineHeight: '32px' }}>
                 {item.name}
               </Ellipsis>
@@ -116,12 +122,21 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(
                   .slice(0, 4)
                   .map(it => (
                     <Stack direction={'row'} alignItems={'center'} gap={1}>
-                      <Icon
-                        type={
-                          it.type === 1 ? 'icon-wenjianjia' : 'icon-wenjian'
-                        }
-                        sx={{ fontSize: 14, color: '#2f80f7', flexShrink: 0 }}
-                      />
+                      {it.emoji ? (
+                        <Box
+                          sx={{ fontSize: 14, color: '#2f80f7', flexShrink: 0 }}
+                        >
+                          {it.emoji}
+                        </Box>
+                      ) : (
+                        <Icon
+                          type={
+                            it.type === 1 ? 'icon-wenjianjia' : 'icon-wenjian'
+                          }
+                          sx={{ fontSize: 14, color: '#2f80f7', flexShrink: 0 }}
+                        />
+                      )}
+
                       <Ellipsis sx={{ flex: 1, width: 0 }}>{it.name}</Ellipsis>
                     </Stack>
                   ))}

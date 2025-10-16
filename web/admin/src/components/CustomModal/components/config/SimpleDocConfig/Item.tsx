@@ -28,7 +28,6 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(
     },
     ref,
   ) => {
-    const { kb_id } = useAppSelector(state => state.config);
     const inlineStyles: CSSProperties = {
       opacity: withOpacity ? '0.5' : '1',
       borderRadius: '10px',
@@ -37,19 +36,6 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(
       width: '100%',
       minWidth: '0px',
       ...style,
-    };
-    const [loading, setLoading] = useState(false);
-
-    const handleCreateSummary = () => {
-      setLoading(true);
-      postApiV1NodeSummary({ ids: [item.id!], kb_id })
-        .then(() => {
-          message.success('生成摘要成功');
-          refresh?.();
-        })
-        .finally(() => {
-          setLoading(false);
-        });
     };
 
     return (
@@ -76,33 +62,20 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(
             }}
           >
             <Stack direction={'row'} alignItems={'center'} gap={1}>
-              <Icon
-                type={item.type === 1 ? 'icon-wenjianjia' : 'icon-wenjian'}
-                sx={{ fontSize: 14, color: '#2f80f7', flexShrink: 0 }}
-              />
+              {item.emoji ? (
+                <Box sx={{ fontSize: 14, color: '#2f80f7', flexShrink: 0 }}>
+                  {item.emoji}
+                </Box>
+              ) : (
+                <Icon
+                  type={item.type === 1 ? 'icon-wenjianjia' : 'icon-wenjian'}
+                  sx={{ fontSize: 14, color: '#2f80f7', flexShrink: 0 }}
+                />
+              )}
               <Ellipsis sx={{ flex: 1, width: 0, lineHeight: '32px' }}>
                 {item.name}
               </Ellipsis>
             </Stack>
-
-            {item.recommend_nodes && item.recommend_nodes.length > 0 && (
-              <Stack sx={{ fontSize: 14, color: 'text.tertiary', pl: '20px' }}>
-                {item.recommend_nodes
-                  .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
-                  .slice(0, 4)
-                  .map(it => (
-                    <Stack direction={'row'} alignItems={'center'} gap={1}>
-                      <Icon
-                        type={
-                          it.type === 1 ? 'icon-wenjianjia' : 'icon-wenjian'
-                        }
-                        sx={{ fontSize: 14, color: '#2f80f7', flexShrink: 0 }}
-                      />
-                      <Ellipsis sx={{ flex: 1, width: 0 }}>{it.name}</Ellipsis>
-                    </Stack>
-                  ))}
-              </Stack>
-            )}
           </Box>
           <Stack justifyContent={'space-between'} sx={{ flexShrink: 0 }}>
             <IconButton

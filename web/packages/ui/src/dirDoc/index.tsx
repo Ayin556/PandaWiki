@@ -11,7 +11,7 @@ import {
 } from '../component/styledCommon';
 import { IconWenjianjia, IconWenjian } from '@panda-wiki/icons';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
-
+import { useFadeInText, useCardAnimation } from '../hooks/useGsapAnimation';
 interface DirDocProps {
   mobile?: boolean;
   title?: string;
@@ -20,9 +20,12 @@ interface DirDocProps {
   items?: {
     id: string;
     name: string;
+    emoji?: string;
     recommend_nodes: {
       id: string;
       name: string;
+      emoji?: string;
+      position?: number;
     }[];
   }[];
   baseUrl?: string;
@@ -45,6 +48,7 @@ const StyledDirDocItem = styled('div')(({ theme }) => ({
     boxShadow: '0px 10px 20px 0px rgba(0,0,5,0.15)',
   },
   width: '100%',
+  opacity: 0,
 }));
 
 const StyledDirDocItemTitle = styled('h3')(({ theme }) => ({
@@ -94,6 +98,57 @@ const StyledDirDocItemMore = styled('a')(({ theme }) => ({
   cursor: 'pointer',
 }));
 
+// 单个卡片组件，带动画效果
+const DirDocItem: React.FC<{
+  item: any;
+  index: number;
+  baseUrl: string;
+  size: any;
+}> = React.memo(({ item, index, baseUrl, size }) => {
+  const cardRef = useCardAnimation(0.2 + index * 0.1, 0.1);
+
+  return (
+    <Grid size={size} key={index}>
+      <StyledDirDocItem ref={cardRef as React.Ref<HTMLDivElement>}>
+        <StyledDirDocItemTitle>
+          {item.emoji ? (
+            <Box>{item.emoji}</Box>
+          ) : (
+            <IconWenjianjia sx={{ fontSize: 16, flexShrink: 0 }} />
+          )}
+          <StyledEllipsis>{item.name}</StyledEllipsis>
+        </StyledDirDocItemTitle>
+        <StyledDirDocItemFiles>
+          {[...item.recommend_nodes]
+            .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
+            .slice(0, 5)
+            .map(it => (
+              <StyledDirDocItemFile
+                key={it.id}
+                href={`${baseUrl}/node/${it.id}`}
+                target='_blank'
+              >
+                {it.emoji ? (
+                  <Box>{it.emoji}</Box>
+                ) : (
+                  <IconWenjian sx={{ fontSize: 14, flexShrink: 0 }} />
+                )}
+                <StyledEllipsis>{it.name}</StyledEllipsis>
+              </StyledDirDocItemFile>
+            ))}
+        </StyledDirDocItemFiles>
+        <StyledDirDocItemMore
+          href={`${baseUrl}/node/${item.recommend_nodes[0]?.id}`}
+          target='_blank'
+        >
+          查看更多
+          <ArrowForwardRoundedIcon sx={{ fontSize: 16, flexShrink: 0 }} />
+        </StyledDirDocItemMore>
+      </StyledDirDocItem>
+    </Grid>
+  );
+});
+
 const DirDoc: React.FC<DirDocProps> = React.memo(
   ({
     title = '目录文档',
@@ -105,43 +160,26 @@ const DirDoc: React.FC<DirDocProps> = React.memo(
   }) => {
     const size =
       typeof mobile === 'boolean' ? (mobile ? 12 : 4) : { xs: 12, md: 4 };
+
+    // 添加标题淡入动画
+    const titleRef = useFadeInText(0.2, 0.1);
+
     return (
       <StyledTopicContainer>
         <StyledTopicInner sx={{ backgroundColor: bgColor }}>
           <StyledTopicBox>
-            <StyledTopicTitle sx={{ color: titleColor }}>
+            <StyledTopicTitle ref={titleRef} sx={{ color: titleColor }}>
               {title}
             </StyledTopicTitle>
             <Grid container spacing={3} sx={{ width: '100%' }}>
               {items.map((item, index) => (
-                <Grid size={size} key={index}>
-                  <StyledDirDocItem>
-                    <StyledDirDocItemTitle>
-                      <IconWenjianjia sx={{ fontSize: 16, flexShrink: 0 }} />
-                      <StyledEllipsis>{item.name}</StyledEllipsis>
-                    </StyledDirDocItemTitle>
-                    <StyledDirDocItemFiles>
-                      {item.recommend_nodes.slice(0, 5).map(it => (
-                        <StyledDirDocItemFile
-                          href={`${baseUrl}/node/${it.id}`}
-                          target='_blank'
-                        >
-                          <IconWenjian sx={{ fontSize: 14, flexShrink: 0 }} />
-                          <StyledEllipsis>{it.name}</StyledEllipsis>
-                        </StyledDirDocItemFile>
-                      ))}
-                    </StyledDirDocItemFiles>
-                    <StyledDirDocItemMore
-                      href={`${baseUrl}/node/${item.id}`}
-                      target='_blank'
-                    >
-                      查看更多
-                      <ArrowForwardRoundedIcon
-                        sx={{ fontSize: 16, flexShrink: 0 }}
-                      />
-                    </StyledDirDocItemMore>
-                  </StyledDirDocItem>
-                </Grid>
+                <DirDocItem
+                  key={index}
+                  item={item}
+                  index={index}
+                  baseUrl={baseUrl}
+                  size={size}
+                />
               ))}
             </Grid>
           </StyledTopicBox>

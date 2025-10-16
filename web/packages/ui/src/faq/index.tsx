@@ -9,6 +9,7 @@ import {
   StyledTopicContainer,
 } from '../component/styledCommon';
 import HelpIcon from '@mui/icons-material/Help';
+import { useFadeInText, useCardAnimation } from '../hooks/useGsapAnimation';
 
 interface FaqProps {
   mobile?: boolean;
@@ -49,6 +50,7 @@ const StyledFaqItem = styled('a')(({ theme }) => ({
     transform: 'translateY(-5px)',
     color: theme.palette.primary.main,
   },
+  opacity: 0,
 }));
 
 const StyledFaqItemTitle = styled('span')(({ theme }) => ({
@@ -56,25 +58,46 @@ const StyledFaqItemTitle = styled('span')(({ theme }) => ({
   fontWeight: 600,
 }));
 
+// 单个卡片组件，带动画效果
+const FaqItem: React.FC<{
+  item: any;
+  index: number;
+  size: any;
+}> = React.memo(({ item, index, size }) => {
+  const cardRef = useCardAnimation(0.2 + index * 0.1, 0.1);
+
+  return (
+    <Grid size={size} key={index}>
+      <StyledFaqItem
+        ref={cardRef as React.Ref<HTMLAnchorElement>}
+        href={item.url}
+        target='_blank'
+      >
+        <HelpIcon sx={{ color: 'primary.main', fontSize: 18 }} />
+        <StyledFaqItemTitle>{item.question}</StyledFaqItemTitle>
+      </StyledFaqItem>
+    </Grid>
+  );
+});
+
 const Faq: React.FC<FaqProps> = React.memo(
   ({ title = '常见问题', items = [], mobile, bgColor, titleColor }) => {
     const size =
       typeof mobile === 'boolean' ? (mobile ? 12 : 6) : { xs: 12, md: 6 };
+
+    // 添加标题淡入动画
+    const titleRef = useFadeInText(0.2, 0.1);
+
     return (
       <StyledTopicContainer>
         <StyledTopicInner sx={{ backgroundColor: bgColor }}>
           <StyledTopicBox>
-            <StyledTopicTitle sx={{ color: titleColor }}>
+            <StyledTopicTitle ref={titleRef} sx={{ color: titleColor }}>
               {title}
             </StyledTopicTitle>
             <Grid container spacing={2} sx={{ width: '100%' }}>
               {items.map((item, index) => (
-                <Grid size={size} key={index}>
-                  <StyledFaqItem href={item.url} target='_blank'>
-                    <HelpIcon sx={{ color: 'primary.main', fontSize: 18 }} />
-                    <StyledFaqItemTitle>{item.question}</StyledFaqItemTitle>
-                  </StyledFaqItem>
-                </Grid>
+                <FaqItem key={index} item={item} index={index} size={size} />
               ))}
             </Grid>
           </StyledTopicBox>

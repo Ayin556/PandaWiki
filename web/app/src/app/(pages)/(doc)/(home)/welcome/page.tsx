@@ -1,9 +1,9 @@
-import Home from '@/views/home';
+import Welcome from '@/views/welcome';
 import { getShareV1NodeRecommendList } from '@/request/ShareNode';
 
-const HomePage = async () => {
+const WelcomePage = async () => {
   const data = await getShareV1NodeRecommendList({});
-  return <Home recommendNodes={data?.node_recommends || []} />;
+  return <Welcome recommendNodes={data?.node_recommends || []} />;
 };
 
-export default HomePage;
+export default WelcomePage;
