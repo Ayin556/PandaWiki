@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"slices"
-	"strings"
 
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/html"
@@ -22,6 +21,7 @@ import (
 	"github.com/chaitin/panda-wiki/repo/mq"
 	"github.com/chaitin/panda-wiki/repo/pg"
 	"github.com/chaitin/panda-wiki/store/s3"
+	"github.com/chaitin/panda-wiki/utils"
 )
 
 type NodeUsecase struct {
@@ -82,7 +82,7 @@ func (u *NodeUsecase) GetNodeByKBID(ctx context.Context, id, kbId, format string
 		return nil, err
 	}
 	if format != "raw" {
-		if !strings.HasPrefix(node.Content, "<") {
+		if !utils.IsLikelyHTML(node.Content) {
 			node.Content = u.convertMDToHTML(node.Content)
 		}
 	}
@@ -167,7 +167,7 @@ func (u *NodeUsecase) GetNodeReleaseDetailByKBIDAndID(ctx context.Context, kbID,
 	}
 	// just for info
 	if format != "raw" {
-		if !strings.HasPrefix(node.Content, "<") {
+		if !utils.IsLikelyHTML(node.Content) {
 			node.Content = u.convertMDToHTML(node.Content)
 		}
 	}
