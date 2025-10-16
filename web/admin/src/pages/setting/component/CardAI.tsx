@@ -1,11 +1,11 @@
-import { DomainKnowledgeBaseDetail } from '@/request/types';
 import { getApiProV1Prompt, postApiProV1Prompt } from '@/request/pro/Prompt';
-import { Box, Slider, TextField } from '@mui/material';
-import { useEffect, useMemo, useState } from 'react';
-import { SettingCard, SettingCardItem, FormItem } from './Common';
-import { Controller, useForm } from 'react-hook-form';
+import { DomainKnowledgeBaseDetail } from '@/request/types';
 import { useAppSelector } from '@/store';
 import { message } from '@ctzhian/ui';
+import { Box, Slider, TextField } from '@mui/material';
+import { useEffect, useMemo, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { FormItem, SettingCardItem } from './Common';
 
 interface CardAIProps {
   kb: DomainKnowledgeBaseDetail;
@@ -44,7 +44,13 @@ const CardAI = ({ kb }: CardAIProps) => {
   }, [kb, isPro]);
 
   return (
-    <SettingCard title='AI 设置'>
+    <Box
+      sx={{
+        width: 1000,
+        margin: 'auto',
+        pb: 4,
+      }}
+    >
       <SettingCardItem title='智能问答' isEdit={isEdit} onSubmit={onSubmit}>
         <FormItem
           vertical
@@ -76,7 +82,7 @@ const CardAI = ({ kb }: CardAIProps) => {
                 fullWidth
                 disabled={!isPro}
                 multiline
-                rows={4}
+                rows={20}
                 placeholder='智能问答提示词'
                 onChange={e => {
                   field.onChange(e.target.value);
@@ -151,7 +157,7 @@ const CardAI = ({ kb }: CardAIProps) => {
           />
         </FormItem>
       </SettingCardItem>
-    </SettingCard>
+    </Box>
   );
 };
 

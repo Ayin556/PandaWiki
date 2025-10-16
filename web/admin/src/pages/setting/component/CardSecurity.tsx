@@ -1,24 +1,25 @@
-import React, { useMemo, useState, useEffect } from 'react';
-import { SettingCardItem, SettingCard, FormItem } from './Common';
-import { useAppSelector } from '@/store';
-import { useForm, Controller } from 'react-hook-form';
 import { putApiV1App } from '@/request/App';
+import { getApiProV1Block, postApiProV1Block } from '@/request/pro/Block';
 import {
-  Radio,
-  RadioGroup,
-  FormControlLabel,
-  TextField,
-  styled,
-  Autocomplete,
-} from '@mui/material';
-import { message } from '@ctzhian/ui';
-import {
+  ConstsCopySetting,
+  ConstsWatermarkSetting,
   DomainAppDetailResp,
   DomainKnowledgeBaseDetail,
-  ConstsWatermarkSetting,
-  ConstsCopySetting,
 } from '@/request/types';
-import { getApiProV1Block, postApiProV1Block } from '@/request/pro/Block';
+import { useAppSelector } from '@/store';
+import { message } from '@ctzhian/ui';
+import {
+  Autocomplete,
+  Box,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
+  TextField,
+  styled,
+} from '@mui/material';
+import { useEffect, useMemo, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { FormItem, SettingCardItem } from './Common';
 
 const StyledRadioLabel = styled('div')(({ theme }) => ({
   width: 100,
@@ -326,11 +327,17 @@ const CardSecurity = ({
   refresh: () => void;
 }) => {
   return (
-    <SettingCard title='安全'>
+    <Box
+      sx={{
+        width: 1000,
+        margin: 'auto',
+        pb: 4,
+      }}
+    >
       <WatermarkForm data={data} refresh={refresh} />
       <CopyForm data={data} refresh={refresh} />
       <KeywordsForm kb={kb} />
-    </SettingCard>
+    </Box>
   );
 };
 
