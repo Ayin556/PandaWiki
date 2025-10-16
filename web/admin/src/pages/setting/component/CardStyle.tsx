@@ -2,7 +2,6 @@ import { ThemeAndStyleSetting, ThemeMode } from '@/api/type';
 import doc_width_full from '@/assets/images/full.png';
 import doc_width_normal from '@/assets/images/normal.png';
 import doc_width_wide from '@/assets/images/wide.png';
-import UploadFile from '@/components/UploadFile';
 import { putApiV1App } from '@/request/App';
 import { DomainAppDetailResp } from '@/request/types';
 import { useAppSelector } from '@/store';
@@ -10,10 +9,8 @@ import { message } from '@ctzhian/ui';
 import {
   Box,
   FormControlLabel,
-  MenuItem,
   Radio,
   RadioGroup,
-  Select,
   Stack,
   Tooltip,
 } from '@mui/material';
@@ -34,8 +31,8 @@ const CardStyle = ({ id, data, refresh }: CardStyleProps) => {
     ThemeMode & ThemeAndStyleSetting
   >({
     defaultValues: {
-      theme_mode: 'light',
-      bg_image: '',
+      // theme_mode: 'light',
+      // bg_image: '',
       doc_width: 'full',
     },
   });
@@ -49,8 +46,8 @@ const CardStyle = ({ id, data, refresh }: CardStyleProps) => {
           ...data.settings,
           theme_mode: value.theme_mode,
           theme_and_style: {
-            ...data.settings?.theme_and_style,
-            bg_image: value.bg_image,
+            // ...data.settings?.theme_and_style,
+            // bg_image: value.bg_image,
             doc_width: value.doc_width,
           },
         },
@@ -63,8 +60,8 @@ const CardStyle = ({ id, data, refresh }: CardStyleProps) => {
   };
 
   useEffect(() => {
-    setValue('theme_mode', data.settings?.theme_mode as 'light' | 'dark');
-    setValue('bg_image', data.settings?.theme_and_style?.bg_image || '');
+    // setValue('theme_mode', data.settings?.theme_mode as 'light' | 'dark');
+    // setValue('bg_image', data.settings?.theme_and_style?.bg_image || '');
     setValue('doc_width', data.settings?.theme_and_style?.doc_width || 'full');
   }, [data]);
 
@@ -74,7 +71,7 @@ const CardStyle = ({ id, data, refresh }: CardStyleProps) => {
       isEdit={isEdit}
       onSubmit={handleSubmit(onSubmit)}
     >
-      <FormItem label='配色方案'>
+      {/* <FormItem label='配色方案'>
         <Controller
           control={control}
           name='theme_mode'
@@ -92,9 +89,9 @@ const CardStyle = ({ id, data, refresh }: CardStyleProps) => {
             </Select>
           )}
         />
-      </FormItem>
+      </FormItem> */}
 
-      <FormItem label='背景图片'>
+      {/* <FormItem label='背景图片'>
         <Controller
           control={control}
           name='bg_image'
@@ -112,7 +109,7 @@ const CardStyle = ({ id, data, refresh }: CardStyleProps) => {
             />
           )}
         />{' '}
-      </FormItem>
+      </FormItem> */}
 
       <FormItem label='页面宽度' sx={{ alignItems: 'flex-start' }}>
         <Controller
@@ -127,20 +124,17 @@ const CardStyle = ({ id, data, refresh }: CardStyleProps) => {
                 setIsEdit(true);
               }}
             >
-              <Stack alignItems='center' sx={{ width: 120, mr: 2 }}>
-                <img src={doc_width_full} width={120} alt='全屏' />
+              <Stack sx={{ width: 200, mr: 2 }}>
+                <img src={doc_width_full} width={200} alt='全屏' />
                 <FormControlLabel
                   value={'full'}
                   control={<Radio size='small' />}
                   label={<Box>全屏</Box>}
                 />
               </Stack>
-              <Stack
-                alignItems='center'
-                sx={{ width: 120, mr: 2, cursor: 'pointer' }}
-              >
+              <Stack sx={{ width: 200, mr: 2, cursor: 'pointer' }}>
                 <Tooltip placement='top' title='适配内容宽度：1120px' arrow>
-                  <img src={doc_width_wide} width={120} alt='超宽' />
+                  <img src={doc_width_wide} width={200} alt='超宽' />
                 </Tooltip>
                 <FormControlLabel
                   value={'wide'}
@@ -148,9 +142,9 @@ const CardStyle = ({ id, data, refresh }: CardStyleProps) => {
                   label={<Box>超宽</Box>}
                 />
               </Stack>
-              <Stack alignItems='center' sx={{ width: 120, cursor: 'pointer' }}>
+              <Stack sx={{ width: 200, cursor: 'pointer' }}>
                 <Tooltip placement='top' title='适配内容宽度：880px' arrow>
-                  <img src={doc_width_normal} width={120} alt='常规' />
+                  <img src={doc_width_normal} width={200} alt='常规' />
                 </Tooltip>
                 <FormControlLabel
                   value={'normal'}

@@ -1,30 +1,28 @@
-import { updateKnowledgeBase } from '@/api';
+import NoData from '@/assets/images/nodata.png';
 import {
   deleteApiV1KnowledgeBaseUserDelete,
   getApiV1KnowledgeBaseUserList,
   patchApiV1KnowledgeBaseUserUpdate,
 } from '@/request/KnowledgeBase';
-import NoData from '@/assets/images/nodata.png';
-import { Form, FormItem } from './Common';
 import {
-  ConstsUserKBPermission,
-  DomainKnowledgeBaseDetail,
-  DomainAppDetailResp,
-  V1KBUserListItemResp,
-  V1KBUserUpdateReq,
-} from '@/request/types';
+  deleteApiProV1TokenDelete,
+  getApiProV1TokenList,
+  patchApiProV1TokenUpdate,
+  postApiProV1TokenCreate,
+} from '@/request/pro/ApiToken';
 import {
   GithubComChaitinPandaWikiProApiTokenV1APITokenListItem,
   GithubComChaitinPandaWikiProApiTokenV1CreateAPITokenReq,
 } from '@/request/pro/types';
 import {
-  postApiProV1TokenCreate,
-  patchApiProV1TokenUpdate,
-  getApiProV1TokenList,
-  deleteApiProV1TokenDelete,
-} from '@/request/pro/ApiToken';
+  ConstsUserKBPermission,
+  V1KBUserListItemResp,
+  V1KBUserUpdateReq,
+} from '@/request/types';
 import { useAppSelector } from '@/store';
-import { setKbList } from '@/store/slices/config';
+import { setRefreshAdminRequest } from '@/store/slices/config';
+import { copyText } from '@/utils';
+import { Ellipsis, Icon, message, Modal } from '@ctzhian/ui';
 import InfoIcon from '@mui/icons-material/Info';
 import {
   Box,
@@ -34,21 +32,12 @@ import {
   Stack,
   TextField,
   Tooltip,
-  styled,
 } from '@mui/material';
-import { copyText } from '@/utils';
-import { Ellipsis, Icon, message, Modal } from '@ctzhian/ui';
 import { useEffect, useMemo, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import AddRole from './AddRole';
-import { Controller, useForm } from 'react-hook-form';
-import { setRefreshAdminRequest } from '@/store/slices/config';
-import { SettingCard, SettingCardItem } from './Common';
-
-interface CardKBProps {
-  kb: DomainKnowledgeBaseDetail;
-  data?: DomainAppDetailResp;
-}
+import { Form, FormItem, SettingCardItem } from './Common';
 
 type ApiTokenPermission =
   GithubComChaitinPandaWikiProApiTokenV1CreateAPITokenReq['permission'];
@@ -401,12 +390,10 @@ const ApiToken = () => {
   );
 };
 
-const CardKB = ({ kb, data }: CardKBProps) => {
-  const { kbList, kb_id, license } = useAppSelector(state => state.config);
+const CardKB = () => {
+  const { kb_id, license } = useAppSelector(state => state.config);
   const dispatch = useDispatch();
 
-  const [kbName, setKbName] = useState(kb.name);
-  const [isEdit, setIsEdit] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
   const [adminList, setAdminList] = useState<V1KBUserListItemResp[]>([]);
 
@@ -426,21 +413,6 @@ const CardKB = ({ kb, data }: CardKBProps) => {
     if (!kb_id) return;
     getUserList();
   }, [kb_id]);
-
-  const handleSave = () => {
-    if (!kb.id) return;
-    updateKnowledgeBase({ id: kb.id, name: kbName }).then(() => {
-      message.success('保存成功');
-      dispatch(
-        setKbList(
-          kbList?.map(item =>
-            item.id === kb.id ? { ...item, name: kbName } : item,
-          ),
-        ),
-      );
-      setIsEdit(false);
-    });
-  };
 
   useEffect(() => {
     dispatch(setRefreshAdminRequest(getUserList));
@@ -479,27 +451,14 @@ const CardKB = ({ kb, data }: CardKBProps) => {
     });
   };
 
-  useEffect(() => {
-    setKbName(kb.name);
-  }, [kb]);
-
   return (
-    <SettingCard title='后台信息'>
-      <SettingCardItem
-        title='Wiki 站名称'
-        isEdit={isEdit}
-        onSubmit={handleSave}
-      >
-        <TextField
-          fullWidth
-          value={kbName}
-          onChange={e => {
-            setKbName(e.target.value);
-            setIsEdit(true);
-          }}
-        />
-      </SettingCardItem>
-
+    <Box
+      sx={{
+        width: 1000,
+        margin: 'auto',
+        pb: 4,
+      }}
+    >
       <SettingCardItem
         title='Wiki 站管理员'
         extra={
@@ -635,7 +594,7 @@ const CardKB = ({ kb, data }: CardKBProps) => {
           setAddOpen(false);
         }}
       />
-    </SettingCard>
+    </Box>
   );
 };
 

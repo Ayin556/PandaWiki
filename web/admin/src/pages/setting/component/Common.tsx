@@ -1,7 +1,7 @@
-import { createContext, useContext } from 'react';
-import { Button, Stack, styled, Tooltip, SxProps } from '@mui/material';
 import Card from '@/components/Card';
 import InfoIcon from '@mui/icons-material/Info';
+import { Button, Stack, styled, SxProps, Tooltip } from '@mui/material';
+import { createContext, useContext } from 'react';
 
 const StyledForm = styled('form')<{ gap?: number | string }>(
   ({ theme, gap = 2 }) => ({
@@ -141,7 +141,7 @@ export const SettingCard = ({
 const StyledSettingCardItem = styled('div')(({ theme }) => ({
   '&:not(:last-child)': {
     borderBottom: `1px solid ${theme.palette.divider}`,
-    paddingBottom: theme.spacing(2),
+    paddingBottom: theme.spacing(4),
   },
 }));
 

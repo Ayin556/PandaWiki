@@ -3,19 +3,17 @@ import {
   DomainAppDetailResp,
   DomainKnowledgeBaseDetail,
 } from '@/request/types';
+import { Box } from '@mui/material';
 import { useEffect, useState } from 'react';
 import CardAuth from './CardAuth';
 import CardBasicInfo from './CardBasicInfo';
 import CardCatalog from './CardCatalog';
 import CardCustom from './CardCustom';
-import CardFooter from './CardFooter';
 import CardListen from './CardListen';
 import CardProxy from './CardProxy';
 import CardStyle from './CardStyle';
 import CardWebCustomCode from './CardWebCustomCode';
 import CardWebSEO from './CardWebSEO';
-import CardWebWelcome from './CardWebWelcome';
-import { SettingCard } from './Common';
 
 interface CardWebProps {
   kb: DomainKnowledgeBaseDetail;
@@ -37,10 +35,13 @@ const CardWeb = ({ kb, refresh }: CardWebProps) => {
   if (!info?.id) return <></>;
 
   return (
-    <SettingCard title='门户网站'>
-      <CardListen kb={kb} refresh={refresh} />
-      <CardProxy kb={kb} refresh={refresh} />
-      <CardBasicInfo kb={kb} refresh={refresh} />
+    <Box
+      sx={{
+        width: 1000,
+        margin: 'auto',
+        pb: 4,
+      }}
+    >
       <CardCustom
         kb={kb}
         refresh={value => {
@@ -54,7 +55,6 @@ const CardWeb = ({ kb, refresh }: CardWebProps) => {
         }}
         info={info}
       ></CardCustom>
-      <CardAuth kb={kb} refresh={refresh} />
       <CardStyle
         id={info.id}
         data={info}
@@ -73,6 +73,10 @@ const CardWeb = ({ kb, refresh }: CardWebProps) => {
           });
         }}
       />
+      <CardListen kb={kb} refresh={refresh} />
+      <CardProxy kb={kb} refresh={refresh} />
+      <CardBasicInfo kb={kb} refresh={refresh} />
+      <CardAuth kb={kb} refresh={refresh} />
       {/* <CardWebHeader
         id={info.id}
         data={info}
@@ -118,7 +122,7 @@ const CardWeb = ({ kb, refresh }: CardWebProps) => {
           });
         }}
       /> */}
-      <CardWebWelcome
+      {/* <CardWebWelcome
         id={info.id}
         data={info}
         refresh={value => {
@@ -130,7 +134,7 @@ const CardWeb = ({ kb, refresh }: CardWebProps) => {
             },
           });
         }}
-      />
+      /> */}
       <CardWebSEO
         id={info.id}
         data={info}
@@ -158,7 +162,7 @@ const CardWeb = ({ kb, refresh }: CardWebProps) => {
           });
         }}
       />
-    </SettingCard>
+    </Box>
   );
 };
 export default CardWeb;

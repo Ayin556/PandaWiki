@@ -1,26 +1,26 @@
-import { useAppSelector } from '@/store';
-import InfoIcon from '@mui/icons-material/Info';
 import {
   DomainAppDetailResp,
   DomainKnowledgeBaseDetail,
 } from '@/request/types';
+import { useAppSelector } from '@/store';
+import InfoIcon from '@mui/icons-material/Info';
 import {
   Box,
+  Chip,
   FormControlLabel,
   Radio,
   RadioGroup,
-  TextField,
   styled,
+  TextField,
   Tooltip,
-  Chip,
 } from '@mui/material';
 
-import { Controller, useForm } from 'react-hook-form';
-import { useEffect, useState } from 'react';
-import Autocomplete from '@mui/material/Autocomplete';
-import { message } from '@ctzhian/ui';
-import { FormItem, SettingCard, SettingCardItem } from './Common';
 import { getApiV1AppDetail, putApiV1App } from '@/request/App';
+import { message } from '@ctzhian/ui';
+import Autocomplete from '@mui/material/Autocomplete';
+import { useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { FormItem, SettingCardItem } from './Common';
 
 interface CardCommentProps {
   kb: DomainKnowledgeBaseDetail;
@@ -354,32 +354,34 @@ const DocumentContribution = ({
       isEdit={isEdit}
       onSubmit={onSubmit}
     >
-      <Controller
-        control={control}
-        name='is_enable'
-        render={({ field }) => (
-          <RadioGroup
-            row
-            {...field}
-            value={isPro ? field.value : undefined}
-            onChange={e => {
-              setIsEdit(true);
-              field.onChange(e.target.value === 'true');
-            }}
-          >
-            <FormControlLabel
-              value={true}
-              control={<Radio size='small' disabled={!isPro} />}
-              label={<StyledRadioLabel>启用</StyledRadioLabel>}
-            />
-            <FormControlLabel
-              value={false}
-              control={<Radio size='small' disabled={!isPro} />}
-              label={<StyledRadioLabel>禁用</StyledRadioLabel>}
-            />
-          </RadioGroup>
-        )}
-      />
+      <FormItem label='文档贡献'>
+        <Controller
+          control={control}
+          name='is_enable'
+          render={({ field }) => (
+            <RadioGroup
+              row
+              {...field}
+              value={isPro ? field.value : undefined}
+              onChange={e => {
+                setIsEdit(true);
+                field.onChange(e.target.value === 'true');
+              }}
+            >
+              <FormControlLabel
+                value={true}
+                control={<Radio size='small' disabled={!isPro} />}
+                label={<StyledRadioLabel>启用</StyledRadioLabel>}
+              />
+              <FormControlLabel
+                value={false}
+                control={<Radio size='small' disabled={!isPro} />}
+                label={<StyledRadioLabel>禁用</StyledRadioLabel>}
+              />
+            </RadioGroup>
+          )}
+        />
+      </FormItem>
     </SettingCardItem>
   );
 };
@@ -399,11 +401,17 @@ const CardFeedback = ({ kb }: CardCommentProps) => {
   if (!info) return <></>;
 
   return (
-    <SettingCard title='反馈'>
+    <Box
+      sx={{
+        width: 1000,
+        margin: 'auto',
+        pb: 4,
+      }}
+    >
       <AIQuestion data={info} refresh={getInfo} />
       <DocumentComments data={info} refresh={getInfo} />
       <DocumentContribution data={info} refresh={getInfo} />
-    </SettingCard>
+    </Box>
   );
 };
 

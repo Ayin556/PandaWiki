@@ -1,24 +1,18 @@
-import {
-  Box,
-  Button,
-  Stack,
-  TextField,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-} from '@mui/material';
-import { message } from '@ctzhian/ui';
-import { useEffect, useState } from 'react';
+import documentPng from '@/assets/images/document.png';
+import welcomePng from '@/assets/images/welcome.png';
 import CustomModal from '@/components/CustomModal';
-import { SettingCardItem, FormItem } from './Common';
-import { useForm, Controller } from 'react-hook-form';
+import { putApiV1App } from '@/request/App';
 import {
+  ConstsHomePageSetting,
   DomainAppDetailResp,
   DomainKnowledgeBaseDetail,
-  ConstsHomePageSetting,
 } from '@/request/types';
 import { useAppSelector } from '@/store';
-import { putApiV1App } from '@/request/App';
+import { message } from '@ctzhian/ui';
+import { Box, FormControlLabel, Radio, RadioGroup, Stack } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { FormItem, SettingCardItem } from './Common';
 
 interface CardCustomProps {
   kb: DomainKnowledgeBaseDetail;
@@ -71,21 +65,8 @@ const CardCustom = ({ kb, refresh, info }: CardCustomProps) => {
       title='前台网站样式个性化'
       isEdit={isEdit}
       onSubmit={onSubmit}
-      more={
-        <Button
-          size='small'
-          color='primary'
-          variant='outlined'
-          sx={{ ml: 2 }}
-          onClick={() => {
-            setCustomModalOpen(true);
-          }}
-        >
-          定制页面
-        </Button>
-      }
     >
-      <FormItem label='默认首页'>
+      <FormItem label='默认首页' sx={{ alignItems: 'flex-start' }}>
         <Controller
           control={control}
           name='home_page_setting'
@@ -99,16 +80,31 @@ const CardCustom = ({ kb, refresh, info }: CardCustomProps) => {
                 setIsEdit(true);
               }}
             >
-              <FormControlLabel
-                value='doc'
-                control={<Radio size='small' />}
-                label={<Box sx={{ width: 65 }}>文档页面</Box>}
-              />
-              <FormControlLabel
-                value='custom'
-                control={<Radio size='small' />}
-                label={<Box sx={{ width: 85 }}>自定义欢迎页</Box>}
-              />
+              <Stack sx={{ width: 200, mr: 2 }}>
+                <img src={documentPng} width={200} height={115.28} alt='全屏' />
+                <FormControlLabel
+                  value='doc'
+                  control={<Radio size='small' />}
+                  label={<Box sx={{ width: 65 }}>文档页面</Box>}
+                />
+              </Stack>
+              <Stack sx={{ mr: 2 }}>
+                <img
+                  src={welcomePng}
+                  width={200}
+                  height={115.28}
+                  alt='欢迎页面'
+                />
+                <FormControlLabel
+                  value='custom'
+                  control={<Radio size='small' />}
+                  label={
+                    <Stack direction={'row'} alignItems={'center'}>
+                      <Box>欢迎页面</Box>
+                    </Stack>
+                  }
+                />
+              </Stack>
             </RadioGroup>
           )}
         />
