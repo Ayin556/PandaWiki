@@ -6,3 +6,11 @@ export { default as DirDoc } from './dirDoc';
 export { default as SimpleDoc } from './simpleDoc';
 export { default as Carousel } from './carousel';
 export { default as Faq } from './faq';
+
+// 导出动画 hooks
+export {
+  useTextAnimation,
+  useFadeInText,
+  useTypewriterText,
+  useCardAnimation,
+} from './hooks/useGsapAnimation';

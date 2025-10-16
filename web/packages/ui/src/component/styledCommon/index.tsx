@@ -57,6 +57,7 @@ export const StyledTopicTitle = styled('h2')(({ theme }) => ({
   fontWeight: 700,
   color: theme.palette.text.primary,
   overflow: 'hidden',
+  opacity: 0,
 }));
 
 export const StyledTopicDes = styled('p')(({ theme }) => ({

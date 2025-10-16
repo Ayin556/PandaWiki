@@ -42,8 +42,7 @@ const handleBasicDocProps = (setting: any) => {
     titleColor: config.basic_doc_config?.title_color || '#00000',
     items:
       config.basic_doc_config?.docs?.map((item: any) => ({
-        id: item.id,
-        name: item.name,
+        ...item,
         summary: item.summary || '暂无摘要',
       })) || [],
   };
@@ -57,8 +56,7 @@ const handleDirDocProps = (setting: any) => {
     titleColor: config.dir_doc_config?.title_color || '#ffffff',
     items:
       config.dir_doc_config?.dirs?.map((item: any) => ({
-        id: item.id,
-        name: item.name,
+        ...item,
         recommend_nodes: item.recommend_nodes || [],
       })) || [],
   };
@@ -72,8 +70,7 @@ const handleSimpleDocProps = (setting: any) => {
     titleColor: config.simple_doc_config?.title_color || '#000000',
     items:
       config.simple_doc_config?.docs?.map((item: any) => ({
-        id: item.id,
-        name: item.name,
+        ...item,
       })) || [],
   };
 };

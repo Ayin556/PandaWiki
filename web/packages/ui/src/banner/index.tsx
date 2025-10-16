@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { IconXingxing } from '@panda-wiki/icons';
+import { useTextAnimation } from '../hooks/useGsapAnimation';
 import {
   ButtonProps,
   styled,
@@ -22,7 +23,7 @@ import { StyledTopicBox } from '../component/styledCommon';
 import { IconFasong } from '@panda-wiki/icons';
 
 const StyledBanner = styled('div')(({ theme }) => ({
-  margin: theme.spacing(0, 2),
+  margin: theme.spacing(2, 2, 0),
   backgroundSize: 'cover',
   backgroundPosition: 'center',
   backgroundRepeat: 'no-repeat',
@@ -33,6 +34,7 @@ const StyledBanner = styled('div')(({ theme }) => ({
 const StyledTitle = styled('h1')(({ theme }) => ({
   fontSize: 36,
   fontWeight: 700,
+  wordBreak: 'break-all',
 }));
 
 const StyledSubTitle = styled('h2')(({ theme }) => ({
@@ -94,13 +96,16 @@ const Banner = React.memo(
     const inputRef = useRef<HTMLInputElement>(null);
     const debounceTimer = useRef<NodeJS.Timeout | null>(null);
 
+    // 添加文字动画效果
+    const titleRef = useTextAnimation(0, 0.1);
+    const subtitleRef = useTextAnimation(0.2, 0.1);
+
     // 防抖搜索
     const debouncedSearch = useCallback(
       (query: string) => {
         if (debounceTimer.current) {
           clearTimeout(debounceTimer.current);
         }
-
         debounceTimer.current = setTimeout(async () => {
           if (query.trim() && onSearchSuggestions) {
             setIsLoading(true);
@@ -151,6 +156,7 @@ const Banner = React.memo(
         //   onSearch?.(searchText);
         // }
         onSearch?.(searchText, 'chat');
+        setSearchText('');
         setAnchorEl(null);
         setSelectedIndex(-1);
       } else if (e.key === 'ArrowDown') {
@@ -171,6 +177,7 @@ const Banner = React.memo(
     const handleSuggestionClick = (suggestion: SearchSuggestion) => {
       setSearchText(suggestion.title);
       onSearch?.(suggestion.title);
+      setSearchText('');
       setAnchorEl(null);
       setSelectedIndex(-1);
     };
@@ -239,6 +246,7 @@ const Banner = React.memo(
       >
         <StyledTopicBox sx={{ alignItems: 'flex-start', gap: 0, py: '140px' }}>
           <StyledTitle
+            ref={titleRef}
             sx={{
               fontSize: `${title.fontSize || 60}px`,
               color: title.color || '#5F58FE',
@@ -248,6 +256,7 @@ const Banner = React.memo(
           </StyledTitle>
           {subtitle.text && (
             <StyledSubTitle
+              ref={subtitleRef}
               sx={{
                 fontSize: `${subtitle.fontSize || 16}px`,
                 color: subtitle.color || 'rgba(255,255,255,0.5)',
@@ -288,7 +297,10 @@ const Banner = React.memo(
                             cursor: 'pointer',
                             fontSize: 22,
                           }}
-                          onClick={() => onSearch?.(searchText, 'chat')}
+                          onClick={() => {
+                            onSearch?.(searchText, 'chat');
+                            setSearchText('');
+                          }}
                         />
                       )}
                     </InputAdornment>
@@ -401,7 +413,11 @@ const Banner = React.memo(
                   <Button
                     variant='outlined'
                     color='primary'
-                    onClick={() => onSearch?.(searchText, 'chat')}
+                    onClick={() => {
+                      onSearch?.(searchText, 'chat');
+                      setSearchText('');
+                      setAnchorEl(null);
+                    }}
                   >
                     <IconXingxing sx={{ mr: 0.5 }} />
                     智能问答
@@ -409,7 +425,11 @@ const Banner = React.memo(
                   <Button
                     variant='outlined'
                     color='primary'
-                    onClick={() => onSearch?.(searchText, 'search')}
+                    onClick={() => {
+                      onSearch?.(searchText, 'search');
+                      setSearchText('');
+                      setAnchorEl(null);
+                    }}
                   >
                     全站搜索
                   </Button>
@@ -419,26 +439,38 @@ const Banner = React.memo(
           </Box>
           {search.hot?.length > 0 && (
             <Stack direction='row' gap={3} sx={{ fontSize: 12, mt: 3 }}>
-              <Box sx={{ color: 'rgba(255,255,255, 0.5)' }}>热门搜索</Box>
-              {search.hot?.map(hot => (
-                <Box
-                  key={hot}
-                  sx={{
-                    color: 'rgba(255,255,255, 0.7)',
-                    cursor: 'pointer',
-                    '&:hover': {
-                      color: 'rgba(255,255,255, 1)',
-                    },
-                  }}
-                  onClick={() => onSearch?.(hot)}
-                >
-                  {hot}
-                </Box>
-              ))}
+              <Box sx={{ color: 'rgba(255,255,255, 0.5)', flexShrink: 0 }}>
+                热门搜索
+              </Box>
+              <Stack direction='row' gap='4px 24px' flexWrap='wrap'>
+                {search.hot?.map(hot => (
+                  <Box
+                    key={hot}
+                    sx={{
+                      color: 'rgba(255,255,255, 0.7)',
+                      cursor: 'pointer',
+                      '&:hover': {
+                        color: 'rgba(255,255,255, 1)',
+                      },
+                    }}
+                    onClick={() => onSearch?.(hot)}
+                  >
+                    {hot}
+                  </Box>
+                ))}
+              </Stack>
             </Stack>
           )}
           {btns.length > 0 && (
-            <Stack direction='row' gap={5} sx={{ mt: 5 }}>
+            <Stack
+              direction='row'
+              gap={{
+                xs: '16px 24px',
+                md: '16px 40px',
+              }}
+              sx={{ mt: 5 }}
+              flexWrap='wrap'
+            >
               {btns.map(btn => (
                 <Button
                   key={btn.text}
@@ -448,9 +480,18 @@ const Banner = React.memo(
                   size='large'
                   color='primary'
                   sx={{
-                    fontSize: 18,
-                    px: '69px',
-                    py: '12px',
+                    fontSize: {
+                      xs: 14,
+                      md: 18,
+                    },
+                    px: {
+                      xs: 3,
+                      md: '69px',
+                    },
+                    py: {
+                      xs: 1,
+                      md: '12px',
+                    },
                   }}
                 >
                   {btn.text}

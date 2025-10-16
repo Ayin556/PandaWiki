@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { styled, Grid } from '@mui/material';
+import { styled, Grid, Box } from '@mui/material';
 import {
   StyledTopicInner,
   StyledTopicContainer,
@@ -11,6 +11,7 @@ import {
 } from '../component/styledCommon';
 import IconWenjian from '@panda-wiki/icons/IconWenjian';
 import ArrowForwardIosRoundedIcon from '@mui/icons-material/ArrowForwardIosRounded';
+import { useFadeInText, useCardAnimation } from '../hooks/useGsapAnimation';
 
 interface SimpleDocProps {
   mobile?: boolean;
@@ -20,6 +21,7 @@ interface SimpleDocProps {
   items?: {
     id: string;
     name: string;
+    emoji?: string;
   }[];
   baseUrl?: string;
 }
@@ -44,6 +46,7 @@ const StyledSimpleDocItem = styled('a')(({ theme }) => ({
     color: theme.palette.primary.main,
     boxShadow: '0px 10px 20px 0px rgba(0,0,5,0.15)',
   },
+  opacity: 0,
 }));
 
 const StyledSimpleDocItemTitle = styled('h3')(({ theme }) => ({
@@ -54,6 +57,38 @@ const StyledSimpleDocItemTitle = styled('h3')(({ theme }) => ({
   fontWeight: 700,
   width: '100%',
 }));
+
+// 单个卡片组件，带动画效果
+const SimpleDocItem: React.FC<{
+  item: any;
+  index: number;
+  baseUrl: string;
+  size: any;
+}> = React.memo(({ item, index, baseUrl, size }) => {
+  const cardRef = useCardAnimation(0.2 + index * 0.1, 0.1);
+
+  return (
+    <Grid size={size} key={index}>
+      <StyledSimpleDocItem
+        ref={cardRef as React.Ref<HTMLAnchorElement>}
+        href={`${baseUrl}/node/${item.id}`}
+        target='_blank'
+      >
+        <StyledSimpleDocItemTitle>
+          {item.emoji ? (
+            <Box>{item.emoji}</Box>
+          ) : (
+            <IconWenjian sx={{ fontSize: 16, flexShrink: 0 }} />
+          )}
+          <StyledEllipsis sx={{ flex: 1 }}>{item.name}</StyledEllipsis>
+          <ArrowForwardIosRoundedIcon
+            sx={{ fontSize: 14, color: 'primary.main' }}
+          />
+        </StyledSimpleDocItemTitle>
+      </StyledSimpleDocItem>
+    </Grid>
+  );
+});
 
 const SimpleDoc: React.FC<SimpleDocProps> = React.memo(
   ({
@@ -66,31 +101,26 @@ const SimpleDoc: React.FC<SimpleDocProps> = React.memo(
   }) => {
     const size =
       typeof mobile === 'boolean' ? (mobile ? 12 : 4) : { xs: 12, md: 4 };
+
+    // 添加标题淡入动画
+    const titleRef = useFadeInText(0.2, 0.1);
+
     return (
       <StyledTopicContainer>
         <StyledTopicInner sx={{ backgroundColor: bgColor }}>
           <StyledTopicBox>
-            <StyledTopicTitle sx={{ color: titleColor }}>
+            <StyledTopicTitle ref={titleRef} sx={{ color: titleColor }}>
               {title}
             </StyledTopicTitle>
             <Grid container spacing={2} sx={{ width: '100%' }}>
               {items.map((item, index) => (
-                <Grid size={size} key={index}>
-                  <StyledSimpleDocItem
-                    href={`${baseUrl}/node/${item.id}`}
-                    target='_blank'
-                  >
-                    <StyledSimpleDocItemTitle>
-                      <IconWenjian sx={{ fontSize: 16, flexShrink: 0 }} />
-                      <StyledEllipsis sx={{ flex: 1 }}>
-                        {item.name}
-                      </StyledEllipsis>
-                      <ArrowForwardIosRoundedIcon
-                        sx={{ fontSize: 14, color: 'primary.main' }}
-                      />
-                    </StyledSimpleDocItemTitle>
-                  </StyledSimpleDocItem>
-                </Grid>
+                <SimpleDocItem
+                  key={index}
+                  item={item}
+                  index={index}
+                  baseUrl={baseUrl}
+                  size={size}
+                />
               ))}
             </Grid>
           </StyledTopicBox>

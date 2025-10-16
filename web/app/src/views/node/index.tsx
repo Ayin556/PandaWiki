@@ -98,7 +98,7 @@ const Doc = ({ node }: { node?: NodeDetail }) => {
             ...(docWidth !== 'full' &&
               !mobile && {
                 width: DocWidth[docWidth as keyof typeof DocWidth].value,
-                maxWidth: `calc(100% - ${catalogWidth}px - 265px - 192px)`,
+                maxWidth: `calc(100% - ${catalogWidth}px - 240px - 192px)`,
               }),
             ...(mobile && {
               mx: 'auto',
@@ -181,9 +181,7 @@ const Doc = ({ node }: { node?: NodeDetail }) => {
       )}
 
       {!mobile && <DocAnchor headings={headings} />}
-
       <DocFab />
-
       {!mobile && (
         <Zoom in={showScrollTop}>
           <Fab

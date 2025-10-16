@@ -2,6 +2,7 @@ import { CSSProperties, memo } from 'react';
 import { styled } from '@mui/material';
 import { StyledTopicTitle } from '../component/styledCommon';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { useFadeInText } from '../hooks/useGsapAnimation';
 
 import 'swiper/css';
 import 'swiper/css/pagination';
@@ -97,6 +98,9 @@ const Carousel = ({
   bgColor,
   titleColor,
 }: CarouselProps) => {
+  // 添加标题淡入动画
+  const titleRef = useFadeInText(0.2, 0.1);
+
   return (
     <StyledCarousel
       sx={{
@@ -106,7 +110,9 @@ const Carousel = ({
       }}
     >
       <StyledCarouselInner sx={{ backgroundColor: bgColor }}>
-        <StyledTopicTitle sx={{ color: titleColor }}>{title}</StyledTopicTitle>
+        <StyledTopicTitle ref={titleRef} sx={{ color: titleColor }}>
+          {title}
+        </StyledTopicTitle>
         <Swiper
           slidesPerView={mobile ? 1 : 2}
           spaceBetween={50}
