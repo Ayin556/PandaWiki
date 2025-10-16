@@ -23,7 +23,7 @@ import {
 } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import VersionPublish from '../release/components/VersionPublish';
-import AddDocByOther from './component/AddDocByOther';
+import AddDocByOther from './component/AddDocByOther/index';
 import DocAdd from './component/DocAdd';
 import DocDelete from './component/DocDelete';
 import DocPropertiesModal from './component/DocPropertiesModal';
