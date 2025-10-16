@@ -235,6 +235,7 @@ const docTemplate = `{
                             "dingtalk_bot",
                             "feishu_bot",
                             "wechat_bot",
+                            "wecom_ai_bot",
                             "wechat_service_bot",
                             "discord_bot",
                             "wechat_official_account",
@@ -253,6 +254,7 @@ const docTemplate = `{
                             "SourceTypeDingtalkBot",
                             "SourceTypeFeishuBot",
                             "SourceTypeWechatBot",
+                            "SourceTypeWecomAIBot",
                             "SourceTypeWechatServiceBot",
                             "SourceTypeDiscordBot",
                             "SourceTypeWechatOfficialAccount",
@@ -4797,6 +4799,7 @@ const docTemplate = `{
                 "dingtalk_bot",
                 "feishu_bot",
                 "wechat_bot",
+                "wecom_ai_bot",
                 "wechat_service_bot",
                 "discord_bot",
                 "wechat_official_account",
@@ -4814,6 +4817,7 @@ const docTemplate = `{
                 "SourceTypeDingtalkBot",
                 "SourceTypeFeishuBot",
                 "SourceTypeWechatBot",
+                "SourceTypeWecomAIBot",
                 "SourceTypeWechatServiceBot",
                 "SourceTypeDiscordBot",
                 "SourceTypeWechatOfficialAccount",
@@ -5225,7 +5229,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "wechat_app_is_enabled": {
-                    "description": "WechatAppBot",
+                    "description": "WechatAppBot 企业微信机器人",
                     "type": "boolean"
                 },
                 "wechat_app_secret": {
@@ -5250,11 +5254,23 @@ const docTemplate = `{
                 "wechat_official_account_token": {
                     "type": "string"
                 },
+                "wechat_service_contain_keywords": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "wechat_service_corpid": {
                     "type": "string"
                 },
                 "wechat_service_encodingaeskey": {
                     "type": "string"
+                },
+                "wechat_service_equal_keywords": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "wechat_service_is_enabled": {
                     "description": "WechatServiceBot",
@@ -5265,6 +5281,14 @@ const docTemplate = `{
                 },
                 "wechat_service_token": {
                     "type": "string"
+                },
+                "wecom_ai_bot_settings": {
+                    "description": "WecomAIBotSettings 企业微信智能机器人",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.WecomAIBotSettings"
+                        }
+                    ]
                 },
                 "welcome_str": {
                     "description": "welcome",
@@ -5481,11 +5505,23 @@ const docTemplate = `{
                 "wechat_official_account_token": {
                     "type": "string"
                 },
+                "wechat_service_contain_keywords": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "wechat_service_corpid": {
                     "type": "string"
                 },
                 "wechat_service_encodingaeskey": {
                     "type": "string"
+                },
+                "wechat_service_equal_keywords": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "wechat_service_is_enabled": {
                     "description": "WechatServiceBot",
@@ -5496,6 +5532,9 @@ const docTemplate = `{
                 },
                 "wechat_service_token": {
                     "type": "string"
+                },
+                "wecom_ai_bot_settings": {
+                    "$ref": "#/definitions/domain.WecomAIBotSettings"
                 },
                 "welcome_str": {
                     "description": "welcome",
@@ -5523,7 +5562,8 @@ const docTemplate = `{
                 6,
                 7,
                 8,
-                9
+                9,
+                10
             ],
             "x-enum-varnames": [
                 "AppTypeWeb",
@@ -5534,7 +5574,8 @@ const docTemplate = `{
                 "AppTypeWechatServiceBot",
                 "AppTypeDisCordBot",
                 "AppTypeWechatOfficialAccount",
-                "AppTypeOpenAIAPI"
+                "AppTypeOpenAIAPI",
+                "AppTypeWecomAIBot"
             ]
         },
         "domain.AuthUserInfo": {
@@ -7672,6 +7713,20 @@ const docTemplate = `{
                             "type": "string"
                         }
                     }
+                }
+            }
+        },
+        "domain.WecomAIBotSettings": {
+            "type": "object",
+            "properties": {
+                "encodingaeskey": {
+                    "type": "string"
+                },
+                "is_enabled": {
+                    "type": "boolean"
+                },
+                "token": {
+                    "type": "string"
                 }
             }
         },

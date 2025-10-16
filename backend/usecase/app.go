@@ -362,11 +362,13 @@ func (u *AppUsecase) GetAppDetailByKBIDAndAppType(ctx context.Context, kbID stri
 		WeChatAppSecret:         app.Settings.WeChatAppSecret,
 		WeChatAppAgentID:        app.Settings.WeChatAppAgentID,
 		// WechatServiceBot
-		WeChatServiceIsEnabled:      app.Settings.WeChatServiceIsEnabled,
-		WeChatServiceToken:          app.Settings.WeChatServiceToken,
-		WeChatServiceEncodingAESKey: app.Settings.WeChatServiceEncodingAESKey,
-		WeChatServiceCorpID:         app.Settings.WeChatServiceCorpID,
-		WeChatServiceSecret:         app.Settings.WeChatServiceSecret,
+		WeChatServiceIsEnabled:       app.Settings.WeChatServiceIsEnabled,
+		WeChatServiceToken:           app.Settings.WeChatServiceToken,
+		WeChatServiceEncodingAESKey:  app.Settings.WeChatServiceEncodingAESKey,
+		WeChatServiceCorpID:          app.Settings.WeChatServiceCorpID,
+		WeChatServiceSecret:          app.Settings.WeChatServiceSecret,
+		WechatServiceContainKeywords: app.Settings.WechatServiceContainKeywords,
+		WechatServiceEqualKeywords:   app.Settings.WechatServiceEqualKeywords,
 		// Discord
 		DiscordBotIsEnabled: app.Settings.DiscordBotIsEnabled,
 		DiscordBotToken:     app.Settings.DiscordBotToken,
@@ -405,6 +407,8 @@ func (u *AppUsecase) GetAppDetailByKBIDAndAppType(ctx context.Context, kbID stri
 		CopySetting:        app.Settings.CopySetting,
 		ContributeSettings: app.Settings.ContributeSettings,
 		HomePageSetting:    app.Settings.HomePageSetting,
+
+		WecomAIBotSettings: app.Settings.WecomAIBotSettings,
 	}
 	// init ai feedback string
 	if app.Settings.AIFeedbackSettings.AIFeedbackType == nil {
@@ -600,6 +604,14 @@ func (u *AppUsecase) handleBotAuths(ctx context.Context, id string, newSettings 
 		if err := u.handleBotAuth(ctx, currentApp.KBID, currentApp.ID, &currentApp.Settings.OpenAIAPIBotSettings.IsEnabled,
 			&newSettings.OpenAIAPIBotSettings.IsEnabled, consts.SourceTypeOpenAIAPI); err != nil {
 			u.logger.Error("failed to handle openai api bot auth", log.Error(err))
+		}
+	}
+
+	// Handle Wecom AI Bot
+	if currentApp.Settings.WecomAIBotSettings.IsEnabled != newSettings.WecomAIBotSettings.IsEnabled {
+		if err := u.handleBotAuth(ctx, currentApp.KBID, currentApp.ID, &currentApp.Settings.WecomAIBotSettings.IsEnabled,
+			&newSettings.WecomAIBotSettings.IsEnabled, consts.SourceTypeWecomAIBot); err != nil {
+			u.logger.Error("failed to handle wecom ai bot account auth", log.Error(err))
 		}
 	}
 

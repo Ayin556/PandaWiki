@@ -18,6 +18,7 @@ const (
 	SourceTypeDingtalkBot           SourceType = "dingtalk_bot"
 	SourceTypeFeishuBot             SourceType = "feishu_bot"
 	SourceTypeWechatBot             SourceType = "wechat_bot"
+	SourceTypeWecomAIBot            SourceType = "wecom_ai_bot"
 	SourceTypeWechatServiceBot      SourceType = "wechat_service_bot"
 	SourceTypeDiscordBot            SourceType = "discord_bot"
 	SourceTypeWechatOfficialAccount SourceType = "wechat_official_account"
@@ -34,6 +35,8 @@ func (s SourceType) Name() string {
 		return "飞书机器人"
 	case SourceTypeWechatBot:
 		return "企业微信机器人"
+	case SourceTypeWecomAIBot:
+		return "企业微信智能机器人"
 	case SourceTypeWechatServiceBot:
 		return "企业微信客服"
 	case SourceTypeDiscordBot:

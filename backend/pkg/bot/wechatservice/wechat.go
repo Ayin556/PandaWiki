@@ -9,10 +9,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"slices"
 	"strings"
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/samber/lo"
 	"github.com/sbzhu/weworkapi_golang/wxbizmsgcrypt"
 
 	"github.com/chaitin/panda-wiki/domain"
@@ -20,15 +22,17 @@ import (
 	"github.com/chaitin/panda-wiki/pkg/bot"
 )
 
-func NewWechatServiceConfig(ctx context.Context, CorpID, Token, EncodingAESKey string, kbid string, secret string, logger *log.Logger) (*WechatServiceConfig, error) {
+func NewWechatServiceConfig(ctx context.Context, logger *log.Logger, CorpID, Token, EncodingAESKey string, kbid string, secret string, containKeywords, equalKeywords []string) (*WechatServiceConfig, error) {
 	return &WechatServiceConfig{
-		Ctx:            ctx,
-		CorpID:         CorpID,
-		Token:          Token,
-		EncodingAESKey: EncodingAESKey,
-		kbID:           kbid,
-		Secret:         secret,
-		logger:         logger,
+		Ctx:             ctx,
+		CorpID:          CorpID,
+		Token:           Token,
+		EncodingAESKey:  EncodingAESKey,
+		kbID:            kbid,
+		Secret:          secret,
+		logger:          logger,
+		containKeywords: containKeywords,
+		equalKeywords:   equalKeywords,
 	}, nil
 }
 
@@ -104,7 +108,9 @@ func (cfg *WechatServiceConfig) Processmessage(msgRet *MsgRet, Kfmsg *WeixinUser
 		return nil
 	}
 
-	if content == "转人工" || content == "人工客服" {
+	if slices.Contains(cfg.equalKeywords, content) || lo.SomeBy(cfg.containKeywords, func(sub string) bool {
+		return strings.Contains(content, sub)
+	}) {
 		// 改变状态为人工接待
 		// 非人工 ->转人工
 		humanList, err := cfg.GetKfHumanList(token, openkfId)

@@ -53,12 +53,14 @@ func (u *WechatUsecase) WechatService(ctx context.Context, msg *wechatservice.We
 func (u *WechatUsecase) NewWechatServiceConfig(ctx context.Context, appInfo *domain.AppDetailResp, kbID string) (*wechatservice.WechatServiceConfig, error) {
 	return wechatservice.NewWechatServiceConfig(
 		ctx,
+		u.logger,
 		appInfo.Settings.WeChatServiceCorpID,
 		appInfo.Settings.WeChatServiceToken,
 		appInfo.Settings.WeChatServiceEncodingAESKey,
 		kbID,
 		appInfo.Settings.WeChatServiceSecret,
-		u.logger,
+		appInfo.Settings.WechatServiceContainKeywords,
+		appInfo.Settings.WechatServiceEqualKeywords,
 	)
 }
 

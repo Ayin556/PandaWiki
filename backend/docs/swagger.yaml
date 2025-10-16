@@ -139,6 +139,7 @@ definitions:
     - dingtalk_bot
     - feishu_bot
     - wechat_bot
+    - wecom_ai_bot
     - wechat_service_bot
     - discord_bot
     - wechat_official_account
@@ -156,6 +157,7 @@ definitions:
     - SourceTypeDingtalkBot
     - SourceTypeFeishuBot
     - SourceTypeWechatBot
+    - SourceTypeWecomAIBot
     - SourceTypeWechatServiceBot
     - SourceTypeDiscordBot
     - SourceTypeWechatOfficialAccount
@@ -428,7 +430,7 @@ definitions:
       wechat_app_encodingaeskey:
         type: string
       wechat_app_is_enabled:
-        description: WechatAppBot
+        description: WechatAppBot 企业微信机器人
         type: boolean
       wechat_app_secret:
         type: string
@@ -445,10 +447,18 @@ definitions:
         type: boolean
       wechat_official_account_token:
         type: string
+      wechat_service_contain_keywords:
+        items:
+          type: string
+        type: array
       wechat_service_corpid:
         type: string
       wechat_service_encodingaeskey:
         type: string
+      wechat_service_equal_keywords:
+        items:
+          type: string
+        type: array
       wechat_service_is_enabled:
         description: WechatServiceBot
         type: boolean
@@ -456,6 +466,10 @@ definitions:
         type: string
       wechat_service_token:
         type: string
+      wecom_ai_bot_settings:
+        allOf:
+        - $ref: '#/definitions/domain.WecomAIBotSettings'
+        description: WecomAIBotSettings 企业微信智能机器人
       welcome_str:
         description: welcome
         type: string
@@ -591,10 +605,18 @@ definitions:
         type: boolean
       wechat_official_account_token:
         type: string
+      wechat_service_contain_keywords:
+        items:
+          type: string
+        type: array
       wechat_service_corpid:
         type: string
       wechat_service_encodingaeskey:
         type: string
+      wechat_service_equal_keywords:
+        items:
+          type: string
+        type: array
       wechat_service_is_enabled:
         description: WechatServiceBot
         type: boolean
@@ -602,6 +624,8 @@ definitions:
         type: string
       wechat_service_token:
         type: string
+      wecom_ai_bot_settings:
+        $ref: '#/definitions/domain.WecomAIBotSettings'
       welcome_str:
         description: welcome
         type: string
@@ -621,6 +645,7 @@ definitions:
     - 7
     - 8
     - 9
+    - 10
     format: int32
     type: integer
     x-enum-varnames:
@@ -633,6 +658,7 @@ definitions:
     - AppTypeDisCordBot
     - AppTypeWechatOfficialAccount
     - AppTypeOpenAIAPI
+    - AppTypeWecomAIBot
   domain.AuthUserInfo:
     properties:
       avatar_url:
@@ -2025,6 +2051,15 @@ definitions:
             type: string
         type: object
     type: object
+  domain.WecomAIBotSettings:
+    properties:
+      encodingaeskey:
+        type: string
+      is_enabled:
+        type: boolean
+      token:
+        type: string
+    type: object
   domain.WidgetBotSettings:
     properties:
       btn_logo:
@@ -3149,6 +3184,7 @@ paths:
         - dingtalk_bot
         - feishu_bot
         - wechat_bot
+        - wecom_ai_bot
         - wechat_service_bot
         - discord_bot
         - wechat_official_account
@@ -3169,6 +3205,7 @@ paths:
         - SourceTypeDingtalkBot
         - SourceTypeFeishuBot
         - SourceTypeWechatBot
+        - SourceTypeWecomAIBot
         - SourceTypeWechatServiceBot
         - SourceTypeDiscordBot
         - SourceTypeWechatOfficialAccount

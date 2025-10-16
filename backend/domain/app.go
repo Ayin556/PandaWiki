@@ -22,6 +22,7 @@ const (
 	AppTypeDisCordBot
 	AppTypeWechatOfficialAccount
 	AppTypeOpenAIAPI
+	AppTypeWecomAIBot
 )
 
 var AppTypes = []AppType{
@@ -34,6 +35,7 @@ var AppTypes = []AppType{
 	AppTypeDisCordBot,
 	AppTypeWechatOfficialAccount,
 	AppTypeOpenAIAPI,
+	AppTypeWecomAIBot,
 }
 
 func (t AppType) ToSourceType() consts.SourceType {
@@ -48,6 +50,8 @@ func (t AppType) ToSourceType() consts.SourceType {
 		return consts.SourceTypeFeishuBot
 	case AppTypeWechatBot:
 		return consts.SourceTypeWechatBot
+	case AppTypeWecomAIBot:
+		return consts.SourceTypeWecomAIBot
 	case AppTypeWechatServiceBot:
 		return consts.SourceTypeWechatServiceBot
 	case AppTypeDisCordBot:
@@ -99,19 +103,23 @@ type AppSettings struct {
 	FeishuBotIsEnabled *bool  `json:"feishu_bot_is_enabled,omitempty"`
 	FeishuBotAppID     string `json:"feishu_bot_app_id,omitempty"`
 	FeishuBotAppSecret string `json:"feishu_bot_app_secret,omitempty"`
-	// WechatAppBot
+	// WechatAppBot 企业微信机器人
 	WeChatAppIsEnabled      *bool  `json:"wechat_app_is_enabled,omitempty"`
 	WeChatAppToken          string `json:"wechat_app_token,omitempty"`
 	WeChatAppEncodingAESKey string `json:"wechat_app_encodingaeskey,omitempty"`
 	WeChatAppCorpID         string `json:"wechat_app_corpid,omitempty"`
 	WeChatAppSecret         string `json:"wechat_app_secret,omitempty"`
 	WeChatAppAgentID        string `json:"wechat_app_agent_id,omitempty"`
+	// WecomAIBotSettings 企业微信智能机器人
+	WecomAIBotSettings WecomAIBotSettings `json:"wecom_ai_bot_settings"`
 	// WechatServiceBot
-	WeChatServiceIsEnabled      *bool  `json:"wechat_service_is_enabled,omitempty"`
-	WeChatServiceToken          string `json:"wechat_service_token,omitempty"`
-	WeChatServiceEncodingAESKey string `json:"wechat_service_encodingaeskey,omitempty"`
-	WeChatServiceCorpID         string `json:"wechat_service_corpid,omitempty"`
-	WeChatServiceSecret         string `json:"wechat_service_secret,omitempty"`
+	WeChatServiceIsEnabled       *bool    `json:"wechat_service_is_enabled,omitempty"`
+	WeChatServiceToken           string   `json:"wechat_service_token,omitempty"`
+	WeChatServiceEncodingAESKey  string   `json:"wechat_service_encodingaeskey,omitempty"`
+	WeChatServiceCorpID          string   `json:"wechat_service_corpid,omitempty"`
+	WeChatServiceSecret          string   `json:"wechat_service_secret,omitempty"`
+	WechatServiceContainKeywords []string `json:"wechat_service_contain_keywords"`
+	WechatServiceEqualKeywords   []string `json:"wechat_service_equal_keywords"`
 	// DisCordBot
 	DiscordBotIsEnabled *bool  `json:"discord_bot_is_enabled,omitempty"`
 	DiscordBotToken     string `json:"discord_bot_token,omitempty"`
@@ -210,6 +218,12 @@ type WebAppLandingSettings struct {
 		} `json:"list"`
 	} `json:"faq_config"`
 	ComConfigOrder []string `json:"com_config_order"`
+}
+
+type WecomAIBotSettings struct {
+	IsEnabled      bool   `json:"is_enabled,omitempty"`
+	Token          string `json:"token,omitempty"`
+	EncodingAESKey string `json:"encodingaeskey,omitempty"`
 }
 
 type DisclaimerSettings struct {
@@ -347,11 +361,14 @@ type AppSettingsResp struct {
 	WeChatAppSecret         string `json:"wechat_app_secret,omitempty"`
 	WeChatAppAgentID        string `json:"wechat_app_agent_id,omitempty"`
 	// WechatServiceBot
-	WeChatServiceIsEnabled      *bool  `json:"wechat_service_is_enabled,omitempty"`
-	WeChatServiceToken          string `json:"wechat_service_token,omitempty"`
-	WeChatServiceEncodingAESKey string `json:"wechat_service_encodingaeskey,omitempty"`
-	WeChatServiceCorpID         string `json:"wechat_service_corpid,omitempty"`
-	WeChatServiceSecret         string `json:"wechat_service_secret,omitempty"`
+	WeChatServiceIsEnabled       *bool    `json:"wechat_service_is_enabled,omitempty"`
+	WeChatServiceToken           string   `json:"wechat_service_token,omitempty"`
+	WeChatServiceEncodingAESKey  string   `json:"wechat_service_encodingaeskey,omitempty"`
+	WeChatServiceCorpID          string   `json:"wechat_service_corpid,omitempty"`
+	WeChatServiceSecret          string   `json:"wechat_service_secret,omitempty"`
+	WechatServiceContainKeywords []string `json:"wechat_service_contain_keywords"`
+	WechatServiceEqualKeywords   []string `json:"wechat_service_equal_keywords"`
+
 	// DisCordBot
 	DiscordBotIsEnabled *bool  `json:"discord_bot_is_enabled,omitempty"`
 	DiscordBotToken     string `json:"discord_bot_token,omitempty"`
@@ -361,6 +378,9 @@ type AppSettingsResp struct {
 	WechatOfficialAccountAppSecret      string `json:"wechat_official_account_app_secret,omitempty"`
 	WechatOfficialAccountToken          string `json:"wechat_official_account_token,omitempty"`
 	WechatOfficialAccountEncodingAESKey string `json:"wechat_official_account_encodingaeskey,omitempty"`
+
+	WecomAIBotSettings WecomAIBotSettings `json:"wecom_ai_bot_settings"`
+
 	// theme
 	ThemeMode     string        `json:"theme_mode,omitempty"`
 	ThemeAndStyle ThemeAndStyle `json:"theme_and_style"`

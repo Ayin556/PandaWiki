@@ -25,6 +25,7 @@ type ShareWechatHandler struct {
 	appCase          *usecase.AppUsecase
 	conversationCase *usecase.ConversationUsecase
 	wechatUsecase    *usecase.WechatUsecase
+	wecomUsecase     *usecase.WecomUsecase
 	wechatAppUsecase *usecase.WechatAppUsecase
 }
 
@@ -35,6 +36,7 @@ func NewShareWechatHandler(
 	appCase *usecase.AppUsecase,
 	conversationCase *usecase.ConversationUsecase,
 	wechatUsecase *usecase.WechatUsecase,
+	wecomUsecase *usecase.WecomUsecase,
 	wechatAppUsecase *usecase.WechatAppUsecase,
 ) *ShareWechatHandler {
 	h := &ShareWechatHandler{
@@ -43,6 +45,7 @@ func NewShareWechatHandler(
 		appCase:          appCase,
 		conversationCase: conversationCase,
 		wechatUsecase:    wechatUsecase,
+		wecomUsecase:     wecomUsecase,
 		wechatAppUsecase: wechatAppUsecase,
 	}
 
@@ -66,6 +69,10 @@ func NewShareWechatHandler(
 	//企业微信
 	share.GET("/wechat/app", h.VerifyUrlWechatApp)
 	share.POST("/wechat/app", h.WechatHandlerApp)
+
+	// 企业微信智能机器人
+	share.GET("/wecom/ai_bot", h.WecomAIBotVerify)
+	share.POST("/wecom/ai_bot", h.WecomAIBotHandle)
 
 	return h
 }
@@ -253,7 +260,7 @@ func (h *ShareWechatHandler) WechatHandlerService(c echo.Context) error {
 	wxCrypt := wxbizmsgcrypt.NewWXBizMsgCrypt(wechatServiceConf.Token, wechatServiceConf.EncodingAESKey, wechatServiceConf.CorpID, wxbizmsgcrypt.XmlType)
 	decryptMsg, errCode := wxCrypt.DecryptMsg(signature, timestamp, nonce, body)
 	if errCode != nil {
-		h.logger.Error("DecryptMsg failed", log.Any("decryptMsg err", errCode))
+		h.logger.Error("DecryptUserReq failed", log.Any("decryptMsg err", errCode))
 		return nil
 	}
 
@@ -363,7 +370,7 @@ func (h *ShareWechatHandler) WechatHandlerApp(c echo.Context) error {
 	wxCrypt := wxbizmsgcrypt.NewWXBizMsgCrypt(wechatConfig.Token, wechatConfig.EncodingAESKey, wechatConfig.CorpID, wxbizmsgcrypt.XmlType)
 	decryptMsg, errCode := wxCrypt.DecryptMsg(signature, timestamp, nonce, body)
 	if errCode != nil {
-		return h.NewResponseWithError(c, "DecryptMsg failed", nil)
+		return h.NewResponseWithError(c, "DecryptUserReq failed", nil)
 	}
 
 	msg, err := wechatConfig.UnmarshalMsg(decryptMsg)
@@ -390,4 +397,83 @@ func (h *ShareWechatHandler) WechatHandlerApp(c echo.Context) error {
 	}(msg, wechatConfig, kbID)
 
 	return c.XMLBlob(http.StatusOK, []byte(immediateResponse))
+}
+
+func (h *ShareWechatHandler) WecomAIBotVerify(c echo.Context) error {
+	signature := c.QueryParam("msg_signature")
+	timestamp := c.QueryParam("timestamp")
+	nonce := c.QueryParam("nonce")
+	echoStr := c.QueryParam("echostr")
+
+	kbID := c.Request().Header.Get("X-KB-ID")
+
+	if kbID == "" {
+		return h.NewResponseWithError(c, "kb_id is required", nil)
+	}
+
+	if signature == "" || timestamp == "" || nonce == "" || echoStr == "" {
+		return h.NewResponseWithError(
+			c, "verify wecom ai params failed", nil,
+		)
+	}
+
+	ctx := c.Request().Context()
+
+	appInfo, err := h.appCase.GetAppDetailByKBIDAndAppType(ctx, kbID, domain.AppTypeWecomAIBot)
+
+	if err != nil {
+		h.logger.Error("find app detail failed", log.Error(err))
+		return err
+	}
+	if !appInfo.Settings.WecomAIBotSettings.IsEnabled {
+		h.logger.Error("wecom ai bot is not enabled", log.Error(err))
+		return errors.New("wecom ai bot is not enabled")
+	}
+
+	resp, err := h.wecomUsecase.VerifyUrlService(ctx, signature, timestamp, nonce, echoStr, appInfo)
+	if err != nil {
+		h.logger.Error("wecom ai bot verify failed", log.Error(err))
+		return err
+	}
+
+	return c.String(http.StatusOK, resp)
+}
+
+func (h *ShareWechatHandler) WecomAIBotHandle(c echo.Context) error {
+
+	signature := c.QueryParam("msg_signature")
+	timestamp := c.QueryParam("timestamp")
+	nonce := c.QueryParam("nonce")
+
+	kbID := c.Request().Header.Get("X-KB-ID")
+	if kbID == "" {
+		return h.NewResponseWithError(c, "kb_id is required", nil)
+	}
+
+	body, err := io.ReadAll(c.Request().Body)
+	if err != nil {
+		h.logger.Error("get request failed", log.Error(err))
+		return h.NewResponseWithError(c, "Internal Server Error", err)
+	}
+	defer c.Request().Body.Close()
+
+	ctx := c.Request().Context()
+
+	appInfo, err := h.appCase.GetAppDetailByKBIDAndAppType(ctx, kbID, domain.AppTypeWecomAIBot)
+	if err != nil {
+		return h.NewResponseWithError(c, "GetAppDetailByKBIDAndAppType failed", err)
+	}
+
+	if !appInfo.Settings.WecomAIBotSettings.IsEnabled {
+		return h.NewResponseWithError(c, "wecom app bot is not enabled", nil)
+	}
+
+	h.logger.Info("msg:", log.String("body", string(body)))
+	resp, err := h.wecomUsecase.HandleMsg(ctx, kbID, signature, timestamp, nonce, string(body), appInfo)
+	if err != nil {
+		h.logger.Error("wecom ai bot handle msg failed", log.Error(err))
+		return err
+	}
+
+	return c.String(http.StatusOK, resp)
 }
