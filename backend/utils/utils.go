@@ -359,3 +359,8 @@ func IsUUID(s string) bool {
 	_, err := uuid.Parse(s)
 	return err == nil
 }
+
+func IsLikelyHTML(text string) bool {
+	trimContent := strings.TrimSpace(text)
+	return strings.HasPrefix(trimContent, "<") && strings.HasSuffix(trimContent, ">")
+}

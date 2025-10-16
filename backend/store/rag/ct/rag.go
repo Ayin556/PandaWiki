@@ -21,6 +21,7 @@ import (
 	"github.com/chaitin/panda-wiki/config"
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/log"
+	"github.com/chaitin/panda-wiki/utils"
 )
 
 type CTRAG struct {
@@ -168,9 +169,9 @@ func (s *CTRAG) UpsertRecords(ctx context.Context, datasetID string, nodeRelease
 	if err != nil {
 		return "", fmt.Errorf("create temp file failed: %w", err)
 	}
-	// convert html to markdown
 	markdown := nodeRelease.Content
-	if strings.HasPrefix(nodeRelease.Content, "<") {
+	// if the content is html, convert it to markdown first
+	if utils.IsLikelyHTML(nodeRelease.Content) {
 		markdown, err = s.mdConv.ConvertString(nodeRelease.Content)
 		if err != nil {
 			return "", fmt.Errorf("convert html to markdown failed: %w", err)
