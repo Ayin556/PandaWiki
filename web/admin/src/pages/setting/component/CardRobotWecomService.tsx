@@ -1,21 +1,24 @@
+import { FreeSoloAutocomplete } from '@/components/FreeSoloAutocomplete';
 import ShowText from '@/components/ShowText';
+import { useCommitPendingInput } from '@/hooks';
+import { getApiV1AppDetail, putApiV1App } from '@/request/App';
+import {
+  DomainAppDetailResp,
+  DomainKnowledgeBaseDetail,
+} from '@/request/types';
+import { useAppSelector } from '@/store';
+import { Icon, message } from '@ctzhian/ui';
 import {
   Box,
   FormControlLabel,
   Radio,
   RadioGroup,
+  Stack,
   TextField,
 } from '@mui/material';
-import { message } from '@ctzhian/ui';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import {
-  DomainKnowledgeBaseDetail,
-  DomainAppDetailResp,
-} from '@/request/types';
-import { getApiV1AppDetail, putApiV1App } from '@/request/App';
 import { FormItem, SettingCardItem } from './Common';
-import { useAppSelector } from '@/store';
 
 const CardRobotWecomService = ({
   kb,
@@ -33,6 +36,8 @@ const CardRobotWecomService = ({
     handleSubmit,
     formState: { errors },
     reset,
+    watch,
+    setValue,
   } = useForm({
     defaultValues: {
       wechat_service_is_enabled: false,
@@ -40,6 +45,8 @@ const CardRobotWecomService = ({
       wechat_service_token: '',
       wechat_service_encodingaeskey: '',
       wechat_service_corpid: '',
+      wechat_service_contain_keywords: [] as string[],
+      wechat_service_equal_keywords: [] as string[],
     },
   });
 
@@ -55,9 +62,34 @@ const CardRobotWecomService = ({
         wechat_service_encodingaeskey:
           res.settings?.wechat_service_encodingaeskey ?? '',
         wechat_service_corpid: res.settings?.wechat_service_corpid ?? '',
+        wechat_service_contain_keywords:
+          res.settings?.wechat_service_contain_keywords ?? ([] as string[]),
+        wechat_service_equal_keywords:
+          res.settings?.wechat_service_equal_keywords ?? ([] as string[]),
       });
     });
   };
+
+  const wechat_service_contain_keywords =
+    watch('wechat_service_contain_keywords') || [];
+  const wechat_service_equal_keywords =
+    watch('wechat_service_equal_keywords') || [];
+
+  const containKeywordsField = useCommitPendingInput<string>({
+    value: wechat_service_contain_keywords,
+    setValue: value => {
+      setIsEdit(true);
+      setValue('wechat_service_contain_keywords', value);
+    },
+  });
+
+  const equalKeywordsField = useCommitPendingInput<string>({
+    value: wechat_service_equal_keywords,
+    setValue: value => {
+      setIsEdit(true);
+      setValue('wechat_service_equal_keywords', value);
+    },
+  });
 
   const onSubmit = handleSubmit(data => {
     if (!detail) return;
@@ -71,6 +103,8 @@ const CardRobotWecomService = ({
           wechat_service_token: data.wechat_service_token,
           wechat_service_encodingaeskey: data.wechat_service_encodingaeskey,
           wechat_service_corpid: data.wechat_service_corpid,
+          wechat_service_contain_keywords: data.wechat_service_contain_keywords,
+          wechat_service_equal_keywords: data.wechat_service_equal_keywords,
         },
       },
     ).then(() => {
@@ -217,6 +251,47 @@ const CardRobotWecomService = ({
                   helperText={errors.wechat_service_encodingaeskey?.message}
                 />
               )}
+            />
+          </FormItem>
+          <Stack
+            direction={'row'}
+            alignItems={'center'}
+            gap={1}
+            sx={{ fontSize: 14, fontWeight: 600, color: 'warning.main' }}
+          >
+            <Icon type='icon-jinggao' sx={{ fontSize: 18 }} />
+            人工客服转接配置：当用户触发以下场景时，会自动转接人工客服
+          </Stack>
+          <FormItem
+            label={
+              <Box>
+                提问
+                <Box component={'span'} sx={{ fontWeight: 600 }}>
+                  包含特定
+                </Box>
+                关键词
+              </Box>
+            }
+          >
+            <FreeSoloAutocomplete
+              placeholder='回车确认，填写下一个'
+              {...containKeywordsField}
+            />
+          </FormItem>
+          <FormItem
+            label={
+              <Box>
+                提问
+                <Box component={'span'} sx={{ fontWeight: 600 }}>
+                  完全匹配
+                </Box>
+                关键词
+              </Box>
+            }
+          >
+            <FreeSoloAutocomplete
+              placeholder='回车确认，填写下一个'
+              {...equalKeywordsField}
             />
           </FormItem>
         </>

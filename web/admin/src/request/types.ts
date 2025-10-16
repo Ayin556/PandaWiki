@@ -75,6 +75,7 @@ export enum DomainAppType {
   AppTypeDisCordBot = 7,
   AppTypeWechatOfficialAccount = 8,
   AppTypeOpenAIAPI = 9,
+  AppTypeWecomAIBot = 10,
 }
 
 export enum ConstsWatermarkSetting {
@@ -123,6 +124,7 @@ export enum ConstsSourceType {
   SourceTypeDingtalkBot = "dingtalk_bot",
   SourceTypeFeishuBot = "feishu_bot",
   SourceTypeWechatBot = "wechat_bot",
+  SourceTypeWecomAIBot = "wecom_ai_bot",
   SourceTypeWechatServiceBot = "wechat_service_bot",
   SourceTypeDiscordBot = "discord_bot",
   SourceTypeWechatOfficialAccount = "wechat_official_account",
@@ -292,7 +294,7 @@ export interface DomainAppSettings {
   wechat_app_agent_id?: string;
   wechat_app_corpid?: string;
   wechat_app_encodingaeskey?: string;
-  /** WechatAppBot */
+  /** WechatAppBot 企业微信机器人 */
   wechat_app_is_enabled?: boolean;
   wechat_app_secret?: string;
   wechat_app_token?: string;
@@ -302,12 +304,16 @@ export interface DomainAppSettings {
   /** WechatOfficialAccount */
   wechat_official_account_is_enabled?: boolean;
   wechat_official_account_token?: string;
+  wechat_service_contain_keywords?: string[];
   wechat_service_corpid?: string;
   wechat_service_encodingaeskey?: string;
+  wechat_service_equal_keywords?: string[];
   /** WechatServiceBot */
   wechat_service_is_enabled?: boolean;
   wechat_service_secret?: string;
   wechat_service_token?: string;
+  /** WecomAIBotSettings 企业微信智能机器人 */
+  wecom_ai_bot_settings?: DomainWecomAIBotSettings;
   /** welcome */
   welcome_str?: string;
   /** Widget bot settings */
@@ -380,12 +386,15 @@ export interface DomainAppSettingsResp {
   /** WechatOfficialAccount */
   wechat_official_account_is_enabled?: boolean;
   wechat_official_account_token?: string;
+  wechat_service_contain_keywords?: string[];
   wechat_service_corpid?: string;
   wechat_service_encodingaeskey?: string;
+  wechat_service_equal_keywords?: string[];
   /** WechatServiceBot */
   wechat_service_is_enabled?: boolean;
   wechat_service_secret?: string;
   wechat_service_token?: string;
+  wecom_ai_bot_settings?: DomainWecomAIBotSettings;
   /** welcome */
   welcome_str?: string;
   /** WidgetBot */
@@ -429,6 +438,15 @@ export interface DomainChatRequest {
   conversation_id?: string;
   message: string;
   nonce?: string;
+}
+
+export interface DomainChatSearchReq {
+  captcha_token?: string;
+  message: string;
+}
+
+export interface DomainChatSearchResp {
+  node_result?: DomainNodeContentChunkSSE[];
 }
 
 export interface DomainCommentInfo {
@@ -735,6 +753,13 @@ export interface DomainNodeActionReq {
   action: "delete";
   ids: string[];
   kb_id: string;
+}
+
+export interface DomainNodeContentChunkSSE {
+  emoji?: string;
+  name?: string;
+  node_id?: string;
+  summary?: string;
 }
 
 export interface DomainNodeGroupDetail {
@@ -1060,6 +1085,7 @@ export interface DomainWebAppLandingSettings {
     title_color?: string;
   };
   carousel_config?: {
+    bg_color?: string;
     list?: {
       desc?: string;
       id?: string;
@@ -1091,6 +1117,15 @@ export interface DomainWebAppLandingSettings {
     title?: string;
     title_color?: string;
   };
+}
+
+export interface DomainWecomAIBotSettings {
+  agent_id?: string;
+  corpid?: string;
+  encodingaeskey?: string;
+  is_enabled?: boolean;
+  secret?: string;
+  token?: string;
 }
 
 export interface DomainWidgetBotSettings {
@@ -1666,6 +1701,7 @@ export interface GetApiV1AuthGetParams {
     | "dingtalk_bot"
     | "feishu_bot"
     | "wechat_bot"
+    | "wecom_ai_bot"
     | "wechat_service_bot"
     | "discord_bot"
     | "wechat_official_account"
