@@ -9,7 +9,14 @@ import {
 } from '@/request/types';
 import { useAppSelector } from '@/store';
 import { message } from '@ctzhian/ui';
-import { Box, FormControlLabel, Radio, RadioGroup, Stack } from '@mui/material';
+import {
+  Box,
+  Button,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
+  Stack,
+} from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { FormItem, SettingCardItem } from './Common';
@@ -108,6 +115,15 @@ const CardCustom = ({ kb, refresh, info }: CardCustomProps) => {
             </RadioGroup>
           )}
         />
+      </FormItem>
+      <FormItem label='自定义欢迎页面'>
+        <Button
+          variant='outlined'
+          fullWidth
+          onClick={() => setCustomModalOpen(true)}
+        >
+          定制页面
+        </Button>
       </FormItem>
       <CustomModal
         open={customModalOpen}

@@ -161,6 +161,11 @@ const KBSelect = () => {
                       size='small'
                       className='hover-del-space-icon'
                       sx={{ display: 'none' }}
+                      onClick={event => {
+                        event.stopPropagation();
+                        setOpraData(item);
+                        setModifyOpen(true);
+                      }}
                     >
                       <Icon
                         type='icon-tianjiawendang'
@@ -169,17 +174,17 @@ const KBSelect = () => {
                           color: 'text.tertiary',
                           flexShrink: 0,
                         }}
-                        onClick={event => {
-                          event.stopPropagation();
-                          setOpraData(item);
-                          setModifyOpen(true);
-                        }}
                       />
                     </IconButton>
                     <IconButton
                       size='small'
                       className='hover-del-space-icon'
                       sx={{ display: 'none' }}
+                      onClick={event => {
+                        event.stopPropagation();
+                        setOpraData(item);
+                        setDeleteOpen(true);
+                      }}
                     >
                       <Icon
                         type='icon-shanchu'
@@ -187,11 +192,6 @@ const KBSelect = () => {
                           fontSize: 14,
                           color: 'text.tertiary',
                           flexShrink: 0,
-                        }}
-                        onClick={event => {
-                          event.stopPropagation();
-                          setOpraData(item);
-                          setDeleteOpen(true);
                         }}
                       />
                     </IconButton>

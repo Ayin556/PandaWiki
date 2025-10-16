@@ -6,7 +6,7 @@ import {
   DomainKnowledgeBaseDetail,
 } from '@/request/types';
 import { useAppSelector } from '@/store';
-import { Box, Tab, Tabs, useMediaQuery } from '@mui/material';
+import { Box, Tab, Tabs } from '@mui/material';
 import { useEffect, useState } from 'react';
 import CardAI from './component/CardAI';
 import CardFeedback from './component/CardFeedback';
@@ -27,7 +27,6 @@ const SettingTabs: { label: string; id: string }[] = [
 const Setting = () => {
   const { kb_id } = useAppSelector(state => state.config);
   const [kb, setKb] = useState<DomainKnowledgeBaseDetail | null>(null);
-  const isWideScreen = useMediaQuery('(min-width:1400px)');
   const [url, setUrl] = useState<string>('');
   const [activeTab, setActiveTab] = useState<string>('backend-info');
   const [info, setInfo] = useState<DomainAppDetailResp>();

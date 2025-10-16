@@ -44,7 +44,7 @@ const CardStyle = ({ id, data, refresh }: CardStyleProps) => {
         kb_id,
         settings: {
           ...data.settings,
-          theme_mode: value.theme_mode,
+          // theme_mode: value.theme_mode,
           theme_and_style: {
             // ...data.settings?.theme_and_style,
             // bg_image: value.bg_image,
