@@ -110,6 +110,7 @@ const handleCarouselProps = (config: any = {}) => {
 };
 
 const handleBannerProps = (config: any = {}) => {
+  console.log(config, 'config-------------', config.btns || []);
   return {
     title: {
       text: config.title,
@@ -162,38 +163,6 @@ const Welcome = () => {
     }
   };
 
-  // const handleComponentProps = (
-  //   type: string,
-  //   id: string,
-  //   setting: any,
-  // ) => {
-  //   if (type === 'header') {
-  //     return handleHeaderProps(setting);
-  //   } else if (type === 'footer') {
-  //     return handleFooterProps(setting);
-  //   } else {
-  //     const config = (setting.web_app_landing_configs || []).find(
-  //       (c: any) => c.id === id,
-  //     );
-
-  //     console.log(setting.web_app_landing_configs, 'config-------------');
-  //     switch (type) {
-  //       case 'faq':
-  //         return handleFaqProps(config);
-  //       case 'basicDoc':
-  //         return handleBasicDocProps(config);
-  //       case 'dirDoc':
-  //         return handleDirDocProps(config);
-  //       case 'simpleDoc':
-  //         return handleSimpleDocProps(config);
-  //       case 'carousel':
-  //         return handleCarouselProps(config);
-  //       case 'banner':
-  //         return handleBannerProps(config);
-  //     }
-  //   }
-  // };
-
   const TYPE_TO_CONFIG_LABEL = {
     banner: 'banner_config',
     basic_doc: 'basic_doc_config',
@@ -224,14 +193,13 @@ const Welcome = () => {
         return {
           ...handleBannerProps(config),
           onSearch: onBannerSearch,
-          btns: config?.btns?.map((item: any) => ({
+          btns: (config?.btns || []).map((item: any) => ({
             ...item,
             href: item.href || '/node',
           })),
         };
     }
   };
-  console.log(settings?.web_app_landing_configs);
   return (
     <>
       {settings?.web_app_landing_configs?.map((item, index) => {

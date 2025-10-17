@@ -121,7 +121,6 @@ export const handleComponentProps = (
       (c: any) => c.id === id,
     );
 
-    console.log(setting.web_app_landing_configs, 'config-------------');
     switch (type) {
       case 'faq':
         return handleFaqProps(config);

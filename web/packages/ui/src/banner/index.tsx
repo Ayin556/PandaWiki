@@ -82,7 +82,7 @@ const Banner = React.memo(
     subtitle,
     bg_url,
     search,
-    btns,
+    btns = [],
     onSearch,
     onSearchSuggestions,
     baseUrl = '',
