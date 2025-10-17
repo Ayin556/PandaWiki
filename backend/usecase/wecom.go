@@ -194,7 +194,7 @@ func (u *WecomUsecase) HandleMsg(ctx context.Context, kbID, signature, timestamp
 
 		if state.IsDone {
 			domain.ConversationManager.Delete(conversationId)
-			content += "\n\n本回答由 [PandaWiki](https://pandawiki.docs.baizhi.cloud/) 基于 AI 生成，仅供参考。"
+			content += "\n\n---  \n\n本回答由 [PandaWiki](https://pandawiki.docs.baizhi.cloud/) 基于 AI 生成，仅供参考。"
 		}
 
 		resp, err := wecomAIBotClient.MakeStreamResp(nonce, req.Stream.Id, content, state.IsDone)
@@ -231,7 +231,7 @@ func (u *WecomUsecase) SendQuestionToAI(conversationID string, eventCh <-chan do
 	for event := range eventCh {
 		if event.Type == "done" || event.Type == "error" {
 			if event.Type == "error" {
-				u.logger.Error("AI response error", log.String("error", event.Content))
+				u.logger.Error("AI response error", log.String("conversation_id", conversationID), log.String("error", event.Content))
 			}
 			break
 		}

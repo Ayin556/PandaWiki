@@ -260,7 +260,7 @@ func (h *ShareWechatHandler) WechatHandlerService(c echo.Context) error {
 	wxCrypt := wxbizmsgcrypt.NewWXBizMsgCrypt(wechatServiceConf.Token, wechatServiceConf.EncodingAESKey, wechatServiceConf.CorpID, wxbizmsgcrypt.XmlType)
 	decryptMsg, errCode := wxCrypt.DecryptMsg(signature, timestamp, nonce, body)
 	if errCode != nil {
-		h.logger.Error("DecryptUserReq failed", log.Any("decryptMsg err", errCode))
+		h.logger.Error("DecryptMsg failed", log.Any("decryptMsg err", errCode))
 		return nil
 	}
 
@@ -370,7 +370,7 @@ func (h *ShareWechatHandler) WechatHandlerApp(c echo.Context) error {
 	wxCrypt := wxbizmsgcrypt.NewWXBizMsgCrypt(wechatConfig.Token, wechatConfig.EncodingAESKey, wechatConfig.CorpID, wxbizmsgcrypt.XmlType)
 	decryptMsg, errCode := wxCrypt.DecryptMsg(signature, timestamp, nonce, body)
 	if errCode != nil {
-		return h.NewResponseWithError(c, "DecryptUserReq failed", nil)
+		return h.NewResponseWithError(c, "DecryptMsg failed", nil)
 	}
 
 	msg, err := wechatConfig.UnmarshalMsg(decryptMsg)

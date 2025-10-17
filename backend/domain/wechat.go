@@ -11,7 +11,7 @@ type ConversationState struct {
 	Question         string
 	Buffer           bytes.Buffer
 	IsVisited        bool
-	IsDone           bool // 标记 AI 响应是否已完成
+	IsDone           bool
 	NotificationChan chan string
 }
 
