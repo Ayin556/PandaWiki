@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/spf13/viper"
 )
@@ -206,6 +207,18 @@ func overrideWithEnv(c *Config) {
 	}
 	if env := os.Getenv("SENTRY_DSN"); env != "" {
 		c.Sentry.DSN = env
+	}
+	// log level
+	if env := os.Getenv("LOG_LEVEL"); env != "" {
+		if i, err := strconv.Atoi(env); err == nil {
+			// -4: debug
+			// 0: info
+			// 4: warn
+			// 8: error
+			c.Log.Level = i
+		} else {
+			fmt.Fprintf(os.Stderr, "Invalid log level: %s with err: %s\n", env, err)
+		}
 	}
 }
 
