@@ -7,6 +7,7 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
+import { v4 as uuidv4 } from 'uuid';
 import { Icon } from '@ctzhian/ui';
 import { Dispatch, SetStateAction, useMemo, useState, lazy } from 'react';
 import type { CSSProperties } from 'react';
@@ -37,6 +38,7 @@ import {
   IconLunbotu,
   IconShanchu,
 } from '@panda-wiki/icons';
+import { DEFAULT_DATA, TYPE_TO_CONFIG_LABEL } from '../../constants';
 interface ComponentBarProps {
   components: Component[];
   setComponents: Dispatch<SetStateAction<Component[]>>;
@@ -58,21 +60,21 @@ const ComponentBar = ({
   const options = useMemo(
     () => [
       {
-        name: 'basicDoc',
+        name: 'basic_doc',
         title: '基础文档',
         icon: IconJichuwendang,
         component: lazy(() => import('@panda-wiki/ui/basicDoc')),
         config: lazy(() => import('../config/BasicDocConfig')),
       },
       {
-        name: 'dirDoc',
+        name: 'dir_doc',
         title: '目录文档',
         icon: IconMuluwendang,
         component: lazy(() => import('@panda-wiki/ui/dirDoc')),
         config: lazy(() => import('../config/DirDocConfig')),
       },
       {
-        name: 'simpleDoc',
+        name: 'simple_doc',
         title: '简易文档',
         icon: IconJianyiwendang,
         component: lazy(() => import('@panda-wiki/ui/simpleDoc')),
@@ -108,7 +110,7 @@ const ComponentBar = ({
   );
 
   const nonFixedIds = useMemo(
-    () => components.filter(c => !c.fixed).map(c => c.name),
+    () => components.filter(c => !c.fixed).map(c => c.id),
     [components],
   );
 
@@ -119,8 +121,8 @@ const ComponentBar = ({
 
     // 仅对非 fixed 项进行重排，fixed 保持原位置
     const nonFixedItems = components.filter(c => !c.fixed);
-    const fromIdx = nonFixedItems.findIndex(c => c.name === active.id);
-    const toIdx = nonFixedItems.findIndex(c => c.name === over.id);
+    const fromIdx = nonFixedItems.findIndex(c => c.id === active.id);
+    const toIdx = nonFixedItems.findIndex(c => c.id === over.id);
     if (fromIdx === -1 || toIdx === -1) return;
 
     const newNonFixed = arrayMove(nonFixedItems, fromIdx, toIdx);
@@ -148,7 +150,7 @@ const ComponentBar = ({
       transform,
       transition,
       isDragging,
-    } = useSortable({ id: item.name, disabled: !!item.fixed });
+    } = useSortable({ id: item.id, disabled: !!item.fixed });
     const style: CSSProperties = {
       transform: CSS.Transform.toString(transform),
       transition,
@@ -162,7 +164,7 @@ const ComponentBar = ({
         sx={{
           height: '40px',
           borderRadius: '6px',
-          bgcolor: item.name === curComponent.name ? '#F2F8FF' : '',
+          bgcolor: item.id === curComponent.id ? '#F2F8FF' : '',
           pl: '12px',
           alignItems: 'center',
           mb: '10px',
@@ -174,7 +176,7 @@ const ComponentBar = ({
           },
         }}
         style={style}
-        key={item.name}
+        key={item.id}
         onClick={() => {
           setCurComponent(item);
         }}
@@ -183,7 +185,7 @@ const ComponentBar = ({
         <Icon
           type='icon-wangyeguajian'
           sx={{
-            color: item.name === curComponent.name ? '#5F58FE' : '#21222D',
+            color: item.id === curComponent.id ? '#5F58FE' : '#21222D',
             fontSize: '14px',
           }}
         ></Icon>
@@ -191,7 +193,7 @@ const ComponentBar = ({
           sx={{
             marginLeft: '8px',
             fontSize: '14px',
-            color: item.name === curComponent.name ? '#5F58FE' : '#344054',
+            color: item.id === curComponent.id ? '#5F58FE' : '#344054',
             fontWeight: 500,
           }}
         >
@@ -203,10 +205,8 @@ const ComponentBar = ({
           onClick={e => {
             e.stopPropagation();
             if (item.fixed) return;
-            const filterComponents = components.filter(
-              c => c.name !== item.name,
-            );
-            if (curComponent.name === item.name) {
+            const filterComponents = components.filter(c => c.id !== item.id);
+            if (curComponent.id === item.id) {
               setCurComponent(filterComponents[0]);
             }
             setComponents(filterComponents);
@@ -359,17 +359,36 @@ const ComponentBar = ({
                 },
               }}
               onClick={() => {
-                setCurComponent(item);
+                const addComponent = {
+                  id: uuidv4(),
+                  name: item.name,
+                  title: item.title,
+                  component: item.component,
+                  config: item.config,
+                  fixed: false,
+                };
+                // if (components.find(c => c.name === item.name)) return;
+                const newInfo = {
+                  ...appPreviewData,
+                  settings: {
+                    ...(appPreviewData?.settings || {}),
+                    web_app_landing_configs: [
+                      ...(appPreviewData?.settings?.web_app_landing_configs ||
+                        []),
+                      {
+                        type: item.name,
+                        id: addComponent.id,
+                        ...DEFAULT_DATA[item.name as keyof typeof DEFAULT_DATA],
+                      },
+                    ],
+                  },
+                };
+                dispatch(setAppPreviewData(newInfo));
+                setCurComponent(addComponent);
                 setAnchorEl(null);
-                if (components.find(c => c.name === item.name)) return;
                 setComponents([
                   ...components.slice(0, -1),
-                  {
-                    name: item.name,
-                    title: item.title,
-                    component: item.component,
-                    config: item.config,
-                  },
+                  addComponent,
                   ...components.slice(-1),
                 ]);
                 setIsEdit(true);
@@ -419,7 +438,7 @@ const ComponentBar = ({
             }}
           >
             {components.map(item => (
-              <SortableItem key={item.name} item={item} />
+              <SortableItem key={item.id} item={item} />
             ))}
           </Stack>
         </SortableContext>

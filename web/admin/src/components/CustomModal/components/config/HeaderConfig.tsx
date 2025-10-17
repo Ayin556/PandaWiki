@@ -7,6 +7,7 @@ import { Dispatch, SetStateAction, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { setAppPreviewData } from '@/store/slices/config';
+import useDebounceAppPreviewData from '@/hooks/useDebounceAppPreviewData';
 
 interface CardWebHeaderProps {
   data?: AppDetail | null;
@@ -17,6 +18,7 @@ interface CardWebHeaderProps {
 const HeaderConfig = ({ data, setIsEdit, isEdit }: CardWebHeaderProps) => {
   const { appPreviewData } = useAppSelector(state => state.config);
   const dispatch = useAppDispatch();
+  const debouncedDispatch = useDebounceAppPreviewData();
   const {
     control,
     formState: { errors },
@@ -102,7 +104,7 @@ const HeaderConfig = ({ data, setIsEdit, isEdit }: CardWebHeaderProps) => {
         },
       },
     };
-    dispatch(setAppPreviewData(previewData));
+    debouncedDispatch(previewData);
   }, [title, btns, icon, header_search_placeholder, allow_theme_switching]);
 
   return (

@@ -2,7 +2,7 @@ import {
   ConstsCopySetting,
   ConstsWatermarkSetting,
   DomainDisclaimerSettings,
-  DomainWebAppLandingSettings,
+  DomainWebAppLandingConfig,
 } from '@/request/types';
 
 export interface NavBtn {
@@ -89,7 +89,7 @@ export interface KBDetail {
     contribute_settings?: {
       is_enable: boolean;
     };
-    web_app_landing_settings: DomainWebAppLandingSettings;
+    web_app_landing_configs: DomainWebAppLandingConfig[];
   };
 }
 export interface DomainSocialMediaAccount {

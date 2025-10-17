@@ -75,6 +75,7 @@ export enum DomainAppType {
   AppTypeDisCordBot = 7,
   AppTypeWechatOfficialAccount = 8,
   AppTypeOpenAIAPI = 9,
+  AppTypeWecomAIBot = 10,
 }
 
 export enum ConstsWatermarkSetting {
@@ -123,6 +124,7 @@ export enum ConstsSourceType {
   SourceTypeDingtalkBot = "dingtalk_bot",
   SourceTypeFeishuBot = "feishu_bot",
   SourceTypeWechatBot = "wechat_bot",
+  SourceTypeWecomAIBot = "wecom_ai_bot",
   SourceTypeWechatServiceBot = "wechat_service_bot",
   SourceTypeDiscordBot = "discord_bot",
   SourceTypeWechatOfficialAccount = "wechat_official_account",
@@ -287,12 +289,12 @@ export interface DomainAppSettings {
   web_app_comment_settings?: DomainWebAppCommentSettings;
   /** WebAppCustomStyle */
   web_app_custom_style?: DomainWebAppCustomSettings;
-  /** WebAppLandingSettings */
-  web_app_landing_settings?: DomainWebAppLandingSettings;
+  /** WebAppLandingConfigs */
+  web_app_landing_configs?: DomainWebAppLandingConfig[];
   wechat_app_agent_id?: string;
   wechat_app_corpid?: string;
   wechat_app_encodingaeskey?: string;
-  /** WechatAppBot */
+  /** WechatAppBot 企业微信机器人 */
   wechat_app_is_enabled?: boolean;
   wechat_app_secret?: string;
   wechat_app_token?: string;
@@ -302,12 +304,16 @@ export interface DomainAppSettings {
   /** WechatOfficialAccount */
   wechat_official_account_is_enabled?: boolean;
   wechat_official_account_token?: string;
+  wechat_service_contain_keywords?: string[];
   wechat_service_corpid?: string;
   wechat_service_encodingaeskey?: string;
+  wechat_service_equal_keywords?: string[];
   /** WechatServiceBot */
   wechat_service_is_enabled?: boolean;
   wechat_service_secret?: string;
   wechat_service_token?: string;
+  /** WecomAIBotSettings 企业微信智能机器人 */
+  wecom_ai_bot_settings?: DomainWecomAIBotSettings;
   /** welcome */
   welcome_str?: string;
   /** Widget bot settings */
@@ -366,7 +372,7 @@ export interface DomainAppSettingsResp {
   /** WebAppCustomStyle */
   web_app_custom_style?: DomainWebAppCustomSettings;
   /** WebApp Landing Settings */
-  web_app_landing_settings?: DomainWebAppLandingSettings;
+  web_app_landing_configs?: DomainWebAppLandingConfigResp[];
   wechat_app_agent_id?: string;
   wechat_app_corpid?: string;
   wechat_app_encodingaeskey?: string;
@@ -380,12 +386,15 @@ export interface DomainAppSettingsResp {
   /** WechatOfficialAccount */
   wechat_official_account_is_enabled?: boolean;
   wechat_official_account_token?: string;
+  wechat_service_contain_keywords?: string[];
   wechat_service_corpid?: string;
   wechat_service_encodingaeskey?: string;
+  wechat_service_equal_keywords?: string[];
   /** WechatServiceBot */
   wechat_service_is_enabled?: boolean;
   wechat_service_secret?: string;
   wechat_service_token?: string;
+  wecom_ai_bot_settings?: DomainWecomAIBotSettings;
   /** welcome */
   welcome_str?: string;
   /** WidgetBot */
@@ -396,6 +405,30 @@ export interface DomainAuthUserInfo {
   avatar_url?: string;
   email?: string;
   username?: string;
+}
+
+export interface DomainBannerConfig {
+  bg_url?: string;
+  btns?: {
+    href?: string;
+    id?: string;
+    text?: string;
+    type?: string;
+  }[];
+  hot_search?: string[];
+  placeholder?: string;
+  subtitle?: string;
+  subtitle_color?: string;
+  subtitle_font_size?: number;
+  title?: string;
+  title_color?: string;
+  title_font_size?: number;
+}
+
+export interface DomainBasicDocConfig {
+  bg_color?: string;
+  title?: string;
+  title_color?: string;
 }
 
 export interface DomainBatchMoveReq {
@@ -412,6 +445,17 @@ export interface DomainBrandGroup {
 export interface DomainBrowserCount {
   count?: number;
   name?: string;
+}
+
+export interface DomainCarouselConfig {
+  bg_color?: string;
+  list?: {
+    desc?: string;
+    id?: string;
+    title?: string;
+    url?: string;
+  }[];
+  title?: string;
 }
 
 export interface DomainCatalogSettings {
@@ -604,12 +648,29 @@ export interface DomainCreateNodeReq {
   type: 1 | 2;
 }
 
+export interface DomainDirDocConfig {
+  bg_color?: string;
+  title?: string;
+  title_color?: string;
+}
+
 export interface DomainDisclaimerSettings {
   content?: string;
 }
 
 export interface DomainEnterpriseAuth {
   enabled?: boolean;
+}
+
+export interface DomainFaqConfig {
+  bg_color?: string;
+  list?: {
+    id?: string;
+    link?: string;
+    question?: string;
+  }[];
+  title?: string;
+  title_color?: string;
 }
 
 export interface DomainFeedBackInfo {
@@ -967,6 +1028,12 @@ export interface DomainSimpleAuth {
   password?: string;
 }
 
+export interface DomainSimpleDocConfig {
+  bg_color?: string;
+  title?: string;
+  title_color?: string;
+}
+
 export interface DomainSocialMediaAccount {
   channel?: string;
   icon?: string;
@@ -1051,63 +1118,35 @@ export interface DomainWebAppCustomSettings {
   social_media_accounts?: DomainSocialMediaAccount[];
 }
 
-export interface DomainWebAppLandingSettings {
-  banner_config?: {
-    bg_url?: string;
-    btns?: {
-      href?: string;
-      id?: string;
-      text?: string;
-      type?: string;
-    }[];
-    hot_search?: string[];
-    placeholder?: string;
-    subtitle?: string;
-    subtitle_color?: string;
-    subtitle_font_size?: number;
-    title?: string;
-    title_color?: string;
-    title_font_size?: number;
-  };
-  basic_doc_config?: {
-    bg_color?: string;
-    list?: string[];
-    title?: string;
-    title_color?: string;
-  };
-  carousel_config?: {
-    bg_color?: string;
-    list?: {
-      desc?: string;
-      id?: string;
-      title?: string;
-      url?: string;
-    }[];
-    title?: string;
-  };
+export interface DomainWebAppLandingConfig {
+  banner_config?: DomainBannerConfig;
+  basic_doc_config?: DomainBasicDocConfig;
+  carousel_config?: DomainCarouselConfig;
   com_config_order?: string[];
-  dir_doc_config?: {
-    bg_color?: string;
-    list?: string[];
-    title?: string;
-    title_color?: string;
-  };
-  faq_config?: {
-    bg_color?: string;
-    list?: {
-      id?: string;
-      link?: string;
-      question?: string;
-    }[];
-    title?: string;
-    title_color?: string;
-  };
-  simple_doc_config?: {
-    bg_color?: string;
-    list?: string[];
-    title?: string;
-    title_color?: string;
-  };
+  dir_doc_config?: DomainDirDocConfig;
+  faq_config?: DomainFaqConfig;
+  node_ids?: string[];
+  simple_doc_config?: DomainSimpleDocConfig;
+  type?: string;
+}
+
+export interface DomainWebAppLandingConfigResp {
+  banner_config?: DomainBannerConfig;
+  basic_doc_config?: DomainBasicDocConfig;
+  carousel_config?: DomainCarouselConfig;
+  com_config_order?: string[];
+  dir_doc_config?: DomainDirDocConfig;
+  faq_config?: DomainFaqConfig;
+  node_ids?: string[];
+  nodes?: DomainRecommendNodeListResp[];
+  simple_doc_config?: DomainSimpleDocConfig;
+  type?: string;
+}
+
+export interface DomainWecomAIBotSettings {
+  encodingaeskey?: string;
+  is_enabled?: boolean;
+  token?: string;
 }
 
 export interface DomainWidgetBotSettings {
@@ -1429,17 +1468,6 @@ export interface V1NodeDetailResp {
   updated_at?: string;
 }
 
-export interface V1NodeItem {
-  emoji?: string;
-  id?: string;
-  name?: string;
-  parent_id?: string;
-  position?: number;
-  recommend_nodes?: DomainRecommendNodeListResp[];
-  summary?: string;
-  type?: DomainNodeType;
-}
-
 export interface V1NodePermissionEditReq {
   /** 可被问答 */
   answerable_groups?: number[];
@@ -1463,13 +1491,6 @@ export interface V1NodePermissionResp {
   visible_groups?: DomainNodeGroupDetail[];
   /** 可被访问 */
   visitable_groups?: DomainNodeGroupDetail[];
-}
-
-export interface V1NodeRecommendListResp {
-  basic_docs?: V1NodeItem[];
-  dir_docs?: V1NodeItem[];
-  node_recommends?: V1NodeItem[];
-  simple_docs?: V1NodeItem[];
 }
 
 export interface V1NotionParseItem {
@@ -1683,6 +1704,7 @@ export interface GetApiV1AuthGetParams {
     | "dingtalk_bot"
     | "feishu_bot"
     | "wechat_bot"
+    | "wecom_ai_bot"
     | "wechat_service_bot"
     | "discord_bot"
     | "wechat_official_account"

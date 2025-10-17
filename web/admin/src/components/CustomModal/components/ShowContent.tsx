@@ -72,7 +72,7 @@ const SortableItem = memo(
       transform,
       transition,
       isDragging,
-    } = useSortable({ id: item.name, disabled: !!item.fixed });
+    } = useSortable({ id: item.id, disabled: !!item.fixed });
     const style: CSSProperties = {
       transform: CSS.Transform.toString(transform),
       transition,
@@ -92,7 +92,7 @@ const SortableItem = memo(
             border: isHighlighted ? '2px solid #5F58FE' : '2px dashed #5F58FE',
           },
         }}
-        data-component={item.name}
+        data-component={item.id}
         ref={setNodeRef}
         style={style}
         {...(!item.fixed ? { ...attributes, ...listeners } : {})}
@@ -173,7 +173,7 @@ const ShowContent = ({
 
   const handleScroll = () => {
     const targetElement = containerRef.current?.querySelector(
-      `[data-component="${curComponent.name}"]`,
+      `[data-component="${curComponent.id}"]`,
     );
     if (targetElement) {
       targetElement.scrollIntoView({
@@ -192,7 +192,7 @@ const ShowContent = ({
   // 滚动到当前选中的组件（仅在组件真正改变时）
   useEffect(() => {
     if (
-      !curComponent?.name ||
+      !curComponent?.id ||
       !containerRef.current ||
       isComponentClickRef.current
     ) {
@@ -212,14 +212,14 @@ const ShowContent = ({
 
   const handleDelete = useCallback(
     (item: Component) => {
-      const filterComponents = components.filter(c => c.name !== item.name);
-      if (curComponent?.name === item.name) {
+      const filterComponents = components.filter(c => c.id !== item.id);
+      if (curComponent?.id === item.id) {
         setCurComponent(filterComponents[0]);
       }
       setComponents(filterComponents);
       setIsEdit?.(true);
     },
-    [components, curComponent?.name, setComponents, setCurComponent, setIsEdit],
+    [components, curComponent?.id, setComponents, setCurComponent, setIsEdit],
   );
 
   const sensors = useSensors(
@@ -227,7 +227,7 @@ const ShowContent = ({
   );
 
   const nonFixedIds = useMemo(
-    () => components.filter(c => !c.fixed).map(c => c.name),
+    () => components.filter(c => !c.fixed).map(c => c.id),
     [components],
   );
 
@@ -237,8 +237,8 @@ const ShowContent = ({
     if (active.id === over.id) return;
 
     const nonFixedItems = components.filter(c => !c.fixed);
-    const fromIdx = nonFixedItems.findIndex(c => c.name === active.id);
-    const toIdx = nonFixedItems.findIndex(c => c.name === over.id);
+    const fromIdx = nonFixedItems.findIndex(c => c.id === active.id);
+    const toIdx = nonFixedItems.findIndex(c => c.id === over.id);
     if (fromIdx === -1 || toIdx === -1) return;
 
     const newNonFixed = arrayMove(nonFixedItems, fromIdx, toIdx);
@@ -255,7 +255,7 @@ const ShowContent = ({
       }
     }
     setComponents(result);
-    const newCur = result.find(c => c.name === curComponent.name);
+    const newCur = result.find(c => c.id === curComponent.id);
     if (newCur) setCurComponent(newCur);
     if (setIsEdit) setIsEdit(true);
   };
@@ -271,12 +271,12 @@ const ShowContent = ({
 
   // 初始化/同步缓存（新增、删除）
   useEffect(() => {
-    const nextKeys = new Set(components.map(c => c.name));
+    const nextKeys = new Set(components.map(c => c.id));
     // 新增项：补齐缓存
     components.forEach(c => {
-      if (!propsCacheRef.current[c.name]) {
-        propsCacheRef.current[c.name] =
-          handleComponentProps(c.name, appSettings) || {};
+      if (!propsCacheRef.current[c.id]) {
+        propsCacheRef.current[c.id] =
+          handleComponentProps(c.name, c.id, appSettings) || {};
       }
     });
     // 移除项：清理缓存
@@ -288,22 +288,23 @@ const ShowContent = ({
 
   // appSettings 变化时，只更新当前高亮组件的缓存，其他组件沿用旧 props
   useEffect(() => {
-    if (!curComponent?.name) return;
-    propsCacheRef.current[curComponent.name] =
-      handleComponentProps(curComponent.name, appSettings) || {};
+    if (!curComponent?.id) return;
+    propsCacheRef.current[curComponent.id] =
+      handleComponentProps(curComponent.name, curComponent.id, appSettings) ||
+      {};
     setCacheTick(t => t + 1);
-  }, [appSettings, curComponent?.name]);
+  }, [appSettings, curComponent?.id]);
 
   // 渲染项缓存：仅在关键签名或必要依赖变更时重建
   const renderedItems = useMemo(() => {
     return components.map(item =>
-      propsCacheRef.current[item.name] ? (
+      propsCacheRef.current[item.id] ? (
         <SortableItem
-          key={item.name}
+          key={item.id}
           item={item}
           renderMode={renderMode}
-          cachedProps={propsCacheRef.current[item.name]}
-          isHighlighted={curComponent?.name === item.name}
+          cachedProps={propsCacheRef.current[item.id]}
+          isHighlighted={curComponent?.id === item.id}
           onSelect={handleSelect}
           onDelete={handleDelete}
           baseUrl={baseUrl}
@@ -313,7 +314,7 @@ const ShowContent = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     renderMode,
-    curComponent?.name,
+    curComponent?.id,
     handleSelect,
     handleDelete,
     cacheTick,

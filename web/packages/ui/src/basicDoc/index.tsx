@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { styled, Grid, Box } from '@mui/material';
+import { styled, Grid, Box, Button } from '@mui/material';
 import {
   StyledTopicBox,
   StyledTopicTitle,
@@ -32,7 +32,7 @@ const StyledBasicDocItem = styled('div')(({ theme }) => ({
   alignItems: 'flex-start',
   justifyContent: 'space-between',
   gap: theme.spacing(2),
-  padding: theme.spacing(3.5, 2.5),
+  padding: theme.spacing(3.5, 2.5, 2),
   backgroundColor: theme.palette.background.paper,
   borderRadius: '8px',
   boxShadow: '0px 5px 20px 0px rgba(33,34,45,0.05)',
@@ -112,13 +112,16 @@ const BasicDocItem: React.FC<{
           <StyledBasicDocItemName>{item.name}</StyledBasicDocItemName>
         </StyledBasicDocItemTitle>
         <StyledBasicDocItemSummary>{item.summary}</StyledBasicDocItemSummary>
-        <StyledBasicDocItemMore
+        <Button
           href={`${baseUrl}/node/${item.id}`}
           target='_blank'
+          sx={{ gap: 1, alignSelf: 'flex-end' }}
+          variant='text'
+          color='primary'
         >
           查看更多
           <ArrowForwardRoundedIcon sx={{ fontSize: 16, flexShrink: 0 }} />
-        </StyledBasicDocItemMore>
+        </Button>
       </StyledBasicDocItem>
     </Grid>
   );

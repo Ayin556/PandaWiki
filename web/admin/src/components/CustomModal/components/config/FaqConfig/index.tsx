@@ -9,25 +9,18 @@ import useDebounceAppPreviewData from '@/hooks/useDebounceAppPreviewData';
 import { Empty } from '@ctzhian/ui';
 import { DEFAULT_DATA } from '../../../constants';
 import ColorPickerField from '../../components/ColorPickerField';
+import { findConfigById, handleLandingConfigs } from '../../../utils';
 
-type FaqFormValues = {
-  title: string;
-  list: {
-    id: string;
-    question: string;
-    link: string;
-  }[];
-  bg_color: string;
-  title_color: string;
-};
-
-const FaqConfig = ({ setIsEdit }: ConfigProps) => {
+const FaqConfig = ({ setIsEdit, id }: ConfigProps) => {
   const { appPreviewData } = useAppSelector(state => state.config);
   const debouncedDispatch = useDebounceAppPreviewData();
-  const { control, setValue, watch, subscribe } = useForm<FaqFormValues>({
-    defaultValues:
-      appPreviewData?.settings?.web_app_landing_settings?.faq_config ||
-      DEFAULT_DATA.faq,
+  const { control, setValue, watch, reset, subscribe } = useForm<
+    typeof DEFAULT_DATA.faq
+  >({
+    defaultValues: findConfigById(
+      appPreviewData?.settings?.web_app_landing_configs || [],
+      id,
+    ),
   });
 
   const list = watch('list') || [];
@@ -37,10 +30,20 @@ const FaqConfig = ({ setIsEdit }: ConfigProps) => {
     setValue('list', [...list, { id: nextId, question: '', link: '' }]);
   };
 
-  const handleListChange = (newList: FaqFormValues['list']) => {
+  const handleListChange = (newList: (typeof DEFAULT_DATA.faq)['list']) => {
     setValue('list', newList);
     setIsEdit(true);
   };
+
+  useEffect(() => {
+    reset(
+      findConfigById(
+        appPreviewData?.settings?.web_app_landing_configs || [],
+        id,
+      ),
+      { keepDefaultValues: true },
+    );
+  }, [id, appPreviewData]);
 
   useEffect(() => {
     const callback = subscribe({
@@ -52,10 +55,11 @@ const FaqConfig = ({ setIsEdit }: ConfigProps) => {
           ...appPreviewData,
           settings: {
             ...appPreviewData?.settings,
-            web_app_landing_settings: {
-              ...appPreviewData?.settings?.web_app_landing_settings,
-              faq_config: values,
-            },
+            web_app_landing_configs: handleLandingConfigs({
+              id,
+              config: appPreviewData?.settings?.web_app_landing_configs || [],
+              values,
+            }),
           },
         };
         setIsEdit(true);
@@ -65,7 +69,7 @@ const FaqConfig = ({ setIsEdit }: ConfigProps) => {
     return () => {
       callback();
     };
-  }, [subscribe]);
+  }, [subscribe, id, appPreviewData]);
 
   return (
     <StyledCommonWrapper>

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { styled, Grid, Box } from '@mui/material';
+import { styled, Grid, Box, Button } from '@mui/material';
 import {
   StyledTopicBox,
   StyledTopicTitle,
@@ -37,7 +37,7 @@ const StyledDirDocItem = styled('div')(({ theme }) => ({
   alignItems: 'flex-start',
   justifyContent: 'space-between',
   gap: theme.spacing(2),
-  padding: theme.spacing(3.5, 2.5),
+  padding: theme.spacing(3.5, 2.5, 2),
   backgroundColor: '#fff',
   borderRadius: '8px',
   boxShadow: '0px 5px 20px 0px rgba(33,34,45,0.05)',
@@ -69,7 +69,7 @@ const StyledDirDocItemFiles = styled('div')(({ theme }) => ({
   gap: theme.spacing(2),
   fontSize: 14,
   fontWeight: 400,
-  height: 169,
+  height: 129,
   width: '100%',
   lineHeight: 1.5,
 }));
@@ -84,18 +84,6 @@ const StyledDirDocItemFile = styled('a')(({ theme }) => ({
   '&:hover': {
     color: theme.palette.primary.main,
   },
-}));
-
-const StyledDirDocItemMore = styled('a')(({ theme }) => ({
-  display: 'flex',
-  width: '100%',
-  alignItems: 'center',
-  justifyContent: 'flex-end',
-  gap: theme.spacing(1),
-  color: theme.palette.primary.main,
-  fontSize: 14,
-  fontWeight: 400,
-  cursor: 'pointer',
 }));
 
 // 单个卡片组件，带动画效果
@@ -121,7 +109,7 @@ const DirDocItem: React.FC<{
         <StyledDirDocItemFiles>
           {[...item.recommend_nodes]
             .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
-            .slice(0, 5)
+            .slice(0, 4)
             .map(it => (
               <StyledDirDocItemFile
                 key={it.id}
@@ -137,13 +125,16 @@ const DirDocItem: React.FC<{
               </StyledDirDocItemFile>
             ))}
         </StyledDirDocItemFiles>
-        <StyledDirDocItemMore
+        <Button
           href={`${baseUrl}/node/${item.recommend_nodes[0]?.id}`}
           target='_blank'
+          sx={{ gap: 1, alignSelf: 'flex-end' }}
+          variant='text'
+          color='primary'
         >
           查看更多
           <ArrowForwardRoundedIcon sx={{ fontSize: 16, flexShrink: 0 }} />
-        </StyledDirDocItemMore>
+        </Button>
       </StyledDirDocItem>
     </Grid>
   );

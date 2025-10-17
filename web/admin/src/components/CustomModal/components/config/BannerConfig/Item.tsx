@@ -20,7 +20,7 @@ import {
 type Item = {
   id: string;
   text: string;
-  type: 'contained' | 'outlined' | 'text' | string;
+  type: 'contained' | 'outlined' | 'text';
   href: string;
 };
 

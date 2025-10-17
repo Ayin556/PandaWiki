@@ -9,26 +9,18 @@ import useDebounceAppPreviewData from '@/hooks/useDebounceAppPreviewData';
 import { DEFAULT_DATA } from '../../../constants';
 import { Empty } from '@ctzhian/ui';
 import ColorPickerField from '../../components/ColorPickerField';
+import { findConfigById, handleLandingConfigs } from '../../../utils';
 
-type FormValues = {
-  title: string;
-  list: {
-    id: string;
-    title: string;
-    url: string;
-    desc: string;
-  }[];
-  bg_color: string;
-  title_color: string;
-};
-
-const Config = ({ setIsEdit }: ConfigProps) => {
+const Config = ({ setIsEdit, id }: ConfigProps) => {
   const { appPreviewData } = useAppSelector(state => state.config);
   const debouncedDispatch = useDebounceAppPreviewData();
-  const { control, setValue, watch, subscribe } = useForm<FormValues>({
-    defaultValues:
-      appPreviewData?.settings?.web_app_landing_settings?.carousel_config ||
-      DEFAULT_DATA.carousel,
+  const { control, setValue, watch, subscribe, reset } = useForm<
+    typeof DEFAULT_DATA.carousel
+  >({
+    defaultValues: findConfigById(
+      appPreviewData?.settings?.web_app_landing_configs || [],
+      id,
+    ),
   });
 
   const list = watch('list') || [];
@@ -38,10 +30,22 @@ const Config = ({ setIsEdit }: ConfigProps) => {
     setValue('list', [...list, { id: nextId, title: '', url: '', desc: '' }]);
   };
 
-  const handleListChange = (newList: FormValues['list']) => {
+  const handleListChange = (
+    newList: (typeof DEFAULT_DATA.carousel)['list'],
+  ) => {
     setValue('list', newList);
     setIsEdit(true);
   };
+
+  useEffect(() => {
+    reset(
+      findConfigById(
+        appPreviewData?.settings?.web_app_landing_configs || [],
+        id,
+      ),
+      { keepDefaultValues: true },
+    );
+  }, [appPreviewData, id]);
 
   useEffect(() => {
     const callback = subscribe({
@@ -53,10 +57,11 @@ const Config = ({ setIsEdit }: ConfigProps) => {
           ...appPreviewData,
           settings: {
             ...appPreviewData?.settings,
-            web_app_landing_settings: {
-              ...appPreviewData?.settings?.web_app_landing_settings,
-              carousel_config: values,
-            },
+            web_app_landing_configs: handleLandingConfigs({
+              id,
+              config: appPreviewData?.settings?.web_app_landing_configs || [],
+              values,
+            }),
           },
         };
         setIsEdit(true);
@@ -66,7 +71,7 @@ const Config = ({ setIsEdit }: ConfigProps) => {
     return () => {
       callback();
     };
-  }, [subscribe]);
+  }, [subscribe, id, appPreviewData]);
 
   return (
     <StyledCommonWrapper>

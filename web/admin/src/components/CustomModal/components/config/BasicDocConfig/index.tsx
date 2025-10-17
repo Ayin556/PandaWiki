@@ -8,35 +8,30 @@ import { Empty } from '@ctzhian/ui';
 import { useAppSelector } from '@/store';
 import AddRecommendContent from '@/pages/setting/component/AddRecommendContent';
 import { getApiV1NodeRecommendNodes } from '@/request/Node';
-import { DomainRecommendNodeListResp } from '@/request/types';
 import useDebounceAppPreviewData from '@/hooks/useDebounceAppPreviewData';
-import { DEFAULT_DATA } from '../../../constants';
 import ColorPickerField from '../../components/ColorPickerField';
+import { handleLandingConfigs, findConfigById } from '../../../utils';
+import { DEFAULT_DATA } from '../../../constants';
 
-type FormValues = {
-  title: string;
-  docs: DomainRecommendNodeListResp[];
-  bg_color: string;
-  title_color: string;
-};
-
-const BasicDocConfig = ({ setIsEdit }: ConfigProps) => {
+const BasicDocConfig = ({ setIsEdit, id }: ConfigProps) => {
   const { kb_id } = useAppSelector(state => state.config);
   const { appPreviewData } = useAppSelector(state => state.config);
   const debouncedDispatch = useDebounceAppPreviewData();
-
-  const { control, setValue, watch, subscribe } = useForm<FormValues>({
-    defaultValues:
-      appPreviewData?.settings?.web_app_landing_settings?.basic_doc_config ||
-      DEFAULT_DATA.basicDoc,
+  const { control, watch, setValue, subscribe, reset } = useForm<
+    typeof DEFAULT_DATA.basic_doc
+  >({
+    defaultValues: findConfigById(
+      appPreviewData?.settings?.web_app_landing_configs || [],
+      id,
+    ),
   });
 
-  const docs = watch('docs') || [];
+  const nodes = watch('nodes') || [];
   const [open, setOpen] = useState(false);
 
   const nodeRec = (ids: string[]) => {
     getApiV1NodeRecommendNodes({ kb_id, node_ids: ids }).then(res => {
-      setValue('docs', res);
+      setValue('nodes', res as []);
     });
   };
 
@@ -44,6 +39,16 @@ const BasicDocConfig = ({ setIsEdit }: ConfigProps) => {
     nodeRec(newList);
     setIsEdit(true);
   };
+
+  useEffect(() => {
+    reset(
+      findConfigById(
+        appPreviewData?.settings?.web_app_landing_configs || [],
+        id,
+      ),
+      { keepDefaultValues: true },
+    );
+  }, [appPreviewData, id]);
 
   useEffect(() => {
     const callback = subscribe({
@@ -55,10 +60,11 @@ const BasicDocConfig = ({ setIsEdit }: ConfigProps) => {
           ...appPreviewData,
           settings: {
             ...appPreviewData?.settings,
-            web_app_landing_settings: {
-              ...appPreviewData?.settings?.web_app_landing_settings,
-              basic_doc_config: values,
-            },
+            web_app_landing_configs: handleLandingConfigs({
+              id,
+              config: appPreviewData?.settings?.web_app_landing_configs || [],
+              values,
+            }),
           },
         };
         setIsEdit(true);
@@ -68,7 +74,7 @@ const BasicDocConfig = ({ setIsEdit }: ConfigProps) => {
     return () => {
       callback();
     };
-  }, [subscribe]);
+  }, [subscribe, appPreviewData, id]);
 
   return (
     <StyledCommonWrapper>
@@ -107,14 +113,14 @@ const BasicDocConfig = ({ setIsEdit }: ConfigProps) => {
         />
       </CommonItem>
       <CommonItem title='推荐文档' onAdd={() => setOpen(true)}>
-        {docs.length === 0 ? (
+        {nodes.length === 0 ? (
           <Empty />
         ) : (
           <BasicDocDragList
-            data={docs}
+            data={nodes}
             onChange={value => {
               setIsEdit(true);
-              setValue('docs', value);
+              setValue('nodes', value);
             }}
             setIsEdit={setIsEdit}
           />
@@ -122,7 +128,7 @@ const BasicDocConfig = ({ setIsEdit }: ConfigProps) => {
       </CommonItem>
       <AddRecommendContent
         open={open}
-        selected={docs.map(item => item.id!)}
+        selected={nodes.map(item => item.id!)}
         onChange={handleListChange}
         onClose={() => setOpen(false)}
         disabled={item => item.type === 1}

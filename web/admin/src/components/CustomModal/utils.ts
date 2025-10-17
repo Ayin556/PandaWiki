@@ -1,4 +1,4 @@
-import { DEFAULT_DATA } from './constants';
+import { DEFAULT_DATA, TYPE_TO_CONFIG_LABEL } from './constants';
 import Logo from '@/assets/images/footer-logo.png';
 
 const handleHeaderProps = (setting: any) => {
@@ -20,69 +20,64 @@ const handleFooterProps = (setting: any) => {
   };
 };
 
-const handleFaqProps = (setting: any) => {
-  const config = setting.web_app_landing_settings || {};
+const handleFaqProps = (config: any = {}) => {
   return {
-    title: config.faq_config?.title || '常见问题',
-    bgColor: config.faq_config?.bg_color || '#ffffff',
-    titleColor: config.faq_config?.title_color || '#000000',
+    title: config.title || '常见问题',
+    bgColor: config.bg_color || '#ffffff',
+    titleColor: config.title_color || '#000000',
     items:
-      config.faq_config?.list?.map((item: any) => ({
+      config.list?.map((item: any) => ({
         question: item.question,
         url: item.link,
       })) || [],
   };
 };
 
-const handleBasicDocProps = (setting: any) => {
-  const config = setting.web_app_landing_settings || {};
+const handleBasicDocProps = (config: any = {}) => {
   return {
-    title: config.basic_doc_config?.title || '基础文档',
-    bgColor: config.basic_doc_config?.bg_color || '#ffffff',
-    titleColor: config.basic_doc_config?.title_color || '#00000',
+    title: config.title || '基础文档',
+    bgColor: config.bg_color || '#ffffff',
+    titleColor: config.title_color || '#00000',
     items:
-      config.basic_doc_config?.docs?.map((item: any) => ({
+      config.nodes?.map((item: any) => ({
         ...item,
         summary: item.summary || '暂无摘要',
       })) || [],
   };
 };
 
-const handleDirDocProps = (setting: any) => {
-  const config = setting.web_app_landing_settings || {};
+const handleDirDocProps = (config: any = {}) => {
   return {
-    title: config.dir_doc_config?.title || '目录文档',
-    bgColor: config.dir_doc_config?.bg_color || '#3248F2',
-    titleColor: config.dir_doc_config?.title_color || '#ffffff',
+    title: config.title || '目录文档',
+    bgColor: config.bg_color || '#3248F2',
+    titleColor: config.title_color || '#ffffff',
     items:
-      config.dir_doc_config?.dirs?.map((item: any) => ({
+      config.nodes?.map((item: any) => ({
         ...item,
         recommend_nodes: item.recommend_nodes || [],
       })) || [],
   };
 };
 
-const handleSimpleDocProps = (setting: any) => {
-  const config = setting.web_app_landing_settings || {};
+const handleSimpleDocProps = (config: any = {}) => {
   return {
-    title: config.simple_doc_config?.title || '简易文档',
-    bgColor: config.simple_doc_config?.bg_color || '#ffffff',
-    titleColor: config.simple_doc_config?.title_color || '#000000',
+    title: config.title || '简易文档',
+    bgColor: config?.bg_color || '#ffffff',
+    titleColor: config.title_color || '#000000',
     items:
-      config.simple_doc_config?.docs?.map((item: any) => ({
+      config.nodes?.map((item: any) => ({
         ...item,
       })) || [],
   };
 };
 
-const handleCarouselProps = (setting: any) => {
-  const config = setting.web_app_landing_settings || {};
+const handleCarouselProps = (config: any = {}) => {
   return {
-    title: config.carousel_config?.title || '轮播图展示',
-    bgColor: config.carousel_config?.bg_color || '#3248F2',
-    titleColor: config.carousel_config?.title_color || '#ffffff',
+    title: config.title || '轮播图展示',
+    bgColor: config.bg_color || '#3248F2',
+    titleColor: config.title_color || '#ffffff',
     items:
-      config.carousel_config?.list?.map((item: any) => ({
+      config.list?.map((item: any) => ({
         id: item.id,
         title: item.title,
         url: item.url,
@@ -91,9 +86,7 @@ const handleCarouselProps = (setting: any) => {
   };
 };
 
-const handleBannerProps = (setting: any) => {
-  const config =
-    setting.web_app_landing_settings?.banner_config || DEFAULT_DATA.banner;
+const handleBannerProps = (config: any = {}) => {
   return {
     title: {
       text: config.title,
@@ -114,25 +107,62 @@ const handleBannerProps = (setting: any) => {
   };
 };
 
-export const handleComponentProps = (type: string, setting: any) => {
-  switch (type) {
-    case 'header':
-      return handleHeaderProps(setting);
-    case 'footer':
-      return handleFooterProps(setting);
-    case 'faq':
-      return handleFaqProps(setting);
-    case 'basicDoc':
-      return handleBasicDocProps(setting);
-    case 'dirDoc':
-      return handleDirDocProps(setting);
-    case 'simpleDoc':
-      return handleSimpleDocProps(setting);
-    case 'carousel':
-      return handleCarouselProps(setting);
-    case 'banner':
-      return handleBannerProps(setting);
+export const handleComponentProps = (
+  type: string,
+  id: string,
+  setting: any,
+) => {
+  if (type === 'header') {
+    return handleHeaderProps(setting);
+  } else if (type === 'footer') {
+    return handleFooterProps(setting);
+  } else {
+    const config = (setting.web_app_landing_configs || []).find(
+      (c: any) => c.id === id,
+    );
+
+    console.log(setting.web_app_landing_configs, 'config-------------');
+    switch (type) {
+      case 'faq':
+        return handleFaqProps(config);
+      case 'basic_doc':
+        return handleBasicDocProps(config);
+      case 'dir_doc':
+        return handleDirDocProps(config);
+      case 'simple_doc':
+        return handleSimpleDocProps(config);
+      case 'carousel':
+        return handleCarouselProps(config);
+      case 'banner':
+        return handleBannerProps(config);
+    }
   }
+};
+
+export const findConfigById = (configs: any[], id: string) => {
+  const config = configs.find(item => item.id === id);
+  return config || {};
+};
+
+export const handleLandingConfigs = ({
+  id,
+  config,
+  values,
+}: {
+  id: string;
+  config: any[];
+  values: any;
+}) => {
+  return config.map(item => {
+    if (item.id === id) {
+      return {
+        type: item.type,
+        id: item.id,
+        ...values,
+      };
+    }
+    return item;
+  });
 };
 
 // 返回与组件强相关的 settings 切片，减少无关字段引发的重渲染
