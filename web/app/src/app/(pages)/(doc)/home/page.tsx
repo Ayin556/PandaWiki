@@ -1,12 +1,10 @@
 import Home from '@/views/home';
 import { FooterProvider } from '@/components/footer';
 import Header from '@/components/header';
-import { getShareV1NodeRecommendList } from '@/request/ShareNode';
 import dotImage from '@/assets/images/dot.png';
 import { Stack } from '@mui/material';
 
-const HomePage = async () => {
-  const docs = await getShareV1NodeRecommendList({});
+const HomePage = () => {
   return (
     <Stack
       sx={{
@@ -18,7 +16,7 @@ const HomePage = async () => {
       justifyContent='space-between'
     >
       <Header isDocPage={true} isWelcomePage={true} />
-      <Home docs={docs} />
+      <Home />
       <FooterProvider isDocPage={true} isWelcomePage={true} />
     </Stack>
   );

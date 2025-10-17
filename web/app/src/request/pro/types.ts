@@ -40,6 +40,7 @@ export enum ConstsSourceType {
   SourceTypeDingtalkBot = "dingtalk_bot",
   SourceTypeFeishuBot = "feishu_bot",
   SourceTypeWechatBot = "wechat_bot",
+  SourceTypeWecomAIBot = "wecom_ai_bot",
   SourceTypeWechatServiceBot = "wechat_service_bot",
   SourceTypeDiscordBot = "discord_bot",
   SourceTypeWechatOfficialAccount = "wechat_official_account",
@@ -561,6 +562,7 @@ export interface GetApiProV1AuthGetParams {
     | "dingtalk_bot"
     | "feishu_bot"
     | "wechat_bot"
+    | "wecom_ai_bot"
     | "wechat_service_bot"
     | "discord_bot"
     | "wechat_official_account"

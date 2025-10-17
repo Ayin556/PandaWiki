@@ -1,18 +1,29 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Button, Stack, Typography } from '@mui/material';
 import { CusTabs, Icon, message, Modal } from '@ctzhian/ui';
 import {
   getApiV1NodeRecommendNodes,
   getApiV1KnowledgeBaseDetail,
 } from '@/request';
-import { DomainAppDetailResp } from '@/request/types';
+import {
+  DomainAppDetailResp,
+  DomainWebAppLandingConfigResp,
+} from '@/request/types';
+
 import { getApiV1AppDetail, putApiV1App } from '@/request/App';
 import { useAppSelector, useAppDispatch } from '@/store';
 import { setAppPreviewData } from '@/store/slices/config';
 import ComponentBar from './components/components/ComponentBar';
 import ConfigBar from './components/config/ConfigBar';
 import ShowContent from './components/ShowContent';
-import { COMPONENTS_MAP } from './constants';
+import {
+  COMPONENTS_MAP,
+  DEFAULT_DATA,
+  TYPE_TO_CONFIG_LABEL,
+} from './constants';
+import { v4 as uuidv4 } from 'uuid';
+
+type WebAppLandingConfigWithId = DomainWebAppLandingConfigResp & { id: string };
 
 interface CustomModalProps {
   open: boolean;
@@ -20,6 +31,7 @@ interface CustomModalProps {
 }
 
 export interface Component {
+  id: string;
   name: string;
   title: string;
   component: React.FC<any>;
@@ -32,10 +44,11 @@ const CustomModal = ({ open, onCancel }: CustomModalProps) => {
   const { kb_id } = useAppSelector(state => state.config);
   const [info, setInfo] = useState<DomainAppDetailResp>();
   const [renderMode, setRenderMode] = useState<'pc' | 'mobile'>('pc');
+  const bannerRefId = useRef<string>(uuidv4());
   const [components, setComponents] = useState<Component[]>([
-    COMPONENTS_MAP.header,
-    COMPONENTS_MAP.banner,
-    COMPONENTS_MAP.footer,
+    { ...COMPONENTS_MAP.header, id: uuidv4() },
+    { ...COMPONENTS_MAP.banner, id: bannerRefId.current },
+    { ...COMPONENTS_MAP.footer, id: uuidv4() },
   ]);
   const [curComponent, setCurComponent] = useState<Component>(components[0]);
   const [isEdit, setIsEdit] = useState(false);
@@ -45,53 +58,52 @@ const CustomModal = ({ open, onCancel }: CustomModalProps) => {
 
   const getInfo = async () => {
     const res = await getApiV1AppDetail({ kb_id: kb_id, type: '1' });
-    const web_app_landing_settings =
-      res.settings?.web_app_landing_settings || {};
-    const { basic_doc_config, dir_doc_config, simple_doc_config } =
-      web_app_landing_settings;
-    await Promise.all([
-      basic_doc_config?.list && basic_doc_config.list.length > 0
-        ? getApiV1NodeRecommendNodes({
-            kb_id,
-            node_ids: basic_doc_config.list,
-          }).then(res => {
-            // @ts-expect-error ignore
-            basic_doc_config.docs = res;
-          })
-        : Promise.resolve(),
-      dir_doc_config?.list && dir_doc_config.list.length > 0
-        ? getApiV1NodeRecommendNodes({
-            kb_id,
-            node_ids: dir_doc_config.list,
-          }).then(res => {
-            // @ts-expect-error ignore
-            dir_doc_config.dirs = res;
-          })
-        : Promise.resolve(),
-      simple_doc_config?.list && simple_doc_config.list.length > 0
-        ? getApiV1NodeRecommendNodes({
-            kb_id,
-            node_ids: simple_doc_config.list,
-          }).then(res => {
-            // @ts-expect-error ignore
-            simple_doc_config.docs = res;
-          })
-        : Promise.resolve(),
-    ]);
+    const web_app_landing_configs = res.settings?.web_app_landing_configs || [];
+
+    await Promise.all(
+      web_app_landing_configs
+        .map((item, index) => {
+          if (item.node_ids && item.node_ids.length > 0) {
+            return getApiV1NodeRecommendNodes({
+              kb_id,
+              node_ids: item.node_ids,
+            }).then(res => {
+              const label =
+                TYPE_TO_CONFIG_LABEL[
+                  item.type as keyof typeof TYPE_TO_CONFIG_LABEL
+                ];
+              (web_app_landing_configs[index] as any)[label] = {
+                ...item[label],
+                nodes: res,
+              };
+            });
+          }
+        })
+        .filter(Boolean),
+    );
     setInfo(res);
-    dispatch(setAppPreviewData(res));
   };
   const onSubmit = () => {
     if (!info || !appPreviewData) return;
-    const com_config_order = components.map(item => item.name);
-    const web_app_landing_settings =
-      appPreviewData.settings?.web_app_landing_settings || {};
-    const {
-      basic_doc_config,
-      dir_doc_config,
-      simple_doc_config,
-      banner_config,
-    } = web_app_landing_settings;
+
+    const submitWebAppLandingConfigs = components
+      .map(item => {
+        if (item.name === 'header' || item.name === 'footer') return null;
+        const config = appPreviewData.settings?.web_app_landing_configs?.find(
+          (con: any) => con.id === item.id,
+        );
+
+        return {
+          type: config!.type,
+          [TYPE_TO_CONFIG_LABEL[
+            config!.type as keyof typeof TYPE_TO_CONFIG_LABEL
+          ]]: {
+            ...config,
+          },
+          node_ids: (config!.nodes?.map(node => node?.id) || []) as string[],
+        };
+      })
+      .filter(Boolean);
 
     putApiV1App(
       { id: info.id! },
@@ -99,36 +111,8 @@ const CustomModal = ({ open, onCancel }: CustomModalProps) => {
         settings: {
           ...info.settings,
           ...appPreviewData.settings,
-          web_app_landing_settings: {
-            ...web_app_landing_settings,
-            basic_doc_config: {
-              title: basic_doc_config?.title,
-              bg_color: basic_doc_config?.bg_color,
-              title_color: basic_doc_config?.title_color,
-              // @ts-expect-error ignore
-              list: basic_doc_config?.docs?.map(item => item?.id) || [],
-            },
-            dir_doc_config: {
-              title: dir_doc_config?.title,
-              bg_color: dir_doc_config?.bg_color,
-              title_color: dir_doc_config?.title_color,
-              // @ts-expect-error ignore
-              list: dir_doc_config?.dirs?.map(item => item?.id) || [],
-            },
-            simple_doc_config: {
-              title: simple_doc_config?.title,
-              bg_color: simple_doc_config?.bg_color,
-              title_color: simple_doc_config?.title_color,
-              // @ts-expect-error ignore
-              list: simple_doc_config?.docs?.map(item => item?.id) || [],
-            },
-            banner_config: {
-              ...banner_config,
-              title_font_size: +(banner_config?.title_font_size || 0),
-              subtitle_font_size: +(banner_config?.subtitle_font_size || 0),
-            },
-            com_config_order,
-          },
+          // @ts-expect-error ignore
+          web_app_landing_configs: submitWebAppLandingConfigs,
         },
         kb_id,
       },
@@ -150,16 +134,50 @@ const CustomModal = ({ open, onCancel }: CustomModalProps) => {
   };
   useEffect(() => {
     if (!info) return;
-    dispatch(setAppPreviewData(info));
-    const com_config_order =
-      info.settings?.web_app_landing_settings?.com_config_order;
-    if (com_config_order) {
-      setComponents(
-        com_config_order.map(
-          item => COMPONENTS_MAP[item as keyof typeof COMPONENTS_MAP],
-        ),
-      );
+    const mergeInfo = { ...info };
+    const web_app_landing_configs =
+      info.settings?.web_app_landing_configs || [];
+    if (web_app_landing_configs.length === 0) {
+      mergeInfo.settings = {
+        ...mergeInfo.settings,
+        web_app_landing_configs: [
+          {
+            type: 'banner',
+            id: bannerRefId.current,
+            ...DEFAULT_DATA.banner,
+          } as WebAppLandingConfigWithId,
+        ],
+      };
+    } else {
+      const newWebAppLandingConfigs = web_app_landing_configs.map(item => {
+        return {
+          id:
+            item.type === 'banner'
+              ? bannerRefId.current
+              : (item as any).id || uuidv4(),
+          type: item.type,
+          ...(item as any)[
+            TYPE_TO_CONFIG_LABEL[item.type as keyof typeof TYPE_TO_CONFIG_LABEL]
+          ],
+        };
+      });
+
+      mergeInfo.settings = {
+        ...mergeInfo.settings,
+        web_app_landing_configs: newWebAppLandingConfigs,
+      };
+
+      setComponents(pre => {
+        const customComponents = newWebAppLandingConfigs.map(item => {
+          return {
+            ...COMPONENTS_MAP[item.type as keyof typeof COMPONENTS_MAP],
+            id: item.id,
+          };
+        });
+        return [pre[0], ...customComponents, pre[pre.length - 1]];
+      });
     }
+    dispatch(setAppPreviewData(mergeInfo));
   }, [info]);
 
   useEffect(() => {

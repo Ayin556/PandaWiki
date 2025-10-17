@@ -31,7 +31,6 @@ export interface BrandGroup {
     url: string;
   }[];
 }
-[];
 
 interface DragBrandProps {
   onChange: (data: BrandGroup[]) => void;

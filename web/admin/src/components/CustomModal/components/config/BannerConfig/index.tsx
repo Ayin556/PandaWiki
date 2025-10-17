@@ -16,15 +16,20 @@ import DragList from './DragList';
 import UploadFile from '@/components/UploadFile';
 import { DEFAULT_DATA } from '../../../constants';
 import useDebounceAppPreviewData from '@/hooks/useDebounceAppPreviewData';
+import { handleLandingConfigs, findConfigById } from '../../../utils';
 
-const Config: React.FC<ConfigProps> = ({ setIsEdit }) => {
+const Config: React.FC<ConfigProps> = ({ setIsEdit, id }) => {
   const { appPreviewData } = useAppSelector(state => state.config);
   const [inputValue, setInputValue] = useState('');
-  const { control, watch, setValue, subscribe } = useForm({
-    defaultValues:
-      appPreviewData?.settings?.web_app_landing_settings?.banner_config ||
-      DEFAULT_DATA.banner,
+  const { control, watch, setValue, subscribe } = useForm<
+    typeof DEFAULT_DATA.banner
+  >({
+    defaultValues: findConfigById(
+      appPreviewData?.settings?.web_app_landing_configs || [],
+      id,
+    ),
   });
+
   const debouncedDispatch = useDebounceAppPreviewData();
   const btns = watch('btns') || [];
 
@@ -46,10 +51,15 @@ const Config: React.FC<ConfigProps> = ({ setIsEdit }) => {
           ...appPreviewData,
           settings: {
             ...appPreviewData?.settings,
-            web_app_landing_settings: {
-              ...appPreviewData?.settings?.web_app_landing_settings,
-              banner_config: values,
-            },
+            web_app_landing_configs: handleLandingConfigs({
+              id,
+              config: appPreviewData?.settings?.web_app_landing_configs || [],
+              values: {
+                ...values,
+                title_font_size: +(values.title_font_size || 0),
+                subtitle_font_size: +(values.subtitle_font_size || 0),
+              },
+            }),
           },
         };
         setIsEdit(true);

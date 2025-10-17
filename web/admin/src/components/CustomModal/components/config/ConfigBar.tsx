@@ -42,7 +42,12 @@ const ConfigBar = ({
             pb: 4,
           }}
         >
-          <curConfig.config setIsEdit={setIsEdit} data={data} isEdit={isEdit} />
+          <curConfig.config
+            setIsEdit={setIsEdit}
+            data={data}
+            isEdit={isEdit}
+            id={curComponent.id}
+          />
         </Stack>
       ) : null}
     </Stack>

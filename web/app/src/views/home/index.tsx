@@ -8,10 +8,10 @@ import {
   SimpleDoc,
   Carousel,
 } from '@panda-wiki/ui';
-
+import { DomainRecommendNodeListResp } from '@/request/types';
 import { useRouter } from 'next/navigation';
+
 import { useStore } from '@/provider';
-import { V1NodeRecommendListResp } from '@/request/types';
 
 const handleHeaderProps = (setting: any) => {
   return {
@@ -32,42 +32,45 @@ const handleFooterProps = (setting: any) => {
   };
 };
 
-const handleFaqProps = (setting: any) => {
-  const config = setting.web_app_landing_settings || {};
+const handleFaqProps = (config: any = {}) => {
   return {
-    title: config.faq_config?.title || '常见问题',
-    bgColor: config.faq_config?.bg_color || '#ffffff',
-    titleColor: config.faq_config?.title_color || '#000000',
+    title: config.title || '常见问题',
+    bgColor: config.bg_color || '#ffffff',
+    titleColor: config.title_color || '#000000',
     items:
-      config.faq_config?.list?.map((item: any) => ({
+      config.list?.map((item: any) => ({
         question: item.question,
         url: item.link,
       })) || [],
   };
 };
 
-const handleBasicDocProps = (setting: any, docs: V1NodeRecommendListResp) => {
-  const config = setting.web_app_landing_settings || {};
+const handleBasicDocProps = (
+  config: any = {},
+  docs: DomainRecommendNodeListResp[],
+) => {
   return {
-    title: config.basic_doc_config?.title || '基础文档',
-    bgColor: config.basic_doc_config?.bg_color || '#ffffff',
-    titleColor: config.basic_doc_config?.title_color || '#00000',
+    title: config.title || '基础文档',
+    bgColor: config.bg_color || '#ffffff',
+    titleColor: config.title_color || '#00000',
     items:
-      docs.basic_docs?.map((item: any) => ({
+      docs?.map(item => ({
         ...item,
         summary: item.summary || '暂无摘要',
       })) || [],
   };
 };
 
-const handleDirDocProps = (setting: any, docs: V1NodeRecommendListResp) => {
-  const config = setting.web_app_landing_settings || {};
+const handleDirDocProps = (
+  config: any = {},
+  docs: DomainRecommendNodeListResp[],
+) => {
   return {
-    title: config.dir_doc_config?.title || '目录文档',
-    bgColor: config.dir_doc_config?.bg_color || '#3248F2',
-    titleColor: config.dir_doc_config?.title_color || '#ffffff',
+    title: config.title || '目录文档',
+    bgColor: config.bg_color || '#3248F2',
+    titleColor: config.title_color || '#ffffff',
     items:
-      docs.dir_docs?.map((item: any) => ({
+      docs?.map(item => ({
         id: item.id,
         name: item.name,
         ...item,
@@ -76,27 +79,28 @@ const handleDirDocProps = (setting: any, docs: V1NodeRecommendListResp) => {
   };
 };
 
-const handleSimpleDocProps = (setting: any, docs: V1NodeRecommendListResp) => {
-  const config = setting.web_app_landing_settings || {};
+const handleSimpleDocProps = (
+  config: any = {},
+  docs: DomainRecommendNodeListResp[],
+) => {
   return {
-    title: config.simple_doc_config?.title || '简易文档',
-    bgColor: config.simple_doc_config?.bg_color || '#ffffff',
-    titleColor: config.simple_doc_config?.title_color || '#000000',
+    title: config.title || '简易文档',
+    bgColor: config.bg_color || '#ffffff',
+    titleColor: config.title_color || '#000000',
     items:
-      docs.simple_docs?.map((item: any) => ({
+      docs?.map(item => ({
         ...item,
       })) || [],
   };
 };
 
-const handleCarouselProps = (setting: any) => {
-  const config = setting.web_app_landing_settings || {};
+const handleCarouselProps = (config: any = {}) => {
   return {
-    title: config.carousel_config?.title || '轮播图展示',
-    bgColor: config.carousel_config?.bg_color || '#3248F2',
-    titleColor: config.carousel_config?.title_color || '#ffffff',
+    title: config.title || '轮播图展示',
+    bgColor: config.bg_color || '#3248F2',
+    titleColor: config.title_color || '#ffffff',
     items:
-      config.carousel_config?.list?.map((item: any) => ({
+      config.list?.map((item: any) => ({
         id: item.id,
         title: item.title,
         url: item.url,
@@ -105,8 +109,8 @@ const handleCarouselProps = (setting: any) => {
   };
 };
 
-const handleBannerProps = (setting: any) => {
-  const config = setting.web_app_landing_settings?.banner_config || {};
+const handleBannerProps = (config: any = {}) => {
+  console.log(config, 'config-------------', config.btns || []);
   return {
     title: {
       text: config.title,
@@ -129,14 +133,14 @@ const handleBannerProps = (setting: any) => {
 
 const componentMap = {
   banner: Banner,
-  basicDoc: BasicDoc,
-  dirDoc: DirDoc,
-  simpleDoc: SimpleDoc,
+  basic_doc: BasicDoc,
+  dir_doc: DirDoc,
+  simple_doc: SimpleDoc,
   carousel: Carousel,
   faq: Faq,
-};
+} as const;
 
-const Welcome = ({ docs }: { docs: V1NodeRecommendListResp }) => {
+const Welcome = () => {
   const {
     mobile = false,
     kbDetail,
@@ -159,52 +163,53 @@ const Welcome = ({ docs }: { docs: V1NodeRecommendListResp }) => {
     }
   };
 
-  const handleComponentProps = (
-    type: string,
-    setting: any,
-    docs: V1NodeRecommendListResp,
-  ) => {
-    switch (type) {
-      case 'header':
-        return { ...handleHeaderProps(setting), onSearch: onBannerSearch };
-      case 'footer':
-        return handleFooterProps(setting);
+  const TYPE_TO_CONFIG_LABEL = {
+    banner: 'banner_config',
+    basic_doc: 'basic_doc_config',
+    dir_doc: 'dir_doc_config',
+    simple_doc: 'simple_doc_config',
+    carousel: 'carousel_config',
+    faq: 'faq_config',
+  } as const;
+
+  const handleComponentProps = (data: any) => {
+    const config =
+      data[
+        TYPE_TO_CONFIG_LABEL[data.type as keyof typeof TYPE_TO_CONFIG_LABEL]
+      ];
+
+    switch (data.type) {
       case 'faq':
-        return handleFaqProps(setting);
-      case 'basicDoc':
-        return handleBasicDocProps(setting, docs);
-      case 'dirDoc':
-        return handleDirDocProps(setting, docs);
-      case 'simpleDoc':
-        return handleSimpleDocProps(setting, docs);
+        return handleFaqProps(config);
+      case 'basic_doc':
+        return handleBasicDocProps(config, data.nodes);
+      case 'dir_doc':
+        return handleDirDocProps(config, data.nodes);
+      case 'simple_doc':
+        return handleSimpleDocProps(config, data.nodes);
       case 'carousel':
-        return handleCarouselProps(setting);
+        return handleCarouselProps(config);
       case 'banner':
         return {
-          ...handleBannerProps(setting),
+          ...handleBannerProps(config),
           onSearch: onBannerSearch,
-          btns: setting.web_app_landing_settings?.banner_config?.btns?.map(
-            (item: any) => ({
-              ...item,
-              href: item.href || '/node',
-            }),
-          ),
+          btns: (config?.btns || []).map((item: any) => ({
+            ...item,
+            href: item.href || '/node',
+          })),
         };
     }
   };
-
   return (
     <>
-      {settings?.web_app_landing_settings?.com_config_order?.map(
-        (key: string) => {
-          const Component = componentMap[key as keyof typeof componentMap]!;
-          const props = handleComponentProps(key, settings, docs);
-          return Component ? (
-            // @ts-ignore
-            <Component key={key} mobile={mobile} {...props} />
-          ) : null;
-        },
-      )}
+      {settings?.web_app_landing_configs?.map((item, index) => {
+        const Component = componentMap[item.type as keyof typeof componentMap];
+        const props = handleComponentProps(item);
+        return Component ? (
+          // @ts-ignore
+          <Component key={index} mobile={mobile} {...props} />
+        ) : null;
+      })}
     </>
   );
 };

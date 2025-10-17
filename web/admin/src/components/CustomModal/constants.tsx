@@ -6,62 +6,64 @@ import {
   IconChangjianwenti,
   IconLunbotu,
 } from '@panda-wiki/icons';
+import { DomainRecommendNodeListResp } from '@/request/types';
 
 export const DEFAULT_DATA = {
   banner: {
-    title: 'PandaWiki AI 知识库',
+    title: '',
     title_color: '#6E73FE',
     title_font_size: 60,
-    subtitle:
-      'PandaWiki 借助大模型的力量为你提供 AI 创作、 AI 问答、AI 搜索等能力',
-    placeholder: '搜索文档',
+    subtitle: '',
+    placeholder: '',
     subtitle_color: '#ffffff80',
     subtitle_font_size: 16,
     bg_url: '',
     hot_search: [] as string[],
-    btns: [
-      {
-        id: '1',
-        text: '前往文档',
-        type: 'contained',
-        href: '',
-      },
-    ] as {
+    btns: [] as {
       id: string;
       text: string;
       type: 'contained' | 'outlined' | 'text';
       href: string;
     }[],
   },
-  basicDoc: {
+  basic_doc: {
     title: '基础文档',
     bg_color: '#ffffff00',
     title_color: '#000000',
-    docs: [],
+    nodes: [] as DomainRecommendNodeListResp[],
   },
-  dirDoc: {
+  dir_doc: {
     title: '目录文档',
     bg_color: '#3248F2',
     title_color: '#ffffff',
-    dirs: [],
+    nodes: [] as DomainRecommendNodeListResp[],
   },
-  simpleDoc: {
+  simple_doc: {
     title: '简易文档',
     bg_color: '#ffffff00',
     title_color: '#000000',
-    docs: [],
+    nodes: [] as DomainRecommendNodeListResp[],
   },
   carousel: {
     title: '轮播图展示',
     bg_color: '#3248F2',
     title_color: '#ffffff',
-    list: [],
+    list: [] as {
+      id: string;
+      title: string;
+      url: string;
+      desc: string;
+    }[],
   },
   faq: {
     title: '常见问题',
     bg_color: '#ffffff00',
     title_color: '#000000',
-    list: [],
+    list: [] as {
+      id: string;
+      question: string;
+      link: string;
+    }[],
   },
 };
 
@@ -80,24 +82,24 @@ export const COMPONENTS_MAP = {
     config: lazy(() => import('./components/config/BannerConfig')),
     fixed: true,
   },
-  basicDoc: {
-    name: 'basicDoc',
+  basic_doc: {
+    name: 'basic_doc',
     title: '基础文档',
     icon: IconJichuwendang,
     component: lazy(() => import('@panda-wiki/ui/basicDoc')),
     config: lazy(() => import('./components/config/BasicDocConfig')),
     fixed: false,
   },
-  dirDoc: {
-    name: 'dirDoc',
+  dir_doc: {
+    name: 'dir_doc',
     title: '目录文档',
     icon: IconMuluwendang,
     component: lazy(() => import('@panda-wiki/ui/dirDoc')),
     config: lazy(() => import('./components/config/DirDocConfig')),
     fixed: false,
   },
-  simpleDoc: {
-    name: 'simpleDoc',
+  simple_doc: {
+    name: 'simple_doc',
     title: '简易文档',
     icon: IconJianyiwendang,
     component: lazy(() => import('@panda-wiki/ui/simpleDoc')),
@@ -128,3 +130,12 @@ export const COMPONENTS_MAP = {
     fixed: true,
   },
 };
+
+export const TYPE_TO_CONFIG_LABEL = {
+  banner: 'banner_config',
+  basic_doc: 'basic_doc_config',
+  dir_doc: 'dir_doc_config',
+  simple_doc: 'simple_doc_config',
+  carousel: 'carousel_config',
+  faq: 'faq_config',
+} as const;
