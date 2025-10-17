@@ -1,4 +1,5 @@
 import Card from '@/components/Card';
+import { useURLSearchParams } from '@/hooks';
 import { getApiV1AppDetail } from '@/request/App';
 import { getApiV1KnowledgeBaseDetail } from '@/request/KnowledgeBase';
 import {
@@ -26,9 +27,10 @@ const SettingTabs: { label: string; id: string }[] = [
 
 const Setting = () => {
   const { kb_id } = useAppSelector(state => state.config);
+  const [searchParams, setSearchParams] = useURLSearchParams();
+  const activeTab = searchParams.get('tab') || 'backend-info';
   const [kb, setKb] = useState<DomainKnowledgeBaseDetail | null>(null);
   const [url, setUrl] = useState<string>('');
-  const [activeTab, setActiveTab] = useState<string>('backend-info');
   const [info, setInfo] = useState<DomainAppDetailResp>();
 
   const getInfo = async () => {
@@ -40,6 +42,10 @@ const Setting = () => {
     if (!kb_id) return;
     getApiV1KnowledgeBaseDetail({ id: kb_id }).then(res => setKb(res));
     getInfo();
+  };
+
+  const setActiveTab = (tab: string) => {
+    setSearchParams({ tab });
   };
 
   useEffect(() => {
@@ -88,7 +94,7 @@ const Setting = () => {
       <Card sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}>
         <Tabs
           value={activeTab}
-          onChange={(event, newValue) => setActiveTab(newValue)}
+          onChange={(event, newValue) => setActiveTab(newValue as string)}
           aria-label='setting tabs'
         >
           {SettingTabs.map(tab => (
