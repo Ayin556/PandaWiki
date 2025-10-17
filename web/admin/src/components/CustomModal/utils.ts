@@ -54,7 +54,9 @@ const handleDirDocProps = (config: any = {}) => {
     items:
       config.nodes?.map((item: any) => ({
         ...item,
-        recommend_nodes: item.recommend_nodes || [],
+        recommend_nodes: [...(item.recommend_nodes || [])].sort(
+          (a: any, b: any) => (a.position ?? 0) - (b.position ?? 0),
+        ),
       })) || [],
   };
 };

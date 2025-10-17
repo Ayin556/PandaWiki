@@ -107,23 +107,20 @@ const DirDocItem: React.FC<{
           <StyledEllipsis>{item.name}</StyledEllipsis>
         </StyledDirDocItemTitle>
         <StyledDirDocItemFiles>
-          {[...item.recommend_nodes]
-            .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
-            .slice(0, 4)
-            .map(it => (
-              <StyledDirDocItemFile
-                key={it.id}
-                href={`${baseUrl}/node/${it.id}`}
-                target='_blank'
-              >
-                {it.emoji ? (
-                  <Box>{it.emoji}</Box>
-                ) : (
-                  <IconWenjian sx={{ fontSize: 14, flexShrink: 0 }} />
-                )}
-                <StyledEllipsis>{it.name}</StyledEllipsis>
-              </StyledDirDocItemFile>
-            ))}
+          {item.recommend_nodes.slice(0, 4).map((it: any) => (
+            <StyledDirDocItemFile
+              key={it.id}
+              href={`${baseUrl}/node/${it.id}`}
+              target='_blank'
+            >
+              {it.emoji ? (
+                <Box>{it.emoji}</Box>
+              ) : (
+                <IconWenjian sx={{ fontSize: 14, flexShrink: 0 }} />
+              )}
+              <StyledEllipsis>{it.name}</StyledEllipsis>
+            </StyledDirDocItemFile>
+          ))}
         </StyledDirDocItemFiles>
         <Button
           href={`${baseUrl}/node/${item.recommend_nodes[0]?.id}`}

@@ -179,10 +179,14 @@ const AiQaModal = () => {
         onSearch(searchQuery, true);
       }
     } else {
-      onReset();
+      handleSearchAbort();
+
       const currentUrl = new URL(window.location.href);
       currentUrl.searchParams.delete('cid');
       window.history.replaceState(null, '', currentUrl.toString());
+      setTimeout(() => {
+        onReset();
+      });
     }
   }, [qaModalOpen]);
 

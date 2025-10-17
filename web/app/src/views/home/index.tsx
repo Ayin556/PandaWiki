@@ -74,7 +74,9 @@ const handleDirDocProps = (
         id: item.id,
         name: item.name,
         ...item,
-        recommend_nodes: item.recommend_nodes || [],
+        recommend_nodes: [...(item.recommend_nodes || [])].sort(
+          (a, b) => (a.position ?? 0) - (b.position ?? 0),
+        ),
       })) || [],
   };
 };
@@ -110,7 +112,6 @@ const handleCarouselProps = (config: any = {}) => {
 };
 
 const handleBannerProps = (config: any = {}) => {
-  console.log(config, 'config-------------', config.btns || []);
   return {
     title: {
       text: config.title,
