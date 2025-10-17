@@ -440,7 +440,7 @@ export type AppConfigEditData = {
 // =============================================》model
 
 export type GetModelNameData = {
-  type: 'chat' | 'embedding' | 'rerank' | 'analysis';
+  type: 'chat' | 'embedding' | 'rerank' | 'analysis' | 'analysis-vl';
   provider: keyof typeof ModelProvider | '';
   api_header: string;
   api_key: string;
