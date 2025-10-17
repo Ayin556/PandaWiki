@@ -170,6 +170,8 @@ const Upload = ({
         onChange={e => {
           if (e.target.files) {
             onDrop(Array.from(e.target.files), []);
+            // 清空 input value，以便能够选择相同的文件
+            e.target.value = '';
           }
         }}
       />
