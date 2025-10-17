@@ -18,10 +18,11 @@ import type {
 } from '@ctzhian/modelkit';
 const modelkitModelTypeToLocal = (
   modelType: string,
-): 'chat' | 'embedding' | 'rerank' | 'analysis' => {
+): 'chat' | 'embedding' | 'rerank' | 'analysis' | 'analysis-vl' => {
   if (modelType === 'chat') return 'chat';
   if (modelType === 'llm') return 'chat';
   if (modelType === 'analysis') return 'analysis';
+  if (modelType === 'analysis-vl') return 'analysis-vl';
   if (modelType === 'rerank') return 'rerank';
   if (modelType === 'reranker') return 'rerank';
   if (modelType === 'embedding') return 'embedding';

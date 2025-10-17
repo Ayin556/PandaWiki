@@ -50,6 +50,7 @@ export enum DomainModelType {
   ModelTypeEmbedding = "embedding",
   ModelTypeRerank = "rerank",
   ModelTypeAnalysis = "analysis",
+  ModelTypeAnalysisVL = "analysis-vl",
 }
 
 export enum DomainMessageFrom {
