@@ -419,10 +419,11 @@ definitions:
         allOf:
         - $ref: '#/definitions/domain.WebAppCustomSettings'
         description: WebAppCustomStyle
-      web_app_landing_settings:
-        allOf:
-        - $ref: '#/definitions/domain.WebAppLandingSettings'
-        description: WebAppLandingSettings
+      web_app_landing_configs:
+        description: WebAppLandingConfigs
+        items:
+          $ref: '#/definitions/domain.WebAppLandingConfig'
+        type: array
       wechat_app_agent_id:
         type: string
       wechat_app_corpid:
@@ -577,10 +578,11 @@ definitions:
         allOf:
         - $ref: '#/definitions/domain.WebAppCustomSettings'
         description: WebAppCustomStyle
-      web_app_landing_settings:
-        allOf:
-        - $ref: '#/definitions/domain.WebAppLandingSettings'
+      web_app_landing_configs:
         description: WebApp Landing Settings
+        items:
+          $ref: '#/definitions/domain.WebAppLandingConfigResp'
+        type: array
       wechat_app_agent_id:
         type: string
       wechat_app_corpid:
@@ -668,6 +670,51 @@ definitions:
       username:
         type: string
     type: object
+  domain.BannerConfig:
+    properties:
+      bg_url:
+        type: string
+      btns:
+        items:
+          properties:
+            href:
+              type: string
+            id:
+              type: string
+            text:
+              type: string
+            type:
+              type: string
+          type: object
+        type: array
+      hot_search:
+        items:
+          type: string
+        type: array
+      placeholder:
+        type: string
+      subtitle:
+        type: string
+      subtitle_color:
+        type: string
+      subtitle_font_size:
+        type: integer
+      title:
+        type: string
+      title_color:
+        type: string
+      title_font_size:
+        type: integer
+    type: object
+  domain.BasicDocConfig:
+    properties:
+      bg_color:
+        type: string
+      title:
+        type: string
+      title_color:
+        type: string
+    type: object
   domain.BatchMoveReq:
     properties:
       ids:
@@ -696,6 +743,26 @@ definitions:
       count:
         type: integer
       name:
+        type: string
+    type: object
+  domain.CarouselConfig:
+    properties:
+      bg_color:
+        type: string
+      list:
+        items:
+          properties:
+            desc:
+              type: string
+            id:
+              type: string
+            title:
+              type: string
+            url:
+              type: string
+          type: object
+        type: array
+      title:
         type: string
     type: object
   domain.CatalogSettings:
@@ -1069,6 +1136,15 @@ definitions:
     - name
     - type
     type: object
+  domain.DirDocConfig:
+    properties:
+      bg_color:
+        type: string
+      title:
+        type: string
+      title_color:
+        type: string
+    type: object
   domain.DisclaimerSettings:
     properties:
       content:
@@ -1078,6 +1154,26 @@ definitions:
     properties:
       enabled:
         type: boolean
+    type: object
+  domain.FaqConfig:
+    properties:
+      bg_color:
+        type: string
+      list:
+        items:
+          properties:
+            id:
+              type: string
+            link:
+              type: string
+            question:
+              type: string
+          type: object
+        type: array
+      title:
+        type: string
+      title_color:
+        type: string
     type: object
   domain.FeedBackInfo:
     properties:
@@ -1756,6 +1852,15 @@ definitions:
       password:
         type: string
     type: object
+  domain.SimpleDocConfig:
+    properties:
+      bg_color:
+        type: string
+      title:
+        type: string
+      title_color:
+        type: string
+    type: object
   domain.SocialMediaAccount:
     properties:
       channel:
@@ -1929,127 +2034,59 @@ definitions:
           $ref: '#/definitions/domain.SocialMediaAccount'
         type: array
     type: object
-  domain.WebAppLandingSettings:
+  domain.WebAppLandingConfig:
     properties:
       banner_config:
-        properties:
-          bg_url:
-            type: string
-          btns:
-            items:
-              properties:
-                href:
-                  type: string
-                id:
-                  type: string
-                text:
-                  type: string
-                type:
-                  type: string
-              type: object
-            type: array
-          hot_search:
-            items:
-              type: string
-            type: array
-          placeholder:
-            type: string
-          subtitle:
-            type: string
-          subtitle_color:
-            type: string
-          subtitle_font_size:
-            type: integer
-          title:
-            type: string
-          title_color:
-            type: string
-          title_font_size:
-            type: integer
-        type: object
+        $ref: '#/definitions/domain.BannerConfig'
       basic_doc_config:
-        properties:
-          bg_color:
-            type: string
-          list:
-            items:
-              type: string
-            type: array
-          title:
-            type: string
-          title_color:
-            type: string
-        type: object
+        $ref: '#/definitions/domain.BasicDocConfig'
       carousel_config:
-        properties:
-          bg_color:
-            type: string
-          list:
-            items:
-              properties:
-                desc:
-                  type: string
-                id:
-                  type: string
-                title:
-                  type: string
-                url:
-                  type: string
-              type: object
-            type: array
-          title:
-            type: string
-        type: object
+        $ref: '#/definitions/domain.CarouselConfig'
       com_config_order:
         items:
           type: string
         type: array
       dir_doc_config:
-        properties:
-          bg_color:
-            type: string
-          list:
-            items:
-              type: string
-            type: array
-          title:
-            type: string
-          title_color:
-            type: string
-        type: object
+        $ref: '#/definitions/domain.DirDocConfig'
       faq_config:
-        properties:
-          bg_color:
-            type: string
-          list:
-            items:
-              properties:
-                id:
-                  type: string
-                link:
-                  type: string
-                question:
-                  type: string
-              type: object
-            type: array
-          title:
-            type: string
-          title_color:
-            type: string
-        type: object
+        $ref: '#/definitions/domain.FaqConfig'
+      node_ids:
+        items:
+          type: string
+        type: array
       simple_doc_config:
-        properties:
-          bg_color:
-            type: string
-          list:
-            items:
-              type: string
-            type: array
-          title:
-            type: string
-          title_color:
-            type: string
-        type: object
+        $ref: '#/definitions/domain.SimpleDocConfig'
+      type:
+        type: string
+    type: object
+  domain.WebAppLandingConfigResp:
+    properties:
+      banner_config:
+        $ref: '#/definitions/domain.BannerConfig'
+      basic_doc_config:
+        $ref: '#/definitions/domain.BasicDocConfig'
+      carousel_config:
+        $ref: '#/definitions/domain.CarouselConfig'
+      com_config_order:
+        items:
+          type: string
+        type: array
+      dir_doc_config:
+        $ref: '#/definitions/domain.DirDocConfig'
+      faq_config:
+        $ref: '#/definitions/domain.FaqConfig'
+      node_ids:
+        items:
+          type: string
+        type: array
+      nodes:
+        items:
+          $ref: '#/definitions/domain.RecommendNodeListResp'
+        type: array
+      simple_doc_config:
+        $ref: '#/definitions/domain.SimpleDocConfig'
+      type:
+        type: string
     type: object
   domain.WecomAIBotSettings:
     properties:
@@ -2655,27 +2692,6 @@ definitions:
       updated_at:
         type: string
     type: object
-  v1.NodeItem:
-    properties:
-      emoji:
-        type: string
-      id:
-        type: string
-      name:
-        type: string
-      parent_id:
-        type: string
-      position:
-        type: number
-      recommend_nodes:
-        items:
-          $ref: '#/definitions/domain.RecommendNodeListResp'
-        type: array
-      summary:
-        type: string
-      type:
-        $ref: '#/definitions/domain.NodeType'
-    type: object
   v1.NodePermissionEditReq:
     properties:
       answerable_groups:
@@ -2727,25 +2743,6 @@ definitions:
         description: 可被访问
         items:
           $ref: '#/definitions/domain.NodeGroupDetail'
-        type: array
-    type: object
-  v1.NodeRecommendListResp:
-    properties:
-      basic_docs:
-        items:
-          $ref: '#/definitions/v1.NodeItem'
-        type: array
-      dir_docs:
-        items:
-          $ref: '#/definitions/v1.NodeItem'
-        type: array
-      node_recommends:
-        items:
-          $ref: '#/definitions/v1.NodeItem'
-        type: array
-      simple_docs:
-        items:
-          $ref: '#/definitions/v1.NodeItem'
         type: array
     type: object
   v1.NotionParseItem:
@@ -5788,32 +5785,6 @@ paths:
           schema:
             $ref: '#/definitions/domain.Response'
       summary: GetNodeList
-      tags:
-      - share_node
-  /share/v1/node/recommend/list:
-    get:
-      consumes:
-      - application/json
-      description: 推荐卡片列表
-      parameters:
-      - description: kb id
-        in: header
-        name: X-KB-ID
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/domain.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/v1.NodeRecommendListResp'
-              type: object
-      summary: 推荐卡片列表
       tags:
       - share_node
   /share/v1/openapi/github/callback:
