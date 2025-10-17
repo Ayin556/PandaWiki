@@ -19,10 +19,11 @@ const (
 type ModelType string
 
 const (
-	ModelTypeChat      ModelType = "chat"
-	ModelTypeEmbedding ModelType = "embedding"
-	ModelTypeRerank    ModelType = "rerank"
-	ModelTypeAnalysis  ModelType = "analysis"
+	ModelTypeChat       ModelType = "chat"
+	ModelTypeEmbedding  ModelType = "embedding"
+	ModelTypeRerank     ModelType = "rerank"
+	ModelTypeAnalysis   ModelType = "analysis"
+	ModelTypeAnalysisVL ModelType = "analysis-vl"
 )
 
 type Model struct {
@@ -137,7 +138,7 @@ type BaseModelInfo struct {
 	APIKey     string        `json:"api_key"`
 	APIHeader  string        `json:"api_header"`
 	APIVersion string        `json:"api_version"` // for azure openai
-	Type       ModelType     `json:"type" validate:"required,oneof=chat embedding rerank analysis"`
+	Type       ModelType     `json:"type" validate:"required,oneof=chat embedding rerank analysis analysis-vl"`
 }
 
 type CheckModelResp struct {
@@ -150,7 +151,7 @@ type GetProviderModelListReq struct {
 	BaseURL   string    `json:"base_url" query:"base_url" validate:"required"`
 	APIKey    string    `json:"api_key" query:"api_key"`
 	APIHeader string    `json:"api_header" query:"api_header"`
-	Type      ModelType `json:"type" query:"type" validate:"required,oneof=chat embedding rerank analysis"`
+	Type      ModelType `json:"type" query:"type" validate:"required,oneof=chat embedding rerank analysis analysis-vl"`
 }
 
 type GetProviderModelListResp struct {

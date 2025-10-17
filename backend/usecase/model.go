@@ -5,14 +5,16 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/cloudwego/eino/schema"
+	"github.com/google/uuid"
+	"github.com/samber/lo"
+
 	"github.com/chaitin/panda-wiki/config"
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/log"
 	"github.com/chaitin/panda-wiki/repo/mq"
 	"github.com/chaitin/panda-wiki/repo/pg"
 	"github.com/chaitin/panda-wiki/store/rag"
-	"github.com/cloudwego/eino/schema"
-	"github.com/google/uuid"
 )
 
 type ModelUsecase struct {
@@ -118,7 +120,7 @@ func (u *ModelUsecase) Create(ctx context.Context, model *domain.Model) error {
 	if err := u.modelRepo.Create(ctx, model); err != nil {
 		return err
 	}
-	if model.Type == domain.ModelTypeEmbedding || model.Type == domain.ModelTypeRerank || model.Type == domain.ModelTypeAnalysis {
+	if model.Type == domain.ModelTypeEmbedding || model.Type == domain.ModelTypeRerank || model.Type == domain.ModelTypeAnalysis || model.Type == domain.ModelTypeAnalysisVL {
 		if id, err := u.ragStore.AddModel(ctx, model); err != nil {
 			return err
 		} else {
@@ -179,7 +181,13 @@ func (u *ModelUsecase) Update(ctx context.Context, req *domain.UpdateModelReq) e
 	if err := u.modelRepo.Update(ctx, req); err != nil {
 		return err
 	}
-	if req.Type == domain.ModelTypeEmbedding || req.Type == domain.ModelTypeRerank || req.Type == domain.ModelTypeAnalysis {
+	ragModelTypes := []domain.ModelType{
+		domain.ModelTypeEmbedding,
+		domain.ModelTypeRerank,
+		domain.ModelTypeAnalysis,
+		domain.ModelTypeAnalysisVL,
+	}
+	if lo.Contains(ragModelTypes, req.Type) {
 		updateModel := &domain.Model{
 			ID:       req.ID,
 			Model:    req.Model,
@@ -191,13 +199,15 @@ func (u *ModelUsecase) Update(ctx context.Context, req *domain.UpdateModelReq) e
 		if req.Parameters != nil {
 			updateModel.Parameters = *req.Parameters
 		}
-		if req.Type == domain.ModelTypeAnalysis && req.IsActive != nil {
+		// update is active flag for analysis models
+		if (req.Type == domain.ModelTypeAnalysis || req.Type == domain.ModelTypeAnalysisVL) && req.IsActive != nil {
 			updateModel.IsActive = *req.IsActive
 		}
 		if err := u.ragStore.UpdateModel(ctx, updateModel); err != nil {
 			return err
 		}
 	}
+	// update all records when embedding model is updated
 	if req.Type == domain.ModelTypeEmbedding {
 		return u.TriggerUpsertRecords(ctx)
 	}

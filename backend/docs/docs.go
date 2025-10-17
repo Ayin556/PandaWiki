@@ -6123,7 +6123,8 @@ const docTemplate = `{
                         "chat",
                         "embedding",
                         "rerank",
-                        "analysis"
+                        "analysis",
+                        "analysis-vl"
                     ],
                     "allOf": [
                         {
@@ -6301,7 +6302,8 @@ const docTemplate = `{
                         "chat",
                         "embedding",
                         "rerank",
-                        "analysis"
+                        "analysis",
+                        "analysis-vl"
                     ],
                     "allOf": [
                         {
@@ -6526,13 +6528,15 @@ const docTemplate = `{
                 "chat",
                 "embedding",
                 "rerank",
-                "analysis"
+                "analysis",
+                "analysis-vl"
             ],
             "x-enum-varnames": [
                 "ModelTypeChat",
                 "ModelTypeEmbedding",
                 "ModelTypeRerank",
-                "ModelTypeAnalysis"
+                "ModelTypeAnalysis",
+                "ModelTypeAnalysisVL"
             ]
         },
         "domain.MoveNodeReq": {
@@ -7386,7 +7390,8 @@ const docTemplate = `{
                         "chat",
                         "embedding",
                         "rerank",
-                        "analysis"
+                        "analysis",
+                        "analysis-vl"
                     ],
                     "allOf": [
                         {
@@ -7768,7 +7773,8 @@ const docTemplate = `{
                         "chat",
                         "embedding",
                         "rerank",
-                        "analysis"
+                        "analysis",
+                        "analysis-vl"
                     ],
                     "allOf": [
                         {
