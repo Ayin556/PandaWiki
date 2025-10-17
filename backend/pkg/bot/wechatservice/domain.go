@@ -10,13 +10,15 @@ import (
 )
 
 type WechatServiceConfig struct {
-	Ctx            context.Context
-	CorpID         string
-	Token          string
-	EncodingAESKey string
-	kbID           string
-	Secret         string
-	logger         *log.Logger
+	Ctx             context.Context
+	CorpID          string
+	Token           string
+	EncodingAESKey  string
+	kbID            string
+	Secret          string
+	logger          *log.Logger
+	containKeywords []string
+	equalKeywords   []string
 	// db
 	WeRepo *pg.WechatRepository
 }

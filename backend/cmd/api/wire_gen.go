@@ -164,8 +164,9 @@ func createApp() (*App, error) {
 	shareConversationHandler := share.NewShareConversationHandler(baseHandler, echo, conversationUsecase, logger)
 	wechatRepository := pg2.NewWechatRepository(db, logger)
 	wechatUsecase := usecase.NewWechatUsecase(logger, appUsecase, chatUsecase, wechatRepository, authRepo)
+	wecomUsecase := usecase.NewWecomUsecase(logger, cacheCache, appUsecase, chatUsecase, authRepo)
 	wechatAppUsecase := usecase.NewWechatAppUsecase(logger, appUsecase, chatUsecase, wechatRepository, authRepo)
-	shareWechatHandler := share.NewShareWechatHandler(echo, baseHandler, logger, appUsecase, conversationUsecase, wechatUsecase, wechatAppUsecase)
+	shareWechatHandler := share.NewShareWechatHandler(echo, baseHandler, logger, appUsecase, conversationUsecase, wechatUsecase, wecomUsecase, wechatAppUsecase)
 	shareCaptchaHandler := share.NewShareCaptchaHandler(baseHandler, echo, logger)
 	openapiV1Handler := share.NewOpenapiV1Handler(echo, baseHandler, logger, authUsecase)
 	shareHandler := &share.ShareHandler{

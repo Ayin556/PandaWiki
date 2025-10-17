@@ -22,6 +22,7 @@ const (
 	AppTypeDisCordBot
 	AppTypeWechatOfficialAccount
 	AppTypeOpenAIAPI
+	AppTypeWecomAIBot
 )
 
 var AppTypes = []AppType{
@@ -34,6 +35,7 @@ var AppTypes = []AppType{
 	AppTypeDisCordBot,
 	AppTypeWechatOfficialAccount,
 	AppTypeOpenAIAPI,
+	AppTypeWecomAIBot,
 }
 
 func (t AppType) ToSourceType() consts.SourceType {
@@ -48,6 +50,8 @@ func (t AppType) ToSourceType() consts.SourceType {
 		return consts.SourceTypeFeishuBot
 	case AppTypeWechatBot:
 		return consts.SourceTypeWechatBot
+	case AppTypeWecomAIBot:
+		return consts.SourceTypeWecomAIBot
 	case AppTypeWechatServiceBot:
 		return consts.SourceTypeWechatServiceBot
 	case AppTypeDisCordBot:
@@ -99,19 +103,23 @@ type AppSettings struct {
 	FeishuBotIsEnabled *bool  `json:"feishu_bot_is_enabled,omitempty"`
 	FeishuBotAppID     string `json:"feishu_bot_app_id,omitempty"`
 	FeishuBotAppSecret string `json:"feishu_bot_app_secret,omitempty"`
-	// WechatAppBot
+	// WechatAppBot 企业微信机器人
 	WeChatAppIsEnabled      *bool  `json:"wechat_app_is_enabled,omitempty"`
 	WeChatAppToken          string `json:"wechat_app_token,omitempty"`
 	WeChatAppEncodingAESKey string `json:"wechat_app_encodingaeskey,omitempty"`
 	WeChatAppCorpID         string `json:"wechat_app_corpid,omitempty"`
 	WeChatAppSecret         string `json:"wechat_app_secret,omitempty"`
 	WeChatAppAgentID        string `json:"wechat_app_agent_id,omitempty"`
+	// WecomAIBotSettings 企业微信智能机器人
+	WecomAIBotSettings WecomAIBotSettings `json:"wecom_ai_bot_settings"`
 	// WechatServiceBot
-	WeChatServiceIsEnabled      *bool  `json:"wechat_service_is_enabled,omitempty"`
-	WeChatServiceToken          string `json:"wechat_service_token,omitempty"`
-	WeChatServiceEncodingAESKey string `json:"wechat_service_encodingaeskey,omitempty"`
-	WeChatServiceCorpID         string `json:"wechat_service_corpid,omitempty"`
-	WeChatServiceSecret         string `json:"wechat_service_secret,omitempty"`
+	WeChatServiceIsEnabled       *bool    `json:"wechat_service_is_enabled,omitempty"`
+	WeChatServiceToken           string   `json:"wechat_service_token,omitempty"`
+	WeChatServiceEncodingAESKey  string   `json:"wechat_service_encodingaeskey,omitempty"`
+	WeChatServiceCorpID          string   `json:"wechat_service_corpid,omitempty"`
+	WeChatServiceSecret          string   `json:"wechat_service_secret,omitempty"`
+	WechatServiceContainKeywords []string `json:"wechat_service_contain_keywords"`
+	WechatServiceEqualKeywords   []string `json:"wechat_service_equal_keywords"`
 	// DisCordBot
 	DiscordBotIsEnabled *bool  `json:"discord_bot_is_enabled,omitempty"`
 	DiscordBotToken     string `json:"discord_bot_token,omitempty"`
@@ -143,8 +151,8 @@ type AppSettings struct {
 	OpenAIAPIBotSettings OpenAIAPIBotSettings `json:"openai_api_bot_settings"`
 	// Disclaimer Settings
 	DisclaimerSettings DisclaimerSettings `json:"disclaimer_settings"`
-	// WebAppLandingSettings
-	WebAppLandingSettings *WebAppLandingSettings `json:"web_app_landing_settings,omitempty"`
+	// WebAppLandingConfigs
+	WebAppLandingConfigs []WebAppLandingConfig `json:"web_app_landing_configs,omitempty"`
 
 	WatermarkContent   string                  `json:"watermark_content"`
 	WatermarkSetting   consts.WatermarkSetting `json:"watermark_setting" validate:"omitempty,oneof='' hidden visible"`
@@ -153,63 +161,75 @@ type AppSettings struct {
 	HomePageSetting    consts.HomePageSetting  `json:"home_page_setting"`
 }
 
-type WebAppLandingSettings struct {
-	BannerConfig struct {
-		Title            string   `json:"title"`
-		TitleColor       string   `json:"title_color"`
-		TitleFontSize    int      `json:"title_font_size"`
-		Subtitle         string   `json:"subtitle"`
-		Placeholder      string   `json:"placeholder"`
-		SubtitleColor    string   `json:"subtitle_color"`
-		SubtitleFontSize int      `json:"subtitle_font_size"`
-		BgURL            string   `json:"bg_url"`
-		HotSearch        []string `json:"hot_search"`
-		Btns             []struct {
-			ID   string `json:"id"`
-			Text string `json:"text"`
-			Type string `json:"type"`
-			Href string `json:"href"`
-		} `json:"btns"`
-	} `json:"banner_config"`
-	BasicDocConfig struct {
-		Title      string   `json:"title"`
-		TitleColor string   `json:"title_color"`
-		BgColor    string   `json:"bg_color"`
-		List       []string `json:"list"`
-	} `json:"basic_doc_config"`
-	DirDocConfig struct {
-		Title      string   `json:"title"`
-		TitleColor string   `json:"title_color"`
-		BgColor    string   `json:"bg_color"`
-		List       []string `json:"list"`
-	} `json:"dir_doc_config"`
-	SimpleDocConfig struct {
-		Title      string   `json:"title"`
-		TitleColor string   `json:"title_color"`
-		BgColor    string   `json:"bg_color"`
-		List       []string `json:"list"`
-	} `json:"simple_doc_config"`
-	CarouselConfig struct {
-		Title   string `json:"title"`
-		BgColor string `json:"bg_color"`
-		List    []struct {
-			ID    string `json:"id"`
-			Title string `json:"title"`
-			URL   string `json:"url"`
-			Desc  string `json:"desc"`
-		} `json:"list"`
-	} `json:"carousel_config"`
-	FaqConfig struct {
-		Title      string `json:"title"`
-		TitleColor string `json:"title_color"`
-		BgColor    string `json:"bg_color"`
-		List       []struct {
-			ID       string `json:"id"`
-			Question string `json:"question"`
-			Link     string `json:"link"`
-		} `json:"list"`
-	} `json:"faq_config"`
-	ComConfigOrder []string `json:"com_config_order"`
+type BannerConfig struct {
+	Title            string   `json:"title"`
+	TitleColor       string   `json:"title_color"`
+	TitleFontSize    int      `json:"title_font_size"`
+	Subtitle         string   `json:"subtitle"`
+	Placeholder      string   `json:"placeholder"`
+	SubtitleColor    string   `json:"subtitle_color"`
+	SubtitleFontSize int      `json:"subtitle_font_size"`
+	BgURL            string   `json:"bg_url"`
+	HotSearch        []string `json:"hot_search"`
+	Btns             []struct {
+		ID   string `json:"id"`
+		Text string `json:"text"`
+		Type string `json:"type"`
+		Href string `json:"href"`
+	} `json:"btns"`
+}
+type BasicDocConfig struct {
+	Title      string `json:"title"`
+	TitleColor string `json:"title_color"`
+	BgColor    string `json:"bg_color"`
+}
+type DirDocConfig struct {
+	Title      string `json:"title"`
+	TitleColor string `json:"title_color"`
+	BgColor    string `json:"bg_color"`
+}
+
+type SimpleDocConfig struct {
+	Title      string `json:"title"`
+	TitleColor string `json:"title_color"`
+	BgColor    string `json:"bg_color"`
+}
+type CarouselConfig struct {
+	Title   string `json:"title"`
+	BgColor string `json:"bg_color"`
+	List    []struct {
+		ID    string `json:"id"`
+		Title string `json:"title"`
+		URL   string `json:"url"`
+		Desc  string `json:"desc"`
+	} `json:"list"`
+}
+type FaqConfig struct {
+	Title      string `json:"title"`
+	TitleColor string `json:"title_color"`
+	BgColor    string `json:"bg_color"`
+	List       []struct {
+		ID       string `json:"id"`
+		Question string `json:"question"`
+		Link     string `json:"link"`
+	} `json:"list"`
+}
+type WebAppLandingConfig struct {
+	Type            string           `json:"type"`
+	NodeIds         []string         `json:"node_ids"`
+	BannerConfig    *BannerConfig    `json:"banner_config,omitempty"`
+	BasicDocConfig  *BasicDocConfig  `json:"basic_doc_config,omitempty"`
+	DirDocConfig    *DirDocConfig    `json:"dir_doc_config,omitempty"`
+	SimpleDocConfig *SimpleDocConfig `json:"simple_doc_config,omitempty"`
+	CarouselConfig  *CarouselConfig  `json:"carousel_config,omitempty"`
+	FaqConfig       *FaqConfig       `json:"faq_config,omitempty"`
+	ComConfigOrder  []string         `json:"com_config_order"`
+}
+
+type WecomAIBotSettings struct {
+	IsEnabled      bool   `json:"is_enabled,omitempty"`
+	Token          string `json:"token,omitempty"`
+	EncodingAESKey string `json:"encodingaeskey,omitempty"`
 }
 
 type DisclaimerSettings struct {
@@ -347,11 +367,14 @@ type AppSettingsResp struct {
 	WeChatAppSecret         string `json:"wechat_app_secret,omitempty"`
 	WeChatAppAgentID        string `json:"wechat_app_agent_id,omitempty"`
 	// WechatServiceBot
-	WeChatServiceIsEnabled      *bool  `json:"wechat_service_is_enabled,omitempty"`
-	WeChatServiceToken          string `json:"wechat_service_token,omitempty"`
-	WeChatServiceEncodingAESKey string `json:"wechat_service_encodingaeskey,omitempty"`
-	WeChatServiceCorpID         string `json:"wechat_service_corpid,omitempty"`
-	WeChatServiceSecret         string `json:"wechat_service_secret,omitempty"`
+	WeChatServiceIsEnabled       *bool    `json:"wechat_service_is_enabled,omitempty"`
+	WeChatServiceToken           string   `json:"wechat_service_token,omitempty"`
+	WeChatServiceEncodingAESKey  string   `json:"wechat_service_encodingaeskey,omitempty"`
+	WeChatServiceCorpID          string   `json:"wechat_service_corpid,omitempty"`
+	WeChatServiceSecret          string   `json:"wechat_service_secret,omitempty"`
+	WechatServiceContainKeywords []string `json:"wechat_service_contain_keywords"`
+	WechatServiceEqualKeywords   []string `json:"wechat_service_equal_keywords"`
+
 	// DisCordBot
 	DiscordBotIsEnabled *bool  `json:"discord_bot_is_enabled,omitempty"`
 	DiscordBotToken     string `json:"discord_bot_token,omitempty"`
@@ -361,6 +384,9 @@ type AppSettingsResp struct {
 	WechatOfficialAccountAppSecret      string `json:"wechat_official_account_app_secret,omitempty"`
 	WechatOfficialAccountToken          string `json:"wechat_official_account_token,omitempty"`
 	WechatOfficialAccountEncodingAESKey string `json:"wechat_official_account_encodingaeskey,omitempty"`
+
+	WecomAIBotSettings WecomAIBotSettings `json:"wecom_ai_bot_settings"`
+
 	// theme
 	ThemeMode     string        `json:"theme_mode,omitempty"`
 	ThemeAndStyle ThemeAndStyle `json:"theme_and_style"`
@@ -389,8 +415,21 @@ type AppSettingsResp struct {
 	// Disclaimer Settings
 	DisclaimerSettings DisclaimerSettings `json:"disclaimer_settings"`
 	// WebApp Landing Settings
-	WebAppLandingSettings *WebAppLandingSettings `json:"web_app_landing_settings,omitempty"`
-	HomePageSetting       consts.HomePageSetting `json:"home_page_setting"`
+	WebAppLandingConfigs []WebAppLandingConfigResp `json:"web_app_landing_configs,omitempty"`
+	HomePageSetting      consts.HomePageSetting    `json:"home_page_setting"`
+}
+
+type WebAppLandingConfigResp struct {
+	Type            string                   `json:"type"`
+	BannerConfig    *BannerConfig            `json:"banner_config,omitempty"`
+	BasicDocConfig  *BasicDocConfig          `json:"basic_doc_config,omitempty"`
+	DirDocConfig    *DirDocConfig            `json:"dir_doc_config,omitempty"`
+	SimpleDocConfig *SimpleDocConfig         `json:"simple_doc_config,omitempty"`
+	CarouselConfig  *CarouselConfig          `json:"carousel_config,omitempty"`
+	FaqConfig       *FaqConfig               `json:"faq_config,omitempty"`
+	ComConfigOrder  []string                 `json:"com_config_order"`
+	NodeIds         []string                 `json:"node_ids"`
+	Nodes           []*RecommendNodeListResp `json:"nodes" gorm:"-"`
 }
 
 func (s *AppSettingsResp) Scan(value any) error {

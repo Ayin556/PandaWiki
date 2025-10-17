@@ -9,10 +9,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"slices"
 	"strings"
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/samber/lo"
 	"github.com/sbzhu/weworkapi_golang/wxbizmsgcrypt"
 
 	"github.com/chaitin/panda-wiki/domain"
@@ -20,15 +22,17 @@ import (
 	"github.com/chaitin/panda-wiki/pkg/bot"
 )
 
-func NewWechatServiceConfig(ctx context.Context, CorpID, Token, EncodingAESKey string, kbid string, secret string, logger *log.Logger) (*WechatServiceConfig, error) {
+func NewWechatServiceConfig(ctx context.Context, logger *log.Logger, CorpID, Token, EncodingAESKey string, kbid string, secret string, containKeywords, equalKeywords []string) (*WechatServiceConfig, error) {
 	return &WechatServiceConfig{
-		Ctx:            ctx,
-		CorpID:         CorpID,
-		Token:          Token,
-		EncodingAESKey: EncodingAESKey,
-		kbID:           kbid,
-		Secret:         secret,
-		logger:         logger,
+		Ctx:             ctx,
+		CorpID:          CorpID,
+		Token:           Token,
+		EncodingAESKey:  EncodingAESKey,
+		kbID:            kbid,
+		Secret:          secret,
+		logger:          logger,
+		containKeywords: containKeywords,
+		equalKeywords:   equalKeywords,
 	}, nil
 }
 
@@ -103,30 +107,33 @@ func (cfg *WechatServiceConfig) Processmessage(msgRet *MsgRet, Kfmsg *WeixinUser
 		cfg.logger.Info("the customer has already in human service")
 		return nil
 	}
-
-	if content == "转人工" || content == "人工客服" {
-		// 改变状态为人工接待
-		// 非人工 ->转人工
-		humanList, err := cfg.GetKfHumanList(token, openkfId)
-		if err != nil {
-			cfg.logger.Error("get human list failed", log.Error(err))
-			return err
-		}
-		// 遍历找到可以接待的员工
-		for _, servicer := range humanList.ServicerList {
-			if servicer.Status == 0 { // 可以接待
-				err := ChangeState(token, userId, openkfId, 3, servicer.UserID)
-				if err != nil {
-					cfg.logger.Error("change state to human failed", log.Error(err))
-					return err
-				}
-				cfg.logger.Info("change state to human successful") // 转人工成功
-				return nil
+	if len(cfg.equalKeywords) > 0 || len(cfg.containKeywords) > 0 {
+		if slices.Contains(cfg.equalKeywords, content) || lo.SomeBy(cfg.containKeywords, func(sub string) bool {
+			return strings.Contains(content, sub)
+		}) {
+			// 改变状态为人工接待
+			// 非人工 ->转人工
+			humanList, err := cfg.GetKfHumanList(token, openkfId)
+			if err != nil {
+				cfg.logger.Error("get human list failed", log.Error(err))
+				return err
 			}
+			// 遍历找到可以接待的员工
+			for _, servicer := range humanList.ServicerList {
+				if servicer.Status == 0 { // 可以接待
+					err := ChangeState(token, userId, openkfId, 3, servicer.UserID)
+					if err != nil {
+						cfg.logger.Error("change state to human failed", log.Error(err))
+						return err
+					}
+					cfg.logger.Info("change state to human successful") // 转人工成功
+					return nil
+				}
+			}
+			// 失败
+			cfg.logger.Info("no human available")
+			return cfg.SendResponseToKfTxt(userId, openkfId, "当前没有可用的人工客服", token)
 		}
-		// 失败
-		cfg.logger.Info("no human available")
-		return cfg.SendResponseToKfTxt(userId, openkfId, "当前没有可用的人工客服", token)
 	}
 
 	// 1. first response to user

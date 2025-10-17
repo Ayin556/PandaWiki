@@ -96,7 +96,7 @@ func (u *ChatUsecase) Chat(ctx context.Context, req *domain.ChatRequest) (<-chan
 		}
 		req.ModelInfo = model
 		// 3. conversation management
-		if req.AppType == domain.AppTypeWechatServiceBot || req.AppType == domain.AppTypeWechatBot { // wechat service has its own id
+		if req.AppType == domain.AppTypeWechatServiceBot || req.AppType == domain.AppTypeWechatBot || req.AppType == domain.AppTypeWecomAIBot { // wechat service has its own id
 			nonce := uuid.New().String()
 			eventCh <- domain.SSEEvent{Type: "conversation_id", Content: req.ConversationID}
 			eventCh <- domain.SSEEvent{Type: "nonce", Content: nonce}

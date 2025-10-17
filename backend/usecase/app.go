@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"fmt"
+	"slices"
 	"sync"
 	"time"
 
@@ -332,6 +333,21 @@ func (u *AppUsecase) GetAppDetailByKBIDAndAppType(ctx context.Context, kbID stri
 		Name: app.Name,
 		Type: app.Type,
 	}
+	var webAppLandingConfigs []domain.WebAppLandingConfigResp
+	for i := range app.Settings.WebAppLandingConfigs {
+		webAppLandingConfigResp := domain.WebAppLandingConfigResp{
+			Type:            app.Settings.WebAppLandingConfigs[i].Type,
+			BannerConfig:    app.Settings.WebAppLandingConfigs[i].BannerConfig,
+			BasicDocConfig:  app.Settings.WebAppLandingConfigs[i].BasicDocConfig,
+			DirDocConfig:    app.Settings.WebAppLandingConfigs[i].DirDocConfig,
+			SimpleDocConfig: app.Settings.WebAppLandingConfigs[i].SimpleDocConfig,
+			CarouselConfig:  app.Settings.WebAppLandingConfigs[i].CarouselConfig,
+			FaqConfig:       app.Settings.WebAppLandingConfigs[i].FaqConfig,
+			ComConfigOrder:  app.Settings.WebAppLandingConfigs[i].ComConfigOrder,
+			NodeIds:         app.Settings.WebAppLandingConfigs[i].NodeIds,
+		}
+		webAppLandingConfigs = append(webAppLandingConfigs, webAppLandingConfigResp)
+	}
 	appDetailResp.Settings = domain.AppSettingsResp{
 		Title:              app.Settings.Title,
 		Icon:               app.Settings.Icon,
@@ -362,11 +378,13 @@ func (u *AppUsecase) GetAppDetailByKBIDAndAppType(ctx context.Context, kbID stri
 		WeChatAppSecret:         app.Settings.WeChatAppSecret,
 		WeChatAppAgentID:        app.Settings.WeChatAppAgentID,
 		// WechatServiceBot
-		WeChatServiceIsEnabled:      app.Settings.WeChatServiceIsEnabled,
-		WeChatServiceToken:          app.Settings.WeChatServiceToken,
-		WeChatServiceEncodingAESKey: app.Settings.WeChatServiceEncodingAESKey,
-		WeChatServiceCorpID:         app.Settings.WeChatServiceCorpID,
-		WeChatServiceSecret:         app.Settings.WeChatServiceSecret,
+		WeChatServiceIsEnabled:       app.Settings.WeChatServiceIsEnabled,
+		WeChatServiceToken:           app.Settings.WeChatServiceToken,
+		WeChatServiceEncodingAESKey:  app.Settings.WeChatServiceEncodingAESKey,
+		WeChatServiceCorpID:          app.Settings.WeChatServiceCorpID,
+		WeChatServiceSecret:          app.Settings.WeChatServiceSecret,
+		WechatServiceContainKeywords: app.Settings.WechatServiceContainKeywords,
+		WechatServiceEqualKeywords:   app.Settings.WechatServiceEqualKeywords,
 		// Discord
 		DiscordBotIsEnabled: app.Settings.DiscordBotIsEnabled,
 		DiscordBotToken:     app.Settings.DiscordBotToken,
@@ -398,13 +416,15 @@ func (u *AppUsecase) GetAppDetailByKBIDAndAppType(ctx context.Context, kbID stri
 		// disclaimer settings
 		DisclaimerSettings: app.Settings.DisclaimerSettings,
 		// webapp landing settings
-		WebAppLandingSettings: app.Settings.WebAppLandingSettings,
+		WebAppLandingConfigs: webAppLandingConfigs,
 
 		WatermarkContent:   app.Settings.WatermarkContent,
 		WatermarkSetting:   app.Settings.WatermarkSetting,
 		CopySetting:        app.Settings.CopySetting,
 		ContributeSettings: app.Settings.ContributeSettings,
 		HomePageSetting:    app.Settings.HomePageSetting,
+
+		WecomAIBotSettings: app.Settings.WecomAIBotSettings,
 	}
 	// init ai feedback string
 	if app.Settings.AIFeedbackSettings.AIFeedbackType == nil {
@@ -428,10 +448,30 @@ func (u *AppUsecase) GetAppDetailByKBIDAndAppType(ctx context.Context, kbID stri
 	return appDetailResp, nil
 }
 
-func (u *AppUsecase) GetWebAppInfo(ctx context.Context, kbID string) (*domain.AppInfoResp, error) {
+func (u *AppUsecase) ShareGetWebAppInfo(ctx context.Context, kbID string, authId uint) (*domain.AppInfoResp, error) {
 	app, err := u.repo.GetOrCreateAppByKBIDAndType(ctx, kbID, domain.AppTypeWeb)
 	if err != nil {
 		return nil, err
+	}
+	var webAppLandingConfigs []domain.WebAppLandingConfigResp
+	for i := range app.Settings.WebAppLandingConfigs {
+		webAppLandingConfigResp := domain.WebAppLandingConfigResp{
+			Type:            app.Settings.WebAppLandingConfigs[i].Type,
+			BannerConfig:    app.Settings.WebAppLandingConfigs[i].BannerConfig,
+			BasicDocConfig:  app.Settings.WebAppLandingConfigs[i].BasicDocConfig,
+			DirDocConfig:    app.Settings.WebAppLandingConfigs[i].DirDocConfig,
+			SimpleDocConfig: app.Settings.WebAppLandingConfigs[i].SimpleDocConfig,
+			CarouselConfig:  app.Settings.WebAppLandingConfigs[i].CarouselConfig,
+			FaqConfig:       app.Settings.WebAppLandingConfigs[i].FaqConfig,
+			ComConfigOrder:  app.Settings.WebAppLandingConfigs[i].ComConfigOrder,
+			NodeIds:         app.Settings.WebAppLandingConfigs[i].NodeIds,
+		}
+		nodes, err := u.GetRecommendNodesByIds(ctx, kbID, app.Settings.WebAppLandingConfigs[i].NodeIds, authId)
+		if err != nil {
+			return nil, err
+		}
+		webAppLandingConfigResp.Nodes = nodes
+		webAppLandingConfigs = append(webAppLandingConfigs, webAppLandingConfigResp)
 	}
 	appInfo := &domain.AppInfoResp{
 		Name: app.Name,
@@ -466,7 +506,7 @@ func (u *AppUsecase) GetWebAppInfo(ctx context.Context, kbID string) (*domain.Ap
 			// Disclaimer Settings
 			DisclaimerSettings: app.Settings.DisclaimerSettings,
 			// WebApp Landing Settings
-			WebAppLandingSettings: app.Settings.WebAppLandingSettings,
+			WebAppLandingConfigs: webAppLandingConfigs,
 
 			WatermarkContent:   app.Settings.WatermarkContent,
 			WatermarkSetting:   app.Settings.WatermarkSetting,
@@ -603,6 +643,14 @@ func (u *AppUsecase) handleBotAuths(ctx context.Context, id string, newSettings 
 		}
 	}
 
+	// Handle Wecom AI Bot
+	if currentApp.Settings.WecomAIBotSettings.IsEnabled != newSettings.WecomAIBotSettings.IsEnabled {
+		if err := u.handleBotAuth(ctx, currentApp.KBID, currentApp.ID, &currentApp.Settings.WecomAIBotSettings.IsEnabled,
+			&newSettings.WecomAIBotSettings.IsEnabled, consts.SourceTypeWecomAIBot); err != nil {
+			u.logger.Error("failed to handle wecom ai bot account auth", log.Error(err))
+		}
+	}
+
 	return nil
 }
 
@@ -652,4 +700,65 @@ func (u *AppUsecase) GetOpenAIAPIAppInfo(ctx context.Context, kbID string) (*dom
 		},
 	}
 	return appInfo, nil
+}
+
+// GetRecommendNodesByIds 根据nodeIds获取nodes详情（需要authId对node验证权限)
+func (u *AppUsecase) GetRecommendNodesByIds(ctx context.Context, kbId string, nodeIds []string, authId uint) ([]*domain.RecommendNodeListResp, error) {
+	nodes, err := u.nodeUsecase.GetRecommendNodeList(ctx, &domain.GetRecommendNodeListReq{
+		KBID:    kbId,
+		NodeIDs: nodeIds,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	recommendNodes := make([]*domain.RecommendNodeListResp, 0)
+
+	nodeVisibleGroupIds, err := u.nodeUsecase.GetNodeIdsByAuthId(ctx, authId, consts.NodePermNameVisible)
+	if err != nil {
+		return nil, err
+	}
+
+	nodeVisitableGroupIds, err := u.nodeUsecase.GetNodeIdsByAuthId(ctx, authId, consts.NodePermNameVisitable)
+	if err != nil {
+		return nil, err
+	}
+
+	for i, node := range nodes {
+		switch node.Permissions.Visitable {
+		case consts.NodeAccessPermClosed:
+			nodes[i].Summary = ""
+		case consts.NodeAccessPermPartial:
+			if !slices.Contains(nodeVisitableGroupIds, node.ID) {
+				nodes[i].Summary = ""
+			}
+		}
+
+		switch node.Permissions.Visible {
+		case consts.NodeAccessPermOpen:
+			recommendNodes = append(recommendNodes, nodes[i])
+		case consts.NodeAccessPermPartial:
+			if slices.Contains(nodeVisibleGroupIds, node.ID) {
+				recommendNodes = append(recommendNodes, nodes[i])
+			}
+		}
+
+		if node.Type == domain.NodeTypeFolder {
+			newFileNodes := make([]*domain.RecommendNodeListResp, 0)
+
+			for i2, recommendNode := range node.RecommendNodes {
+				node.RecommendNodes[i2].Summary = ""
+				switch recommendNode.Permissions.Visible {
+				case consts.NodeAccessPermOpen:
+					newFileNodes = append(newFileNodes, node.RecommendNodes[i2])
+				case consts.NodeAccessPermPartial:
+					if slices.Contains(nodeVisibleGroupIds, node.RecommendNodes[i2].ID) {
+						newFileNodes = append(newFileNodes, node.RecommendNodes[i2])
+					}
+				}
+			}
+			node.RecommendNodes = newFileNodes
+		}
+	}
+	return recommendNodes, nil
 }

@@ -7,11 +7,11 @@ import (
 
 // ConversationState
 type ConversationState struct {
-	Mutex    sync.Mutex
-	Question string
-	Buffer   bytes.Buffer
-	// ai answer is done
+	Mutex            sync.Mutex
+	Question         string
+	Buffer           bytes.Buffer
 	IsVisited        bool
+	IsDone           bool
 	NotificationChan chan string
 }
 

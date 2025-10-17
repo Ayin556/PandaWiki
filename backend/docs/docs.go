@@ -235,6 +235,7 @@ const docTemplate = `{
                             "dingtalk_bot",
                             "feishu_bot",
                             "wechat_bot",
+                            "wecom_ai_bot",
                             "wechat_service_bot",
                             "discord_bot",
                             "wechat_official_account",
@@ -253,6 +254,7 @@ const docTemplate = `{
                             "SourceTypeDingtalkBot",
                             "SourceTypeFeishuBot",
                             "SourceTypeWechatBot",
+                            "SourceTypeWecomAIBot",
                             "SourceTypeWechatServiceBot",
                             "SourceTypeDiscordBot",
                             "SourceTypeWechatOfficialAccount",
@@ -4491,50 +4493,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/share/v1/node/recommend/list": {
-            "get": {
-                "description": "推荐卡片列表",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "share_node"
-                ],
-                "summary": "推荐卡片列表",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "kb id",
-                        "name": "X-KB-ID",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/domain.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/v1.NodeRecommendListResp"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
         "/share/v1/openapi/github/callback": {
             "get": {
                 "description": "GitHub回调",
@@ -4797,6 +4755,7 @@ const docTemplate = `{
                 "dingtalk_bot",
                 "feishu_bot",
                 "wechat_bot",
+                "wecom_ai_bot",
                 "wechat_service_bot",
                 "discord_bot",
                 "wechat_official_account",
@@ -4814,6 +4773,7 @@ const docTemplate = `{
                 "SourceTypeDingtalkBot",
                 "SourceTypeFeishuBot",
                 "SourceTypeWechatBot",
+                "SourceTypeWecomAIBot",
                 "SourceTypeWechatServiceBot",
                 "SourceTypeDiscordBot",
                 "SourceTypeWechatOfficialAccount",
@@ -5207,13 +5167,12 @@ const docTemplate = `{
                         }
                     ]
                 },
-                "web_app_landing_settings": {
-                    "description": "WebAppLandingSettings",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/domain.WebAppLandingSettings"
-                        }
-                    ]
+                "web_app_landing_configs": {
+                    "description": "WebAppLandingConfigs",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.WebAppLandingConfig"
+                    }
                 },
                 "wechat_app_agent_id": {
                     "type": "string"
@@ -5225,7 +5184,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "wechat_app_is_enabled": {
-                    "description": "WechatAppBot",
+                    "description": "WechatAppBot 企业微信机器人",
                     "type": "boolean"
                 },
                 "wechat_app_secret": {
@@ -5250,11 +5209,23 @@ const docTemplate = `{
                 "wechat_official_account_token": {
                     "type": "string"
                 },
+                "wechat_service_contain_keywords": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "wechat_service_corpid": {
                     "type": "string"
                 },
                 "wechat_service_encodingaeskey": {
                     "type": "string"
+                },
+                "wechat_service_equal_keywords": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "wechat_service_is_enabled": {
                     "description": "WechatServiceBot",
@@ -5265,6 +5236,14 @@ const docTemplate = `{
                 },
                 "wechat_service_token": {
                     "type": "string"
+                },
+                "wecom_ai_bot_settings": {
+                    "description": "WecomAIBotSettings 企业微信智能机器人",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.WecomAIBotSettings"
+                        }
+                    ]
                 },
                 "welcome_str": {
                     "description": "welcome",
@@ -5438,13 +5417,12 @@ const docTemplate = `{
                         }
                     ]
                 },
-                "web_app_landing_settings": {
+                "web_app_landing_configs": {
                     "description": "WebApp Landing Settings",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/domain.WebAppLandingSettings"
-                        }
-                    ]
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.WebAppLandingConfigResp"
+                    }
                 },
                 "wechat_app_agent_id": {
                     "type": "string"
@@ -5481,11 +5459,23 @@ const docTemplate = `{
                 "wechat_official_account_token": {
                     "type": "string"
                 },
+                "wechat_service_contain_keywords": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "wechat_service_corpid": {
                     "type": "string"
                 },
                 "wechat_service_encodingaeskey": {
                     "type": "string"
+                },
+                "wechat_service_equal_keywords": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "wechat_service_is_enabled": {
                     "description": "WechatServiceBot",
@@ -5496,6 +5486,9 @@ const docTemplate = `{
                 },
                 "wechat_service_token": {
                     "type": "string"
+                },
+                "wecom_ai_bot_settings": {
+                    "$ref": "#/definitions/domain.WecomAIBotSettings"
                 },
                 "welcome_str": {
                     "description": "welcome",
@@ -5523,7 +5516,8 @@ const docTemplate = `{
                 6,
                 7,
                 8,
-                9
+                9,
+                10
             ],
             "x-enum-varnames": [
                 "AppTypeWeb",
@@ -5534,7 +5528,8 @@ const docTemplate = `{
                 "AppTypeWechatServiceBot",
                 "AppTypeDisCordBot",
                 "AppTypeWechatOfficialAccount",
-                "AppTypeOpenAIAPI"
+                "AppTypeOpenAIAPI",
+                "AppTypeWecomAIBot"
             ]
         },
         "domain.AuthUserInfo": {
@@ -5547,6 +5542,75 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.BannerConfig": {
+            "type": "object",
+            "properties": {
+                "bg_url": {
+                    "type": "string"
+                },
+                "btns": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "href": {
+                                "type": "string"
+                            },
+                            "id": {
+                                "type": "string"
+                            },
+                            "text": {
+                                "type": "string"
+                            },
+                            "type": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "hot_search": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "placeholder": {
+                    "type": "string"
+                },
+                "subtitle": {
+                    "type": "string"
+                },
+                "subtitle_color": {
+                    "type": "string"
+                },
+                "subtitle_font_size": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "title_color": {
+                    "type": "string"
+                },
+                "title_font_size": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.BasicDocConfig": {
+            "type": "object",
+            "properties": {
+                "bg_color": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "title_color": {
                     "type": "string"
                 }
             }
@@ -5593,6 +5657,37 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.CarouselConfig": {
+            "type": "object",
+            "properties": {
+                "bg_color": {
+                    "type": "string"
+                },
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "desc": {
+                                "type": "string"
+                            },
+                            "id": {
+                                "type": "string"
+                            },
+                            "title": {
+                                "type": "string"
+                            },
+                            "url": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "title": {
                     "type": "string"
                 }
             }
@@ -6173,6 +6268,20 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.DirDocConfig": {
+            "type": "object",
+            "properties": {
+                "bg_color": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "title_color": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.DisclaimerSettings": {
             "type": "object",
             "properties": {
@@ -6186,6 +6295,37 @@ const docTemplate = `{
             "properties": {
                 "enabled": {
                     "type": "boolean"
+                }
+            }
+        },
+        "domain.FaqConfig": {
+            "type": "object",
+            "properties": {
+                "bg_color": {
+                    "type": "string"
+                },
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "link": {
+                                "type": "string"
+                            },
+                            "question": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "title": {
+                    "type": "string"
+                },
+                "title_color": {
+                    "type": "string"
                 }
             }
         },
@@ -7231,6 +7371,20 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.SimpleDocConfig": {
+            "type": "object",
+            "properties": {
+                "bg_color": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "title_color": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.SocialMediaAccount": {
             "type": "object",
             "properties": {
@@ -7492,114 +7646,17 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.WebAppLandingSettings": {
+        "domain.WebAppLandingConfig": {
             "type": "object",
             "properties": {
                 "banner_config": {
-                    "type": "object",
-                    "properties": {
-                        "bg_url": {
-                            "type": "string"
-                        },
-                        "btns": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "href": {
-                                        "type": "string"
-                                    },
-                                    "id": {
-                                        "type": "string"
-                                    },
-                                    "text": {
-                                        "type": "string"
-                                    },
-                                    "type": {
-                                        "type": "string"
-                                    }
-                                }
-                            }
-                        },
-                        "hot_search": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        },
-                        "placeholder": {
-                            "type": "string"
-                        },
-                        "subtitle": {
-                            "type": "string"
-                        },
-                        "subtitle_color": {
-                            "type": "string"
-                        },
-                        "subtitle_font_size": {
-                            "type": "integer"
-                        },
-                        "title": {
-                            "type": "string"
-                        },
-                        "title_color": {
-                            "type": "string"
-                        },
-                        "title_font_size": {
-                            "type": "integer"
-                        }
-                    }
+                    "$ref": "#/definitions/domain.BannerConfig"
                 },
                 "basic_doc_config": {
-                    "type": "object",
-                    "properties": {
-                        "bg_color": {
-                            "type": "string"
-                        },
-                        "list": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        },
-                        "title": {
-                            "type": "string"
-                        },
-                        "title_color": {
-                            "type": "string"
-                        }
-                    }
+                    "$ref": "#/definitions/domain.BasicDocConfig"
                 },
                 "carousel_config": {
-                    "type": "object",
-                    "properties": {
-                        "bg_color": {
-                            "type": "string"
-                        },
-                        "list": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "desc": {
-                                        "type": "string"
-                                    },
-                                    "id": {
-                                        "type": "string"
-                                    },
-                                    "title": {
-                                        "type": "string"
-                                    },
-                                    "url": {
-                                        "type": "string"
-                                    }
-                                }
-                            }
-                        },
-                        "title": {
-                            "type": "string"
-                        }
-                    }
+                    "$ref": "#/definitions/domain.CarouselConfig"
                 },
                 "com_config_order": {
                     "type": "array",
@@ -7608,75 +7665,80 @@ const docTemplate = `{
                     }
                 },
                 "dir_doc_config": {
-                    "type": "object",
-                    "properties": {
-                        "bg_color": {
-                            "type": "string"
-                        },
-                        "list": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        },
-                        "title": {
-                            "type": "string"
-                        },
-                        "title_color": {
-                            "type": "string"
-                        }
-                    }
+                    "$ref": "#/definitions/domain.DirDocConfig"
                 },
                 "faq_config": {
-                    "type": "object",
-                    "properties": {
-                        "bg_color": {
-                            "type": "string"
-                        },
-                        "list": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "id": {
-                                        "type": "string"
-                                    },
-                                    "link": {
-                                        "type": "string"
-                                    },
-                                    "question": {
-                                        "type": "string"
-                                    }
-                                }
-                            }
-                        },
-                        "title": {
-                            "type": "string"
-                        },
-                        "title_color": {
-                            "type": "string"
-                        }
+                    "$ref": "#/definitions/domain.FaqConfig"
+                },
+                "node_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
                     }
                 },
                 "simple_doc_config": {
-                    "type": "object",
-                    "properties": {
-                        "bg_color": {
-                            "type": "string"
-                        },
-                        "list": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        },
-                        "title": {
-                            "type": "string"
-                        },
-                        "title_color": {
-                            "type": "string"
-                        }
+                    "$ref": "#/definitions/domain.SimpleDocConfig"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.WebAppLandingConfigResp": {
+            "type": "object",
+            "properties": {
+                "banner_config": {
+                    "$ref": "#/definitions/domain.BannerConfig"
+                },
+                "basic_doc_config": {
+                    "$ref": "#/definitions/domain.BasicDocConfig"
+                },
+                "carousel_config": {
+                    "$ref": "#/definitions/domain.CarouselConfig"
+                },
+                "com_config_order": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
                     }
+                },
+                "dir_doc_config": {
+                    "$ref": "#/definitions/domain.DirDocConfig"
+                },
+                "faq_config": {
+                    "$ref": "#/definitions/domain.FaqConfig"
+                },
+                "node_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "nodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.RecommendNodeListResp"
+                    }
+                },
+                "simple_doc_config": {
+                    "$ref": "#/definitions/domain.SimpleDocConfig"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.WecomAIBotSettings": {
+            "type": "object",
+            "properties": {
+                "encodingaeskey": {
+                    "type": "string"
+                },
+                "is_enabled": {
+                    "type": "boolean"
+                },
+                "token": {
+                    "type": "string"
                 }
             }
         },
@@ -8585,38 +8647,6 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.NodeItem": {
-            "type": "object",
-            "properties": {
-                "emoji": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "parent_id": {
-                    "type": "string"
-                },
-                "position": {
-                    "type": "number"
-                },
-                "recommend_nodes": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/domain.RecommendNodeListResp"
-                    }
-                },
-                "summary": {
-                    "type": "string"
-                },
-                "type": {
-                    "$ref": "#/definitions/domain.NodeType"
-                }
-            }
-        },
         "v1.NodePermissionEditReq": {
             "type": "object",
             "required": [
@@ -8690,35 +8720,6 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/domain.NodeGroupDetail"
-                    }
-                }
-            }
-        },
-        "v1.NodeRecommendListResp": {
-            "type": "object",
-            "properties": {
-                "basic_docs": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/v1.NodeItem"
-                    }
-                },
-                "dir_docs": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/v1.NodeItem"
-                    }
-                },
-                "node_recommends": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/v1.NodeItem"
-                    }
-                },
-                "simple_docs": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/v1.NodeItem"
                     }
                 }
             }
