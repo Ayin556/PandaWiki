@@ -168,7 +168,7 @@ func createApp() (*App, error) {
 	wechatAppUsecase := usecase.NewWechatAppUsecase(logger, appUsecase, chatUsecase, wechatRepository, authRepo)
 	shareWechatHandler := share.NewShareWechatHandler(echo, baseHandler, logger, appUsecase, conversationUsecase, wechatUsecase, wecomUsecase, wechatAppUsecase)
 	shareCaptchaHandler := share.NewShareCaptchaHandler(baseHandler, echo, logger)
-	openapiV1Handler := share.NewOpenapiV1Handler(echo, baseHandler, logger, authUsecase)
+	openapiV1Handler := share.NewOpenapiV1Handler(echo, baseHandler, logger, authUsecase, appUsecase)
 	shareHandler := &share.ShareHandler{
 		ShareNodeHandler:         shareNodeHandler,
 		ShareAppHandler:          shareAppHandler,

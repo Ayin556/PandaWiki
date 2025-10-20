@@ -138,6 +138,7 @@ definitions:
     - widget
     - dingtalk_bot
     - feishu_bot
+    - lark_bot
     - wechat_bot
     - wecom_ai_bot
     - wechat_service_bot
@@ -156,6 +157,7 @@ definitions:
     - SourceTypeWidget
     - SourceTypeDingtalkBot
     - SourceTypeFeishuBot
+    - SourceTypeLarkBot
     - SourceTypeWechatBot
     - SourceTypeWecomAIBot
     - SourceTypeWechatServiceBot
@@ -380,6 +382,10 @@ definitions:
         type: string
       keyword:
         type: string
+      lark_bot_settings:
+        allOf:
+        - $ref: '#/definitions/domain.LarkBotSettings'
+        description: LarkBot
       openai_api_bot_settings:
         allOf:
         - $ref: '#/definitions/domain.OpenAIAPIBotSettings'
@@ -544,6 +550,10 @@ definitions:
         type: string
       keyword:
         type: string
+      lark_bot_settings:
+        allOf:
+        - $ref: '#/definitions/domain.LarkBotSettings'
+        description: LarkBot
       openai_api_bot_settings:
         allOf:
         - $ref: '#/definitions/domain.OpenAIAPIBotSettings'
@@ -648,6 +658,7 @@ definitions:
     - 8
     - 9
     - 10
+    - 11
     format: int32
     type: integer
     x-enum-varnames:
@@ -661,6 +672,7 @@ definitions:
     - AppTypeWechatOfficialAccount
     - AppTypeOpenAIAPI
     - AppTypeWecomAIBot
+    - AppTypeLarkBot
   domain.AuthUserInfo:
     properties:
       avatar_url:
@@ -1375,6 +1387,19 @@ definitions:
       name:
         type: string
       updated_at:
+        type: string
+    type: object
+  domain.LarkBotSettings:
+    properties:
+      app_id:
+        type: string
+      app_secret:
+        type: string
+      encrypt_key:
+        type: string
+      is_enabled:
+        type: boolean
+      verify_token:
         type: string
     type: object
   domain.Link:
@@ -3186,6 +3211,7 @@ paths:
         - widget
         - dingtalk_bot
         - feishu_bot
+        - lark_bot
         - wechat_bot
         - wecom_ai_bot
         - wechat_service_bot
@@ -3207,6 +3233,7 @@ paths:
         - SourceTypeWidget
         - SourceTypeDingtalkBot
         - SourceTypeFeishuBot
+        - SourceTypeLarkBot
         - SourceTypeWechatBot
         - SourceTypeWecomAIBot
         - SourceTypeWechatServiceBot
@@ -5819,6 +5846,28 @@ paths:
                   $ref: '#/definitions/github_com_chaitin_panda-wiki_api_share_v1.GitHubCallbackResp'
               type: object
       summary: GitHub回调
+      tags:
+      - ShareOpenapi
+  /share/v1/openapi/lark/bot/{kb_id}:
+    post:
+      consumes:
+      - application/json
+      description: Lark机器人请求
+      operationId: v1-LarkBot
+      parameters:
+      - description: 知识库ID
+        in: path
+        name: kb_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.PWResponse'
+      summary: Lark机器人请求
       tags:
       - ShareOpenapi
   /share/v1/stat/page:
