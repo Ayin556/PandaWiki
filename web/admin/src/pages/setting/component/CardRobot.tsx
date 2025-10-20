@@ -4,6 +4,7 @@ import CardRobotApi from './CardRobotApi';
 import CardRobotDing from './CardRobotDing';
 import CardRobotDiscord from './CardRobotDiscord';
 import CardRobotFeishu from './CardRobotFeishu';
+import CardRobotLark from './CardRobotLark';
 import CardRobotWebComponent from './CardRobotWebComponent';
 import CardRobotWechatOfficeAccount from './CardRobotWechatOfficeAccount';
 import CardRobotWecom from './CardRobotWecom';
@@ -28,11 +29,12 @@ const CardRobot = ({
       <CardRobotWebComponent kb={kb} />
       <CardRobotApi kb={kb} url={url} />
       <CardRobotDing kb={kb} />
-      <CardRobotFeishu kb={kb} />
       <CardRobotWechatOfficeAccount kb={kb} url={url} />
       <CardRobotWecom kb={kb} url={url} />
       <CardRobotWecomAIBot kb={kb} url={url} />
       <CardRobotWecomService kb={kb} url={url} />
+      <CardRobotFeishu kb={kb} />
+      <CardRobotLark kb={kb} url={url} />
       <CardRobotDiscord kb={kb} />
     </Box>
   );
