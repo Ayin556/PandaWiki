@@ -2,8 +2,8 @@ import Emoji from '@/components/Emoji';
 import { V1NodeDetailResp } from '@/request';
 import { postApiV1Node, putApiV1NodeDetail } from '@/request/Node';
 import { useAppSelector } from '@/store';
-import { Box, TextField } from '@mui/material';
 import { message, Modal } from '@ctzhian/ui';
+import { Box, TextField } from '@mui/material';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
@@ -14,6 +14,12 @@ interface DocAddByCustomTextProps {
   setDetail?: (data: V1NodeDetailResp) => void;
   refresh?: () => void;
   type?: 1 | 2;
+  onCreated?: (node: {
+    id: string;
+    name: string;
+    type: 1 | 2;
+    emoji?: string;
+  }) => void;
 }
 const DocAddByCustomText = ({
   open,
@@ -22,6 +28,7 @@ const DocAddByCustomText = ({
   refresh,
   setDetail,
   type = 2,
+  onCreated,
 }: DocAddByCustomTextProps) => {
   const { kb_id: id } = useAppSelector(state => state.config);
   const text = type === 1 ? '文件夹' : '文档';
@@ -73,7 +80,8 @@ const DocAddByCustomText = ({
         message.success('创建成功');
         reset();
         handleClose();
-        refresh?.();
+        // 回传创建结果给上层，由上层本地追加并滚动
+        onCreated?.({ id, name: value.name, type, emoji: value.emoji });
         if (type === 2) {
           window.open(`/doc/editor/${id}`, '_blank');
         }

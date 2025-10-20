@@ -1,4 +1,4 @@
-import { Box, Popover, Stack, SxProps, Theme, Typography } from '@mui/material';
+import { Box, Popover, Stack, SxProps, Theme } from '@mui/material';
 import React from 'react';
 
 interface Item {
@@ -166,11 +166,9 @@ const Cascader: React.FC<CascaderProps> = ({
                           >
                             <Stack alignItems='center' gap={1} direction='row'>
                               {child.icon}
-                              <Typography
-                                sx={{ flexShrink: 0, ...child.textSx }}
-                              >
+                              <Box sx={{ flexShrink: 0, ...child.textSx }}>
                                 {child.label}
-                              </Typography>
+                              </Box>
                               {child.extra}
                             </Stack>
                           </Box>

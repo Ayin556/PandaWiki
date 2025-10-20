@@ -199,6 +199,7 @@ export interface ITreeItem {
   updated_at?: string;
   status?: 1 | 2;
   permissions?: DomainNodePermissions;
+  collapsed?: boolean;
 }
 
 export interface NodeReleaseItem {
