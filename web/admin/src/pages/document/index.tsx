@@ -1,7 +1,7 @@
 import { ImportDocType, ITreeItem, NodeListFilterData } from '@/api';
 import Card from '@/components/Card';
 import Cascader from '@/components/Cascader';
-import DragTree from '@/components/Drag/DragTree';
+import DragTree, { type DragTreeHandle } from '@/components/Drag/DragTree';
 import {
   TreeMenuItem,
   TreeMenuOptions,
@@ -11,7 +11,7 @@ import { getApiV1NodeList } from '@/request/Node';
 import { DomainNodeListItemResp } from '@/request/types';
 import { useAppSelector } from '@/store';
 import { addOpacityToColor } from '@/utils';
-import { convertToTree } from '@/utils/drag';
+import { collapseAllFolders, convertToTree } from '@/utils/drag';
 import { Icon } from '@ctzhian/ui';
 import {
   Box,
@@ -21,7 +21,7 @@ import {
   Stack,
   useTheme,
 } from '@mui/material';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import VersionPublish from '../release/components/VersionPublish';
 import AddDocByOther from './component/AddDocByOther/index';
 import DocAdd from './component/DocAdd';
@@ -36,13 +36,14 @@ import Summary from './component/Summary';
 const Content = () => {
   const { kb_id } = useAppSelector(state => state.config);
   const theme = useTheme();
+  const dragTreeRef = useRef<DragTreeHandle>(null);
 
   const [searchParams] = useURLSearchParams();
   const search = searchParams.get('search') || '';
   const [supportSelect, setBatchOpen] = useState(false);
 
   const [publish, setPublish] = useState({
-    published: 0,
+    // published: 0,
     unpublished: 0,
   });
   const [list, setList] = useState<DomainNodeListItemResp[]>([]);
@@ -69,11 +70,6 @@ const Content = () => {
 
   const handleDelete = (item: ITreeItem) => {
     setDeleteOpen(true);
-    setOpraData(list.filter(it => it.id === item.id));
-  };
-
-  const handleSummary = (item: ITreeItem) => {
-    setSummaryOpen(true);
     setOpraData(list.filter(it => it.id === item.id));
   };
 
@@ -201,19 +197,60 @@ const Content = () => {
     ];
   };
 
+  // 收集当前已展开的文件夹 id（collapsed === false）
+  const collectOpenFolderIds = useCallback(
+    (items: ITreeItem[]): Set<string> => {
+      const openIds = new Set<string>();
+      const dfs = (nodes: ITreeItem[]) => {
+        nodes.forEach(n => {
+          if (n.type === 1 && n.collapsed === false) openIds.add(n.id);
+          if (n.children?.length) dfs(n.children as ITreeItem[]);
+        });
+      };
+      dfs(items);
+      return openIds;
+    },
+    [],
+  );
+
+  // 重新打开指定的文件夹 ids
+  const reopenFolders = useCallback(
+    (items: ITreeItem[], openIds: Set<string>): ITreeItem[] => {
+      return items.map(n => {
+        const children = n.children?.length
+          ? reopenFolders(n.children as ITreeItem[], openIds)
+          : n.children;
+        const collapsed =
+          n.type === 1 && openIds.has(n.id) ? false : n.collapsed;
+        return { ...n, collapsed, children } as ITreeItem;
+      });
+    },
+    [],
+  );
+
   const getData = useCallback(() => {
     const params: NodeListFilterData = { kb_id };
     if (search) params.search = search;
+    // 记录当前展开的文件夹
+    const openIds = collectOpenFolderIds(data);
     getApiV1NodeList(params).then(res => {
       setList(res || []);
       setPublish({
         unpublished: res.filter(it => it.status === 1).length,
-        published: res.filter(it => it.status === 2).length,
+        // published: res.filter(it => it.status === 2).length,
       });
-      const v = convertToTree(res || []);
-      setData(v);
+      const collapsedAll = collapseAllFolders(convertToTree(res || []), true);
+      const next = openIds.size
+        ? reopenFolders(collapsedAll, openIds)
+        : collapsedAll;
+      setData(next);
     });
-  }, [search, kb_id]);
+  }, [search, kb_id, data, collectOpenFolderIds, reopenFolders]);
+
+  // 本地更新数据，不重新请求
+  const updateLocalData = useCallback((newData: ITreeItem[]) => {
+    setData([...newData]);
+  }, []);
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -258,7 +295,7 @@ const Content = () => {
                     ml: 2,
                   }}
                 >
-                  {publish.unpublished} 个 文档/文件夹 未发布，
+                  {publish.unpublished} 个 文档/文件夹未发布，
                 </Box>
                 <Button
                   size='small'
@@ -274,7 +311,37 @@ const Content = () => {
           </Stack>
           <Stack direction={'row'} alignItems={'center'} gap={2}>
             <DocSearch />
-            <DocAdd refresh={getData} />
+            <DocAdd
+              refresh={getData}
+              createLocal={node => {
+                setData(prev => {
+                  // 追加到根末尾
+                  const next = [
+                    ...prev,
+                    {
+                      id: node.id,
+                      name: node.name,
+                      level: 0,
+                      order: prev.length
+                        ? (prev[prev.length - 1].order ?? 0) + 1
+                        : 0,
+                      emoji: node.emoji,
+                      parentId: undefined,
+                      children: node.type === 1 ? [] : undefined,
+                      type: node.type,
+                      status: 1,
+                    } as ITreeItem,
+                  ];
+                  return next;
+                });
+              }}
+              scrollTo={id => {
+                // 滚动到新创建项
+                setTimeout(() => {
+                  dragTreeRef.current?.scrollToItem(id);
+                }, 120);
+              }}
+            />
             <Cascader
               list={[
                 {
@@ -317,13 +384,16 @@ const Content = () => {
           </Stack>
         </Stack>
         {supportSelect && (
-          <Stack direction={'row'} alignItems={'center'} sx={{ px: 2, mb: 2 }}>
+          <Stack
+            direction={'row'}
+            alignItems={'center'}
+            sx={{ px: 2, lineHeight: '35px' }}
+          >
             <Checkbox
               sx={{
                 color: 'text.disabled',
                 width: '35px',
                 height: '35px',
-                mt: '-1px',
               }}
               checked={selected.length === list.length}
               onChange={e => {
@@ -339,14 +409,14 @@ const Content = () => {
             />
             {selected.length > 0 ? (
               <>
-                <Box sx={{ fontSize: 14, color: 'text.secondary', mr: 2 }}>
+                <Box sx={{ fontSize: 13, color: 'text.secondary', mr: 2 }}>
                   已选中 {selected.length} 项
                 </Box>
                 <Stack direction={'row'} alignItems={'center'} gap={1}>
                   <Button
                     size='small'
                     color='primary'
-                    sx={{ minWidth: 0, p: 0 }}
+                    sx={{ minWidth: 0, p: 0, lineHeight: 1 }}
                     onClick={() => {
                       setMoreSummaryOpen(true);
                       setOpraData(
@@ -359,7 +429,7 @@ const Content = () => {
                   <Button
                     size='small'
                     color='primary'
-                    sx={{ minWidth: 0, p: 0 }}
+                    sx={{ minWidth: 0, p: 0, lineHeight: 1 }}
                     onClick={() => {
                       setMoveOpen(true);
                       setOpraData(
@@ -372,7 +442,7 @@ const Content = () => {
                   <Button
                     size='small'
                     color='primary'
-                    sx={{ minWidth: 0, p: 0 }}
+                    sx={{ minWidth: 0, p: 0, lineHeight: 1 }}
                     onClick={() => {
                       setDeleteOpen(true);
                       setOpraData(
@@ -385,7 +455,7 @@ const Content = () => {
                   <Button
                     size='small'
                     color='primary'
-                    sx={{ minWidth: 0, p: 0 }}
+                    sx={{ minWidth: 0, p: 0, lineHeight: 1 }}
                     onClick={() => {
                       setPropertiesOpen(true);
                       setIsBatch(true);
@@ -399,11 +469,17 @@ const Content = () => {
                 </Stack>
               </>
             ) : (
-              <Box sx={{ fontSize: 14, color: 'text.secondary' }}>全选</Box>
+              <Box sx={{ fontSize: 13, color: 'text.secondary' }}>全选</Box>
             )}
             <Button
               size='small'
-              sx={{ color: 'text.secondary', minWidth: 0, p: 0, ml: 2 }}
+              sx={{
+                color: 'text.secondary',
+                minWidth: 0,
+                p: 0,
+                ml: 2,
+                lineHeight: 1,
+              }}
               onClick={() => {
                 setSelected([]);
                 setBatchOpen(false);
@@ -415,7 +491,9 @@ const Content = () => {
         )}
         <Stack
           sx={{
-            height: 'calc(100vh - 148px)',
+            height: supportSelect
+              ? 'calc(100vh - 183px)'
+              : 'calc(100vh - 148px)',
             overflow: 'hidden',
             overflowY: 'auto',
             px: 2,
@@ -423,14 +501,16 @@ const Content = () => {
           }}
         >
           <DragTree
+            ref={dragTreeRef}
             data={data}
             menu={menu}
-            refresh={getData}
+            updateData={updateLocalData}
             selected={selected}
             onSelectChange={value => {
               setSelected(value);
             }}
             supportSelect={supportSelect}
+            virtualized={true}
           />
         </Stack>
       </Card>
@@ -443,7 +523,22 @@ const Content = () => {
           setBatchOpen(false);
         }}
         data={opraData}
-        refresh={getData}
+        onDeleted={ids => {
+          // 本地删除：从 data 移除这些 id 及其所有子节点
+          const removeIds = new Set(ids);
+          const removeDeep = (items: ITreeItem[]): ITreeItem[] => {
+            const result: ITreeItem[] = [];
+            for (const it of items) {
+              if (removeIds.has(it.id)) continue;
+              const children = it.children?.length
+                ? removeDeep(it.children as ITreeItem[])
+                : undefined;
+              result.push({ ...it, children });
+            }
+            return result;
+          };
+          setData(prev => removeDeep(prev));
+        }}
       />
       <AddDocByOther
         type={key}
@@ -499,7 +594,99 @@ const Content = () => {
         open={moveOpen}
         data={list}
         selected={opraData}
-        refresh={getData}
+        onMoved={({ ids, parentId }) => {
+          // 本地移动：将 ids 对应节点移动到 parentId 下
+          setData(prev => {
+            // 1) 取出所有被移动节点
+            const idSet = new Set(ids);
+            const picked: ITreeItem[] = [];
+            const removePicked = (items: ITreeItem[]): ITreeItem[] => {
+              const res: ITreeItem[] = [];
+              for (const it of items) {
+                if (idSet.has(it.id)) {
+                  picked.push({ ...it });
+                  continue;
+                }
+                const children = it.children?.length
+                  ? removePicked(it.children as ITreeItem[])
+                  : it.children;
+                res.push({ ...it, children });
+              }
+              return res;
+            };
+            let next = removePicked(prev);
+
+            // 2) 找到目标父节点（空字符串或 'root' 表示根）
+            const findNode = (
+              items: ITreeItem[],
+              id: string,
+            ): ITreeItem | null => {
+              for (const it of items) {
+                if (it.id === id) return it;
+                if (it.children?.length) {
+                  const f = findNode(it.children as ITreeItem[], id);
+                  if (f) return f;
+                }
+              }
+              return null;
+            };
+
+            if (!parentId) {
+              // 移动到根
+              next = [
+                ...next,
+                ...picked.map(p => ({ ...p, parentId: undefined })),
+              ];
+            } else {
+              const parent = findNode(next, parentId);
+              if (parent) {
+                const children =
+                  (parent.children as ITreeItem[] | undefined) ?? [];
+                parent.children = [
+                  ...children,
+                  ...picked.map(p => ({ ...p, parentId: parentId })),
+                ];
+                // 展开目标父及其祖先
+                parent.collapsed = false;
+                const expandAncestors = (
+                  items: ITreeItem[],
+                  targetId: string,
+                ) => {
+                  const dfs = (
+                    nodes: ITreeItem[],
+                    trail: ITreeItem[],
+                  ): boolean => {
+                    for (const n of nodes) {
+                      const nextTrail = [...trail, n];
+                      if (n.id === targetId) {
+                        nextTrail.forEach(t => {
+                          if (t.type === 1) t.collapsed = false;
+                        });
+                        return true;
+                      }
+                      if (
+                        n.children?.length &&
+                        dfs(n.children as ITreeItem[], nextTrail)
+                      )
+                        return true;
+                    }
+                    return false;
+                  };
+                  dfs(items, []);
+                };
+                expandAncestors(next, parentId);
+              }
+            }
+            return [...next];
+          });
+          // 滚动到第一个移动的节点位置
+          setTimeout(() => {
+            const targetId = ids[0];
+            if (targetId) {
+              dragTreeRef.current?.scrollToItem(targetId);
+            }
+          }, 120);
+        }}
         onClose={() => {
           setMoveOpen(false);
           setOpraData([]);

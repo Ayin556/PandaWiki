@@ -1,5 +1,3 @@
-import { Height, Opacity } from '@mui/icons-material';
-
 export const tableSx = {
   '& .MuiTableCell-root': {
     '&:first-of-type': {
@@ -16,7 +14,7 @@ export const tableSx = {
 
 export const treeSx = (supportSelect: boolean, ui: 'select' | 'move') => ({
   cursor: 'grab',
-  pl: supportSelect ? 0 : 2,
+  pl: 2,
   '&:active': {
     cursor: 'grabbing',
   },
@@ -57,7 +55,6 @@ export const treeSx = (supportSelect: boolean, ui: 'select' | 'move') => ({
     width: '20px',
     height: '20px',
     cursor: 'grab',
-    marginRight: '10px',
     marginTop: '10px',
     background: `url("data:image/svg+xml;utf8,<svg  xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' width='12'><path d='M7 2a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 2zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 8zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 14zm6-8a2 2 0 1 0-.001-4.001A2 2 0 0 0 13 6zm0 2a2 2 0 1 0 .001 4.001A2 2 0 0 0 13 8zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 13 14z' fill='gray'></path></svg>") no-repeat center`,
     borderRadius: '4px',

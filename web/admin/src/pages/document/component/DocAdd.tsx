@@ -8,9 +8,17 @@ import DocAddByCustomText from './DocAddByCustomText';
 
 interface InputContentProps {
   refresh: () => void;
+  createLocal?: (node: {
+    id: string;
+    name: string;
+    type: 1 | 2;
+    emoji?: string;
+    parentId?: string | null;
+  }) => void;
+  scrollTo?: (id: string) => void;
 }
 
-const DocAdd = ({ refresh }: InputContentProps) => {
+const DocAdd = ({ refresh, createLocal, scrollTo }: InputContentProps) => {
   const theme = useTheme();
   const [customDocOpen, setCustomDocOpen] = useState(false);
   const [urlOpen, setUrlOpen] = useState(false);
@@ -169,11 +177,16 @@ const DocAdd = ({ refresh }: InputContentProps) => {
         open={urlOpen}
         refresh={refresh}
         onCancel={close}
+        // 导入类操作：刷新后由上层保持展开状态，并由上层决定滚动位置
       />
       <DocAddByCustomText
         type={docFileKey}
         open={customDocOpen}
-        refresh={refresh}
+        // 本地创建：不刷新，创建后本地追加并滚动
+        onCreated={node => {
+          createLocal?.(node);
+          scrollTo?.(node.id);
+        }}
         onClose={() => setCustomDocOpen(false)}
       />
     </Box>

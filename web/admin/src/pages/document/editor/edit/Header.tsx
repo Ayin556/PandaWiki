@@ -559,11 +559,6 @@ const Header = ({
             status: 1,
           },
         ]}
-        refresh={() => {
-          setTimeout(() => {
-            window.close();
-          }, 1500);
-        }}
       />
     </Box>
   );

@@ -1,12 +1,12 @@
 import { ITreeItem } from '@/api';
-import { postApiV1NodeBatchMove } from '@/request/Node';
-import { DomainNodeListItemResp } from '@/request/types';
 import Card from '@/components/Card';
 import DragTree from '@/components/Drag/DragTree';
+import { postApiV1NodeBatchMove } from '@/request/Node';
+import { DomainNodeListItemResp } from '@/request/types';
 import { useAppSelector } from '@/store';
 import { convertToTree } from '@/utils/drag';
-import { Box, Checkbox, Stack } from '@mui/material';
 import { Icon, message, Modal } from '@ctzhian/ui';
+import { Box, Checkbox, Stack } from '@mui/material';
 import { useEffect, useState } from 'react';
 
 interface DocDeleteProps {
@@ -14,7 +14,7 @@ interface DocDeleteProps {
   onClose: () => void;
   data: DomainNodeListItemResp[];
   selected: DomainNodeListItemResp[];
-  refresh?: () => void;
+  onMoved?: (payload: { ids: string[]; parentId: string }) => void;
 }
 
 const MoveDocs = ({
@@ -22,7 +22,7 @@ const MoveDocs = ({
   onClose,
   data,
   selected,
-  refresh,
+  onMoved,
 }: DocDeleteProps) => {
   const { kb_id } = useAppSelector(state => state.config);
   const [tree, setTree] = useState<ITreeItem[]>([]);
@@ -45,7 +45,7 @@ const MoveDocs = ({
     postApiV1NodeBatchMove({ ids, parent_id, kb_id }).then(() => {
       message.success('移动成功');
       onClose();
-      refresh?.();
+      onMoved?.({ ids, parentId: parent_id });
     });
   };
 

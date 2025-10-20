@@ -22,7 +22,7 @@
     "@tiptap/extension-collaboration": "^3.3.0",
     "@tiptap/extension-collaboration-caret": "^3.3.0",
     "axios": "^1.7.9",
-    "dnd-kit-sortable-tree": "^0.1.73",
+    "clsx": "^2.1.1",
     "echarts": "^5.6.0",
     "emoji-mart": "^5.6.0",
     "highlight.js": "^11.11.1",

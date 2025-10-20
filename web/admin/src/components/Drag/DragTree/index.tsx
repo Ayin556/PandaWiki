@@ -1,59 +1,81 @@
 import { ITreeItem } from '@/api';
+import {
+  SortableTree,
+  SortableTreeHandle,
+  TreeItems,
+} from '@/components/TreeDragSortable';
+import { ItemChangedReason } from '@/components/TreeDragSortable/types';
 import { postApiV1NodeMove } from '@/request/Node';
-import { AppContext, DragTreeProps, getSiblingItemIds } from '@/utils/drag';
-import { DndContext } from '@dnd-kit/core';
-import { SortableTree, TreeItems } from 'dnd-kit-sortable-tree';
-import { ItemChangedReason } from 'dnd-kit-sortable-tree/dist/types';
-import { useEffect, useState } from 'react';
 import { useAppSelector } from '@/store';
+import { AppContext, DragTreeProps, getSiblingItemIds } from '@/utils/drag';
+import { forwardRef, useImperativeHandle, useRef } from 'react';
 import TreeItem from './TreeItem';
 
-const DragTree = ({
-  data,
-  menu,
-  refresh,
-  ui = 'move',
-  readOnly = false,
-  selected,
-  onSelectChange,
-  supportSelect = true,
-  relativeSelect = true,
-  disabled,
-}: DragTreeProps) => {
-  const [items, setItems] = useState<TreeItems<ITreeItem>>(data);
-  const { kb_id } = useAppSelector(state => state.config);
-  useEffect(() => {
-    setItems(data);
-  }, [data]);
+export type DragTreeHandle = {
+  scrollToItem: (itemId: string) => void;
+};
 
-  return (
-    <AppContext.Provider
-      value={{
-        ui,
-        menu,
-        items,
-        setItems,
-        refresh,
-        readOnly,
-        selected,
-        onSelectChange,
-        supportSelect,
-        relativeSelect,
-        disabled,
-      }}
-    >
-      <DndContext>
+const DragTree = forwardRef<DragTreeHandle, DragTreeProps>(
+  (
+    {
+      data,
+      menu,
+      updateData,
+      ui = 'move',
+      readOnly = false,
+      selected,
+      onSelectChange,
+      supportSelect = true,
+      relativeSelect = true,
+      disabled,
+      virtualized = false,
+      virtualizedHeight,
+    },
+    ref,
+  ) => {
+    const { kb_id } = useAppSelector(state => state.config);
+    const sortableTreeRef = useRef<SortableTreeHandle>(null);
+
+    // 暴露滚动方法
+    useImperativeHandle(ref, () => ({
+      scrollToItem: (itemId: string) => {
+        sortableTreeRef.current?.scrollToItem(itemId);
+      },
+    }));
+
+    return (
+      <AppContext.Provider
+        value={{
+          ui,
+          menu,
+          data,
+          updateData,
+          readOnly,
+          selected,
+          onSelectChange,
+          supportSelect,
+          relativeSelect,
+          disabled,
+          scrollToItem: (itemId: string) => {
+            sortableTreeRef.current?.scrollToItem(itemId);
+          },
+        }}
+      >
         <SortableTree
+          ref={sortableTreeRef}
           disableSorting={readOnly}
-          items={items.map(it => ({ ...it }))}
+          items={data.map(it => ({ ...it }))}
           onItemsChanged={(
-            items: TreeItems<ITreeItem>,
+            newItems: TreeItems<ITreeItem>,
             reason: ItemChangedReason<ITreeItem>,
           ) => {
             if (reason.type === 'dropped') {
               const { draggedItem } = reason;
               const { parentId, id } = draggedItem;
-              const { prevItemId, nextItemId } = getSiblingItemIds(items, id);
+              const { prevItemId, nextItemId } = getSiblingItemIds(
+                newItems,
+                id,
+              );
               postApiV1NodeMove({
                 id,
                 parent_id: parentId,
@@ -61,16 +83,21 @@ const DragTree = ({
                 prev_id: prevItemId as string,
                 kb_id: kb_id,
               }).then(() => {
-                refresh?.();
+                updateData?.(newItems);
               });
+            } else {
+              updateData?.(newItems);
             }
-            setItems(items);
           }}
           TreeItemComponent={TreeItem}
+          virtualized={virtualized}
+          virtualizedHeight={virtualizedHeight}
         />
-      </DndContext>
-    </AppContext.Provider>
-  );
-};
+      </AppContext.Provider>
+    );
+  },
+);
+
+DragTree.displayName = 'DragTree';
 
 export default DragTree;

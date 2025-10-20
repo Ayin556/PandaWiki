@@ -3,8 +3,8 @@ import {
   TreeMenuItem,
   TreeMenuOptions,
 } from '@/components/Drag/DragTree/TreeMenu';
+import { TreeItems } from '@/components/TreeDragSortable';
 import { DomainNodeListItemResp } from '@/request/types';
-import { TreeItems } from 'dnd-kit-sortable-tree';
 import { createContext } from 'react';
 
 export interface DragTreeProps {
@@ -12,6 +12,7 @@ export interface DragTreeProps {
   readOnly?: boolean;
   menu?: (opra: TreeMenuOptions) => TreeMenuItem[];
   refresh?: () => void;
+  updateData?: (data: TreeItems<ITreeItem>) => void;
   ui?: 'select' | 'move';
   selected?: string[];
   supportSelect?: boolean;
@@ -19,12 +20,15 @@ export interface DragTreeProps {
   relativeSelect?: boolean;
   traverseFolder?: boolean;
   disabled?: (value: ITreeItem) => boolean;
+  virtualized?: boolean;
+  virtualizedHeight?: number | string;
 }
 
 // 定义上下文类型
 export interface AppContextType {
-  items: TreeItems<ITreeItem>;
-  setItems: React.Dispatch<React.SetStateAction<TreeItems<ITreeItem>>>;
+  data: ITreeItem[];
+  scrollToItem?: (itemId: string) => void;
+  updateData?: (data: TreeItems<ITreeItem>) => void;
 }
 
 // 使用正确的类型创建上下文

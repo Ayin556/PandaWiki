@@ -1,37 +1,29 @@
+import NoData from '@/assets/images/nodata.png';
+import { DndContext } from '@dnd-kit/core';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { Box, IconButton, Menu, MenuItem, Stack } from '@mui/material';
+import dayjs from 'dayjs';
 import React, {
+  createContext,
+  useContext,
   useEffect,
   useMemo,
   useState,
-  createContext,
-  useContext,
 } from 'react';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import {
-  Box,
-  Stack,
-  IconButton,
-  Menu,
-  MenuItem,
-  Button,
-  ButtonBase,
-} from '@mui/material';
-import dayjs from 'dayjs';
-import NoData from '@/assets/images/nodata.png';
-import { DndContext } from '@dnd-kit/core';
+
 import {
   SortableTree,
-  TreeItems,
-  SimpleTreeItemWrapper,
   TreeItemComponentProps,
-} from 'dnd-kit-sortable-tree';
-import { ItemChangedReason } from 'dnd-kit-sortable-tree/dist/types';
-
+  TreeItems,
+  TreeItemWrapper,
+} from '@/components/TreeDragSortable';
+import { ItemChangedReason } from '@/components/TreeDragSortable/types';
+import { treeSx } from '@/constant/styles';
+import { getApiProV1AuthGroupDetail } from '@/request/pro/AuthGroup';
+import { GithubComChaitinPandaWikiProApiAuthV1AuthGroupTreeItem } from '@/request/pro/types';
+import { useAppSelector } from '@/store';
 import { Icon, Modal, Table } from '@ctzhian/ui';
 import { ColumnType } from '@ctzhian/ui/dist/Table';
-import { GithubComChaitinPandaWikiProApiAuthV1AuthGroupTreeItem } from '@/request/pro/types';
-import { treeSx } from '@/constant/styles';
-import { useAppSelector } from '@/store';
-import { getApiProV1AuthGroupDetail } from '@/request/pro/AuthGroup';
 
 type TreeNode = {
   id: string | number;
@@ -128,7 +120,7 @@ const TreeItem = React.forwardRef<
           <div />
         )}
         <Box sx={{ flex: 1 }}>
-          <SimpleTreeItemWrapper
+          <TreeItemWrapper
             {...props}
             indentationWidth={23}
             disableCollapseOnItemClick={false}
@@ -206,7 +198,7 @@ const TreeItem = React.forwardRef<
                 )}
               </Stack>
             </Stack>
-          </SimpleTreeItemWrapper>
+          </TreeItemWrapper>
         </Box>
       </Stack>
     </Box>
