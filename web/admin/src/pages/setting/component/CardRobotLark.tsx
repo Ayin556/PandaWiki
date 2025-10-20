@@ -88,7 +88,7 @@ const CardRobotLark = ({
 
   return (
     <SettingCardItem
-      title='飞书国际版机器人'
+      title='Lark 机器人'
       isEdit={isEdit}
       onSubmit={onSubmit}
       more={{
@@ -98,7 +98,7 @@ const CardRobotLark = ({
         text: '使用方法',
       }}
     >
-      <FormItem label='飞书国际版机器人'>
+      <FormItem label='Lark 机器人'>
         <Controller
           control={control}
           name='is_enabled'
