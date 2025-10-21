@@ -1138,6 +1138,8 @@ definitions:
         type: string
       position:
         type: number
+      summary:
+        type: string
       type:
         allOf:
         - $ref: '#/definitions/domain.NodeType'

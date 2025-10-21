@@ -123,7 +123,8 @@ type CreateNodeReq struct {
 	Name    string `json:"name" validate:"required"`
 	Content string `json:"content"`
 
-	Emoji string `json:"emoji"`
+	Emoji   string  `json:"emoji"`
+	Summary *string `json:"summary"`
 
 	MaxNode int `json:"-"`
 
