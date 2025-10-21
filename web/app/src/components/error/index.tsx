@@ -3,7 +3,7 @@ import ErrorPng from '@/assets/images/500.png';
 import NoPermissionImg from '@/assets/images/no-permission.png';
 import NotFoundImg from '@/assets/images/404.png';
 import BlockImg from '@/assets/images/block.png';
-import { Button, Stack } from '@mui/material';
+import { SxProps, Stack } from '@mui/material';
 import Image from 'next/image';
 import { useStore } from '@/provider';
 
@@ -28,11 +28,13 @@ const DEFAULT_ERROR = {
 };
 
 export default function Error({
+  sx,
   error,
   reset,
 }: {
   error: Partial<Error> & { digest?: string } & { code?: number | string };
   reset?: () => void;
+  sx?: SxProps;
 }) {
   const { mobile } = useStore();
   const errorInfo =
@@ -40,12 +42,13 @@ export default function Error({
   return (
     <Stack
       flex={1}
-      style={{
+      sx={{
         height: '100%',
         ...(mobile && {
           width: '100%',
           marginLeft: 0,
         }),
+        ...sx,
       }}
       justifyContent='center'
       alignItems='center'

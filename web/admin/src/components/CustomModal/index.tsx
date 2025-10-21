@@ -28,6 +28,7 @@ type WebAppLandingConfigWithId = DomainWebAppLandingConfigResp & { id: string };
 interface CustomModalProps {
   open: boolean;
   onCancel: () => void;
+  refresh: (v: any) => void;
 }
 
 export interface Component {
@@ -39,7 +40,7 @@ export interface Component {
   fixed?: boolean;
 }
 
-const CustomModal = ({ open, onCancel }: CustomModalProps) => {
+const CustomModal = ({ open, onCancel, refresh }: CustomModalProps) => {
   const dispatch = useAppDispatch();
   const { kb_id } = useAppSelector(state => state.config);
   const [info, setInfo] = useState<DomainAppDetailResp>();
@@ -117,6 +118,10 @@ const CustomModal = ({ open, onCancel }: CustomModalProps) => {
         kb_id,
       },
     ).then(() => {
+      refresh({
+        ...appPreviewData.settings,
+        web_app_landing_configs: submitWebAppLandingConfigs,
+      });
       message.success('保存成功');
       setIsEdit(false);
     });

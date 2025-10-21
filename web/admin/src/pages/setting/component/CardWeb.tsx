@@ -54,7 +54,7 @@ const CardWeb = ({ kb, refresh }: CardWebProps) => {
           });
         }}
         info={info}
-      ></CardCustom>
+      />
       <CardStyle
         id={info.id}
         data={info}

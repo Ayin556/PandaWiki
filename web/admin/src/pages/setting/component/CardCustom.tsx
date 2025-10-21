@@ -128,6 +128,7 @@ const CardCustom = ({ kb, refresh, info }: CardCustomProps) => {
       <CustomModal
         open={customModalOpen}
         onCancel={() => setCustomModalOpen(false)}
+        refresh={refresh}
       />
     </SettingCardItem>
   );
