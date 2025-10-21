@@ -23,6 +23,7 @@ const (
 	AppTypeWechatOfficialAccount
 	AppTypeOpenAIAPI
 	AppTypeWecomAIBot
+	AppTypeLarkBot
 )
 
 var AppTypes = []AppType{
@@ -36,6 +37,7 @@ var AppTypes = []AppType{
 	AppTypeWechatOfficialAccount,
 	AppTypeOpenAIAPI,
 	AppTypeWecomAIBot,
+	AppTypeLarkBot,
 }
 
 func (t AppType) ToSourceType() consts.SourceType {
@@ -60,6 +62,8 @@ func (t AppType) ToSourceType() consts.SourceType {
 		return consts.SourceTypeWechatOfficialAccount
 	case AppTypeOpenAIAPI:
 		return consts.SourceTypeOpenAIAPI
+	case AppTypeLarkBot:
+		return consts.SourceTypeLarkBot
 	default:
 		return ""
 	}
@@ -103,6 +107,8 @@ type AppSettings struct {
 	FeishuBotIsEnabled *bool  `json:"feishu_bot_is_enabled,omitempty"`
 	FeishuBotAppID     string `json:"feishu_bot_app_id,omitempty"`
 	FeishuBotAppSecret string `json:"feishu_bot_app_secret,omitempty"`
+	// LarkBot
+	LarkBotSettings LarkBotSettings `json:"lark_bot_settings,omitempty"`
 	// WechatAppBot 企业微信机器人
 	WeChatAppIsEnabled      *bool  `json:"wechat_app_is_enabled,omitempty"`
 	WeChatAppToken          string `json:"wechat_app_token,omitempty"`
@@ -159,6 +165,14 @@ type AppSettings struct {
 	CopySetting        consts.CopySetting      `json:"copy_setting" validate:"omitempty,oneof='' append disabled"`
 	ContributeSettings ContributeSettings      `json:"contribute_settings"`
 	HomePageSetting    consts.HomePageSetting  `json:"home_page_setting"`
+}
+
+type LarkBotSettings struct {
+	IsEnabled   *bool  `json:"is_enabled"`
+	AppID       string `json:"app_id"`
+	AppSecret   string `json:"app_secret"`
+	VerifyToken string `json:"verify_token"`
+	EncryptKey  string `json:"encrypt_key"`
 }
 
 type BannerConfig struct {
@@ -359,6 +373,8 @@ type AppSettingsResp struct {
 	FeishuBotIsEnabled *bool  `json:"feishu_bot_is_enabled,omitempty"`
 	FeishuBotAppID     string `json:"feishu_bot_app_id,omitempty"`
 	FeishuBotAppSecret string `json:"feishu_bot_app_secret,omitempty"`
+	// LarkBot
+	LarkBotSettings LarkBotSettings `json:"lark_bot_settings,omitempty"`
 	// WechatAppBot
 	WeChatAppIsEnabled      *bool  `json:"wechat_app_is_enabled,omitempty"`
 	WeChatAppToken          string `json:"wechat_app_token,omitempty"`

@@ -234,6 +234,7 @@ const docTemplate = `{
                             "widget",
                             "dingtalk_bot",
                             "feishu_bot",
+                            "lark_bot",
                             "wechat_bot",
                             "wecom_ai_bot",
                             "wechat_service_bot",
@@ -253,6 +254,7 @@ const docTemplate = `{
                             "SourceTypeWidget",
                             "SourceTypeDingtalkBot",
                             "SourceTypeFeishuBot",
+                            "SourceTypeLarkBot",
                             "SourceTypeWechatBot",
                             "SourceTypeWecomAIBot",
                             "SourceTypeWechatServiceBot",
@@ -4541,6 +4543,39 @@ const docTemplate = `{
                 }
             }
         },
+        "/share/v1/openapi/lark/bot/{kb_id}": {
+            "post": {
+                "description": "Lark机器人请求",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ShareOpenapi"
+                ],
+                "summary": "Lark机器人请求",
+                "operationId": "v1-LarkBot",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "知识库ID",
+                        "name": "kb_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.PWResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/share/v1/stat/page": {
             "post": {
                 "description": "RecordPage",
@@ -4754,6 +4789,7 @@ const docTemplate = `{
                 "widget",
                 "dingtalk_bot",
                 "feishu_bot",
+                "lark_bot",
                 "wechat_bot",
                 "wecom_ai_bot",
                 "wechat_service_bot",
@@ -4772,6 +4808,7 @@ const docTemplate = `{
                 "SourceTypeWidget",
                 "SourceTypeDingtalkBot",
                 "SourceTypeFeishuBot",
+                "SourceTypeLarkBot",
                 "SourceTypeWechatBot",
                 "SourceTypeWecomAIBot",
                 "SourceTypeWechatServiceBot",
@@ -5102,6 +5139,14 @@ const docTemplate = `{
                 "keyword": {
                     "type": "string"
                 },
+                "lark_bot_settings": {
+                    "description": "LarkBot",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.LarkBotSettings"
+                        }
+                    ]
+                },
                 "openai_api_bot_settings": {
                     "description": "OpenAI API Bot settings",
                     "allOf": [
@@ -5361,6 +5406,14 @@ const docTemplate = `{
                 "keyword": {
                     "type": "string"
                 },
+                "lark_bot_settings": {
+                    "description": "LarkBot",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.LarkBotSettings"
+                        }
+                    ]
+                },
                 "openai_api_bot_settings": {
                     "description": "OpenAI API settings",
                     "allOf": [
@@ -5517,7 +5570,8 @@ const docTemplate = `{
                 7,
                 8,
                 9,
-                10
+                10,
+                11
             ],
             "x-enum-varnames": [
                 "AppTypeWeb",
@@ -5529,7 +5583,8 @@ const docTemplate = `{
                 "AppTypeDisCordBot",
                 "AppTypeWechatOfficialAccount",
                 "AppTypeOpenAIAPI",
-                "AppTypeWecomAIBot"
+                "AppTypeWecomAIBot",
+                "AppTypeLarkBot"
             ]
         },
         "domain.AuthUserInfo": {
@@ -6636,6 +6691,26 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.LarkBotSettings": {
+            "type": "object",
+            "properties": {
+                "app_id": {
+                    "type": "string"
+                },
+                "app_secret": {
+                    "type": "string"
+                },
+                "encrypt_key": {
+                    "type": "string"
+                },
+                "is_enabled": {
+                    "type": "boolean"
+                },
+                "verify_token": {
                     "type": "string"
                 }
             }

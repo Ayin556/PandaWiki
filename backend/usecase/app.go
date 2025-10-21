@@ -15,6 +15,7 @@ import (
 	"github.com/chaitin/panda-wiki/pkg/bot/dingtalk"
 	"github.com/chaitin/panda-wiki/pkg/bot/discord"
 	"github.com/chaitin/panda-wiki/pkg/bot/feishu"
+	"github.com/chaitin/panda-wiki/pkg/bot/lark"
 	"github.com/chaitin/panda-wiki/repo/pg"
 	"github.com/chaitin/panda-wiki/store/cache"
 )
@@ -32,6 +33,8 @@ type AppUsecase struct {
 	dingTalkMutex sync.RWMutex
 	feishuBots    map[string]*feishu.FeishuClient
 	feishuMutex   sync.RWMutex
+	larkBots      map[string]*lark.LarkClient
+	larkMutex     sync.RWMutex
 	discordBots   map[string]*discord.DiscordClient
 	discordMutex  sync.RWMutex
 }
@@ -57,11 +60,12 @@ func NewAppUsecase(
 		cache:        cache,
 		dingTalkBots: make(map[string]*dingtalk.DingTalkClient),
 		feishuBots:   make(map[string]*feishu.FeishuClient),
+		larkBots:     make(map[string]*lark.LarkClient),
 		discordBots:  make(map[string]*discord.DiscordClient),
 	}
 
-	// Initialize all valid DingTalkBot and FeishuBot instances
-	apps, err := u.repo.GetAppsByTypes(context.Background(), []domain.AppType{domain.AppTypeDingTalkBot, domain.AppTypeFeishuBot, domain.AppTypeDisCordBot})
+	// Initialize all valid DingTalkBot, FeishuBot, LarkBot and DiscordBot instances
+	apps, err := u.repo.GetAppsByTypes(context.Background(), []domain.AppType{domain.AppTypeDingTalkBot, domain.AppTypeFeishuBot, domain.AppTypeLarkBot, domain.AppTypeDisCordBot})
 	if err != nil {
 		u.logger.Error("failed to get dingtalk bot apps", log.Error(err))
 		return u
@@ -73,6 +77,8 @@ func NewAppUsecase(
 			u.updateDingTalkBot(app)
 		case domain.AppTypeFeishuBot:
 			u.updateFeishuBot(app)
+		case domain.AppTypeLarkBot:
+			u.updateLarkBot(app)
 		case domain.AppTypeDisCordBot:
 			u.updateDisCordBot(app)
 		}
@@ -123,6 +129,8 @@ func (u *AppUsecase) UpdateApp(ctx context.Context, id string, appRequest *domai
 			u.updateDingTalkBot(app)
 		case domain.AppTypeFeishuBot:
 			u.updateFeishuBot(app)
+		case domain.AppTypeLarkBot:
+			u.updateLarkBot(app)
 		case domain.AppTypeDisCordBot:
 			u.updateDisCordBot(app)
 		}
@@ -237,6 +245,52 @@ func (u *AppUsecase) updateFeishuBot(app *domain.App) {
 	u.feishuBots[app.ID] = feishuClient
 }
 
+func (u *AppUsecase) updateLarkBot(app *domain.App) {
+	u.larkMutex.Lock()
+	defer u.larkMutex.Unlock()
+
+	if bot, exists := u.larkBots[app.ID]; exists {
+		if bot != nil {
+			bot.Stop()
+			delete(u.larkBots, app.ID)
+		}
+	}
+
+	if (app.Settings.LarkBotSettings.IsEnabled != nil && !*app.Settings.LarkBotSettings.IsEnabled) || app.Settings.LarkBotSettings.AppID == "" || app.Settings.LarkBotSettings.AppSecret == "" {
+		return
+	}
+
+	getQA := u.getQAFunc(app.KBID, app.Type)
+
+	botCtx, cancel := context.WithCancel(context.Background())
+	larkClient, err := lark.NewLarkClient(
+		botCtx,
+		cancel,
+		app.Settings.LarkBotSettings.AppID,
+		app.Settings.LarkBotSettings.AppSecret,
+		app.Settings.LarkBotSettings.VerifyToken,
+		app.Settings.LarkBotSettings.EncryptKey,
+		u.logger,
+		getQA,
+	)
+	if err != nil {
+		u.logger.Error("failed to create lark client", log.Error(err))
+		return
+	}
+
+	go func() {
+		u.logger.Info("lark bot is starting", log.String("app_id", app.Settings.LarkBotSettings.AppID))
+		err := larkClient.Start()
+		if err != nil {
+			u.logger.Error("failed to start lark client", log.Error(err))
+			cancel()
+			return
+		}
+	}()
+
+	u.larkBots[app.ID] = larkClient
+}
+
 func (u *AppUsecase) updateDingTalkBot(app *domain.App) {
 	u.dingTalkMutex.Lock()
 	defer u.dingTalkMutex.Unlock()
@@ -322,6 +376,15 @@ func (u *AppUsecase) DeleteApp(ctx context.Context, id, kbID string) error {
 	return u.repo.DeleteApp(ctx, id, kbID)
 }
 
+// GetLarkBotClient returns the Lark bot client for a given app ID
+// This is used to access the event handler for HTTP callbacks
+func (u *AppUsecase) GetLarkBotClient(appID string) (*lark.LarkClient, bool) {
+	u.larkMutex.RLock()
+	defer u.larkMutex.RUnlock()
+	client, ok := u.larkBots[appID]
+	return client, ok
+}
+
 func (u *AppUsecase) GetAppDetailByKBIDAndAppType(ctx context.Context, kbID string, appType domain.AppType) (*domain.AppDetailResp, error) {
 	app, err := u.repo.GetOrCreateAppByKBIDAndType(ctx, kbID, appType)
 	if err != nil {
@@ -370,6 +433,8 @@ func (u *AppUsecase) GetAppDetailByKBIDAndAppType(ctx context.Context, kbID stri
 		FeishuBotIsEnabled: app.Settings.FeishuBotIsEnabled,
 		FeishuBotAppID:     app.Settings.FeishuBotAppID,
 		FeishuBotAppSecret: app.Settings.FeishuBotAppSecret,
+		// LarkBot
+		LarkBotSettings: app.Settings.LarkBotSettings,
 		// WechatBot
 		WeChatAppIsEnabled:      app.Settings.WeChatAppIsEnabled,
 		WeChatAppToken:          app.Settings.WeChatAppToken,
@@ -600,6 +665,14 @@ func (u *AppUsecase) handleBotAuths(ctx context.Context, id string, newSettings 
 		if err := u.handleBotAuth(ctx, currentApp.KBID, currentApp.ID, currentApp.Settings.FeishuBotIsEnabled,
 			newSettings.FeishuBotIsEnabled, consts.SourceTypeFeishuBot); err != nil {
 			u.logger.Error("failed to handle feishu bot auth", log.Error(err))
+		}
+	}
+
+	// Handle Lark Bot
+	if currentApp.Settings.LarkBotSettings.IsEnabled != newSettings.LarkBotSettings.IsEnabled {
+		if err := u.handleBotAuth(ctx, currentApp.KBID, currentApp.ID, currentApp.Settings.LarkBotSettings.IsEnabled,
+			newSettings.LarkBotSettings.IsEnabled, consts.SourceTypeLarkBot); err != nil {
+			u.logger.Error("failed to handle lark bot auth", log.Error(err))
 		}
 	}
 
