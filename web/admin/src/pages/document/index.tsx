@@ -9,7 +9,8 @@ import {
 import { useURLSearchParams } from '@/hooks';
 import { getApiV1NodeList } from '@/request/Node';
 import { DomainNodeListItemResp } from '@/request/types';
-import { useAppSelector } from '@/store';
+import { useAppSelector, useAppDispatch } from '@/store';
+import { setIsRefreshDocList } from '@/store/slices/config';
 import { addOpacityToColor } from '@/utils';
 import { collapseAllFolders, convertToTree } from '@/utils/drag';
 import { Icon } from '@ctzhian/ui';
@@ -34,7 +35,8 @@ import MoveDocs from './component/MoveDocs';
 import Summary from './component/Summary';
 
 const Content = () => {
-  const { kb_id } = useAppSelector(state => state.config);
+  const { kb_id, isRefreshDocList } = useAppSelector(state => state.config);
+  const dispatch = useAppDispatch();
   const theme = useTheme();
   const dragTreeRef = useRef<DragTreeHandle>(null);
 
@@ -268,6 +270,13 @@ const Content = () => {
     if (kb_id) getData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, kb_id]);
+
+  useEffect(() => {
+    if (isRefreshDocList) {
+      getData();
+      dispatch(setIsRefreshDocList(false));
+    }
+  }, [isRefreshDocList, getData]);
 
   return (
     <>
