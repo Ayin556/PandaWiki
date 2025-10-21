@@ -12,9 +12,9 @@ export const tableSx = {
   },
 };
 
-export const treeSx = (supportSelect: boolean, ui: 'select' | 'move') => ({
+export const treeSx = (readOnly: boolean) => ({
   cursor: 'grab',
-  pl: 2,
+  pl: readOnly ? 0 : 2,
   '&:active': {
     cursor: 'grabbing',
   },

@@ -1,13 +1,13 @@
 import { ITreeItem } from '@/api';
-import { getApiV1NodeList } from '@/request/Node';
-import { DomainNodeListItemResp } from '@/request/types';
-import { postApiV1KnowledgeBaseRelease } from '@/request/KnowledgeBase';
 import Card from '@/components/Card';
 import DragTree from '@/components/Drag/DragTree';
+import { postApiV1KnowledgeBaseRelease } from '@/request/KnowledgeBase';
+import { getApiV1NodeList } from '@/request/Node';
+import { DomainNodeListItemResp } from '@/request/types';
 import { useAppSelector } from '@/store';
 import { convertToTree } from '@/utils/drag';
-import { Box, Checkbox, Stack, TextField } from '@mui/material';
 import { message, Modal } from '@ctzhian/ui';
+import { Box, Checkbox, Stack, TextField } from '@mui/material';
 import dayjs from 'dayjs';
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -201,6 +201,7 @@ const VersionPublish = ({
           >
             <DragTree
               ui='select'
+              readOnly
               selected={selected}
               data={treeList}
               refresh={getData}

@@ -1,33 +1,36 @@
-import { useEffect, useState, useMemo } from 'react';
-import { Form, FormItem } from '@/pages/setting/component/Common';
-import { Modal, Icon, message } from '@ctzhian/ui';
-import { GithubComChaitinPandaWikiProApiAuthV1AuthGroupListItem } from '@/request/pro/types';
-import { DomainNodeListItemResp, DomainNodeType } from '@/request/types';
 import Card from '@/components/Card';
 import DragTree from '@/components/Drag/DragTree';
-import dayjs from 'dayjs';
-import {
-  RadioGroup,
-  Radio,
-  TextField,
-  styled,
-  Stack,
-  Button,
-  Autocomplete,
-  Box,
-} from '@mui/material';
-import { useForm, Controller } from 'react-hook-form';
-import { FormControlLabel } from '@mui/material';
-import { ConstsNodeAccessPerm } from '@/request/types';
+import { Form, FormItem } from '@/pages/setting/component/Common';
 import { postApiV1NodeSummary, putApiV1NodeDetail } from '@/request/Node';
-import { getApiProV1AuthGroupList } from '@/request/pro/AuthGroup';
-import { convertToTree } from '@/utils/drag';
-import { filterEmptyFolders } from '@/utils/tree';
 import {
   getApiV1NodePermission,
   patchApiV1NodePermissionEdit,
 } from '@/request/NodePermission';
+import { getApiProV1AuthGroupList } from '@/request/pro/AuthGroup';
+import { GithubComChaitinPandaWikiProApiAuthV1AuthGroupListItem } from '@/request/pro/types';
+import {
+  ConstsNodeAccessPerm,
+  DomainNodeListItemResp,
+  DomainNodeType,
+} from '@/request/types';
 import { useAppSelector } from '@/store';
+import { convertToTree } from '@/utils/drag';
+import { filterEmptyFolders } from '@/utils/tree';
+import { Icon, Modal, message } from '@ctzhian/ui';
+import {
+  Autocomplete,
+  Box,
+  Button,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
+  Stack,
+  TextField,
+  styled,
+} from '@mui/material';
+import dayjs from 'dayjs';
+import { useEffect, useMemo, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 
 interface DocPropertiesModalProps {
   open: boolean;
@@ -240,7 +243,9 @@ const DocPropertiesModal = ({
           </Box>
           <Card
             sx={{
-              py: 1,
+              p: 2,
+              maxHeight: '300px',
+              overflowY: 'auto',
               bgcolor: 'background.paper3',
               '& .dndkit-drag-handle': {
                 top: '-2px !important',
