@@ -1,20 +1,20 @@
 'use client';
-import { postShareProV1FileUploadWithProgress } from '@/request/pro/otherCustomer';
 import Emoji from '@/components/emoji';
+import { postShareProV1FileUploadWithProgress } from '@/request/pro/otherCustomer';
 import { V1NodeDetailResp } from '@/request/types';
-import { Box, Stack, TextField } from '@mui/material';
 import { Editor, TocList, useTiptap, UseTiptapReturn } from '@ctzhian/tiptap';
 import { message } from '@ctzhian/ui';
-import { IconZiti, IconAShijian2 } from '@panda-wiki/icons';
+import { Box, Stack, TextField } from '@mui/material';
+import { IconAShijian2, IconZiti } from '@panda-wiki/icons';
 import dayjs from 'dayjs';
+import { useParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { useWrapContext } from '..';
 import AIGenerate from './AIGenerate';
+import ConfirmModal from './ConfirmModal';
 import Header from './Header';
 import Toc from './Toc';
 import Toolbar from './Toolbar';
-import ConfirmModal from './ConfirmModal';
-import { useParams } from 'next/navigation';
 
 interface WrapProps {
   detail: V1NodeDetailResp;
@@ -262,7 +262,7 @@ const Wrap = ({ detail: defaultDetail = {} }: WrapProps) => {
                 minHeight: 'calc(100vh - 102px - 48px)',
               },
               '.tableWrapper': {
-                maxWidth: `calc(100vw - 160px - ${catalogOpen ? 292 : 0}px - ${fixedToc ? 292 : 0}px)`,
+                width: '100%',
                 overflowX: 'auto',
               },
             }}

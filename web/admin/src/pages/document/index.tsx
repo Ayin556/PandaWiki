@@ -387,7 +387,7 @@ const Content = () => {
           <Stack
             direction={'row'}
             alignItems={'center'}
-            sx={{ px: 2, lineHeight: '35px' }}
+            sx={{ pr: 2, pl: 6.5, lineHeight: '35px' }}
           >
             <Checkbox
               sx={{

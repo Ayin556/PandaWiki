@@ -64,6 +64,14 @@ export const AppType = {
     label: '问答机器人 API',
     icon: 'icon-Wendajiqiren',
   },
+  10: {
+    label: '企业微信智能机器人',
+    icon: 'icon-qiyeweixinjiqiren',
+  },
+  11: {
+    label: 'Lark 机器人',
+    icon: 'icon-feishujiqiren',
+  },
 };
 
 export const AnswerStatus = {

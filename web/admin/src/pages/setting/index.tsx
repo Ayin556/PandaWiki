@@ -17,18 +17,18 @@ import CardSecurity from './component/CardSecurity';
 import CardWeb from './component/CardWeb';
 
 const SettingTabs: { label: string; id: string }[] = [
-  { label: '后台信息', id: 'backend-info' },
   { label: '门户网站', id: 'portal-website' },
   { label: 'AI 机器人', id: 'robot' },
   { label: '问答设置', id: 'ai-setting' },
   { label: '反馈设置', id: 'feedback' },
   { label: '安全设置', id: 'security' },
+  { label: '访问控制', id: 'backend-info' },
 ];
 
 const Setting = () => {
   const { kb_id } = useAppSelector(state => state.config);
   const [searchParams, setSearchParams] = useURLSearchParams();
-  const activeTab = searchParams.get('tab') || 'backend-info';
+  const activeTab = searchParams.get('tab') || 'portal-website';
   const [kb, setKb] = useState<DomainKnowledgeBaseDetail | null>(null);
   const [url, setUrl] = useState<string>('');
   const [info, setInfo] = useState<DomainAppDetailResp>();

@@ -146,6 +146,7 @@ const DocContent = ({
         ...(docWidth === 'full' &&
           !mobile && {
             flexGrow: 1,
+            width: 0,
           }),
         ...(docWidth !== 'full' &&
           !mobile && {
@@ -231,16 +232,13 @@ const DocContent = ({
           mt: 6,
           '.tiptap.ProseMirror': {
             '.tableWrapper': {
-              transition: 'width 0.3s ease-in-out',
               width:
                 docWidth === 'full'
-                  ? `calc(100vw - 80px - 264px - 192px - 8px - ${catalogShow ? catalogWidth : 26}px)`
+                  ? '100%'
                   : DocWidth[docWidth as keyof typeof DocWidth].value,
-              maxWidth: `calc(100vw - 80px - 264px - 192px - 8px - ${catalogShow ? catalogWidth : 26}px)`,
               overflowX: 'auto',
               ...(mobile && {
                 width: '100%',
-                maxWidth: '100%',
               }),
             },
           },

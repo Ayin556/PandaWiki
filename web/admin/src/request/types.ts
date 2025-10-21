@@ -77,6 +77,7 @@ export enum DomainAppType {
   AppTypeWechatOfficialAccount = 8,
   AppTypeOpenAIAPI = 9,
   AppTypeWecomAIBot = 10,
+  AppTypeLarkBot = 11,
 }
 
 export enum ConstsWatermarkSetting {
@@ -124,6 +125,7 @@ export enum ConstsSourceType {
   SourceTypeWidget = "widget",
   SourceTypeDingtalkBot = "dingtalk_bot",
   SourceTypeFeishuBot = "feishu_bot",
+  SourceTypeLarkBot = "lark_bot",
   SourceTypeWechatBot = "wechat_bot",
   SourceTypeWecomAIBot = "wecom_ai_bot",
   SourceTypeWechatServiceBot = "wechat_service_bot",
@@ -274,6 +276,8 @@ export interface DomainAppSettings {
   home_page_setting?: ConstsHomePageSetting;
   icon?: string;
   keyword?: string;
+  /** LarkBot */
+  lark_bot_settings?: DomainLarkBotSettings;
   /** OpenAI API Bot settings */
   openai_api_bot_settings?: DomainOpenAIAPIBotSettings;
   recommend_node_ids?: string[];
@@ -356,6 +360,8 @@ export interface DomainAppSettingsResp {
   home_page_setting?: ConstsHomePageSetting;
   icon?: string;
   keyword?: string;
+  /** LarkBot */
+  lark_bot_settings?: DomainLarkBotSettings;
   /** OpenAI API settings */
   openai_api_bot_settings?: DomainOpenAIAPIBotSettings;
   recommend_node_ids?: string[];
@@ -636,7 +642,7 @@ export interface DomainCreateModelReq {
   model: string;
   parameters?: GithubComChaitinPandaWikiDomainModelParam;
   provider: GithubComChaitinPandaWikiDomainModelProvider;
-  type: "chat" | "embedding" | "rerank" | "analysis";
+  type: "chat" | "embedding" | "rerank" | "analysis" | "analysis-vl";
 }
 
 export interface DomainCreateNodeReq {
@@ -714,7 +720,7 @@ export interface DomainGetProviderModelListReq {
   api_key?: string;
   base_url: string;
   provider: string;
-  type: "chat" | "embedding" | "rerank" | "analysis";
+  type: "chat" | "embedding" | "rerank" | "analysis" | "analysis-vl";
 }
 
 export interface DomainGetProviderModelListResp {
@@ -787,6 +793,14 @@ export interface DomainKnowledgeBaseListItem {
   id?: string;
   name?: string;
   updated_at?: string;
+}
+
+export interface DomainLarkBotSettings {
+  app_id?: string;
+  app_secret?: string;
+  encrypt_key?: string;
+  is_enabled?: boolean;
+  verify_token?: string;
 }
 
 export interface DomainLink {
@@ -1082,7 +1096,7 @@ export interface DomainUpdateModelReq {
   model: string;
   parameters?: GithubComChaitinPandaWikiDomainModelParam;
   provider: GithubComChaitinPandaWikiDomainModelProvider;
-  type: "chat" | "embedding" | "rerank" | "analysis";
+  type: "chat" | "embedding" | "rerank" | "analysis" | "analysis-vl";
 }
 
 export interface DomainUpdateNodeReq {
@@ -1185,7 +1199,7 @@ export interface GithubComChaitinPandaWikiDomainCheckModelReq {
   model: string;
   parameters?: GithubComChaitinPandaWikiDomainModelParam;
   provider: GithubComChaitinPandaWikiDomainModelProvider;
-  type: "chat" | "embedding" | "rerank" | "analysis";
+  type: "chat" | "embedding" | "rerank" | "analysis" | "analysis-vl";
 }
 
 export interface GithubComChaitinPandaWikiDomainCheckModelResp {
@@ -1704,6 +1718,7 @@ export interface GetApiV1AuthGetParams {
     | "widget"
     | "dingtalk_bot"
     | "feishu_bot"
+    | "lark_bot"
     | "wechat_bot"
     | "wecom_ai_bot"
     | "wechat_service_bot"
@@ -1942,4 +1957,9 @@ export interface GetShareV1NodeDetailParams {
 export interface GetShareV1OpenapiGithubCallbackParams {
   code?: string;
   state?: string;
+}
+
+export interface PostShareV1OpenapiLarkBotKbIdParams {
+  /** 知识库ID */
+  kbId: string;
 }
