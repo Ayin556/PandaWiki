@@ -43,12 +43,12 @@ export const useTextAnimation = (
 
     const text = textRef.current;
 
-    // 创建文字分割效果
+    // 创建文字分割效果 - 支持表情符号
     const splitText = (element: HTMLElement) => {
       const text = element.textContent || '';
-      const chars = text
-        .split('')
-        .map(char => (char === ' ' ? '&nbsp;' : char));
+      const chars = Array.from(text).map(char => {
+        return char === ' ' ? '&nbsp;' : char;
+      });
 
       element.innerHTML = chars
         .map(
