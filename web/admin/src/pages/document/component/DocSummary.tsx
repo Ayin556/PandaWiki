@@ -1,12 +1,12 @@
-import { postApiV1NodeSummary } from '@/request/Node';
-import { DomainNodeListItemResp } from '@/request/types';
 import Card from '@/components/Card';
 import DragTree from '@/components/Drag/DragTree';
+import { postApiV1NodeSummary } from '@/request/Node';
+import { DomainNodeListItemResp } from '@/request/types';
 import { convertToTree } from '@/utils/drag';
 import { filterEmptyFolders } from '@/utils/tree';
+import { message, Modal } from '@ctzhian/ui';
 import ErrorIcon from '@mui/icons-material/Error';
 import { Box, Stack } from '@mui/material';
-import { message, Modal } from '@ctzhian/ui';
 
 interface DocSummaryProps {
   open: boolean;
@@ -47,8 +47,10 @@ const DocSummary = ({ open, kb_id, onClose, data }: DocSummaryProps) => {
     >
       <Card
         sx={{
-          py: 1,
+          p: 2,
           bgcolor: 'background.paper3',
+          maxHeight: 'calc(100vh - 300px)',
+          overflowY: 'auto',
           '& .dndkit-drag-handle': {
             top: '-2px !important',
           },

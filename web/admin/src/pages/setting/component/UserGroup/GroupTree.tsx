@@ -98,7 +98,7 @@ const TreeItem = React.forwardRef<
   return (
     <Box
       sx={[
-        treeSx(false, 'move'),
+        treeSx(true),
         {
           px: 1,
           '&:hover': {

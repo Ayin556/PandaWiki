@@ -321,7 +321,6 @@ const Content = () => {
           <Stack direction={'row'} alignItems={'center'} gap={2}>
             <DocSearch />
             <DocAdd
-              refresh={getData}
               createLocal={node => {
                 setData(prev => {
                   // 追加到根末尾

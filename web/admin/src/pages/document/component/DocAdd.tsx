@@ -7,7 +7,9 @@ import AddDocByOther from './AddDocByOther';
 import DocAddByCustomText from './DocAddByCustomText';
 
 interface InputContentProps {
-  refresh: () => void;
+  exportFile?: boolean;
+  refresh?: () => void;
+  context?: React.ReactElement<{ onClick?: any; 'aria-describedby'?: any }>;
   createLocal?: (node: {
     id: string;
     name: string;
@@ -18,7 +20,13 @@ interface InputContentProps {
   scrollTo?: (id: string) => void;
 }
 
-const DocAdd = ({ refresh, createLocal, scrollTo }: InputContentProps) => {
+const DocAdd = ({
+  exportFile = true,
+  refresh,
+  context,
+  createLocal,
+  scrollTo,
+}: InputContentProps) => {
   const theme = useTheme();
   const [customDocOpen, setCustomDocOpen] = useState(false);
   const [urlOpen, setUrlOpen] = useState(false);
@@ -40,90 +48,94 @@ const DocAdd = ({ refresh, createLocal, scrollTo }: InputContentProps) => {
         setCustomDocOpen(true);
       },
     },
-    OfflineFile: {
-      label: '通过离线文件导入',
-      onClick: () => {
-        setUrlOpen(true);
-        setKey('OfflineFile');
-      },
-    },
-    URL: {
-      label: '通过 URL 导入',
-      onClick: () => {
-        setKey('URL');
-        setUrlOpen(true);
-      },
-    },
-    RSS: {
-      label: '通过 RSS 导入',
-      onClick: () => {
-        setUrlOpen(true);
-        setKey('RSS');
-      },
-    },
-    Sitemap: {
-      label: '通过 Sitemap 导入',
-      onClick: () => {
-        setUrlOpen(true);
-        setKey('Sitemap');
-      },
-    },
-    Notion: {
-      label: '通过 Notion 导入',
-      onClick: () => {
-        setUrlOpen(true);
-        setKey('Notion');
-      },
-    },
-    Epub: {
-      label: '通过 Epub 导入',
-      onClick: () => {
-        setUrlOpen(true);
-        setKey('Epub');
-      },
-    },
-    'Wiki.js': {
-      label: '通过 Wiki.js 导入',
-      onClick: () => {
-        setUrlOpen(true);
-        setKey('Wiki.js');
-      },
-    },
-    Yuque: {
-      label: '通过 语雀 导入',
-      onClick: () => {
-        setUrlOpen(true);
-        setKey('Yuque');
-      },
-    },
-    Siyuan: {
-      label: '通过 思源笔记 导入',
-      onClick: () => {
-        setUrlOpen(true);
-        setKey('Siyuan');
-      },
-    },
-    MinDoc: {
-      label: '通过 MinDoc 导入',
-      onClick: () => {
-        setUrlOpen(true);
-        setKey('MinDoc');
-      },
-    },
-    Feishu: {
-      label: '通过飞书文档导入',
-      onClick: () => {
-        setUrlOpen(true);
-        setKey('Feishu');
-      },
-    },
-    Confluence: {
-      label: '通过 Confluence 导入',
-      onClick: () => {
-        setUrlOpen(true);
-        setKey('Confluence');
-      },
-    },
+    ...(exportFile
+      ? {
+          OfflineFile: {
+            label: '通过离线文件导入',
+            onClick: () => {
+              setUrlOpen(true);
+              setKey('OfflineFile');
+            },
+          },
+          URL: {
+            label: '通过 URL 导入',
+            onClick: () => {
+              setKey('URL');
+              setUrlOpen(true);
+            },
+          },
+          RSS: {
+            label: '通过 RSS 导入',
+            onClick: () => {
+              setUrlOpen(true);
+              setKey('RSS');
+            },
+          },
+          Sitemap: {
+            label: '通过 Sitemap 导入',
+            onClick: () => {
+              setUrlOpen(true);
+              setKey('Sitemap');
+            },
+          },
+          Notion: {
+            label: '通过 Notion 导入',
+            onClick: () => {
+              setUrlOpen(true);
+              setKey('Notion');
+            },
+          },
+          Epub: {
+            label: '通过 Epub 导入',
+            onClick: () => {
+              setUrlOpen(true);
+              setKey('Epub');
+            },
+          },
+          'Wiki.js': {
+            label: '通过 Wiki.js 导入',
+            onClick: () => {
+              setUrlOpen(true);
+              setKey('Wiki.js');
+            },
+          },
+          Yuque: {
+            label: '通过 语雀 导入',
+            onClick: () => {
+              setUrlOpen(true);
+              setKey('Yuque');
+            },
+          },
+          Siyuan: {
+            label: '通过 思源笔记 导入',
+            onClick: () => {
+              setUrlOpen(true);
+              setKey('Siyuan');
+            },
+          },
+          MinDoc: {
+            label: '通过 MinDoc 导入',
+            onClick: () => {
+              setUrlOpen(true);
+              setKey('MinDoc');
+            },
+          },
+          Feishu: {
+            label: '通过飞书文档导入',
+            onClick: () => {
+              setUrlOpen(true);
+              setKey('Feishu');
+            },
+          },
+          Confluence: {
+            label: '通过 Confluence 导入',
+            onClick: () => {
+              setUrlOpen(true);
+              setKey('Confluence');
+            },
+          },
+        }
+      : {}),
   };
 
   const close = () => {
@@ -158,10 +170,10 @@ const DocAdd = ({ refresh, createLocal, scrollTo }: InputContentProps) => {
               >
                 {value.label}
               </Stack>
-              {key === 'customDoc' && (
+              {key === 'OfflineFile' && (
                 <Box
                   sx={{
-                    borderBottom: '1px solid',
+                    borderTop: '1px solid',
                     borderColor: theme.palette.divider,
                     my: 0.5,
                   }}
@@ -170,7 +182,7 @@ const DocAdd = ({ refresh, createLocal, scrollTo }: InputContentProps) => {
             </Box>
           ),
         }))}
-        context={<Button variant='contained'>创建文档</Button>}
+        context={context || <Button variant='contained'>创建文档</Button>}
       />
       <AddDocByOther
         type={key}
@@ -183,6 +195,7 @@ const DocAdd = ({ refresh, createLocal, scrollTo }: InputContentProps) => {
         type={docFileKey}
         open={customDocOpen}
         // 本地创建：不刷新，创建后本地追加并滚动
+        refresh={refresh}
         onCreated={node => {
           createLocal?.(node);
           scrollTo?.(node.id);

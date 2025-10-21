@@ -243,7 +243,7 @@ const TreeItem = React.forwardRef<
   return (
     <Box
       sx={[
-        treeSx(supportSelect, ui),
+        treeSx(readOnly ?? false),
         {
           '&:hover': {
             '.dnd-sortable-tree_simple_handle': {
@@ -291,7 +291,6 @@ const TreeItem = React.forwardRef<
             {...props}
             ref={ref}
             indentationWidth={23}
-            disableCollapseOnItemClick={!readOnly}
             showDragHandle={false}
           >
             <Stack

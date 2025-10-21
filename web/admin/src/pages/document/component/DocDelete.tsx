@@ -63,7 +63,7 @@ const DocDelete = ({
     >
       <Card
         sx={{
-          py: 1,
+          p: 2,
           bgcolor: 'background.paper3',
           '& .dndkit-drag-handle': {
             top: '-2px !important',
