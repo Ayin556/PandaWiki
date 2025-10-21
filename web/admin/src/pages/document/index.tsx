@@ -276,7 +276,7 @@ const Content = () => {
       getData();
       dispatch(setIsRefreshDocList(false));
     }
-  }, [isRefreshDocList]);
+  }, [isRefreshDocList, getData]);
 
   return (
     <>

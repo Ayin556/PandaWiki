@@ -143,7 +143,7 @@ const CreateWikiModal = () => {
   }, [kb_c]);
 
   useEffect(() => {
-    if (kbList && kbList.length === 0 && modelStatus) setOpen(true);
+    if (kbList?.length === 0 && modelStatus) setOpen(true);
   }, [kbList, modelStatus]);
 
   return (
