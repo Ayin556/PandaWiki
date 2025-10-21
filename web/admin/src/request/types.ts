@@ -652,6 +652,7 @@ export interface DomainCreateNodeReq {
   name: string;
   parent_id?: string;
   position?: number;
+  summary?: string;
   type: 1 | 2;
 }
 

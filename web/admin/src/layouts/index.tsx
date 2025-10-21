@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
 import KBCreate from '@/components/KB/KBCreate';
+import CreateWikiModal from '@/components/CreateWikiModal';
 import { getApiV1ModelList } from '@/request/Model';
 import { getApiV1KnowledgeBaseList } from '@/request/KnowledgeBase';
 import { getApiV1User } from '@/request/User';
@@ -105,7 +106,8 @@ export const MainLayout = () => {
           <Outlet />
         </Box>
       </Box>
-      <KBCreate />
+      {/* <KBCreate /> */}
+      <CreateWikiModal />
     </>
   );
 };

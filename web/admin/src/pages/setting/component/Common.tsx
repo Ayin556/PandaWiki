@@ -81,6 +81,7 @@ export const FormItem = ({
   tooltip,
   extra,
   sx,
+  labelSx,
 }: {
   label?: string | React.ReactNode;
   children?: React.ReactNode;
@@ -90,6 +91,7 @@ export const FormItem = ({
   tooltip?: React.ReactNode;
   extra?: React.ReactNode;
   sx?: SxProps;
+  labelSx?: SxProps;
 }) => {
   const { vertical: verticalContext, labelWidth: labelWidthContext } =
     useContext(FormContext);
@@ -98,6 +100,7 @@ export const FormItem = ({
       <StyledFormLabelWrapper
         vertical={vertical || verticalContext}
         labelWidth={labelWidth || labelWidthContext}
+        sx={labelSx}
       >
         <Stack direction='row' alignItems='center' flex={1}>
           <StyledFormLabel required={required}>{label}</StyledFormLabel>

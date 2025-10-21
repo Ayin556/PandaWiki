@@ -2,7 +2,6 @@ import { getShareV1NodeDetail } from '@/request/ShareNode';
 import { formatMeta } from '@/utils';
 import Doc from '@/views/node';
 import { ResolvingMetadata } from 'next';
-import ErrorComponent from '@/components/error';
 
 export interface PageProps {
   params: Promise<{ id: string }>;
@@ -42,7 +41,7 @@ const DocPage = async ({ params }: PageProps) => {
   } catch (err) {
     error = err;
   }
-  return error ? <ErrorComponent error={error} /> : <Doc node={node} />;
+  return <Doc node={node} error={error} />;
 };
 
 export default DocPage;
