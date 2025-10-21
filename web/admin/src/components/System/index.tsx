@@ -1121,7 +1121,7 @@ const System = () => {
                         color: 'primary.main',
                       }}
                     >
-                      小模型
+                      视觉模型
                     </Box>
                     <Box
                       sx={{
