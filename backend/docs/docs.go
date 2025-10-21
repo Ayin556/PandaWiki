@@ -6310,6 +6310,9 @@ const docTemplate = `{
                 "position": {
                     "type": "number"
                 },
+                "summary": {
+                    "type": "string"
+                },
                 "type": {
                     "enum": [
                         1,

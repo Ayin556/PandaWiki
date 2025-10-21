@@ -80,13 +80,17 @@ func (r *NodeRepository) Create(ctx context.Context, req *domain.CreateNodeReq, 
 		}
 
 		now := time.Now()
+		meta := domain.NodeMeta{Emoji: req.Emoji}
+		if req.Summary != nil {
+			meta.Summary = *req.Summary
+		}
 
 		node := &domain.Node{
 			ID:       nodeIDStr,
 			KBID:     req.KBID,
 			Name:     req.Name,
 			Content:  req.Content,
-			Meta:     domain.NodeMeta{Emoji: req.Emoji},
+			Meta:     meta,
 			Type:     req.Type,
 			ParentID: req.ParentID,
 			Position: newPos,
