@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { Box, Stepper, Step, StepLabel } from '@mui/material';
 import { Modal } from '@ctzhian/ui';
-import { setKbC } from '@/store/slices/config';
+import { useLocation } from 'react-router-dom';
+import { setKbC, setIsRefreshDocList } from '@/store/slices/config';
 import { useAppSelector, useAppDispatch } from '@/store';
 import { postApiV1KnowledgeBaseRelease } from '@/request/KnowledgeBase';
 import {
@@ -26,8 +27,12 @@ const steps = [
 ];
 
 const CreateWikiModal = () => {
-  const { kb_c, kb_id, kbList } = useAppSelector(state => state.config);
+  const { kb_c, kb_id, kbList, modelStatus } = useAppSelector(
+    state => state.config,
+  );
   const dispatch = useAppDispatch();
+  const location = useLocation();
+  const [open, setOpen] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
   const [nodeIds, setNodeIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -39,6 +44,10 @@ const CreateWikiModal = () => {
 
   const onCancel = () => {
     dispatch(setKbC(false));
+    setOpen(false);
+    if (location.pathname === '/') {
+      dispatch(setIsRefreshDocList(true));
+    }
   };
 
   const onPublish = () => {
@@ -121,17 +130,25 @@ const CreateWikiModal = () => {
   };
 
   useEffect(() => {
-    if (!kb_c) {
+    if (!open) {
       setTimeout(() => {
         setNodeIds([]);
         setActiveStep(0);
       }, 300);
     }
+  }, [open]);
+
+  useEffect(() => {
+    setOpen(kb_c);
   }, [kb_c]);
+
+  useEffect(() => {
+    if (kbList && kbList.length === 0 && modelStatus) setOpen(true);
+  }, [kbList, modelStatus]);
 
   return (
     <Modal
-      open={kb_c}
+      open={open}
       onCancel={onCancel}
       title='创建 Wiki 站点'
       width={880}

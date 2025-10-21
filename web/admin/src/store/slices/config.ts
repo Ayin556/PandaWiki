@@ -19,6 +19,7 @@ export interface config {
   kbDetail: DomainKnowledgeBaseDetail;
   appPreviewData: DomainAppDetailResp | null;
   refreshAdminRequest: () => void;
+  isRefreshDocList: boolean;
 }
 
 const initialState: config = {
@@ -40,6 +41,7 @@ const initialState: config = {
   kbDetail: {} as DomainKnowledgeBaseDetail,
   appPreviewData: null,
   refreshAdminRequest: () => {},
+  isRefreshDocList: false,
 };
 
 const configSlice = createSlice({
@@ -77,6 +79,9 @@ const configSlice = createSlice({
     setRefreshAdminRequest(state, { payload }) {
       state.refreshAdminRequest = payload;
     },
+    setIsRefreshDocList(state, { payload }) {
+      state.isRefreshDocList = payload;
+    },
   },
 });
 
@@ -91,5 +96,6 @@ export const {
   setKbDetail,
   setRefreshAdminRequest,
   setModelList,
+  setIsRefreshDocList,
 } = configSlice.actions;
 export default configSlice.reducer;
