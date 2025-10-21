@@ -57,6 +57,9 @@ const Header = ({ isDocPage = false, isWelcomePage = false }: HeaderProps) => {
       catalogWidth={catalogWidth}
       logo={kbDetail?.settings?.icon || Logo.src}
       title={kbDetail?.settings?.title}
+      placeholder={
+        kbDetail?.settings?.web_app_custom_style?.header_search_placeholder
+      }
       showSearch
       btns={kbDetail?.settings?.btns}
       onSearch={handleSearch}
