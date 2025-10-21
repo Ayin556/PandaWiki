@@ -13,7 +13,7 @@ interface Item {
   onClick?: () => void;
 }
 
-interface CascaderProps {
+export interface CascaderProps {
   id?: string;
   arrowIcon?: React.ReactNode;
   list: Item[];

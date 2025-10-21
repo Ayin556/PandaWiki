@@ -1,13 +1,20 @@
 import { ITreeItem, NodeListFilterData } from '@/api';
+import Cascader from '@/components/Cascader';
+import {
+  findItemDeep,
+  setProperty,
+} from '@/components/TreeDragSortable/utilities';
 import { getApiV1NodeList } from '@/request/Node';
 import { DomainNodeListItemResp, V1NodeDetailResp } from '@/request/types';
 import { useAppSelector } from '@/store';
+import { addOpacityToColor } from '@/utils';
 import { convertToTree } from '@/utils/drag';
 import { filterEmptyFolders } from '@/utils/tree';
 import { Ellipsis, Icon } from '@ctzhian/ui';
-import { alpha, Box, Stack, useTheme } from '@mui/material';
+import { alpha, Box, IconButton, Stack, useTheme } from '@mui/material';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import DocAddByCustomText from '../../component/DocAddByCustomText';
 import KBSwitch from './KBSwitch';
 
 interface CatalogProps {
@@ -31,6 +38,29 @@ const Catalog = ({ curNode, setCatalogOpen }: CatalogProps) => {
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(
     new Set(),
   );
+
+  const [opraParentId, setOpraParentId] = useState<string>('');
+  const [docFileKey, setDocFileKey] = useState<1 | 2>(1);
+  const [customDocOpen, setCustomDocOpen] = useState(false);
+
+  const ImportContentWays = {
+    docFile: {
+      label: '创建文件夹',
+      onClick: (parentId: string) => {
+        setOpraParentId(parentId);
+        setDocFileKey(1);
+        setCustomDocOpen(true);
+      },
+    },
+    customDoc: {
+      label: '创建文档',
+      onClick: (parentId: string) => {
+        setOpraParentId(parentId);
+        setDocFileKey(2);
+        setCustomDocOpen(true);
+      },
+    },
+  };
 
   const getCatalogData = useCallback(() => {
     const params: NodeListFilterData = {
@@ -87,7 +117,12 @@ const Catalog = ({ curNode, setCatalogOpen }: CatalogProps) => {
       (a, b) => (a.order ?? 0) - (b.order ?? 0),
     );
     return sortedItems.map(item => (
-      <Stack key={item.id} sx={{ position: 'relative' }}>
+      <Stack
+        key={item.id}
+        sx={{
+          position: 'relative',
+        }}
+      >
         <Stack
           direction={'row'}
           alignItems={'center'}
@@ -103,6 +138,9 @@ const Catalog = ({ curNode, setCatalogOpen }: CatalogProps) => {
               id === item.id
                 ? alpha(theme.palette.primary.main, 0.1)
                 : 'transparent',
+            '&:hover .catalog-folder-add-icon': {
+              color: 'text.tertiary',
+            },
             '&:hover': {
               bgcolor:
                 id === item.id
@@ -128,7 +166,7 @@ const Catalog = ({ curNode, setCatalogOpen }: CatalogProps) => {
               sx={{
                 position: 'absolute',
                 left: -18 + (pl || 0) * 8 * depth,
-                top: 6,
+                top: 13,
               }}
             >
               <Icon
@@ -154,6 +192,72 @@ const Catalog = ({ curNode, setCatalogOpen }: CatalogProps) => {
             />
           )}
           <Ellipsis>{item.name}</Ellipsis>
+          {item.type === 1 && (
+            <Box sx={{ flexShrink: 0 }} onClick={e => e.stopPropagation()}>
+              <Cascader
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'left',
+                }}
+                context={
+                  <IconButton>
+                    <Icon
+                      className='catalog-folder-add-icon'
+                      type='icon-icon_tool_close'
+                      sx={{
+                        fontSize: 16,
+                        color: 'action.selected',
+                        transform: 'rotate(45deg)',
+                      }}
+                    />
+                  </IconButton>
+                }
+                list={Object.entries(ImportContentWays).map(([key, value]) => ({
+                  key,
+                  label: (
+                    <Box key={key}>
+                      <Stack
+                        direction={'row'}
+                        alignItems={'center'}
+                        gap={1}
+                        sx={{
+                          fontSize: 14,
+                          px: 2,
+                          lineHeight: '40px',
+                          height: 40,
+                          width: 180,
+                          borderRadius: '5px',
+                          cursor: 'pointer',
+                          ':hover': {
+                            bgcolor: addOpacityToColor(
+                              theme.palette.primary.main,
+                              0.1,
+                            ),
+                          },
+                        }}
+                        onClick={() => value.onClick(item.id)}
+                      >
+                        {value.label}
+                      </Stack>
+                      {key === 'OfflineFile' && (
+                        <Box
+                          sx={{
+                            borderTop: '1px solid',
+                            borderColor: theme.palette.divider,
+                            my: 0.5,
+                          }}
+                        />
+                      )}
+                    </Box>
+                  ),
+                }))}
+              />
+            </Box>
+          )}
         </Stack>
         {item.children &&
           item.children.length > 0 &&
@@ -166,19 +270,19 @@ const Catalog = ({ curNode, setCatalogOpen }: CatalogProps) => {
 
   useEffect(() => {
     if (curNode.id) {
-      const newNodeList = nodeList.map(item => {
-        if (item.id === curNode.id) {
-          return {
-            ...item,
-            name: curNode.name,
-            emoji: curNode.meta?.emoji || '',
-          };
-        }
-        return item;
+      setData(prev => {
+        let next = setProperty(prev, curNode.id!, 'name', val =>
+          curNode.name !== undefined ? curNode.name : (val as string),
+        ) as ITreeItem[];
+        next = setProperty(next, curNode.id!, 'emoji', val =>
+          curNode.meta?.emoji !== undefined
+            ? curNode.meta.emoji
+            : (val as string | undefined),
+        ) as ITreeItem[];
+        return [...next];
       });
-      setData(filterEmptyFolders(convertToTree(newNodeList || [])));
     }
-  }, [curNode, nodeList]);
+  }, [curNode]);
 
   useEffect(() => {
     getCatalogData();
@@ -247,6 +351,46 @@ const Catalog = ({ curNode, setCatalogOpen }: CatalogProps) => {
       >
         {renderTree(data)}
       </Stack>
+      <DocAddByCustomText
+        type={docFileKey}
+        autoJump={false}
+        open={customDocOpen}
+        parentId={opraParentId}
+        onCreated={node => {
+          // 复用工具方法：findItemDeep / setProperty
+          setData(prev => {
+            const parent = findItemDeep(prev, opraParentId);
+            if (!parent) return prev;
+            const children = (parent.children as ITreeItem[] | undefined) ?? [];
+            const lastOrder = children.length
+              ? (children[children.length - 1].order ?? children.length - 1)
+              : -1;
+            const newChild: ITreeItem = {
+              id: node.id,
+              name: node.name,
+              type: node.type,
+              emoji: node.emoji,
+              parentId: parent.id,
+              level: (parent.level ?? 0) + 1,
+              order: lastOrder + 1,
+              status: 1,
+              children: node.type === 1 ? [] : undefined,
+            };
+            const next = setProperty(prev, opraParentId, 'children', val => [
+              ...((val as ITreeItem[] | undefined) ?? []),
+              newChild,
+            ]) as ITreeItem[];
+            return [...next];
+          });
+          // 展开父级，确保新项可见
+          setExpandedFolders(prev => {
+            const ns = new Set(prev);
+            if (opraParentId) ns.add(opraParentId);
+            return ns;
+          });
+        }}
+        onClose={() => setCustomDocOpen(false)}
+      />
     </Stack>
   );
 };

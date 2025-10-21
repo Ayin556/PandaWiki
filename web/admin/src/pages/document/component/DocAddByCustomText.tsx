@@ -1,5 +1,5 @@
 import Emoji from '@/components/Emoji';
-import { V1NodeDetailResp } from '@/request';
+import { DomainCreateNodeReq, V1NodeDetailResp } from '@/request';
 import { postApiV1Node, putApiV1NodeDetail } from '@/request/Node';
 import { useAppSelector } from '@/store';
 import { message, Modal } from '@ctzhian/ui';
@@ -10,7 +10,9 @@ import { Controller, useForm } from 'react-hook-form';
 interface DocAddByCustomTextProps {
   open: boolean;
   data?: V1NodeDetailResp;
+  autoJump?: boolean;
   onClose: () => void;
+  parentId?: string;
   setDetail?: (data: V1NodeDetailResp) => void;
   refresh?: () => void;
   type?: 1 | 2;
@@ -24,6 +26,8 @@ interface DocAddByCustomTextProps {
 const DocAddByCustomText = ({
   open,
   data,
+  autoJump = true,
+  parentId,
   onClose,
   refresh,
   setDetail,
@@ -70,19 +74,23 @@ const DocAddByCustomText = ({
       });
     } else {
       if (!id) return;
-      postApiV1Node({
+      const params: DomainCreateNodeReq = {
         name: value.name,
         content: '',
         kb_id: id,
         type,
         emoji: value.emoji,
-      }).then(({ id }) => {
+      };
+      if (parentId) {
+        params.parent_id = parentId;
+      }
+      postApiV1Node(params).then(({ id }) => {
         message.success('创建成功');
         reset();
         handleClose();
         // 回传创建结果给上层，由上层本地追加并滚动
         onCreated?.({ id, name: value.name, type, emoji: value.emoji });
-        if (type === 2) {
+        if (type === 2 && autoJump) {
           window.open(`/doc/editor/${id}`, '_blank');
         }
       });
