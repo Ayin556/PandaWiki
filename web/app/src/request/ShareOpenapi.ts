@@ -15,6 +15,7 @@ import {
   DomainPWResponse,
   GetShareV1OpenapiGithubCallbackParams,
   GithubComChaitinPandaWikiApiShareV1GitHubCallbackResp,
+  PostShareV1OpenapiLarkBotKbIdParams,
 } from "./types";
 
 /**
@@ -42,6 +43,28 @@ export const getShareV1OpenapiGithubCallback = (
     path: `/share/v1/openapi/github/callback`,
     method: "GET",
     query: query,
+    type: ContentType.Json,
+    format: "json",
+    ...params,
+  });
+
+/**
+ * @description Lark机器人请求
+ *
+ * @tags ShareOpenapi
+ * @name PostShareV1OpenapiLarkBotKbId
+ * @summary Lark机器人请求
+ * @request POST:/share/v1/openapi/lark/bot/{kb_id}
+ * @response `200` `DomainPWResponse` OK
+ */
+
+export const postShareV1OpenapiLarkBotKbId = (
+  { kbId, ...query }: PostShareV1OpenapiLarkBotKbIdParams,
+  params: RequestParams = {},
+) =>
+  httpRequest<DomainPWResponse>({
+    path: `/share/v1/openapi/lark/bot/${kbId}`,
+    method: "POST",
     type: ContentType.Json,
     format: "json",
     ...params,
