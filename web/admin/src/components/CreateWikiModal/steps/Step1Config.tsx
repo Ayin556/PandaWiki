@@ -74,16 +74,17 @@ const VALIDATION_RULES = {
 };
 
 interface Step1ConfigProps {
-  ref: Ref<{ onSubmit: () => Promise<void> }>;
+  ref: Ref<{ onSubmit: () => Promise<unknown> }>;
 }
 
 const Step1Config: React.FC<Step1ConfigProps> = ({ ref }) => {
   const {
     control,
-    handleSubmit,
     formState: { errors },
+    trigger,
     watch,
     reset,
+    getValues,
   } = useForm({
     defaultValues: {
       name: '',
@@ -124,38 +125,36 @@ const Step1Config: React.FC<Step1ConfigProps> = ({ ref }) => {
     ]);
   };
 
-  const onSubmit = handleSubmit(value => {
-    if (!value.http && !value.https) {
-      message.error('HTTP 和 HTTPS 至少需要启用一种服务');
-      return Promise.reject(new Error('HTTP 和 HTTPS 至少需要启用一种服务'));
-    }
-    const formData: DomainCreateKnowledgeBaseReq = { name: value.name };
-    if (value.domain) formData.hosts = [value.domain];
-    if (value.http) formData.ports = [+value.port];
-    if (value.https) {
-      formData.ssl_ports = [+value.ssl_port];
-      if (value.httpsCert) formData.public_key = value.httpsCert;
-      else {
-        message.error('请上传 SSL 证书文件');
-        return Promise.reject(new Error('请上传 SSL 证书文件'));
+  const onSubmit = async () => {
+    const isRHFValid = await trigger();
+    if (!isRHFValid) {
+      return Promise.reject();
+    } else {
+      const value = getValues();
+      if (!value.http && !value.https) {
+        message.error('HTTP 和 HTTPS 至少需要启用一种服务');
+        return Promise.reject(new Error('HTTP 和 HTTPS 至少需要启用一种服务'));
       }
-      if (value.httpsKey) formData.private_key = value.httpsKey;
-      else {
-        message.error('请上传 SSL 私钥文件');
-        return Promise.reject(new Error('请上传 SSL 私钥文件'));
+      const formData: DomainCreateKnowledgeBaseReq = { name: value.name };
+      if (value.domain) formData.hosts = [value.domain];
+      if (value.http) formData.ports = [+value.port];
+      if (value.https) {
+        formData.ssl_ports = [+value.ssl_port];
+        if (value.httpsCert) formData.public_key = value.httpsCert;
+        if (value.httpsKey) formData.private_key = value.httpsKey;
       }
-    }
 
-    return (
-      postApiV1KnowledgeBase(formData)
-        // @ts-expect-error 类型错误
-        .then(({ id }) => {
-          return getKb(id).then(() => {
-            // message.success('创建成功');
-          });
-        })
-    );
-  });
+      return (
+        postApiV1KnowledgeBase(formData)
+          // @ts-expect-error 类型错误
+          .then(({ id }) => {
+            return getKb(id).then(() => {
+              // message.success('创建成功');
+            });
+          })
+      );
+    }
+  };
 
   useImperativeHandle(ref, () => ({
     onSubmit,
