@@ -2,6 +2,7 @@ package share
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 
@@ -87,6 +88,12 @@ func (h *ShareCommentHandler) CreateComment(c echo.Context) error {
 	// validate captcha token
 	if !h.Captcha.ValidateToken(ctx, req.CaptchaToken) {
 		return h.NewResponseWithError(c, "failed to validate captcha token", nil)
+	}
+
+	for _, url := range req.PicUrls {
+		if !strings.HasPrefix(url, "/static-file/") {
+			return h.NewResponseWithError(c, "validate param pic_urls failed", err)
+		}
 	}
 
 	remoteIP := c.RealIP()

@@ -877,6 +877,10 @@ definitions:
         type: string
       parent_id:
         type: string
+      pic_urls:
+        items:
+          type: string
+        type: array
       root_id:
         type: string
       user_name:
@@ -884,6 +888,7 @@ definitions:
     required:
     - content
     - node_id
+    - pic_urls
     type: object
   domain.CommentStatus:
     enum:
@@ -1851,6 +1856,10 @@ definitions:
         type: string
       parent_id:
         type: string
+      pic_urls:
+        items:
+          type: string
+        type: array
       root_id:
         type: string
     type: object
@@ -2600,6 +2609,11 @@ definitions:
       name:
         type: string
       space_id:
+        type: string
+    type: object
+  v1.FileUploadResp:
+    properties:
+      key:
         type: string
     type: object
   v1.KBUserInviteReq:
@@ -5739,6 +5753,43 @@ paths:
       summary: GetCommentList
       tags:
       - share_comment
+  /share/v1/common/file/upload:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 前台用户上传文件,目前只支持图片文件上传
+      operationId: share-FileUpload
+      parameters:
+      - description: kb id
+        in: header
+        name: X-KB-ID
+        required: true
+        type: string
+      - description: File
+        in: formData
+        name: file
+        required: true
+        type: file
+      - description: captcha_token
+        in: formData
+        name: captcha_token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/v1.FileUploadResp'
+              type: object
+      summary: 文件上传
+      tags:
+      - ShareFile
   /share/v1/conversation/detail:
     get:
       consumes:
