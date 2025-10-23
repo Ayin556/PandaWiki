@@ -4366,6 +4366,65 @@ const docTemplate = `{
                 }
             }
         },
+        "/share/v1/common/file/upload": {
+            "post": {
+                "description": "前台用户上传文件,目前只支持图片文件上传",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ShareFile"
+                ],
+                "summary": "文件上传",
+                "operationId": "share-FileUpload",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "kb id",
+                        "name": "X-KB-ID",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "File",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "captcha_token",
+                        "name": "captcha_token",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/v1.FileUploadResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/share/v1/conversation/detail": {
             "get": {
                 "description": "GetConversationDetail",
@@ -5892,7 +5951,8 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "content",
-                "node_id"
+                "node_id",
+                "pic_urls"
             ],
             "properties": {
                 "captcha_token": {
@@ -5906,6 +5966,12 @@ const docTemplate = `{
                 },
                 "parent_id": {
                     "type": "string"
+                },
+                "pic_urls": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "root_id": {
                     "type": "string"
@@ -7399,6 +7465,12 @@ const docTemplate = `{
                 "parent_id": {
                     "type": "string"
                 },
+                "pic_urls": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "root_id": {
                     "type": "string"
                 }
@@ -8532,6 +8604,14 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "space_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.FileUploadResp": {
+            "type": "object",
+            "properties": {
+                "key": {
                     "type": "string"
                 }
             }

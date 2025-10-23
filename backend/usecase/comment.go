@@ -49,8 +49,9 @@ func (u *CommentUsecase) CreateComment(ctx context.Context, commentReq *domain.C
 	CommentStr := CommentID.String()
 
 	err = u.CommentRepo.CreateComment(ctx, &domain.Comment{
-		ID:     CommentStr,
-		NodeID: commentReq.NodeID,
+		ID:      CommentStr,
+		PicUrls: commentReq.PicUrls,
+		NodeID:  commentReq.NodeID,
 		Info: domain.CommentInfo{
 			UserName:   commentReq.UserName,
 			RemoteIP:   remoteIP,

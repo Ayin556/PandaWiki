@@ -28,8 +28,8 @@ func (r *CommentRepository) CreateComment(ctx context.Context, comment *domain.C
 
 func (r *CommentRepository) GetCommentList(ctx context.Context, nodeID string, edition consts.LicenseEdition) ([]*domain.ShareCommentListItem, int64, error) {
 	// 按照时间排序来查询node_id的comments
-	comments := []*domain.ShareCommentListItem{}
-	query := r.db.Model(&domain.Comment{}).Where("node_id = ?", nodeID)
+	var comments []*domain.ShareCommentListItem
+	query := r.db.WithContext(ctx).Model(&domain.Comment{}).Where("node_id = ?", nodeID)
 
 	if edition == consts.LicenseEditionContributor || edition == consts.LicenseEditionEnterprise {
 		query = query.Where("status = ?", domain.CommentStatusAccepted) //accepted
