@@ -261,7 +261,7 @@ const KBCreate = () => {
             component={'label'}
             sx={{ width: 136, flexShrink: 0, cursor: 'pointer', fontSize: 14 }}
           >
-            域名
+            域名或 IP
           </Box>
           <Controller
             control={control}

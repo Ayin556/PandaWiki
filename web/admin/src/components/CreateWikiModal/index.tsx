@@ -2,7 +2,11 @@ import { useState, useRef, useEffect } from 'react';
 import { Box, Stepper, Step, StepLabel } from '@mui/material';
 import { Modal } from '@ctzhian/ui';
 import { useLocation } from 'react-router-dom';
-import { setKbC, setIsRefreshDocList } from '@/store/slices/config';
+import {
+  setKbC,
+  setIsRefreshDocList,
+  setIsCreateWikiModalOpen,
+} from '@/store/slices/config';
 import { useAppSelector, useAppDispatch } from '@/store';
 import { postApiV1KnowledgeBaseRelease } from '@/request/KnowledgeBase';
 import {
@@ -136,6 +140,7 @@ const CreateWikiModal = () => {
         setActiveStep(0);
       }, 300);
     }
+    dispatch(setIsCreateWikiModalOpen(open));
   }, [open]);
 
   useEffect(() => {
