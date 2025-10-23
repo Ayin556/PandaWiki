@@ -12,9 +12,9 @@
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,css,scss,md,mdx,json,yml,yaml,mjs,cjs}\""
   },
   "dependencies": {
+    "@cap.js/widget": "^0.1.26",
     "@emoji-mart/data": "^1.2.1",
     "@emoji-mart/react": "^1.1.1",
-    "@cap.js/widget": "^0.1.26",
     "@emotion/cache": "^11.14.0",
     "@mui/material-nextjs": "^7.1.0",
     "@sentry/nextjs": "^10.8.0",
@@ -33,6 +33,7 @@
     "next": "15.4.6",
     "react-device-detect": "^2.2.3",
     "react-markdown": "^10.1.0",
+    "react-photo-view": "^1.2.7",
     "react-syntax-highlighter": "^15.6.1",
     "rehype-katex": "^7.0.1",
     "rehype-raw": "^7.0.0",

@@ -2,12 +2,17 @@
 
 import { NodeDetail } from '@/assets/type';
 import { IconFile, IconFolder } from '@/components/icons';
+import CommentInput, {
+  ImageItem,
+  CommentInputRef,
+} from '@/components/commentInput';
 import { DocWidth } from '@/constant';
 import { useStore } from '@/provider';
 import {
   getShareV1CommentList,
   postShareV1Comment,
 } from '@/request/ShareComment';
+import { PhotoProvider, PhotoView } from 'react-photo-view';
 import { Editor, UseTiptapReturn } from '@ctzhian/tiptap';
 import { message } from '@ctzhian/ui';
 import { Box, Button, Divider, Stack, TextField, alpha } from '@mui/material';
@@ -34,13 +39,7 @@ const DocContent = ({
   commentList?: any[];
   characterCount?: number;
 }) => {
-  const {
-    mobile = false,
-    authInfo,
-    kbDetail,
-    catalogWidth,
-    catalogShow,
-  } = useStore();
+  const { mobile = false, authInfo, kbDetail, catalogWidth } = useStore();
 
   const params = useParams() || {};
   const [commentLoading, setCommentLoading] = useState(false);
@@ -59,8 +58,9 @@ const DocContent = ({
     },
   });
 
-  const contentInputRef = useRef<HTMLInputElement>(null);
+  const commentInputRef = useRef<CommentInputRef>(null);
   const [contentFocused, setContentFocused] = useState(false);
+  const [commentImages, setCommentImages] = useState<ImageItem[]>([]);
 
   const getComment = async () => {
     const res = await getShareV1CommentList({ id: docId });
@@ -82,30 +82,45 @@ const DocContent = ({
       setCommentLoading(true);
       let token = '';
 
-      const Cap = (await import('@cap.js/widget')).default;
-      const cap = new Cap({
-        apiEndpoint: '/share/v1/captcha/',
-      });
       try {
+        const Cap = (await import('@cap.js/widget')).default;
+        const cap = new Cap({
+          apiEndpoint: '/share/v1/captcha/',
+        });
         const solution = await cap.solve();
         token = solution.token;
       } catch (error) {
         message.error('验证失败');
         console.log(error, 'error---------');
+        setCommentLoading(false);
         return;
       }
 
-      await postShareV1Comment({
-        content: data.content,
-        node_id: docId,
-        user_name: data.name,
-        captcha_token: token,
-      }).then(res => {
+      try {
+        // 先上传所有图片
+        let imageUrls: string[] = [];
+        if (commentImages.length > 0 && commentInputRef.current) {
+          imageUrls = await commentInputRef.current.uploadImages();
+        }
+
+        await postShareV1Comment({
+          content: data.content,
+          pic_urls: imageUrls,
+          node_id: docId,
+          user_name: data.name,
+          captcha_token: token,
+        });
+
         getComment();
         reset();
+        commentInputRef.current?.clearImages();
+        setCommentImages([]);
         message.success('评论成功');
-      });
-      setCommentLoading(false);
+      } catch (error: any) {
+        console.log(error.message || '评论发布失败');
+      } finally {
+        setCommentLoading(false);
+      }
     },
   );
 
@@ -267,31 +282,19 @@ const DocContent = ({
                 required: '请输入评论',
               }}
               render={({ field }) => (
-                <TextField
-                  {...field}
-                  inputRef={contentInputRef}
-                  onFocus={e => {
+                <CommentInput
+                  value={field.value}
+                  onChange={field.onChange}
+                  onImagesChange={setCommentImages}
+                  ref={commentInputRef}
+                  onFocus={() => {
                     setContentFocused(true);
-                    // field.onFocus?.(e);
                   }}
-                  onBlur={e => {
+                  onBlur={() => {
                     setContentFocused(false);
                     field.onBlur?.();
                   }}
                   placeholder='请输入评论'
-                  fullWidth
-                  multiline
-                  minRows={4}
-                  sx={{
-                    '.MuiOutlinedInput-notchedOutline': {
-                      border: 'none',
-                      padding: 0,
-                    },
-
-                    '.MuiInputBase-root': {
-                      padding: 0,
-                    },
-                  }}
                   error={!!errors.content}
                   helperText={errors.content?.message}
                 />
@@ -346,6 +349,66 @@ const DocContent = ({
                     {item.info.user_name}
                   </Box>
                   <Box sx={{ fontSize: 14 }}>{item.content}</Box>
+                  <Stack direction='row' gap={1}>
+                    <PhotoProvider
+                      maskOpacity={0.3}
+                      toolbarRender={({ rotate, onRotate, onScale, scale }) => {
+                        return (
+                          <>
+                            <svg
+                              className='PhotoView-Slider__toolbarIcon'
+                              width='44'
+                              height='44'
+                              viewBox='0 0 768 768'
+                              fill='white'
+                              onClick={() => onScale(scale + 0.2)}
+                            >
+                              <path d='M384 640.5q105 0 180.75-75.75t75.75-180.75-75.75-180.75-180.75-75.75-180.75 75.75-75.75 180.75 75.75 180.75 180.75 75.75zM384 64.5q132 0 225.75 93.75t93.75 225.75-93.75 225.75-225.75 93.75-225.75-93.75-93.75-225.75 93.75-225.75 225.75-93.75zM415.5 223.5v129h129v63h-129v129h-63v-129h-129v-63h129v-129h63z' />
+                            </svg>
+                            <svg
+                              className='PhotoView-Slider__toolbarIcon'
+                              width='44'
+                              height='44'
+                              viewBox='0 0 768 768'
+                              fill='white'
+                              onClick={() => onScale(scale - 0.2)}
+                            >
+                              <path d='M384 640.5q105 0 180.75-75.75t75.75-180.75-75.75-180.75-180.75-75.75-180.75 75.75-75.75 180.75 75.75 180.75 180.75 75.75zM384 64.5q132 0 225.75 93.75t93.75 225.75-93.75 225.75-225.75 93.75-225.75-93.75-93.75-225.75 93.75-225.75 225.75-93.75zM223.5 352.5h321v63h-321v-63z' />
+                            </svg>
+                            <svg
+                              className='PhotoView-Slider__toolbarIcon'
+                              onClick={() => onRotate(rotate + 90)}
+                              width='44'
+                              height='44'
+                              fill='white'
+                              viewBox='0 0 768 768'
+                            >
+                              <path d='M565.5 202.5l75-75v225h-225l103.5-103.5c-34.5-34.5-82.5-57-135-57-106.5 0-192 85.5-192 192s85.5 192 192 192c84 0 156-52.5 181.5-127.5h66c-28.5 111-127.5 192-247.5 192-141 0-255-115.5-255-256.5s114-256.5 255-256.5c70.5 0 135 28.5 181.5 75z' />
+                            </svg>
+                          </>
+                        );
+                      }}
+                    >
+                      {(item.pic_urls || []).map((url: string) => (
+                        <PhotoView key={url} src={url}>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            alt={url}
+                            src={url}
+                            width={118}
+                            height={118}
+                            style={{
+                              borderRadius: '4px',
+                              objectFit: 'cover',
+                              boxShadow: '0px 0px 3px 1px rgba(0,0,5,0.15)',
+                              cursor: 'pointer',
+                            }}
+                            referrerPolicy='no-referrer'
+                          />
+                        </PhotoView>
+                      ))}
+                    </PhotoProvider>
+                  </Stack>
                   <Stack
                     direction='row'
                     justifyContent='flex-end'
