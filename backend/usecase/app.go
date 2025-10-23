@@ -89,20 +89,29 @@ func NewAppUsecase(
 
 func (u *AppUsecase) ValidateUpdateApp(ctx context.Context, id string, req *domain.UpdateAppReq, edition consts.LicenseEdition) error {
 	switch edition {
-	case consts.LicenseEditionEnterprise:
-		return nil
-	case consts.LicenseEditionFree, consts.LicenseEditionContributor:
+	case consts.LicenseEditionFree:
 		app, err := u.repo.GetAppDetail(ctx, id)
 		if err != nil {
 			return err
 		}
-
 		if app.Settings.WatermarkContent != req.Settings.WatermarkContent ||
 			app.Settings.WatermarkSetting != req.Settings.WatermarkSetting ||
 			app.Settings.ContributeSettings != req.Settings.ContributeSettings ||
 			app.Settings.CopySetting != req.Settings.CopySetting {
 			return domain.ErrPermissionDenied
 		}
+	case consts.LicenseEditionContributor:
+		app, err := u.repo.GetAppDetail(ctx, id)
+		if err != nil {
+			return err
+		}
+		if app.Settings.WatermarkContent != req.Settings.WatermarkContent ||
+			app.Settings.WatermarkSetting != req.Settings.WatermarkSetting ||
+			app.Settings.CopySetting != req.Settings.CopySetting {
+			return domain.ErrPermissionDenied
+		}
+	case consts.LicenseEditionEnterprise:
+		return nil
 	default:
 		return fmt.Errorf("unsupported license type: %d", edition)
 	}
