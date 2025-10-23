@@ -36,7 +36,9 @@ const SystemTabs = [
 
 const System = () => {
   const theme = useTheme();
-  const { user, modelList } = useAppSelector(state => state.config);
+  const { user, modelList, isCreateWikiModalOpen } = useAppSelector(
+    state => state.config,
+  );
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('model-config');
   const dispatch = useAppDispatch();
@@ -107,6 +109,12 @@ const System = () => {
       handleModelList(modelList);
     }
   }, [modelList]);
+
+  useEffect(() => {
+    if (isCreateWikiModalOpen) {
+      setOpen(false);
+    }
+  }, [isCreateWikiModalOpen]);
 
   return (
     <>

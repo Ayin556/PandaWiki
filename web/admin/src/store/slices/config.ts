@@ -20,6 +20,7 @@ export interface config {
   appPreviewData: DomainAppDetailResp | null;
   refreshAdminRequest: () => void;
   isRefreshDocList: boolean;
+  isCreateWikiModalOpen: boolean;
 }
 
 const initialState: config = {
@@ -42,6 +43,7 @@ const initialState: config = {
   appPreviewData: null,
   refreshAdminRequest: () => {},
   isRefreshDocList: false,
+  isCreateWikiModalOpen: false,
 };
 
 const configSlice = createSlice({
@@ -82,6 +84,9 @@ const configSlice = createSlice({
     setIsRefreshDocList(state, { payload }) {
       state.isRefreshDocList = payload;
     },
+    setIsCreateWikiModalOpen(state, { payload }) {
+      state.isCreateWikiModalOpen = payload;
+    },
   },
 });
 
@@ -97,5 +102,6 @@ export const {
   setRefreshAdminRequest,
   setModelList,
   setIsRefreshDocList,
+  setIsCreateWikiModalOpen,
 } = configSlice.actions;
 export default configSlice.reducer;

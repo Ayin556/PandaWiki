@@ -162,7 +162,7 @@ const Step1Config: React.FC<Step1ConfigProps> = ({ ref }) => {
 
   return (
     <>
-      <SettingCardItem title='知识库名称'>
+      <SettingCardItem title='WIKI 站'>
         {/* Knowledge Base Name Section */}
         <FormItem
           label='名称'
