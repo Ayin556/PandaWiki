@@ -107,7 +107,7 @@ const CardListen = ({
 
   return (
     <SettingCardItem title='服务监听方式' isEdit={isEdit} onSubmit={onSubmit}>
-      <FormItem label='域名'>
+      <FormItem label='域名或 IP'>
         <Controller
           control={control}
           name='domain'
@@ -116,7 +116,7 @@ const CardListen = ({
             <TextField
               {...field}
               fullWidth
-              label='域名'
+              label='域名或 IP'
               onChange={e => {
                 field.onChange(e.target.value);
                 setIsEdit(true);

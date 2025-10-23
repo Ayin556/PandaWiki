@@ -190,7 +190,7 @@ const Step1Config: React.FC<Step1ConfigProps> = ({ ref }) => {
       </SettingCardItem>
       <SettingCardItem title='服务监听方式'>
         <FormItem
-          label='域名'
+          label='域名或 IP'
           labelWidth={100}
           sx={{ alignItems: 'flex-start' }}
           labelSx={{ height: 52 }}
