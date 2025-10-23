@@ -389,7 +389,7 @@ const DocContent = ({
                         );
                       }}
                     >
-                      {item.pic_urls.map((url: string) => (
+                      {(item.pic_urls || []).map((url: string) => (
                         <PhotoView key={url} src={url}>
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
