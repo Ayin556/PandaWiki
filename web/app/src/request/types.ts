@@ -828,6 +828,7 @@ export interface DomainNodeContentChunkSSE {
   emoji?: string;
   name?: string;
   node_id?: string;
+  node_path_names?: string[];
   summary?: string;
 }
 

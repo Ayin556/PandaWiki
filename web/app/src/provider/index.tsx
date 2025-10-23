@@ -29,8 +29,6 @@ interface StoreContextType {
   setCatalogWidth?: (value: number) => void;
   qaModalOpen?: boolean;
   setQaModalOpen?: (value: boolean) => void;
-  searchModalOpen?: boolean;
-  setSearchModalOpen?: (value: boolean) => void;
 }
 
 export const StoreContext = createContext<StoreContextType | undefined>(
@@ -70,7 +68,6 @@ export default function StoreProvider({
   );
   const [tree, setTree] = useState<ITreeItem[] | undefined>(initialTree);
   const [qaModalOpen, setQaModalOpen] = useState(false);
-  const [searchModalOpen, setSearchModalOpen] = useState(false);
 
   const [catalogShow, setCatalogShow] = useState(
     catalogSettings?.catalog_visible !== 2,
@@ -117,8 +114,6 @@ export default function StoreProvider({
         },
         qaModalOpen,
         setQaModalOpen,
-        searchModalOpen,
-        setSearchModalOpen,
       }}
     >
       {children}

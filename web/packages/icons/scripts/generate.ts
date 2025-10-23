@@ -12,7 +12,7 @@ async function downloadAndExtractSVGs(url) {
       throw new Error('Network response was not ok');
     }
     const svgString = await response.text();
-    extractSVGs(svgString);
+    await extractSVGs(svgString);
   } catch (error) {
     console.error('Failed to fetch SVG string:', error);
   }

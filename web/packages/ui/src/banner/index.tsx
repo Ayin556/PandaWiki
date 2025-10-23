@@ -74,6 +74,7 @@ interface BannerProps {
   onSearch?: (value: string, type?: 'search' | 'chat') => void;
   onSearchSuggestions?: (query: string) => Promise<SearchSuggestion[]>;
   baseUrl?: string;
+  onQaClick?: () => void;
 }
 
 const Banner = React.memo(
@@ -86,6 +87,7 @@ const Banner = React.memo(
     onSearch,
     onSearchSuggestions,
     baseUrl = '',
+    onQaClick,
   }: BannerProps) => {
     const [searchText, setSearchText] = useState('');
     const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([]);
@@ -271,13 +273,16 @@ const Banner = React.memo(
               ref={inputRef}
               fullWidth
               placeholder={search.placeholder}
-              value={searchText}
+              value={''}
+              focused={false}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
               onBlur={handleInputBlur}
               onFocus={handleInputFocus}
+              onClick={() => onQaClick?.()}
               slotProps={{
                 input: {
+                  readOnly: true,
                   sx: {
                     bgcolor: '#fff',
                     color: '#000',
@@ -308,137 +313,9 @@ const Banner = React.memo(
                 },
               }}
             />
-
-            {/* 搜索建议下拉框 */}
-            <Popper
-              open={Boolean(anchorEl)}
-              anchorEl={anchorEl}
-              placement='bottom-start'
-              sx={{
-                zIndex: 1300,
-                width: anchorElWidth,
-                '& .MuiPopper-root': {
-                  width: '100%',
-                },
-              }}
-            >
-              <Paper
-                elevation={8}
-                sx={{
-                  width: '100%',
-                  maxHeight: 300,
-                  mt: 1,
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
-                  borderRadius: 2,
-                  overflow: 'hidden',
-                }}
-                onMouseDown={(e: React.MouseEvent) => {
-                  // 阻止事件冒泡，避免关闭 Popper
-                  e.stopPropagation();
-                }}
-              >
-                {isLoading ? (
-                  <Box sx={{ p: 2, textAlign: 'center' }}>
-                    <CircularProgress size={20} />
-                    <Typography
-                      variant='body2'
-                      sx={{ mt: 1, color: 'text.secondary' }}
-                    >
-                      搜索中...
-                    </Typography>
-                  </Box>
-                ) : suggestions.length > 0 ? (
-                  <List sx={{ p: 0 }}>
-                    {suggestions.map((suggestion, index) => (
-                      <ListItem key={suggestion.id} disablePadding>
-                        <ListItemButton
-                          selected={index === selectedIndex}
-                          onClick={() => handleSuggestionClick(suggestion)}
-                          sx={{
-                            '&.Mui-selected': {
-                              backgroundColor: 'primary.main',
-                              color: 'primary.contrastText',
-                              '&:hover': {
-                                backgroundColor: 'primary.dark',
-                              },
-                            },
-                            '&:hover': {
-                              backgroundColor: 'action.hover',
-                            },
-                          }}
-                        >
-                          <ListItemText
-                            primary={suggestion.title}
-                            secondary={suggestion.description}
-                            primaryTypographyProps={{
-                              sx: {
-                                fontWeight: index === selectedIndex ? 600 : 400,
-                              },
-                            }}
-                            secondaryTypographyProps={{
-                              sx: {
-                                fontSize: '0.75rem',
-                                color:
-                                  index === selectedIndex
-                                    ? 'inherit'
-                                    : 'text.secondary',
-                              },
-                            }}
-                          />
-                          {suggestion.type && (
-                            <Typography
-                              variant='caption'
-                              sx={{
-                                color:
-                                  suggestion.type === 'recent'
-                                    ? 'text.secondary'
-                                    : 'primary.main',
-                                fontSize: '0.7rem',
-                                ml: 1,
-                              }}
-                            >
-                              {suggestion.type === 'recent'
-                                ? '最近搜索'
-                                : suggestion.type === 'trending'
-                                  ? '热门'
-                                  : '建议'}
-                            </Typography>
-                          )}
-                        </ListItemButton>
-                      </ListItem>
-                    ))}
-                  </List>
-                ) : null}
-                <Stack direction='row' gap={2} sx={{ p: 2 }}>
-                  <Button
-                    variant='outlined'
-                    color='primary'
-                    onClick={() => {
-                      onSearch?.(searchText, 'chat');
-                      setSearchText('');
-                      setAnchorEl(null);
-                    }}
-                  >
-                    <IconXingxing sx={{ mr: 0.5 }} />
-                    智能问答
-                  </Button>
-                  <Button
-                    variant='outlined'
-                    color='primary'
-                    onClick={() => {
-                      onSearch?.(searchText, 'search');
-                      setSearchText('');
-                      setAnchorEl(null);
-                    }}
-                  >
-                    全站搜索
-                  </Button>
-                </Stack>
-              </Paper>
-            </Popper>
           </Box>
           {search.hot?.length > 0 && (
-            <Stack direction='row' gap={3} sx={{ fontSize: 12, mt: 3 }}>
+            <Stack direction='row' gap={3} sx={{ fontSize: 16, mt: 3 }}>
               <Box sx={{ color: 'rgba(255,255,255, 0.5)', flexShrink: 0 }}>
                 热门搜索
               </Box>
@@ -480,6 +357,9 @@ const Banner = React.memo(
                   size='large'
                   color='primary'
                   sx={{
+                    ...(btn.type === 'outlined' && {
+                      borderWidth: 2,
+                    }),
                     fontSize: {
                       xs: 14,
                       md: 18,

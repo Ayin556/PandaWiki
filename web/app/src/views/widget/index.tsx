@@ -113,6 +113,7 @@ const Widget = () => {
       update_time: '',
       message_id: '',
       source: 'chat',
+      chunk_result: [],
     });
     messageIdRef.current = '';
     setConversation(newConversation);
