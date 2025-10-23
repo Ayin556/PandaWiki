@@ -1,7 +1,7 @@
 import Logo from '@/assets/images/logo.png';
 import Qrcode from '@/assets/images/qrcode.png';
 
-import { Box, Button, Stack, useTheme } from '@mui/material';
+import { Box, Button, Stack, Typography, useTheme } from '@mui/material';
 import { ConstsUserKBPermission } from '@/request/types';
 import { Icon, Modal } from '@ctzhian/ui';
 import { useState, useMemo, useEffect } from 'react';
@@ -249,7 +249,7 @@ const Sidebar = () => {
             window.open('https://github.com/chaitin/PandaWiki', '_blank')
           }
         >
-          Github
+          GitHub
         </Button>
         <Button
           variant='outlined'
@@ -273,19 +273,144 @@ const Sidebar = () => {
           onClick={() => setShowQrcode(true)}
           startIcon={<Icon type='icon-group' sx={{ width: 14, height: 14 }} />}
         >
-          交流群
+          在线支持
         </Button>
         <Version />
       </Stack>
       <Modal
         open={showQrcode}
         onCancel={() => setShowQrcode(false)}
-        title='欢迎加入 PandaWiki 交流群'
+        title='在线支持'
         footer={null}
+        width={600}
       >
-        <Stack alignItems={'center'} justifyContent={'center'} sx={{ my: 2 }}>
-          <Box component='img' src={Qrcode} sx={{ width: 300 }} />
-        </Stack>
+        <Box sx={{ p: 2 }}>
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3}>
+            {/* Enterprise WeChat Group */}
+            <Box sx={{ flex: 1, display: 'flex' }}>
+              <Box
+                sx={{
+                  p: 2,
+                  borderRadius: 2,
+                  background:
+                    'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
+                  textAlign: 'center',
+                  width: '100%',
+                  height: 280,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                }}
+              >
+                <Stack alignItems='center' spacing={1.5}>
+                  <Typography
+                    variant='subtitle1'
+                    sx={{ fontWeight: 600, color: '#2d3748' }}
+                  >
+                    企业微信交流群
+                  </Typography>
+                  <Box
+                    component='img'
+                    src={Qrcode}
+                    sx={{
+                      width: 120,
+                      height: 120,
+                      borderRadius: 2,
+                      border: '2px solid white',
+                      boxShadow: '0 2px 6px rgba(0, 0, 0, 0.08)',
+                    }}
+                  />
+                  <Typography
+                    variant='body2'
+                    sx={{ color: '#4a5568', fontSize: 13 }}
+                  >
+                    扫码加入企业微信交流群
+                  </Typography>
+                </Stack>
+              </Box>
+            </Box>
+
+            {/* Divider */}
+            <Box
+              sx={{
+                display: { xs: 'none', sm: 'flex' },
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Box
+                sx={{
+                  width: 1,
+                  height: '60%',
+                  background:
+                    'linear-gradient(to bottom, transparent, #e2e8f0, transparent)',
+                }}
+              />
+            </Box>
+
+            {/* Community Forum */}
+            <Box sx={{ flex: 1, display: 'flex' }}>
+              <Box
+                sx={{
+                  p: 2,
+                  borderRadius: 2,
+                  background:
+                    'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
+                  textAlign: 'center',
+                  width: '100%',
+                  height: 280,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                }}
+              >
+                <Stack alignItems='center' spacing={2}>
+                  <Typography
+                    variant='subtitle1'
+                    sx={{ fontWeight: 600, color: '#2d3748' }}
+                  >
+                    社区论坛
+                  </Typography>
+                  <Button
+                    variant='contained'
+                    onClick={() =>
+                      window.open(
+                        'https://bbs.baizhi.cloud?ref=PandaWiki',
+                        '_blank',
+                      )
+                    }
+                    sx={{
+                      px: 3,
+                      py: 1,
+                      fontSize: 13,
+                      borderRadius: 2,
+                      textTransform: 'none',
+                      fontWeight: 600,
+                      background:
+                        'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                      boxShadow: '0 2px 8px rgba(102, 126, 234, 0.3)',
+                      '&:hover': {
+                        boxShadow: '0 4px 12px rgba(102, 126, 234, 0.5)',
+                        transform: 'translateY(-1px)',
+                      },
+                      transition: 'all 0.3s ease',
+                    }}
+                  >
+                    访问官方论坛
+                  </Button>
+                  <Typography
+                    variant='body2'
+                    sx={{ color: '#4a5568', fontSize: 13, textAlign: 'center' }}
+                  >
+                    查看更多技术讨论和社区动态
+                  </Typography>
+                </Stack>
+              </Box>
+            </Box>
+          </Stack>
+        </Box>
       </Modal>
     </Stack>
   );
