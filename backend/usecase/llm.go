@@ -100,7 +100,7 @@ func (u *LLMUsecase) FormatConversationMessages(
 			if err != nil {
 				return nil, nil, fmt.Errorf("get kb failed: %w", err)
 			}
-			rankedNodes, err := u.GetRankNodes(ctx, []string{kb.DatasetID}, question, groupIDs, historyMessages[:len(historyMessages)-1])
+			rankedNodes, err = u.GetRankNodes(ctx, []string{kb.DatasetID}, question, groupIDs, historyMessages[:len(historyMessages)-1])
 			if err != nil {
 				return nil, nil, fmt.Errorf("get rank nodes failed: %w", err)
 			}
