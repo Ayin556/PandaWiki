@@ -82,8 +82,8 @@ importers:
   admin:
     dependencies:
       '@ctzhian/modelkit':
-        specifier: 2.7.1
-        version: 2.7.1(a40c6e8256236e8a7309db8c40417cbf)
+        specifier: 2.7.2
+        version: 2.7.2(a40c6e8256236e8a7309db8c40417cbf)
       '@dnd-kit/core':
         specifier: ^6.3.1
         version: 6.3.1(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -500,8 +500,8 @@ packages:
     resolution: {integrity: sha512-VSNoMsvT8bi1eYuG9nO9oyW/ODxebAJr0j+OMqvDc2FsnznabU1Sjjg9ge6jJuDTRiWWAKfIJX2LEvINmw5C6w==}
     hasBin: true
 
-  '@ctzhian/modelkit@2.7.1':
-    resolution: {integrity: sha512-+FCNuWAahbnTM9YIkoQx9LNCGMvuzwaIcpxVvD7aM2//6MqDuZ1zk3kD3nbXfLoiiBCX7X3IZesGdppZ7jI26w==}
+  '@ctzhian/modelkit@2.7.2':
+    resolution: {integrity: sha512-ZtfnsaM3gneN/9yhBwAAE0TRX2Ogsw+YlA/K3BXl7lnFZcYZN0kflEysXILzkV3ywQatxIVxB8quQpPLSYSRVQ==}
     peerDependencies:
       '@ctzhian/ui': ^7
       '@emotion/react': ^11
@@ -5869,7 +5869,7 @@ snapshots:
       - magicast
       - typescript
 
-  '@ctzhian/modelkit@2.7.1(a40c6e8256236e8a7309db8c40417cbf)':
+  '@ctzhian/modelkit@2.7.2(a40c6e8256236e8a7309db8c40417cbf)':
     dependencies:
       '@ctzhian/ui': 7.0.5(@emotion/react@11.14.0(@types/react@19.1.13)(react@19.1.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.1.13)(react@19.1.1))(@types/react@19.1.13)(react@19.1.1))(@mui/icons-material@7.3.2(@mui/material@7.3.2(@emotion/react@11.14.0(@types/react@19.1.13)(react@19.1.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.1.13)(react@19.1.1))(@types/react@19.1.13)(react@19.1.1))(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(@types/react@19.1.13)(react@19.1.1))(@mui/material@7.3.2(@emotion/react@11.14.0(@types/react@19.1.13)(react@19.1.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.1.13)(react@19.1.1))(@types/react@19.1.13)(react@19.1.1))(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(@mui/utils@7.3.2(@types/react@19.1.13)(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@emotion/react': 11.14.0(@types/react@19.1.13)(react@19.1.1)
