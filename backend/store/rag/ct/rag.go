@@ -47,7 +47,7 @@ func (s *CTRAG) CreateKnowledgeBase(ctx context.Context) (string, error) {
 	return dataset.ID, nil
 }
 
-func (s *CTRAG) QueryRecords(ctx context.Context, datasetIDs []string, query string, groupIds []int, historyMsgs []*schema.Message) ([]*domain.NodeContentChunk, error) {
+func (s *CTRAG) QueryRecords(ctx context.Context, datasetIDs []string, query string, groupIds []int, similarityThreshold float64, historyMsgs []*schema.Message) ([]*domain.NodeContentChunk, error) {
 	var chatMsgs []rag.ChatMessage
 	for _, msg := range historyMsgs {
 		switch msg.Role {
@@ -66,14 +66,17 @@ func (s *CTRAG) QueryRecords(ctx context.Context, datasetIDs []string, query str
 		}
 	}
 	s.logger.Debug("retrieving by history msgs", log.Any("history_msgs", historyMsgs), log.Any("chat_msgs", chatMsgs))
-	chunks, _, rewriteQuery, err := s.client.RetrieveChunks(ctx, rag.RetrievalRequest{
+	retrieveReq := rag.RetrievalRequest{
 		DatasetIDs:   datasetIDs,
 		Question:     query,
 		TopK:         10,
 		UserGroupIDs: groupIds,
 		ChatMessages: chatMsgs,
-		// SimilarityThreshold: 0.2,
-	})
+	}
+	if similarityThreshold != 0 {
+		retrieveReq.SimilarityThreshold = similarityThreshold
+	}
+	chunks, _, rewriteQuery, err := s.client.RetrieveChunks(ctx, retrieveReq)
 	s.logger.Info("retrieve chunks result", log.Int("chunks count", len(chunks)), log.String("query", rewriteQuery))
 
 	if err != nil {

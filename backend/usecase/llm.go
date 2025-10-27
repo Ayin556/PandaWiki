@@ -100,7 +100,7 @@ func (u *LLMUsecase) FormatConversationMessages(
 			if err != nil {
 				return nil, nil, fmt.Errorf("get kb failed: %w", err)
 			}
-			rankedNodes, err = u.GetRankNodes(ctx, []string{kb.DatasetID}, question, groupIDs, historyMessages[:len(historyMessages)-1])
+			rankedNodes, err = u.GetRankNodes(ctx, []string{kb.DatasetID}, question, groupIDs, 0, historyMessages[:len(historyMessages)-1])
 			if err != nil {
 				return nil, nil, fmt.Errorf("get rank nodes failed: %w", err)
 			}
@@ -297,10 +297,17 @@ func (u *LLMUsecase) SplitByTokenLimit(text string, maxTokens int) ([]string, er
 	return result, nil
 }
 
-func (u *LLMUsecase) GetRankNodes(ctx context.Context, datasetIDs []string, question string, groupIDs []int, historyMessages []*schema.Message) ([]*domain.RankedNodeChunks, error) {
+func (u *LLMUsecase) GetRankNodes(
+	ctx context.Context,
+	datasetIDs []string,
+	question string,
+	groupIDs []int,
+	similarityThreshold float64,
+	historyMessages []*schema.Message,
+) ([]*domain.RankedNodeChunks, error) {
 	var rankedNodes []*domain.RankedNodeChunks
 	// get related documents from raglite
-	records, err := u.rag.QueryRecords(ctx, datasetIDs, question, groupIDs, historyMessages)
+	records, err := u.rag.QueryRecords(ctx, datasetIDs, question, groupIDs, similarityThreshold, historyMessages)
 	if err != nil {
 		return nil, fmt.Errorf("get records from raglite failed: %w", err)
 	}

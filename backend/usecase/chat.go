@@ -372,7 +372,7 @@ func (u *ChatUsecase) Search(ctx context.Context, req *domain.ChatSearchReq) (*d
 	if err != nil {
 		return nil, err
 	}
-	rankedNodes, err := u.llmUsecase.GetRankNodes(ctx, []string{kb.DatasetID}, req.Message, groupIds, nil)
+	rankedNodes, err := u.llmUsecase.GetRankNodes(ctx, []string{kb.DatasetID}, req.Message, groupIds, 0.2, nil)
 	if err != nil {
 		return nil, err
 	}
