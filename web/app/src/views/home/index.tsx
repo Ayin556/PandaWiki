@@ -142,12 +142,7 @@ const componentMap = {
 } as const;
 
 const Welcome = () => {
-  const {
-    mobile = false,
-    kbDetail,
-    setSearchModalOpen,
-    setQaModalOpen,
-  } = useStore();
+  const { mobile = false, kbDetail, setQaModalOpen } = useStore();
   const settings = kbDetail?.settings;
   const onBannerSearch = (
     searchText: string,
@@ -159,7 +154,6 @@ const Welcome = () => {
         setQaModalOpen?.(true);
       } else {
         sessionStorage.setItem('chat_search_query', searchText.trim());
-        setSearchModalOpen?.(true);
       }
     }
   };
@@ -194,6 +188,7 @@ const Welcome = () => {
         return {
           ...handleBannerProps(config),
           onSearch: onBannerSearch,
+          onQaClick: () => setQaModalOpen?.(true),
           btns: (config?.btns || []).map((item: any) => ({
             ...item,
             href: item.href || '/node',

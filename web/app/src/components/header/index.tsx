@@ -1,32 +1,19 @@
 'use client';
 
 import Logo from '@/assets/images/logo.png';
-import { IconSearch } from '@/components/icons';
-import { DocWidth } from '@/constant/index';
+
 import { useStore } from '@/provider';
-import { Box, Button, IconButton, Stack, TextField } from '@mui/material';
-import Image from 'next/image';
-import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
-import NavBtns from './NavBtns';
+import { usePathname } from 'next/navigation';
+import { useMemo } from 'react';
 import { Header as CustomHeader } from '@panda-wiki/ui';
-import AiQaModal from '../aiQaModal';
-import SearchModal from '../searchModal';
+import QaModal from '../QaModal';
 interface HeaderProps {
   isDocPage?: boolean;
   isWelcomePage?: boolean;
 }
 
 const Header = ({ isDocPage = false, isWelcomePage = false }: HeaderProps) => {
-  const {
-    mobile = false,
-    kbDetail,
-    catalogWidth,
-    setQaModalOpen,
-    setSearchModalOpen,
-  } = useStore();
-  const router = useRouter();
+  const { mobile = false, kbDetail, catalogWidth, setQaModalOpen } = useStore();
   const pathname = usePathname();
   const docWidth = useMemo(() => {
     if (isWelcomePage) return 'full';
@@ -40,7 +27,6 @@ const Header = ({ isDocPage = false, isWelcomePage = false }: HeaderProps) => {
         setQaModalOpen?.(true);
       } else {
         sessionStorage.setItem('chat_search_query', value.trim());
-        setSearchModalOpen?.(true);
       }
     }
   };
@@ -63,9 +49,9 @@ const Header = ({ isDocPage = false, isWelcomePage = false }: HeaderProps) => {
       showSearch
       btns={kbDetail?.settings?.btns}
       onSearch={handleSearch}
+      onQaClick={() => setQaModalOpen?.(true)}
     >
-      <AiQaModal />
-      <SearchModal />
+      <QaModal />
     </CustomHeader>
   );
 };

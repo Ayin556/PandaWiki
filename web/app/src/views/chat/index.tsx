@@ -168,7 +168,8 @@ const Chat = ({
       message_id: '',
       update_time: '',
       source: 'chat',
-    });
+      chunk_result: [],
+    } as ConversationItem);
     messageIdRef.current = '';
     setConversation(newConversation);
     setAnswer('');

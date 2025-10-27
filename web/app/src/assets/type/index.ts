@@ -187,4 +187,5 @@ export interface ConversationItem {
   update_time: string;
   message_id: string;
   source: 'history' | 'chat';
+  chunk_result: ChunkResultItem[];
 }
