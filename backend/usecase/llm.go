@@ -312,7 +312,7 @@ func (u *LLMUsecase) GetRankNodes(ctx context.Context, datasetIDs []string, ques
 			return item.DocID
 		}))
 		u.logger.Info("node chunk doc ids", log.Any("docIDs", docIDs))
-		docIDNode, err := u.nodeRepo.GetNodeReleasesByDocIDs(ctx, docIDs)
+		docIDNode, err := u.nodeRepo.GetNodeReleasesWithPathsByDocIDs(ctx, docIDs)
 		if err != nil {
 			return nil, fmt.Errorf("get nodes by ids failed: %w", err)
 		}
@@ -321,11 +321,12 @@ func (u *LLMUsecase) GetRankNodes(ctx context.Context, datasetIDs []string, ques
 			if nodeChunk, ok := rankedNodesMap[record.DocID]; !ok {
 				if docNode, ok := docIDNode[record.DocID]; ok {
 					rankNodeChunk := &domain.RankedNodeChunks{
-						NodeID:      docNode.NodeID,
-						NodeName:    docNode.Name,
-						NodeSummary: docNode.Meta.Summary,
-						NodeEmoji:   docNode.Meta.Emoji,
-						Chunks:      []*domain.NodeContentChunk{record},
+						NodeID:        docNode.NodeID,
+						NodeName:      docNode.Name,
+						NodeSummary:   docNode.Meta.Summary,
+						NodeEmoji:     docNode.Meta.Emoji,
+						NodePathNames: docNode.PathNames,
+						Chunks:        []*domain.NodeContentChunk{record},
 					}
 					rankedNodes = append(rankedNodes, rankNodeChunk)
 					rankedNodesMap[record.DocID] = rankNodeChunk

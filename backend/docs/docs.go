@@ -6884,6 +6884,12 @@ const docTemplate = `{
                 "node_id": {
                     "type": "string"
                 },
+                "node_path_names": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "summary": {
                     "type": "string"
                 }
