@@ -16,7 +16,7 @@ import (
 type RAGService interface {
 	CreateKnowledgeBase(ctx context.Context) (string, error)
 	UpsertRecords(ctx context.Context, datasetID string, nodeRelease *domain.NodeReleaseWithDirPath, authGroupId []int) (string, error)
-	QueryRecords(ctx context.Context, datasetIDs []string, query string, groupIDs []int, historyMsgs []*schema.Message) ([]*domain.NodeContentChunk, error)
+	QueryRecords(ctx context.Context, datasetIDs []string, query string, groupIDs []int, similarityThreshold float64, historyMsgs []*schema.Message) ([]*domain.NodeContentChunk, error)
 	DeleteRecords(ctx context.Context, datasetID string, docIDs []string) error
 	DeleteKnowledgeBase(ctx context.Context, datasetID string) error
 	UpdateDocumentGroupIDs(ctx context.Context, datasetID string, docID string, groupIds []int) error
