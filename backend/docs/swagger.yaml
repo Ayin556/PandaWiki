@@ -1479,6 +1479,10 @@ definitions:
         type: string
       node_id:
         type: string
+      node_path_names:
+        items:
+          type: string
+        type: array
       summary:
         type: string
     type: object

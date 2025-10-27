@@ -229,9 +229,10 @@ func (u *ChatUsecase) Chat(ctx context.Context, req *domain.ChatRequest) (<-chan
 		u.logger.Debug("message:", log.Any("schema", messages))
 		for _, node := range rankedNodes {
 			chunkResult := domain.NodeContentChunkSSE{
-				NodeID:  node.NodeID,
-				Name:    node.NodeName,
-				Summary: node.NodeSummary,
+				NodeID:        node.NodeID,
+				Name:          node.NodeName,
+				Summary:       node.NodeSummary,
+				NodePathNames: node.NodePathNames,
 			}
 			eventCh <- domain.SSEEvent{Type: "chunk_result", ChunkResult: &chunkResult}
 		}
@@ -378,10 +379,11 @@ func (u *ChatUsecase) Search(ctx context.Context, req *domain.ChatSearchReq) (*d
 	resp := domain.ChatSearchResp{}
 	for _, node := range rankedNodes {
 		chunkResult := domain.NodeContentChunkSSE{
-			NodeID:  node.NodeID,
-			Name:    node.NodeName,
-			Summary: node.NodeSummary,
-			Emoji:   node.NodeEmoji,
+			NodeID:        node.NodeID,
+			Name:          node.NodeName,
+			Summary:       node.NodeSummary,
+			Emoji:         node.NodeEmoji,
+			NodePathNames: node.NodePathNames,
 		}
 		resp.NodeResult = append(resp.NodeResult, chunkResult)
 	}

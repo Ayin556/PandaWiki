@@ -165,11 +165,12 @@ type NodeContentChunk struct {
 }
 
 type RankedNodeChunks struct {
-	NodeID      string
-	NodeName    string
-	NodeSummary string
-	NodeEmoji   string
-	Chunks      []*NodeContentChunk
+	NodeID        string
+	NodeName      string
+	NodeSummary   string
+	NodeEmoji     string
+	NodePathNames []string
+	Chunks        []*NodeContentChunk
 }
 
 func (n *RankedNodeChunks) GetURL(baseURL string) string {
@@ -184,10 +185,11 @@ type ChunkListItemResp struct {
 }
 
 type NodeContentChunkSSE struct {
-	NodeID  string `json:"node_id"`
-	Name    string `json:"name"`
-	Summary string `json:"summary"`
-	Emoji   string `json:"emoji"`
+	NodeID        string   `json:"node_id"`
+	Name          string   `json:"name"`
+	Summary       string   `json:"summary"`
+	Emoji         string   `json:"emoji"`
+	NodePathNames []string `json:"node_path_names"`
 }
 
 type RecommendNodeListResp struct {

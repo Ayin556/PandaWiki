@@ -11,6 +11,7 @@ import (
 	"gorm.io/gorm/clause"
 
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 	"github.com/samber/lo"
 	"github.com/samber/lo/mutable"
 
@@ -431,6 +432,137 @@ func (r *NodeRepository) GetNodeReleasesByDocIDs(ctx context.Context, ids []stri
 		nodesMap[nodeRelease.DocID] = nodeRelease
 	}
 	return nodesMap, nil
+}
+
+// NodeReleaseWithPath represents a node release with path information
+type NodeReleaseWithPath struct {
+	*domain.NodeRelease
+	PathIDs   []string `json:"path_ids"`
+	PathNames []string `json:"path_names"`
+	Depth     int      `json:"depth"`
+}
+
+// GetNodeReleasesWithPathsByDocIDs retrieving node releases with path information
+func (r *NodeRepository) GetNodeReleasesWithPathsByDocIDs(ctx context.Context, ids []string) (map[string]*NodeReleaseWithPath, error) {
+	if len(ids) == 0 {
+		return make(map[string]*NodeReleaseWithPath), nil
+	}
+
+	// 1. 查询节点基本信息
+	var nodeReleases []*domain.NodeRelease
+	if err := r.db.WithContext(ctx).
+		Model(&domain.NodeRelease{}).
+		Where("doc_id IN ?", ids).
+		Find(&nodeReleases).Error; err != nil {
+		return nil, err
+	}
+
+	if len(nodeReleases) == 0 {
+		return make(map[string]*NodeReleaseWithPath), nil
+	}
+
+	docIDs := lo.Map(nodeReleases, func(release *domain.NodeRelease, i int) string {
+		return release.DocID
+	})
+
+	// 2. 批量查询路径
+	paths, err := r.getNodePathsBatch(ctx, docIDs)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get paths: %w", err)
+	}
+
+	// 3. 组装结果
+	result := make(map[string]*NodeReleaseWithPath, len(nodeReleases))
+	for _, nr := range nodeReleases {
+		nrWithPath := &NodeReleaseWithPath{
+			NodeRelease: nr,
+		}
+
+		if path, ok := paths[nr.DocID]; ok {
+			nrWithPath.PathIDs = path.PathIDs
+			nrWithPath.PathNames = path.PathNames
+			nrWithPath.Depth = path.Depth
+		}
+
+		result[nr.DocID] = nrWithPath
+	}
+
+	return result, nil
+}
+
+// NodePathInfo contains path information for a node
+type NodePathInfo struct {
+	DocID     string
+	PathIDs   []string
+	PathNames []string
+	Depth     int
+}
+
+// getNodePathsBatch batch query node paths
+func (r *NodeRepository) getNodePathsBatch(ctx context.Context, docIDs []string) (map[string]*NodePathInfo, error) {
+	type pathResult struct {
+		DocID     string         `gorm:"column:doc_id"`
+		PathIDs   pq.StringArray `gorm:"column:path_ids;type:text[]"`
+		PathNames pq.StringArray `gorm:"column:path_names;type:text[]"`
+		Depth     int            `gorm:"column:depth"`
+	}
+
+	var results []pathResult
+
+	query := `
+		WITH RECURSIVE node_paths AS (
+			SELECT
+				node_id,
+				parent_id,
+				name,
+				doc_id as root_doc_id,
+				ARRAY[node_id] as path_ids,
+				ARRAY[name] as path_names,
+				1 as depth
+			FROM node_releases
+			WHERE doc_id = ANY($1)
+
+			UNION ALL
+
+			SELECT
+				n.node_id,
+				n.parent_id,
+				n.name,
+				np.root_doc_id,
+				n.node_id || np.path_ids,
+				n.name || np.path_names,
+				np.depth + 1
+			FROM node_releases n
+			INNER JOIN node_paths np ON n.node_id = np.parent_id
+			WHERE np.depth < 20 AND n.doc_id != ''
+		)
+		SELECT
+			root_doc_id as doc_id,
+			path_ids,
+			path_names,
+			depth
+		FROM node_paths
+		WHERE parent_id IS NULL OR parent_id = ''
+	`
+
+	if err := r.db.WithContext(ctx).
+		Raw(query, pq.Array(docIDs)).
+		Scan(&results).Error; err != nil {
+		return nil, err
+	}
+
+	// 转换为map
+	pathMap := make(map[string]*NodePathInfo, len(results))
+	for _, res := range results {
+		pathMap[res.DocID] = &NodePathInfo{
+			DocID:     res.DocID,
+			PathIDs:   res.PathIDs,
+			PathNames: res.PathNames,
+			Depth:     res.Depth,
+		}
+	}
+
+	return pathMap, nil
 }
 
 // GetRecommendNodeListByIDs get node list by ids
