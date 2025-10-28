@@ -1418,6 +1418,10 @@ export interface V1FileUploadResp {
   key?: string;
 }
 
+export interface V1FileUploadResp {
+  key?: string;
+}
+
 export interface V1KBUserInviteReq {
   kb_id: string;
   perm: "full_control" | "doc_manage" | "data_operate";
