@@ -14,6 +14,7 @@ import { IconJinsousuo, IconFasong, IconMianbaoxie } from '@panda-wiki/icons';
 import { postShareV1ChatSearch } from '@/request/ShareChatSearch';
 import { DomainNodeContentChunkSSE } from '@/request/types';
 import { message } from '@ctzhian/ui';
+import { IconWenjian } from '@panda-wiki/icons';
 
 interface SearchDocContentProps {
   inputRef: React.RefObject<HTMLInputElement | null>;
@@ -71,6 +72,7 @@ const SearchDocContent: React.FC<SearchDocContentProps> = ({
 
   // 执行搜索
   const handleSearch = async () => {
+    if (isSearching) return;
     if (!input.trim()) return;
 
     setIsSearching(true);
@@ -301,23 +303,25 @@ const SearchDocContent: React.FC<SearchDocContentProps> = ({
                   </Typography>
 
                   {/* 标题和图标 */}
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Typography
-                      variant='h6'
-                      className='hover-primary'
-                      sx={{
-                        fontSize: 14,
-                        fontWeight: 600,
-                        color: 'text.primary',
-                        flex: 1,
-                        textOverflow: 'ellipsis',
-                        overflow: 'hidden',
-                        whiteSpace: 'nowrap',
-                      }}
-                    >
-                      {result.emoji} {result.name}
-                    </Typography>
-                  </Box>
+
+                  <Typography
+                    variant='h6'
+                    className='hover-primary'
+                    sx={{
+                      gap: 0.5,
+                      display: 'flex',
+                      alignItems: 'center',
+                      fontSize: 14,
+                      fontWeight: 600,
+                      color: 'text.primary',
+                      flex: 1,
+                      textOverflow: 'ellipsis',
+                      overflow: 'hidden',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {result.emoji || <IconWenjian />} {result.name}
+                  </Typography>
 
                   {/* 描述 */}
                   <Typography

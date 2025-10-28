@@ -5,6 +5,12 @@ import { Box, Button, IconButton, Stack, TextField, Link } from '@mui/material';
 import NavBtns, { NavBtn } from './NavBtns';
 import { DocWidth } from '../constants';
 
+// 检测平台类型
+const isMac =
+  typeof navigator !== 'undefined' &&
+  /Mac|iPod|iPhone|iPad/.test(navigator.userAgent);
+const getKeyboardShortcut = () => (isMac ? '⌘K' : 'Ctrl+K');
+
 interface SearchSuggestion {
   id: string;
   title: string;
@@ -143,7 +149,7 @@ const Header = React.memo(
                   left: '50%',
                   top: '50%',
                   transform: 'translate(-50%, -50%)',
-                  maxWidth: '600px',
+                  maxWidth: '500px',
                   bgcolor: 'background.paper3',
                   borderRadius: '10px',
                   overflow: 'hidden',
@@ -166,6 +172,10 @@ const Header = React.memo(
                     },
                     '&:hover fieldset': {
                       borderColor: 'primary.main',
+                    },
+                    '&:hover .ai-qa-button-wrapper': {
+                      background:
+                        'linear-gradient(135deg, #B27BFB 0%, #5A44FA 100%)',
                     },
                   },
                 }}
@@ -195,32 +205,49 @@ const Header = React.memo(
                             color: 'text.tertiary',
                           }}
                         >
-                          ⌘K
+                          {getKeyboardShortcut()}
                         </Box>
-                        <Button
-                          variant='contained'
-                          // @ts-ignore
-                          color='light'
-                          startIcon={
-                            <IconZhinengwenda
-                              sx={{
-                                width: 16,
-                                height: 16,
-                                fontSize: 12,
-                                color: 'primary.main',
-                              }}
-                            ></IconZhinengwenda>
-                          }
+                        <Box
+                          className='ai-qa-button-wrapper'
                           sx={{
-                            textTransform: 'none',
-                            minWidth: 'auto',
-                            px: 1,
-                            py: 0.5,
-                            fontSize: 12,
+                            position: 'relative',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            borderRadius: '6px',
+                            padding: '1px',
+                            background: 'transparent',
+                            transition: 'background 0.2s ease',
                           }}
                         >
-                          智能问答
-                        </Button>
+                          <Button
+                            variant='contained'
+                            // @ts-ignore
+                            color='light'
+                            startIcon={
+                              <IconZhinengwenda
+                                sx={{
+                                  width: 16,
+                                  height: 16,
+                                  fontSize: 12,
+                                  color: 'primary.main',
+                                }}
+                              ></IconZhinengwenda>
+                            }
+                            sx={{
+                              textTransform: 'none',
+                              minWidth: 'auto',
+                              px: 1,
+                              py: '2px',
+                              fontSize: 12,
+                              borderRadius: '6px',
+                              boxShadow:
+                                '0px 1px 2px 0px rgba(145,158,171,0.16)',
+                            }}
+                          >
+                            智能问答
+                          </Button>
+                        </Box>
                       </Stack>
                     ),
                   },

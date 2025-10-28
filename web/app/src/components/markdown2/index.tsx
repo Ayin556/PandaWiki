@@ -230,9 +230,20 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
         const originalHtmlBlock = md.renderer.rules.html_block;
         const originalHtmlInline = md.renderer.rules.html_inline;
 
+        // HTML 白名单 - 只允许这些标签通过
+        const allowedTags = ['think', 'error'];
+
         // 用于跟踪thinking状态
         let isInThinking = false;
         let thinkingContent = '';
+
+        // 检查是否是允许的标签
+        const isAllowedTag = (content: string): boolean => {
+          return allowedTags.some(
+            tag =>
+              content.includes(`<${tag}>`) || content.includes(`</${tag}>`),
+          );
+        };
 
         md.renderer.rules.html_block = (
           tokens,
@@ -272,6 +283,11 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
           if (content.includes('<error>')) return '<span class="chat-error">';
           if (content.includes('</error>')) return '</span>';
 
+          // 🔒 安全检查：不在白名单的标签，转义输出
+          if (!isAllowedTag(content)) {
+            return md.utils.escapeHtml(content);
+          }
+
           return originalHtmlBlock
             ? originalHtmlBlock(tokens, idx, options, env, renderer)
             : content;
@@ -289,6 +305,11 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
 
           if (content.includes('<error>')) return '<span class="chat-error">';
           if (content.includes('</error>')) return '</span>';
+
+          // 🔒 安全检查：不在白名单的标签，转义输出
+          if (!isAllowedTag(content)) {
+            return md.utils.escapeHtml(content);
+          }
 
           return originalHtmlInline
             ? originalHtmlInline(tokens, idx, options, env, renderer)

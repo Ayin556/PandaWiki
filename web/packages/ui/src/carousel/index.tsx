@@ -1,8 +1,9 @@
-import { CSSProperties, memo } from 'react';
+import { CSSProperties, memo, useRef, useCallback } from 'react';
 import { styled } from '@mui/material';
 import { StyledTopicTitle } from '../component/styledCommon';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { useFadeInText } from '../hooks/useGsapAnimation';
+import { Swiper as SwiperType } from 'swiper';
 
 import 'swiper/css';
 import 'swiper/css/pagination';
@@ -100,6 +101,42 @@ const Carousel = ({
 }: CarouselProps) => {
   // 添加标题淡入动画
   const titleRef = useFadeInText(0.2, 0.1);
+  // 添加Swiper ref
+  const swiperRef = useRef<SwiperType | null>(null);
+
+  // 导航函数
+  const handlePrev = useCallback(() => {
+    if (swiperRef.current) {
+      swiperRef.current.slidePrev();
+    }
+  }, []);
+
+  const handleNext = useCallback(() => {
+    if (swiperRef.current) {
+      swiperRef.current.slideNext();
+    }
+  }, []);
+
+  // 使用事件委托的方式处理点击事件
+  const handleSlideClick = useCallback(
+    (swiper: SwiperType, event: MouseEvent | TouchEvent | PointerEvent) => {
+      const target = event.target as HTMLElement;
+      // 查找最近的swiper-slide元素
+      const slideElement = target.closest('.swiper-slide');
+
+      if (slideElement) {
+        // 检查是否包含swiper-slide-prev类名
+        if (slideElement.classList.contains('swiper-slide-prev')) {
+          handlePrev();
+        }
+        // 检查是否包含swiper-slide-next类名
+        else if (slideElement.classList.contains('swiper-slide-next')) {
+          handleNext();
+        }
+      }
+    },
+    [handlePrev, handleNext],
+  );
 
   return (
     <StyledCarousel
@@ -107,6 +144,12 @@ const Carousel = ({
         '.swiper-pagination-bullets': indicatorContainerStyle,
         '.swiper-pagination-bullet': indicatorIconButtonStyle,
         '.swiper-pagination-bullet-active': activeIndicatorIconButtonStyle,
+        '.swiper-slide-prev': {
+          cursor: 'pointer',
+        },
+        '.swiper-slide-next': {
+          cursor: 'pointer',
+        },
       }}
     >
       <StyledCarouselInner sx={{ backgroundColor: bgColor }}>
@@ -114,6 +157,10 @@ const Carousel = ({
           {title}
         </StyledTopicTitle>
         <Swiper
+          onSwiper={swiper => {
+            swiperRef.current = swiper;
+          }}
+          onClick={handleSlideClick}
           slidesPerView={mobile ? 1 : 2}
           spaceBetween={50}
           centeredSlides={true}
