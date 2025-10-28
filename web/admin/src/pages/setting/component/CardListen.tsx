@@ -1,11 +1,11 @@
 import { updateKnowledgeBase, UpdateKnowledgeBaseData } from '@/api';
 import FileText from '@/components/UploadFile/FileText';
+import { DomainKnowledgeBaseDetail } from '@/request/types';
+import { message } from '@ctzhian/ui';
 import { Box, Checkbox, Stack, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { message } from '@ctzhian/ui';
-import { DomainKnowledgeBaseDetail } from '@/request/types';
-import { SettingCardItem, FormItem } from './Common';
+import { FormItem, SettingCardItem } from './Common';
 
 // 验证规则常量
 const VALIDATION_RULES = {
@@ -91,6 +91,7 @@ const CardListen = ({
       },
     }).then(() => {
       message.success('更新成功');
+      setIsEdit(false);
       refresh();
     });
   });

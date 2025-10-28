@@ -1,9 +1,9 @@
-import { ImportDocType } from '@/api';
 import Cascader from '@/components/Cascader';
+import { ConstsCrawlerSource } from '@/request';
 import { addOpacityToColor } from '@/utils';
 import { Box, Button, Stack, useTheme } from '@mui/material';
 import { useState } from 'react';
-import AddDocByOther from './AddDocByOther';
+import AddDocByType from './AddDocByType';
 import DocAddByCustomText from './DocAddByCustomText';
 
 interface InputContentProps {
@@ -20,7 +20,7 @@ interface InputContentProps {
   scrollTo?: (id: string) => void;
 }
 
-const DocAdd = ({
+const AddDocBtn = ({
   exportFile = true,
   refresh,
   context,
@@ -29,8 +29,8 @@ const DocAdd = ({
 }: InputContentProps) => {
   const theme = useTheme();
   const [customDocOpen, setCustomDocOpen] = useState(false);
-  const [urlOpen, setUrlOpen] = useState(false);
-  const [key, setKey] = useState<ImportDocType>('URL');
+  const [uploadOpen, setUploadOpen] = useState(false);
+  const [key, setKey] = useState<ConstsCrawlerSource | null>(null);
   const [docFileKey, setDocFileKey] = useState<1 | 2>(1);
 
   const ImportContentWays = {
@@ -50,88 +50,88 @@ const DocAdd = ({
     },
     ...(exportFile
       ? {
-          OfflineFile: {
+          [ConstsCrawlerSource.CrawlerSourceFile]: {
             label: '通过离线文件导入',
             onClick: () => {
-              setUrlOpen(true);
-              setKey('OfflineFile');
+              setUploadOpen(true);
+              setKey(ConstsCrawlerSource.CrawlerSourceFile);
             },
           },
-          URL: {
+          [ConstsCrawlerSource.CrawlerSourceUrl]: {
             label: '通过 URL 导入',
             onClick: () => {
-              setKey('URL');
-              setUrlOpen(true);
+              setKey(ConstsCrawlerSource.CrawlerSourceUrl);
+              setUploadOpen(true);
             },
           },
-          RSS: {
+          [ConstsCrawlerSource.CrawlerSourceRSS]: {
             label: '通过 RSS 导入',
             onClick: () => {
-              setUrlOpen(true);
-              setKey('RSS');
+              setUploadOpen(true);
+              setKey(ConstsCrawlerSource.CrawlerSourceRSS);
             },
           },
-          Sitemap: {
+          [ConstsCrawlerSource.CrawlerSourceSitemap]: {
             label: '通过 Sitemap 导入',
             onClick: () => {
-              setUrlOpen(true);
-              setKey('Sitemap');
+              setUploadOpen(true);
+              setKey(ConstsCrawlerSource.CrawlerSourceSitemap);
             },
           },
-          Notion: {
+          [ConstsCrawlerSource.CrawlerSourceNotion]: {
             label: '通过 Notion 导入',
             onClick: () => {
-              setUrlOpen(true);
-              setKey('Notion');
+              setUploadOpen(true);
+              setKey(ConstsCrawlerSource.CrawlerSourceNotion);
             },
           },
-          Epub: {
+          [ConstsCrawlerSource.CrawlerSourceEpub]: {
             label: '通过 Epub 导入',
             onClick: () => {
-              setUrlOpen(true);
-              setKey('Epub');
+              setUploadOpen(true);
+              setKey(ConstsCrawlerSource.CrawlerSourceEpub);
             },
           },
-          'Wiki.js': {
+          [ConstsCrawlerSource.CrawlerSourceWikijs]: {
             label: '通过 Wiki.js 导入',
             onClick: () => {
-              setUrlOpen(true);
-              setKey('Wiki.js');
+              setUploadOpen(true);
+              setKey(ConstsCrawlerSource.CrawlerSourceWikijs);
             },
           },
-          Yuque: {
+          [ConstsCrawlerSource.CrawlerSourceYuque]: {
             label: '通过 语雀 导入',
             onClick: () => {
-              setUrlOpen(true);
-              setKey('Yuque');
+              setUploadOpen(true);
+              setKey(ConstsCrawlerSource.CrawlerSourceYuque);
             },
           },
-          Siyuan: {
+          [ConstsCrawlerSource.CrawlerSourceSiyuan]: {
             label: '通过 思源笔记 导入',
             onClick: () => {
-              setUrlOpen(true);
-              setKey('Siyuan');
+              setUploadOpen(true);
+              setKey(ConstsCrawlerSource.CrawlerSourceSiyuan);
             },
           },
-          MinDoc: {
+          [ConstsCrawlerSource.CrawlerSourceMindoc]: {
             label: '通过 MinDoc 导入',
             onClick: () => {
-              setUrlOpen(true);
-              setKey('MinDoc');
+              setUploadOpen(true);
+              setKey(ConstsCrawlerSource.CrawlerSourceMindoc);
             },
           },
-          Feishu: {
+          [ConstsCrawlerSource.CrawlerSourceFeishu]: {
             label: '通过飞书文档导入',
             onClick: () => {
-              setUrlOpen(true);
-              setKey('Feishu');
+              setUploadOpen(true);
+              setKey(ConstsCrawlerSource.CrawlerSourceFeishu);
             },
           },
-          Confluence: {
+          [ConstsCrawlerSource.CrawlerSourceConfluence]: {
             label: '通过 Confluence 导入',
             onClick: () => {
-              setUrlOpen(true);
-              setKey('Confluence');
+              setUploadOpen(true);
+              setKey(ConstsCrawlerSource.CrawlerSourceConfluence);
             },
           },
         }
@@ -139,7 +139,7 @@ const DocAdd = ({
   };
 
   const close = () => {
-    setUrlOpen(false);
+    setUploadOpen(false);
     setCustomDocOpen(false);
   };
 
@@ -170,7 +170,7 @@ const DocAdd = ({
               >
                 {value.label}
               </Stack>
-              {key === 'OfflineFile' && (
+              {key === ConstsCrawlerSource.CrawlerSourceFile && (
                 <Box
                   sx={{
                     borderTop: '1px solid',
@@ -184,13 +184,16 @@ const DocAdd = ({
         }))}
         context={context || <Button variant='contained'>创建文档</Button>}
       />
-      <AddDocByOther
-        type={key}
-        open={urlOpen}
-        refresh={refresh}
-        onCancel={close}
-        // 导入类操作：刷新后由上层保持展开状态，并由上层决定滚动位置
-      />
+      {key && (
+        <AddDocByType
+          type={key}
+          open={uploadOpen}
+          refresh={refresh}
+          onCancel={close}
+          parentId={null}
+          // 导入类操作：刷新后由上层保持展开状态，并由上层决定滚动位置
+        />
+      )}
       <DocAddByCustomText
         type={docFileKey}
         open={customDocOpen}
@@ -206,4 +209,4 @@ const DocAdd = ({
   );
 };
 
-export default DocAdd;
+export default AddDocBtn;
