@@ -73,6 +73,11 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
   // const [showSummaryBtn, setShowSummaryBtn] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const initialStateRef = useRef({
+    content: defaultDetail.content || '',
+    summary: defaultDetail.meta?.summary || '',
+    emoji: defaultDetail.meta?.emoji || '',
+  });
 
   const updateDetail = (value: V1NodeDetailResp) => {
     setNodeDetail({
@@ -170,8 +175,8 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
   };
 
   const handleUpdate = ({ editor }: { editor: UseTiptapReturn['editor'] }) => {
-    setIsEditing(true);
     setCharacterCount((editor.storage as any).characterCount.characters());
+    checkIfEdited();
   };
 
   const handleAiWritingGetSuggestion = async ({
@@ -267,6 +272,20 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
     onAiWritingGetSuggestion: handleAiWritingGetSuggestion,
   });
 
+  // 检查是否有任何字段被修改
+  const checkIfEdited = useCallback(() => {
+    const currentContent = editorRef.editor?.getHTML() || '';
+    const currentSummary = summary;
+    const currentEmoji = nodeDetail?.meta?.emoji || '';
+
+    const hasChanges =
+      currentContent !== initialStateRef.current.content ||
+      currentSummary !== initialStateRef.current.summary ||
+      currentEmoji !== initialStateRef.current.emoji;
+
+    setIsEditing(hasChanges);
+  }, [editorRef.editor, summary, nodeDetail?.meta?.emoji]);
+
   const handleAiGenerate = useCallback(() => {
     if (editorRef.editor) {
       const { from, to } = editorRef.editor.state.selection;
@@ -287,8 +306,15 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
         content: html,
       });
       onSave(html);
+      // 更新初始状态引用
+      initialStateRef.current = {
+        content: html,
+        summary: summary,
+        emoji: nodeDetail?.meta?.emoji || '',
+      };
+      setIsEditing(false);
     }
-  }, [id, editorRef, onSave]);
+  }, [id, editorRef, onSave, summary, nodeDetail?.meta?.emoji]);
 
   const handleGlobalSave = useCallback(
     (event: KeyboardEvent) => {
@@ -300,19 +326,38 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
             content: html,
           });
           onSave(html);
+          // 更新初始状态引用
+          initialStateRef.current = {
+            content: html,
+            summary: summary,
+            emoji: nodeDetail?.meta?.emoji || '',
+          };
+          setIsEditing(false);
         }
       }
     },
-    [editorRef, onSave, id],
+    [editorRef, onSave, id, summary, nodeDetail?.meta?.emoji],
   );
 
   useEffect(() => {
     setSummary(nodeDetail?.meta?.summary || '');
   }, [nodeDetail]);
 
+  // 当summary变化时检查是否有编辑
+  useEffect(() => {
+    checkIfEdited();
+  }, [summary]);
+
   useEffect(() => {
     setTitle(defaultDetail?.name || '');
     setSummary(defaultDetail?.meta?.summary || '');
+    // 重置初始状态引用
+    initialStateRef.current = {
+      content: defaultDetail.content || '',
+      summary: defaultDetail.meta?.summary || '',
+      emoji: defaultDetail.meta?.emoji || '',
+    };
+    setIsEditing(false);
   }, [defaultDetail]);
 
   useEffect(() => {
@@ -324,17 +369,28 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
 
   useEffect(() => {
     if (state && state.node && editorRef.editor) {
+      const newContent = state.node.content || nodeDetail?.content || '';
+      const newSummary =
+        state.node.meta?.summary || nodeDetail?.meta?.summary || '';
+      const newEmoji = state.node.meta?.emoji || nodeDetail?.meta?.emoji || '';
       updateDetail({
         name: state.node.name || nodeDetail?.name || '',
         meta: {
-          summary: state.node.meta?.summary || nodeDetail?.meta?.summary || '',
-          emoji: state.node.meta?.emoji || nodeDetail?.meta?.emoji || '',
+          summary: newSummary,
+          emoji: newEmoji,
           // doc_width:
           //   state.node.meta?.doc_width || nodeDetail?.meta?.doc_width || 'full',
         },
-        content: state.node.content || nodeDetail?.content || '',
+        content: newContent,
       });
-      editorRef.editor.commands.setContent(state.node.content || '');
+      editorRef.editor.commands.setContent(newContent);
+      // 重置初始状态引用
+      initialStateRef.current = {
+        content: newContent,
+        summary: newSummary,
+        emoji: newEmoji,
+      };
+      setIsEditing(false);
       navigate(`/doc/editor/${defaultDetail.id}`);
     }
   }, [state, editorRef.editor]);
@@ -351,14 +407,28 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
   useEffect(() => {
     const handleTabClose = () => {
       if (isEditing) {
-        onSave(editorRef.getHTML());
+        const html = editorRef.getHTML();
+        onSave(html);
         updateDetail({});
+        // 更新初始状态引用
+        initialStateRef.current = {
+          content: html,
+          summary: summary,
+          emoji: nodeDetail?.meta?.emoji || '',
+        };
       }
     };
     const handleVisibilityChange = () => {
       if (document.hidden && isEditing) {
-        onSave(editorRef.getHTML());
+        const html = editorRef.getHTML();
+        onSave(html);
         updateDetail({});
+        // 更新初始状态引用
+        initialStateRef.current = {
+          content: html,
+          summary: summary,
+          emoji: nodeDetail?.meta?.emoji || '',
+        };
       }
     };
     window.addEventListener('beforeunload', handleTabClose);
@@ -367,7 +437,7 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
       window.removeEventListener('beforeunload', handleTabClose);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [editorRef, isEditing]);
+  }, [editorRef, isEditing, summary, nodeDetail?.meta?.emoji]);
 
   // const handleWebSocketError = useCallback((_error: Event, _provider: WebsocketProvider) => {
   //   _provider.disconnect();
@@ -448,6 +518,13 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
               content: value,
             });
             await onSave(value);
+            // 更新初始状态引用
+            initialStateRef.current = {
+              content: value,
+              summary: summary,
+              emoji: nodeDetail?.meta?.emoji || '',
+            };
+            setIsEditing(false);
           }}
           handleExport={handleExport}
         />
@@ -530,6 +607,8 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
                       emoji: value,
                     },
                   });
+                  // 延迟检查以确保状态已更新
+                  setTimeout(() => checkIfEdited(), 0);
                 });
               }}
             />
