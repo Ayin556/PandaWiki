@@ -252,20 +252,12 @@ func (r *NodeRepository) GetByID(ctx context.Context, id, kbId string) (*v1.Node
 func (r *NodeRepository) Delete(ctx context.Context, kbID string, ids []string) ([]string, error) {
 	docIDs := make([]string, 0)
 	if err := r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		// check if node.parent_id in ids
-		var parentIDs []string
-		if err := tx.Model(&domain.Node{}).
-			Where("parent_id IN ?", ids).
-			Select("parent_id").
-			Find(&parentIDs).Error; err != nil {
-			return err
-		}
-		if len(parentIDs) > 0 {
-			return domain.ErrNodeParentIDInIDs
-		}
+		// recursively collect all child node IDs
+		allIDs := r.collectAllChildNodeIDs(tx, kbID, ids)
+
 		var nodes []*domain.Node
 		if err := tx.Model(&domain.Node{}).
-			Where("id IN ?", ids).
+			Where("id IN ?", allIDs).
 			Where("kb_id = ?", kbID).
 			Clauses(clause.Returning{Columns: []clause.Column{{Name: "doc_id"}}}).
 			Delete(&nodes).Error; err != nil {
@@ -274,7 +266,7 @@ func (r *NodeRepository) Delete(ctx context.Context, kbID string, ids []string) 
 		// delete node release
 		var nodeReleases []*domain.NodeRelease
 		if err := tx.Model(&domain.NodeRelease{}).
-			Where("node_id IN ?", ids).
+			Where("node_id IN ?", allIDs).
 			Clauses(clause.Returning{Columns: []clause.Column{{Name: "doc_id"}}}).
 			Delete(&nodeReleases).Error; err != nil {
 			return err
@@ -294,6 +286,33 @@ func (r *NodeRepository) Delete(ctx context.Context, kbID string, ids []string) 
 		return nil, err
 	}
 	return lo.Uniq(docIDs), nil
+}
+
+// collectAllChildNodeIDs recursively collects all child node IDs for the given parent IDs
+func (r *NodeRepository) collectAllChildNodeIDs(tx *gorm.DB, kbID string, parentIDs []string) []string {
+	allIDs := make([]string, 0)
+	allIDs = append(allIDs, parentIDs...)
+
+	currentParentIDs := parentIDs
+	for len(currentParentIDs) > 0 {
+		var childIDs []string
+		if err := tx.Model(&domain.Node{}).
+			Where("parent_id IN ?", currentParentIDs).
+			Where("kb_id = ?", kbID).
+			Select("id").
+			Find(&childIDs).Error; err != nil {
+			break
+		}
+
+		if len(childIDs) == 0 {
+			break
+		}
+
+		allIDs = append(allIDs, childIDs...)
+		currentParentIDs = childIDs
+	}
+
+	return lo.Uniq(allIDs)
 }
 
 func (r *NodeRepository) GetNodeByID(ctx context.Context, id string) (*domain.Node, error) {
