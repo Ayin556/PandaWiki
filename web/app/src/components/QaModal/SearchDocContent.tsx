@@ -299,7 +299,9 @@ const SearchDocContent: React.FC<SearchDocContentProps> = ({
                       display: 'block',
                     }}
                   >
-                    {result.node_path_names?.join(' > ')}
+                    {(result.node_path_names || []).length > 0
+                      ? result.node_path_names?.join(' > ')
+                      : result.name}
                   </Typography>
 
                   {/* 标题和图标 */}

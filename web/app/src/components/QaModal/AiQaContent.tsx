@@ -103,6 +103,7 @@ const AiQaContent: React.FC<{
   const [conversationId, setConversationId] = useState('');
   const [answer, setAnswer] = useState('');
   const [isScrolling, setIsScrolling] = useState(true);
+  const [shouldAutoScroll, setShouldAutoScroll] = useState(true); // 是否应该自动滚动
   const [input, setInput] = useState('');
   const [open, setOpen] = useState(false);
   const [conversationItem, setConversationItem] =
@@ -456,6 +457,7 @@ const AiQaContent: React.FC<{
   const onSearch = (q: string, reset: boolean = false) => {
     if (loading || !q.trim()) return;
     setIsScrolling(true);
+    setShouldAutoScroll(true); // 开始新搜索时，重置为自动滚动
     const newConversation = reset
       ? []
       : conversation.some(item => item.source === 'history')
@@ -496,7 +498,34 @@ const AiQaContent: React.FC<{
     // @ts-ignore
     kbDetail?.settings?.ai_feedback_settings?.is_enabled ?? true;
 
-  const scrollToBottom = () => {
+  /**
+   * 检查用户是否在底部
+   */
+  const checkIfAtBottom = useCallback((container: HTMLElement) => {
+    const threshold = 10; // 距离底部的阈值（像素）
+    const isAtBottom =
+      container.scrollHeight - container.scrollTop - container.clientHeight <=
+      threshold;
+    return isAtBottom;
+  }, []);
+
+  /**
+   * 处理滚动事件
+   */
+  const handleScrollEvent = useCallback(
+    (event: Event) => {
+      const container = event.target as HTMLElement;
+      if (container) {
+        const isAtBottom = checkIfAtBottom(container);
+        setShouldAutoScroll(isAtBottom);
+      }
+    },
+    [checkIfAtBottom],
+  );
+
+  const scrollToBottom = useCallback(() => {
+    if (!shouldAutoScroll) return; // 如果用户不在底部，不自动滚动
+
     const container = document.querySelector('.conversation-container');
     if (container) {
       container.scrollTo({
@@ -504,7 +533,7 @@ const AiQaContent: React.FC<{
         behavior: 'smooth',
       });
     }
-  };
+  }, [shouldAutoScroll]);
 
   const handleScore = async (
     message_id: string,
@@ -655,7 +684,19 @@ const AiQaContent: React.FC<{
         scrollToBottom();
       });
     }
-  }, [loading, isScrolling]);
+  }, [loading, isScrolling, scrollToBottom]);
+
+  // 监听滚动事件
+  useEffect(() => {
+    const container = document.querySelector('.conversation-container');
+    if (!container) return;
+
+    container.addEventListener('scroll', handleScrollEvent);
+
+    return () => {
+      container.removeEventListener('scroll', handleScrollEvent);
+    };
+  }, [handleScrollEvent]);
 
   return (
     <Box sx={{ flex: 1 }}>

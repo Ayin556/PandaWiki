@@ -29,10 +29,10 @@ export function addOpacityToColor(color: string, opacity: number) {
 export const copyText = (text: string, callback?: () => void) => {
   const isNotHttps = !/^https:\/\//.test(window.location.origin);
 
-  // if (isNotHttps) {
-  //   message.error('非 https 协议下不支持复制，请使用 https 协议');
-  //   return;
-  // }
+  if (isNotHttps) {
+    message.error('非 https 协议下不支持复制，请使用 https 协议');
+    return;
+  }
 
   try {
     if (navigator.clipboard && window.isSecureContext) {
