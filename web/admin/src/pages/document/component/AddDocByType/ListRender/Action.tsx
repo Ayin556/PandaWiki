@@ -157,6 +157,11 @@ const BatchActionBar = (props: BatchActionBarProps) => {
       itemsToImport = itemsToImport.filter(item => checked.includes(item.uuid));
     }
 
+    // 过滤掉文件夹中 folderReq 为 false 的项
+    itemsToImport = itemsToImport.filter(
+      item => item.file || item.folderReq !== false,
+    );
+
     if (itemsToImport.length === 0) {
       message.warning('请选择需要导入的文档');
       return;
