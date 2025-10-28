@@ -6,10 +6,9 @@ import NavBtns, { NavBtn } from './NavBtns';
 import { DocWidth } from '../constants';
 
 // 检测平台类型
-const isMac =
-  typeof navigator !== 'undefined' &&
-  /Mac|iPod|iPhone|iPad/.test(navigator.userAgent);
-const getKeyboardShortcut = () => (isMac ? '⌘K' : 'Ctrl+K');
+const isMac = () => /Mac|iPod|iPhone|iPad/.test(navigator.userAgent);
+const getKeyboardShortcut = () =>
+  typeof navigator !== 'undefined' ? (isMac() ? '⌘K' : 'Ctrl+K') : '';
 
 interface SearchSuggestion {
   id: string;
