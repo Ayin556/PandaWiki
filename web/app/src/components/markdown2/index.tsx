@@ -35,7 +35,7 @@ interface MarkDown2Props {
  */
 const createMarkdownIt = (): MarkdownIt => {
   const md = new MarkdownIt({
-    html: false,
+    html: true,
     breaks: true,
     linkify: true,
     typographer: true,
@@ -73,6 +73,7 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
   const [showThink, setShowThink] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImgSrc, setPreviewImgSrc] = useState('');
+  const [shouldAutoScroll, setShouldAutoScroll] = useState(true); // 是否应该自动滚动
 
   // Refs
   const containerRef = useRef<HTMLDivElement>(null);
@@ -90,7 +91,34 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
     setShowThink(prev => !prev);
   }, []);
 
+  /**
+   * 检查用户是否在底部
+   */
+  const checkIfAtBottom = useCallback((container: HTMLElement) => {
+    const threshold = 10; // 距离底部的阈值（像素）
+    const isAtBottom =
+      container.scrollHeight - container.scrollTop - container.clientHeight <=
+      threshold;
+    return isAtBottom;
+  }, []);
+
+  /**
+   * 处理滚动事件
+   */
+  const handleScroll = useCallback(
+    (event: Event) => {
+      const container = event.target as HTMLElement;
+      if (container) {
+        const isAtBottom = checkIfAtBottom(container);
+        setShouldAutoScroll(isAtBottom);
+      }
+    },
+    [checkIfAtBottom],
+  );
+
   const onScrollBottom = useCallback(() => {
+    if (!shouldAutoScroll) return; // 如果用户不在底部，不自动滚动
+
     setTimeout(() => {
       const container = document.querySelector('.conversation-container');
       if (container) {
@@ -100,7 +128,7 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
         });
       }
     });
-  }, []);
+  }, [shouldAutoScroll]);
 
   // ==================== 渲染器函数 ====================
   /**
@@ -230,9 +258,20 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
         const originalHtmlBlock = md.renderer.rules.html_block;
         const originalHtmlInline = md.renderer.rules.html_inline;
 
+        // HTML 白名单 - 只允许这些标签通过
+        const allowedTags = ['think', 'error'];
+
         // 用于跟踪thinking状态
         let isInThinking = false;
         let thinkingContent = '';
+
+        // 检查是否是允许的标签
+        const isAllowedTag = (content: string): boolean => {
+          return allowedTags.some(
+            tag =>
+              content.includes(`<${tag}>`) || content.includes(`</${tag}>`),
+          );
+        };
 
         md.renderer.rules.html_block = (
           tokens,
@@ -272,6 +311,11 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
           if (content.includes('<error>')) return '<span class="chat-error">';
           if (content.includes('</error>')) return '</span>';
 
+          // 🔒 安全检查：不在白名单的标签，转义输出
+          if (!isAllowedTag(content)) {
+            return md.utils.escapeHtml(content);
+          }
+
           return originalHtmlBlock
             ? originalHtmlBlock(tokens, idx, options, env, renderer)
             : content;
@@ -289,6 +333,11 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
 
           if (content.includes('<error>')) return '<span class="chat-error">';
           if (content.includes('</error>')) return '</span>';
+
+          // 🔒 安全检查：不在白名单的标签，转义输出
+          if (!isAllowedTag(content)) {
+            return md.utils.escapeHtml(content);
+          }
 
           return originalHtmlInline
             ? originalHtmlInline(tokens, idx, options, env, renderer)
@@ -317,6 +366,18 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
       delete (window as any).handleCodeCopy;
     };
   }, [handleCodeClick]);
+
+  // 监听滚动事件
+  useEffect(() => {
+    const container = document.querySelector('.conversation-container');
+    if (!container) return;
+
+    container.addEventListener('scroll', handleScroll);
+
+    return () => {
+      container.removeEventListener('scroll', handleScroll);
+    };
+  }, [handleScroll]);
 
   // 主要的内容渲染 Effect
   useEffect(() => {

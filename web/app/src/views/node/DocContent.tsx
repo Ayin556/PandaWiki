@@ -395,8 +395,8 @@ const DocContent = ({
                           <img
                             alt={url}
                             src={url}
-                            width={118}
-                            height={118}
+                            width={80}
+                            height={80}
                             style={{
                               borderRadius: '4px',
                               objectFit: 'cover',

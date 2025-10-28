@@ -54,7 +54,7 @@ interface QaModalProps {
 }
 
 const QaModal: React.FC<QaModalProps> = () => {
-  const { qaModalOpen, setQaModalOpen, kbDetail } = useStore();
+  const { qaModalOpen, setQaModalOpen, kbDetail, mobile } = useStore();
   const [searchMode, setSearchMode] = useState<'chat' | 'search'>('chat');
   const inputRef = useRef<HTMLInputElement>(null);
   const aiQaInputRef = useRef<HTMLInputElement>(null);
@@ -167,36 +167,38 @@ const QaModal: React.FC<QaModalProps> = () => {
                     searchMode === 'chat' ? 'primary.main' : 'text.primary',
                 }}
               />
-              智能问答
+              {!mobile && '智能问答'}
             </StyledButton>
             <StyledButton
               active={searchMode === 'search'}
               onClick={() => setSearchMode('search')}
             >
-              <IconJinsousuo sx={{ fontSize: 16 }} /> 仅搜索文档
+              <IconJinsousuo sx={{ fontSize: 16 }} /> {!mobile && '仅搜索文档'}
             </StyledButton>
           </Stack>
 
           {/* Esc按钮 */}
-          <Button
-            onClick={onClose}
-            size='small'
-            sx={{
-              minWidth: 'auto',
-              px: 1.5,
-              py: 0.5,
-              bgcolor: 'grey.100',
-              color: 'text.tertiary',
-              fontSize: 12,
-              fontWeight: 500,
-              textTransform: 'none',
-              '&:hover': {
-                bgcolor: 'grey.200',
-              },
-            }}
-          >
-            Esc
-          </Button>
+          {!mobile && (
+            <Button
+              onClick={onClose}
+              size='small'
+              sx={{
+                minWidth: 'auto',
+                px: 1.5,
+                py: 0.5,
+                bgcolor: 'grey.100',
+                color: 'text.tertiary',
+                fontSize: 12,
+                fontWeight: 500,
+                textTransform: 'none',
+                '&:hover': {
+                  bgcolor: 'grey.200',
+                },
+              }}
+            >
+              Esc
+            </Button>
+          )}
         </Box>
 
         {/* 主内容区域 - 根据模式切换 */}
@@ -214,10 +216,11 @@ const QaModal: React.FC<QaModalProps> = () => {
         </Box>
 
         {/* 底部AI生成提示 */}
+
         <Box
           sx={{
             px: 3,
-            py: 2,
+            py: kbDetail?.settings?.disclaimer_settings?.content ? 2 : 1,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -233,8 +236,7 @@ const QaModal: React.FC<QaModalProps> = () => {
               gap: 1,
             }}
           >
-            <IconZhishikulogo sx={{ color: 'text.disabled', fontSize: 16 }} />
-            本回答由 PandaWiki 基于 AI 生成，仅供参考
+            <Box>{kbDetail?.settings?.disclaimer_settings?.content}</Box>
           </Typography>
         </Box>
       </Paper>

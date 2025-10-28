@@ -3,12 +3,12 @@ import SSEClient from '@/utils/fetch';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import dayjs from 'dayjs';
-import { ChunkResultItem, ConversationItem } from '@/assets/type';
-import { AnswerStatus } from '@/views/chat/constant';
+import { ChunkResultItem } from '@/assets/type';
 import aiLoading from '@/assets/images/ai-loading.gif';
 import { getShareV1ConversationDetail } from '@/request/ShareConversation';
 import { message } from '@ctzhian/ui';
 import Feedback from '@/components/feedback';
+import { handleThinkingContent } from './utils';
 
 import {
   IconArrowUp,
@@ -42,15 +42,38 @@ import { IconTupian, IconFasong } from '@panda-wiki/icons';
 import CloseIcon from '@mui/icons-material/Close';
 import Image from 'next/image';
 
+export interface ConversationItem {
+  q: string;
+  a: string;
+  score: number;
+  update_time: string;
+  message_id: string;
+  source: 'history' | 'chat';
+  chunk_result: ChunkResultItem[];
+  thinking_content: string;
+}
+
 dayjs.extend(relativeTime);
 dayjs.locale('zh-cn');
 
-const LoadingContent = () => {
+const AnswerStatus = {
+  1: '正在搜索结果...',
+  2: '思考中...',
+  3: '正在回答',
+  4: '',
+};
+
+const LoadingContent = ({
+  thinking,
+}: {
+  thinking: keyof typeof AnswerStatus;
+}) => {
+  if (thinking === 4) return null;
   return (
-    <Stack direction='row' alignItems='center' gap={1}>
+    <Stack direction='row' alignItems='center' gap={1} sx={{ pb: 1 }}>
       <Image src={aiLoading} alt='ai-loading' width={20} height={20} />
-      <Typography variant='body2' sx={{ fontSize: 14, color: 'text.tertiary' }}>
-        正在搜索结果...
+      <Typography variant='body2' sx={{ fontSize: 12, color: 'text.tertiary' }}>
+        {AnswerStatus[thinking]}
       </Typography>
     </Stack>
   );
@@ -68,14 +91,19 @@ const AiQaContent: React.FC<{
   }> | null>(null);
 
   const messageIdRef = useRef('');
+  const [fullAnswer, setFullAnswer] = useState<string>('');
   const [chunkResult, setChunkResult] = useState<ChunkResultItem[]>([]);
+  const [isChunkResult, setIsChunkResult] = useState(false);
   const [conversation, setConversation] = useState<ConversationItem[]>([]);
+  const [thinkingContent, setThinkingContent] = useState<string>('');
+  const [isThinking, setIsThinking] = useState(false);
   const [loading, setLoading] = useState(false);
   const [thinking, setThinking] = useState<keyof typeof AnswerStatus>(4);
   const [nonce, setNonce] = useState('');
   const [conversationId, setConversationId] = useState('');
   const [answer, setAnswer] = useState('');
   const [isScrolling, setIsScrolling] = useState(true);
+  const [shouldAutoScroll, setShouldAutoScroll] = useState(true); // 是否应该自动滚动
   const [input, setInput] = useState('');
   const [open, setOpen] = useState(false);
   const [conversationItem, setConversationItem] =
@@ -98,6 +126,8 @@ const AiQaContent: React.FC<{
     setConversation([]);
     setChunkResult([]);
     setAnswer('');
+    setFullAnswer('');
+    setThinkingContent('');
     setInput('');
     // 清理图片URL
     uploadedImages.forEach(img => {
@@ -299,58 +329,60 @@ const AiQaContent: React.FC<{
     }
   };
 
-  const chatAnswer = useCallback(
-    async (q: string) => {
-      setLoading(true);
-      setThinking(1);
+  const chatAnswer = async (q: string) => {
+    setLoading(true);
+    setThinking(1);
 
-      let token = '';
+    let token = '';
 
-      const Cap = (await import('@cap.js/widget')).default;
-      const cap = new Cap({
-        apiEndpoint: '/share/v1/captcha/',
-      });
-      try {
-        const solution = await cap.solve();
-        token = solution.token;
-      } catch (error) {
-        message.error('验证失败');
-        console.log(error, 'error---------');
-        return;
-      }
+    const Cap = (await import('@cap.js/widget')).default;
+    const cap = new Cap({
+      apiEndpoint: '/share/v1/captcha/',
+    });
+    try {
+      const solution = await cap.solve();
+      token = solution.token;
+    } catch (error) {
+      message.error('验证失败');
+      console.log(error, 'error---------');
+      return;
+    }
 
-      const reqData = {
-        message: q,
-        nonce: '',
-        conversation_id: '',
-        app_type: 1,
-        captcha_token: token,
-      };
-      if (conversationId) reqData.conversation_id = conversationId;
-      if (nonce) reqData.nonce = nonce;
+    const reqData = {
+      message: q,
+      nonce: '',
+      conversation_id: '',
+      app_type: 1,
+      captcha_token: token,
+    };
+    if (conversationId) reqData.conversation_id = conversationId;
+    if (nonce) reqData.nonce = nonce;
 
-      if (sseClientRef.current) {
-        sseClientRef.current.subscribe(
-          JSON.stringify(reqData),
-          ({ type, content, chunk_result }) => {
-            if (type === 'conversation_id') {
-              setConversationId(prev => prev + content);
-            } else if (type === 'message_id') {
-              messageIdRef.current += content;
-            } else if (type === 'nonce') {
-              setNonce(prev => prev + content);
-            } else if (type === 'error') {
-              setLoading(false);
-              setThinking(4);
-              setAnswer(prev => {
-                if (content) {
-                  return prev + `\n\n回答出现错误：<error>${content}</error>`;
-                }
-                return prev + '\n\n回答出现错误，请重试';
-              });
-              if (content) message.error(content);
-            } else if (type === 'done') {
-              setAnswer(prevAnswer => {
+    if (sseClientRef.current) {
+      sseClientRef.current.subscribe(
+        JSON.stringify(reqData),
+        ({ type, content, chunk_result }) => {
+          if (type === 'conversation_id') {
+            setConversationId(prev => prev + content);
+          } else if (type === 'message_id') {
+            messageIdRef.current += content;
+          } else if (type === 'nonce') {
+            setNonce(prev => prev + content);
+          } else if (type === 'error') {
+            setLoading(false);
+            setIsChunkResult(false);
+            setIsThinking(false);
+            setThinking(4);
+            setAnswer(prev => {
+              if (content) {
+                return prev + `\n\n回答出现错误：<error>${content}</error>`;
+              }
+              return prev + '\n\n回答出现错误，请重试';
+            });
+            if (content) message.error(content);
+          } else if (type === 'done') {
+            setAnswer(prevAnswer => {
+              setThinkingContent(prevThinkingContent => {
                 setChunkResult(prevChunkResult => {
                   setConversation(prev => {
                     const newConversation = [...prev];
@@ -364,44 +396,57 @@ const AiQaContent: React.FC<{
                       lastConversation.message_id = messageIdRef.current;
                       lastConversation.source = 'chat';
                       lastConversation.chunk_result = prevChunkResult;
+                      lastConversation.thinking_content = prevThinkingContent;
                     }
-
                     return newConversation;
                   });
                   return prevChunkResult;
                 });
-
-                return '';
+                return prevThinkingContent;
               });
+              return '';
+            });
 
-              setLoading(false);
-              setThinking(4);
-            } else if (type === 'data') {
-              setAnswer(prev => {
-                const newAnswer = prev + content;
-                if (newAnswer.includes('</think>')) {
-                  setThinking(3);
-                  return newAnswer;
-                }
-                if (newAnswer.includes('<think>')) {
-                  setThinking(2);
-                  return newAnswer;
-                }
+            setFullAnswer('');
+            setLoading(false);
+            setIsChunkResult(false);
+            setIsThinking(false);
+            setThinking(4);
+          } else if (type === 'data') {
+            setIsChunkResult(false);
+            setFullAnswer(prevFullAnswer => {
+              const newFullAnswer = prevFullAnswer + content;
+
+              const { thinkingContent, answerContent } =
+                handleThinkingContent(newFullAnswer);
+
+              setThinkingContent(thinkingContent);
+              setAnswer(answerContent);
+
+              // 更新状态
+              if (newFullAnswer.includes('</think>')) {
+                setIsThinking(false);
                 setThinking(3);
-                return newAnswer;
-              });
-            } else if (type === 'chunk_result') {
-              setChunkResult(prev => [...prev, chunk_result]);
-              setTimeout(() => {
-                scrollToBottom();
-              }, 200);
-            }
-          },
-        );
-      }
-    },
-    [conversationId, nonce, sseClientRef, chunkResult],
-  );
+              } else if (newFullAnswer.includes('<think>')) {
+                setIsThinking(true);
+                setThinking(2);
+              } else {
+                setThinking(3);
+              }
+
+              return newFullAnswer;
+            });
+          } else if (type === 'chunk_result') {
+            setChunkResult(prev => [...prev, chunk_result]);
+            setIsChunkResult(true);
+            setTimeout(() => {
+              scrollToBottom();
+            }, 200);
+          }
+        },
+      );
+    }
+  };
 
   useEffect(() => {
     // @ts-ignore
@@ -412,6 +457,7 @@ const AiQaContent: React.FC<{
   const onSearch = (q: string, reset: boolean = false) => {
     if (loading || !q.trim()) return;
     setIsScrolling(true);
+    setShouldAutoScroll(true); // 开始新搜索时，重置为自动滚动
     const newConversation = reset
       ? []
       : conversation.some(item => item.source === 'history')
@@ -425,13 +471,17 @@ const AiQaContent: React.FC<{
       update_time: '',
       source: 'chat',
       chunk_result: [],
+      thinking_content: '',
     });
     messageIdRef.current = '';
     setConversation(newConversation);
     setTimeout(() => {
       setChunkResult([]);
+      setThinkingContent('');
     }, 0);
     setAnswer('');
+    setFullAnswer('');
+    setThinkingContent('');
     setTimeout(() => chatAnswer(q), 0);
     setTimeout(scrollToBottom, 200);
   };
@@ -448,7 +498,34 @@ const AiQaContent: React.FC<{
     // @ts-ignore
     kbDetail?.settings?.ai_feedback_settings?.is_enabled ?? true;
 
-  const scrollToBottom = () => {
+  /**
+   * 检查用户是否在底部
+   */
+  const checkIfAtBottom = useCallback((container: HTMLElement) => {
+    const threshold = 10; // 距离底部的阈值（像素）
+    const isAtBottom =
+      container.scrollHeight - container.scrollTop - container.clientHeight <=
+      threshold;
+    return isAtBottom;
+  }, []);
+
+  /**
+   * 处理滚动事件
+   */
+  const handleScrollEvent = useCallback(
+    (event: Event) => {
+      const container = event.target as HTMLElement;
+      if (container) {
+        const isAtBottom = checkIfAtBottom(container);
+        setShouldAutoScroll(isAtBottom);
+      }
+    },
+    [checkIfAtBottom],
+  );
+
+  const scrollToBottom = useCallback(() => {
+    if (!shouldAutoScroll) return; // 如果用户不在底部，不自动滚动
+
     const container = document.querySelector('.conversation-container');
     if (container) {
       container.scrollTo({
@@ -456,7 +533,7 @@ const AiQaContent: React.FC<{
         behavior: 'smooth',
       });
     }
-  };
+  }, [shouldAutoScroll]);
 
   const handleScore = async (
     message_id: string,
@@ -558,20 +635,26 @@ const AiQaContent: React.FC<{
                   message_id: '',
                   source: 'history',
                   chunk_result: [],
-                } as ConversationItem);
+                  thinking_content: '',
+                });
               }
               current = {
                 q: message.content,
               };
             } else if (message.role === 'assistant') {
               if (current.q) {
-                current.a = message.content;
+                const { thinkingContent, answerContent } =
+                  handleThinkingContent(message.content || '');
+
+                current.a = answerContent;
                 current.update_time = message.created_at;
                 current.score = 0;
                 current.message_id = '';
+                current.thinking_content = thinkingContent;
                 current.source = 'history';
                 conversation.push(current as ConversationItem);
                 current = {};
+                setThinkingContent(thinkingContent);
               }
             }
           });
@@ -585,6 +668,7 @@ const AiQaContent: React.FC<{
               message_id: '',
               source: 'history',
               chunk_result: [],
+              thinking_content: '',
             });
           }
         }
@@ -600,7 +684,19 @@ const AiQaContent: React.FC<{
         scrollToBottom();
       });
     }
-  }, [loading, isScrolling]);
+  }, [loading, isScrolling, scrollToBottom]);
+
+  // 监听滚动事件
+  useEffect(() => {
+    const container = document.querySelector('.conversation-container');
+    if (!container) return;
+
+    container.addEventListener('scroll', handleScrollEvent);
+
+    return () => {
+      container.removeEventListener('scroll', handleScrollEvent);
+    };
+  }, [handleScrollEvent]);
 
   return (
     <Box sx={{ flex: 1 }}>
@@ -625,21 +721,31 @@ const AiQaContent: React.FC<{
               key={index}
               defaultExpanded={true}
               sx={{
-                bgcolor:
-                  themeMode === 'dark'
-                    ? 'background.default'
-                    : 'background.paper3',
+                p: 0,
+                border: 'none',
+                '&:before': {
+                  content: '""',
+                  height: 0,
+                },
+                bgcolor: 'background.default',
               }}
             >
               <AccordionSummary
-                expandIcon={<ExpandMoreIcon sx={{ fontSize: 24 }} />}
+                expandIcon={<ExpandMoreIcon sx={{ fontSize: 18 }} />}
                 sx={{
+                  px: 2,
+                  py: 1,
                   userSelect: 'text',
+                  borderRadius: '10px',
+                  backgroundColor: 'background.paper3',
+                  border: '1px solid',
+                  borderColor: 'divider',
                 }}
               >
                 <Box
                   sx={{
                     fontWeight: '700',
+                    fontSize: 16,
                     lineHeight: '24px',
                     wordBreak: 'break-all',
                   }}
@@ -647,19 +753,121 @@ const AiQaContent: React.FC<{
                   {item.q}
                 </Box>
               </AccordionSummary>
-              <AccordionDetails sx={{ pt: 2 }}>
-                <Accordion
-                  sx={{
-                    bgcolor: 'transparent',
-                    border: 'none',
-                    p: 0,
-                    pb: 2,
-                  }}
-                  defaultExpanded
-                >
-                  {(index === conversation.length - 1
-                    ? chunkResult.length > 0
-                    : item.chunk_result.length > 0) && (
+              <AccordionDetails sx={{ p: 2, borderTop: 'none' }}>
+                {(index === conversation.length - 1
+                  ? chunkResult.length > 0
+                  : item.chunk_result.length > 0) && (
+                  <Accordion
+                    sx={{
+                      bgcolor: 'transparent',
+                      border: 'none',
+                      p: 0,
+                      pb: 2,
+                    }}
+                    defaultExpanded
+                  >
+                    {(index === conversation.length - 1
+                      ? chunkResult.length > 0
+                      : item.chunk_result.length > 0) && (
+                      <AccordionSummary
+                        expandIcon={<ExpandMoreIcon sx={{ fontSize: 16 }} />}
+                        sx={{
+                          justifyContent: 'flex-start',
+                          gap: 2,
+                          '.MuiAccordionSummary-content': {
+                            flexGrow: 0,
+                          },
+                        }}
+                      >
+                        <Typography
+                          variant='body2'
+                          sx={{ fontSize: 12, color: 'text.tertiary' }}
+                        >
+                          共找到{' '}
+                          {index === conversation.length - 1
+                            ? chunkResult.length
+                            : item.chunk_result.length}{' '}
+                          个结果
+                        </Typography>
+                      </AccordionSummary>
+                    )}
+
+                    <AccordionDetails
+                      sx={{
+                        pt: 0,
+                        pl: 2,
+                        borderTop: 'none',
+                        borderLeft: '1px solid',
+                        borderColor: 'divider',
+                      }}
+                    >
+                      <Stack gap={1}>
+                        {(index === conversation.length - 1
+                          ? chunkResult
+                          : item.chunk_result
+                        ).map((chunk, index) => (
+                          <Box
+                            key={index}
+                            sx={{
+                              cursor: 'pointer',
+                              '&:hover': {
+                                '.hover-primary': {
+                                  color: 'primary.main',
+                                },
+                              },
+                            }}
+                          >
+                            <Typography
+                              variant='body2'
+                              className='hover-primary'
+                              sx={{ fontSize: 12, color: 'text.tertiary' }}
+                              onClick={() => {
+                                window.open(`/node/${chunk.node_id}`, '_blank');
+                              }}
+                            >
+                              {chunk.name}
+                            </Typography>
+                          </Box>
+                        ))}
+                      </Stack>
+                    </AccordionDetails>
+                  </Accordion>
+                )}
+
+                {/* {index === conversation.length - 1 &&
+                  loading &&
+                  !answer &&
+                  !item.a &&
+                  chunkResult.length === 0 && (
+                    <>
+                      <LoadingContent thinking={thinking} />
+                    </>
+                  )} */}
+                {index === conversation.length - 1 &&
+                  loading &&
+                  !isChunkResult &&
+                  !thinkingContent && (
+                    <>
+                      <LoadingContent thinking={thinking} />
+                    </>
+                  )}
+
+                {(index === conversation.length - 1
+                  ? !!thinkingContent
+                  : !!item.thinking_content) && (
+                  <Accordion
+                    sx={{
+                      bgcolor: 'transparent',
+                      border: 'none',
+                      p: 0,
+                      pb: 2,
+                      '&:before': {
+                        content: '""',
+                        height: 0,
+                      },
+                    }}
+                    defaultExpanded
+                  >
                     <AccordionSummary
                       expandIcon={<ExpandMoreIcon sx={{ fontSize: 16 }} />}
                       sx={{
@@ -670,59 +878,49 @@ const AiQaContent: React.FC<{
                         },
                       }}
                     >
-                      <Typography
-                        variant='body2'
-                        sx={{ fontSize: 12, color: 'text.tertiary' }}
-                      >
-                        共找到{' '}
-                        {index === conversation.length - 1
-                          ? chunkResult.length
-                          : item.chunk_result.length}{' '}
-                        个结果
-                      </Typography>
-                    </AccordionSummary>
-                  )}
+                      <Stack direction='row' alignItems='center' gap={1}>
+                        {isThinking && (
+                          <Image
+                            src={aiLoading}
+                            alt='ai-loading'
+                            width={20}
+                            height={20}
+                          />
+                        )}
 
-                  <AccordionDetails
-                    sx={{
-                      pt: 0,
-                      pl: 2,
-                      borderTop: 'none',
-                      borderLeft: '1px solid',
-                      borderColor: 'divider',
-                    }}
-                  >
-                    <Stack gap={1}>
-                      {(index === conversation.length - 1
-                        ? chunkResult
-                        : item.chunk_result
-                      ).map((chunk, index) => (
-                        <Box
-                          key={index}
-                          sx={{
-                            cursor: 'pointer',
-                            '&:hover': {
-                              '.hover-primary': {
-                                color: 'primary.main',
-                              },
-                            },
-                          }}
+                        <Typography
+                          variant='body2'
+                          sx={{ fontSize: 12, color: 'text.tertiary' }}
                         >
-                          <Typography
-                            variant='body2'
-                            className='hover-primary'
-                            sx={{ fontSize: 12, color: 'text.tertiary' }}
-                            onClick={() => {
-                              window.open(`/node/${chunk.node_id}`, '_blank');
-                            }}
-                          >
-                            {chunk.name}
-                          </Typography>
-                        </Box>
-                      ))}
-                    </Stack>
-                  </AccordionDetails>
-                </Accordion>
+                          {isThinking ? '思考中...' : '已思考'}
+                        </Typography>
+                      </Stack>
+                    </AccordionSummary>
+
+                    <AccordionDetails
+                      sx={{
+                        pt: 0,
+                        pl: 2,
+                        borderTop: 'none',
+                        borderLeft: '1px solid',
+                        borderColor: 'divider',
+                        '.markdown-body': {
+                          opacity: 0.75,
+                          fontSize: 12,
+                        },
+                      }}
+                    >
+                      <MarkDown2
+                        content={
+                          index === conversation.length - 1
+                            ? thinkingContent
+                            : item.thinking_content || ''
+                        }
+                      />
+                    </AccordionDetails>
+                  </Accordion>
+                )}
+
                 {item.source === 'history' ? (
                   <MarkDown content={item.a} />
                 ) : index === conversation.length - 1 ? (
@@ -732,16 +930,6 @@ const AiQaContent: React.FC<{
                   // 非最后一个对话项：正常显示
                   <MarkDown2 content={item.a} />
                 )}
-
-                {index === conversation.length - 1 &&
-                  loading &&
-                  !answer &&
-                  !item.a &&
-                  chunkResult.length === 0 && (
-                    <>
-                      <LoadingContent />
-                    </>
-                  )}
               </AccordionDetails>
             </Accordion>
             {(index !== conversation.length - 1 || !loading) && (
@@ -756,8 +944,6 @@ const AiQaContent: React.FC<{
                   mt: 2,
                 }}
               >
-                {/* <Box>{kbDetail?.settings?.disclaimer_settings?.content}</Box> */}
-
                 <Stack direction='row' gap={3} alignItems='center'>
                   <span>生成于 {dayjs(item.update_time).fromNow()}</span>
 
