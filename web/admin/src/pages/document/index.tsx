@@ -1,4 +1,4 @@
-import { ImportDocType, ITreeItem, NodeListFilterData } from '@/api';
+import { ITreeItem, NodeListFilterData } from '@/api';
 import Card from '@/components/Card';
 import Cascader from '@/components/Cascader';
 import DragTree, { type DragTreeHandle } from '@/components/Drag/DragTree';
@@ -8,8 +8,8 @@ import {
 } from '@/components/Drag/DragTree/TreeMenu';
 import { useURLSearchParams } from '@/hooks';
 import { getApiV1NodeList } from '@/request/Node';
-import { DomainNodeListItemResp } from '@/request/types';
-import { useAppSelector, useAppDispatch } from '@/store';
+import { ConstsCrawlerSource, DomainNodeListItemResp } from '@/request/types';
+import { useAppDispatch, useAppSelector } from '@/store';
 import { setIsRefreshDocList } from '@/store/slices/config';
 import { addOpacityToColor } from '@/utils';
 import { collapseAllFolders, convertToTree } from '@/utils/drag';
@@ -24,8 +24,8 @@ import {
 } from '@mui/material';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import VersionPublish from '../release/components/VersionPublish';
-import AddDocByOther from './component/AddDocByOther/index';
-import DocAdd from './component/DocAdd';
+import AddDocBtn from './component/AddDocBtn';
+import AddDocByType from './component/AddDocByType';
 import DocDelete from './component/DocDelete';
 import DocPropertiesModal from './component/DocPropertiesModal';
 import DocSearch from './component/DocSearch';
@@ -60,19 +60,58 @@ const Content = () => {
   const [urlOpen, setUrlOpen] = useState(false);
   const [publishIds, setPublishIds] = useState<string[]>([]);
   const [publishOpen, setPublishOpen] = useState(false);
-  const [key, setKey] = useState<ImportDocType>('URL');
+  const [key, setKey] = useState<ConstsCrawlerSource | null>(null);
   const [propertiesOpen, setPropertiesOpen] = useState(false);
   const [isBatch, setIsBatch] = useState(false);
 
-  const handleUrl = (item: ITreeItem, key: ImportDocType) => {
+  // 从树形数据中查找节点并转换为列表格式
+  const findItemInTree = (
+    items: ITreeItem[],
+    id: string,
+  ): DomainNodeListItemResp | null => {
+    for (const item of items) {
+      if (item.id === id) {
+        // 将 ITreeItem 转换为 DomainNodeListItemResp
+        return {
+          id: item.id,
+          name: item.name,
+          emoji: item.emoji,
+          parent_id: item.parentId,
+          summary: item.summary,
+          type: item.type,
+          status: item.status,
+          permissions: item.permissions,
+          updated_at: item.updated_at,
+        } as DomainNodeListItemResp;
+      }
+      if (item.children?.length) {
+        const found = findItemInTree(item.children as ITreeItem[], id);
+        if (found) return found;
+      }
+    }
+    return null;
+  };
+
+  // 优先从 list 查找，如果找不到则从 data 树中查找（用于新创建的节点）
+  const getOperationData = (item: ITreeItem): DomainNodeListItemResp[] => {
+    const fromList = list.filter(it => it.id === item.id);
+    if (fromList.length > 0) {
+      return fromList;
+    }
+    // 从树中查找
+    const fromTree = findItemInTree(data, item.id);
+    return fromTree ? [fromTree] : [];
+  };
+
+  const handleUrl = (item: ITreeItem, key: ConstsCrawlerSource) => {
     setKey(key);
     setUrlOpen(true);
-    setOpraData(list.filter(it => it.id === item.id));
+    setOpraData(getOperationData(item));
   };
 
   const handleDelete = (item: ITreeItem) => {
     setDeleteOpen(true);
-    setOpraData(list.filter(it => it.id === item.id));
+    setOpraData(getOperationData(item));
   };
 
   const handlePublish = (item: ITreeItem) => {
@@ -82,7 +121,7 @@ const Content = () => {
 
   const handleProperties = (item: ITreeItem) => {
     setPropertiesOpen(true);
-    setOpraData(list.filter(it => it.id === item.id));
+    setOpraData(getOperationData(item));
     setIsBatch(false);
   };
 
@@ -103,63 +142,78 @@ const Content = () => {
               children: [
                 {
                   label: '通过离线文件导入',
-                  key: 'OfflineFile',
-                  onClick: () => handleUrl(item, 'OfflineFile'),
+                  key: ConstsCrawlerSource.CrawlerSourceFile,
+                  onClick: () =>
+                    handleUrl(item, ConstsCrawlerSource.CrawlerSourceFile),
                 },
                 {
                   label: '通过 URL 导入',
-                  key: 'URL',
-                  onClick: () => handleUrl(item, 'URL'),
+                  key: ConstsCrawlerSource.CrawlerSourceUrl,
+                  onClick: () =>
+                    handleUrl(item, ConstsCrawlerSource.CrawlerSourceUrl),
                 },
                 {
                   label: '通过 RSS 导入',
-                  key: 'RSS',
-                  onClick: () => handleUrl(item, 'RSS'),
+                  key: ConstsCrawlerSource.CrawlerSourceRSS,
+                  onClick: () =>
+                    handleUrl(item, ConstsCrawlerSource.CrawlerSourceRSS),
                 },
                 {
                   label: '通过 Sitemap 导入',
-                  key: 'Sitemap',
-                  onClick: () => handleUrl(item, 'Sitemap'),
+                  key: ConstsCrawlerSource.CrawlerSourceSitemap,
+                  onClick: () =>
+                    handleUrl(item, ConstsCrawlerSource.CrawlerSourceSitemap),
                 },
                 {
                   label: '通过 Notion 导入',
-                  key: 'Notion',
-                  onClick: () => handleUrl(item, 'Notion'),
+                  key: ConstsCrawlerSource.CrawlerSourceNotion,
+                  onClick: () =>
+                    handleUrl(item, ConstsCrawlerSource.CrawlerSourceNotion),
                 },
                 {
                   label: '通过 Epub 导入',
-                  key: 'Epub',
-                  onClick: () => handleUrl(item, 'Epub'),
+                  key: ConstsCrawlerSource.CrawlerSourceEpub,
+                  onClick: () =>
+                    handleUrl(item, ConstsCrawlerSource.CrawlerSourceEpub),
                 },
                 {
                   label: '通过 Wiki.js 导入',
-                  key: 'Wiki.js',
-                  onClick: () => handleUrl(item, 'Wiki.js'),
+                  key: ConstsCrawlerSource.CrawlerSourceWikijs,
+                  onClick: () =>
+                    handleUrl(item, ConstsCrawlerSource.CrawlerSourceWikijs),
                 },
                 {
                   label: '通过 语雀 导入',
-                  key: 'Yuque',
-                  onClick: () => handleUrl(item, 'Yuque'),
+                  key: ConstsCrawlerSource.CrawlerSourceYuque,
+                  onClick: () =>
+                    handleUrl(item, ConstsCrawlerSource.CrawlerSourceYuque),
                 },
                 {
                   label: '通过 思源笔记 导入',
-                  key: 'Siyuan',
-                  onClick: () => handleUrl(item, 'Siyuan'),
+                  key: ConstsCrawlerSource.CrawlerSourceSiyuan,
+                  onClick: () =>
+                    handleUrl(item, ConstsCrawlerSource.CrawlerSourceSiyuan),
                 },
                 {
                   label: '通过 MinDoc 导入',
-                  key: 'MinDoc',
-                  onClick: () => handleUrl(item, 'MinDoc'),
+                  key: ConstsCrawlerSource.CrawlerSourceMindoc,
+                  onClick: () =>
+                    handleUrl(item, ConstsCrawlerSource.CrawlerSourceMindoc),
                 },
                 {
                   label: '通过飞书文档导入',
-                  key: 'Feishu',
-                  onClick: () => handleUrl(item, 'Feishu'),
+                  key: ConstsCrawlerSource.CrawlerSourceFeishu,
+                  onClick: () =>
+                    handleUrl(item, ConstsCrawlerSource.CrawlerSourceFeishu),
                 },
                 {
                   label: '通过 Confluence 导入',
-                  key: 'Confluence',
-                  onClick: () => handleUrl(item, 'Confluence'),
+                  key: ConstsCrawlerSource.CrawlerSourceConfluence,
+                  onClick: () =>
+                    handleUrl(
+                      item,
+                      ConstsCrawlerSource.CrawlerSourceConfluence,
+                    ),
                 },
               ],
             },
@@ -320,7 +374,7 @@ const Content = () => {
           </Stack>
           <Stack direction={'row'} alignItems={'center'} gap={2}>
             <DocSearch />
-            <DocAdd
+            <AddDocBtn
               createLocal={node => {
                 setData(prev => {
                   // 追加到根末尾
@@ -548,16 +602,18 @@ const Content = () => {
           setData(prev => removeDeep(prev));
         }}
       />
-      <AddDocByOther
-        type={key}
-        open={urlOpen}
-        onCancel={() => {
-          setUrlOpen(false);
-          setOpraData([]);
-        }}
-        parentId={opraData[0]?.id}
-        refresh={getData}
-      />
+      {key && (
+        <AddDocByType
+          type={key}
+          open={urlOpen}
+          onCancel={() => {
+            setUrlOpen(false);
+            setOpraData([]);
+          }}
+          parentId={opraData[0]?.id || null}
+          refresh={getData}
+        />
+      )}
       <Summary
         data={opraData[0]}
         kb_id={kb_id}
