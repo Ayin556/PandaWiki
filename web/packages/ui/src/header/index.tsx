@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { IconSousuo, IconZhinengwenda } from '@panda-wiki/icons';
 import { Box, Button, IconButton, Stack, TextField, Link } from '@mui/material';
 import NavBtns, { NavBtn } from './NavBtns';
@@ -48,6 +48,11 @@ const Header = React.memo(
     children,
     onQaClick,
   }: HeaderProps) => {
+    const [ctrlKShortcut, setCtrlKShortcut] = useState('');
+    useEffect(() => {
+      setCtrlKShortcut(getKeyboardShortcut());
+    }, []);
+
     // 全局键盘事件监听：⌘K (Mac) 或 Ctrl+K (Windows/Linux)
     useEffect(() => {
       const handleKeyDown = (event: KeyboardEvent) => {
@@ -204,7 +209,7 @@ const Header = React.memo(
                             color: 'text.tertiary',
                           }}
                         >
-                          {getKeyboardShortcut()}
+                          {ctrlKShortcut}
                         </Box>
                         <Box
                           className='ai-qa-button-wrapper'

@@ -226,7 +226,7 @@ export const INIT_LADING_DATA = {
     {
       type: 'faq',
       faq_config: {
-        title: '常见问题',
+        title: '链接组',
         title_color: '#000000',
         bg_color: '#ffffff00',
         list: [

@@ -1,3 +1,4 @@
+'use client';
 import { useStore } from '@/provider';
 import SSEClient from '@/utils/fetch';
 import { useCallback, useEffect, useRef, useState } from 'react';

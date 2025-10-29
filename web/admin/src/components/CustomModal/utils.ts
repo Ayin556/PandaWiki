@@ -14,7 +14,7 @@ const handleHeaderProps = (setting: any) => {
 const handleFooterProps = (setting: any) => {
   return {
     footerSetting: setting.footer_settings,
-    logo: Logo,
+    logo: 'https://release.baizhi.cloud/panda-wiki/icon.png',
     showBrand: setting.web_app_custom_style?.show_brand_info || false,
     customStyle: setting.web_app_custom_style,
   };
@@ -22,7 +22,7 @@ const handleFooterProps = (setting: any) => {
 
 const handleFaqProps = (config: any = {}) => {
   return {
-    title: config.title || '常见问题',
+    title: config.title || '链接组',
     bgColor: config.bg_color || '#ffffff',
     titleColor: config.title_color || '#000000',
     items:
@@ -35,7 +35,7 @@ const handleFaqProps = (config: any = {}) => {
 
 const handleBasicDocProps = (config: any = {}) => {
   return {
-    title: config.title || '基础文档',
+    title: config.title || '文档摘要卡片',
     bgColor: config.bg_color || '#ffffff',
     titleColor: config.title_color || '#00000',
     items:
@@ -48,7 +48,7 @@ const handleBasicDocProps = (config: any = {}) => {
 
 const handleDirDocProps = (config: any = {}) => {
   return {
-    title: config.title || '目录文档',
+    title: config.title || '文档目录卡片',
     bgColor: config.bg_color || '#3248F2',
     titleColor: config.title_color || '#ffffff',
     items:
@@ -63,7 +63,7 @@ const handleDirDocProps = (config: any = {}) => {
 
 const handleSimpleDocProps = (config: any = {}) => {
   return {
-    title: config.title || '简易文档',
+    title: config.title || '简易文档卡片',
     bgColor: config?.bg_color || '#ffffff',
     titleColor: config.title_color || '#000000',
     items:
@@ -75,7 +75,7 @@ const handleSimpleDocProps = (config: any = {}) => {
 
 const handleCarouselProps = (config: any = {}) => {
   return {
-    title: config.title || '轮播图展示',
+    title: config.title || '轮播图',
     bgColor: config.bg_color || '#3248F2',
     titleColor: config.title_color || '#ffffff',
     items:
