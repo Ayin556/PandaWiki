@@ -157,8 +157,8 @@ const SearchDocContent: React.FC<SearchDocContentProps> = ({
         fullWidth
         autoFocus
         sx={{
+          borderRadius: 2,
           '& .MuiInputBase-root': {
-            borderRadius: 2,
             fontSize: 16,
             bgcolor: 'background.paper3',
             '& fieldset': {

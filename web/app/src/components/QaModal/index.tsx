@@ -1,23 +1,10 @@
 'use client';
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Logo from '@/assets/images/logo.png';
-import {
-  IconZhinengwenda,
-  IconJinsousuo,
-  IconZhishikulogo,
-} from '@panda-wiki/icons';
+import { IconZhinengwenda, IconJinsousuo } from '@panda-wiki/icons';
 import { useSearchParams } from 'next/navigation';
-import {
-  Box,
-  Button,
-  Paper,
-  Typography,
-  Modal,
-  Avatar,
-  ButtonGroup,
-  styled,
-  Stack,
-} from '@mui/material';
+import { Box, Button, Typography, Modal, Stack } from '@mui/material';
+import { CusTabs } from '@ctzhian/ui';
 import AiQaContent from './AiQaContent';
 import SearchDocContent from './SearchDocContent';
 import { useStore } from '@/provider';
@@ -28,22 +15,6 @@ interface SearchSuggestion {
   description?: string;
   type?: 'recent' | 'suggestion' | 'trending';
 }
-
-const StyledButton = styled('div')<{ active: boolean }>(({ theme, active }) => {
-  return {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: theme.spacing(0.5),
-    padding: theme.spacing(1, 3),
-    borderRadius: '10px',
-    backgroundColor: '#F8F9FA',
-    cursor: 'pointer',
-    border: '1px solid',
-    borderColor: active ? theme.palette.primary.main : '#F8F9FA',
-    fontSize: 12,
-  };
-});
 
 interface QaModalProps {
   placeholder?: string;
@@ -109,7 +80,7 @@ const QaModal: React.FC<QaModalProps> = () => {
         p: 2,
       }}
     >
-      <Paper
+      <Box
         sx={{
           display: 'flex',
           flexDirection: 'column',
@@ -117,7 +88,7 @@ const QaModal: React.FC<QaModalProps> = () => {
           flex: 1,
           maxWidth: 800,
           maxHeight: '100%',
-          bgcolor: 'background.paper',
+          backgroundColor: 'background.paper',
           borderRadius: '10px',
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
           overflow: 'hidden',
@@ -154,28 +125,31 @@ const QaModal: React.FC<QaModalProps> = () => {
             </Typography>
           </Box>
 
-          {/* 模式切换按钮 */}
-          <Stack direction={'row'} gap={2}>
-            <StyledButton
-              active={searchMode === 'chat'}
-              onClick={() => setSearchMode('chat')}
-            >
-              <IconZhinengwenda
-                sx={{
-                  fontSize: 16,
-                  color:
-                    searchMode === 'chat' ? 'primary.main' : 'text.primary',
-                }}
-              />
-              {!mobile && '智能问答'}
-            </StyledButton>
-            <StyledButton
-              active={searchMode === 'search'}
-              onClick={() => setSearchMode('search')}
-            >
-              <IconJinsousuo sx={{ fontSize: 16 }} /> {!mobile && '仅搜索文档'}
-            </StyledButton>
-          </Stack>
+          <CusTabs
+            size='small'
+            list={[
+              {
+                label: (
+                  <Stack direction='row' gap={1} alignItems='center'>
+                    <IconZhinengwenda sx={{ fontSize: 16 }} />
+                    {!mobile && <span>智能问答</span>}
+                  </Stack>
+                ),
+                value: 'chat',
+              },
+              {
+                label: (
+                  <Stack direction='row' gap={1} alignItems='center'>
+                    <IconJinsousuo sx={{ fontSize: 16 }} />
+                    {!mobile && <span>仅搜索文档</span>}
+                  </Stack>
+                ),
+                value: 'search',
+              },
+            ]}
+            value={searchMode}
+            onChange={value => setSearchMode(value as 'chat' | 'search')}
+          />
 
           {/* Esc按钮 */}
           {!mobile && (
@@ -186,7 +160,7 @@ const QaModal: React.FC<QaModalProps> = () => {
                 minWidth: 'auto',
                 px: 1.5,
                 py: 0.5,
-                bgcolor: 'grey.100',
+                bgcolor: 'background.paper3',
                 color: 'text.tertiary',
                 fontSize: 12,
                 fontWeight: 500,
@@ -200,7 +174,6 @@ const QaModal: React.FC<QaModalProps> = () => {
             </Button>
           )}
         </Box>
-
         {/* 主内容区域 - 根据模式切换 */}
         <Box sx={{ px: 2, display: searchMode === 'chat' ? 'block' : 'none' }}>
           <AiQaContent
@@ -214,9 +187,7 @@ const QaModal: React.FC<QaModalProps> = () => {
         >
           <SearchDocContent inputRef={inputRef} placeholder={placeholder} />
         </Box>
-
         {/* 底部AI生成提示 */}
-
         <Box
           sx={{
             px: 3,
@@ -239,7 +210,7 @@ const QaModal: React.FC<QaModalProps> = () => {
             <Box>{kbDetail?.settings?.disclaimer_settings?.content}</Box>
           </Typography>
         </Box>
-      </Paper>
+      </Box>
     </Modal>
   );
 };

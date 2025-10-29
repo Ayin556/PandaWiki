@@ -1,6 +1,6 @@
 import { useStore } from '@/provider';
 import SSEClient from '@/utils/fetch';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import dayjs from 'dayjs';
 import { ChunkResultItem } from '@/assets/type';
@@ -9,9 +9,9 @@ import { getShareV1ConversationDetail } from '@/request/ShareConversation';
 import { message } from '@ctzhian/ui';
 import Feedback from '@/components/feedback';
 import { handleThinkingContent } from './utils';
+import { useSmartScroll } from '@/hooks';
 
 import {
-  IconArrowUp,
   IconCai,
   IconCaied,
   IconCopy,
@@ -23,24 +23,41 @@ import MarkDown2 from '@/components/markdown2';
 import { postShareV1ChatFeedback } from '@/request/ShareChat';
 import { copyText } from '@/utils';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Box,
-  IconButton,
-  Skeleton,
-  Stack,
-  TextField,
-  Typography,
-  Tooltip,
-} from '@mui/material';
+import { Box, IconButton, Stack, Typography, Tooltip } from '@mui/material';
 import 'dayjs/locale/zh-cn';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import ChatLoading from '../../views/chat/ChatLoading';
 import { IconTupian, IconFasong } from '@panda-wiki/icons';
 import CloseIcon from '@mui/icons-material/Close';
 import Image from 'next/image';
+import {
+  StyledMainContainer,
+  StyledConversationContainer,
+  StyledConversationItem,
+  StyledAccordion,
+  StyledAccordionSummary,
+  StyledAccordionDetails,
+  StyledQuestionText,
+  StyledChunkAccordion,
+  StyledChunkAccordionSummary,
+  StyledChunkAccordionDetails,
+  StyledChunkItem,
+  StyledThinkingAccordion,
+  StyledThinkingAccordionSummary,
+  StyledThinkingAccordionDetails,
+  StyledActionStack,
+  StyledInputContainer,
+  StyledInputWrapper,
+  StyledImagePreviewStack,
+  StyledImagePreviewItem,
+  StyledImageRemoveButton,
+  StyledTextField,
+  StyledActionButtonStack,
+  StyledFuzzySuggestionsStack,
+  StyledFuzzySuggestionItem,
+  StyledHotSearchStack,
+  StyledHotSearchItem,
+} from './StyledComponents';
 
 export interface ConversationItem {
   q: string;
@@ -68,7 +85,7 @@ const LoadingContent = ({
 }: {
   thinking: keyof typeof AnswerStatus;
 }) => {
-  if (thinking === 4) return null;
+  if (thinking === 4 || thinking === 2) return null;
   return (
     <Stack direction='row' alignItems='center' gap={1} sx={{ pb: 1 }}>
       <Image src={aiLoading} alt='ai-loading' width={20} height={20} />
@@ -92,18 +109,11 @@ const AiQaContent: React.FC<{
 
   const messageIdRef = useRef('');
   const [fullAnswer, setFullAnswer] = useState<string>('');
-  const [chunkResult, setChunkResult] = useState<ChunkResultItem[]>([]);
-  const [isChunkResult, setIsChunkResult] = useState(false);
   const [conversation, setConversation] = useState<ConversationItem[]>([]);
-  const [thinkingContent, setThinkingContent] = useState<string>('');
-  const [isThinking, setIsThinking] = useState(false);
   const [loading, setLoading] = useState(false);
   const [thinking, setThinking] = useState<keyof typeof AnswerStatus>(4);
   const [nonce, setNonce] = useState('');
   const [conversationId, setConversationId] = useState('');
-  const [answer, setAnswer] = useState('');
-  const [isScrolling, setIsScrolling] = useState(true);
-  const [shouldAutoScroll, setShouldAutoScroll] = useState(true); // 是否应该自动滚动
   const [input, setInput] = useState('');
   const [open, setOpen] = useState(false);
   const [conversationItem, setConversationItem] =
@@ -121,13 +131,17 @@ const AiQaContent: React.FC<{
 
   const searchParams = useSearchParams();
 
+  // 使用智能滚动 hook
+  const { scrollToBottom, setShouldAutoScroll } = useSmartScroll({
+    container: '.conversation-container',
+    threshold: 10,
+    behavior: 'smooth',
+  });
+
   const onReset = () => {
     setConversationId('');
     setConversation([]);
-    setChunkResult([]);
-    setAnswer('');
     setFullAnswer('');
-    setThinkingContent('');
     setInput('');
     // 清理图片URL
     uploadedImages.forEach(img => {
@@ -370,78 +384,81 @@ const AiQaContent: React.FC<{
             setNonce(prev => prev + content);
           } else if (type === 'error') {
             setLoading(false);
-            setIsChunkResult(false);
-            setIsThinking(false);
             setThinking(4);
-            setAnswer(prev => {
-              if (content) {
-                return prev + `\n\n回答出现错误：<error>${content}</error>`;
+            setConversation(prev => {
+              const newConversation = [...prev];
+              const lastConversation =
+                newConversation[newConversation.length - 1];
+              if (lastConversation) {
+                lastConversation.a =
+                  lastConversation.a +
+                  (content
+                    ? `\n\n回答出现错误：<error>${content}</error>`
+                    : '\n\n回答出现错误，请重试');
               }
-              return prev + '\n\n回答出现错误，请重试';
+              return newConversation;
             });
             if (content) message.error(content);
           } else if (type === 'done') {
-            setAnswer(prevAnswer => {
-              setThinkingContent(prevThinkingContent => {
-                setChunkResult(prevChunkResult => {
-                  setConversation(prev => {
-                    const newConversation = [...prev];
-                    const lastConversation =
-                      newConversation[newConversation.length - 1];
-                    if (lastConversation) {
-                      lastConversation.a = prevAnswer;
-                      lastConversation.update_time = dayjs().format(
-                        'YYYY-MM-DD HH:mm:ss',
-                      );
-                      lastConversation.message_id = messageIdRef.current;
-                      lastConversation.source = 'chat';
-                      lastConversation.chunk_result = prevChunkResult;
-                      lastConversation.thinking_content = prevThinkingContent;
-                    }
-                    return newConversation;
-                  });
-                  return prevChunkResult;
-                });
-                return prevThinkingContent;
-              });
-              return '';
+            setConversation(prev => {
+              const newConversation = [...prev];
+              const lastConversation =
+                newConversation[newConversation.length - 1];
+              if (lastConversation) {
+                lastConversation.update_time = dayjs().format(
+                  'YYYY-MM-DD HH:mm:ss',
+                );
+                lastConversation.message_id = messageIdRef.current;
+                lastConversation.source = 'chat';
+              }
+              return newConversation;
             });
 
             setFullAnswer('');
             setLoading(false);
-            setIsChunkResult(false);
-            setIsThinking(false);
+
             setThinking(4);
           } else if (type === 'data') {
-            setIsChunkResult(false);
             setFullAnswer(prevFullAnswer => {
               const newFullAnswer = prevFullAnswer + content;
 
               const { thinkingContent, answerContent } =
                 handleThinkingContent(newFullAnswer);
 
-              setThinkingContent(thinkingContent);
-              setAnswer(answerContent);
-
               // 更新状态
               if (newFullAnswer.includes('</think>')) {
-                setIsThinking(false);
                 setThinking(3);
               } else if (newFullAnswer.includes('<think>')) {
-                setIsThinking(true);
                 setThinking(2);
               } else {
                 setThinking(3);
               }
+              setConversation(preConversation => {
+                const newConversation = [...preConversation];
+                const lastConversation =
+                  newConversation[newConversation.length - 1];
+                if (lastConversation) {
+                  lastConversation.a = answerContent;
+                  lastConversation.thinking_content = thinkingContent;
+                }
+                return newConversation;
+              });
 
               return newFullAnswer;
             });
           } else if (type === 'chunk_result') {
-            setChunkResult(prev => [...prev, chunk_result]);
-            setIsChunkResult(true);
-            setTimeout(() => {
-              scrollToBottom();
-            }, 200);
+            setConversation(preConversation => {
+              const newConversation = [...preConversation];
+              const lastConversation =
+                newConversation[newConversation.length - 1];
+              if (lastConversation) {
+                lastConversation.chunk_result = [
+                  ...lastConversation.chunk_result,
+                  chunk_result,
+                ];
+              }
+              return newConversation;
+            });
           }
         },
       );
@@ -456,7 +473,6 @@ const AiQaContent: React.FC<{
 
   const onSearch = (q: string, reset: boolean = false) => {
     if (loading || !q.trim()) return;
-    setIsScrolling(true);
     setShouldAutoScroll(true); // 开始新搜索时，重置为自动滚动
     const newConversation = reset
       ? []
@@ -475,15 +491,8 @@ const AiQaContent: React.FC<{
     });
     messageIdRef.current = '';
     setConversation(newConversation);
-    setTimeout(() => {
-      setChunkResult([]);
-      setThinkingContent('');
-    }, 0);
-    setAnswer('');
     setFullAnswer('');
-    setThinkingContent('');
     setTimeout(() => chatAnswer(q), 0);
-    setTimeout(scrollToBottom, 200);
   };
 
   const handleSearchAbort = () => {
@@ -497,43 +506,6 @@ const AiQaContent: React.FC<{
   const isFeedbackEnabled =
     // @ts-ignore
     kbDetail?.settings?.ai_feedback_settings?.is_enabled ?? true;
-
-  /**
-   * 检查用户是否在底部
-   */
-  const checkIfAtBottom = useCallback((container: HTMLElement) => {
-    const threshold = 10; // 距离底部的阈值（像素）
-    const isAtBottom =
-      container.scrollHeight - container.scrollTop - container.clientHeight <=
-      threshold;
-    return isAtBottom;
-  }, []);
-
-  /**
-   * 处理滚动事件
-   */
-  const handleScrollEvent = useCallback(
-    (event: Event) => {
-      const container = event.target as HTMLElement;
-      if (container) {
-        const isAtBottom = checkIfAtBottom(container);
-        setShouldAutoScroll(isAtBottom);
-      }
-    },
-    [checkIfAtBottom],
-  );
-
-  const scrollToBottom = useCallback(() => {
-    if (!shouldAutoScroll) return; // 如果用户不在底部，不自动滚动
-
-    const container = document.querySelector('.conversation-container');
-    if (container) {
-      container.scrollTo({
-        top: container.scrollHeight,
-        behavior: 'smooth',
-      });
-    }
-  }, [shouldAutoScroll]);
 
   const handleScore = async (
     message_id: string,
@@ -566,23 +538,18 @@ const AiQaContent: React.FC<{
       onCancel: () => {
         setLoading(false);
         setThinking(4);
-        setAnswer(prev => {
-          let value = '';
-          if (prev) {
-            value = prev + '\n\n<error>Request canceled</error>';
+        setConversation(prev => {
+          const newConversation = [...prev];
+          const lastConversation = newConversation[newConversation.length - 1];
+          if (lastConversation) {
+            lastConversation.a =
+              lastConversation.a + '\n\n<error>Request canceled</error>';
+            lastConversation.update_time = dayjs().format(
+              'YYYY-MM-DD HH:mm:ss',
+            );
+            lastConversation.message_id = messageIdRef.current;
           }
-          setConversation(prev => {
-            const newConversation = [...prev];
-            if (newConversation[newConversation.length - 1]) {
-              newConversation[newConversation.length - 1].a = value;
-              newConversation[newConversation.length - 1].update_time =
-                dayjs().format('YYYY-MM-DD HH:mm:ss');
-              newConversation[newConversation.length - 1].message_id =
-                messageIdRef.current;
-            }
-            return newConversation;
-          });
-          return '';
+          return newConversation;
         });
       },
     });
@@ -623,7 +590,9 @@ const AiQaContent: React.FC<{
         id: cid,
       }).then(res => {
         if (res.messages) {
-          let current: Partial<ConversationItem> = {};
+          let current: Partial<ConversationItem> = {
+            chunk_result: [],
+          };
           res.messages.forEach(message => {
             if (message.role === 'user') {
               if (current.q) {
@@ -640,6 +609,7 @@ const AiQaContent: React.FC<{
               }
               current = {
                 q: message.content,
+                chunk_result: [],
               };
             } else if (message.role === 'assistant') {
               if (current.q) {
@@ -654,7 +624,6 @@ const AiQaContent: React.FC<{
                 current.source = 'history';
                 conversation.push(current as ConversationItem);
                 current = {};
-                setThinkingContent(thinkingContent);
               }
             }
           });
@@ -673,150 +642,59 @@ const AiQaContent: React.FC<{
           }
         }
         setConversation(conversation);
-        setIsScrolling(false);
+        setShouldAutoScroll(false);
       });
     }
   }, []);
 
   useEffect(() => {
-    if (!loading && isScrolling) {
-      setTimeout(() => {
-        scrollToBottom();
-      });
+    if (!loading) {
+      scrollToBottom();
     }
-  }, [loading, isScrolling, scrollToBottom]);
+  }, [loading]);
 
-  // 监听滚动事件
   useEffect(() => {
-    const container = document.querySelector('.conversation-container');
-    if (!container) return;
-
-    container.addEventListener('scroll', handleScrollEvent);
-
-    return () => {
-      container.removeEventListener('scroll', handleScrollEvent);
-    };
-  }, [handleScrollEvent]);
+    if (conversation.length > 0) {
+      scrollToBottom();
+    }
+  }, [conversation]);
 
   return (
-    <Box sx={{ flex: 1 }}>
-      <Stack
+    <StyledMainContainer>
+      <StyledConversationContainer
         direction='column'
         gap={2}
         className='conversation-container'
         sx={{
-          maxHeight: 'calc(100vh - 334px)',
-          overflow: 'auto',
-          scrollbarWidth: 'none',
-          msOverflowStyle: 'none',
-          '&::-webkit-scrollbar': {
-            display: 'none',
-          },
           mb: conversation?.length > 0 ? 2 : 0,
         }}
       >
         {conversation.map((item, index) => (
-          <Box key={index}>
-            <Accordion
-              key={index}
-              defaultExpanded={true}
-              sx={{
-                p: 0,
-                border: 'none',
-                '&:before': {
-                  content: '""',
-                  height: 0,
-                },
-                bgcolor: 'background.default',
-              }}
-            >
-              <AccordionSummary
+          <StyledConversationItem key={index}>
+            <StyledAccordion key={index} defaultExpanded={true}>
+              <StyledAccordionSummary
                 expandIcon={<ExpandMoreIcon sx={{ fontSize: 18 }} />}
-                sx={{
-                  px: 2,
-                  py: 1,
-                  userSelect: 'text',
-                  borderRadius: '10px',
-                  backgroundColor: 'background.paper3',
-                  border: '1px solid',
-                  borderColor: 'divider',
-                }}
               >
-                <Box
-                  sx={{
-                    fontWeight: '700',
-                    fontSize: 16,
-                    lineHeight: '24px',
-                    wordBreak: 'break-all',
-                  }}
-                >
-                  {item.q}
-                </Box>
-              </AccordionSummary>
-              <AccordionDetails sx={{ p: 2, borderTop: 'none' }}>
-                {(index === conversation.length - 1
-                  ? chunkResult.length > 0
-                  : item.chunk_result.length > 0) && (
-                  <Accordion
-                    sx={{
-                      bgcolor: 'transparent',
-                      border: 'none',
-                      p: 0,
-                      pb: 2,
-                    }}
-                    defaultExpanded
-                  >
-                    {(index === conversation.length - 1
-                      ? chunkResult.length > 0
-                      : item.chunk_result.length > 0) && (
-                      <AccordionSummary
-                        expandIcon={<ExpandMoreIcon sx={{ fontSize: 16 }} />}
-                        sx={{
-                          justifyContent: 'flex-start',
-                          gap: 2,
-                          '.MuiAccordionSummary-content': {
-                            flexGrow: 0,
-                          },
-                        }}
-                      >
-                        <Typography
-                          variant='body2'
-                          sx={{ fontSize: 12, color: 'text.tertiary' }}
-                        >
-                          共找到{' '}
-                          {index === conversation.length - 1
-                            ? chunkResult.length
-                            : item.chunk_result.length}{' '}
-                          个结果
-                        </Typography>
-                      </AccordionSummary>
-                    )}
-
-                    <AccordionDetails
-                      sx={{
-                        pt: 0,
-                        pl: 2,
-                        borderTop: 'none',
-                        borderLeft: '1px solid',
-                        borderColor: 'divider',
-                      }}
+                <StyledQuestionText>{item.q}</StyledQuestionText>
+              </StyledAccordionSummary>
+              <StyledAccordionDetails>
+                {item.chunk_result.length > 0 && (
+                  <StyledChunkAccordion defaultExpanded>
+                    <StyledChunkAccordionSummary
+                      expandIcon={<ExpandMoreIcon sx={{ fontSize: 16 }} />}
                     >
+                      <Typography
+                        variant='body2'
+                        sx={{ fontSize: 12, color: 'text.tertiary' }}
+                      >
+                        共找到 {item.chunk_result.length} 个结果
+                      </Typography>
+                    </StyledChunkAccordionSummary>
+
+                    <StyledChunkAccordionDetails>
                       <Stack gap={1}>
-                        {(index === conversation.length - 1
-                          ? chunkResult
-                          : item.chunk_result
-                        ).map((chunk, index) => (
-                          <Box
-                            key={index}
-                            sx={{
-                              cursor: 'pointer',
-                              '&:hover': {
-                                '.hover-primary': {
-                                  color: 'primary.main',
-                                },
-                              },
-                            }}
-                          >
+                        {item.chunk_result.map((chunk, index) => (
+                          <StyledChunkItem key={index}>
                             <Typography
                               variant='body2'
                               className='hover-primary'
@@ -827,59 +705,26 @@ const AiQaContent: React.FC<{
                             >
                               {chunk.name}
                             </Typography>
-                          </Box>
+                          </StyledChunkItem>
                         ))}
                       </Stack>
-                    </AccordionDetails>
-                  </Accordion>
+                    </StyledChunkAccordionDetails>
+                  </StyledChunkAccordion>
                 )}
 
-                {/* {index === conversation.length - 1 &&
-                  loading &&
-                  !answer &&
-                  !item.a &&
-                  chunkResult.length === 0 && (
-                    <>
-                      <LoadingContent thinking={thinking} />
-                    </>
-                  )} */}
-                {index === conversation.length - 1 &&
-                  loading &&
-                  !isChunkResult &&
-                  !thinkingContent && (
-                    <>
-                      <LoadingContent thinking={thinking} />
-                    </>
-                  )}
+                {index === conversation.length - 1 && loading && (
+                  <>
+                    <LoadingContent thinking={thinking} />
+                  </>
+                )}
 
-                {(index === conversation.length - 1
-                  ? !!thinkingContent
-                  : !!item.thinking_content) && (
-                  <Accordion
-                    sx={{
-                      bgcolor: 'transparent',
-                      border: 'none',
-                      p: 0,
-                      pb: 2,
-                      '&:before': {
-                        content: '""',
-                        height: 0,
-                      },
-                    }}
-                    defaultExpanded
-                  >
-                    <AccordionSummary
+                {!!item.thinking_content && (
+                  <StyledThinkingAccordion defaultExpanded>
+                    <StyledThinkingAccordionSummary
                       expandIcon={<ExpandMoreIcon sx={{ fontSize: 16 }} />}
-                      sx={{
-                        justifyContent: 'flex-start',
-                        gap: 2,
-                        '.MuiAccordionSummary-content': {
-                          flexGrow: 0,
-                        },
-                      }}
                     >
                       <Stack direction='row' alignItems='center' gap={1}>
-                        {isThinking && (
+                        {thinking === 2 && (
                           <Image
                             src={aiLoading}
                             alt='ai-loading'
@@ -892,57 +737,33 @@ const AiQaContent: React.FC<{
                           variant='body2'
                           sx={{ fontSize: 12, color: 'text.tertiary' }}
                         >
-                          {isThinking ? '思考中...' : '已思考'}
+                          {thinking === 2 ? '思考中...' : '已思考'}
                         </Typography>
                       </Stack>
-                    </AccordionSummary>
+                    </StyledThinkingAccordionSummary>
 
-                    <AccordionDetails
-                      sx={{
-                        pt: 0,
-                        pl: 2,
-                        borderTop: 'none',
-                        borderLeft: '1px solid',
-                        borderColor: 'divider',
-                        '.markdown-body': {
-                          opacity: 0.75,
-                          fontSize: 12,
-                        },
-                      }}
-                    >
+                    <StyledThinkingAccordionDetails>
                       <MarkDown2
-                        content={
-                          index === conversation.length - 1
-                            ? thinkingContent
-                            : item.thinking_content || ''
-                        }
+                        content={item.thinking_content || ''}
+                        autoScroll={false}
                       />
-                    </AccordionDetails>
-                  </Accordion>
+                    </StyledThinkingAccordionDetails>
+                  </StyledThinkingAccordion>
                 )}
 
                 {item.source === 'history' ? (
                   <MarkDown content={item.a} />
-                ) : index === conversation.length - 1 ? (
-                  // 最后一个对话项：显示合并后的内容，避免闪烁
-                  <MarkDown2 content={item.a || answer || ''} />
                 ) : (
-                  // 非最后一个对话项：正常显示
-                  <MarkDown2 content={item.a} />
+                  <MarkDown2 content={item.a} autoScroll={false} />
                 )}
-              </AccordionDetails>
-            </Accordion>
+              </StyledAccordionDetails>
+            </StyledAccordion>
             {(index !== conversation.length - 1 || !loading) && (
-              <Stack
+              <StyledActionStack
                 direction={mobile ? 'column' : 'row'}
                 alignItems={mobile ? 'flex-start' : 'center'}
                 justifyContent='space-between'
                 gap={mobile ? 1 : 3}
-                sx={{
-                  fontSize: 12,
-                  color: 'text.tertiary',
-                  mt: 2,
-                }}
               >
                 <Stack direction='row' gap={3} alignItems='center'>
                   <span>生成于 {dayjs(item.update_time).fromNow()}</span>
@@ -985,60 +806,18 @@ const AiQaContent: React.FC<{
                     </>
                   )}
                 </Stack>
-              </Stack>
+              </StyledActionStack>
             )}
-          </Box>
+          </StyledConversationItem>
         ))}
-      </Stack>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 1,
-        }}
-      >
-        <Stack
-          sx={{
-            px: 1.5,
-            py: 1,
-            borderRadius: '10px',
-            border: '1px solid',
-            borderColor: 'background.paper3',
-            display: 'flex',
-            alignItems: 'flex-end',
-            gap: 2,
-            bgcolor: 'background.paper3',
-            transition: 'border-color 0.2s ease-in-out',
-            '&:hover': {
-              borderColor: 'primary.main',
-            },
-            '&:focus-within': {
-              borderColor: 'dark.main',
-            },
-          }}
-        >
+      </StyledConversationContainer>
+      <StyledInputContainer>
+        <StyledInputWrapper>
           {/* 多张图片预览 */}
           {uploadedImages.length > 0 && (
-            <Stack
-              direction='row'
-              flexWrap='wrap'
-              gap={1}
-              sx={{
-                width: '100%',
-                zIndex: 1,
-              }}
-            >
+            <StyledImagePreviewStack direction='row' flexWrap='wrap' gap={1}>
               {uploadedImages.map(image => (
-                <Box
-                  key={image.id}
-                  sx={{
-                    position: 'relative',
-                    borderRadius: '8px',
-                    overflow: 'hidden',
-                    border: '1px solid',
-                    borderColor: 'divider',
-                  }}
-                >
+                <StyledImagePreviewItem key={image.id}>
                   <Image
                     src={image.url}
                     alt='uploaded'
@@ -1048,59 +827,22 @@ const AiQaContent: React.FC<{
                       objectFit: 'cover',
                     }}
                   />
-                  <IconButton
+                  <StyledImageRemoveButton
                     size='small'
                     onClick={() => handleRemoveImage(image.id)}
-                    sx={{
-                      position: 'absolute',
-                      top: 2,
-                      right: 2,
-                      width: 16,
-                      height: 16,
-                      bgcolor: 'background.paper',
-                      border: '1px solid',
-                      borderColor: 'divider',
-
-                      transition: 'opacity 0.2s',
-                      '&:hover': {
-                        bgcolor: 'background.paper',
-                      },
-                    }}
                   >
                     <CloseIcon sx={{ fontSize: 10 }} />
-                  </IconButton>
-                </Box>
+                  </StyledImageRemoveButton>
+                </StyledImagePreviewItem>
               ))}
-            </Stack>
+            </StyledImagePreviewStack>
           )}
-
-          <TextField
+          <StyledTextField
             fullWidth
             multiline
             rows={2}
             disabled={loading}
             ref={inputRef}
-            sx={{
-              bgcolor: 'background.paper3',
-              '.MuiInputBase-root': {
-                p: 0,
-                overflow: 'hidden',
-                height: '52px !important',
-              },
-              textarea: {
-                borderRadius: 0,
-                '&::-webkit-scrollbar': {
-                  display: 'none',
-                },
-                scrollbarWidth: 'none',
-                msOverflowStyle: 'none',
-                p: '2px',
-              },
-
-              fieldset: {
-                border: 'none',
-              },
-            }}
             size='small'
             value={input}
             onChange={handleInputChange}
@@ -1123,11 +865,10 @@ const AiQaContent: React.FC<{
             placeholder={placeholder}
             autoComplete='off'
           />
-          <Stack
+          <StyledActionButtonStack
             direction='row'
             alignItems='center'
             justifyContent='space-between'
-            sx={{ width: '100%' }}
           >
             <input
               ref={fileInputRef}
@@ -1186,9 +927,9 @@ const AiQaContent: React.FC<{
                 </IconButton>
               )}
             </Box>
-          </Stack>
-        </Stack>
-      </Box>
+          </StyledActionButtonStack>
+        </StyledInputWrapper>
+      </StyledInputContainer>
       <Feedback
         open={open}
         onClose={() => setOpen(false)}
@@ -1199,68 +940,27 @@ const AiQaContent: React.FC<{
       {showFuzzySuggestions &&
         fuzzySuggestions.length > 0 &&
         conversation.length === 0 && (
-          <Stack
-            sx={{
-              mt: 1,
-              position: 'relative',
-              zIndex: 1000,
-            }}
-            gap={0.5}
-          >
+          <StyledFuzzySuggestionsStack gap={0.5}>
             {fuzzySuggestions.map((suggestion, index) => (
-              <Box
+              <StyledFuzzySuggestionItem
                 key={index}
                 onClick={() => handleFuzzySuggestionClick(suggestion)}
-                sx={{
-                  py: 1,
-                  px: 2,
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  bgcolor: 'transparent',
-                  color: 'text.primary',
-                  '&:hover': {
-                    bgcolor: 'action.hover',
-                  },
-                  display: 'flex',
-                  alignItems: 'center',
-                  width: 'auto',
-                  fontSize: 14,
-                  fontWeight: 400,
-                }}
               >
                 {highlightMatch(suggestion, input)}
-              </Box>
+              </StyledFuzzySuggestionItem>
             ))}
-          </Stack>
+          </StyledFuzzySuggestionsStack>
         )}
 
       {/* 原始搜索建议列表 - 只在没有模糊搜索建议时显示 */}
       {!showFuzzySuggestions &&
         hotSearch.length > 0 &&
         conversation.length === 0 && (
-          <Stack sx={{ mt: 2 }} gap={1}>
+          <StyledHotSearchStack gap={1}>
             {hotSearch.map((suggestion, index) => (
-              <Box
+              <StyledHotSearchItem
                 key={index}
                 onClick={() => onSuggestionClick(suggestion)}
-                sx={{
-                  py: '6px',
-                  px: 2,
-                  mb: 1,
-                  borderRadius: '10px',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  bgcolor: '#F8F9FA',
-                  color: 'text.secondary',
-                  '&:hover': {
-                    color: 'primary.main',
-                  },
-                  alignSelf: 'flex-start',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  width: 'auto',
-                }}
               >
                 <Typography
                   variant='body2'
@@ -1271,11 +971,11 @@ const AiQaContent: React.FC<{
                 >
                   {suggestion} →
                 </Typography>
-              </Box>
+              </StyledHotSearchItem>
             ))}
-          </Stack>
+          </StyledHotSearchStack>
         )}
-    </Box>
+    </StyledMainContainer>
   );
 };
 
