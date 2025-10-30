@@ -320,7 +320,14 @@ const Banner = React.memo(
     return (
       <StyledBanner
         sx={{
-          ...(bg_url ? { backgroundImage: `url(${bg_url})` } : {}),
+          ...(bg_url
+            ? {
+                backgroundImage: `url(${bg_url})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+              }
+            : {}),
         }}
       >
         <StyledTopicBox sx={{ alignItems: 'flex-start', gap: 0, py: '200px' }}>

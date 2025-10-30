@@ -1,5 +1,5 @@
 import { CSSProperties, memo, useRef, useCallback } from 'react';
-import { styled } from '@mui/material';
+import { styled, alpha } from '@mui/material';
 import { StyledTopicTitle } from '../component/styledCommon';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { useFadeInText } from '../hooks/useGsapAnimation';
@@ -79,15 +79,13 @@ const StyledSwiperSlideImg = styled('img')(({ theme }) => ({
 }));
 
 const StyledSwiperSlideTitle = styled('h3')(({ theme }) => ({
-  // @ts-ignore
-  color: theme.palette.light.main,
+  color: theme.palette.text.primary,
   fontSize: 20,
   fontWeight: 600,
 }));
 
 const StyledSwiperSlideDesc = styled('h3')(({ theme }) => ({
-  // @ts-ignore
-  color: theme.palette.light.main,
+  color: alpha(theme.palette.text.primary, 0.5),
   fontSize: 14,
   fontWeight: 400,
 }));
@@ -152,8 +150,8 @@ const Carousel = ({
         },
       }}
     >
-      <StyledCarouselInner sx={{ backgroundColor: bgColor }}>
-        <StyledTopicTitle ref={titleRef} sx={{ color: titleColor }}>
+      <StyledCarouselInner>
+        <StyledTopicTitle ref={titleRef} sx={{ color: 'text.primary' }}>
           {title}
         </StyledTopicTitle>
         <Swiper
