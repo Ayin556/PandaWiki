@@ -9,7 +9,6 @@ import {
   Carousel,
 } from '@panda-wiki/ui';
 import { DomainRecommendNodeListResp } from '@/request/types';
-import { useRouter } from 'next/navigation';
 
 import { useStore } from '@/provider';
 

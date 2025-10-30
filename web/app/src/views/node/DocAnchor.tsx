@@ -167,7 +167,7 @@ const DocAnchor = ({ headings }: DocAnchorProps) => {
       sx={{
         position: 'sticky',
         zIndex: 5,
-        top: 114,
+        top: 130,
         flexShrink: 0,
         width: 240,
       }}

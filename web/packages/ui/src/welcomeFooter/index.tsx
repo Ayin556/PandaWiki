@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { Box, Divider, Stack, Link } from '@mui/material';
+import { Box, Divider, Stack, Link, alpha } from '@mui/material';
 import { useState } from 'react';
 import { IconDianhua, IconWeixingongzhonghao } from '@panda-wiki/icons';
 import Overlay from './Overlay';
@@ -80,20 +80,18 @@ const Footer = React.memo(
         <>
           <Box
             id='footer'
-            sx={{
+            sx={theme => ({
               position: 'relative',
               fontSize: '12px',
               fontWeight: 'normal',
               zIndex: 1,
               px: 3,
-              bgcolor: 'background.footer',
-              borderTop: '1px solid',
-              borderColor: 'divider',
               width: '100%',
               '.MuiLink-root': {
                 color: 'inherit',
               },
-            }}
+              bgcolor: alpha(theme.palette.text.primary, 0.05),
+            })}
           >
             {showBrand && (
               <Box
@@ -120,7 +118,7 @@ const Footer = React.memo(
                           fontWeight: 'bold',
                           lineHeight: '32px',
                           fontSize: 24,
-                          color: 'white',
+                          color: 'text.primary',
                         }}
                       >
                         {footerSetting?.brand_name}
@@ -128,12 +126,12 @@ const Footer = React.memo(
                     </Stack>
                     {footerSetting?.brand_desc && (
                       <Box
-                        sx={{
+                        sx={theme => ({
                           fontSize: 12,
                           lineHeight: '26px',
                           mt: 2,
-                          color: 'rgba(255, 255, 255, 0.70)',
-                        }}
+                          color: alpha(theme.palette.text.primary, 0.7),
+                        })}
                       >
                         {footerSetting.brand_desc}
                       </Box>
@@ -145,10 +143,10 @@ const Footer = React.memo(
                             <Stack
                               direction={'row'}
                               key={index}
-                              sx={{
+                              sx={theme => ({
                                 position: 'relative',
-                                color: 'rgba(255, 255, 255, 0.70)',
-                              }}
+                                color: alpha(theme.palette.text.primary, 0.7),
+                              })}
                               gap={1}
                               onClick={() => {
                                 setCurOverlayType(account.channel || '');
@@ -192,16 +190,17 @@ const Footer = React.memo(
                                   <Stack
                                     direction={'column'}
                                     alignItems={'center'}
-                                    bgcolor={'#fff'}
                                     p={1.5}
-                                    sx={{
+                                    sx={theme => ({
                                       position: 'absolute',
                                       top: '40px',
                                       left: 0,
                                       boxShadow:
-                                        ' 0px 4px 8px 0px rgba(255,255,255,0.25)',
+                                        ' 0px 4px 8px 0px ' +
+                                        alpha(theme.palette.text.primary, 0.25),
                                       borderRadius: '4px',
-                                    }}
+                                      bgcolor: theme.palette.background.default,
+                                    })}
                                     gap={1}
                                     display={'none'}
                                     zIndex={999}
@@ -218,7 +217,7 @@ const Footer = React.memo(
                                         sx={{
                                           fontSize: '12px',
                                           lineHeight: '16px',
-                                          color: '#21222D',
+                                          color: 'text.primary',
                                           maxWidth: '83px',
 
                                           textAlign: 'center',
@@ -259,13 +258,18 @@ const Footer = React.memo(
                           fontSize: 14,
                           lineHeight: '24px',
                           mb: 1,
-                          color: '#ffffff',
+                          color: 'text.primary',
                         }}
                       >
                         {group.name}
                       </Box>
                       {group.links?.map(link => (
-                        <Box color={'rgba(255,255,255,0.5)'} key={link.name}>
+                        <Box
+                          sx={theme => ({
+                            color: alpha(theme.palette.text.primary, 0.5),
+                          })}
+                          key={link.name}
+                        >
                           <Link
                             href={link?.url || ''}
                             target='_blank'
@@ -285,34 +289,33 @@ const Footer = React.memo(
               footerSetting?.brand_groups?.length === 0
             ) && (
               <Stack
-                sx={{
+                sx={theme => ({
                   height: '1px',
                   width: '100%',
-                  bgcolor: 'rgba(255, 255, 255, 0.10)',
+                  bgcolor: alpha(theme.palette.text.primary, 0.1),
                   mt: 5,
                   mb: 3,
-                }}
+                })}
               ></Stack>
             )}
-
             {!!footerSetting?.corp_name && (
               <Box
-                sx={{
+                sx={theme => ({
                   height: 40,
                   lineHeight: '40px',
-                  color: 'rgba(255, 255, 255, 0.30)',
-                }}
+                  color: alpha(theme.palette.text.primary, 0.3),
+                })}
               >
                 {footerSetting?.corp_name}
               </Box>
             )}
             {!!footerSetting?.icp && (
               <Box
-                sx={{
+                sx={theme => ({
                   height: 40,
                   lineHeight: '40px',
-                  color: 'rgba(255, 255, 255, 0.30)',
-                }}
+                  color: alpha(theme.palette.text.primary, 0.3),
+                })}
               >
                 {footerSetting?.icp}
               </Box>
@@ -322,11 +325,11 @@ const Footer = React.memo(
                 direction={'row'}
                 alignItems={'center'}
                 gap={0.5}
-                sx={{
+                sx={theme => ({
                   height: 40,
                   lineHeight: '40px',
-                  color: 'rgba(255, 255, 255, 0.30)',
-                }}
+                  color: alpha(theme.palette.text.primary, 0.3),
+                })}
               >
                 <Link
                   href={'https://pandawiki.docs.baizhi.cloud/'}
@@ -349,14 +352,15 @@ const Footer = React.memo(
           </Box>
           <Overlay open={open} onClose={setOpen}>
             <Stack
-              sx={{
+              sx={theme => ({
                 width: '270px',
                 alignItems: 'center',
                 borderRadius: '4px',
-                boxShadow: '0px 4px 8px 0px rgba(255,255,255,0.25)',
-                bgcolor: '#fff',
+                boxShadow:
+                  '0px 4px 8px 0px ' + alpha(theme.palette.text.primary, 0.25),
+                bgcolor: theme.palette.background.default,
                 padding: 3,
-              }}
+              })}
               gap={2}
             >
               {curOverlayType === 'wechat_oa' && (
@@ -367,11 +371,11 @@ const Footer = React.memo(
                     height={'222px'}
                   ></img>
                   <Box
-                    sx={{
+                    sx={theme => ({
                       fontSize: '24px',
                       lineHeight: '32px',
-                      color: '#000',
-                    }}
+                      color: theme.palette.text.primary,
+                    })}
                   >
                     {wechatData?.text}
                   </Box>
@@ -380,12 +384,12 @@ const Footer = React.memo(
               {curOverlayType === 'phone' && (
                 <>
                   <Box
-                    sx={{
+                    sx={theme => ({
                       fontSize: '24px',
                       lineHeight: '32px',
-                      color: '#000',
+                      color: theme.palette.text.primary,
                       width: '100%',
-                    }}
+                    })}
                     onClick={() => {
                       window.location.href = `tel:${phoneData?.phone}`;
                     }}
@@ -396,22 +400,25 @@ const Footer = React.memo(
                     direction={'row'}
                     alignItems={'center'}
                     width={'100%'}
-                    sx={{
+                    sx={theme => ({
                       fontSize: '24px',
                       lineHeight: '32px',
-                      color: '#000',
-                    }}
+                      color: theme.palette.text.primary,
+                    })}
                     gap={1}
                   >
                     <IconDianhua
-                      sx={{ fontSize: '22px', color: 'rgba(33, 34, 45, 0.70)' }}
+                      sx={theme => ({
+                        fontSize: '24px',
+                        color: alpha(theme.palette.text.primary, 0.7),
+                      })}
                     ></IconDianhua>
                     <Box
-                      sx={{
+                      sx={theme => ({
                         fontSize: '24px',
                         lineHeight: '32px',
-                        color: '#000',
-                      }}
+                        color: theme.palette.text.primary,
+                      })}
                     >
                       {phoneData?.text}
                     </Box>
@@ -429,43 +436,23 @@ const Footer = React.memo(
         style={{
           width: '100%',
         }}
-        sx={{
+        sx={theme => ({
           px: mobile ? 3 : 5,
           display: 'flex',
           flexDirection: 'row',
           justifyContent: 'center',
           fontSize: '12px',
           zIndex: 1,
-          color: '#fff',
-          bgcolor: 'background.footer',
-          ...(showBrand && {
-            borderTop: '1px solid',
-            borderColor: 'divider',
-          }),
+          color: 'text.primary',
+          bgcolor: alpha(theme.palette.text.primary, 0.05),
           '.MuiLink-root': {
             color: 'inherit',
           },
-        }}
+        })}
       >
         <Box
           sx={{
             width: '100%',
-
-            ...(isDocPage &&
-              !mobile &&
-              docWidth !== 'full' && {
-                width: `calc(${DocWidth[docWidth as keyof typeof DocWidth].value}px + ${catalogWidth}px + 192px + 240px)`,
-                // width:
-                //   DocWidth[docWidth as keyof typeof DocWidth].value +
-                //   catalogWidth +
-                //   192 +
-                //   240,
-                // maxWidth: `calc(100% - 265px - 192px)`,
-                // maxWidth: `calc(100vw - 80px)`,
-                // ...(docWidth !== 'full' && {
-                //   width: `calc(${catalogWidth}px + 192px + 264px + ${DocWidth[docWidth as keyof typeof DocWidth].value}px)`,
-                // }),
-              }),
           }}
         >
           {showBrand && (
@@ -498,14 +485,14 @@ const Footer = React.memo(
                         <img
                           src={footerSetting.brand_logo}
                           alt='PandaWiki'
-                          height={24}
+                          height={36}
                         />
                       )}
                       <Box
                         sx={{
                           fontWeight: 'bold',
                           lineHeight: '32px',
-                          fontSize: 20,
+                          fontSize: 24,
                         }}
                       >
                         {footerSetting?.brand_name}
@@ -514,11 +501,11 @@ const Footer = React.memo(
 
                     {footerSetting?.brand_desc && (
                       <Box
-                        sx={{
-                          fontSize: 12,
+                        sx={theme => ({
+                          fontSize: 14,
                           lineHeight: '26px',
-                          color: 'rgba(255, 255, 255, 0.7)',
-                        }}
+                          color: alpha(theme.palette.text.primary, 0.7),
+                        })}
                       >
                         {footerSetting.brand_desc}
                       </Box>
@@ -530,32 +517,35 @@ const Footer = React.memo(
                             <Stack
                               direction={'row'}
                               key={index}
-                              sx={{
+                              alignItems='center'
+                              sx={theme => ({
                                 position: 'relative',
-                                '&:hover': { color: '#fff' },
+                                '&:hover': {
+                                  color: theme.palette.primary.main,
+                                },
                                 '&:hover .popup': {
                                   display: 'flex !important',
                                 },
-                                color: 'rgba(255, 255, 255, 0.70)',
+                                color: alpha(theme.palette.text.primary, 0.7),
                                 cursor: 'default',
-                              }}
+                              })}
                               gap={1}
                             >
                               {account.channel === 'wechat_oa' && (
                                 <IconWeixingongzhonghao
-                                  sx={{ fontSize: '20px', color: 'inherit' }}
+                                  sx={{ fontSize: '18px', color: 'inherit' }}
                                 ></IconWeixingongzhonghao>
                               )}
                               {account.channel === 'phone' && (
                                 <IconDianhua
-                                  sx={{ fontSize: '20px', color: 'inherit' }}
+                                  sx={{ fontSize: '16px', color: 'inherit' }}
                                 ></IconDianhua>
                               )}
 
                               <Box
                                 sx={{
                                   lineHeight: '24px',
-                                  fontSize: '12px',
+                                  fontSize: '14px',
                                   color: 'inherit',
                                 }}
                               >
@@ -567,17 +557,18 @@ const Footer = React.memo(
                                     className={'popup'}
                                     direction={'column'}
                                     alignItems={'center'}
-                                    bgcolor={'#fff'}
                                     p={1.5}
-                                    sx={{
+                                    sx={theme => ({
                                       position: 'absolute',
                                       bottom: '100%',
                                       transform: 'translateY(-10px)',
                                       left: 0,
                                       boxShadow:
-                                        ' 0px 4px 8px 0px rgba(255,255,255,0.25)',
+                                        ' 0px 4px 8px 0px ' +
+                                        alpha(theme.palette.text.primary, 0.25),
                                       borderRadius: '4px',
-                                    }}
+                                      bgcolor: theme.palette.background.default,
+                                    })}
                                     gap={1}
                                     display={'none'}
                                     zIndex={999}
@@ -594,7 +585,7 @@ const Footer = React.memo(
                                         sx={{
                                           fontSize: '12px',
                                           lineHeight: '16px',
-                                          color: '#21222D',
+                                          color: 'text.primary',
                                           maxWidth: '120px',
                                           textAlign: 'center',
                                         }}
@@ -608,27 +599,28 @@ const Footer = React.memo(
                                 account?.phone && (
                                   <Stack
                                     className={'popup'}
-                                    bgcolor={'#fff'}
                                     px={1.5}
                                     py={1}
-                                    sx={{
+                                    sx={theme => ({
                                       position: 'absolute',
                                       bottom: '100%',
                                       transform: 'translateY(-10px)',
                                       left: 0,
                                       boxShadow:
-                                        ' 0px 4px 8px 0px rgba(255,255,255,0.25)',
+                                        '0px 4px 8px 0px ' +
+                                        alpha(theme.palette.text.primary, 0.25),
                                       borderRadius: '4px',
-                                    }}
+                                      bgcolor: theme.palette.background.default,
+                                    })}
                                     display={'none'}
                                     zIndex={999}
                                   >
                                     {account.phone && (
                                       <Box
                                         sx={{
-                                          fontSize: '12px',
+                                          fontSize: '14px',
                                           lineHeight: '16px',
-                                          color: '#21222D',
+                                          color: 'text.primary',
                                           textAlign: 'center',
                                         }}
                                       >
@@ -648,18 +640,16 @@ const Footer = React.memo(
                 <Stack
                   direction={'row'}
                   width={'100%'}
-                  justifyContent={
-                    (footerSetting?.brand_groups?.length || 0) > 1
-                      ? 'space-around'
-                      : 'flex-start'
-                  }
+                  justifyContent={'flex-start'}
+                  flexWrap='wrap'
                 >
                   {footerSetting?.brand_groups?.map(group => (
                     <Stack
                       gap={1.5}
                       key={group.name}
                       sx={{
-                        fontSize: 12,
+                        flex: '0 0 33.33%',
+                        fontSize: 14,
                         lineHeight: '22px',
                         minWidth: '100px',
                         '& a:hover': {
@@ -669,7 +659,7 @@ const Footer = React.memo(
                     >
                       <Box
                         sx={{
-                          fontSize: 14,
+                          fontSize: 16,
                           lineHeight: '24px',
                           mb: 1,
                         }}
@@ -678,7 +668,9 @@ const Footer = React.memo(
                       </Box>
                       {group.links?.map(link => (
                         <Box
-                          color={'rgba(255, 255, 255, 0.50)'}
+                          sx={theme => ({
+                            color: alpha(theme.palette.text.primary, 0.5),
+                          })}
                           key={link.name}
                         >
                           <Link
@@ -701,11 +693,11 @@ const Footer = React.memo(
             footerSetting?.brand_groups?.length === 0
           ) && (
             <Stack
-              sx={{
-                bgcolor: 'rgba(236, 238, 241, 0.10)',
+              sx={theme => ({
+                bgcolor: alpha(theme.palette.text.primary, 0.1),
                 width: '100%',
                 height: '1px',
-              }}
+              })}
             ></Stack>
           )}
           <Box
@@ -724,7 +716,9 @@ const Footer = React.memo(
                 direction={'row'}
                 alignItems={'center'}
                 gap={1}
-                sx={{ color: 'rgba(255, 255, 255, 0.30)' }}
+                sx={theme => ({
+                  color: alpha(theme.palette.text.primary, 0.5),
+                })}
               >
                 {!!footerSetting?.corp_name && (
                   <Box>{footerSetting?.corp_name}</Box>
@@ -733,11 +727,11 @@ const Footer = React.memo(
                   <>
                     <Divider
                       orientation='vertical'
-                      sx={{
+                      sx={theme => ({
                         mx: 0.5,
                         height: 16,
-                        borderColor: 'rgba(255, 255, 255, 0.30)',
-                      }}
+                        borderColor: alpha(theme.palette.text.primary, 0.1),
+                      })}
                     />
                     <Link href={`https://beian.miit.gov.cn/`} target='_blank'>
                       {footerSetting?.icp}
@@ -749,18 +743,20 @@ const Footer = React.memo(
                     {(footerSetting?.corp_name || footerSetting?.icp) && (
                       <Divider
                         orientation='vertical'
-                        sx={{
+                        sx={theme => ({
                           mx: 0.5,
                           height: 16,
-                          borderColor: 'rgba(255, 255, 255, 0.30)',
-                        }}
+                          borderColor: alpha(theme.palette.text.primary, 0.1),
+                        })}
                       />
                     )}
                     <Stack
                       direction={'row'}
                       alignItems={'center'}
                       gap={0.5}
-                      sx={{ color: 'rgba(255, 255, 255, 0.30)' }}
+                      sx={theme => ({
+                        color: alpha(theme.palette.text.primary, 0.5),
+                      })}
                     >
                       <Link
                         href={'https://pandawiki.docs.baizhi.cloud/'}
@@ -777,13 +773,8 @@ const Footer = React.memo(
                             },
                           }}
                         >
-                          <img
-                            src={logo}
-                            alt='PandaWiki'
-                            width={16}
-                            height={16}
-                          />
                           <Box>本网站由 PandaWiki 提供技术支持</Box>
+                          <img src={logo} alt='PandaWiki' width={0} />
                         </Stack>
                       </Link>
                     </Stack>

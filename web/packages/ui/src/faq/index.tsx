@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { styled, Grid } from '@mui/material';
+import { styled, Grid, alpha } from '@mui/material';
 import {
   StyledTopicBox,
   StyledTopicTitle,
@@ -28,6 +28,7 @@ const StyledFaqItem = styled('a')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   gap: theme.spacing(2),
+  color: alpha(theme.palette.text.primary, 0.75),
   // @ts-ignore
   backgroundColor: theme.palette.background.paper3,
   ...theme.applyStyles('dark', {
@@ -50,7 +51,6 @@ const StyledFaqItem = styled('a')(({ theme }) => ({
     transform: 'translateY(-5px)',
     color: theme.palette.primary.main,
   },
-  opacity: 0,
 }));
 
 const StyledFaqItemTitle = styled('span')(({ theme }) => ({

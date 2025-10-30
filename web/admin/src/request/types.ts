@@ -324,6 +324,7 @@ export interface DomainAppSettings {
   web_app_custom_style?: DomainWebAppCustomSettings;
   /** WebAppLandingConfigs */
   web_app_landing_configs?: DomainWebAppLandingConfig[];
+  web_app_landing_theme?: DomainWebAppLandingTheme;
   wechat_app_agent_id?: string;
   wechat_app_corpid?: string;
   wechat_app_encodingaeskey?: string;
@@ -408,6 +409,7 @@ export interface DomainAppSettingsResp {
   web_app_custom_style?: DomainWebAppCustomSettings;
   /** WebApp Landing Settings */
   web_app_landing_configs?: DomainWebAppLandingConfigResp[];
+  web_app_landing_theme?: DomainWebAppLandingTheme;
   wechat_app_agent_id?: string;
   wechat_app_corpid?: string;
   wechat_app_encodingaeskey?: string;
@@ -856,6 +858,7 @@ export interface DomainNodeContentChunkSSE {
   emoji?: string;
   name?: string;
   node_id?: string;
+  node_path_names?: string[];
   summary?: string;
 }
 
@@ -1187,6 +1190,10 @@ export interface DomainWebAppLandingConfigResp {
   nodes?: DomainRecommendNodeListResp[];
   simple_doc_config?: DomainSimpleDocConfig;
   type?: string;
+}
+
+export interface DomainWebAppLandingTheme {
+  name?: string;
 }
 
 export interface DomainWecomAIBotSettings {

@@ -53,7 +53,7 @@ const CustomModal = ({ open, onCancel, refresh }: CustomModalProps) => {
   ]);
   const [curComponent, setCurComponent] = useState<Component>(components[0]);
   const [isEdit, setIsEdit] = useState(false);
-  const [scale, setScale] = useState(1);
+  const [scale, setScale] = useState(0.6);
   const [baseUrl, setBaseUrl] = useState('');
   const appPreviewData = useAppSelector(state => state.config.appPreviewData);
 
@@ -219,7 +219,7 @@ const CustomModal = ({ open, onCancel, refresh }: CustomModalProps) => {
 
   useEffect(() => {
     if (!open) {
-      setScale(1);
+      setScale(0.6);
     }
   }, [open]);
 
@@ -273,7 +273,7 @@ const CustomModal = ({ open, onCancel, refresh }: CustomModalProps) => {
                   fontWeight: 600,
                 }}
               >
-                自定义页面
+                自定义欢迎页
               </Typography>
               <Button
                 variant='contained'

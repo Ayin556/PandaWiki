@@ -32,6 +32,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import type { CSSProperties, MouseEvent } from 'react';
+import { THEME_TO_PALETTE } from '@panda-wiki/themes/constants';
 
 interface ShowContentProps {
   curComponent: Component;
@@ -375,11 +376,24 @@ const ShowContent = ({
 };
 
 const ThemeWrapper = ({ children }: { children: React.ReactNode }) => {
+  const { appPreviewData } = useAppSelector(state => state.config);
+
+  const theme = useMemo(() => {
+    return createTheme(
+      // @ts-expect-error themeOptions is not typed
+      {
+        ...themeOptions[0],
+        palette:
+          THEME_TO_PALETTE[
+            appPreviewData?.settings?.web_app_landing_theme?.name || 'blue'
+          ].palette,
+      },
+      ...themeOptions.slice(1),
+    );
+  }, [appPreviewData?.settings?.web_app_landing_theme?.name]);
+
   return (
-    <ThemeProvider
-      theme={createTheme(...(themeOptions as Parameters<typeof createTheme>))}
-      storageManager={null}
-    >
+    <ThemeProvider theme={theme} storageManager={null}>
       {children}
     </ThemeProvider>
   );

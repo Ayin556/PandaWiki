@@ -71,7 +71,7 @@ export const COMPONENTS_MAP = {
   header: {
     name: 'header',
     title: '顶部导航',
-    component: lazy(() => import('@panda-wiki/ui/header')),
+    component: lazy(() => import('@panda-wiki/ui/welcomeHeader')),
     config: lazy(() => import('./components/config/HeaderConfig')),
     fixed: true,
   },
@@ -125,7 +125,7 @@ export const COMPONENTS_MAP = {
   footer: {
     name: 'footer',
     title: '底部导航',
-    component: lazy(() => import('@panda-wiki/ui/footer')),
+    component: lazy(() => import('@panda-wiki/ui/welcomeFooter')),
     config: lazy(() => import('./components/config/FooterConfig')),
     fixed: true,
   },

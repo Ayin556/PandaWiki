@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { styled, Grid, Box, Button } from '@mui/material';
+import { styled, Grid, Box, Button, alpha } from '@mui/material';
 import {
   StyledTopicBox,
   StyledTopicTitle,
@@ -75,8 +75,7 @@ const StyledBasicDocItemSummary = styled('div')(({ theme }) => ({
   fontSize: 14,
   fontWeight: 400,
   height: 80,
-  // @ts-ignore
-  color: theme.palette.text.tertiary,
+  color: alpha(theme.palette.text.primary, 0.5),
 }));
 
 const StyledBasicDocItemMore = styled('a')(({ theme }) => ({

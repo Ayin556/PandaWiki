@@ -5,7 +5,10 @@ import Logo from '@/assets/images/logo.png';
 import { useStore } from '@/provider';
 import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
-import { Header as CustomHeader } from '@panda-wiki/ui';
+import {
+  Header as CustomHeader,
+  WelcomeHeader as WelcomeHeaderComponent,
+} from '@panda-wiki/ui';
 import QaModal from '../QaModal';
 interface HeaderProps {
   isDocPage?: boolean;
@@ -53,6 +56,39 @@ const Header = ({ isDocPage = false, isWelcomePage = false }: HeaderProps) => {
     >
       <QaModal />
     </CustomHeader>
+  );
+};
+
+export const WelcomeHeader = () => {
+  const { mobile = false, kbDetail, catalogWidth, setQaModalOpen } = useStore();
+  const handleSearch = (value?: string, type: 'chat' | 'search' = 'chat') => {
+    if (value?.trim()) {
+      if (type === 'chat') {
+        sessionStorage.setItem('chat_search_query', value.trim());
+        setQaModalOpen?.(true);
+      } else {
+        sessionStorage.setItem('chat_search_query', value.trim());
+      }
+    }
+  };
+  return (
+    <WelcomeHeaderComponent
+      isDocPage={false}
+      mobile={mobile}
+      docWidth='full'
+      catalogWidth={catalogWidth}
+      logo={kbDetail?.settings?.icon || Logo.src}
+      title={kbDetail?.settings?.title}
+      placeholder={
+        kbDetail?.settings?.web_app_custom_style?.header_search_placeholder
+      }
+      showSearch
+      btns={kbDetail?.settings?.btns}
+      onSearch={handleSearch}
+      onQaClick={() => setQaModalOpen?.(true)}
+    >
+      <QaModal />
+    </WelcomeHeaderComponent>
   );
 };
 

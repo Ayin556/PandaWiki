@@ -1,2 +1,10 @@
 export { default as darkPalette } from './dark';
 export { default as lightPalette } from './light';
+export { default as bluePalette } from './blue';
+export { default as orangePalette } from './orange';
+export { default as greenPalette } from './green';
+export { default as blackPalette } from './black';
+export { default as deepTealPalette } from './deepTeal';
+export { default as redPalette } from './red';
+export { default as whitePalette } from './white';
+export { default as electricBluePalette } from './electricBlue';
