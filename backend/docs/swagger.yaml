@@ -480,6 +480,8 @@ definitions:
         items:
           $ref: '#/definitions/domain.WebAppLandingConfig'
         type: array
+      web_app_landing_theme:
+        $ref: '#/definitions/domain.WebAppLandingTheme'
       wechat_app_agent_id:
         type: string
       wechat_app_corpid:
@@ -643,6 +645,8 @@ definitions:
         items:
           $ref: '#/definitions/domain.WebAppLandingConfigResp'
         type: array
+      web_app_landing_theme:
+        $ref: '#/definitions/domain.WebAppLandingTheme'
       wechat_app_agent_id:
         type: string
       wechat_app_corpid:
@@ -2181,6 +2185,11 @@ definitions:
       simple_doc_config:
         $ref: '#/definitions/domain.SimpleDocConfig'
       type:
+        type: string
+    type: object
+  domain.WebAppLandingTheme:
+    properties:
+      name:
         type: string
     type: object
   domain.WecomAIBotSettings:

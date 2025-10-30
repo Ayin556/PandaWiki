@@ -4443,6 +4443,9 @@ const docTemplate = `{
                         "$ref": "#/definitions/domain.WebAppLandingConfig"
                     }
                 },
+                "web_app_landing_theme": {
+                    "$ref": "#/definitions/domain.WebAppLandingTheme"
+                },
                 "wechat_app_agent_id": {
                     "type": "string"
                 },
@@ -4700,6 +4703,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/domain.WebAppLandingConfigResp"
                     }
+                },
+                "web_app_landing_theme": {
+                    "$ref": "#/definitions/domain.WebAppLandingTheme"
                 },
                 "wechat_app_agent_id": {
                     "type": "string"
@@ -7045,6 +7051,14 @@ const docTemplate = `{
                     "$ref": "#/definitions/domain.SimpleDocConfig"
                 },
                 "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.WebAppLandingTheme": {
+            "type": "object",
+            "properties": {
+                "name": {
                     "type": "string"
                 }
             }
