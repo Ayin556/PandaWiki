@@ -1,26 +1,46 @@
+'use client';
+import { useMemo } from 'react';
 import Home from '@/views/home';
-import { FooterProvider } from '@/components/footer';
-import Header from '@/components/header';
-import dotImage from '@/assets/images/dot.png';
-import { Stack } from '@mui/material';
+import { WelcomeFooter } from '@/components/footer';
+import { ThemeProvider } from '@ctzhian/ui';
+import { WelcomeHeader } from '@/components/header';
+import { Stack, createTheme } from '@mui/material';
+import { createComponentStyleOverrides } from '@/theme';
+import { useStore } from '@/provider';
+import { THEME_TO_PALETTE } from '@panda-wiki/themes/constants';
 
 const HomePage = () => {
+  const { kbDetail } = useStore();
+
+  const theme = useMemo(() => {
+    // @ts-ignore
+    const themeMode = kbDetail?.settings?.web_app_landing_theme?.name || 'blue';
+    return createTheme({
+      cssVariables: {
+        cssVarPrefix: 'welcome',
+      },
+      palette: THEME_TO_PALETTE[themeMode].palette,
+      typography: {
+        fontFamily: 'var(--font-gilory), PingFang SC, sans-serif',
+      },
+      components: createComponentStyleOverrides(true),
+    });
+    // @ts-ignore
+  }, [kbDetail?.settings?.web_app_landing_theme?.name]);
+
   return (
-    <Stack
-      sx={{
-        minHeight: '100vh',
-        backgroundImage: `url(${dotImage.src})`,
-        backgroundSize: '24px',
-        backgroundPosition: 'center',
-      }}
-      justifyContent='space-between'
-    >
-      <Header isDocPage={true} isWelcomePage={true} />
-      <Stack sx={{ flex: 1 }}>
-        <Home />
+    <ThemeProvider theme={theme}>
+      <Stack
+        justifyContent='space-between'
+        sx={{ minHeight: '100vh', bgcolor: 'background.default' }}
+      >
+        <WelcomeHeader />
+        <Stack sx={{ flex: 1 }}>
+          <Home />
+        </Stack>
+        <WelcomeFooter />
       </Stack>
-      <FooterProvider isDocPage={true} isWelcomePage={true} />
-    </Stack>
+    </ThemeProvider>
   );
 };
 

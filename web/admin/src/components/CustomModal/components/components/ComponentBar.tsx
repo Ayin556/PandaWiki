@@ -6,6 +6,7 @@ import {
   Select,
   Stack,
   Typography,
+  alpha,
 } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
 import { Icon } from '@ctzhian/ui';
@@ -38,7 +39,8 @@ import {
   IconLunbotu,
   IconShanchu,
 } from '@panda-wiki/icons';
-import { DEFAULT_DATA, TYPE_TO_CONFIG_LABEL } from '../../constants';
+import { DEFAULT_DATA } from '../../constants';
+import { THEME_LIST, THEME_TO_PALETTE } from '@panda-wiki/themes/constants';
 interface ComponentBarProps {
   components: Component[];
   setComponents: Dispatch<SetStateAction<Component[]>>;
@@ -46,6 +48,45 @@ interface ComponentBarProps {
   setCurComponent: Dispatch<SetStateAction<Component>>;
   setIsEdit: Dispatch<SetStateAction<boolean>>;
 }
+
+const ThemeCard = ({ palette, label }: any) => {
+  return (
+    <Box
+      sx={{
+        boxShadow: '0px 0px 10px 0px rgba(0, 0, 0, 0.1)',
+        bgcolor: palette.background.default,
+        my: 0.5,
+      }}
+    >
+      <Stack
+        sx={{
+          p: 1,
+          width: '150px',
+          height: '50px',
+          bgcolor: alpha(palette.primary.main, 0.3),
+        }}
+      >
+        <Box
+          sx={{
+            fontSize: 12,
+            height: 20,
+            color: palette.primary.main,
+          }}
+        >
+          {label}
+        </Box>
+        <Box
+          sx={{
+            height: '120px',
+            bgcolor: palette.background.default,
+          }}
+        ></Box>
+      </Stack>
+      <Box sx={{ height: '30px', bgcolor: palette.background.default }}></Box>
+    </Box>
+  );
+};
+
 const ComponentBar = ({
   components,
   setComponents,
@@ -253,7 +294,12 @@ const ComponentBar = ({
           </Stack>
           <Stack sx={{ paddingX: '20px', marginTop: '15px' }}>
             <Select
-              value={appPreviewData.settings?.theme_mode}
+              value={
+                appPreviewData.settings?.web_app_landing_theme?.name || 'blue'
+              }
+              renderValue={value => {
+                return THEME_TO_PALETTE[value]?.label;
+              }}
               sx={{
                 width: '100%',
                 height: '40px',
@@ -279,15 +325,20 @@ const ComponentBar = ({
                   ...appPreviewData,
                   settings: {
                     ...appPreviewData.settings,
-                    theme_mode: e.target.value,
+                    web_app_landing_theme: {
+                      name: e.target.value,
+                    },
                   },
                 };
                 setIsEdit(true);
                 dispatch(setAppPreviewData(newInfo));
               }}
             >
-              <MenuItem value='light'>浅色模式</MenuItem>
-              <MenuItem value='dark'>深色模式</MenuItem>
+              {THEME_LIST.map(item => (
+                <MenuItem key={item.value} value={item.value}>
+                  <ThemeCard palette={item.palette} label={item.label} />
+                </MenuItem>
+              ))}
             </Select>
           </Stack>
         </>

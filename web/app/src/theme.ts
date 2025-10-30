@@ -5,7 +5,7 @@ import { zhCN as CuiZhCN } from '@ctzhian/ui/dist/local';
 import { darkPalette, lightPalette } from '@panda-wiki/themes';
 
 const createComponentStyleOverrides = (
-  isDark: boolean,
+  defaultColor: boolean = true,
 ): CssVarsThemeOptions['components'] => ({
   MuiInputBase: {
     styleOverrides: {
@@ -31,7 +31,7 @@ const createComponentStyleOverrides = (
 
   MuiButton: {
     defaultProps: {
-      color: isDark ? 'primary' : 'dark',
+      color: defaultColor ? 'primary' : 'dark',
     },
     styleOverrides: {
       root: {
@@ -169,4 +169,5 @@ export {
   lightThemeOptions,
   lightThemeWidget,
   darkThemeWidget,
+  createComponentStyleOverrides,
 };

@@ -7,7 +7,9 @@ import { darkPalette, lightPalette } from '@panda-wiki/themes';
 
 const defaultTheme = createTheme();
 
-const componentStyleOverrides: CssVarsThemeOptions['components'] = {
+const componentStyleOverrides = (
+  defaultColor: boolean = true,
+): CssVarsThemeOptions['components'] => ({
   MuiCssBaseline: {
     styleOverrides: {
       body: {
@@ -95,7 +97,7 @@ const componentStyleOverrides: CssVarsThemeOptions['components'] = {
   },
   MuiButton: {
     defaultProps: {
-      color: 'dark',
+      color: defaultColor ? 'dark' : 'primary',
     },
     styleOverrides: {
       root: {
@@ -235,18 +237,18 @@ const componentStyleOverrides: CssVarsThemeOptions['components'] = {
       },
     },
   },
-};
+});
 
 const themeOptions = [
   {
-    colorSchemes: {
-      light: {
-        palette: lightPalette,
-      },
-      dark: {
-        palette: darkPalette,
-      },
-    },
+    // colorSchemes: {
+    //   light: {
+    //     palette: lightPalette,
+    //   },
+    //   dark: {
+    //     palette: darkPalette,
+    //   },
+    // },
     typography: {
       fontFamily: 'G, PingFang SC, sans-serif',
     },
@@ -256,7 +258,7 @@ const themeOptions = [
       '0px 10px 20px 0px rgba(54,59,76,0.2)',
       ...defaultTheme.shadows.slice(9),
     ] as Shadows,
-    components: componentStyleOverrides,
+    components: componentStyleOverrides(false),
   },
   zhCN,
   CuiZhCN,
@@ -286,7 +288,7 @@ const theme = createTheme(
       '0px 10px 20px 0px rgba(54,59,76,0.2)',
       ...defaultTheme.shadows.slice(9),
     ] as Shadows,
-    components: componentStyleOverrides,
+    components: componentStyleOverrides(true),
   },
   zhCN,
   CuiZhCN,

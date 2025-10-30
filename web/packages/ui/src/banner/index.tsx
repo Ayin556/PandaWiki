@@ -1,6 +1,5 @@
 'use client';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { IconXingxing } from '@panda-wiki/icons';
 import { useTextAnimation } from '../hooks/useGsapAnimation';
 import {
   ButtonProps,
@@ -9,38 +8,97 @@ import {
   Button,
   Stack,
   Box,
-  InputAdornment,
-  Popper,
-  Paper,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemButton,
-  Typography,
-  CircularProgress,
+  alpha,
+  lighten,
 } from '@mui/material';
 import { StyledTopicBox } from '../component/styledCommon';
-import { IconFasong } from '@panda-wiki/icons';
 
 const StyledBanner = styled('div')(({ theme }) => ({
-  margin: theme.spacing(2, 2, 0),
-  backgroundSize: 'cover',
-  backgroundPosition: 'center',
-  backgroundRepeat: 'no-repeat',
-  borderRadius: '20px',
-  backgroundColor: '#21212d',
+  backgroundColor: alpha(theme.palette.primary.main, 0.03),
+  backgroundImage: `radial-gradient(${alpha(theme.palette.primary.main, 0.08)} 2px, transparent 1px)`,
+  backgroundSize: '36px 36px', // dot spacing
+  backgroundPosition: '0 0',
+  backgroundRepeat: 'repeat',
+  marginTop: theme.spacing(-10),
 }));
 
 const StyledTitle = styled('h1')(({ theme }) => ({
   fontSize: 36,
   fontWeight: 700,
   wordBreak: 'break-all',
+  color: theme.palette.primary.main,
 }));
 
 const StyledSubTitle = styled('h2')(({ theme }) => ({
   fontWeight: 400,
   marginTop: theme.spacing(3),
   marginBottom: theme.spacing(5),
+  color: theme.palette.text.primary,
+}));
+
+const StyledSearchBox = styled(Box)(({ theme }) => ({
+  position: 'relative',
+  width: '100%',
+  padding: theme.spacing(2),
+  boxShadow: `0 2px 10px 0px ${alpha(theme.palette.text.primary, 0.1)}`,
+  border: `1px solid transparent`,
+  borderRadius: '10px',
+  backgroundColor: theme.palette.background.default,
+  '&:hover': {
+    borderColor: alpha(theme.palette.primary.main, 0.4),
+  },
+  '&:focus-within': {
+    borderColor: theme.palette.primary.main,
+  },
+}));
+
+const StyledTextField = styled(TextField)(({ theme }) => ({
+  '.MuiInputBase-root': {
+    padding: 0,
+  },
+  fieldset: {
+    border: 'none',
+  },
+  '& input::placeholder, & textarea::placeholder': {
+    color: alpha(theme.palette.text.primary, 0.5),
+    opacity: 1,
+  },
+}));
+
+// 闪烁光标样式
+const blinkAnimation = `
+  @keyframes blink {
+    0%, 49% {
+      opacity: 1;
+    }
+    50%, 100% {
+      opacity: 0;
+    }
+  }
+`;
+
+const StyledCursor = styled('span')(({ theme }) => ({
+  display: 'inline-block',
+  width: '1px',
+  height: '18px',
+  backgroundColor: alpha(theme.palette.text.primary, 1),
+  marginLeft: '2px',
+  animation: 'blink 1s infinite',
+  flexShrink: 0,
+}));
+
+const StyledHotItem = styled(Box)(({ theme }) => ({
+  color: theme.palette.text.primary,
+  padding: theme.spacing(0.75, 2),
+  borderRadius: '16px',
+  border: `1px solid ${alpha(theme.palette.text.primary, 0.1)}`,
+  fontSize: 12,
+  cursor: 'pointer',
+  transition: 'all 0.2s',
+  '&:hover': {
+    borderColor: alpha(theme.palette.primary.main, 0.1),
+    color: theme.palette.primary.main,
+  },
 }));
 
 interface SearchSuggestion {
@@ -95,12 +153,72 @@ const Banner = React.memo(
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
     const [anchorElWidth, setAnchorElWidth] = useState<number | null>(null);
     const [selectedIndex, setSelectedIndex] = useState(-1);
-    const inputRef = useRef<HTMLInputElement>(null);
+    const [isFocused, setIsFocused] = useState(false);
+    const [typedText, setTypedText] = useState('');
     const debounceTimer = useRef<NodeJS.Timeout | null>(null);
+    const typewriterTimer = useRef<NodeJS.Timeout | null>(null);
 
     // 添加文字动画效果
     const titleRef = useTextAnimation(0, 0.1);
     const subtitleRef = useTextAnimation(0.2, 0.1);
+
+    // 打字机效果
+    useEffect(() => {
+      if (isFocused || !search.hot || search.hot.length === 0) {
+        return;
+      }
+
+      let currentIndex = 0;
+      let currentCharIndex = 0;
+      let isDeleting = false;
+      let isPaused = false;
+
+      const typeWriter = () => {
+        const currentWord = search.hot[currentIndex];
+
+        if (isPaused) {
+          typewriterTimer.current = setTimeout(() => {
+            isPaused = false;
+            typeWriter();
+          }, 1000); // 暂停1秒
+          return;
+        }
+
+        if (!isDeleting) {
+          // 打字阶段
+          if (currentCharIndex < currentWord.length) {
+            setTypedText(currentWord.substring(0, currentCharIndex + 1));
+            currentCharIndex++;
+            typewriterTimer.current = setTimeout(typeWriter, 100); // 打字速度（调慢）
+          } else {
+            // 打完了，暂停后开始删除
+            isPaused = true;
+            isDeleting = true;
+            typeWriter();
+          }
+        } else {
+          // 删除阶段
+          if (currentCharIndex > 0) {
+            currentCharIndex--;
+            setTypedText(currentWord.substring(0, currentCharIndex));
+            typewriterTimer.current = setTimeout(typeWriter, 80); // 删除速度（调慢）
+          } else {
+            // 删完了，切换到下一个词
+            isDeleting = false;
+            currentIndex = (currentIndex + 1) % search.hot.length;
+            typewriterTimer.current = setTimeout(typeWriter, 200); // 切换词之间的延迟
+          }
+        }
+      };
+
+      typeWriter();
+
+      return () => {
+        if (typewriterTimer.current) {
+          clearTimeout(typewriterTimer.current);
+        }
+      };
+    }, [isFocused, search.hot]);
 
     // 防抖搜索
     const debouncedSearch = useCallback(
@@ -175,17 +293,10 @@ const Banner = React.memo(
       }
     };
 
-    // 处理建议项点击
-    const handleSuggestionClick = (suggestion: SearchSuggestion) => {
-      setSearchText(suggestion.title);
-      onSearch?.(suggestion.title);
-      setSearchText('');
-      setAnchorEl(null);
-      setSelectedIndex(-1);
-    };
-
     // 处理输入框聚焦
     const handleInputFocus = (e: React.FocusEvent) => {
+      setIsFocused(true);
+      setTypedText(''); // 清空打字机文本
       if (searchText.trim()) {
         setAnchorEl(e.currentTarget.parentElement);
         setAnchorElWidth(e.currentTarget.parentElement?.offsetWidth || 0);
@@ -193,43 +304,9 @@ const Banner = React.memo(
     };
 
     // 处理输入框失焦
-    const handleInputBlur = (e: React.FocusEvent) => {
-      // 检查焦点是否移到了 Popper 内部
-      const relatedTarget = e.relatedTarget as HTMLElement;
-      const isFocusInPopper =
-        relatedTarget &&
-        (relatedTarget.closest('.MuiPopper-root') ||
-          relatedTarget.closest('[role="listbox"]'));
-
-      if (!isFocusInPopper) {
-        // 延迟关闭，允许点击建议项
-        setTimeout(() => {
-          setAnchorEl(null);
-          setSelectedIndex(-1);
-        }, 200);
-      }
+    const handleInputBlur = () => {
+      setIsFocused(false);
     };
-
-    // 处理点击外部关闭下拉框
-    useEffect(() => {
-      const handleClickOutside = (event: MouseEvent) => {
-        if (anchorEl && !anchorEl.contains(event.target as Node)) {
-          const popperElement = document.querySelector('.MuiPopper-root');
-          if (popperElement && !popperElement.contains(event.target as Node)) {
-            setAnchorEl(null);
-            setSelectedIndex(-1);
-          }
-        }
-      };
-
-      if (anchorEl) {
-        document.addEventListener('mousedown', handleClickOutside);
-      }
-
-      return () => {
-        document.removeEventListener('mousedown', handleClickOutside);
-      };
-    }, [anchorEl]);
 
     // 清理定时器
     useEffect(() => {
@@ -243,15 +320,15 @@ const Banner = React.memo(
     return (
       <StyledBanner
         sx={{
-          backgroundImage: `url(${bg_url})`,
+          ...(bg_url ? { backgroundImage: `url(${bg_url})` } : {}),
         }}
       >
-        <StyledTopicBox sx={{ alignItems: 'flex-start', gap: 0, py: '140px' }}>
+        <StyledTopicBox sx={{ alignItems: 'flex-start', gap: 0, py: '200px' }}>
           <StyledTitle
             ref={titleRef}
             sx={{
               fontSize: `${title.fontSize || 60}px`,
-              color: title.color || '#5F58FE',
+              // color: title.color || '#5F58FE',
             }}
           >
             {title.text}
@@ -261,83 +338,72 @@ const Banner = React.memo(
               ref={subtitleRef}
               sx={{
                 fontSize: `${subtitle.fontSize || 16}px`,
-                color: subtitle.color || 'rgba(255,255,255,0.5)',
+                // color: subtitle.color || 'rgba(255,255,255,0.5)',
               }}
             >
               {subtitle.text}
             </StyledSubTitle>
           )}
 
-          <Box sx={{ position: 'relative', width: '100%' }}>
-            <TextField
-              ref={inputRef}
-              fullWidth
-              placeholder={search.placeholder}
-              value={''}
-              focused={false}
-              onChange={handleInputChange}
-              onKeyDown={handleKeyDown}
-              onBlur={handleInputBlur}
-              onFocus={handleInputFocus}
-              onClick={() => onQaClick?.()}
-              slotProps={{
-                input: {
-                  readOnly: true,
-                  sx: {
-                    bgcolor: '#fff',
-                    color: '#000',
-                    height: 64,
-                    '.MuiOutlinedInput-notchedOutline': {
-                      border: '0px !important',
-                    },
-                  },
-                  endAdornment: (
-                    <InputAdornment position='end'>
-                      {isLoading ? (
-                        <CircularProgress size={20} />
-                      ) : (
-                        <IconFasong
-                          sx={{
-                            color: 'primary.main',
-                            cursor: 'pointer',
-                            fontSize: 22,
-                          }}
-                          onClick={() => {
-                            onSearch?.(searchText, 'chat');
-                            setSearchText('');
-                          }}
-                        />
-                      )}
-                    </InputAdornment>
-                  ),
-                },
-              }}
-            />
-          </Box>
-          {search.hot?.length > 0 && (
-            <Stack direction='row' gap={3} sx={{ fontSize: 16, mt: 3 }}>
-              <Box sx={{ color: 'rgba(255,255,255, 0.5)', flexShrink: 0 }}>
-                热门搜索
-              </Box>
-              <Stack direction='row' gap='4px 24px' flexWrap='wrap'>
+          <StyledSearchBox>
+            <Box sx={{ position: 'relative' }}>
+              <style>{blinkAnimation}</style>
+              {!isFocused && !searchText && typedText && (
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    pointerEvents: 'none',
+                    color: theme => alpha(theme.palette.text.primary, 0.85),
+                    fontSize: '16px',
+                    lineHeight: 1.5,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'break-word',
+                  }}
+                >
+                  <span>{typedText}</span>
+                  <StyledCursor />
+                </Box>
+              )}
+              <StyledTextField
+                fullWidth
+                placeholder={isFocused || searchText ? search.placeholder : ''}
+                value={searchText}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+                onFocus={handleInputFocus}
+                onBlur={handleInputBlur}
+                multiline
+                rows={3}
+              />
+            </Box>
+            <Stack direction='row' alignItems='center' gap={1} flexWrap='wrap'>
+              <Stack direction='row' gap='8px 16px' flexWrap='wrap'>
                 {search.hot?.map(hot => (
-                  <Box
-                    key={hot}
-                    sx={{
-                      color: 'rgba(255,255,255, 0.7)',
-                      cursor: 'pointer',
-                      '&:hover': {
-                        color: 'rgba(255,255,255, 1)',
-                      },
-                    }}
-                    onClick={() => onSearch?.(hot)}
-                  >
+                  <StyledHotItem key={hot} onClick={() => onSearch?.(hot)}>
                     {hot}
-                  </Box>
+                  </StyledHotItem>
                 ))}
               </Stack>
+              <Button
+                variant='contained'
+                size='small'
+                sx={{
+                  fontSize: 12,
+                  borderRadius: 4,
+                  flexShrink: 0,
+                  ml: 'auto',
+                }}
+                onClick={() => onSearch?.(searchText, 'chat')}
+              >
+                AI 智能问答
+              </Button>
             </Stack>
-          )}
+          </StyledSearchBox>
+
           {btns.length > 0 && (
             <Stack
               direction='row'
@@ -356,10 +422,16 @@ const Banner = React.memo(
                   target='_blank'
                   size='large'
                   color='primary'
-                  sx={{
+                  sx={theme => ({
                     ...(btn.type === 'outlined' && {
                       borderWidth: 2,
+                      bgcolor: theme.palette.background.default,
+                      borderColor: alpha(theme.palette.primary.main, 0.8),
+                      '&:hover': {
+                        borderColor: theme.palette.primary.main,
+                      },
                     }),
+                    lineHeight: 1.5,
                     fontSize: {
                       xs: 14,
                       md: 18,
@@ -372,7 +444,7 @@ const Banner = React.memo(
                       xs: 1,
                       md: '12px',
                     },
-                  }}
+                  })}
                 >
                   {btn.text}
                 </Button>

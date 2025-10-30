@@ -52,7 +52,7 @@ const CatalogH5 = () => {
     <Box
       sx={{
         position: 'sticky',
-        top: '64px',
+        top: '80px',
         width: '100%',
         zIndex: 2,
         bgcolor: 'background.paper3',

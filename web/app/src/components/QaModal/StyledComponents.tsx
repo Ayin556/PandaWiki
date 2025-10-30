@@ -9,6 +9,7 @@ import {
   Stack,
   TextField,
   styled,
+  alpha,
 } from '@mui/material';
 
 // 布局容器组件
@@ -157,17 +158,17 @@ export const StyledInputWrapper = styled(Stack)(({ theme }) => ({
   paddingBottom: theme.spacing(1),
   borderRadius: '10px',
   border: '1px solid',
-  borderColor: theme.palette.background.paper3,
+  borderColor: alpha(theme.palette.text.primary, 0.1),
   display: 'flex',
   alignItems: 'flex-end',
   gap: theme.spacing(2),
-  backgroundColor: theme.palette.background.paper3,
+  backgroundColor: theme.palette.background.default,
   transition: 'border-color 0.2s ease-in-out',
   '&:hover': {
     borderColor: theme.palette.primary.main,
   },
   '&:focus-within': {
-    borderColor: theme.palette.dark.main,
+    borderColor: theme.palette.primary.main,
   },
 }));
 
@@ -268,8 +269,9 @@ export const StyledHotSearchItem = styled(Box)(({ theme }) => ({
   borderRadius: '10px',
   cursor: 'pointer',
   transition: 'all 0.2s',
-  backgroundColor: theme.palette.background.paper3,
-  color: theme.palette.text.secondary,
+  backgroundColor: alpha(theme.palette.text.primary, 0.02),
+  border: `1px solid ${alpha(theme.palette.text.primary, 0.01)}`,
+  color: alpha(theme.palette.text.primary, 0.75),
   '&:hover': {
     color: theme.palette.primary.main,
   },

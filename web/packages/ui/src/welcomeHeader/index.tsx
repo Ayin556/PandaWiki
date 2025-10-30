@@ -1,9 +1,28 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { IconSousuo } from '@panda-wiki/icons';
-import { Box, Button, IconButton, Stack, TextField, Link } from '@mui/material';
+import {
+  Box,
+  Button,
+  IconButton,
+  Stack,
+  TextField,
+  Link,
+  alpha,
+  styled,
+  lighten,
+} from '@mui/material';
 import NavBtns, { NavBtn } from './NavBtns';
 import { DocWidth } from '../constants';
+
+const StyledButton = styled(Button)(({ theme }) => ({
+  textTransform: 'none',
+  padding: '2px 12px',
+  fontSize: 12,
+  borderRadius: '6px',
+  boxShadow: '0px 1px 2px 0px rgba(145,158,171,0.16)',
+  backgroundColor: theme.palette.background.default,
+}));
 
 // 检测平台类型
 const isMac = () => /Mac|iPod|iPhone|iPad/.test(navigator.userAgent);
@@ -53,6 +72,16 @@ const Header = React.memo(
       setCtrlKShortcut(getKeyboardShortcut());
     }, []);
 
+    const [isAtTop, setIsAtTop] = useState(true);
+    useEffect(() => {
+      const handleScroll = () => {
+        setIsAtTop(window.scrollY <= 0);
+      };
+      handleScroll();
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
     // 全局键盘事件监听：⌘K (Mac) 或 Ctrl+K (Windows/Linux)
     useEffect(() => {
       const handleKeyDown = (event: KeyboardEvent) => {
@@ -75,7 +104,7 @@ const Header = React.memo(
         direction='row'
         alignItems='center'
         justifyContent='center'
-        sx={{
+        sx={theme => ({
           transition: 'left 0.2s ease-in-out',
           position: 'sticky',
           zIndex: 10,
@@ -83,15 +112,18 @@ const Header = React.memo(
           left: 0,
           right: 0,
           height: 80,
-          bgcolor: 'background.default',
-          borderBottom: '1px solid',
-          borderColor: 'divider',
+          backgroundColor: isAtTop
+            ? 'transparent'
+            : theme.palette.background.default,
+          boxShadow: isAtTop
+            ? 'none'
+            : `0 2px 8px 0px ${alpha(theme.palette.text.primary, 0.1)}`,
           ...(mobile && {
             left: 0,
           }),
           pl: mobile ? 3 : 5,
           pr: mobile ? 1.5 : 5,
-        }}
+        })}
       >
         <Stack
           direction='row'
@@ -148,13 +180,12 @@ const Header = React.memo(
                 fullWidth
                 focused={false}
                 onClick={() => onQaClick?.()}
-                sx={{
+                sx={theme => ({
                   position: 'absolute',
                   left: '50%',
                   top: '50%',
                   transform: 'translate(-50%, -50%)',
                   maxWidth: '500px',
-                  bgcolor: 'background.paper3',
                   borderRadius: '10px',
                   overflow: 'hidden',
                   cursor: 'pointer',
@@ -167,17 +198,13 @@ const Header = React.memo(
                     pl: '12px',
                     '& fieldset': {
                       borderRadius: '10px',
-                      borderColor: 'transparent',
+                      borderColor: alpha(theme.palette.primary.main, 0.1),
                     },
                     '&:hover fieldset': {
                       borderColor: 'primary.main',
                     },
-                    '&:hover .ai-qa-button-wrapper': {
-                      background:
-                        'linear-gradient(135deg, #B27BFB 0%, #5A44FA 100%)',
-                    },
                   },
-                }}
+                })}
                 slotProps={{
                   input: {
                     readOnly: true,
@@ -206,37 +233,14 @@ const Header = React.memo(
                         >
                           {ctrlKShortcut}
                         </Box>
-                        <Box
-                          className='ai-qa-button-wrapper'
-                          sx={{
-                            position: 'relative',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            borderRadius: '6px',
-                            padding: '1px',
-                            background: 'transparent',
-                            transition: 'background 0.2s ease',
-                          }}
+                        <StyledButton
+                          variant='contained'
+                          // @ts-ignore
+                          color='light'
+                          sx={{}}
                         >
-                          <Button
-                            variant='contained'
-                            // @ts-ignore
-                            color='light'
-                            sx={{
-                              textTransform: 'none',
-                              minWidth: 'auto',
-                              px: 1,
-                              py: '2px',
-                              fontSize: 12,
-                              borderRadius: '6px',
-                              boxShadow:
-                                '0px 1px 2px 0px rgba(145,158,171,0.16)',
-                            }}
-                          >
-                            智能问答
-                          </Button>
-                        </Box>
+                          智能问答
+                        </StyledButton>
                       </Stack>
                     ),
                   },
@@ -250,11 +254,20 @@ const Header = React.memo(
                 <Link key={index} href={item.url} target={item.target}>
                   <Button
                     variant={item.variant}
-                    sx={{
-                      py: 1.5,
+                    sx={theme => ({
                       px: 3.5,
                       textTransform: 'none',
-                    }}
+                      boxSizing: 'border-box',
+                      height: 48,
+                      ...(item.variant === 'outlined' && {
+                        borderWidth: 2,
+                        bgcolor: theme.palette.background.default,
+                        borderColor: alpha(theme.palette.primary.main, 0.8),
+                        '&:hover': {
+                          borderColor: theme.palette.primary.main,
+                        },
+                      }),
+                    })}
                     startIcon={
                       item.showIcon && item.icon ? (
                         <img

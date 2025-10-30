@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Logo from '@/assets/images/logo.png';
 import { IconZhinengwenda, IconJinsousuo } from '@panda-wiki/icons';
 import { useSearchParams } from 'next/navigation';
-import { Box, Button, Typography, Modal, Stack } from '@mui/material';
+import { Box, Button, Typography, Modal, Stack, lighten } from '@mui/material';
 import { CusTabs } from '@ctzhian/ui';
 import AiQaContent from './AiQaContent';
 import SearchDocContent from './SearchDocContent';
@@ -81,19 +81,22 @@ const QaModal: React.FC<QaModalProps> = () => {
       }}
     >
       <Box
-        sx={{
+        sx={theme => ({
           display: 'flex',
           flexDirection: 'column',
           gap: 2,
           flex: 1,
           maxWidth: 800,
           maxHeight: '100%',
-          backgroundColor: 'background.paper',
+          backgroundColor: lighten(theme.palette.background.default, 0.05),
           borderRadius: '10px',
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
           overflow: 'hidden',
           outline: 'none',
-        }}
+          '& .Mui-selected': {
+            color: `${theme.palette.background.default} !important`,
+          },
+        })}
         onClick={e => e.stopPropagation()}
       >
         {/* 头部区域 */}

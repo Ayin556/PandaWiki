@@ -176,6 +176,21 @@ export enum ConstsCrawlerStatus {
   CrawlerStatusFailed = "failed",
 }
 
+export enum ConstsCrawlerSource {
+  CrawlerSourceUrl = "url",
+  CrawlerSourceRSS = "rss",
+  CrawlerSourceSitemap = "sitemap",
+  CrawlerSourceNotion = "notion",
+  CrawlerSourceFeishu = "feishu",
+  CrawlerSourceFile = "file",
+  CrawlerSourceEpub = "epub",
+  CrawlerSourceYuque = "yuque",
+  CrawlerSourceSiyuan = "siyuan",
+  CrawlerSourceMindoc = "mindoc",
+  CrawlerSourceWikijs = "wikijs",
+  CrawlerSourceConfluence = "confluence",
+}
+
 export enum ConstsCopySetting {
   /** 无限制 */
   CopySettingNone = "",
@@ -192,6 +207,19 @@ export enum ConstsAuthType {
   AuthTypeSimple = "simple",
   /** 企业认证 */
   AuthTypeEnterprise = "enterprise",
+}
+
+export interface AnydocChild {
+  children?: AnydocChild[];
+  value?: AnydocValue;
+}
+
+export interface AnydocValue {
+  file?: boolean;
+  file_type?: string;
+  id?: string;
+  summary?: string;
+  title?: string;
 }
 
 export interface ConstsRedeemCaptchaReq {
@@ -296,6 +324,7 @@ export interface DomainAppSettings {
   web_app_custom_style?: DomainWebAppCustomSettings;
   /** WebAppLandingConfigs */
   web_app_landing_configs?: DomainWebAppLandingConfig[];
+  web_app_landing_theme?: DomainWebAppLandingTheme;
   wechat_app_agent_id?: string;
   wechat_app_corpid?: string;
   wechat_app_encodingaeskey?: string;
@@ -380,6 +409,7 @@ export interface DomainAppSettingsResp {
   web_app_custom_style?: DomainWebAppCustomSettings;
   /** WebApp Landing Settings */
   web_app_landing_configs?: DomainWebAppLandingConfigResp[];
+  web_app_landing_theme?: DomainWebAppLandingTheme;
   wechat_app_agent_id?: string;
   wechat_app_corpid?: string;
   wechat_app_encodingaeskey?: string;
@@ -1162,6 +1192,10 @@ export interface DomainWebAppLandingConfigResp {
   type?: string;
 }
 
+export interface DomainWebAppLandingTheme {
+  name?: string;
+}
+
 export interface DomainWecomAIBotSettings {
   encodingaeskey?: string;
   is_enabled?: boolean;
@@ -1305,36 +1339,44 @@ export interface V1CommentLists {
   total?: number;
 }
 
-export interface V1ConfluenceParseItem {
-  id?: string;
-  title?: string;
-  url?: string;
-}
-
-export interface V1ConfluenceParseResp {
-  docs?: V1ConfluenceParseItem[];
-  id?: string;
-}
-
-export interface V1ConfluenceScrapeReq {
-  doc_id: string;
-  id: string;
-  kb_id: string;
-}
-
-export interface V1ConfluenceScrapeResp {
-  content?: string;
-}
-
 export interface V1ConversationListItems {
   data?: DomainConversationListItem[];
   total?: number;
+}
+
+export interface V1CrawlerExportReq {
+  doc_id: string;
+  file_type?: string;
+  id: string;
+  kb_id: string;
+  space_id?: string;
+}
+
+export interface V1CrawlerExportResp {
+  task_id?: string;
+}
+
+export interface V1CrawlerParseReq {
+  crawler_source: ConstsCrawlerSource;
+  feishu_setting?: V1FeishuSetting;
+  filename?: string;
+  kb_id: string;
+  key?: string;
+}
+
+export interface V1CrawlerParseResp {
+  docs?: AnydocChild;
+  id?: string;
 }
 
 export interface V1CrawlerResultItem {
   content?: string;
   status?: ConstsCrawlerStatus;
   task_id?: string;
+}
+
+export interface V1CrawlerResultReq {
+  task_id: string;
 }
 
 export interface V1CrawlerResultResp {
@@ -1362,66 +1404,11 @@ export interface V1CreateUserResp {
   id?: string;
 }
 
-export interface V1EpubParseReq {
-  filename: string;
-  kb_id: string;
-  key: string;
-}
-
-export interface V1EpubParseResp {
-  task_id?: string;
-}
-
-export interface V1FeishuGetDocReq {
-  doc_id: string;
-  file_type?: string;
-  id: string;
-  kb_id: string;
+export interface V1FeishuSetting {
+  app_id?: string;
+  app_secret?: string;
   space_id?: string;
-}
-
-export interface V1FeishuGetDocResp {
-  content?: string;
-}
-
-export interface V1FeishuListCloudDocReq {
-  app_id: string;
-  app_secret: string;
-  user_access_token: string;
-}
-
-export interface V1FeishuListCloudDocResp {
-  doc_id: string;
-  file_type?: string;
-  id: string;
-  space_id?: string;
-  title?: string;
-}
-
-export interface V1FeishuSearchWikiReq {
-  app_id: string;
-  app_secret: string;
-  space_id?: string;
-  user_access_token: string;
-}
-
-export interface V1FeishuSearchWikiResp {
-  doc_id: string;
-  file_type?: string;
-  id: string;
-  space_id?: string;
-  title?: string;
-}
-
-export interface V1FeishuSpaceListReq {
-  app_id: string;
-  app_secret: string;
-  user_access_token: string;
-}
-
-export interface V1FeishuSpaceListResp {
-  name?: string;
-  space_id?: string;
+  user_access_token?: string;
 }
 
 export interface V1FileUploadResp {
@@ -1454,27 +1441,6 @@ export interface V1LoginReq {
 
 export interface V1LoginResp {
   token?: string;
-}
-
-export interface V1MindocParseItem {
-  id?: string;
-  title?: string;
-  url?: string;
-}
-
-export interface V1MindocParseResp {
-  docs?: V1MindocParseItem[];
-  id?: string;
-}
-
-export interface V1MindocScrapeReq {
-  doc_id: string;
-  id: string;
-  kb_id: string;
-}
-
-export interface V1MindocScrapeResp {
-  content?: string;
 }
 
 export interface V1NodeDetailResp {
@@ -1516,114 +1482,10 @@ export interface V1NodePermissionResp {
   visitable_groups?: DomainNodeGroupDetail[];
 }
 
-export interface V1NotionParseItem {
-  id?: string;
-  title?: string;
-}
-
-export interface V1NotionParseReq {
-  integration: string;
-}
-
-export interface V1NotionParseResp {
-  docs?: V1NotionParseItem[];
-  id?: string;
-}
-
-export interface V1NotionScrapeReq {
-  doc_id: string;
-  id: string;
-  kb_id: string;
-}
-
-export interface V1NotionScrapeResp {
-  content?: string;
-}
-
 export interface V1ResetPasswordReq {
   id: string;
   /** @minLength 8 */
   new_password: string;
-}
-
-export interface V1RssParseItem {
-  desc?: string;
-  title?: string;
-  url?: string;
-}
-
-export interface V1RssParseReq {
-  url: string;
-}
-
-export interface V1RssParseResp {
-  id?: string;
-  list?: V1RssParseItem[];
-}
-
-export interface V1RssScrapeReq {
-  id: string;
-  kb_id: string;
-  url: string;
-}
-
-export interface V1RssScrapeResp {
-  content?: string;
-}
-
-export interface V1ScrapeReq {
-  kb_id: string;
-  url: string;
-}
-
-export interface V1ScrapeResp {
-  task_id?: string;
-  title?: string;
-}
-
-export interface V1SitemapParseItem {
-  title?: string;
-  url?: string;
-}
-
-export interface V1SitemapParseReq {
-  url: string;
-}
-
-export interface V1SitemapParseResp {
-  id?: string;
-  list?: V1SitemapParseItem[];
-}
-
-export interface V1SitemapScrapeReq {
-  id: string;
-  kb_id: string;
-  url: string;
-}
-
-export interface V1SitemapScrapeResp {
-  content?: string;
-}
-
-export interface V1SiyuanParseItem {
-  id?: string;
-  title?: string;
-  url?: string;
-}
-
-export interface V1SiyuanParseResp {
-  docs?: V1SiyuanParseItem[];
-  id?: string;
-}
-
-export interface V1SiyuanScrapeReq {
-  doc_id: string;
-  id: string;
-  kb_id: string;
-}
-
-export interface V1SiyuanScrapeResp {
-  content?: string;
 }
 
 export interface V1StatCountResp {
@@ -1652,41 +1514,6 @@ export interface V1UserListItemResp {
 
 export interface V1UserListResp {
   users?: V1UserListItemResp[];
-}
-
-export interface V1WikijsParseItem {
-  id?: string;
-  title?: string;
-}
-
-export interface V1WikijsParseResp {
-  docs?: V1WikijsParseItem[];
-  id?: string;
-}
-
-export interface V1WikijsScrapeReq {
-  doc_id: string;
-  id: string;
-  kb_id: string;
-}
-
-export interface V1WikijsScrapeResp {
-  content?: string;
-}
-
-export interface V1YuqueParseItem {
-  task_id?: string;
-  title?: string;
-}
-
-export interface V1YuqueParseReq {
-  filename: string;
-  kb_id: string;
-  key: string;
-}
-
-export interface V1YuqueParseResp {
-  list?: V1YuqueParseItem[];
 }
 
 export interface PutApiV1AppParams {
@@ -1776,50 +1603,6 @@ export interface GetApiV1ConversationMessageListParams {
   page: number;
   /** @min 1 */
   per_page: number;
-}
-
-export interface PostApiV1CrawlerConfluenceParsePayload {
-  /**
-   * file
-   * @format binary
-   */
-  file: File;
-  /** kb_id */
-  kb_id: string;
-}
-
-export interface PostApiV1CrawlerMindocParsePayload {
-  /**
-   * file
-   * @format binary
-   */
-  file: File;
-  /** kb_id */
-  kb_id: string;
-}
-
-export interface GetApiV1CrawlerResultParams {
-  task_id: string;
-}
-
-export interface PostApiV1CrawlerSiyuanParsePayload {
-  /**
-   * file
-   * @format binary
-   */
-  file: File;
-  /** kb_id */
-  kb_id: string;
-}
-
-export interface PostApiV1CrawlerWikijsParsePayload {
-  /**
-   * file
-   * @format binary
-   */
-  file: File;
-  /** kb_id */
-  kb_id: string;
 }
 
 export interface PostApiV1FileUploadPayload {

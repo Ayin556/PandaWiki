@@ -91,7 +91,7 @@ const Config: React.FC<ConfigProps> = ({ setIsEdit, id }) => {
             />
           )}
         />
-        <Stack direction='row' gap={2}>
+        {/* <Stack direction='row' gap={2}>
           <Controller
             control={control}
             name='title_font_size'
@@ -127,7 +127,7 @@ const Config: React.FC<ConfigProps> = ({ setIsEdit, id }) => {
               />
             )}
           />
-        </Stack>
+        </Stack> */}
       </CommonItem>
       <CommonItem title='副标题'>
         <Controller
@@ -149,7 +149,7 @@ const Config: React.FC<ConfigProps> = ({ setIsEdit, id }) => {
             />
           )}
         />
-        <Stack direction='row' gap={2}>
+        {/* <Stack direction='row' gap={2}>
           <Controller
             control={control}
             name='subtitle_font_size'
@@ -185,7 +185,7 @@ const Config: React.FC<ConfigProps> = ({ setIsEdit, id }) => {
               />
             )}
           />
-        </Stack>
+        </Stack> */}
       </CommonItem>
       <CommonItem title='背景图' desc='(推荐 1920*720)'>
         <Controller
