@@ -80,6 +80,9 @@ func (u *NodeUsecase) GetNodeByKBID(ctx context.Context, id, kbId, format string
 	if err != nil {
 		return nil, err
 	}
+	if node.Meta.ContentType == domain.ContentTypeMD {
+		return node, nil
+	}
 	if format != "raw" {
 		if !utils.IsLikelyHTML(node.Content) {
 			node.Content = u.convertMDToHTML(node.Content)
@@ -163,6 +166,9 @@ func (u *NodeUsecase) GetNodeReleaseDetailByKBIDAndID(ctx context.Context, kbID,
 	node, err := u.nodeRepo.GetNodeReleaseDetailByKBIDAndID(ctx, kbID, nodeId)
 	if err != nil {
 		return nil, err
+	}
+	if node.Meta.ContentType == domain.ContentTypeMD {
+		return node, nil
 	}
 	// just for info
 	if format != "raw" {
