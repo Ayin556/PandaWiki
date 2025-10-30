@@ -15,6 +15,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { useSmartScroll } from '@/hooks';
 import { createImageRenderer } from './imageRenderer';
 import { incrementalRender } from './incrementalRenderer';
 import { createMermaidRenderer } from './mermaidRenderer';
@@ -27,6 +28,7 @@ import {
 interface MarkDown2Props {
   loading?: boolean;
   content: string;
+  autoScroll?: boolean;
 }
 
 // ==================== 工具函数 ====================
@@ -65,7 +67,11 @@ const createMarkdownIt = (): MarkdownIt => {
 };
 
 // ==================== 主组件 ====================
-const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
+const MarkDown2: React.FC<MarkDown2Props> = ({
+  loading = false,
+  content,
+  autoScroll = true,
+}) => {
   const theme = useTheme();
   const { themeMode = 'light' } = useStore();
 
@@ -73,7 +79,6 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
   const [showThink, setShowThink] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImgSrc, setPreviewImgSrc] = useState('');
-  const [shouldAutoScroll, setShouldAutoScroll] = useState(true); // 是否应该自动滚动
 
   // Refs
   const containerRef = useRef<HTMLDivElement>(null);
@@ -81,6 +86,14 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
   const mdRef = useRef<MarkdownIt | null>(null);
   const mermaidSuccessIdRef = useRef<Map<number, string>>(new Map());
   const imageRenderCacheRef = useRef<Map<number, string>>(new Map()); // 图片渲染缓存
+
+  // 使用智能滚动 hook
+  const { scrollToBottom } = useSmartScroll({
+    container: '.conversation-container',
+    threshold: 10,
+    behavior: 'smooth',
+    enabled: autoScroll,
+  });
 
   // ==================== 事件处理函数 ====================
   const handleCodeClick = useCallback((code: string) => {
@@ -90,45 +103,6 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
   const handleThinkToggle = useCallback(() => {
     setShowThink(prev => !prev);
   }, []);
-
-  /**
-   * 检查用户是否在底部
-   */
-  const checkIfAtBottom = useCallback((container: HTMLElement) => {
-    const threshold = 10; // 距离底部的阈值（像素）
-    const isAtBottom =
-      container.scrollHeight - container.scrollTop - container.clientHeight <=
-      threshold;
-    return isAtBottom;
-  }, []);
-
-  /**
-   * 处理滚动事件
-   */
-  const handleScroll = useCallback(
-    (event: Event) => {
-      const container = event.target as HTMLElement;
-      if (container) {
-        const isAtBottom = checkIfAtBottom(container);
-        setShouldAutoScroll(isAtBottom);
-      }
-    },
-    [checkIfAtBottom],
-  );
-
-  const onScrollBottom = useCallback(() => {
-    if (!shouldAutoScroll) return; // 如果用户不在底部，不自动滚动
-
-    setTimeout(() => {
-      const container = document.querySelector('.conversation-container');
-      if (container) {
-        container.scrollTo({
-          top: container.scrollHeight,
-          behavior: 'smooth',
-        });
-      }
-    });
-  }, [shouldAutoScroll]);
 
   // ==================== 渲染器函数 ====================
   /**
@@ -367,18 +341,6 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
     };
   }, [handleCodeClick]);
 
-  // 监听滚动事件
-  useEffect(() => {
-    const container = document.querySelector('.conversation-container');
-    if (!container) return;
-
-    container.addEventListener('scroll', handleScroll);
-
-    return () => {
-      container.removeEventListener('scroll', handleScroll);
-    };
-  }, [handleScroll]);
-
   // 主要的内容渲染 Effect
   useEffect(() => {
     if (!containerRef.current || !mdRef.current || !content) return;
@@ -397,14 +359,14 @@ const MarkDown2: React.FC<MarkDown2Props> = ({ loading = false, content }) => {
 
       incrementalRender(containerRef.current, newHtml, lastContentRef.current);
       lastContentRef.current = processedContent;
-      onScrollBottom();
+      scrollToBottom();
     } catch (error) {
       console.error('Markdown 渲染错误:', error);
       if (containerRef.current) {
         containerRef.current.innerHTML = '<div>Markdown 渲染错误</div>';
       }
     }
-  }, [content, customizeRenderer, onScrollBottom]);
+  }, [content, customizeRenderer, scrollToBottom]);
 
   // ==================== 组件样式 ====================
   const componentStyles = {
