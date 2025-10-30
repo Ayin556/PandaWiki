@@ -785,10 +785,11 @@ const Footer = React.memo(
                             width={16}
                             height={16}
                           />
-                          <Box sx={{ fontWeight: 'bold' }}>PandaWiki</Box>
+                          <Box sx={{ fontWeight: 'bold' }}>
+                            本网站由 PandaWiki 提供技术支持
+                          </Box>
                         </Stack>
                       </Link>
-                      提供技术支持
                     </Stack>
                   </>
                 )}

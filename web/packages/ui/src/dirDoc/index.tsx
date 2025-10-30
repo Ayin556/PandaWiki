@@ -139,7 +139,7 @@ const DirDocItem: React.FC<{
 
 const DirDoc: React.FC<DirDocProps> = React.memo(
   ({
-    title = '目录文档',
+    title = '文档目录卡片',
     items = [],
     mobile,
     baseUrl = '',

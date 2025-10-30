@@ -27,25 +27,25 @@ export const DEFAULT_DATA = {
     }[],
   },
   basic_doc: {
-    title: '基础文档',
+    title: '文档摘要卡片',
     bg_color: '#ffffff00',
     title_color: '#000000',
     nodes: [] as DomainRecommendNodeListResp[],
   },
   dir_doc: {
-    title: '目录文档',
+    title: '文档目录卡片',
     bg_color: '#3248F2',
     title_color: '#ffffff',
     nodes: [] as DomainRecommendNodeListResp[],
   },
   simple_doc: {
-    title: '简易文档',
+    title: '简易文档卡片',
     bg_color: '#ffffff00',
     title_color: '#000000',
     nodes: [] as DomainRecommendNodeListResp[],
   },
   carousel: {
-    title: '轮播图展示',
+    title: '轮播图',
     bg_color: '#3248F2',
     title_color: '#ffffff',
     list: [] as {
@@ -56,7 +56,7 @@ export const DEFAULT_DATA = {
     }[],
   },
   faq: {
-    title: '常见问题',
+    title: '链接组',
     bg_color: '#ffffff00',
     title_color: '#000000',
     list: [] as {
@@ -77,14 +77,14 @@ export const COMPONENTS_MAP = {
   },
   banner: {
     name: 'banner',
-    title: 'banner',
+    title: '欢迎组件',
     component: lazy(() => import('@panda-wiki/ui/banner')),
     config: lazy(() => import('./components/config/BannerConfig')),
     fixed: true,
   },
   basic_doc: {
     name: 'basic_doc',
-    title: '基础文档',
+    title: '文档摘要卡片',
     icon: IconJichuwendang,
     component: lazy(() => import('@panda-wiki/ui/basicDoc')),
     config: lazy(() => import('./components/config/BasicDocConfig')),
@@ -92,7 +92,7 @@ export const COMPONENTS_MAP = {
   },
   dir_doc: {
     name: 'dir_doc',
-    title: '目录文档',
+    title: '文档目录卡片',
     icon: IconMuluwendang,
     component: lazy(() => import('@panda-wiki/ui/dirDoc')),
     config: lazy(() => import('./components/config/DirDocConfig')),
@@ -100,7 +100,7 @@ export const COMPONENTS_MAP = {
   },
   simple_doc: {
     name: 'simple_doc',
-    title: '简易文档',
+    title: '简易文档卡片',
     icon: IconJianyiwendang,
     component: lazy(() => import('@panda-wiki/ui/simpleDoc')),
     config: lazy(() => import('./components/config/SimpleDocConfig')),
@@ -108,7 +108,7 @@ export const COMPONENTS_MAP = {
   },
   carousel: {
     name: 'carousel',
-    title: '轮播图展示',
+    title: '轮播图',
     icon: IconLunbotu,
     component: lazy(() => import('@panda-wiki/ui/carousel')),
     config: lazy(() => import('./components/config/CarouselConfig')),
@@ -116,7 +116,7 @@ export const COMPONENTS_MAP = {
   },
   faq: {
     name: 'faq',
-    title: '常见问题',
+    title: '链接组',
     icon: IconChangjianwenti,
     component: lazy(() => import('@panda-wiki/ui/faq')),
     config: lazy(() => import('./components/config/FaqConfig')),

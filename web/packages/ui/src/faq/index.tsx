@@ -81,7 +81,7 @@ const FaqItem: React.FC<{
 });
 
 const Faq: React.FC<FaqProps> = React.memo(
-  ({ title = '常见问题', items = [], mobile, bgColor, titleColor }) => {
+  ({ title = '链接组', items = [], mobile, bgColor, titleColor }) => {
     const size =
       typeof mobile === 'boolean' ? (mobile ? 12 : 6) : { xs: 12, md: 6 };
 

@@ -92,7 +92,7 @@ const SimpleDocItem: React.FC<{
 
 const SimpleDoc: React.FC<SimpleDocProps> = React.memo(
   ({
-    title = '简易文档',
+    title = '简易文档卡片',
     items = [],
     mobile,
     baseUrl = '',
