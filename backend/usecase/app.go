@@ -491,6 +491,7 @@ func (u *AppUsecase) GetAppDetailByKBIDAndAppType(ctx context.Context, kbID stri
 		DisclaimerSettings: app.Settings.DisclaimerSettings,
 		// webapp landing settings
 		WebAppLandingConfigs: webAppLandingConfigs,
+		WebAppLandingTheme:   app.Settings.WebAppLandingTheme,
 
 		WatermarkContent:   app.Settings.WatermarkContent,
 		WatermarkSetting:   app.Settings.WatermarkSetting,
@@ -581,6 +582,7 @@ func (u *AppUsecase) ShareGetWebAppInfo(ctx context.Context, kbID string, authId
 			DisclaimerSettings: app.Settings.DisclaimerSettings,
 			// WebApp Landing Settings
 			WebAppLandingConfigs: webAppLandingConfigs,
+			WebAppLandingTheme:   app.Settings.WebAppLandingTheme,
 
 			WatermarkContent:   app.Settings.WatermarkContent,
 			WatermarkSetting:   app.Settings.WatermarkSetting,

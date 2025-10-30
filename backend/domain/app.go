@@ -159,12 +159,17 @@ type AppSettings struct {
 	DisclaimerSettings DisclaimerSettings `json:"disclaimer_settings"`
 	// WebAppLandingConfigs
 	WebAppLandingConfigs []WebAppLandingConfig `json:"web_app_landing_configs,omitempty"`
+	WebAppLandingTheme   WebAppLandingTheme    `json:"web_app_landing_theme"`
 
 	WatermarkContent   string                  `json:"watermark_content"`
 	WatermarkSetting   consts.WatermarkSetting `json:"watermark_setting" validate:"omitempty,oneof='' hidden visible"`
 	CopySetting        consts.CopySetting      `json:"copy_setting" validate:"omitempty,oneof='' append disabled"`
 	ContributeSettings ContributeSettings      `json:"contribute_settings"`
 	HomePageSetting    consts.HomePageSetting  `json:"home_page_setting"`
+}
+
+type WebAppLandingTheme struct {
+	Name string `json:"name"`
 }
 
 type LarkBotSettings struct {
@@ -432,6 +437,7 @@ type AppSettingsResp struct {
 	DisclaimerSettings DisclaimerSettings `json:"disclaimer_settings"`
 	// WebApp Landing Settings
 	WebAppLandingConfigs []WebAppLandingConfigResp `json:"web_app_landing_configs,omitempty"`
+	WebAppLandingTheme   WebAppLandingTheme        `json:"web_app_landing_theme"`
 	HomePageSetting      consts.HomePageSetting    `json:"home_page_setting"`
 }
 
