@@ -142,7 +142,7 @@ export const INIT_LADING_DATA = {
         placeholder: '有问题？问问 AI',
         subtitle_color: '#ffffff80',
         subtitle_font_size: 16,
-        bg_url: '/images/init/banner_bg.png',
+        bg_url: '',
         hot_search: [
           '如何安装PandaWiki',
           'PandaWiki能做什么？',
@@ -226,7 +226,7 @@ export const INIT_LADING_DATA = {
     {
       type: 'faq',
       faq_config: {
-        title: '链接组',
+        title: '常见问题',
         title_color: '#000000',
         bg_color: '#ffffff00',
         list: [
