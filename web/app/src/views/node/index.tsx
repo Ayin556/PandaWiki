@@ -1,7 +1,7 @@
 'use client';
 
-import { NodeDetail } from '@/assets/type';
 import DocFab from '@/components/docFab';
+import ErrorComponent from '@/components/error';
 import { DocWidth } from '@/constant';
 import useCopy from '@/hooks/useCopy';
 import { useStore } from '@/provider';
@@ -9,28 +9,30 @@ import { ConstsCopySetting } from '@/request/types';
 import { TocList, useTiptap } from '@ctzhian/tiptap';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { Box, Fab, Skeleton, Zoom } from '@mui/material';
-import { useParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import DocAnchor from './DocAnchor';
 import DocContent from './DocContent';
-import ErrorComponent from '@/components/error';
 
 const Doc = ({
   node,
   error,
 }: {
-  node?: NodeDetail;
+  node?: any;
   error?: Partial<Error> & { digest?: string } & { code?: number | string };
 }) => {
   const { kbDetail, mobile, catalogWidth } = useStore();
   const [loading, setLoading] = useState(true);
   const [headings, setHeadings] = useState<TocList>([]);
   const [characterCount, setCharacterCount] = useState(0);
-  const params = useParams() || {};
-  const docId = params.id as string;
+
+  const isMarkdown = useMemo(() => {
+    return node?.meta?.content_type === 'md';
+  }, [node?.meta?.content_type]);
+
   const editorRef = useTiptap({
     content: node?.content || '',
     editable: false,
+    contentType: isMarkdown ? 'markdown' : 'html',
     immediatelyRender: false,
     onTocUpdate: (toc: TocList) => {
       setHeadings(toc);
@@ -49,7 +51,6 @@ const Doc = ({
   }, [kbDetail]);
 
   const [showScrollTop, setShowScrollTop] = useState(false);
-  const [showActions, setShowActions] = useState(false);
 
   useCopy({
     mode:
@@ -86,9 +87,12 @@ const Doc = ({
   };
 
   useEffect(() => {
-    if (node && editorRef && editorRef.editor) {
+    if (node && editorRef) {
       requestAnimationFrame(() => {
-        editorRef.editor.commands.setContent(node?.content || '');
+        editorRef.setContent(
+          node?.content || '',
+          isMarkdown ? 'markdown' : 'html',
+        );
       });
     }
   }, [node]);

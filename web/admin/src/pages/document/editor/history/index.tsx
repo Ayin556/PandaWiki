@@ -51,7 +51,7 @@ const History = () => {
   const getDetail = (v: DomainNodeReleaseListItem) => {
     getApiProV1NodeReleaseDetail({ id: v.id! }).then(res => {
       setCurNode(res);
-      editorRef.editor.commands.setContent(res.content || '');
+      editorRef.setContent(res.content || '');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   };

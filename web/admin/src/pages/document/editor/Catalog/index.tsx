@@ -27,13 +27,12 @@ const Catalog = ({ curNode, setCatalogOpen }: CatalogProps) => {
   const navigate = useNavigate();
   const { id = '' } = useParams();
   const { pathname } = useLocation();
-  const { kb_id = '', kbDetail } = useAppSelector(state => state.config);
+  const { kb_id = '' } = useAppSelector(state => state.config);
 
   const isHistory = useMemo(() => {
     return pathname.includes('/doc/editor/history');
   }, [pathname]);
 
-  const [nodeList, setNodeList] = useState<DomainNodeListItemResp[]>([]);
   const [data, setData] = useState<ITreeItem[]>([]);
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(
     new Set(),
@@ -67,7 +66,6 @@ const Catalog = ({ curNode, setCatalogOpen }: CatalogProps) => {
       kb_id: kb_id || localStorage.getItem('kb_id') || '',
     };
     getApiV1NodeList(params).then(res => {
-      setNodeList(res);
       const v = filterEmptyFolders(convertToTree(res || []));
       setData(v);
       // 计算当前文档的所有父级文件夹，并默认展开
@@ -192,6 +190,26 @@ const Catalog = ({ curNode, setCatalogOpen }: CatalogProps) => {
             />
           )}
           <Ellipsis>{item.name}</Ellipsis>
+          {item.content_type === 'md' && (
+            <Box
+              sx={{
+                flexShrink: 0,
+                fontSize: 10,
+                // color: 'text.primary',
+                color: 'white',
+                background: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+                px: 1,
+                mr: 1,
+                fontWeight: '500',
+                borderRadius: '4px',
+                height: '14px',
+                lineHeight: '14px',
+                display: 'inline-block',
+              }}
+            >
+              MD
+            </Box>
+          )}
           {item.type === 1 && (
             <Box sx={{ flexShrink: 0 }} onClick={e => e.stopPropagation()}>
               <Cascader
@@ -302,14 +320,7 @@ const Catalog = ({ curNode, setCatalogOpen }: CatalogProps) => {
         sx={{ p: 2 }}
         gap={1}
       >
-        <Stack direction='row' alignItems='center' gap={1} sx={{ flex: 1 }}>
-          <KBSwitch />
-          <Ellipsis
-            sx={{ fontSize: 14, fontWeight: 'bold', width: 0, flex: 1 }}
-          >
-            {kbDetail.name}
-          </Ellipsis>
-        </Stack>
+        <KBSwitch />
         <Stack
           alignItems='center'
           justifyContent='space-between'
@@ -368,6 +379,7 @@ const Catalog = ({ curNode, setCatalogOpen }: CatalogProps) => {
             const newChild: ITreeItem = {
               id: node.id,
               name: node.name,
+              content_type: node.content_type,
               type: node.type,
               emoji: node.emoji,
               parentId: parent.id,

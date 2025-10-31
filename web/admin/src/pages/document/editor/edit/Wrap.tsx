@@ -2,28 +2,24 @@ import { uploadFile } from '@/api';
 import Emoji from '@/components/Emoji';
 import { postApiV1CreationTabComplete, putApiV1NodeDetail } from '@/request';
 import { V1NodeDetailResp } from '@/request/types';
-import { Box, Stack, TextField, Tooltip } from '@mui/material';
-// import { Collaboration } from '@tiptap/extension-collaboration';
-// import { CollaborationCaret } from '@tiptap/extension-collaboration-caret';
-import { Editor, TocList, useTiptap, UseTiptapReturn } from '@ctzhian/tiptap';
+import { useAppSelector } from '@/store';
+import { TocList, useTiptap, UseTiptapReturn } from '@ctzhian/tiptap';
 import { Icon, message } from '@ctzhian/ui';
+import { Box, Stack, TextField, Tooltip } from '@mui/material';
 import dayjs from 'dayjs';
 import { debounce } from 'lodash-es';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   useLocation,
   useNavigate,
   useOutletContext,
   useParams,
 } from 'react-router-dom';
-// import { WebsocketProvider } from 'y-websocket';
-// import * as Y from 'yjs';
-import { DocWidth } from '@/constant/enums';
-import { useAppSelector } from '@/store';
-import { useMemo } from 'react';
 import { WrapContext } from '..';
 import AIGenerate from './AIGenerate';
+import FullTextEditor from './FullTextEditor';
 import Header from './Header';
+import MarkdownEditor from './MarkdownEditor';
 import Summary from './Summary';
 import Toc from './Toc';
 import Toolbar from './Toolbar';
@@ -34,23 +30,22 @@ interface WrapProps {
 
 const Wrap = ({ detail: defaultDetail }: WrapProps) => {
   const { id = '' } = useParams();
-
   const navigate = useNavigate();
   const { license } = useAppSelector(state => state.config);
+
   const state = useLocation().state as { node?: V1NodeDetailResp };
   const { catalogOpen, nodeDetail, setNodeDetail, onSave, docWidth } =
     useOutletContext<WrapContext>();
 
-  // const connectCount = useRef(0);
   const storageTocOpen = localStorage.getItem('toc-open');
 
   const postApiV1CreationTabCompleteController = useRef<AbortController | null>(
     null,
   );
 
-  const isEnterprise = useMemo(() => {
-    return license.edition === 2;
-  }, [license]);
+  const isMarkdown = useMemo(() => {
+    return defaultDetail.meta?.content_type === 'md';
+  }, [defaultDetail.meta?.content_type]);
 
   const [title, setTitle] = useState(nodeDetail?.name || defaultDetail.name);
   const [summary, setSummary] = useState(
@@ -59,18 +54,8 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
   const [characterCount, setCharacterCount] = useState(0);
   const [headings, setHeadings] = useState<TocList>([]);
   const [fixedToc, setFixedToc] = useState(!!storageTocOpen);
-  // const [isSyncing, setIsSyncing] = useState(false);
-  // const [connectError, setConnectError] = useState(false);
-  // const [collaborativeUsers, setCollaborativeUsers] = useState<
-  //   Array<{
-  //     id: string;
-  //     name: string;
-  //     color: string;
-  //   }>
-  // >([]);
   const [selectionText, setSelectionText] = useState('');
   const [aiGenerateOpen, setAiGenerateOpen] = useState(false);
-  // const [showSummaryBtn, setShowSummaryBtn] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const initialStateRef = useRef({
@@ -79,29 +64,9 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
     emoji: defaultDetail.meta?.emoji || '',
   });
 
-  const updateDetail = (value: V1NodeDetailResp) => {
-    setNodeDetail({
-      ...nodeDetail,
-      updated_at: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-      status: 1,
-      ...value,
-    });
-  };
-
-  const debouncedUpdateTitle = useCallback(
-    debounce((newTitle: string) => {
-      putApiV1NodeDetail({
-        id: defaultDetail.id!,
-        kb_id: defaultDetail.kb_id!,
-        name: newTitle,
-      }).then(() => {
-        updateDetail({
-          name: newTitle,
-        });
-      });
-    }, 500),
-    [defaultDetail.id, defaultDetail.kb_id],
-  );
+  const isEnterprise = useMemo(() => {
+    return license.edition === 2;
+  }, [license]);
 
   const debouncedUpdateSummary = useCallback(
     debounce((newSummary: string) => {
@@ -121,31 +86,41 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
     [defaultDetail.id, defaultDetail.kb_id],
   );
 
+  const debouncedUpdateTitle = useCallback(
+    debounce((newTitle: string) => {
+      putApiV1NodeDetail({
+        id: defaultDetail.id!,
+        kb_id: defaultDetail.kb_id!,
+        name: newTitle,
+      }).then(() => {
+        updateDetail({
+          name: newTitle,
+        });
+      });
+    }, 500),
+    [defaultDetail.id, defaultDetail.kb_id],
+  );
+
+  const updateDetail = (value: V1NodeDetailResp) => {
+    setNodeDetail({
+      ...nodeDetail,
+      updated_at: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+      status: 1,
+      ...value,
+    });
+  };
+
   const handleExport = async (type: string) => {
-    if (type === 'html') {
-      const html = editorRef.getHTML();
-      if (!html) return;
-      const blob = new Blob([html], { type: 'text/html' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${nodeDetail?.name}.html`;
-      a.click();
-      URL.revokeObjectURL(url);
-      message.success('导出成功');
-    }
-    if (type === 'md') {
-      const markdown = editorRef.getMarkdownByJSON();
-      if (!markdown) return;
-      const blob = new Blob([markdown], { type: 'text/markdown' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${nodeDetail?.name}.md`;
-      a.click();
-      URL.revokeObjectURL(url);
-      message.success('导出成功');
-    }
+    const value = editorRef?.getContent() || '';
+    if (!value) return;
+    const blob = new Blob([value], { type: `text/${type}` });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${nodeDetail?.name}.${type}`;
+    a.click();
+    URL.revokeObjectURL(url);
+    message.success('导出成功');
   };
 
   const handleUpload = async (
@@ -206,64 +181,17 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
     });
   };
 
-  // const doc = useMemo(() => new Y.Doc(), [defaultDetail.id]);
-  // const yprovider = useMemo(
-  //   () =>
-  //     new WebsocketProvider(
-  //       'ws://10.10.18.71:1234',
-  //       defaultDetail.id || '',
-  //       doc,
-  //       {
-  //         maxBackoffTime: 5000,
-  //       },
-  //     ),
-  //   [defaultDetail.id],
-  // );
-
-  // 更新协同用户列表
-  // const updateCollaborativeUsers = useCallback(() => {
-  //   if (yprovider && yprovider.awareness) {
-  //     const states = Array.from(yprovider.awareness.getStates().values());
-  //     const users = states.map((state: any) => ({
-  //       id: state.user?.id || '',
-  //       name: state.user?.name || '未知用户',
-  //       color: state.user?.color || '#000000',
-  //     }));
-  //     setCollaborativeUsers(users);
-  //   }
-  // }, [yprovider]);
-
   const editorRef = useTiptap({
-    editable: true,
+    editable: !isMarkdown,
+    contentType: isMarkdown ? 'markdown' : 'html',
     immediatelyRender: true,
     content: defaultDetail.content || '',
     exclude: ['invisibleCharacters', 'youtube', 'mention'],
-    // exclude: ['invisibleCharacters', 'youtube', 'mention', 'undoRedo'],
-    // extensions: [
-    //   Collaboration.configure({
-    //     document: doc,
-    //   }),
-    //   CollaborationCaret.configure({
-    //     provider: yprovider,
-    //     user: {
-    //       id: user.id || '',
-    //       name: user.account,
-    //       color: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
-    //     },
-    //   }),
-    // ],
     onCreate: ({ editor: tiptapEditor }) => {
-      setCharacterCount(
-        (tiptapEditor.storage as any).characterCount.characters(),
-      );
-      // yprovider.on('sync', () => {
-      //   if (tiptapEditor.isEmpty) {
-      //     tiptapEditor.commands.setContent(defaultDetail.content || '');
-      //     setCharacterCount(
-      //       (tiptapEditor.storage as any).characterCount.characters(),
-      //     );
-      //   }
-      // });
+      const characterCount = (
+        tiptapEditor.storage as any
+      ).characterCount.characters();
+      setCharacterCount(characterCount);
     },
     onError: handleError,
     onUpload: handleUpload,
@@ -272,9 +200,8 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
     onAiWritingGetSuggestion: handleAiWritingGetSuggestion,
   });
 
-  // 检查是否有任何字段被修改
   const checkIfEdited = useCallback(() => {
-    const currentContent = editorRef.editor?.getHTML() || '';
+    const currentContent = editorRef?.getContent() || '';
     const currentSummary = summary;
     const currentEmoji = nodeDetail?.meta?.emoji || '';
 
@@ -284,7 +211,7 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
       currentEmoji !== initialStateRef.current.emoji;
 
     setIsEditing(hasChanges);
-  }, [editorRef.editor, summary, nodeDetail?.meta?.emoji]);
+  }, [editorRef, summary, nodeDetail?.meta?.emoji, isMarkdown]);
 
   const handleAiGenerate = useCallback(() => {
     if (editorRef.editor) {
@@ -301,34 +228,32 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
 
   const changeCatalogItem = useCallback(() => {
     if (editorRef && editorRef.editor) {
-      const html = editorRef.getHTML();
+      const content = editorRef.getContent();
       updateDetail({
-        content: html,
+        content: content,
       });
-      onSave(html);
-      // 更新初始状态引用
+      onSave(content);
       initialStateRef.current = {
-        content: html,
+        content: content,
         summary: summary,
         emoji: nodeDetail?.meta?.emoji || '',
       };
       setIsEditing(false);
     }
-  }, [id, editorRef, onSave, summary, nodeDetail?.meta?.emoji]);
+  }, [id, editorRef, onSave, summary, nodeDetail?.meta?.emoji, isMarkdown]);
 
   const handleGlobalSave = useCallback(
     (event: KeyboardEvent) => {
       if ((event.ctrlKey || event.metaKey) && event.key === 's') {
         event.preventDefault();
         if (editorRef && editorRef.editor) {
-          const html = editorRef.getHTML();
+          const content = editorRef.getContent();
           updateDetail({
-            content: html,
+            content: content,
           });
-          onSave(html);
-          // 更新初始状态引用
+          onSave(content);
           initialStateRef.current = {
-            content: html,
+            content: content,
             summary: summary,
             emoji: nodeDetail?.meta?.emoji || '',
           };
@@ -336,8 +261,191 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
         }
       }
     },
-    [editorRef, onSave, id, summary, nodeDetail?.meta?.emoji],
+    [editorRef, onSave, id, summary, nodeDetail?.meta?.emoji, isMarkdown],
   );
+
+  const renderEditorTitleEmojiSummary = () => {
+    return (
+      <>
+        <Stack
+          direction={'row'}
+          alignItems={'center'}
+          gap={1}
+          sx={{ mb: 2, position: 'relative' }}
+        >
+          <Emoji
+            type={2}
+            sx={{ flexShrink: 0, width: 36, height: 36 }}
+            iconSx={{ fontSize: 28 }}
+            value={nodeDetail?.meta?.emoji}
+            onChange={value => {
+              putApiV1NodeDetail({
+                id: defaultDetail.id!,
+                kb_id: defaultDetail.kb_id!,
+                emoji: value,
+              }).then(() => {
+                updateDetail({
+                  meta: {
+                    ...nodeDetail?.meta,
+                    emoji: value,
+                  },
+                });
+                // 延迟检查以确保状态已更新
+                setTimeout(() => checkIfEdited(), 0);
+              });
+            }}
+          />
+          <TextField
+            sx={{ flex: 1 }}
+            value={title}
+            slotProps={{
+              input: {
+                sx: {
+                  fontSize: 28,
+                  fontWeight: 'bold',
+                  bgcolor: 'background.default',
+                  '& input': {
+                    p: 0,
+                    lineHeight: '36px',
+                    height: '36px',
+                  },
+                  '& fieldset': {
+                    border: 'none !important',
+                  },
+                },
+              },
+            }}
+            onChange={e => {
+              setTitle(e.target.value);
+              debouncedUpdateTitle(e.target.value);
+            }}
+          />
+        </Stack>
+        <Stack direction={'row'} alignItems={'center'} gap={2} sx={{ mb: 4 }}>
+          <Tooltip arrow title={isEnterprise ? '查看历史版本' : ''}>
+            <Stack
+              direction={'row'}
+              alignItems={'center'}
+              gap={0.5}
+              sx={{
+                fontSize: 12,
+                color: 'text.tertiary',
+                cursor: isEnterprise ? 'pointer' : 'text',
+                ':hover': {
+                  color: isEnterprise ? 'primary.main' : 'text.tertiary',
+                },
+              }}
+              onClick={() => {
+                if (isEnterprise) {
+                  navigate(`/doc/editor/history/${defaultDetail.id}`);
+                }
+              }}
+            >
+              <Icon type='icon-a-shijian2' />
+              {dayjs(defaultDetail.created_at).format(
+                'YYYY-MM-DD HH:mm:ss',
+              )}{' '}
+              创建
+            </Stack>
+          </Tooltip>
+          <Stack
+            direction={'row'}
+            alignItems={'center'}
+            gap={0.5}
+            sx={{ fontSize: 12, color: 'text.tertiary' }}
+          >
+            <Icon type='icon-ziti' />
+            {characterCount} 字
+          </Stack>
+        </Stack>
+        <Box
+          sx={{
+            mb: 6,
+            border: '1px solid',
+            borderColor: 'divider',
+            borderRadius: '10px',
+            bgcolor: 'background.paper2',
+            p: 2,
+            position: 'relative',
+            '.ai-generate-summary-left-icon': {
+              opacity: '0',
+              transition: 'opacity 0.3s ease-in-out',
+            },
+            ':hover': {
+              '.ai-generate-summary-left-icon': {
+                opacity: '1',
+              },
+            },
+            '.MuiInputBase-root': {
+              p: 0,
+            },
+          }}
+        >
+          <Stack
+            className='ai-generate-summary-left-icon'
+            direction={'row'}
+            alignItems={'center'}
+            gap={0.5}
+            onClick={() => setShowSummary(true)}
+            sx={{
+              position: 'absolute',
+              top: -18,
+              left: 0,
+              zIndex: 1,
+              lineHeight: '18px',
+              cursor: 'pointer',
+              fontSize: 12,
+              color: 'text.tertiary',
+              ':hover': {
+                color: 'text.primary',
+              },
+            }}
+          >
+            <Icon type='icon-DJzhinengzhaiyao' sx={{ fontSize: 12 }} />
+            文档摘要
+          </Stack>
+          {nodeDetail?.meta?.summary ? (
+            <TextField
+              value={summary}
+              multiline
+              fullWidth
+              placeholder='暂无摘要，可在此处输入摘要'
+              slotProps={{
+                input: {
+                  sx: {
+                    bgcolor: 'background.paper2',
+                    fontSize: 14,
+                    lineHeight: '28px',
+                    letterSpacing: '1px',
+                    fontWeight: 'normal',
+                    color: 'text.secondary',
+                    '& fieldset': {
+                      border: 'none !important',
+                    },
+                  },
+                },
+              }}
+              onChange={e => {
+                setSummary(e.target.value);
+                debouncedUpdateSummary(e.target.value);
+              }}
+            />
+          ) : (
+            <Box sx={{ fontSize: 12, color: 'text.tertiary' }}>
+              暂无摘要，点击
+              <Box
+                component='span'
+                sx={{ color: 'primary.main', cursor: 'pointer' }}
+                onClick={() => setShowSummary(true)}
+              >
+                生成摘要
+              </Box>
+            </Box>
+          )}
+        </Box>
+      </>
+    );
+  };
 
   useEffect(() => {
     setSummary(nodeDetail?.meta?.summary || '');
@@ -351,7 +459,6 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
   useEffect(() => {
     setTitle(defaultDetail?.name || '');
     setSummary(defaultDetail?.meta?.summary || '');
-    // 重置初始状态引用
     initialStateRef.current = {
       content: defaultDetail.content || '',
       summary: defaultDetail.meta?.summary || '',
@@ -378,13 +485,10 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
         meta: {
           summary: newSummary,
           emoji: newEmoji,
-          // doc_width:
-          //   state.node.meta?.doc_width || nodeDetail?.meta?.doc_width || 'full',
         },
         content: newContent,
       });
-      editorRef.editor.commands.setContent(newContent);
-      // 重置初始状态引用
+      editorRef.setContent(newContent);
       initialStateRef.current = {
         content: newContent,
         summary: newSummary,
@@ -395,24 +499,17 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
     }
   }, [state, editorRef.editor]);
 
-  // useEffect(() => {
-  //   if (isSyncing) {
-  //     const interval = setInterval(() => {
-  //       updateCollaborativeUsers();
-  //     }, 3000);
-  //     return () => clearInterval(interval);
-  //   }
-  // }, [isSyncing]);
-
   useEffect(() => {
     const handleTabClose = () => {
       if (isEditing) {
-        const html = editorRef.getHTML();
-        onSave(html);
-        updateDetail({});
+        const content = editorRef?.getContent() || '';
+        onSave(content);
+        updateDetail({
+          content: content,
+        });
         // 更新初始状态引用
         initialStateRef.current = {
-          content: html,
+          content: content,
           summary: summary,
           emoji: nodeDetail?.meta?.emoji || '',
         };
@@ -420,12 +517,12 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
     };
     const handleVisibilityChange = () => {
       if (document.hidden && isEditing) {
-        const html = editorRef.getHTML();
-        onSave(html);
+        const content = editorRef?.getContent() || '';
+        onSave(content);
         updateDetail({});
         // 更新初始状态引用
         initialStateRef.current = {
-          content: html,
+          content: content,
           summary: summary,
           emoji: nodeDetail?.meta?.emoji || '',
         };
@@ -439,45 +536,8 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
     };
   }, [editorRef, isEditing, summary, nodeDetail?.meta?.emoji]);
 
-  // const handleWebSocketError = useCallback((_error: Event, _provider: WebsocketProvider) => {
-  //   _provider.disconnect();
-  //   if (connectCount.current < 3) {
-  //     connectCount.current++;
-  //     _provider.connect();
-  //   } else {
-  //     if (editorRef.editor.isEmpty) {
-  //       setConnectError(true);
-  //       _provider.connect();
-  //       editorRef.editor.commands.setContent(defaultDetail.content || '');
-  //     }
-  //   }
-  // }, [editorRef.editor, defaultDetail.content]);
-
-  // useEffect(() => {
-  //   if (editorRef.editor) {
-  //     const handleStatus = ({ status }: { status: string }) => {
-  //       if (status === 'connected') {
-  //         setIsSyncing(true);
-  //       }
-  //       if (status === 'disconnected') {
-  //         setIsSyncing(false);
-  //       }
-  //     };
-
-  //     yprovider.on('status', handleStatus);
-  //     yprovider.on('connection-error', handleWebSocketError);
-
-  //     return () => {
-  //       yprovider.off('status', handleStatus);
-  //       yprovider.off('connection-error', handleWebSocketError);
-  //     };
-  //   }
-  // }, [yprovider, editorRef.editor, defaultDetail.content]);
-
   useEffect(() => {
     return () => {
-      // if (doc) doc.destroy();
-      // if (yprovider) yprovider.disconnect();
       if (editorRef) editorRef.editor.destroy();
     };
   }, []);
@@ -488,13 +548,6 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
 
   return (
     <>
-      {/* // <EditorThemeProvider
-    //   colors={{ light }}
-    //   mode='light'
-    //   theme={{
-    //     components: componentStyleOverrides,
-    //   }}
-    // > */}
       <Box
         sx={{
           position: 'fixed',
@@ -507,20 +560,17 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
         }}
       >
         <Header
-          // isSyncing={isSyncing}
-          // collaborativeUsers={collaborativeUsers}
           edit={isEditing}
           detail={nodeDetail!}
           updateDetail={updateDetail}
           handleSave={async () => {
-            const value = editorRef.getHTML();
+            const content = editorRef?.getContent() || '';
             updateDetail({
-              content: value,
+              content: content,
             });
-            await onSave(value);
-            // 更新初始状态引用
+            await onSave(content);
             initialStateRef.current = {
-              content: value,
+              content: content,
               summary: summary,
               emoji: nodeDetail?.meta?.emoji || '',
             };
@@ -528,283 +578,38 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
           }}
           handleExport={handleExport}
         />
-        <Toolbar editorRef={editorRef} handleAiGenerate={handleAiGenerate} />
+        {!isMarkdown && (
+          <Toolbar editorRef={editorRef} handleAiGenerate={handleAiGenerate} />
+        )}
       </Box>
-      <Box
-        sx={{
-          ...(fixedToc && {
-            display: 'flex',
-          }),
-        }}
-      >
-        <Box
-          sx={{
-            width:
-              docWidth === 'full'
-                ? `calc(100vw - 160px - ${catalogOpen ? 292 : 0}px - ${fixedToc ? 292 : 0}px)`
-                : DocWidth[docWidth as keyof typeof DocWidth].value,
-            maxWidth: '100%',
-            p: '72px 80px 150px',
-            mt: '102px',
-            mx: 'auto',
-          }}
-        >
-          <Stack
-            direction={'row'}
-            alignItems={'center'}
-            gap={1}
-            sx={{ mb: 2, position: 'relative' }}
-            // onMouseEnter={() => setShowSummaryBtn(true)}
-            // onMouseLeave={() => setShowSummaryBtn(false)}
-          >
-            {/* {showSummaryBtn && (
-              <Stack
-                direction={'row'}
-                alignItems={'center'}
-                gap={2}
-                sx={{
-                  position: 'absolute',
-                  top: -29,
-                  left: 0,
-                  pb: 1,
-                  width: '100%',
-                  zIndex: 1,
-                  fontSize: 14,
-                  color: 'text.tertiary',
-                }}
-              >
-                <Stack
-                  direction={'row'}
-                  alignItems={'center'}
-                  gap={0.5}
-                  sx={{
-                    cursor: 'pointer',
-                    ':hover': {
-                      color: 'text.primary',
-                    },
-                  }}
-                  onClick={() => setShowSummary(true)}
-                >
-                  <Icon type='icon-DJzhinengzhaiyao' />
-                  智能摘要
-                </Stack>
-              </Stack>
-            )} */}
-            <Emoji
-              type={2}
-              sx={{ flexShrink: 0, width: 36, height: 36 }}
-              iconSx={{ fontSize: 28 }}
-              value={nodeDetail?.meta?.emoji}
-              onChange={value => {
-                putApiV1NodeDetail({
-                  id: defaultDetail.id!,
-                  kb_id: defaultDetail.kb_id!,
-                  emoji: value,
-                }).then(() => {
-                  updateDetail({
-                    meta: {
-                      ...nodeDetail?.meta,
-                      emoji: value,
-                    },
-                  });
-                  // 延迟检查以确保状态已更新
-                  setTimeout(() => checkIfEdited(), 0);
-                });
-              }}
-            />
-            <TextField
-              sx={{ flex: 1 }}
-              value={title}
-              slotProps={{
-                input: {
-                  sx: {
-                    fontSize: 28,
-                    fontWeight: 'bold',
-                    bgcolor: 'background.default',
-                    '& input': {
-                      p: 0,
-                      lineHeight: '36px',
-                      height: '36px',
-                    },
-                    '& fieldset': {
-                      border: 'none !important',
-                    },
-                  },
-                },
-              }}
-              onChange={e => {
-                setTitle(e.target.value);
-                debouncedUpdateTitle(e.target.value);
-              }}
-            />
-          </Stack>
-          <Stack direction={'row'} alignItems={'center'} gap={2} sx={{ mb: 4 }}>
-            <Tooltip arrow title={isEnterprise ? '查看历史版本' : ''}>
-              <Stack
-                direction={'row'}
-                alignItems={'center'}
-                gap={0.5}
-                sx={{
-                  fontSize: 12,
-                  color: 'text.tertiary',
-                  cursor: isEnterprise ? 'pointer' : 'text',
-                  ':hover': {
-                    color: isEnterprise ? 'primary.main' : 'text.tertiary',
-                  },
-                }}
-                onClick={() => {
-                  if (isEnterprise) {
-                    navigate(`/doc/editor/history/${defaultDetail.id}`);
-                  }
-                }}
-              >
-                <Icon type='icon-a-shijian2' />
-                {dayjs(defaultDetail.created_at).format(
-                  'YYYY-MM-DD HH:mm:ss',
-                )}{' '}
-                创建
-              </Stack>
-            </Tooltip>
-            <Stack
-              direction={'row'}
-              alignItems={'center'}
-              gap={0.5}
-              sx={{ fontSize: 12, color: 'text.tertiary' }}
-            >
-              <Icon type='icon-ziti' />
-              {characterCount} 字
-            </Stack>
-          </Stack>
-          <Box
-            sx={{
-              mb: 6,
-              border: '1px solid',
-              borderColor: 'divider',
-              borderRadius: '10px',
-              bgcolor: 'background.paper2',
-              p: 2,
-              position: 'relative',
-              '.ai-generate-summary-left-icon': {
-                opacity: '0',
-                transition: 'opacity 0.3s ease-in-out',
-              },
-              ':hover': {
-                '.ai-generate-summary-left-icon': {
-                  opacity: '1',
-                },
-              },
-              '.MuiInputBase-root': {
-                p: 0,
-              },
+      <Box sx={{ ...(fixedToc && { display: 'flex' }) }}>
+        {isMarkdown ? (
+          <MarkdownEditor
+            editor={editorRef.editor}
+            value={nodeDetail?.content || ''}
+            onChange={value => {
+              updateDetail({
+                content: value,
+              });
+              editorRef.setContent(value);
             }}
-          >
-            <Stack
-              className='ai-generate-summary-left-icon'
-              direction={'row'}
-              alignItems={'center'}
-              gap={0.5}
-              onClick={() => setShowSummary(true)}
-              sx={{
-                position: 'absolute',
-                top: -18,
-                left: 0,
-                zIndex: 1,
-                lineHeight: '18px',
-                cursor: 'pointer',
-                fontSize: 12,
-                color: 'text.tertiary',
-                ':hover': {
-                  color: 'text.primary',
-                },
-              }}
-            >
-              <Icon type='icon-DJzhinengzhaiyao' sx={{ fontSize: 12 }} />
-              文档摘要
-            </Stack>
-            {nodeDetail?.meta?.summary ? (
-              <TextField
-                value={summary}
-                multiline
-                fullWidth
-                placeholder='暂无摘要，可在此处输入摘要'
-                slotProps={{
-                  input: {
-                    sx: {
-                      bgcolor: 'background.paper2',
-                      fontSize: 14,
-                      lineHeight: '28px',
-                      letterSpacing: '1px',
-                      fontWeight: 'normal',
-                      color: 'text.secondary',
-                      '& fieldset': {
-                        border: 'none !important',
-                      },
-                    },
-                  },
-                }}
-                onChange={e => {
-                  setSummary(e.target.value);
-                  debouncedUpdateSummary(e.target.value);
-                }}
-              />
-            ) : (
-              <Box sx={{ fontSize: 12, color: 'text.tertiary' }}>
-                暂无摘要，点击
-                <Box
-                  component='span'
-                  sx={{ color: 'primary.main', cursor: 'pointer' }}
-                  onClick={() => setShowSummary(true)}
-                >
-                  生成摘要
-                </Box>
-              </Box>
-            )}
-          </Box>
-          <Box
-            sx={{
-              wordBreak: 'break-all',
-              '.tiptap.ProseMirror': {
-                overflowX: 'hidden',
-                minHeight: 'calc(100vh - 102px - 48px)',
-              },
-              '.tableWrapper': {
-                maxWidth: `calc(100vw - 160px - ${catalogOpen ? 292 : 0}px - ${fixedToc ? 292 : 0}px)`,
-                overflowX: 'auto',
-              },
-            }}
-          >
-            <Editor editor={editorRef.editor} />
-            {/* {(isSyncing || connectError) ? <Editor editor={editorRef.editor} /> : <Stack gap={1}>
-              {new Array(3).fill(0).map((_, index) => (
-                <Skeleton key={index} variant='text' height={24} />
-              ))}
-              <Skeleton width={500} variant='text' height={24} />
-              {new Array(5).fill(0).map((_, index) => (
-                <Skeleton key={index} variant='text' height={24} />
-              ))}
-              <Skeleton width={400} variant='text' height={24} />
-              {new Array(2).fill(0).map((_, index) => (
-                <Skeleton key={index} variant='text' height={24} />
-              ))}
-              <Skeleton width={300} variant='text' height={24} />
-              {new Array(5).fill(0).map((_, index) => (
-                <Skeleton key={index} variant='text' height={24} />
-              ))}
-              <Skeleton width={500} variant='text' height={24} />
-              {new Array(3).fill(0).map((_, index) => (
-                <Skeleton key={index} variant='text' height={24} />
-              ))}
-              <Skeleton width={300} variant='text' height={24} />
-            </Stack>} */}
-          </Box>
-        </Box>
-        <Toc
-          headings={headings}
-          fixed={fixedToc}
-          setFixed={setFixedToc}
-          setShowSummary={setShowSummary}
-        />
+            header={renderEditorTitleEmojiSummary()}
+          />
+        ) : (
+          <FullTextEditor
+            editor={editorRef.editor}
+            fixed={fixedToc}
+            header={renderEditorTitleEmojiSummary()}
+          />
+        )}
       </Box>
+      <Toc
+        headings={headings}
+        fixed={fixedToc}
+        isMarkdown={isMarkdown}
+        setFixed={setFixedToc}
+        setShowSummary={setShowSummary}
+      />
       <AIGenerate
         open={aiGenerateOpen}
         selectText={selectionText}
@@ -816,7 +621,6 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
         updateDetail={updateDetail}
         onClose={() => setShowSummary(false)}
       />
-      {/* </EditorThemeProvider> */}
     </>
   );
 };

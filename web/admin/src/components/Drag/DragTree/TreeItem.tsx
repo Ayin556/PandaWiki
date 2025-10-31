@@ -119,7 +119,7 @@ const TreeItem = React.forwardRef<
   const inputRef = useRef<HTMLInputElement>(null);
 
   const createItem = useCallback(
-    (type: 1 | 2) => {
+    (type: 1 | 2, contentType?: string) => {
       const newItemId = new Date().getTime().toString();
       const temp = [...data];
       updateTree(temp, item.id, {
@@ -133,6 +133,7 @@ const TreeItem = React.forwardRef<
             level: item.level + 1,
             type,
             emoji: '',
+            content_type: contentType,
             status: 1,
             isEditting: true,
             parentId: item.id,
@@ -375,6 +376,7 @@ const TreeItem = React.forwardRef<
                           parent_id: item.parentId,
                           type: item.type,
                           emoji,
+                          content_type: item.content_type,
                         }).then(res => {
                           message.success('创建成功');
                           const temp = [...data];
@@ -468,7 +470,31 @@ const TreeItem = React.forwardRef<
                       {item.name}
                     </Ellipsis>
                   ) : (
-                    <Box>{item.name}</Box>
+                    <>
+                      <Box>
+                        {item.name}
+                        {item.content_type === 'md' && (
+                          <Box
+                            component={'span'}
+                            sx={{
+                              fontSize: 10,
+                              color: 'white',
+                              background:
+                                'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+                              px: 1,
+                              ml: 1,
+                              fontWeight: '500',
+                              borderRadius: '4px',
+                              height: '14px',
+                              lineHeight: '14px',
+                              display: 'inline-block',
+                            }}
+                          >
+                            MD
+                          </Box>
+                        )}
+                      </Box>
+                    </>
                   )}
                 </Stack>
               )}

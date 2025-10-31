@@ -135,6 +135,26 @@ const Header = ({
             />
           </Stack>
         )}
+        {/* {detail.meta?.content_type === 'md' && <Icon type='icon-a-icon_huaban1fuben22' sx={{ fontSize: 30 }} />} */}
+        {detail.meta?.content_type === 'md' && (
+          <Box
+            component={'span'}
+            sx={{
+              fontSize: 10,
+              color: 'white',
+              background: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+              px: 1,
+              flexShrink: 0,
+              fontWeight: '500',
+              borderRadius: '4px',
+              height: '20px',
+              lineHeight: '20px',
+              display: 'inline-block',
+            }}
+          >
+            MD
+          </Box>
+        )}
         <Stack sx={{ width: 0, flex: 1 }}>
           {detail?.name ? (
             <Ellipsis sx={{ fontSize: 14, fontWeight: 'bold' }}>
@@ -547,6 +567,7 @@ const Header = ({
         }
       />
       <DocDelete
+        type='doc'
         open={delOpen}
         onClose={() => setDelOpen(false)}
         data={[

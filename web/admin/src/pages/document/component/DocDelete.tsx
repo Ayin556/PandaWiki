@@ -36,7 +36,7 @@ const DocDelete = ({
       message.success('删除成功');
       onClose();
       onDeleted?.(ids);
-      if (type === 'list') {
+      if (type === 'doc') {
         setTimeout(() => {
           window.close();
         }, 1500);
@@ -63,7 +63,6 @@ const DocDelete = ({
     >
       <Card
         sx={{
-          p: 2,
           bgcolor: 'background.paper3',
           '& .dndkit-drag-handle': {
             top: '-2px !important',

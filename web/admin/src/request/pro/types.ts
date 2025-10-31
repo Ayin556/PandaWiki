@@ -125,6 +125,7 @@ export interface DomainLicenseResp {
 }
 
 export interface DomainNodeMeta {
+  content_type?: string;
   emoji?: string;
   summary?: string;
 }
