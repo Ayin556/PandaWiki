@@ -1,7 +1,12 @@
-import { postApiV1License, getApiV1License } from '@/request/pro/License';
+import {
+  postApiV1License,
+  getApiV1License,
+  deleteApiV1License,
+} from '@/request/pro/License';
 import { PostApiV1LicensePayload } from '@/request/pro/types';
 import HelpCenter from '@/assets/json/help-center.json';
 import Takeoff from '@/assets/json/takeoff.json';
+import error from '@/assets/json/error.json';
 import IconUpgrade from '@/assets/json/upgrade.json';
 import Upload from '@/components/UploadFile/Drag';
 import { EditionType } from '@/constant/enums';
@@ -46,6 +51,7 @@ const AuthTypeModal = ({
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [file, setFile] = useState<File | undefined>(undefined);
+  const [unbindLoading, setUnbindLoading] = useState(false);
 
   const handleSubmit = () => {
     const params: PostApiV1LicensePayload = {
@@ -70,6 +76,33 @@ const AuthTypeModal = ({
       .finally(() => {
         setLoading(false);
       });
+  };
+
+  const handleUnbind = () => {
+    Modal.confirm({
+      title: '确认解绑授权',
+      content: '解绑后将回到社区版，确定要解绑当前授权吗？',
+      onOk: () => {
+        setUnbindLoading(true);
+        deleteApiV1License()
+          .then(() => {
+            message.success('解绑成功');
+            getApiV1License()
+              .then(res => {
+                dispatch(setLicense(res));
+              })
+              .catch(() => {
+                message.error('授权信息刷新失败，请手动刷新页面');
+              });
+          })
+          .catch(() => {
+            message.error('解绑失败，请重试');
+          })
+          .finally(() => {
+            setUnbindLoading(false);
+          });
+      },
+    });
   };
 
   return (
@@ -169,6 +202,22 @@ const AuthTypeModal = ({
                     onClick={() => setUpdateOpen(true)}
                   >
                     切换授权
+                  </Button>
+                  <Button
+                    size='small'
+                    loading={unbindLoading}
+                    startIcon={
+                      <Box>
+                        <LottieIcon
+                          id='unbind'
+                          src={error}
+                          style={{ width: 16, height: 16, display: 'flex' }}
+                        />
+                      </Box>
+                    }
+                    onClick={handleUnbind}
+                  >
+                    解绑授权
                   </Button>
                   <Button
                     size='small'
