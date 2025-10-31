@@ -1,11 +1,11 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { FC } from 'react';
-import FaqItem, { FaqItemProps } from './Item';
+import FaqItem, { ItemTypeProps } from './Item';
 
-type FaqSortableItemProps = FaqItemProps & {};
+type SortableItemProps = ItemTypeProps & {};
 
-const FaqSortableItem: FC<FaqSortableItemProps> = ({ item, ...rest }) => {
+const SortableItem: FC<SortableItemProps> = ({ item, ...rest }) => {
   const {
     isDragging,
     attributes,
@@ -35,4 +35,4 @@ const FaqSortableItem: FC<FaqSortableItemProps> = ({ item, ...rest }) => {
   );
 };
 
-export default FaqSortableItem;
+export default SortableItem;

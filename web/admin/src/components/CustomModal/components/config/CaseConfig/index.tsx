@@ -26,7 +26,7 @@ const CaseConfig = ({ setIsEdit, id }: ConfigProps) => {
 
   const handleAddQuestion = () => {
     const nextId = `${Date.now()}`;
-    setValue('list', [...list, { id: nextId, name: '' }]);
+    setValue('list', [...list, { id: nextId, name: '', link: '' }]);
   };
 
   const handleListChange = (newList: (typeof DEFAULT_DATA.case)['list']) => {

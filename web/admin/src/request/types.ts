@@ -495,6 +495,16 @@ export interface DomainCarouselConfig {
   title?: string;
 }
 
+export interface DomainCaseConfig {
+  list?: {
+    id?: string;
+    link?: string;
+    name?: string;
+  }[];
+  title?: string;
+  type?: string;
+}
+
 export interface DomainCatalogSettings {
   /** 1: 展开, 2: 折叠, default: 1 */
   catalog_folder?: number;
@@ -841,6 +851,16 @@ export interface DomainLink {
   url?: string;
 }
 
+export interface DomainMetricsConfig {
+  list?: {
+    id?: string;
+    name?: string;
+    number?: string;
+  }[];
+  title?: string;
+  type?: string;
+}
+
 export interface DomainMoveNodeReq {
   id: string;
   kb_id: string;
@@ -1099,6 +1119,11 @@ export interface DomainStatPageReq {
   scene: 1 | 2 | 3 | 4;
 }
 
+export interface DomainTextConfig {
+  title?: string;
+  type?: string;
+}
+
 export interface DomainTextReq {
   /** action: improve, summary, extend, shorten, etc. */
   action?: string;
@@ -1138,6 +1163,7 @@ export interface DomainUpdateModelReq {
 
 export interface DomainUpdateNodeReq {
   content?: string;
+  content_type?: string;
   emoji?: string;
   id: string;
   kb_id: string;
@@ -1174,11 +1200,14 @@ export interface DomainWebAppLandingConfig {
   banner_config?: DomainBannerConfig;
   basic_doc_config?: DomainBasicDocConfig;
   carousel_config?: DomainCarouselConfig;
+  case_config?: DomainCaseConfig;
   com_config_order?: string[];
   dir_doc_config?: DomainDirDocConfig;
   faq_config?: DomainFaqConfig;
+  metrics_config?: DomainMetricsConfig;
   node_ids?: string[];
   simple_doc_config?: DomainSimpleDocConfig;
+  text_config?: DomainTextConfig;
   type?: string;
 }
 
@@ -1186,12 +1215,15 @@ export interface DomainWebAppLandingConfigResp {
   banner_config?: DomainBannerConfig;
   basic_doc_config?: DomainBasicDocConfig;
   carousel_config?: DomainCarouselConfig;
+  case_config?: DomainCaseConfig;
   com_config_order?: string[];
   dir_doc_config?: DomainDirDocConfig;
   faq_config?: DomainFaqConfig;
+  metrics_config?: DomainMetricsConfig;
   node_ids?: string[];
   nodes?: DomainRecommendNodeListResp[];
   simple_doc_config?: DomainSimpleDocConfig;
+  text_config?: DomainTextConfig;
   type?: string;
 }
 
@@ -1412,10 +1444,6 @@ export interface V1FeishuSetting {
   app_secret?: string;
   space_id?: string;
   user_access_token?: string;
-}
-
-export interface V1FileUploadResp {
-  key?: string;
 }
 
 export interface V1FileUploadResp {

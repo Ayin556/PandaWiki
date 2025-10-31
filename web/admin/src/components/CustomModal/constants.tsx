@@ -25,7 +25,7 @@ export const DEFAULT_DATA = {
     list: [] as {
       id: string;
       name: string;
-      // url: string;
+      link: string;
     }[],
   },
   banner: {
