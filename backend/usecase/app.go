@@ -415,6 +415,9 @@ func (u *AppUsecase) GetAppDetailByKBIDAndAppType(ctx context.Context, kbID stri
 			SimpleDocConfig: app.Settings.WebAppLandingConfigs[i].SimpleDocConfig,
 			CarouselConfig:  app.Settings.WebAppLandingConfigs[i].CarouselConfig,
 			FaqConfig:       app.Settings.WebAppLandingConfigs[i].FaqConfig,
+			TextConfig:      app.Settings.WebAppLandingConfigs[i].TextConfig,
+			CaseConfig:      app.Settings.WebAppLandingConfigs[i].CaseConfig,
+			MetricsConfig:   app.Settings.WebAppLandingConfigs[i].MetricsConfig,
 			ComConfigOrder:  app.Settings.WebAppLandingConfigs[i].ComConfigOrder,
 			NodeIds:         app.Settings.WebAppLandingConfigs[i].NodeIds,
 		}
@@ -538,6 +541,9 @@ func (u *AppUsecase) ShareGetWebAppInfo(ctx context.Context, kbID string, authId
 			SimpleDocConfig: app.Settings.WebAppLandingConfigs[i].SimpleDocConfig,
 			CarouselConfig:  app.Settings.WebAppLandingConfigs[i].CarouselConfig,
 			FaqConfig:       app.Settings.WebAppLandingConfigs[i].FaqConfig,
+			TextConfig:      app.Settings.WebAppLandingConfigs[i].TextConfig,
+			CaseConfig:      app.Settings.WebAppLandingConfigs[i].CaseConfig,
+			MetricsConfig:   app.Settings.WebAppLandingConfigs[i].MetricsConfig,
 			ComConfigOrder:  app.Settings.WebAppLandingConfigs[i].ComConfigOrder,
 			NodeIds:         app.Settings.WebAppLandingConfigs[i].NodeIds,
 		}

@@ -4970,6 +4970,34 @@
                 }
             }
         },
+        "domain.CaseConfig": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "link": {
+                                "type": "string"
+                            },
+                            "name": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.CatalogSettings": {
             "type": "object",
             "properties": {
@@ -5973,6 +6001,34 @@
                 "MessageFromPrivate"
             ]
         },
+        "domain.MetricsConfig": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "number": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.ModelType": {
             "type": "string",
             "enum": [
@@ -6773,6 +6829,17 @@
                 "StatPageSceneLogin"
             ]
         },
+        "domain.TextConfig": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.TextReq": {
             "type": "object",
             "required": [
@@ -6990,6 +7057,9 @@
                 "carousel_config": {
                     "$ref": "#/definitions/domain.CarouselConfig"
                 },
+                "case_config": {
+                    "$ref": "#/definitions/domain.CaseConfig"
+                },
                 "com_config_order": {
                     "type": "array",
                     "items": {
@@ -7002,6 +7072,9 @@
                 "faq_config": {
                     "$ref": "#/definitions/domain.FaqConfig"
                 },
+                "metrics_config": {
+                    "$ref": "#/definitions/domain.MetricsConfig"
+                },
                 "node_ids": {
                     "type": "array",
                     "items": {
@@ -7010,6 +7083,9 @@
                 },
                 "simple_doc_config": {
                     "$ref": "#/definitions/domain.SimpleDocConfig"
+                },
+                "text_config": {
+                    "$ref": "#/definitions/domain.TextConfig"
                 },
                 "type": {
                     "type": "string"
@@ -7028,6 +7104,9 @@
                 "carousel_config": {
                     "$ref": "#/definitions/domain.CarouselConfig"
                 },
+                "case_config": {
+                    "$ref": "#/definitions/domain.CaseConfig"
+                },
                 "com_config_order": {
                     "type": "array",
                     "items": {
@@ -7039,6 +7118,9 @@
                 },
                 "faq_config": {
                     "$ref": "#/definitions/domain.FaqConfig"
+                },
+                "metrics_config": {
+                    "$ref": "#/definitions/domain.MetricsConfig"
                 },
                 "node_ids": {
                     "type": "array",
@@ -7054,6 +7136,9 @@
                 },
                 "simple_doc_config": {
                     "$ref": "#/definitions/domain.SimpleDocConfig"
+                },
+                "text_config": {
+                    "$ref": "#/definitions/domain.TextConfig"
                 },
                 "type": {
                     "type": "string"

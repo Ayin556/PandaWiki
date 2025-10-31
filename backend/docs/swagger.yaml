@@ -831,6 +831,24 @@ definitions:
       title:
         type: string
     type: object
+  domain.CaseConfig:
+    properties:
+      list:
+        items:
+          properties:
+            id:
+              type: string
+            link:
+              type: string
+            name:
+              type: string
+          type: object
+        type: array
+      title:
+        type: string
+      type:
+        type: string
+    type: object
   domain.CatalogSettings:
     properties:
       catalog_folder:
@@ -1480,6 +1498,24 @@ definitions:
     x-enum-varnames:
     - MessageFromGroup
     - MessageFromPrivate
+  domain.MetricsConfig:
+    properties:
+      list:
+        items:
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+            number:
+              type: string
+          type: object
+        type: array
+      title:
+        type: string
+      type:
+        type: string
+    type: object
   domain.ModelType:
     enum:
     - chat
@@ -2005,6 +2041,13 @@ definitions:
     - StatPageSceneNodeDetail
     - StatPageSceneChat
     - StatPageSceneLogin
+  domain.TextConfig:
+    properties:
+      title:
+        type: string
+      type:
+        type: string
+    type: object
   domain.TextReq:
     properties:
       action:
@@ -2149,6 +2192,8 @@ definitions:
         $ref: '#/definitions/domain.BasicDocConfig'
       carousel_config:
         $ref: '#/definitions/domain.CarouselConfig'
+      case_config:
+        $ref: '#/definitions/domain.CaseConfig'
       com_config_order:
         items:
           type: string
@@ -2157,12 +2202,16 @@ definitions:
         $ref: '#/definitions/domain.DirDocConfig'
       faq_config:
         $ref: '#/definitions/domain.FaqConfig'
+      metrics_config:
+        $ref: '#/definitions/domain.MetricsConfig'
       node_ids:
         items:
           type: string
         type: array
       simple_doc_config:
         $ref: '#/definitions/domain.SimpleDocConfig'
+      text_config:
+        $ref: '#/definitions/domain.TextConfig'
       type:
         type: string
     type: object
@@ -2174,6 +2223,8 @@ definitions:
         $ref: '#/definitions/domain.BasicDocConfig'
       carousel_config:
         $ref: '#/definitions/domain.CarouselConfig'
+      case_config:
+        $ref: '#/definitions/domain.CaseConfig'
       com_config_order:
         items:
           type: string
@@ -2182,6 +2233,8 @@ definitions:
         $ref: '#/definitions/domain.DirDocConfig'
       faq_config:
         $ref: '#/definitions/domain.FaqConfig'
+      metrics_config:
+        $ref: '#/definitions/domain.MetricsConfig'
       node_ids:
         items:
           type: string
@@ -2192,6 +2245,8 @@ definitions:
         type: array
       simple_doc_config:
         $ref: '#/definitions/domain.SimpleDocConfig'
+      text_config:
+        $ref: '#/definitions/domain.TextConfig'
       type:
         type: string
     type: object
