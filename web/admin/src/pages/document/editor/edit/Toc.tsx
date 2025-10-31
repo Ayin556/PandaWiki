@@ -16,6 +16,7 @@ interface TocProps {
   fixed: boolean;
   setFixed: (fixed: boolean) => void;
   setShowSummary: (showSummary: boolean) => void;
+  isMarkdown: boolean;
 }
 
 const HeadingIcon = [
@@ -33,7 +34,7 @@ const HeadingSx = [
   { fontSize: 14, fontWeight: 400, color: 'text.disabled' },
 ];
 
-const Toc = ({ headings, fixed, setFixed }: TocProps) => {
+const Toc = ({ headings, fixed, setFixed, isMarkdown }: TocProps) => {
   const storageTocOpen = localStorage.getItem('toc-open');
   const [open, setOpen] = useState(!!storageTocOpen);
   const levels = Array.from(
@@ -96,11 +97,12 @@ const Toc = ({ headings, fixed, setFixed }: TocProps) => {
           flexShrink: 0,
           '& .MuiDrawer-paper': {
             p: 1,
-            boxShadow: 'none !important',
-            mt: '102px',
+            mt: isMarkdown ? '56px' : '102px',
             bgcolor: 'background.default',
             width: 292,
             boxSizing: 'border-box',
+            border: 'none',
+            boxShadow: '0px 10px 10px 0px rgba(0, 0, 0, 0.1)',
           },
         }}
       >
@@ -169,15 +171,38 @@ const Toc = ({ headings, fixed, setFixed }: TocProps) => {
                   onClick={() => {
                     const element = document.getElementById(it.id);
                     if (element) {
-                      const offset = 100;
-                      const elementPosition =
-                        element.getBoundingClientRect().top;
-                      const offsetPosition =
-                        elementPosition + window.pageYOffset - offset;
-                      window.scrollTo({
-                        top: offsetPosition,
-                        behavior: 'smooth',
-                      });
+                      if (isMarkdown) {
+                        // 在 Markdown 模式下，滚动预览容器
+                        const container = document.getElementById(
+                          'markdown-preview-container',
+                        );
+                        if (container) {
+                          const containerRect =
+                            container.getBoundingClientRect();
+                          const elementRect = element.getBoundingClientRect();
+                          const offset = 20; // 顶部偏移
+                          const scrollTop =
+                            container.scrollTop +
+                            elementRect.top -
+                            containerRect.top -
+                            offset;
+                          container.scrollTo({
+                            top: scrollTop,
+                            behavior: 'smooth',
+                          });
+                        }
+                      } else {
+                        // 在富文本编辑器模式下，滚动整个窗口
+                        const offset = 100;
+                        const elementPosition =
+                          element.getBoundingClientRect().top;
+                        const offsetPosition =
+                          elementPosition + window.pageYOffset - offset;
+                        window.scrollTo({
+                          top: offsetPosition,
+                          behavior: 'smooth',
+                        });
+                      }
                     }
                   }}
                 >

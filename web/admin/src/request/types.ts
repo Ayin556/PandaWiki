@@ -678,6 +678,7 @@ export interface DomainCreateModelReq {
 
 export interface DomainCreateNodeReq {
   content?: string;
+  content_type?: string;
   emoji?: string;
   kb_id: string;
   name: string;
@@ -872,6 +873,7 @@ export interface DomainNodeGroupDetail {
 }
 
 export interface DomainNodeListItemResp {
+  content_type?: string;
   created_at?: string;
   creator?: string;
   creator_id?: string;
@@ -890,6 +892,7 @@ export interface DomainNodeListItemResp {
 }
 
 export interface DomainNodeMeta {
+  content_type?: string;
   emoji?: string;
   summary?: string;
 }

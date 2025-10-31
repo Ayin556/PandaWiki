@@ -42,18 +42,18 @@ const AIGenerate = ({
         data => {
           setContent(prev => {
             const newContent = prev + data;
-            readEditor.editor?.commands.setContent(newContent);
+            readEditor?.setContent(newContent);
             return newContent;
           });
         },
       );
     }
-  }, [selectText, sseClientRef.current, readEditor.editor]);
+  }, [selectText, sseClientRef.current, readEditor]);
 
   const onCancel = () => {
     sseClientRef.current?.unsubscribe();
-    defaultEditor.editor.commands.setContent('');
-    readEditor.editor.commands.setContent('');
+    defaultEditor?.setContent('');
+    readEditor?.setContent('');
     setContent('');
     onClose();
   };
@@ -76,7 +76,7 @@ const AIGenerate = ({
       onError: () => setLoading(false),
     });
     if (selectText) {
-      defaultEditor.editor.commands.setContent(selectText);
+      defaultEditor?.setContent(selectText);
       setTimeout(() => {
         onGenerate();
       }, 60);

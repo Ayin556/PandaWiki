@@ -3,9 +3,17 @@ import { DomainCreateNodeReq, V1NodeDetailResp } from '@/request';
 import { postApiV1Node, putApiV1NodeDetail } from '@/request/Node';
 import { useAppSelector } from '@/store';
 import { message, Modal } from '@ctzhian/ui';
-import { Box, TextField } from '@mui/material';
+import {
+  Box,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
+  TextField,
+} from '@mui/material';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+
+type FormValues = { name: string; emoji: string; content_type: string };
 
 interface DocAddByCustomTextProps {
   open: boolean;
@@ -20,9 +28,11 @@ interface DocAddByCustomTextProps {
     id: string;
     name: string;
     type: 1 | 2;
+    content_type?: string;
     emoji?: string;
   }) => void;
 }
+
 const DocAddByCustomText = ({
   open,
   data,
@@ -41,11 +51,13 @@ const DocAddByCustomText = ({
     control,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
-  } = useForm<{ name: string; emoji: string }>({
+  } = useForm<FormValues>({
     defaultValues: {
       name: '',
       emoji: '',
+      content_type: '',
     },
   });
 
@@ -54,7 +66,7 @@ const DocAddByCustomText = ({
     onClose();
   };
 
-  const submit = (value: { name: string; emoji: string }) => {
+  const submit = (value: FormValues) => {
     if (data) {
       putApiV1NodeDetail({
         id: data.id || '',
@@ -80,6 +92,7 @@ const DocAddByCustomText = ({
         kb_id: id,
         type,
         emoji: value.emoji,
+        content_type: value.content_type,
       };
       if (parentId) {
         params.parent_id = parentId;
@@ -89,7 +102,13 @@ const DocAddByCustomText = ({
         reset();
         handleClose();
         // 回传创建结果给上层，由上层本地追加并滚动
-        onCreated?.({ id, name: value.name, type, emoji: value.emoji });
+        onCreated?.({
+          id,
+          name: value.name,
+          type,
+          content_type: value.content_type,
+          emoji: value.emoji,
+        });
         if (type === 2 && autoJump) {
           window.open(`/doc/editor/${id}`, '_blank');
         }
@@ -98,14 +117,18 @@ const DocAddByCustomText = ({
   };
 
   useEffect(() => {
+    if (!open) return;
     if (data) {
       reset({
         name: data.name || '',
         emoji: data.meta?.emoji || '',
+        content_type: type === 1 ? '' : data.meta?.content_type || 'html',
       });
+    } else {
+      setValue('content_type', type === 1 ? '' : 'html');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+  }, [data, type, open]);
 
   return (
     <Modal
@@ -139,6 +162,29 @@ const DocAddByCustomText = ({
         name='emoji'
         render={({ field }) => <Emoji {...field} type={type} />}
       />
+      {type === 2 && !data && (
+        <>
+          <Box sx={{ fontSize: 14, lineHeight: '36px', mt: 1 }}>文档类型</Box>
+          <Controller
+            control={control}
+            name='content_type'
+            render={({ field }) => (
+              <RadioGroup {...field} row>
+                <FormControlLabel
+                  value='html'
+                  control={<Radio size='small' />}
+                  label='富文本'
+                />
+                <FormControlLabel
+                  value='md'
+                  control={<Radio size='small' />}
+                  label='Markdown'
+                />
+              </RadioGroup>
+            )}
+          />
+        </>
+      )}
     </Modal>
   );
 };

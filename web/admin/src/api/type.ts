@@ -191,6 +191,7 @@ export interface ITreeItem {
   order?: number;
   emoji?: string;
   parentId?: string;
+  content_type?: string;
   summary?: string;
   children?: ITreeItem[];
   type: 1 | 2;

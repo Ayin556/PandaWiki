@@ -1,11 +1,18 @@
+import { useAppSelector } from '@/store';
+import { Ellipsis, Icon } from '@ctzhian/ui';
 import { Stack } from '@mui/material';
-import { Icon } from '@ctzhian/ui';
+import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const KBSwitch = () => {
   // const dispatch = useAppDispatch();
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
-  // const { kbList, kb_id } = useAppSelector(state => state.config);
+  const { kbList, kb_id } = useAppSelector(state => state.config);
+
+  const currentKb = useMemo(() => {
+    return kbList?.find(item => item.id === kb_id);
+  }, [kbList, kb_id]);
 
   // const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
@@ -20,13 +27,13 @@ const KBSwitch = () => {
   // const open = Boolean(anchorEl);
 
   return (
-    <>
+    <Stack direction='row' alignItems='center' gap={1} sx={{ flex: 1 }}>
       <Stack
         aria-describedby={'editor-kb-switch'}
         alignItems='center'
         justifyContent={'center'}
         sx={{
-          // cursor: 'pointer',
+          cursor: 'pointer',
           flexShrink: 0,
           bgcolor: 'background.paper',
           border: '1px solid',
@@ -35,10 +42,15 @@ const KBSwitch = () => {
           width: 36,
           height: 36,
         }}
-        // onMouseEnter={handlePopoverOpen}
+        onClick={() => {
+          navigate('/');
+        }}
       >
         <Icon type='icon-zuzhi' sx={{ color: 'text.primary' }} />
       </Stack>
+      <Ellipsis sx={{ flex: 1, width: 0, overflow: 'hidden' }}>
+        {currentKb?.name}
+      </Ellipsis>
       {/* <Popover
         id='editor-kb-switch'
         open={open}
@@ -76,7 +88,7 @@ const KBSwitch = () => {
           </Stack>
         </Stack>
       </Popover> */}
-    </>
+    </Stack>
   );
 };
 

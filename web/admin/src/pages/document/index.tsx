@@ -135,10 +135,25 @@ const Content = () => {
               key: 'folder',
               onClick: () => createItem(1),
             },
-            { label: '创建文档', key: 'doc', onClick: () => createItem(2) },
+            {
+              label: '创建文档',
+              key: 'doc',
+              children: [
+                {
+                  label: '创建富文本',
+                  key: 'rich_text',
+                  onClick: () => createItem(2, 'html'),
+                },
+                {
+                  label: '创建 Markdown',
+                  key: 'md',
+                  onClick: () => createItem(2, 'md'),
+                },
+              ],
+            },
             {
               label: '导入文档',
-              key: 'third',
+              key: 'next-line',
               children: [
                 {
                   label: '通过离线文件导入',
@@ -388,6 +403,7 @@ const Content = () => {
                         ? (prev[prev.length - 1].order ?? 0) + 1
                         : 0,
                       emoji: node.emoji,
+                      content_type: node.content_type,
                       parentId: undefined,
                       children: node.type === 1 ? [] : undefined,
                       type: node.type,

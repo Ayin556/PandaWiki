@@ -1,7 +1,6 @@
-import Cascader from '@/components/Cascader';
+import TreeMenu, { TreeMenuItem } from '@/components/Drag/DragTree/TreeMenu';
 import { ConstsCrawlerSource } from '@/request';
-import { addOpacityToColor } from '@/utils';
-import { Box, Button, Stack, useTheme } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import { useState } from 'react';
 import AddDocByType from './AddDocByType';
 import DocAddByCustomText from './DocAddByCustomText';
@@ -16,6 +15,7 @@ interface InputContentProps {
     type: 1 | 2;
     emoji?: string;
     parentId?: string | null;
+    content_type?: string;
   }) => void;
   scrollTo?: (id: string) => void;
 }
@@ -27,21 +27,22 @@ const AddDocBtn = ({
   createLocal,
   scrollTo,
 }: InputContentProps) => {
-  const theme = useTheme();
   const [customDocOpen, setCustomDocOpen] = useState(false);
   const [uploadOpen, setUploadOpen] = useState(false);
   const [key, setKey] = useState<ConstsCrawlerSource | null>(null);
   const [docFileKey, setDocFileKey] = useState<1 | 2>(1);
 
-  const ImportContentWays = {
-    docFile: {
+  const menuItems: TreeMenuItem[] = [
+    {
+      key: 'docFile',
       label: '创建文件夹',
       onClick: () => {
         setDocFileKey(1);
         setCustomDocOpen(true);
       },
     },
-    customDoc: {
+    {
+      key: 'next-line',
       label: '创建文档',
       onClick: () => {
         setDocFileKey(2);
@@ -49,94 +50,106 @@ const AddDocBtn = ({
       },
     },
     ...(exportFile
-      ? {
-          [ConstsCrawlerSource.CrawlerSourceFile]: {
+      ? [
+          {
+            key: ConstsCrawlerSource.CrawlerSourceFile,
             label: '通过离线文件导入',
             onClick: () => {
               setUploadOpen(true);
               setKey(ConstsCrawlerSource.CrawlerSourceFile);
             },
           },
-          [ConstsCrawlerSource.CrawlerSourceUrl]: {
+          {
+            key: ConstsCrawlerSource.CrawlerSourceUrl,
             label: '通过 URL 导入',
             onClick: () => {
               setKey(ConstsCrawlerSource.CrawlerSourceUrl);
               setUploadOpen(true);
             },
           },
-          [ConstsCrawlerSource.CrawlerSourceRSS]: {
+          {
+            key: ConstsCrawlerSource.CrawlerSourceRSS,
             label: '通过 RSS 导入',
             onClick: () => {
               setUploadOpen(true);
               setKey(ConstsCrawlerSource.CrawlerSourceRSS);
             },
           },
-          [ConstsCrawlerSource.CrawlerSourceSitemap]: {
+          {
+            key: ConstsCrawlerSource.CrawlerSourceSitemap,
             label: '通过 Sitemap 导入',
             onClick: () => {
               setUploadOpen(true);
               setKey(ConstsCrawlerSource.CrawlerSourceSitemap);
             },
           },
-          [ConstsCrawlerSource.CrawlerSourceNotion]: {
+          {
+            key: ConstsCrawlerSource.CrawlerSourceNotion,
             label: '通过 Notion 导入',
             onClick: () => {
               setUploadOpen(true);
               setKey(ConstsCrawlerSource.CrawlerSourceNotion);
             },
           },
-          [ConstsCrawlerSource.CrawlerSourceEpub]: {
+          {
+            key: ConstsCrawlerSource.CrawlerSourceEpub,
             label: '通过 Epub 导入',
             onClick: () => {
               setUploadOpen(true);
               setKey(ConstsCrawlerSource.CrawlerSourceEpub);
             },
           },
-          [ConstsCrawlerSource.CrawlerSourceWikijs]: {
+          {
+            key: ConstsCrawlerSource.CrawlerSourceWikijs,
             label: '通过 Wiki.js 导入',
             onClick: () => {
               setUploadOpen(true);
               setKey(ConstsCrawlerSource.CrawlerSourceWikijs);
             },
           },
-          [ConstsCrawlerSource.CrawlerSourceYuque]: {
+          {
+            key: ConstsCrawlerSource.CrawlerSourceYuque,
             label: '通过 语雀 导入',
             onClick: () => {
               setUploadOpen(true);
               setKey(ConstsCrawlerSource.CrawlerSourceYuque);
             },
           },
-          [ConstsCrawlerSource.CrawlerSourceSiyuan]: {
+          {
+            key: ConstsCrawlerSource.CrawlerSourceSiyuan,
             label: '通过 思源笔记 导入',
             onClick: () => {
               setUploadOpen(true);
               setKey(ConstsCrawlerSource.CrawlerSourceSiyuan);
             },
           },
-          [ConstsCrawlerSource.CrawlerSourceMindoc]: {
+          {
+            key: ConstsCrawlerSource.CrawlerSourceMindoc,
             label: '通过 MinDoc 导入',
             onClick: () => {
               setUploadOpen(true);
               setKey(ConstsCrawlerSource.CrawlerSourceMindoc);
             },
           },
-          [ConstsCrawlerSource.CrawlerSourceFeishu]: {
+          {
+            key: ConstsCrawlerSource.CrawlerSourceFeishu,
             label: '通过飞书文档导入',
             onClick: () => {
               setUploadOpen(true);
               setKey(ConstsCrawlerSource.CrawlerSourceFeishu);
             },
           },
-          [ConstsCrawlerSource.CrawlerSourceConfluence]: {
+          {
+            key: ConstsCrawlerSource.CrawlerSourceConfluence,
             label: '通过 Confluence 导入',
             onClick: () => {
               setUploadOpen(true);
               setKey(ConstsCrawlerSource.CrawlerSourceConfluence);
             },
           },
-        }
-      : {}),
-  };
+        ]
+      : []),
+  ];
 
   const close = () => {
     setUploadOpen(false);
@@ -145,43 +158,8 @@ const AddDocBtn = ({
 
   return (
     <Box>
-      <Cascader
-        list={Object.entries(ImportContentWays).map(([key, value]) => ({
-          key,
-          label: (
-            <Box key={key}>
-              <Stack
-                direction={'row'}
-                alignItems={'center'}
-                gap={1}
-                sx={{
-                  fontSize: 14,
-                  px: 2,
-                  lineHeight: '40px',
-                  height: 40,
-                  width: 180,
-                  borderRadius: '5px',
-                  cursor: 'pointer',
-                  ':hover': {
-                    bgcolor: addOpacityToColor(theme.palette.primary.main, 0.1),
-                  },
-                }}
-                onClick={value.onClick}
-              >
-                {value.label}
-              </Stack>
-              {key === ConstsCrawlerSource.CrawlerSourceFile && (
-                <Box
-                  sx={{
-                    borderTop: '1px solid',
-                    borderColor: theme.palette.divider,
-                    my: 0.5,
-                  }}
-                />
-              )}
-            </Box>
-          ),
-        }))}
+      <TreeMenu
+        menu={menuItems}
         context={context || <Button variant='contained'>创建文档</Button>}
       />
       {key && (
