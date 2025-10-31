@@ -31,6 +31,11 @@ const (
 	NodeStatusReleased NodeStatus = 2
 )
 
+const (
+	ContentTypeMD   string = "md"
+	ContentTypeHTML string = "html"
+)
+
 // table: nodes
 type Node struct {
 	ID string `json:"id" gorm:"primaryKey"`
@@ -99,8 +104,9 @@ type NodeGroupDetail struct {
 }
 
 type NodeMeta struct {
-	Summary string `json:"summary"`
-	Emoji   string `json:"emoji"`
+	Summary     string `json:"summary"`
+	Emoji       string `json:"emoji"`
+	ContentType string `json:"content_type"`
 }
 
 func (d *NodeMeta) Value() (driver.Value, error) {
@@ -123,8 +129,9 @@ type CreateNodeReq struct {
 	Name    string `json:"name" validate:"required"`
 	Content string `json:"content"`
 
-	Emoji   string  `json:"emoji"`
-	Summary *string `json:"summary"`
+	Emoji       string  `json:"emoji"`
+	Summary     *string `json:"summary"`
+	ContentType *string `json:"content_type"`
 
 	MaxNode int `json:"-"`
 
@@ -143,6 +150,7 @@ type NodeListItemResp struct {
 	Name        string          `json:"name"`
 	Summary     string          `json:"summary"`
 	Emoji       string          `json:"emoji"`
+	ContentType string          `json:"content_type"`
 	Position    float64         `json:"position"`
 	ParentID    string          `json:"parent_id"`
 	CreatedAt   time.Time       `json:"created_at"`
@@ -211,13 +219,14 @@ type NodeActionReq struct {
 }
 
 type UpdateNodeReq struct {
-	ID       string   `json:"id" validate:"required"`
-	KBID     string   `json:"kb_id" validate:"required"`
-	Name     *string  `json:"name"`
-	Content  *string  `json:"content"`
-	Emoji    *string  `json:"emoji"`
-	Summary  *string  `json:"summary"`
-	Position *float64 `json:"position"`
+	ID          string   `json:"id" validate:"required"`
+	KBID        string   `json:"kb_id" validate:"required"`
+	Name        *string  `json:"name"`
+	Content     *string  `json:"content"`
+	Emoji       *string  `json:"emoji"`
+	Summary     *string  `json:"summary"`
+	Position    *float64 `json:"position"`
+	ContentType *string  `json:"content_type"`
 }
 
 type ShareNodeListItemResp struct {

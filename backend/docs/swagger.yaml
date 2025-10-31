@@ -1187,6 +1187,8 @@ definitions:
     properties:
       content:
         type: string
+      content_type:
+        type: string
       emoji:
         type: string
       kb_id:
@@ -1559,6 +1561,8 @@ definitions:
     type: object
   domain.NodeListItemResp:
     properties:
+      content_type:
+        type: string
       created_at:
         type: string
       creator:
@@ -1592,6 +1596,8 @@ definitions:
     type: object
   domain.NodeMeta:
     properties:
+      content_type:
+        type: string
       emoji:
         type: string
       summary:
@@ -2076,6 +2082,8 @@ definitions:
   domain.UpdateNodeReq:
     properties:
       content:
+        type: string
+      content_type:
         type: string
       emoji:
         type: string

@@ -85,6 +85,9 @@ func (r *NodeRepository) Create(ctx context.Context, req *domain.CreateNodeReq, 
 		if req.Summary != nil {
 			meta.Summary = *req.Summary
 		}
+		if req.ContentType != nil {
+			meta.ContentType = *req.ContentType
+		}
 
 		node := &domain.Node{
 			ID:       nodeIDStr,
@@ -124,7 +127,7 @@ func (r *NodeRepository) GetList(ctx context.Context, req *domain.GetNodeListReq
 		Joins("LEFT JOIN users cu ON nodes.creator_id = cu.id").
 		Joins("LEFT JOIN users eu ON nodes.editor_id = eu.id").
 		Where("nodes.kb_id = ?", req.KBID).
-		Select("cu.account AS creator, eu.account AS editor, nodes.editor_id, nodes.creator_id, nodes.id, nodes.permissions, nodes.type, nodes.status, nodes.name, nodes.parent_id, nodes.position, nodes.created_at, nodes.edit_time as updated_at, nodes.meta->>'summary' as summary, nodes.meta->>'emoji' as emoji")
+		Select("cu.account AS creator, eu.account AS editor, nodes.editor_id, nodes.creator_id, nodes.id, nodes.permissions, nodes.type, nodes.status, nodes.name, nodes.parent_id, nodes.position, nodes.created_at, nodes.edit_time as updated_at, nodes.meta->>'summary' as summary, nodes.meta->>'emoji' as emoji, nodes.meta->>'content_type' as content_type")
 	if req.Search != "" {
 		searchPattern := "%" + req.Search + "%"
 		query = query.Where("name LIKE ? OR content LIKE ?", searchPattern, searchPattern)
@@ -189,7 +192,7 @@ func (r *NodeRepository) UpdateNodeContent(ctx context.Context, req *domain.Upda
 		}
 
 		// Handle multiple meta field updates
-		if req.Emoji != nil || req.Summary != nil {
+		if req.Emoji != nil || req.Summary != nil || req.ContentType != nil {
 			metaExpr := "meta"
 			var args []any
 			metaUpdated := false
@@ -208,6 +211,16 @@ func (r *NodeRepository) UpdateNodeContent(ctx context.Context, req *domain.Upda
 				metaExpr = "jsonb_set(" + metaExpr + ", '{summary}', to_jsonb(?::text))"
 				args = append(args, *req.Summary) // Second parameter for summary
 				metaUpdated = true
+			}
+
+			// Compare and update ContentType
+			if currentNode.Meta.ContentType == "" { // can only modify content_type if it was empty before
+				if req.ContentType != nil && *req.ContentType != currentNode.Meta.ContentType {
+					// Second jsonb_set: jsonb_set(previous_expr, '{content_type}', to_jsonb(?::text))
+					metaExpr = "jsonb_set(" + metaExpr + ", '{content_type}', to_jsonb(?::text))"
+					args = append(args, *req.ContentType) // Second parameter for content_type
+					metaUpdated = true
+				}
 			}
 
 			if metaUpdated {

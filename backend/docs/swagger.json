@@ -5525,6 +5525,9 @@
                 "content": {
                     "type": "string"
                 },
+                "content_type": {
+                    "type": "string"
+                },
                 "emoji": {
                     "type": "string"
                 },
@@ -6088,6 +6091,9 @@
         "domain.NodeListItemResp": {
             "type": "object",
             "properties": {
+                "content_type": {
+                    "type": "string"
+                },
                 "created_at": {
                     "type": "string"
                 },
@@ -6138,6 +6144,9 @@
         "domain.NodeMeta": {
             "type": "object",
             "properties": {
+                "content_type": {
+                    "type": "string"
+                },
                 "emoji": {
                     "type": "string"
                 },
@@ -6883,6 +6892,9 @@
             ],
             "properties": {
                 "content": {
+                    "type": "string"
+                },
+                "content_type": {
                     "type": "string"
                 },
                 "emoji": {

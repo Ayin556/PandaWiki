@@ -5532,6 +5532,9 @@ const docTemplate = `{
                 "content": {
                     "type": "string"
                 },
+                "content_type": {
+                    "type": "string"
+                },
                 "emoji": {
                     "type": "string"
                 },
@@ -6095,6 +6098,9 @@ const docTemplate = `{
         "domain.NodeListItemResp": {
             "type": "object",
             "properties": {
+                "content_type": {
+                    "type": "string"
+                },
                 "created_at": {
                     "type": "string"
                 },
@@ -6145,6 +6151,9 @@ const docTemplate = `{
         "domain.NodeMeta": {
             "type": "object",
             "properties": {
+                "content_type": {
+                    "type": "string"
+                },
                 "emoji": {
                     "type": "string"
                 },
@@ -6890,6 +6899,9 @@ const docTemplate = `{
             ],
             "properties": {
                 "content": {
+                    "type": "string"
+                },
+                "content_type": {
                     "type": "string"
                 },
                 "emoji": {
