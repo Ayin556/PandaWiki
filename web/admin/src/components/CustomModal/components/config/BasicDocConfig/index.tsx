@@ -86,7 +86,7 @@ const BasicDocConfig = ({ setIsEdit, id }: ConfigProps) => {
             <TextField label='文字' {...field} placeholder='请输入' />
           )}
         />
-        <Controller
+        {/* <Controller
           control={control}
           name='title_color'
           render={({ field }) => (
@@ -97,9 +97,9 @@ const BasicDocConfig = ({ setIsEdit, id }: ConfigProps) => {
               sx={{ flex: 1 }}
             />
           )}
-        />
+        /> */}
       </CommonItem>
-      <CommonItem title='背景颜色'>
+      {/* <CommonItem title='背景颜色'>
         <Controller
           control={control}
           name='bg_color'
@@ -111,7 +111,7 @@ const BasicDocConfig = ({ setIsEdit, id }: ConfigProps) => {
             />
           )}
         />
-      </CommonItem>
+      </CommonItem> */}
       <CommonItem title='推荐文档' onAdd={() => setOpen(true)}>
         {nodes.length === 0 ? (
           <Empty />

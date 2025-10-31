@@ -1,6 +1,6 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import { IconSousuo } from '@panda-wiki/icons';
+import React, { useState, useEffect } from 'react';
+import { IconSousuo, IconZhinengwenda } from '@panda-wiki/icons';
 import { Box, Button, IconButton, Stack, TextField, Link } from '@mui/material';
 import NavBtns, { NavBtn } from './NavBtns';
 import { DocWidth } from '../constants';
@@ -52,7 +52,6 @@ const Header = React.memo(
     useEffect(() => {
       setCtrlKShortcut(getKeyboardShortcut());
     }, []);
-
     // 全局键盘事件监听：⌘K (Mac) 或 Ctrl+K (Windows/Linux)
     useEffect(() => {
       const handleKeyDown = (event: KeyboardEvent) => {
@@ -82,7 +81,7 @@ const Header = React.memo(
           top: 0,
           left: 0,
           right: 0,
-          height: 80,
+          height: 64,
           bgcolor: 'background.default',
           borderBottom: '1px solid',
           borderColor: 'divider',
@@ -120,8 +119,8 @@ const Header = React.memo(
                 '&:hover': { color: 'primary.main' },
               }}
             >
-              <img src={logo} alt='logo' height={48} />
-              <Box sx={{ fontSize: 28 }}>{title}</Box>
+              <img src={logo} alt='logo' width={32} />
+              <Box sx={{ fontSize: 18 }}>{title}</Box>
             </Stack>
           </Link>
           {showSearch &&
@@ -158,11 +157,16 @@ const Header = React.memo(
                   borderRadius: '10px',
                   overflow: 'hidden',
                   cursor: 'pointer',
-                  '.MuiOutlinedInput-input': {
-                    py: 1,
+                  '& .MuiInputBase-input': {
+                    fontSize: 14,
+                    lineHeight: '19.5px',
+                    height: '19.5px',
+                    fontFamily: 'Mono',
+                    cursor: 'pointer',
+                    py: '10.5px',
+                    pl: 1,
                   },
                   '& .MuiOutlinedInput-root': {
-                    height: 48,
                     pr: '12px',
                     pl: '12px',
                     '& fieldset': {
@@ -223,6 +227,16 @@ const Header = React.memo(
                             variant='contained'
                             // @ts-ignore
                             color='light'
+                            startIcon={
+                              <IconZhinengwenda
+                                sx={{
+                                  width: 16,
+                                  height: 16,
+                                  fontSize: 12,
+                                  color: 'primary.main',
+                                }}
+                              ></IconZhinengwenda>
+                            }
                             sx={{
                               textTransform: 'none',
                               minWidth: 'auto',
@@ -250,11 +264,6 @@ const Header = React.memo(
                 <Link key={index} href={item.url} target={item.target}>
                   <Button
                     variant={item.variant}
-                    sx={{
-                      py: 1.5,
-                      px: 3.5,
-                      textTransform: 'none',
-                    }}
                     startIcon={
                       item.showIcon && item.icon ? (
                         <img
@@ -265,10 +274,9 @@ const Header = React.memo(
                         />
                       ) : null
                     }
+                    sx={{ textTransform: 'none' }}
                   >
-                    <Box sx={{ lineHeight: '24px', fontSize: 18 }}>
-                      {item.text}
-                    </Box>
+                    <Box sx={{ lineHeight: '24px' }}>{item.text}</Box>
                   </Button>
                 </Link>
               ))}

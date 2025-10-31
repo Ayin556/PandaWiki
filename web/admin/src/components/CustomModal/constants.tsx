@@ -9,6 +9,25 @@ import {
 import { DomainRecommendNodeListResp } from '@/request/types';
 
 export const DEFAULT_DATA = {
+  text: {
+    title: '标题',
+  },
+  metrics: {
+    title: '指标卡片',
+    list: [] as {
+      name: string;
+      number: string;
+      id: string;
+    }[],
+  },
+  case: {
+    title: '案例卡片',
+    list: [] as {
+      id: string;
+      name: string;
+      // url: string;
+    }[],
+  },
   banner: {
     title: '',
     title_color: '#6E73FE',
@@ -74,6 +93,7 @@ export const COMPONENTS_MAP = {
     component: lazy(() => import('@panda-wiki/ui/welcomeHeader')),
     config: lazy(() => import('./components/config/HeaderConfig')),
     fixed: true,
+    disabled: false,
   },
   banner: {
     name: 'banner',
@@ -81,6 +101,7 @@ export const COMPONENTS_MAP = {
     component: lazy(() => import('@panda-wiki/ui/banner')),
     config: lazy(() => import('./components/config/BannerConfig')),
     fixed: true,
+    disabled: false,
   },
   basic_doc: {
     name: 'basic_doc',
@@ -89,6 +110,7 @@ export const COMPONENTS_MAP = {
     component: lazy(() => import('@panda-wiki/ui/basicDoc')),
     config: lazy(() => import('./components/config/BasicDocConfig')),
     fixed: false,
+    disabled: false,
   },
   dir_doc: {
     name: 'dir_doc',
@@ -97,6 +119,7 @@ export const COMPONENTS_MAP = {
     component: lazy(() => import('@panda-wiki/ui/dirDoc')),
     config: lazy(() => import('./components/config/DirDocConfig')),
     fixed: false,
+    disabled: false,
   },
   simple_doc: {
     name: 'simple_doc',
@@ -105,6 +128,7 @@ export const COMPONENTS_MAP = {
     component: lazy(() => import('@panda-wiki/ui/simpleDoc')),
     config: lazy(() => import('./components/config/SimpleDocConfig')),
     fixed: false,
+    disabled: false,
   },
   carousel: {
     name: 'carousel',
@@ -113,6 +137,7 @@ export const COMPONENTS_MAP = {
     component: lazy(() => import('@panda-wiki/ui/carousel')),
     config: lazy(() => import('./components/config/CarouselConfig')),
     fixed: false,
+    disabled: false,
   },
   faq: {
     name: 'faq',
@@ -121,6 +146,7 @@ export const COMPONENTS_MAP = {
     component: lazy(() => import('@panda-wiki/ui/faq')),
     config: lazy(() => import('./components/config/FaqConfig')),
     fixed: false,
+    disabled: false,
   },
   footer: {
     name: 'footer',
@@ -128,6 +154,31 @@ export const COMPONENTS_MAP = {
     component: lazy(() => import('@panda-wiki/ui/welcomeFooter')),
     config: lazy(() => import('./components/config/FooterConfig')),
     fixed: true,
+    disabled: false,
+  },
+  text: {
+    name: 'text',
+    title: '标题',
+    component: lazy(() => import('@panda-wiki/ui/text')),
+    config: lazy(() => import('./components/config/TextConfig')),
+    fixed: false,
+    disabled: false,
+  },
+  case: {
+    name: 'case',
+    title: '案例卡片',
+    component: lazy(() => import('@panda-wiki/ui/case')),
+    config: lazy(() => import('./components/config/CaseConfig')),
+    fixed: false,
+    disabled: false,
+  },
+  metrics: {
+    name: 'metrics',
+    title: '指标卡片',
+    component: lazy(() => import('@panda-wiki/ui/metrics')),
+    config: lazy(() => import('./components/config/MetricsConfig')),
+    fixed: false,
+    disabled: false,
   },
 };
 
@@ -138,4 +189,7 @@ export const TYPE_TO_CONFIG_LABEL = {
   simple_doc: 'simple_doc_config',
   carousel: 'carousel_config',
   faq: 'faq_config',
+  text: 'text_config',
+  case: 'case_config',
+  metrics: 'metrics_config',
 } as const;

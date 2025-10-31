@@ -7,6 +7,9 @@ import {
   DirDoc,
   SimpleDoc,
   Carousel,
+  Text,
+  Case,
+  Metrics,
 } from '@panda-wiki/ui';
 import { DomainRecommendNodeListResp } from '@/request/types';
 
@@ -131,6 +134,26 @@ const handleBannerProps = (config: any = {}) => {
   };
 };
 
+const handleTextProps = (config: any = {}) => {
+  return {
+    title: config.title || '标题',
+  };
+};
+
+const handleCaseProps = (config: any = {}) => {
+  return {
+    title: config.title || '案例',
+    items: config.list || [],
+  };
+};
+
+const handleMetricsProps = (config: any = {}) => {
+  return {
+    title: config.title || '指标',
+    items: config.list || [],
+  };
+};
+
 const componentMap = {
   banner: Banner,
   basic_doc: BasicDoc,
@@ -138,6 +161,9 @@ const componentMap = {
   simple_doc: SimpleDoc,
   carousel: Carousel,
   faq: Faq,
+  text: Text,
+  case: Case,
+  metrics: Metrics,
 } as const;
 
 const Welcome = () => {
@@ -164,6 +190,9 @@ const Welcome = () => {
     simple_doc: 'simple_doc_config',
     carousel: 'carousel_config',
     faq: 'faq_config',
+    text: 'text_config',
+    case: 'case_config',
+    metrics: 'metrics_config',
   } as const;
 
   const handleComponentProps = (data: any) => {
@@ -193,6 +222,12 @@ const Welcome = () => {
             href: item.href || '/node',
           })),
         };
+      case 'text':
+        return handleTextProps(config);
+      case 'case':
+        return handleCaseProps(config);
+      case 'metrics':
+        return handleMetricsProps(config);
     }
   };
   return (

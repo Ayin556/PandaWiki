@@ -205,6 +205,7 @@ const ShowContent = ({
 
   const handleSelect = useCallback(
     (item: Component) => {
+      if (item.disabled) return;
       setCurComponent(item);
       isComponentClickRef.current = true;
     },
@@ -215,7 +216,9 @@ const ShowContent = ({
     (item: Component) => {
       const filterComponents = components.filter(c => c.id !== item.id);
       if (curComponent?.id === item.id) {
-        setCurComponent(filterComponents[0]);
+        setCurComponent(
+          filterComponents.find(c => !c.disabled) || filterComponents[0],
+        );
       }
       setComponents(filterComponents);
       setIsEdit?.(true);

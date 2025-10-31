@@ -2,12 +2,7 @@
 
 import React from 'react';
 import { styled, Grid, Box, Button, alpha } from '@mui/material';
-import {
-  StyledTopicBox,
-  StyledTopicTitle,
-  StyledTopicInner,
-  StyledTopicContainer,
-} from '../component/styledCommon';
+import { StyledTopicBox, StyledTopicTitle } from '../component/styledCommon';
 import IconWenjian from '@panda-wiki/icons/IconWenjian';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 import { useFadeInText, useCardAnimation } from '../hooks/useGsapAnimation';
@@ -33,20 +28,17 @@ const StyledBasicDocItem = styled('div')(({ theme }) => ({
   justifyContent: 'space-between',
   gap: theme.spacing(2),
   padding: theme.spacing(3.5, 2.5, 2),
-  backgroundColor: theme.palette.background.paper,
   borderRadius: '8px',
-  boxShadow: '0px 5px 20px 0px rgba(33,34,45,0.05)',
-  border: `1px solid ${theme.palette.divider}`,
+  boxShadow: `0px 5px 20px 0px ${alpha(theme.palette.text.primary, 0.06)}`,
+  border: `1px solid ${alpha(theme.palette.text.primary, 0.1)}`,
   transition: 'all 0.2s ease',
-  ...theme.applyStyles('dark', {
-    backgroundColor: '#242425',
-  }),
   '&:hover': {
     transform: 'translateY(-5px)',
-    boxShadow: '0px 10px 20px 0px rgba(0,0,5,0.15)',
+    boxShadow: `0px 10px 20px 0px ${alpha(theme.palette.text.primary, 0.1)}`,
+    borderColor: theme.palette.primary.main,
   },
   width: '100%',
-  opacity: 0,
+  cursor: 'pointer',
 }));
 
 const StyledBasicDocItemTitle = styled('h3')(({ theme }) => ({
@@ -78,18 +70,6 @@ const StyledBasicDocItemSummary = styled('div')(({ theme }) => ({
   color: alpha(theme.palette.text.primary, 0.5),
 }));
 
-const StyledBasicDocItemMore = styled('a')(({ theme }) => ({
-  display: 'flex',
-  width: '100%',
-  alignItems: 'center',
-  justifyContent: 'flex-end',
-  gap: theme.spacing(1),
-  color: theme.palette.primary.main,
-  fontSize: 14,
-  fontWeight: 400,
-  cursor: 'pointer',
-}));
-
 // 单个卡片组件，带动画效果
 const BasicDocItem: React.FC<{
   item: any;
@@ -111,16 +91,16 @@ const BasicDocItem: React.FC<{
           <StyledBasicDocItemName>{item.name}</StyledBasicDocItemName>
         </StyledBasicDocItemTitle>
         <StyledBasicDocItemSummary>{item.summary}</StyledBasicDocItemSummary>
-        <Button
-          href={`${baseUrl}/node/${item.id}`}
-          target='_blank'
-          sx={{ gap: 1, alignSelf: 'flex-end' }}
-          variant='text'
-          color='primary'
+        <Box
+          sx={{
+            color: 'primary.main',
+            fontSize: 14,
+            fontWeight: 400,
+            alignSelf: 'flex-end',
+          }}
         >
           查看更多
-          <ArrowForwardRoundedIcon sx={{ fontSize: 16, flexShrink: 0 }} />
-        </Button>
+        </Box>
       </StyledBasicDocItem>
     </Grid>
   );
@@ -135,26 +115,20 @@ const BasicDoc: React.FC<BasicDocProps> = React.memo(
     const titleRef = useFadeInText(0.2, 0.1);
 
     return (
-      <StyledTopicContainer>
-        <StyledTopicInner sx={{ backgroundColor: bgColor }}>
-          <StyledTopicBox>
-            <StyledTopicTitle ref={titleRef} sx={{ color: titleColor }}>
-              {title}
-            </StyledTopicTitle>
-            <Grid container spacing={3} sx={{ width: '100%' }}>
-              {items.map((item, index) => (
-                <BasicDocItem
-                  key={index}
-                  item={item}
-                  index={index}
-                  baseUrl={baseUrl}
-                  size={size}
-                />
-              ))}
-            </Grid>
-          </StyledTopicBox>
-        </StyledTopicInner>
-      </StyledTopicContainer>
+      <StyledTopicBox>
+        <StyledTopicTitle ref={titleRef}>{title}</StyledTopicTitle>
+        <Grid container spacing={3} sx={{ width: '100%' }}>
+          {items.map((item, index) => (
+            <BasicDocItem
+              key={index}
+              item={item}
+              index={index}
+              baseUrl={baseUrl}
+              size={size}
+            />
+          ))}
+        </Grid>
+      </StyledTopicBox>
     );
   },
 );

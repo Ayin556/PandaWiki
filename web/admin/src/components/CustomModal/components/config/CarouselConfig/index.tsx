@@ -83,7 +83,7 @@ const Config = ({ setIsEdit, id }: ConfigProps) => {
             <TextField label='文字' {...field} placeholder='请输入' />
           )}
         />
-        <Controller
+        {/* <Controller
           control={control}
           name='title_color'
           render={({ field }) => (
@@ -94,9 +94,9 @@ const Config = ({ setIsEdit, id }: ConfigProps) => {
               sx={{ flex: 1 }}
             />
           )}
-        />
+        /> */}
       </CommonItem>
-      <CommonItem title='背景颜色'>
+      {/* <CommonItem title='背景颜色'>
         <Controller
           control={control}
           name='bg_color'
@@ -108,7 +108,7 @@ const Config = ({ setIsEdit, id }: ConfigProps) => {
             />
           )}
         />
-      </CommonItem>
+      </CommonItem> */}
       <CommonItem
         title='图片'
         desc='(推荐 880*495，16:9 )'

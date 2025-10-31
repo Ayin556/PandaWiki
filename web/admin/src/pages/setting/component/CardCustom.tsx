@@ -17,7 +17,7 @@ import {
   RadioGroup,
   Stack,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { FormItem, SettingCardItem } from './Common';
 
@@ -28,6 +28,9 @@ interface CardCustomProps {
 }
 
 const CardCustom = ({ kb, refresh, info }: CardCustomProps) => {
+  const [curCustomType, setCurCustomType] = useState<
+    'welcome' | 'header' | 'footer' | null
+  >(null);
   const [customModalOpen, setCustomModalOpen] = useState(false);
   const { kb_id } = useAppSelector(state => state.config);
   const {
@@ -66,6 +69,45 @@ const CardCustom = ({ kb, refresh, info }: CardCustomProps) => {
         ConstsHomePageSetting.HomePageSettingDoc,
     );
   }, [info]);
+
+  useEffect(() => {
+    if (curCustomType) {
+      setCustomModalOpen(true);
+    }
+  }, [curCustomType]);
+
+  useEffect(() => {
+    if (!customModalOpen) {
+      setCurCustomType(null);
+    }
+  }, [customModalOpen]);
+
+  const curCustomTitle = useMemo(() => {
+    if (curCustomType === 'welcome') {
+      return '定制欢迎页面';
+    } else if (curCustomType === 'header') {
+      return '定制导航栏';
+    } else if (curCustomType === 'footer') {
+      return '定制 Footer';
+    }
+    return '';
+  }, [curCustomType]);
+
+  const curCustomDisabledComponents = useMemo(() => {
+    if (curCustomType === 'welcome') {
+      return ['header', 'footer'];
+    }
+    return [];
+  }, [curCustomType]);
+
+  const curCustomShowComponents = useMemo(() => {
+    if (curCustomType === 'header') {
+      return ['header'];
+    } else if (curCustomType === 'footer') {
+      return ['footer'];
+    }
+    return null;
+  }, [curCustomType]);
 
   return (
     <SettingCardItem
@@ -116,19 +158,34 @@ const CardCustom = ({ kb, refresh, info }: CardCustomProps) => {
           )}
         />
       </FormItem>
-      <FormItem label='自定义欢迎页面'>
-        <Button
-          variant='outlined'
-          fullWidth
-          onClick={() => setCustomModalOpen(true)}
-        >
-          定制页面
-        </Button>
+      <FormItem label='自定义样式'>
+        <Stack direction='row' gap={2}>
+          <Button
+            variant='outlined'
+            onClick={() => setCurCustomType('welcome')}
+          >
+            定制欢迎页面
+          </Button>
+          <Button variant='outlined' onClick={() => setCurCustomType('header')}>
+            定制导航栏
+          </Button>
+          <Button
+            variant='outlined'
+            onClick={() => setCurCustomType('footer')}
+            sx={{ textTransform: 'none' }}
+          >
+            定制 Footer
+          </Button>
+        </Stack>
       </FormItem>
+
       <CustomModal
         open={customModalOpen}
         onCancel={() => setCustomModalOpen(false)}
         refresh={refresh}
+        title={curCustomTitle}
+        disabledComponents={curCustomDisabledComponents}
+        components={curCustomShowComponents}
       />
     </SettingCardItem>
   );

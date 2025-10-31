@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { styled, Grid, Box, Button } from '@mui/material';
+import { styled, Grid, Box, Button, alpha } from '@mui/material';
 import {
   StyledTopicBox,
   StyledTopicTitle,
@@ -38,14 +38,14 @@ const StyledDirDocItem = styled('div')(({ theme }) => ({
   justifyContent: 'space-between',
   gap: theme.spacing(2),
   padding: theme.spacing(3.5, 2.5, 2),
-  backgroundColor: '#fff',
   borderRadius: '8px',
-  boxShadow: '0px 5px 20px 0px rgba(33,34,45,0.05)',
-  border: `1px solid #ECEEF1`,
+  boxShadow: `0px 5px 20px 0px ${alpha(theme.palette.text.primary, 0.06)}`,
+  border: `1px solid ${alpha(theme.palette.text.primary, 0.1)}`,
   transition: 'all 0.2s ease',
   '&:hover': {
     transform: 'translateY(-5px)',
-    boxShadow: '0px 10px 20px 0px rgba(0,0,5,0.15)',
+    boxShadow: '0px 10px 20px 0px rgba(0,0,5,0.2)',
+    borderColor: theme.palette.primary.main,
   },
   width: '100%',
   opacity: 0,
@@ -54,7 +54,7 @@ const StyledDirDocItem = styled('div')(({ theme }) => ({
 const StyledDirDocItemTitle = styled('h3')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
-  color: '#171c19',
+  color: theme.palette.text.primary,
   gap: theme.spacing(1),
   fontSize: 20,
   fontWeight: 700,
@@ -130,7 +130,6 @@ const DirDocItem: React.FC<{
           color='primary'
         >
           查看更多
-          <ArrowForwardRoundedIcon sx={{ fontSize: 16, flexShrink: 0 }} />
         </Button>
       </StyledDirDocItem>
     </Grid>
@@ -153,26 +152,20 @@ const DirDoc: React.FC<DirDocProps> = React.memo(
     const titleRef = useFadeInText(0.2, 0.1);
 
     return (
-      <StyledTopicContainer>
-        <StyledTopicInner sx={{ backgroundColor: bgColor }}>
-          <StyledTopicBox>
-            <StyledTopicTitle ref={titleRef} sx={{ color: titleColor }}>
-              {title}
-            </StyledTopicTitle>
-            <Grid container spacing={3} sx={{ width: '100%' }}>
-              {items.map((item, index) => (
-                <DirDocItem
-                  key={index}
-                  item={item}
-                  index={index}
-                  baseUrl={baseUrl}
-                  size={size}
-                />
-              ))}
-            </Grid>
-          </StyledTopicBox>
-        </StyledTopicInner>
-      </StyledTopicContainer>
+      <StyledTopicBox>
+        <StyledTopicTitle ref={titleRef}>{title}</StyledTopicTitle>
+        <Grid container spacing={3} sx={{ width: '100%' }}>
+          {items.map((item, index) => (
+            <DirDocItem
+              key={index}
+              item={item}
+              index={index}
+              baseUrl={baseUrl}
+              size={size}
+            />
+          ))}
+        </Grid>
+      </StyledTopicBox>
     );
   },
 );

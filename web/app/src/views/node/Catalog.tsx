@@ -83,7 +83,7 @@ const Catalog = ({ sx }: { sx?: SxProps }) => {
       alignItems={docWidth === 'full' ? 'flex-start' : 'flex-end'}
       sx={{
         position: 'sticky',
-        top: 130,
+        top: 114,
         maxHeight: 'calc(100vh - 164px)',
         zIndex: 9,
         fontSize: 14,

@@ -203,7 +203,7 @@ export const StyledImageRemoveButton = styled(IconButton)(({ theme }) => ({
 
 // 输入框组件
 export const StyledTextField = styled(TextField)(({ theme }) => ({
-  backgroundColor: theme.palette.background.paper3,
+  backgroundColor: theme.palette.background.default,
   '.MuiInputBase-root': {
     padding: 0,
     overflow: 'hidden',

@@ -27,11 +27,11 @@ const StyledTitle = styled('h1')(({ theme }) => ({
   fontWeight: 700,
   wordBreak: 'break-all',
   color: theme.palette.primary.main,
+  marginBottom: theme.spacing(3),
 }));
 
 const StyledSubTitle = styled('h2')(({ theme }) => ({
   fontWeight: 400,
-  marginTop: theme.spacing(3),
   marginBottom: theme.spacing(5),
   color: theme.palette.text.primary,
 }));
@@ -340,17 +340,16 @@ const Banner = React.memo(
           >
             {title.text}
           </StyledTitle>
-          {subtitle.text && (
-            <StyledSubTitle
-              ref={subtitleRef}
-              sx={{
-                fontSize: `${subtitle.fontSize || 16}px`,
-                // color: subtitle.color || 'rgba(255,255,255,0.5)',
-              }}
-            >
-              {subtitle.text}
-            </StyledSubTitle>
-          )}
+          {/* {subtitle.text && ( */}
+          <StyledSubTitle
+            ref={subtitleRef}
+            sx={{
+              fontSize: `${subtitle.fontSize || 16}px`,
+            }}
+          >
+            {subtitle.text}
+          </StyledSubTitle>
+          {/* )} */}
 
           <StyledSearchBox>
             <Box sx={{ position: 'relative' }}>

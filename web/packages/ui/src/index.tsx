@@ -8,7 +8,9 @@ export { default as DirDoc } from './dirDoc';
 export { default as SimpleDoc } from './simpleDoc';
 export { default as Carousel } from './carousel';
 export { default as Faq } from './faq';
-
+export { default as Metrics } from './metrics';
+export { default as Text } from './text';
+export { default as Case } from './case';
 // 导出动画 hooks
 export {
   useTextAnimation,

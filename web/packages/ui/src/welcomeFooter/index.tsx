@@ -343,8 +343,8 @@ const Footer = React.memo(
                       cursor: 'pointer',
                     }}
                   >
-                    <img src={logo} alt='PandaWiki' width={16} height={16} />
                     <Box>本网站由 PandaWiki 提供技术支持</Box>
+                    <img src={logo} alt='PandaWiki' width={16} height={16} />
                   </Stack>
                 </Link>
               </Stack>
