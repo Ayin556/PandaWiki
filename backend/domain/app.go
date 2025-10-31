@@ -233,6 +233,29 @@ type FaqConfig struct {
 		Link     string `json:"link"`
 	} `json:"list"`
 }
+type TextConfig struct {
+	Type  string `json:"type"`
+	Title string `json:"title"`
+}
+type MetricsConfig struct {
+	Type  string `json:"type"`
+	Title string `json:"title"`
+	List  []struct {
+		ID     string `json:"id"`
+		Name   string `json:"name"`
+		Number string `json:"number"`
+	} `json:"list"`
+}
+type CaseConfig struct {
+	Type  string `json:"type"`
+	Title string `json:"title"`
+	List  []struct {
+		ID   string `json:"id"`
+		Name string `json:"name"`
+		Link string `json:"link"`
+	} `json:"list"`
+}
+
 type WebAppLandingConfig struct {
 	Type            string           `json:"type"`
 	NodeIds         []string         `json:"node_ids"`
@@ -242,6 +265,9 @@ type WebAppLandingConfig struct {
 	SimpleDocConfig *SimpleDocConfig `json:"simple_doc_config,omitempty"`
 	CarouselConfig  *CarouselConfig  `json:"carousel_config,omitempty"`
 	FaqConfig       *FaqConfig       `json:"faq_config,omitempty"`
+	MetricsConfig   *MetricsConfig   `json:"metrics_config,omitempty"`
+	CaseConfig      *CaseConfig      `json:"case_config,omitempty"`
+	TextConfig      *TextConfig      `json:"text_config,omitempty"`
 	ComConfigOrder  []string         `json:"com_config_order"`
 }
 
@@ -449,6 +475,9 @@ type WebAppLandingConfigResp struct {
 	SimpleDocConfig *SimpleDocConfig         `json:"simple_doc_config,omitempty"`
 	CarouselConfig  *CarouselConfig          `json:"carousel_config,omitempty"`
 	FaqConfig       *FaqConfig               `json:"faq_config,omitempty"`
+	MetricsConfig   *MetricsConfig           `json:"metrics_config,omitempty"`
+	CaseConfig      *CaseConfig              `json:"case_config,omitempty"`
+	TextConfig      *TextConfig              `json:"text_config,omitempty"`
 	ComConfigOrder  []string                 `json:"com_config_order"`
 	NodeIds         []string                 `json:"node_ids"`
 	Nodes           []*RecommendNodeListResp `json:"nodes" gorm:"-"`

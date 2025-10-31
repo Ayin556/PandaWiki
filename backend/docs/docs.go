@@ -4977,6 +4977,34 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.CaseConfig": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "link": {
+                                "type": "string"
+                            },
+                            "name": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.CatalogSettings": {
             "type": "object",
             "properties": {
@@ -5980,6 +6008,34 @@ const docTemplate = `{
                 "MessageFromPrivate"
             ]
         },
+        "domain.MetricsConfig": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "number": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.ModelType": {
             "type": "string",
             "enum": [
@@ -6780,6 +6836,17 @@ const docTemplate = `{
                 "StatPageSceneLogin"
             ]
         },
+        "domain.TextConfig": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.TextReq": {
             "type": "object",
             "required": [
@@ -6997,6 +7064,9 @@ const docTemplate = `{
                 "carousel_config": {
                     "$ref": "#/definitions/domain.CarouselConfig"
                 },
+                "case_config": {
+                    "$ref": "#/definitions/domain.CaseConfig"
+                },
                 "com_config_order": {
                     "type": "array",
                     "items": {
@@ -7009,6 +7079,9 @@ const docTemplate = `{
                 "faq_config": {
                     "$ref": "#/definitions/domain.FaqConfig"
                 },
+                "metrics_config": {
+                    "$ref": "#/definitions/domain.MetricsConfig"
+                },
                 "node_ids": {
                     "type": "array",
                     "items": {
@@ -7017,6 +7090,9 @@ const docTemplate = `{
                 },
                 "simple_doc_config": {
                     "$ref": "#/definitions/domain.SimpleDocConfig"
+                },
+                "text_config": {
+                    "$ref": "#/definitions/domain.TextConfig"
                 },
                 "type": {
                     "type": "string"
@@ -7035,6 +7111,9 @@ const docTemplate = `{
                 "carousel_config": {
                     "$ref": "#/definitions/domain.CarouselConfig"
                 },
+                "case_config": {
+                    "$ref": "#/definitions/domain.CaseConfig"
+                },
                 "com_config_order": {
                     "type": "array",
                     "items": {
@@ -7046,6 +7125,9 @@ const docTemplate = `{
                 },
                 "faq_config": {
                     "$ref": "#/definitions/domain.FaqConfig"
+                },
+                "metrics_config": {
+                    "$ref": "#/definitions/domain.MetricsConfig"
                 },
                 "node_ids": {
                     "type": "array",
@@ -7061,6 +7143,9 @@ const docTemplate = `{
                 },
                 "simple_doc_config": {
                     "$ref": "#/definitions/domain.SimpleDocConfig"
+                },
+                "text_config": {
+                    "$ref": "#/definitions/domain.TextConfig"
                 },
                 "type": {
                     "type": "string"
