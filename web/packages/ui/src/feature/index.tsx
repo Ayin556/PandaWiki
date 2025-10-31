@@ -6,7 +6,7 @@ import { StyledTopicBox, StyledTopicTitle } from '../component/styledCommon';
 import { IconLianjiezu } from '@panda-wiki/icons';
 import { useFadeInText, useCardAnimation } from '../hooks/useGsapAnimation';
 
-interface FaqProps {
+interface FeatureProps {
   mobile?: boolean;
   title?: string;
   bgColor?: string;
@@ -33,7 +33,7 @@ const StyledFaqItem = styled('a')(({ theme }) => ({
     transform: 'translateY(-5px)',
     color: theme.palette.primary.main,
     border: `1px solid ${alpha(theme.palette.primary.main, 0.5)}`,
-    boxShadow: `0px 10px 20px 0px ${alpha(theme.palette.text.primary, 0.1)}`,
+    boxShadow: '0px 10px 20px 0px rgba(0,0,5,0.2)',
   },
   whiteSpace: 'nowrap',
   textOverflow: 'ellipsis',
@@ -66,7 +66,7 @@ const FaqItem: React.FC<{
   );
 });
 
-const Faq: React.FC<FaqProps> = React.memo(
+const Feature: React.FC<FeatureProps> = React.memo(
   ({ title = '链接组', items = [], mobile, bgColor, titleColor }) => {
     const size =
       typeof mobile === 'boolean'
@@ -80,7 +80,9 @@ const Faq: React.FC<FaqProps> = React.memo(
 
     return (
       <StyledTopicBox>
-        <StyledTopicTitle ref={titleRef}>{title}</StyledTopicTitle>
+        <StyledTopicTitle ref={titleRef} sx={{ color: titleColor }}>
+          {title}
+        </StyledTopicTitle>
         <Grid container spacing={3} sx={{ width: '100%' }}>
           {items.map((item, index) => (
             <FaqItem key={index} item={item} index={index} size={size} />
@@ -91,4 +93,4 @@ const Faq: React.FC<FaqProps> = React.memo(
   },
 );
 
-export default Faq;
+export default Feature;

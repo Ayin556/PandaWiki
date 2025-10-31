@@ -7,6 +7,7 @@ import {
   redPalette,
   whitePalette,
   electricBluePalette,
+  darkDeepForestPalette,
 } from './index';
 
 export const THEME_LIST = [
@@ -39,6 +40,11 @@ export const THEME_LIST = [
     label: '热情红',
     value: 'red',
     palette: redPalette,
+  },
+  {
+    label: '深墨绿',
+    value: 'darkDeepForest',
+    palette: darkDeepForestPalette,
   },
   {
     label: '深邃黑',

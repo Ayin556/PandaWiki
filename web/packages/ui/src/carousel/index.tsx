@@ -56,7 +56,7 @@ const StyledCarouselInner = styled('div')(({ theme }) => ({
   alignItems: 'center',
   gap: theme.spacing(8),
   flex: 1,
-  padding: '170px 24px 100px',
+  padding: '120px 24px 100px',
   [theme.breakpoints.down('md')]: {
     padding: '50px 24px 20px',
   },

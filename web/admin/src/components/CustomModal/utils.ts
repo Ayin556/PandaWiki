@@ -109,6 +109,26 @@ const handleBannerProps = (config: any = {}) => {
   };
 };
 
+const handleTextProps = (config: any = {}) => {
+  return {
+    title: config.title || '标题',
+  };
+};
+
+const handleMetricsProps = (config: any = {}) => {
+  return {
+    title: config.title || '指标卡片',
+    items: config.list || [],
+  };
+};
+
+const handleCaseProps = (config: any = {}) => {
+  return {
+    title: config.title || '案例卡片',
+    items: config.list || [],
+  };
+};
+
 export const handleComponentProps = (
   type: string,
   id: string,
@@ -136,6 +156,12 @@ export const handleComponentProps = (
         return handleCarouselProps(config);
       case 'banner':
         return handleBannerProps(config);
+      case 'text':
+        return handleTextProps(config);
+      case 'metrics':
+        return handleMetricsProps(config);
+      case 'case':
+        return handleCaseProps(config);
     }
   }
 };
@@ -164,50 +190,4 @@ export const handleLandingConfigs = ({
     }
     return item;
   });
-};
-
-// 返回与组件强相关的 settings 切片，减少无关字段引发的重渲染
-export const getComponentSettingsSlice = (type: string, setting: any) => {
-  switch (type) {
-    case 'header':
-      return {
-        title: setting?.title,
-        icon: setting?.icon,
-        btns: setting?.btns,
-        web_app_custom_style: {
-          header_search_placeholder:
-            setting?.web_app_custom_style?.header_search_placeholder,
-        },
-      };
-    case 'footer':
-      return {
-        footer_settings: setting?.footer_settings,
-        icon: setting?.icon,
-        web_app_custom_style: setting?.web_app_custom_style,
-      };
-    case 'faq':
-      return { faq_config: setting?.faq_config };
-    case 'basicDoc':
-      return { basic_doc_config: setting?.basic_doc_config };
-    case 'dirDoc':
-      return { dir_doc_config: setting?.dir_doc_config };
-    case 'simpleDoc':
-      return { simple_doc_config: setting?.simple_doc_config };
-    case 'carousel':
-      return { carousel_config: setting?.carousel_config };
-    case 'banner':
-      return { banner_config: setting?.banner_config };
-    default:
-      return {};
-  }
-};
-
-// 生成稳定签名，用于 memo 依赖
-export const getComponentSettingsSignature = (type: string, setting: any) => {
-  const slice = getComponentSettingsSlice(type, setting);
-  try {
-    return JSON.stringify(slice);
-  } catch (e) {
-    return '';
-  }
 };

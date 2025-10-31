@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { styled, Grid, Box } from '@mui/material';
+import { styled, Grid, Box, alpha } from '@mui/material';
 import {
   StyledTopicInner,
   StyledTopicContainer,
@@ -31,20 +31,17 @@ const StyledSimpleDocItem = styled('a')(({ theme }) => ({
   alignItems: 'center',
   gap: theme.spacing(2),
   padding: theme.spacing(3.5, 2.5),
-  backgroundColor: theme.palette.background.paper,
-  ...theme.applyStyles('dark', {
-    backgroundColor: '#242425',
-  }),
   borderRadius: '8px',
-  boxShadow: '0px 5px 20px 0px rgba(33,34,45,0.05)',
-  border: `1px solid ${theme.palette.divider}`,
+  boxShadow: `0px 5px 20px 0px ${alpha(theme.palette.text.primary, 0.06)}`,
+  border: `1px solid ${alpha(theme.palette.text.primary, 0.1)}`,
   transition: 'all 0.2s ease',
   cursor: 'pointer',
   color: theme.palette.text.primary,
   '&:hover': {
     transform: 'translateY(-5px)',
     color: theme.palette.primary.main,
-    boxShadow: '0px 10px 20px 0px rgba(0,0,5,0.15)',
+    boxShadow: '0px 10px 20px 0px rgba(0,0,5,0.2)',
+    borderColor: theme.palette.primary.main,
   },
   opacity: 0,
 }));
@@ -106,26 +103,20 @@ const SimpleDoc: React.FC<SimpleDocProps> = React.memo(
     const titleRef = useFadeInText(0.2, 0.1);
 
     return (
-      <StyledTopicContainer>
-        <StyledTopicInner sx={{ backgroundColor: bgColor }}>
-          <StyledTopicBox>
-            <StyledTopicTitle ref={titleRef} sx={{ color: titleColor }}>
-              {title}
-            </StyledTopicTitle>
-            <Grid container spacing={2} sx={{ width: '100%' }}>
-              {items.map((item, index) => (
-                <SimpleDocItem
-                  key={index}
-                  item={item}
-                  index={index}
-                  baseUrl={baseUrl}
-                  size={size}
-                />
-              ))}
-            </Grid>
-          </StyledTopicBox>
-        </StyledTopicInner>
-      </StyledTopicContainer>
+      <StyledTopicBox>
+        <StyledTopicTitle ref={titleRef}>{title}</StyledTopicTitle>
+        <Grid container spacing={2} sx={{ width: '100%' }}>
+          {items.map((item, index) => (
+            <SimpleDocItem
+              key={index}
+              item={item}
+              index={index}
+              baseUrl={baseUrl}
+              size={size}
+            />
+          ))}
+        </Grid>
+      </StyledTopicBox>
     );
   },
 );

@@ -6,5 +6,6 @@ export { default as greenPalette } from './green';
 export { default as blackPalette } from './black';
 export { default as deepTealPalette } from './deepTeal';
 export { default as redPalette } from './red';
+export { default as darkDeepForestPalette } from './darkDeepForest';
 export { default as whitePalette } from './white';
 export { default as electricBluePalette } from './electricBlue';

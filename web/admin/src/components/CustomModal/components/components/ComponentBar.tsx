@@ -38,6 +38,9 @@ import {
   IconChangjianwenti,
   IconLunbotu,
   IconShanchu,
+  IconDanwenzi,
+  IconShuzikapian,
+  IconKehuanli,
 } from '@panda-wiki/icons';
 import { DEFAULT_DATA } from '../../constants';
 import { THEME_LIST, THEME_TO_PALETTE } from '@panda-wiki/themes/constants';
@@ -47,6 +50,7 @@ interface ComponentBarProps {
   curComponent: Component;
   setCurComponent: Dispatch<SetStateAction<Component>>;
   setIsEdit: Dispatch<SetStateAction<boolean>>;
+  allowAdd?: boolean;
 }
 
 const ThemeCard = ({ palette, label }: any) => {
@@ -93,6 +97,7 @@ const ComponentBar = ({
   curComponent,
   setCurComponent,
   setIsEdit,
+  allowAdd = true,
 }: ComponentBarProps) => {
   const dispatch = useAppDispatch();
   const appPreviewData = useAppSelector(state => state.config.appPreviewData);
@@ -134,6 +139,27 @@ const ComponentBar = ({
         icon: IconChangjianwenti,
         component: lazy(() => import('@panda-wiki/ui/faq')),
         config: lazy(() => import('../config/FaqConfig')),
+      },
+      {
+        name: 'text',
+        title: '标题',
+        icon: IconDanwenzi,
+        component: lazy(() => import('@panda-wiki/ui/text')),
+        config: lazy(() => import('../config/TextConfig')),
+      },
+      {
+        name: 'metrics',
+        title: '指标卡片',
+        icon: IconShuzikapian,
+        component: lazy(() => import('@panda-wiki/ui/metrics')),
+        config: lazy(() => import('../config/MetricsConfig')),
+      },
+      {
+        name: 'case',
+        title: '案例卡片',
+        icon: IconKehuanli,
+        component: lazy(() => import('@panda-wiki/ui/case')),
+        config: lazy(() => import('../config/CaseConfig')),
       },
       // {
       //   name: 'contact',
@@ -196,16 +222,22 @@ const ComponentBar = ({
       transform: CSS.Transform.toString(transform),
       transition,
       opacity: isDragging ? 0.6 : 1,
-      cursor: isDragging ? 'move' : 'pointer',
+      cursor: isDragging ? 'move' : item.disabled ? 'not-allowed' : 'pointer',
     };
     return (
       <Stack
         ref={setNodeRef}
         direction={'row'}
         sx={{
+          cursor: 'not-allowed',
           height: '40px',
           borderRadius: '6px',
-          bgcolor: item.id === curComponent.id ? '#F2F8FF' : '',
+          bgcolor:
+            item.id === curComponent.id
+              ? '#F2F8FF'
+              : item.disabled
+                ? 'var(--mui-palette-action-disabledBackground)'
+                : '',
           pl: '12px',
           alignItems: 'center',
           mb: '10px',
@@ -219,6 +251,7 @@ const ComponentBar = ({
         style={style}
         key={item.id}
         onClick={() => {
+          if (item.disabled) return;
           setCurComponent(item);
         }}
         {...(!item.fixed ? { ...attributes, ...listeners } : {})}
@@ -226,7 +259,12 @@ const ComponentBar = ({
         <Icon
           type='icon-wangyeguajian'
           sx={{
-            color: item.id === curComponent.id ? '#5F58FE' : '#21222D',
+            color:
+              item.id === curComponent.id
+                ? 'primary.main'
+                : item.disabled
+                  ? 'var(--mui-palette-action-disabled)'
+                  : 'text.secondary',
             fontSize: '14px',
           }}
         ></Icon>
@@ -234,7 +272,12 @@ const ComponentBar = ({
           sx={{
             marginLeft: '8px',
             fontSize: '14px',
-            color: item.id === curComponent.id ? '#5F58FE' : '#344054',
+            color:
+              item.id === curComponent.id
+                ? 'primary.main'
+                : item.disabled
+                  ? 'var(--mui-palette-action-disabled)'
+                  : 'text.secondary',
             fontWeight: 500,
           }}
         >
@@ -248,7 +291,9 @@ const ComponentBar = ({
             if (item.fixed) return;
             const filterComponents = components.filter(c => c.id !== item.id);
             if (curComponent.id === item.id) {
-              setCurComponent(filterComponents[0]);
+              setCurComponent(
+                filterComponents.find(c => !c.disabled) || filterComponents[0],
+              );
             }
             setComponents(filterComponents);
             setIsEdit(true);
@@ -278,7 +323,6 @@ const ComponentBar = ({
             sx={{
               justifyContent: 'space-between',
               alignItems: 'center',
-              paddingX: '20px',
               paddingTop: '19px',
             }}
           >
@@ -292,7 +336,7 @@ const ComponentBar = ({
               配色方案
             </Typography>
           </Stack>
-          <Stack sx={{ paddingX: '20px', marginTop: '15px' }}>
+          <Stack sx={{ pr: '20px', marginTop: '15px' }}>
             <Select
               value={
                 appPreviewData.settings?.web_app_landing_theme?.name || 'blue'
@@ -343,36 +387,38 @@ const ComponentBar = ({
           </Stack>
         </>
       )}
-
-      <Stack
-        direction={'row'}
-        sx={{
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          paddingX: '20px',
-          paddingTop: '19px',
-        }}
-      >
-        <Typography
+      {allowAdd && (
+        <Stack
+          direction={'row'}
           sx={{
-            fontSize: '16px',
-            lineHeight: '30px',
-            fontWeight: 600,
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            pr: '20px',
+            paddingTop: '19px',
           }}
         >
-          组件
-        </Typography>
-        <IconButton
-          size='small'
-          onClick={e => {
-            setAnchorEl(e.currentTarget);
-          }}
-        >
-          <AddCircleRoundedIcon
-            sx={{ fontSize: '16px', color: 'primary.main' }}
-          />
-        </IconButton>
-      </Stack>
+          <Typography
+            sx={{
+              fontSize: '16px',
+              lineHeight: '30px',
+              fontWeight: 600,
+            }}
+          >
+            组件
+          </Typography>
+          <IconButton
+            size='small'
+            onClick={e => {
+              setAnchorEl(e.currentTarget);
+            }}
+          >
+            <AddCircleRoundedIcon
+              sx={{ fontSize: '16px', color: 'primary.main' }}
+            />
+          </IconButton>
+        </Stack>
+      )}
+
       <Popover
         open={popoverOpen}
         anchorEl={anchorEl}
@@ -484,7 +530,7 @@ const ComponentBar = ({
               overflowY: 'auto',
               flex: 1,
               minHeight: 0,
-              paddingX: '20px',
+              pr: '20px',
               paddingBottom: '20px',
             }}
           >

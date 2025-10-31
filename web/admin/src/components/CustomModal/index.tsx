@@ -29,6 +29,9 @@ interface CustomModalProps {
   open: boolean;
   onCancel: () => void;
   refresh: (v: any) => void;
+  disabledComponents?: string[];
+  components?: string[] | null;
+  title?: string;
 }
 
 export interface Component {
@@ -38,9 +41,17 @@ export interface Component {
   component: React.FC<any>;
   config: React.FC<any>;
   fixed?: boolean;
+  disabled?: boolean;
 }
 
-const CustomModal = ({ open, onCancel, refresh }: CustomModalProps) => {
+const CustomModal = ({
+  open,
+  onCancel,
+  refresh,
+  title,
+  disabledComponents,
+  components: propsComponents,
+}: CustomModalProps) => {
   const dispatch = useAppDispatch();
   const { kb_id } = useAppSelector(state => state.config);
   const [info, setInfo] = useState<DomainAppDetailResp>();
@@ -83,6 +94,7 @@ const CustomModal = ({ open, onCancel, refresh }: CustomModalProps) => {
         .filter(Boolean),
     );
     setInfo(res);
+    handleInitComponents(res);
   };
   const onSubmit = () => {
     if (!info || !appPreviewData) return;
@@ -137,8 +149,8 @@ const CustomModal = ({ open, onCancel, refresh }: CustomModalProps) => {
   const resetZoom = () => {
     setScale(1);
   };
-  useEffect(() => {
-    if (!info) return;
+
+  const handleInitComponents = (info: DomainAppDetailResp) => {
     const mergeInfo = { ...info };
     const web_app_landing_configs =
       info.settings?.web_app_landing_configs || [];
@@ -173,17 +185,33 @@ const CustomModal = ({ open, onCancel, refresh }: CustomModalProps) => {
       };
 
       setComponents(pre => {
-        const customComponents = newWebAppLandingConfigs.map(item => {
+        let customComponents = newWebAppLandingConfigs.map(item => {
           return {
             ...COMPONENTS_MAP[item.type as keyof typeof COMPONENTS_MAP],
             id: item.id,
           };
         });
-        return [pre[0], ...customComponents, pre[pre.length - 1]];
+        // @ts-expect-error ignore
+        customComponents = [pre[0], ...customComponents, pre[pre.length - 1]];
+        if (propsComponents) {
+          customComponents = customComponents.filter(item =>
+            propsComponents.includes(item.name),
+          );
+        }
+        if ((disabledComponents || []).length > 0) {
+          customComponents = customComponents.map(item => ({
+            ...item,
+            disabled: disabledComponents?.includes(item.name) || false,
+          }));
+        }
+        setCurComponent(
+          customComponents.find(item => !item.disabled) || customComponents[0],
+        );
+        return customComponents;
       });
     }
     dispatch(setAppPreviewData(mergeInfo));
-  }, [info]);
+  };
 
   useEffect(() => {
     if (open && kb_id) {
@@ -219,7 +247,15 @@ const CustomModal = ({ open, onCancel, refresh }: CustomModalProps) => {
 
   useEffect(() => {
     if (!open) {
-      setScale(0.6);
+      setTimeout(() => {
+        setScale(0.6);
+        setIsEdit(false);
+        setComponents([
+          { ...COMPONENTS_MAP.header, id: uuidv4() },
+          { ...COMPONENTS_MAP.banner, id: bannerRefId.current },
+          { ...COMPONENTS_MAP.footer, id: uuidv4() },
+        ]);
+      }, 300);
     }
   }, [open]);
 
@@ -273,7 +309,7 @@ const CustomModal = ({ open, onCancel, refresh }: CustomModalProps) => {
                   fontWeight: 600,
                 }}
               >
-                自定义欢迎页
+                {title || '自定义欢迎页'}
               </Typography>
               <Button
                 variant='contained'
@@ -360,15 +396,20 @@ const CustomModal = ({ open, onCancel, refresh }: CustomModalProps) => {
               bgcolor: 'background.paper2',
               minHeight: 0,
               height: '100%',
+              ml: '20px',
             }}
           >
-            <ComponentBar
-              components={components}
-              setComponents={setComponents}
-              curComponent={curComponent}
-              setCurComponent={setCurComponent}
-              setIsEdit={setIsEdit}
-            />
+            {!propsComponents && (
+              <ComponentBar
+                components={components}
+                setComponents={setComponents}
+                curComponent={curComponent}
+                setCurComponent={setCurComponent}
+                setIsEdit={setIsEdit}
+                allowAdd={!propsComponents}
+              />
+            )}
+
             {appPreviewData ? (
               <ShowContent
                 curComponent={curComponent}

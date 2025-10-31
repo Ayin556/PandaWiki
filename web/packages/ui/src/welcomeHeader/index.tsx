@@ -111,7 +111,7 @@ const Header = React.memo(
           top: 0,
           left: 0,
           right: 0,
-          height: 80,
+          height: 64,
           backgroundColor: isAtTop
             ? 'transparent'
             : theme.palette.background.default,
@@ -146,14 +146,13 @@ const Header = React.memo(
               alignItems='center'
               gap={1.5}
               sx={{
-                py: '20px',
                 cursor: 'pointer',
                 color: 'text.primary',
                 '&:hover': { color: 'primary.main' },
               }}
             >
-              <img src={logo} alt='logo' height={48} />
-              <Box sx={{ fontSize: 28 }}>{title}</Box>
+              <img src={logo} alt='logo' height={36} />
+              <Box sx={{ fontSize: 20 }}>{title}</Box>
             </Stack>
           </Link>
           {showSearch &&
@@ -193,7 +192,7 @@ const Header = React.memo(
                     py: 1,
                   },
                   '& .MuiOutlinedInput-root': {
-                    height: 48,
+                    height: 40,
                     pr: '12px',
                     pl: '12px',
                     '& fieldset': {
@@ -258,7 +257,7 @@ const Header = React.memo(
                       px: 3.5,
                       textTransform: 'none',
                       boxSizing: 'border-box',
-                      height: 48,
+                      height: 40,
                       ...(item.variant === 'outlined' && {
                         borderWidth: 2,
                         bgcolor: theme.palette.background.default,
