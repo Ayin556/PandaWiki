@@ -41,31 +41,6 @@ export const activeIndicatorIconButtonStyle: CSSProperties = {
   background: 'rgba(255, 255, 255, 1)',
 };
 
-const StyledCarousel = styled('div')(({ theme }) => ({
-  display: 'flex',
-  justifyContent: 'center',
-  gap: theme.spacing(8),
-  alignItems: 'center',
-  padding: theme.spacing(0, 2),
-}));
-
-const StyledCarouselInner = styled('div')(({ theme }) => ({
-  position: 'relative',
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  gap: theme.spacing(8),
-  flex: 1,
-  padding: '120px 24px 100px',
-  [theme.breakpoints.down('md')]: {
-    padding: '50px 24px 20px',
-  },
-  maxWidth: 1740,
-  borderRadius: '20px',
-  width: '100%',
-  height: '100%',
-}));
-
 const StyledSwiperSlideImg = styled('img')(({ theme }) => ({
   aspectRatio: '16 / 9',
   [theme.breakpoints.down('md')]: {
@@ -106,7 +81,7 @@ const StyledTab = styled(Tab)(({ theme }) => ({
   minHeight: 'auto',
   padding: theme.spacing(1, 2),
   borderRadius: '10px',
-  backgroundColor: theme.palette.common.white,
+  backgroundColor: theme.palette.background.default,
   color: theme.palette.text.secondary,
   fontSize: 14,
   fontWeight: 400,
@@ -117,7 +92,7 @@ const StyledTab = styled(Tab)(({ theme }) => ({
   },
   '&.Mui-selected': {
     backgroundColor: theme.palette.primary.main,
-    color: theme.palette.common.white,
+    color: theme.palette.background.default,
     fontWeight: 500,
   },
 }));
