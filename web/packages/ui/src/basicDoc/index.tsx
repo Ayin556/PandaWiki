@@ -1,17 +1,14 @@
 'use client';
 
 import React from 'react';
-import { styled, Grid, Box, Button, alpha } from '@mui/material';
+import { styled, Grid, Box, alpha } from '@mui/material';
 import { StyledTopicBox, StyledTopicTitle } from '../component/styledCommon';
 import IconWenjian from '@panda-wiki/icons/IconWenjian';
-import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 import { useFadeInText, useCardAnimation } from '../hooks/useGsapAnimation';
 
 interface BasicDocProps {
   mobile?: boolean;
   title?: string;
-  bgColor?: string;
-  titleColor?: string;
   items?: {
     id: string;
     name: string;
@@ -81,7 +78,12 @@ const BasicDocItem: React.FC<{
 
   return (
     <Grid size={size} key={index}>
-      <StyledBasicDocItem ref={cardRef as React.Ref<HTMLDivElement>}>
+      <StyledBasicDocItem
+        ref={cardRef as React.Ref<HTMLDivElement>}
+        onClick={() => {
+          window.open(`${baseUrl}/node/${item.id}`, '_blank');
+        }}
+      >
         <StyledBasicDocItemTitle>
           {item.emoji ? (
             <Box>{item.emoji}</Box>
@@ -107,7 +109,7 @@ const BasicDocItem: React.FC<{
 });
 
 const BasicDoc: React.FC<BasicDocProps> = React.memo(
-  ({ title, items = [], mobile, baseUrl = '', bgColor, titleColor }) => {
+  ({ title, items = [], mobile, baseUrl = '' }) => {
     const size =
       typeof mobile === 'boolean' ? (mobile ? 12 : 4) : { xs: 12, md: 4 };
 

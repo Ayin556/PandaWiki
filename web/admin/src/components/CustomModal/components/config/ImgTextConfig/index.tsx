@@ -1,39 +1,25 @@
 import React, { useEffect } from 'react';
 import { CommonItem, StyledCommonWrapper } from '../../components/StyledCommon';
-import { TextField } from '@mui/material';
+import { Stack, TextField } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
-import FaqDragList from './FaqDragList';
 import type { ConfigProps } from '../type';
 import { useAppSelector } from '@/store';
 import useDebounceAppPreviewData from '@/hooks/useDebounceAppPreviewData';
-import { Empty } from '@ctzhian/ui';
 import { DEFAULT_DATA } from '../../../constants';
-import ColorPickerField from '../../components/ColorPickerField';
 import { findConfigById, handleLandingConfigs } from '../../../utils';
+import UploadFile from '@/components/UploadFile';
 
-const FaqConfig = ({ setIsEdit, id }: ConfigProps) => {
+const Config = ({ setIsEdit, id }: ConfigProps) => {
   const { appPreviewData } = useAppSelector(state => state.config);
   const debouncedDispatch = useDebounceAppPreviewData();
-  const { control, setValue, watch, reset, subscribe } = useForm<
-    typeof DEFAULT_DATA.faq
+  const { control, setValue, watch, subscribe, reset } = useForm<
+    typeof DEFAULT_DATA.img_text
   >({
     defaultValues: findConfigById(
       appPreviewData?.settings?.web_app_landing_configs || [],
       id,
     ),
   });
-
-  const list = watch('list') || [];
-
-  const handleAddQuestion = () => {
-    const nextId = `${Date.now()}`;
-    setValue('list', [...list, { id: nextId, question: '', link: '' }]);
-  };
-
-  const handleListChange = (newList: (typeof DEFAULT_DATA.faq)['list']) => {
-    setValue('list', newList);
-    setIsEdit(true);
-  };
 
   useEffect(() => {
     reset(
@@ -43,7 +29,7 @@ const FaqConfig = ({ setIsEdit, id }: ConfigProps) => {
       ),
       { keepDefaultValues: true },
     );
-  }, [id, appPreviewData]);
+  }, [appPreviewData, id]);
 
   useEffect(() => {
     const callback = subscribe({
@@ -81,45 +67,63 @@ const FaqConfig = ({ setIsEdit, id }: ConfigProps) => {
             <TextField label='文字' {...field} placeholder='请输入' />
           )}
         />
-        {/* <Controller
-          control={control}
-          name='title_color'
-          render={({ field }) => (
-            <ColorPickerField
-              label='标题颜色'
-              value={field.value}
-              onChange={field.onChange}
-              sx={{ flex: 1 }}
-            />
-          )}
-        /> */}
       </CommonItem>
-      {/* <CommonItem title='背景颜色'>
+      <CommonItem title='图片' desc='(推荐 350*350，1 : 1 )'>
         <Controller
           control={control}
-          name='bg_color'
+          name='item.url'
           render={({ field }) => (
-            <ColorPickerField
+            <UploadFile
+              name='item.url'
+              id={`${id}_icon`}
+              type='url'
+              disabled={false}
+              accept='image/*'
+              width={110}
+              height={110}
               value={field.value}
-              onChange={field.onChange}
-              sx={{ flex: 1 }}
+              onChange={(url: string) => {
+                field.onChange(url);
+                setIsEdit(true);
+              }}
             />
           )}
         />
-      </CommonItem> */}
-      <CommonItem title='问题列表' onAdd={handleAddQuestion}>
-        {list.length === 0 ? (
-          <Empty />
-        ) : (
-          <FaqDragList
-            data={list}
-            onChange={handleListChange}
-            setIsEdit={setIsEdit}
-          />
-        )}
+      </CommonItem>
+      <CommonItem title='内容'>
+        <Controller
+          control={control}
+          name='item.name'
+          render={({ field }) => (
+            <TextField
+              label='标题'
+              {...field}
+              placeholder='请输入'
+              onChange={e => {
+                setIsEdit(true);
+                field.onChange(e.target.value);
+              }}
+            />
+          )}
+        />
+        <Controller
+          control={control}
+          name='item.desc'
+          render={({ field }) => (
+            <TextField
+              label='描述'
+              {...field}
+              placeholder='请输入'
+              onChange={e => {
+                setIsEdit(true);
+                field.onChange(e.target.value);
+              }}
+            />
+          )}
+        />
       </CommonItem>
     </StyledCommonWrapper>
   );
 };
 
-export default FaqConfig;
+export default Config;

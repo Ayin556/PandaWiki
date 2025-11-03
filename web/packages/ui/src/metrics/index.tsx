@@ -68,7 +68,7 @@ const MetricsItem: React.FC<{
 });
 
 const Metrics: React.FC<MetricsProps> = React.memo(
-  ({ title = '指标卡片', items = [], mobile }) => {
+  ({ title, items = [], mobile }) => {
     const size =
       typeof mobile === 'boolean'
         ? mobile
