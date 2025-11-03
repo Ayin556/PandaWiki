@@ -5079,6 +5079,40 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.CommentConfig": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "avatar": {
+                                "type": "string"
+                            },
+                            "comment": {
+                                "type": "string"
+                            },
+                            "id": {
+                                "type": "string"
+                            },
+                            "profession": {
+                                "type": "string"
+                            },
+                            "user_name": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.CommentInfo": {
             "type": "object",
             "properties": {
@@ -5655,6 +5689,34 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.FeatureConfig": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "desc": {
+                                "type": "string"
+                            },
+                            "id": {
+                                "type": "string"
+                            },
+                            "name": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.FeedBackInfo": {
             "type": "object",
             "properties": {
@@ -5848,6 +5910,31 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "province": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.ImgTextConfig": {
+            "type": "object",
+            "properties": {
+                "item": {
+                    "type": "object",
+                    "properties": {
+                        "desc": {
+                            "type": "string"
+                        },
+                        "name": {
+                            "type": "string"
+                        },
+                        "url": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
                     "type": "string"
                 }
             }
@@ -6847,6 +6934,31 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.TextImgConfig": {
+            "type": "object",
+            "properties": {
+                "item": {
+                    "type": "object",
+                    "properties": {
+                        "desc": {
+                            "type": "string"
+                        },
+                        "name": {
+                            "type": "string"
+                        },
+                        "url": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.TextReq": {
             "type": "object",
             "required": [
@@ -7073,11 +7185,20 @@ const docTemplate = `{
                         "type": "string"
                     }
                 },
+                "comment_config": {
+                    "$ref": "#/definitions/domain.CommentConfig"
+                },
                 "dir_doc_config": {
                     "$ref": "#/definitions/domain.DirDocConfig"
                 },
                 "faq_config": {
                     "$ref": "#/definitions/domain.FaqConfig"
+                },
+                "feature_config": {
+                    "$ref": "#/definitions/domain.FeatureConfig"
+                },
+                "img_text_config": {
+                    "$ref": "#/definitions/domain.ImgTextConfig"
                 },
                 "metrics_config": {
                     "$ref": "#/definitions/domain.MetricsConfig"
@@ -7093,6 +7214,9 @@ const docTemplate = `{
                 },
                 "text_config": {
                     "$ref": "#/definitions/domain.TextConfig"
+                },
+                "text_img_config": {
+                    "$ref": "#/definitions/domain.TextImgConfig"
                 },
                 "type": {
                     "type": "string"
@@ -7120,11 +7244,20 @@ const docTemplate = `{
                         "type": "string"
                     }
                 },
+                "comment_config": {
+                    "$ref": "#/definitions/domain.CommentConfig"
+                },
                 "dir_doc_config": {
                     "$ref": "#/definitions/domain.DirDocConfig"
                 },
                 "faq_config": {
                     "$ref": "#/definitions/domain.FaqConfig"
+                },
+                "feature_config": {
+                    "$ref": "#/definitions/domain.FeatureConfig"
+                },
+                "img_text_config": {
+                    "$ref": "#/definitions/domain.ImgTextConfig"
                 },
                 "metrics_config": {
                     "$ref": "#/definitions/domain.MetricsConfig"
@@ -7146,6 +7279,9 @@ const docTemplate = `{
                 },
                 "text_config": {
                     "$ref": "#/definitions/domain.TextConfig"
+                },
+                "text_img_config": {
+                    "$ref": "#/definitions/domain.TextImgConfig"
                 },
                 "type": {
                     "type": "string"
