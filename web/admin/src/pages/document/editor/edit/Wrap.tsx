@@ -19,7 +19,7 @@ import { WrapContext } from '..';
 import AIGenerate from './AIGenerate';
 import FullTextEditor from './FullTextEditor';
 import Header from './Header';
-import MarkdownEditor from './MarkdownEditor';
+import MarkdownEditor, { MarkdownEditorRef } from './MarkdownEditor';
 import Summary from './Summary';
 import Toc from './Toc';
 import Toolbar from './Toolbar';
@@ -42,6 +42,8 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
   const postApiV1CreationTabCompleteController = useRef<AbortController | null>(
     null,
   );
+
+  const markdownEditorRef = useRef<MarkdownEditorRef>(null);
 
   const isMarkdown = useMemo(() => {
     return defaultDetail.meta?.content_type === 'md';
@@ -585,6 +587,7 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
       <Box sx={{ ...(fixedToc && { display: 'flex' }) }}>
         {isMarkdown ? (
           <MarkdownEditor
+            ref={markdownEditorRef}
             editor={editorRef.editor}
             value={nodeDetail?.content || ''}
             onChange={value => {
@@ -609,6 +612,12 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
         isMarkdown={isMarkdown}
         setFixed={setFixedToc}
         setShowSummary={setShowSummary}
+        scrollToHeading={
+          isMarkdown
+            ? headingText =>
+                markdownEditorRef.current?.scrollToHeading(headingText)
+            : undefined
+        }
       />
       <AIGenerate
         open={aiGenerateOpen}
