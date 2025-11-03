@@ -1,41 +1,10 @@
 'use client';
 
-import {
-  Banner,
-  Faq,
-  BasicDoc,
-  DirDoc,
-  SimpleDoc,
-  Carousel,
-  Text,
-  Case,
-  Metrics,
-  Feature,
-  ImgText,
-  Comment,
-} from '@panda-wiki/ui';
+import { Banner } from '@panda-wiki/ui';
+import dynamic from 'next/dynamic';
 import { DomainRecommendNodeListResp } from '@/request/types';
 
 import { useStore } from '@/provider';
-
-const handleHeaderProps = (setting: any) => {
-  return {
-    title: setting.title,
-    logo: setting.icon,
-    btns: setting.btns,
-    placeholder:
-      setting.web_app_custom_style?.header_search_placeholder || '搜索...',
-  };
-};
-
-const handleFooterProps = (setting: any) => {
-  return {
-    footerSetting: setting.footer_settings,
-    logo: setting.icon,
-    showBrand: setting.web_app_custom_style?.show_brand_info || false,
-    customStyle: setting.web_app_custom_style,
-  };
-};
 
 const handleFaqProps = (config: any = {}) => {
   return {
@@ -173,20 +142,40 @@ const handleCommentProps = (config: any = {}) => {
   };
 };
 
+const handleBlockGridProps = (config: any = {}) => {
+  return {
+    title: config.title || '区块网格',
+    items: config.list || [],
+  };
+};
+
+const handleQuestionProps = (config: any = {}) => {
+  return {
+    title: config.title || '常见问题',
+    items: config.list || [],
+  };
+};
+
 const componentMap = {
   banner: Banner,
-  basic_doc: BasicDoc,
-  dir_doc: DirDoc,
-  simple_doc: SimpleDoc,
-  carousel: Carousel,
-  faq: Faq,
-  text: Text,
-  case: Case,
-  metrics: Metrics,
-  feature: Feature,
-  text_img: ImgText,
-  img_text: ImgText,
-  comment: Comment,
+  basic_doc: dynamic(() => import('@panda-wiki/ui').then(mod => mod.BasicDoc)),
+  dir_doc: dynamic(() => import('@panda-wiki/ui').then(mod => mod.DirDoc)),
+  simple_doc: dynamic(() =>
+    import('@panda-wiki/ui').then(mod => mod.SimpleDoc),
+  ),
+  carousel: dynamic(() => import('@panda-wiki/ui').then(mod => mod.Carousel)),
+  faq: dynamic(() => import('@panda-wiki/ui').then(mod => mod.Faq)),
+  text: dynamic(() => import('@panda-wiki/ui').then(mod => mod.Text)),
+  case: dynamic(() => import('@panda-wiki/ui').then(mod => mod.Case)),
+  metrics: dynamic(() => import('@panda-wiki/ui').then(mod => mod.Metrics)),
+  feature: dynamic(() => import('@panda-wiki/ui').then(mod => mod.Feature)),
+  text_img: dynamic(() => import('@panda-wiki/ui').then(mod => mod.ImgText)),
+  img_text: dynamic(() => import('@panda-wiki/ui').then(mod => mod.ImgText)),
+  comment: dynamic(() => import('@panda-wiki/ui').then(mod => mod.Comment)),
+  block_grid: dynamic(() =>
+    import('@panda-wiki/ui').then(mod => mod.BlockGrid),
+  ),
+  question: dynamic(() => import('@panda-wiki/ui').then(mod => mod.Question)),
 } as const;
 
 const Welcome = () => {
@@ -220,6 +209,8 @@ const Welcome = () => {
     text_img: 'text_img_config',
     img_text: 'img_text_config',
     comment: 'comment_config',
+    block_grid: 'block_grid_config',
+    question: 'question_config',
   } as const;
 
   const handleComponentProps = (data: any) => {
@@ -243,7 +234,6 @@ const Welcome = () => {
         return {
           ...handleBannerProps(config),
           onSearch: onBannerSearch,
-          onQaClick: () => setQaModalOpen?.(true),
           btns: (config?.btns || []).map((item: any) => ({
             ...item,
             href: item.href || '/node',
@@ -263,6 +253,15 @@ const Welcome = () => {
         return handleImgTextProps(config);
       case 'comment':
         return handleCommentProps(config);
+      case 'block_grid':
+        return handleBlockGridProps(config);
+      case 'question':
+        return {
+          ...handleQuestionProps(config),
+          onSearch: (text: string) => {
+            onBannerSearch(text, 'chat');
+          },
+        };
     }
   };
   return (

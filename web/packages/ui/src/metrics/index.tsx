@@ -3,7 +3,10 @@
 import React from 'react';
 import { styled, Grid, alpha, Stack } from '@mui/material';
 import { StyledTopicBox, StyledTopicTitle } from '../component/styledCommon';
-import { useFadeInText, useCardAnimation } from '../hooks/useGsapAnimation';
+import {
+  useFadeInText,
+  useCardFadeInAnimation,
+} from '../hooks/useGsapAnimation';
 
 interface MetricsProps {
   mobile?: boolean;
@@ -48,7 +51,7 @@ const MetricsItem: React.FC<{
   index: number;
   size: any;
 }> = React.memo(({ item, index, size }) => {
-  const cardRef = useCardAnimation(0.2 + index * 0.1, 0.1);
+  const cardRef = useCardFadeInAnimation(0.2 + index * 0.1, 0.1);
 
   return (
     <Grid size={size} key={index}>
@@ -56,6 +59,7 @@ const MetricsItem: React.FC<{
         ref={cardRef as React.Ref<HTMLDivElement>}
         gap={1}
         alignItems='center'
+        sx={{ opacity: 0 }}
       >
         <StyledMetricsItemNumber className='metrics-item-number'>
           {item.number}
