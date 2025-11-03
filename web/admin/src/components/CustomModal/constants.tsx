@@ -94,6 +94,7 @@ export const COMPONENTS_MAP = {
     config: lazy(() => import('./components/config/HeaderConfig')),
     fixed: true,
     disabled: false,
+    hidden: false,
   },
   banner: {
     name: 'banner',
@@ -102,6 +103,7 @@ export const COMPONENTS_MAP = {
     config: lazy(() => import('./components/config/BannerConfig')),
     fixed: true,
     disabled: false,
+    hidden: false,
   },
   basic_doc: {
     name: 'basic_doc',
@@ -111,6 +113,7 @@ export const COMPONENTS_MAP = {
     config: lazy(() => import('./components/config/BasicDocConfig')),
     fixed: false,
     disabled: false,
+    hidden: false,
   },
   dir_doc: {
     name: 'dir_doc',
@@ -120,6 +123,7 @@ export const COMPONENTS_MAP = {
     config: lazy(() => import('./components/config/DirDocConfig')),
     fixed: false,
     disabled: false,
+    hidden: false,
   },
   simple_doc: {
     name: 'simple_doc',
@@ -129,6 +133,7 @@ export const COMPONENTS_MAP = {
     config: lazy(() => import('./components/config/SimpleDocConfig')),
     fixed: false,
     disabled: false,
+    hidden: false,
   },
   carousel: {
     name: 'carousel',
@@ -138,6 +143,7 @@ export const COMPONENTS_MAP = {
     config: lazy(() => import('./components/config/CarouselConfig')),
     fixed: false,
     disabled: false,
+    hidden: false,
   },
   faq: {
     name: 'faq',
@@ -147,6 +153,7 @@ export const COMPONENTS_MAP = {
     config: lazy(() => import('./components/config/FaqConfig')),
     fixed: false,
     disabled: false,
+    hidden: false,
   },
   footer: {
     name: 'footer',
@@ -155,6 +162,7 @@ export const COMPONENTS_MAP = {
     config: lazy(() => import('./components/config/FooterConfig')),
     fixed: true,
     disabled: false,
+    hidden: false,
   },
   text: {
     name: 'text',
@@ -163,6 +171,7 @@ export const COMPONENTS_MAP = {
     config: lazy(() => import('./components/config/TextConfig')),
     fixed: false,
     disabled: false,
+    hidden: false,
   },
   case: {
     name: 'case',
@@ -171,6 +180,7 @@ export const COMPONENTS_MAP = {
     config: lazy(() => import('./components/config/CaseConfig')),
     fixed: false,
     disabled: false,
+    hidden: false,
   },
   metrics: {
     name: 'metrics',
@@ -179,6 +189,7 @@ export const COMPONENTS_MAP = {
     config: lazy(() => import('./components/config/MetricsConfig')),
     fixed: false,
     disabled: false,
+    hidden: false,
   },
 };
 

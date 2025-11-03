@@ -24,13 +24,19 @@ const StyledMetricsContainer = styled('div')(({ theme }) => ({
 
 const StyledMetricsItemNumber = styled('div')(({ theme }) => ({
   fontSize: 48,
-  fontWeight: 700,
+  fontWeight: 500,
   color: theme.palette.text.primary,
+  userSelect: 'none',
+  transition: 'color 0.2s ease',
+  '&:hover': {
+    color: theme.palette.primary.main,
+  },
 }));
 
 const StyledMetricsItemTitle = styled('span')(({ theme }) => ({
   fontSize: 16,
   color: alpha(theme.palette.text.primary, 0.5),
+  userSelect: 'none',
 }));
 
 // 单个卡片组件，带动画效果
@@ -51,7 +57,9 @@ const MetricsItem: React.FC<{
         gap={1}
         alignItems='center'
       >
-        <StyledMetricsItemNumber>{item.number}</StyledMetricsItemNumber>
+        <StyledMetricsItemNumber className='metrics-item-number'>
+          {item.number}
+        </StyledMetricsItemNumber>
 
         <StyledMetricsItemTitle>{item.name}</StyledMetricsItemTitle>
       </Stack>

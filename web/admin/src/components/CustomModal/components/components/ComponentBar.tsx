@@ -292,7 +292,8 @@ const ComponentBar = ({
             const filterComponents = components.filter(c => c.id !== item.id);
             if (curComponent.id === item.id) {
               setCurComponent(
-                filterComponents.find(c => !c.disabled) || filterComponents[0],
+                filterComponents.find(c => !c.disabled && !c.hidden) ||
+                  filterComponents[0],
               );
             }
             setComponents(filterComponents);

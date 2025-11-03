@@ -10,18 +10,15 @@
   align-items: flex-start;
   gap: 12px;
   padding-bottom: 40px;
-  transform: scale(0.75) translateZ(0) !important;
-  transform-origin: center left;
-  transition: transform 0.3s ease;
 }
 
-.swiper-slide-prev {
+/* .swiper-slide-prev {
   transform-origin: center right;
   opacity: 0.4;
-}
-.swiper-slide-next {
+} */
+/* .swiper-slide-next {
   opacity: 0.4;
-}
+} */
 
 .swiper-slide img {
   display: block;
@@ -31,7 +28,7 @@
 }
 
 /* 居中激活项保持原尺寸 */
-.swiper-slide-active {
+/* .swiper-slide-active {
   transform: scale(1) translateZ(0) !important;
   z-index: 1;
-}
+} */
