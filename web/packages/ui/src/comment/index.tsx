@@ -25,19 +25,19 @@ const StyledItem = styled(Stack)(({ theme }) => ({
 }));
 
 const StyledItemSummary = styled('div')(({ theme }) => ({
-  fontSize: 14,
+  fontSize: 16,
   fontWeight: 400,
-  color: theme.palette.text.primary,
+  color: alpha(theme.palette.text.primary, 0.85),
 }));
 
 const StyledItemUserAvatar = styled('img')(({ theme }) => ({
-  width: 16,
-  height: 16,
+  width: 40,
+  height: 40,
   borderRadius: '50%',
 }));
 
 const StyledItemUser = styled('div')(({ theme }) => ({
-  fontSize: 12,
+  fontSize: 14,
   fontWeight: 400,
   color: theme.palette.text.primary,
 }));
@@ -62,14 +62,14 @@ const Item: React.FC<{
   return (
     <StyledItem ref={cardRef as React.Ref<HTMLDivElement>} gap={3}>
       <StyledItemSummary>{item.comment}</StyledItemSummary>
-      <Stack gap={1}>
-        <Stack direction='row' gap={1} alignItems='center'>
-          {item.avatar && (
-            <StyledItemUserAvatar src={item.avatar} alt={item.user_name} />
-          )}
+      <Stack direction='row' gap={1}>
+        {item.avatar && (
+          <StyledItemUserAvatar src={item.avatar} alt={item.user_name} />
+        )}
+        <Stack gap={0.5} justifyContent='center'>
           <StyledItemUser>{item.user_name}</StyledItemUser>
+          <StyledItemProfession>{item.profession}</StyledItemProfession>
         </Stack>
-        <StyledItemProfession>{item.profession}</StyledItemProfession>
       </Stack>
     </StyledItem>
   );
@@ -81,9 +81,9 @@ const Comment: React.FC<Props> = React.memo(({ title, items, mobile }) => {
   const size =
     typeof mobile === 'boolean'
       ? mobile
-        ? 6
-        : { xs: 6, md: 4 }
-      : { xs: 6, md: 4 };
+        ? 12
+        : { xs: 12, md: 4 }
+      : { xs: 12, md: 4 };
 
   return (
     <StyledTopicBox>

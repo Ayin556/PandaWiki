@@ -34,7 +34,6 @@ const StyledImgTextItemTitle = styled('h3')(({ theme }) => ({
 }));
 
 const StyledImgTextItemSummary = styled('div')(({ theme }) => ({
-  width: '50%',
   fontSize: 16,
   fontWeight: 400,
   color: alpha(theme.palette.text.primary, 0.5),
