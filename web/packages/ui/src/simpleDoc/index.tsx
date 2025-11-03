@@ -88,14 +88,7 @@ const SimpleDocItem: React.FC<{
 });
 
 const SimpleDoc: React.FC<SimpleDocProps> = React.memo(
-  ({
-    title = '简易文档卡片',
-    items = [],
-    mobile,
-    baseUrl = '',
-    bgColor,
-    titleColor,
-  }) => {
+  ({ title, items = [], mobile, baseUrl = '' }) => {
     const size =
       typeof mobile === 'boolean' ? (mobile ? 12 : 4) : { xs: 12, md: 4 };
 

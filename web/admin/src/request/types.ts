@@ -531,6 +531,18 @@ export interface DomainChatSearchResp {
   node_result?: DomainNodeContentChunkSSE[];
 }
 
+export interface DomainCommentConfig {
+  list?: {
+    avatar?: string;
+    comment?: string;
+    id?: string;
+    profession?: string;
+    user_name?: string;
+  }[];
+  title?: string;
+  type?: string;
+}
+
 export interface DomainCommentInfo {
   auth_user_id?: number;
   /** avatar */
@@ -723,6 +735,16 @@ export interface DomainFaqConfig {
   title_color?: string;
 }
 
+export interface DomainFeatureConfig {
+  list?: {
+    desc?: string;
+    id?: string;
+    name?: string;
+  }[];
+  title?: string;
+  type?: string;
+}
+
 export interface DomainFeedBackInfo {
   feedback_content?: string;
   feedback_type?: string;
@@ -792,6 +814,16 @@ export interface DomainIPAddress {
   country?: string;
   ip?: string;
   province?: string;
+}
+
+export interface DomainImgTextConfig {
+  item?: {
+    desc?: string;
+    name?: string;
+    url?: string;
+  };
+  title?: string;
+  type?: string;
 }
 
 export interface DomainInstantCountResp {
@@ -1124,6 +1156,16 @@ export interface DomainTextConfig {
   type?: string;
 }
 
+export interface DomainTextImgConfig {
+  item?: {
+    desc?: string;
+    name?: string;
+    url?: string;
+  };
+  title?: string;
+  type?: string;
+}
+
 export interface DomainTextReq {
   /** action: improve, summary, extend, shorten, etc. */
   action?: string;
@@ -1202,12 +1244,16 @@ export interface DomainWebAppLandingConfig {
   carousel_config?: DomainCarouselConfig;
   case_config?: DomainCaseConfig;
   com_config_order?: string[];
+  comment_config?: DomainCommentConfig;
   dir_doc_config?: DomainDirDocConfig;
   faq_config?: DomainFaqConfig;
+  feature_config?: DomainFeatureConfig;
+  img_text_config?: DomainImgTextConfig;
   metrics_config?: DomainMetricsConfig;
   node_ids?: string[];
   simple_doc_config?: DomainSimpleDocConfig;
   text_config?: DomainTextConfig;
+  text_img_config?: DomainTextImgConfig;
   type?: string;
 }
 
@@ -1217,13 +1263,17 @@ export interface DomainWebAppLandingConfigResp {
   carousel_config?: DomainCarouselConfig;
   case_config?: DomainCaseConfig;
   com_config_order?: string[];
+  comment_config?: DomainCommentConfig;
   dir_doc_config?: DomainDirDocConfig;
   faq_config?: DomainFaqConfig;
+  feature_config?: DomainFeatureConfig;
+  img_text_config?: DomainImgTextConfig;
   metrics_config?: DomainMetricsConfig;
   node_ids?: string[];
   nodes?: DomainRecommendNodeListResp[];
   simple_doc_config?: DomainSimpleDocConfig;
   text_config?: DomainTextConfig;
+  text_img_config?: DomainTextImgConfig;
   type?: string;
 }
 

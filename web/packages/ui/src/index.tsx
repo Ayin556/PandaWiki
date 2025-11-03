@@ -11,6 +11,10 @@ export { default as Faq } from './faq';
 export { default as Metrics } from './metrics';
 export { default as Text } from './text';
 export { default as Case } from './case';
+export { default as ImgText } from './imgText';
+export { default as Feature } from './feature';
+export { default as Comment } from './comment';
+
 // 导出动画 hooks
 export {
   useTextAnimation,

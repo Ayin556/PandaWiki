@@ -10,6 +10,9 @@ import {
   Text,
   Case,
   Metrics,
+  Feature,
+  ImgText,
+  Comment,
 } from '@panda-wiki/ui';
 import { DomainRecommendNodeListResp } from '@/request/types';
 
@@ -37,8 +40,6 @@ const handleFooterProps = (setting: any) => {
 const handleFaqProps = (config: any = {}) => {
   return {
     title: config.title || '链接组',
-    bgColor: config.bg_color || '#ffffff',
-    titleColor: config.title_color || '#000000',
     items:
       config.list?.map((item: any) => ({
         question: item.question,
@@ -53,8 +54,6 @@ const handleBasicDocProps = (
 ) => {
   return {
     title: config.title || '文档摘要卡片',
-    bgColor: config.bg_color || '#ffffff',
-    titleColor: config.title_color || '#00000',
     items:
       docs?.map(item => ({
         ...item,
@@ -69,8 +68,6 @@ const handleDirDocProps = (
 ) => {
   return {
     title: config.title || '文档目录卡片',
-    bgColor: config.bg_color || '#3248F2',
-    titleColor: config.title_color || '#ffffff',
     items:
       docs?.map(item => ({
         id: item.id,
@@ -89,8 +86,6 @@ const handleSimpleDocProps = (
 ) => {
   return {
     title: config.title || '简易文档卡片',
-    bgColor: config.bg_color || '#ffffff',
-    titleColor: config.title_color || '#000000',
     items:
       docs?.map(item => ({
         ...item,
@@ -101,8 +96,6 @@ const handleSimpleDocProps = (
 const handleCarouselProps = (config: any = {}) => {
   return {
     title: config.title || '轮播图',
-    bgColor: config.bg_color || '#3248F2',
-    titleColor: config.title_color || '#ffffff',
     items:
       config.list?.map((item: any) => ({
         id: item.id,
@@ -117,13 +110,9 @@ const handleBannerProps = (config: any = {}) => {
   return {
     title: {
       text: config.title,
-      color: config.title_color,
-      fontSize: config.title_font_size,
     },
     subtitle: {
       text: config.subtitle,
-      color: config.subtitle_color,
-      fontSize: config.subtitle_font_size,
     },
     bg_url: config.bg_url,
     search: {
@@ -154,6 +143,36 @@ const handleMetricsProps = (config: any = {}) => {
   };
 };
 
+const handleFeatureProps = (config: any = {}) => {
+  return {
+    title: config.title || '产品特性',
+    items: config.list || [],
+  };
+};
+
+const handleImgTextProps = (config: any = {}) => {
+  return {
+    title: config.title || '左图右字',
+    item: config.item || {},
+    direction: 'row',
+  };
+};
+
+const handleTextImgProps = (config: any = {}) => {
+  return {
+    title: config.title || '右图左字',
+    item: config.item || {},
+    direction: 'row-reverse',
+  };
+};
+
+const handleCommentProps = (config: any = {}) => {
+  return {
+    title: config.title || '评论卡片',
+    items: config.list || [],
+  };
+};
+
 const componentMap = {
   banner: Banner,
   basic_doc: BasicDoc,
@@ -164,6 +183,10 @@ const componentMap = {
   text: Text,
   case: Case,
   metrics: Metrics,
+  feature: Feature,
+  text_img: ImgText,
+  img_text: ImgText,
+  comment: Comment,
 } as const;
 
 const Welcome = () => {
@@ -193,6 +216,10 @@ const Welcome = () => {
     text: 'text_config',
     case: 'case_config',
     metrics: 'metrics_config',
+    feature: 'feature_config',
+    text_img: 'text_img_config',
+    img_text: 'img_text_config',
+    comment: 'comment_config',
   } as const;
 
   const handleComponentProps = (data: any) => {
@@ -228,6 +255,14 @@ const Welcome = () => {
         return handleCaseProps(config);
       case 'metrics':
         return handleMetricsProps(config);
+      case 'feature':
+        return handleFeatureProps(config);
+      case 'text_img':
+        return handleTextImgProps(config);
+      case 'img_text':
+        return handleImgTextProps(config);
+      case 'comment':
+        return handleCommentProps(config);
     }
   };
   return (

@@ -5,6 +5,14 @@ import {
   IconJianyiwendang,
   IconChangjianwenti,
   IconLunbotu,
+  IconShanchu,
+  IconDanwenzi,
+  IconShuzikapian,
+  IconKehuanli,
+  IconTexing,
+  IconZuotuyouzi,
+  IconYoutuzuozi,
+  IconKehupingjia,
 } from '@panda-wiki/icons';
 import { DomainRecommendNodeListResp } from '@/request/types';
 
@@ -28,14 +36,44 @@ export const DEFAULT_DATA = {
       link: string;
     }[],
   },
+  feature: {
+    title: '产品特性',
+    list: [] as {
+      id: string;
+      name: string;
+      desc: string;
+    }[],
+  },
+  img_text: {
+    title: '图文卡片',
+    item: {
+      url: '',
+      name: '',
+      desc: '',
+    },
+  },
+  text_img: {
+    title: '图文卡片',
+    item: {
+      url: '',
+      name: '',
+      desc: '',
+    },
+  },
+  comment: {
+    title: '点评卡片',
+    list: [] as {
+      id: string;
+      user_name: string;
+      avatar: string;
+      profession: string;
+      comment: string;
+    }[],
+  },
   banner: {
     title: '',
-    title_color: '#6E73FE',
-    title_font_size: 60,
     subtitle: '',
     placeholder: '',
-    subtitle_color: '#ffffff80',
-    subtitle_font_size: 16,
     bg_url: '',
     hot_search: [] as string[],
     btns: [] as {
@@ -47,26 +85,18 @@ export const DEFAULT_DATA = {
   },
   basic_doc: {
     title: '文档摘要卡片',
-    bg_color: '#ffffff00',
-    title_color: '#000000',
     nodes: [] as DomainRecommendNodeListResp[],
   },
   dir_doc: {
     title: '文档目录卡片',
-    bg_color: '#3248F2',
-    title_color: '#ffffff',
     nodes: [] as DomainRecommendNodeListResp[],
   },
   simple_doc: {
     title: '简易文档卡片',
-    bg_color: '#ffffff00',
-    title_color: '#000000',
     nodes: [] as DomainRecommendNodeListResp[],
   },
   carousel: {
     title: '轮播图',
-    bg_color: '#3248F2',
-    title_color: '#ffffff',
     list: [] as {
       id: string;
       title: string;
@@ -75,9 +105,7 @@ export const DEFAULT_DATA = {
     }[],
   },
   faq: {
-    title: '链接组',
-    bg_color: '#ffffff00',
-    title_color: '#000000',
+    title: '常见问题',
     list: [] as {
       id: string;
       question: string;
@@ -167,6 +195,7 @@ export const COMPONENTS_MAP = {
   text: {
     name: 'text',
     title: '标题',
+    icon: IconDanwenzi,
     component: lazy(() => import('@panda-wiki/ui/text')),
     config: lazy(() => import('./components/config/TextConfig')),
     fixed: false,
@@ -176,6 +205,7 @@ export const COMPONENTS_MAP = {
   case: {
     name: 'case',
     title: '案例卡片',
+    icon: IconKehuanli,
     component: lazy(() => import('@panda-wiki/ui/case')),
     config: lazy(() => import('./components/config/CaseConfig')),
     fixed: false,
@@ -185,8 +215,49 @@ export const COMPONENTS_MAP = {
   metrics: {
     name: 'metrics',
     title: '指标卡片',
+    icon: IconShuzikapian,
     component: lazy(() => import('@panda-wiki/ui/metrics')),
     config: lazy(() => import('./components/config/MetricsConfig')),
+    fixed: false,
+    disabled: false,
+    hidden: false,
+  },
+  feature: {
+    name: 'feature',
+    title: '产品特性',
+    icon: IconTexing,
+    component: lazy(() => import('@panda-wiki/ui/feature')),
+    config: lazy(() => import('./components/config/FeatureConfig')),
+    fixed: false,
+    disabled: false,
+    hidden: false,
+  },
+  img_text: {
+    name: 'img_text',
+    title: '左图右字',
+    icon: IconZuotuyouzi,
+    component: lazy(() => import('@panda-wiki/ui/imgText')),
+    config: lazy(() => import('./components/config/ImgTextConfig')),
+    fixed: false,
+    disabled: false,
+    hidden: false,
+  },
+  text_img: {
+    name: 'text_img',
+    title: '右图左字',
+    icon: IconYoutuzuozi,
+    component: lazy(() => import('@panda-wiki/ui/imgText')),
+    config: lazy(() => import('./components/config/ImgTextConfig')),
+    fixed: false,
+    disabled: false,
+    hidden: false,
+  },
+  comment: {
+    name: 'comment',
+    title: '评论卡片',
+    icon: IconKehupingjia,
+    component: lazy(() => import('@panda-wiki/ui/comment')),
+    config: lazy(() => import('./components/config/CommentConfig')),
     fixed: false,
     disabled: false,
     hidden: false,
@@ -203,4 +274,8 @@ export const TYPE_TO_CONFIG_LABEL = {
   text: 'text_config',
   case: 'case_config',
   metrics: 'metrics_config',
+  feature: 'feature_config',
+  text_img: 'text_img_config',
+  img_text: 'img_text_config',
+  comment: 'comment_config',
 } as const;

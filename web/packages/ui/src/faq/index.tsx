@@ -9,8 +9,6 @@ import { useFadeInText, useCardAnimation } from '../hooks/useGsapAnimation';
 interface FaqProps {
   mobile?: boolean;
   title?: string;
-  bgColor?: string;
-  titleColor?: string;
   items?: {
     question: string;
     url: string;
@@ -66,29 +64,27 @@ const FaqItem: React.FC<{
   );
 });
 
-const Faq: React.FC<FaqProps> = React.memo(
-  ({ title = '链接组', items = [], mobile, bgColor, titleColor }) => {
-    const size =
-      typeof mobile === 'boolean'
-        ? mobile
-          ? 12
-          : { xs: 12, md: 4 }
-        : { xs: 12, md: 4 };
+const Faq: React.FC<FaqProps> = React.memo(({ title, items = [], mobile }) => {
+  const size =
+    typeof mobile === 'boolean'
+      ? mobile
+        ? 12
+        : { xs: 12, md: 4 }
+      : { xs: 12, md: 4 };
 
-    // 添加标题淡入动画
-    const titleRef = useFadeInText(0.2, 0.1);
+  // 添加标题淡入动画
+  const titleRef = useFadeInText(0.2, 0.1);
 
-    return (
-      <StyledTopicBox>
-        <StyledTopicTitle ref={titleRef}>{title}</StyledTopicTitle>
-        <Grid container spacing={3} sx={{ width: '100%' }}>
-          {items.map((item, index) => (
-            <FaqItem key={index} item={item} index={index} size={size} />
-          ))}
-        </Grid>
-      </StyledTopicBox>
-    );
-  },
-);
+  return (
+    <StyledTopicBox>
+      <StyledTopicTitle ref={titleRef}>{title}</StyledTopicTitle>
+      <Grid container spacing={3} sx={{ width: '100%' }}>
+        {items.map((item, index) => (
+          <FaqItem key={index} item={item} index={index} size={size} />
+        ))}
+      </Grid>
+    </StyledTopicBox>
+  );
+});
 
 export default Faq;

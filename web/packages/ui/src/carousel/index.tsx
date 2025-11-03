@@ -14,8 +14,6 @@ import './index.css';
 interface CarouselProps {
   mobile?: boolean;
   title: string;
-  bgColor?: string;
-  titleColor?: string;
   items: {
     id: string;
     title: string;
@@ -97,13 +95,7 @@ const StyledTab = styled(Tab)(({ theme }) => ({
   },
 }));
 
-const Carousel = ({
-  title,
-  items,
-  mobile,
-  bgColor,
-  titleColor,
-}: CarouselProps) => {
+const Carousel = ({ title, items }: CarouselProps) => {
   // 添加标题淡入动画
   const titleRef = useFadeInText(0.2, 0.1);
   // 添加Swiper ref
