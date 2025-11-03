@@ -519,8 +519,10 @@ func (u *NodeUsecase) SyncRagNodeStatus(ctx context.Context) error {
 
 			for statusInfo, nodeIDs := range statusGroups {
 				updateMap := map[string]interface{}{
-					"status":  statusInfo.status,
-					"message": statusInfo.message,
+					"rag_info": domain.RagInfo{
+						Status:  consts.NodeRagInfoStatus(statusInfo.status),
+						Message: statusInfo.message,
+					},
 				}
 
 				if err := u.nodeRepo.UpdateNodesByKbID(ctx, nodeIDs, kb.ID, updateMap); err != nil {
