@@ -1,5 +1,6 @@
 import { uploadFile } from '@/api';
 import Emoji from '@/components/Emoji';
+import { MARKDOWN_EDITOR_PLACEHOLDER } from '@/constant/markdown-placeholder';
 import { postApiV1CreationTabComplete, putApiV1NodeDetail } from '@/request';
 import { V1NodeDetailResp } from '@/request/types';
 import { useAppSelector } from '@/store';
@@ -187,7 +188,7 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
     editable: !isMarkdown,
     contentType: isMarkdown ? 'markdown' : 'html',
     immediatelyRender: true,
-    content: defaultDetail.content || '',
+    content: defaultDetail.content || MARKDOWN_EDITOR_PLACEHOLDER,
     exclude: ['invisibleCharacters', 'youtube', 'mention'],
     onCreate: ({ editor: tiptapEditor }) => {
       const characterCount = (

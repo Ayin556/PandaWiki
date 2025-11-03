@@ -3,6 +3,7 @@ import { alpha, Box, Divider, Stack, useTheme } from '@mui/material';
 import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import AceEditor from 'react-ace';
 
+import { MARKDOWN_EDITOR_PLACEHOLDER } from '@/constant/markdown-placeholder';
 import 'ace-builds/src-noconflict/ext-language_tools';
 import 'ace-builds/src-noconflict/mode-markdown';
 import 'ace-builds/src-noconflict/theme-github';
@@ -122,6 +123,12 @@ const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>(
               sx={{
                 flex: 1,
                 fontFamily: 'monospace',
+                '.ace_placeholder': {
+                  transform: 'scale(1)',
+                  height: '100%',
+                  overflow: 'auto',
+                  width: '100%',
+                },
               }}
             >
               <AceEditor
@@ -133,6 +140,7 @@ const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>(
                 name='project-doc-editor'
                 wrapEnabled={true}
                 showPrintMargin={false}
+                placeholder={MARKDOWN_EDITOR_PLACEHOLDER}
                 fontSize={16}
                 editorProps={{ $blockScrolling: true }}
                 setOptions={{
