@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
-import { styled, Grid, alpha, Stack, Box } from '@mui/material';
+import React, { useMemo } from 'react';
+import { styled, alpha, Stack, Box } from '@mui/material';
 import { StyledTopicBox, StyledTopicTitle } from '../component/styledCommon';
 import { useFadeInText, useCardAnimation } from '../hooks/useGsapAnimation';
 
@@ -49,13 +49,30 @@ const ImgText: React.FC<ImgTextProps> = React.memo(
         : { xs: 12, md: 6 };
 
     const titleRef = useFadeInText(0.2, 0.1);
-    const cardRef = useCardAnimation(0.2, 0.1);
+
+    const cardLeftAnimation = useMemo(
+      () => ({
+        initial: { opacity: 0, x: -250 },
+        to: { opacity: 1, x: 0, duration: 0.6, ease: 'power2.out' },
+      }),
+      [],
+    );
+
+    const cardRightAnimation = useMemo(
+      () => ({
+        initial: { opacity: 0, x: 250 },
+        to: { opacity: 1, x: 0, duration: 0.6, ease: 'power2.out' },
+      }),
+      [],
+    );
+
+    const cardLeftRef = useCardAnimation(cardLeftAnimation);
+    const cardRightRef = useCardAnimation(cardRightAnimation);
 
     return (
       <StyledTopicBox>
         <StyledTopicTitle ref={titleRef}>{title}</StyledTopicTitle>
         <StyledImgTextItem
-          ref={cardRef as React.Ref<HTMLDivElement>}
           gap={mobile ? 4 : { xs: 4, sm: 6, md: 38 }}
           direction={
             mobile
@@ -69,10 +86,17 @@ const ImgText: React.FC<ImgTextProps> = React.memo(
           justifyContent='center'
           sx={{ width: '100%' }}
         >
-          <Box sx={{ width: '100%' }}>
+          <Box
+            sx={{ width: '100%' }}
+            ref={cardLeftRef as React.Ref<HTMLDivElement>}
+          >
             <StyledImgTextItemImg src={item.url} alt={item.name} />
           </Box>
-          <Stack gap={1} sx={{ width: '100%' }}>
+          <Stack
+            gap={1}
+            sx={{ width: '100%' }}
+            ref={cardRightRef as React.Ref<HTMLDivElement>}
+          >
             <StyledImgTextItemTitle>{item.name}</StyledImgTextItemTitle>
             <StyledImgTextItemSummary>{item.desc}</StyledImgTextItemSummary>
           </Stack>

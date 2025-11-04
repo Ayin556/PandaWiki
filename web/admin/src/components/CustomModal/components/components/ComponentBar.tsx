@@ -157,6 +157,7 @@ const ComponentBar = ({
         ref={setNodeRef}
         direction={'row'}
         sx={{
+          flexShrink: 0,
           cursor: 'not-allowed',
           height: '40px',
           borderRadius: '6px',

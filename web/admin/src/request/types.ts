@@ -493,6 +493,16 @@ export interface DomainBatchMoveReq {
   parent_id?: string;
 }
 
+export interface DomainBlockGridConfig {
+  list?: {
+    id?: string;
+    name?: string;
+    url?: string;
+  }[];
+  title?: string;
+  type?: string;
+}
+
 export interface DomainBrandGroup {
   links?: DomainLink[];
   name?: string;
@@ -1102,6 +1112,15 @@ export interface DomainProviderModelListItem {
   model?: string;
 }
 
+export interface DomainQuestionConfig {
+  list?: {
+    id?: string;
+    question?: string;
+  }[];
+  title?: string;
+  type?: string;
+}
+
 export interface DomainRagInfo {
   message?: string;
   status?: ConstsNodeRagInfoStatus;
@@ -1266,6 +1285,7 @@ export interface DomainWebAppCustomSettings {
 export interface DomainWebAppLandingConfig {
   banner_config?: DomainBannerConfig;
   basic_doc_config?: DomainBasicDocConfig;
+  block_grid_config?: DomainBlockGridConfig;
   carousel_config?: DomainCarouselConfig;
   case_config?: DomainCaseConfig;
   com_config_order?: string[];
@@ -1276,6 +1296,7 @@ export interface DomainWebAppLandingConfig {
   img_text_config?: DomainImgTextConfig;
   metrics_config?: DomainMetricsConfig;
   node_ids?: string[];
+  question_config?: DomainQuestionConfig;
   simple_doc_config?: DomainSimpleDocConfig;
   text_config?: DomainTextConfig;
   text_img_config?: DomainTextImgConfig;
@@ -1285,6 +1306,7 @@ export interface DomainWebAppLandingConfig {
 export interface DomainWebAppLandingConfigResp {
   banner_config?: DomainBannerConfig;
   basic_doc_config?: DomainBasicDocConfig;
+  block_grid_config?: DomainBlockGridConfig;
   carousel_config?: DomainCarouselConfig;
   case_config?: DomainCaseConfig;
   com_config_order?: string[];
@@ -1296,6 +1318,7 @@ export interface DomainWebAppLandingConfigResp {
   metrics_config?: DomainMetricsConfig;
   node_ids?: string[];
   nodes?: DomainRecommendNodeListResp[];
+  question_config?: DomainQuestionConfig;
   simple_doc_config?: DomainSimpleDocConfig;
   text_config?: DomainTextConfig;
   text_img_config?: DomainTextImgConfig;

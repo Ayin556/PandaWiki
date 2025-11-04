@@ -11,7 +11,10 @@ import {
 } from '../component/styledCommon';
 import IconWenjian from '@panda-wiki/icons/IconWenjian';
 import ArrowForwardIosRoundedIcon from '@mui/icons-material/ArrowForwardIosRounded';
-import { useFadeInText, useCardAnimation } from '../hooks/useGsapAnimation';
+import {
+  useFadeInText,
+  useCardFadeInAnimation,
+} from '../hooks/useGsapAnimation';
 
 interface SimpleDocProps {
   mobile?: boolean;
@@ -62,7 +65,7 @@ const SimpleDocItem: React.FC<{
   baseUrl: string;
   size: any;
 }> = React.memo(({ item, index, baseUrl, size }) => {
-  const cardRef = useCardAnimation(0.2 + index * 0.1, 0.1);
+  const cardRef = useCardFadeInAnimation(0.2 + index * 0.1, 0.1);
 
   return (
     <Grid size={size} key={index}>

@@ -4,7 +4,10 @@ import React from 'react';
 import { styled, Grid, alpha } from '@mui/material';
 import { StyledTopicBox, StyledTopicTitle } from '../component/styledCommon';
 import { IconLianjiezu } from '@panda-wiki/icons';
-import { useFadeInText, useCardAnimation } from '../hooks/useGsapAnimation';
+import {
+  useFadeInText,
+  useCardFadeInAnimation,
+} from '../hooks/useGsapAnimation';
 
 interface FaqProps {
   mobile?: boolean;
@@ -35,6 +38,7 @@ const StyledFaqItem = styled('a')(({ theme }) => ({
   },
   whiteSpace: 'nowrap',
   textOverflow: 'ellipsis',
+  opacity: 0,
 }));
 
 const StyledFaqItemTitle = styled('span')(({ theme }) => ({
@@ -48,7 +52,7 @@ const FaqItem: React.FC<{
   index: number;
   size: any;
 }> = React.memo(({ item, index, size }) => {
-  const cardRef = useCardAnimation(0.2 + index * 0.1, 0.1);
+  const cardRef = useCardFadeInAnimation(0.2 + index * 0.1, 0.1);
 
   return (
     <Grid size={size} key={index}>

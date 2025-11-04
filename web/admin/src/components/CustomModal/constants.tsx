@@ -5,7 +5,6 @@ import {
   IconJianyiwendang,
   IconChangjianwenti,
   IconLunbotu,
-  IconShanchu,
   IconDanwenzi,
   IconShuzikapian,
   IconKehuanli,
@@ -13,6 +12,8 @@ import {
   IconZuotuyouzi,
   IconYoutuzuozi,
   IconKehupingjia,
+  IconJiugongge,
+  IconLianjiezu1,
 } from '@panda-wiki/icons';
 import { DomainRecommendNodeListResp } from '@/request/types';
 
@@ -70,6 +71,14 @@ export const DEFAULT_DATA = {
       comment: string;
     }[],
   },
+  block_grid: {
+    title: '区块网格',
+    list: [] as {
+      id: string;
+      url: string;
+      name: string;
+    }[],
+  },
   banner: {
     title: '',
     subtitle: '',
@@ -105,11 +114,18 @@ export const DEFAULT_DATA = {
     }[],
   },
   faq: {
-    title: '常见问题',
+    title: '链接组',
     list: [] as {
       id: string;
       question: string;
       link: string;
+    }[],
+  },
+  question: {
+    title: '常见问题',
+    list: [] as {
+      id: string;
+      question: string;
     }[],
   },
 };
@@ -176,7 +192,7 @@ export const COMPONENTS_MAP = {
   faq: {
     name: 'faq',
     title: '链接组',
-    icon: IconChangjianwenti,
+    icon: IconLianjiezu1,
     component: lazy(() => import('@panda-wiki/ui/faq')),
     config: lazy(() => import('./components/config/FaqConfig')),
     fixed: false,
@@ -262,6 +278,26 @@ export const COMPONENTS_MAP = {
     disabled: false,
     hidden: false,
   },
+  block_grid: {
+    name: 'block_grid',
+    title: '区块网格',
+    icon: IconJiugongge,
+    component: lazy(() => import('@panda-wiki/ui/blockGrid')),
+    config: lazy(() => import('./components/config/BlockGridConfig')),
+    fixed: false,
+    disabled: false,
+    hidden: false,
+  },
+  question: {
+    name: 'question',
+    title: '常见问题',
+    icon: IconChangjianwenti,
+    component: lazy(() => import('@panda-wiki/ui/question')),
+    config: lazy(() => import('./components/config/QuestionConfig')),
+    fixed: false,
+    disabled: false,
+    hidden: false,
+  },
 };
 
 export const TYPE_TO_CONFIG_LABEL = {
@@ -278,4 +314,6 @@ export const TYPE_TO_CONFIG_LABEL = {
   text_img: 'text_img_config',
   img_text: 'img_text_config',
   comment: 'comment_config',
+  block_grid: 'block_grid_config',
+  question: 'question_config',
 } as const;

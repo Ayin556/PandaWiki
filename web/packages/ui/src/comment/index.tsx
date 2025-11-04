@@ -3,7 +3,10 @@
 import React from 'react';
 import { styled, Grid, alpha, Stack, Rating } from '@mui/material';
 import { StyledTopicBox, StyledTopicTitle } from '../component/styledCommon';
-import { useFadeInText, useCardAnimation } from '../hooks/useGsapAnimation';
+import {
+  useFadeInText,
+  useCardFadeInAnimation,
+} from '../hooks/useGsapAnimation';
 
 interface Props {
   mobile?: boolean;
@@ -22,6 +25,13 @@ const StyledItem = styled(Stack)(({ theme }) => ({
   boxShadow: `0px 5px 20px 0px ${alpha(theme.palette.text.primary, 0.06)}`,
   height: '100%',
   justifyContent: 'space-between',
+  transition: 'all 0.2s ease',
+  '&:hover': {
+    color: theme.palette.primary.main,
+    borderColor: theme.palette.primary.main,
+    boxShadow: `0px 10px 20px 0px ${alpha(theme.palette.text.primary, 0.1)}`,
+  },
+  opacity: 0,
 }));
 
 const StyledItemSummary = styled('div')(({ theme }) => ({
@@ -58,7 +68,7 @@ const Item: React.FC<{
   };
   index: number;
 }> = React.memo(({ item, index }) => {
-  const cardRef = useCardAnimation(0.2 + index * 0.1, 0.1);
+  const cardRef = useCardFadeInAnimation(0.2 + index * 0.1, 0.1);
   return (
     <StyledItem ref={cardRef as React.Ref<HTMLDivElement>} gap={3}>
       <StyledItemSummary>{item.comment}</StyledItemSummary>
