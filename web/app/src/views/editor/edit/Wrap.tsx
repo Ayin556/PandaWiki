@@ -14,7 +14,7 @@ import { message } from '@ctzhian/ui';
 import { Box, Stack, TextField } from '@mui/material';
 import { IconAShijian2, IconZiti } from '@panda-wiki/icons';
 import dayjs from 'dayjs';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useWrapContext } from '..';
 import AIGenerate from './AIGenerate';
@@ -28,6 +28,8 @@ interface WrapProps {
 }
 
 const Wrap = ({ detail: defaultDetail = {} }: WrapProps) => {
+  const searchParams = useSearchParams();
+  const contentType = searchParams.get('contentType') || 'html';
   const { nodeDetail, setNodeDetail, onSave } = useWrapContext();
   const { id } = useParams();
 
@@ -41,8 +43,11 @@ const Wrap = ({ detail: defaultDetail = {} }: WrapProps) => {
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
 
   const isMarkdown = useMemo(() => {
+    if (!id && contentType === 'md') {
+      return true;
+    }
     return defaultDetail.meta?.content_type === 'md';
-  }, [defaultDetail.meta?.content_type]);
+  }, [defaultDetail.meta?.content_type, contentType]);
 
   const updateDetail = (value: V1NodeDetailResp) => {
     setNodeDetail({
@@ -121,16 +126,31 @@ const Wrap = ({ detail: defaultDetail = {} }: WrapProps) => {
         event.preventDefault();
         if (editorRef && editorRef.editor) {
           const value = editorRef.getContent();
-          console.log(value);
           updateDetail({
             content: value,
           });
-          setConfirmModalOpen(true);
+          setTimeout(() => {
+            if (checkRequiredFields()) {
+              setConfirmModalOpen(true);
+            }
+          }, 10);
         }
       }
     },
-    [editorRef, onSave],
+    [editorRef],
   );
+
+  const checkRequiredFields = useCallback(() => {
+    if (!nodeDetail?.name?.trim()) {
+      message.error('请先输入文档名称');
+      return false;
+    }
+    if (!nodeDetail?.content?.trim()) {
+      message.error('请先输入文档内容');
+      return false;
+    }
+    return true;
+  }, [nodeDetail?.name, nodeDetail?.content]);
 
   useEffect(() => {
     document.addEventListener('keydown', handleGlobalSave);
@@ -163,7 +183,9 @@ const Wrap = ({ detail: defaultDetail = {} }: WrapProps) => {
           detail={nodeDetail!}
           updateDetail={updateDetail}
           handleSave={async () => {
-            setConfirmModalOpen(true);
+            if (checkRequiredFields()) {
+              setConfirmModalOpen(true);
+            }
           }}
         />
         {!isMarkdown && (
@@ -333,7 +355,7 @@ const Wrap = ({ detail: defaultDetail = {} }: WrapProps) => {
           updateDetail({
             content: value,
           });
-          await onSave(value, reason, token);
+          await onSave(value, reason, token, isMarkdown ? 'md' : 'html');
           setConfirmModalOpen(false);
         }}
       />
