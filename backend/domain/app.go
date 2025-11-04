@@ -293,6 +293,23 @@ type TextImgConfig struct {
 		Desc string `json:"desc"`
 	} `json:"item"`
 }
+type QuestionConfig struct {
+	Type  string `json:"type"`
+	Title string `json:"title"`
+	List  []struct {
+		ID       string `json:"id"`
+		Question string `json:"question"`
+	} `json:"list"`
+}
+type BlockGridConfig struct {
+	Type  string `json:"type"`
+	Title string `json:"title"`
+	List  []struct {
+		ID   string `json:"id"`
+		Name string `json:"name"`
+		URL  string `json:"url"`
+	} `json:"list"`
+}
 
 type WebAppLandingConfig struct {
 	Type            string           `json:"type"`
@@ -310,6 +327,8 @@ type WebAppLandingConfig struct {
 	FeatureConfig   *FeatureConfig   `json:"feature_config,omitempty"`
 	ImgTextConfig   *ImgTextConfig   `json:"img_text_config,omitempty"`
 	TextImgConfig   *TextImgConfig   `json:"text_img_config,omitempty"`
+	QuestionConfig  *QuestionConfig  `json:"question_config,omitempty"`
+	BlockGridConfig *BlockGridConfig `json:"block_grid_config,omitempty"`
 	ComConfigOrder  []string         `json:"com_config_order"`
 }
 
@@ -524,6 +543,8 @@ type WebAppLandingConfigResp struct {
 	FeatureConfig   *FeatureConfig           `json:"feature_config,omitempty"`
 	ImgTextConfig   *ImgTextConfig           `json:"img_text_config,omitempty"`
 	TextImgConfig   *TextImgConfig           `json:"text_img_config,omitempty"`
+	QuestionConfig  *QuestionConfig          `json:"question_config,omitempty"`
+	BlockGridConfig *BlockGridConfig         `json:"block_grid_config,omitempty"`
 	ComConfigOrder  []string                 `json:"com_config_order"`
 	NodeIds         []string                 `json:"node_ids"`
 	Nodes           []*RecommendNodeListResp `json:"nodes" gorm:"-"`

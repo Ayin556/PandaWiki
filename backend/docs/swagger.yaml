@@ -833,6 +833,24 @@ definitions:
     - ids
     - kb_id
     type: object
+  domain.BlockGridConfig:
+    properties:
+      list:
+        items:
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+            url:
+              type: string
+          type: object
+        type: array
+      title:
+        type: string
+      type:
+        type: string
+    type: object
   domain.BrandGroup:
     properties:
       links:
@@ -1993,6 +2011,22 @@ definitions:
       model:
         type: string
     type: object
+  domain.QuestionConfig:
+    properties:
+      list:
+        items:
+          properties:
+            id:
+              type: string
+            question:
+              type: string
+          type: object
+        type: array
+      title:
+        type: string
+      type:
+        type: string
+    type: object
   domain.RagInfo:
     properties:
       message:
@@ -2309,6 +2343,8 @@ definitions:
         $ref: '#/definitions/domain.BannerConfig'
       basic_doc_config:
         $ref: '#/definitions/domain.BasicDocConfig'
+      block_grid_config:
+        $ref: '#/definitions/domain.BlockGridConfig'
       carousel_config:
         $ref: '#/definitions/domain.CarouselConfig'
       case_config:
@@ -2333,6 +2369,8 @@ definitions:
         items:
           type: string
         type: array
+      question_config:
+        $ref: '#/definitions/domain.QuestionConfig'
       simple_doc_config:
         $ref: '#/definitions/domain.SimpleDocConfig'
       text_config:
@@ -2348,6 +2386,8 @@ definitions:
         $ref: '#/definitions/domain.BannerConfig'
       basic_doc_config:
         $ref: '#/definitions/domain.BasicDocConfig'
+      block_grid_config:
+        $ref: '#/definitions/domain.BlockGridConfig'
       carousel_config:
         $ref: '#/definitions/domain.CarouselConfig'
       case_config:
@@ -2376,6 +2416,8 @@ definitions:
         items:
           $ref: '#/definitions/domain.RecommendNodeListResp'
         type: array
+      question_config:
+        $ref: '#/definitions/domain.QuestionConfig'
       simple_doc_config:
         $ref: '#/definitions/domain.SimpleDocConfig'
       text_config:

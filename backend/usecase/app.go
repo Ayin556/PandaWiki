@@ -422,6 +422,8 @@ func (u *AppUsecase) GetAppDetailByKBIDAndAppType(ctx context.Context, kbID stri
 			FeatureConfig:   app.Settings.WebAppLandingConfigs[i].FeatureConfig,
 			ImgTextConfig:   app.Settings.WebAppLandingConfigs[i].ImgTextConfig,
 			TextImgConfig:   app.Settings.WebAppLandingConfigs[i].TextImgConfig,
+			QuestionConfig:  app.Settings.WebAppLandingConfigs[i].QuestionConfig,
+			BlockGridConfig: app.Settings.WebAppLandingConfigs[i].BlockGridConfig,
 			ComConfigOrder:  app.Settings.WebAppLandingConfigs[i].ComConfigOrder,
 			NodeIds:         app.Settings.WebAppLandingConfigs[i].NodeIds,
 		}
@@ -552,6 +554,8 @@ func (u *AppUsecase) ShareGetWebAppInfo(ctx context.Context, kbID string, authId
 			ImgTextConfig:   app.Settings.WebAppLandingConfigs[i].ImgTextConfig,
 			TextImgConfig:   app.Settings.WebAppLandingConfigs[i].TextImgConfig,
 			MetricsConfig:   app.Settings.WebAppLandingConfigs[i].MetricsConfig,
+			QuestionConfig:  app.Settings.WebAppLandingConfigs[i].QuestionConfig,
+			BlockGridConfig: app.Settings.WebAppLandingConfigs[i].BlockGridConfig,
 			ComConfigOrder:  app.Settings.WebAppLandingConfigs[i].ComConfigOrder,
 			NodeIds:         app.Settings.WebAppLandingConfigs[i].NodeIds,
 		}
