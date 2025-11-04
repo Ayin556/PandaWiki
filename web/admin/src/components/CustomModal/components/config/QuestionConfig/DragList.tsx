@@ -96,7 +96,7 @@ const FaqDragList: FC<FaqDragListProps> = ({ data, onChange, setIsEdit }) => {
           ))}
         </Stack>
       </SortableContext>
-      {/* <DragOverlay adjustScale style={{ transformOrigin: '0 0' }}>
+      <DragOverlay adjustScale style={{ transformOrigin: '0 0' }}>
         {activeId ? (
           <Item
             isDragging
@@ -105,7 +105,7 @@ const FaqDragList: FC<FaqDragListProps> = ({ data, onChange, setIsEdit }) => {
             handleUpdateItem={handleUpdateItem}
           />
         ) : null}
-      </DragOverlay> */}
+      </DragOverlay>
     </DndContext>
   );
 };

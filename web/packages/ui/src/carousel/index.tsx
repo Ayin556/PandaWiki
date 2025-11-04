@@ -209,9 +209,6 @@ const Carousel = ({ title, items }: CarouselProps) => {
 
       document.body.removeChild(measureContainer);
 
-      // 获取目标背景色（从计算样式获取）
-      const targetBgColor = alpha(theme.palette.text.primary, 0.5).toString();
-
       // 设置容器初始状态（只有 padding，背景色透明）
       gsap.set(descElement, {
         width: padding,

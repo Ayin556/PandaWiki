@@ -30,7 +30,7 @@ const Config = ({ setIsEdit, id }: ConfigProps) => {
   };
 
   const handleListChange = (
-    newList: (typeof DEFAULT_DATA.blockGrid)['list'],
+    newList: (typeof DEFAULT_DATA.block_grid)['list'],
   ) => {
     setValue('list', newList);
     setIsEdit(true);
