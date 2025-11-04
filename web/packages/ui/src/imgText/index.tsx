@@ -97,7 +97,11 @@ const ImgText: React.FC<ImgTextProps> = React.memo(
             sx={{ width: '100%' }}
             ref={cardRightRef as React.Ref<HTMLDivElement>}
             alignItems={
-              mobile ? 'row' : direction === 'row' ? 'flex-start' : 'flex-end'
+              mobile
+                ? 'flex-start'
+                : direction === 'row'
+                  ? 'flex-start'
+                  : 'flex-end'
             }
           >
             <StyledImgTextItemTitle
