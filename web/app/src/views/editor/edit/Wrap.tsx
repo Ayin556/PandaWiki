@@ -2,13 +2,20 @@
 import Emoji from '@/components/emoji';
 import { postShareProV1FileUploadWithProgress } from '@/request/pro/otherCustomer';
 import { V1NodeDetailResp } from '@/request/types';
-import { Editor, TocList, useTiptap, UseTiptapReturn } from '@ctzhian/tiptap';
+import {
+  Editor,
+  EditorMarkdown,
+  MarkdownEditorRef,
+  TocList,
+  useTiptap,
+  UseTiptapReturn,
+} from '@ctzhian/tiptap';
 import { message } from '@ctzhian/ui';
 import { Box, Stack, TextField } from '@mui/material';
 import { IconAShijian2, IconZiti } from '@panda-wiki/icons';
 import dayjs from 'dayjs';
 import { useParams } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useWrapContext } from '..';
 import AIGenerate from './AIGenerate';
 import ConfirmModal from './ConfirmModal';
@@ -21,9 +28,10 @@ interface WrapProps {
 }
 
 const Wrap = ({ detail: defaultDetail = {} }: WrapProps) => {
-  const { catalogOpen, nodeDetail, setNodeDetail, onSave } = useWrapContext();
+  const { nodeDetail, setNodeDetail, onSave } = useWrapContext();
   const { id } = useParams();
 
+  const markdownEditorRef = useRef<MarkdownEditorRef>(null);
   const [characterCount, setCharacterCount] = useState(0);
   const [headings, setHeadings] = useState<TocList>([]);
   const [fixedToc, setFixedToc] = useState(false);
@@ -31,6 +39,11 @@ const Wrap = ({ detail: defaultDetail = {} }: WrapProps) => {
   const [aiGenerateOpen, setAiGenerateOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
+
+  const isMarkdown = useMemo(() => {
+    return defaultDetail.meta?.content_type === 'md';
+  }, [defaultDetail.meta?.content_type]);
+
   const updateDetail = (value: V1NodeDetailResp) => {
     setNodeDetail({
       ...nodeDetail,
@@ -73,8 +86,9 @@ const Wrap = ({ detail: defaultDetail = {} }: WrapProps) => {
   };
 
   const editorRef = useTiptap({
-    editable: true,
     immediatelyRender: false,
+    editable: !isMarkdown,
+    contentType: isMarkdown ? 'markdown' : 'html',
     content: defaultDetail?.content || '',
     exclude: ['invisibleCharacters', 'youtube', 'mention'],
     onCreate: ({ editor: tiptapEditor }) => {
@@ -106,9 +120,10 @@ const Wrap = ({ detail: defaultDetail = {} }: WrapProps) => {
       if ((event.ctrlKey || event.metaKey) && event.key === 's') {
         event.preventDefault();
         if (editorRef && editorRef.editor) {
-          const html = editorRef.getHTML();
+          const value = editorRef.getContent();
+          console.log(value);
           updateDetail({
-            content: html,
+            content: value,
           });
           setConfirmModalOpen(true);
         }
@@ -151,7 +166,9 @@ const Wrap = ({ detail: defaultDetail = {} }: WrapProps) => {
             setConfirmModalOpen(true);
           }}
         />
-        <Toolbar editorRef={editorRef} handleAiGenerate={handleAiGenerate} />
+        {!isMarkdown && (
+          <Toolbar editorRef={editorRef} handleAiGenerate={handleAiGenerate} />
+        )}
       </Box>
       <Box
         sx={{
@@ -163,8 +180,8 @@ const Wrap = ({ detail: defaultDetail = {} }: WrapProps) => {
         <Box
           sx={{
             width: `calc(100vw - 160px - ${fixedToc ? 292 : 0}px)`,
-            p: '72px 80px 150px',
-            mt: '102px',
+            p: isMarkdown ? '72px 80px' : '72px 80px 150px',
+            mt: isMarkdown ? '56px' : '102px',
             mx: 'auto',
           }}
         >
@@ -253,24 +270,52 @@ const Wrap = ({ detail: defaultDetail = {} }: WrapProps) => {
               {characterCount} 字
             </Stack>
           </Stack>
-
-          <Box
-            sx={{
-              wordBreak: 'break-all',
-              '.tiptap.ProseMirror': {
-                overflowX: 'hidden',
-                minHeight: 'calc(100vh - 102px - 48px)',
-              },
-              '.tableWrapper': {
-                width: '100%',
-                overflowX: 'auto',
-              },
-            }}
-          >
-            {editorRef.editor && <Editor editor={editorRef.editor} />}
-          </Box>
+          {editorRef.editor && (
+            <Box sx={{ ...(fixedToc && { display: 'flex' }) }}>
+              {isMarkdown ? (
+                <EditorMarkdown
+                  ref={markdownEditorRef}
+                  editor={editorRef.editor}
+                  value={nodeDetail?.content || defaultDetail?.content || ''}
+                  onAceChange={value => {
+                    updateDetail({
+                      content: value,
+                    });
+                  }}
+                  height='calc(100vh - 340px)'
+                />
+              ) : (
+                <Box
+                  sx={{
+                    wordBreak: 'break-all',
+                    '.tiptap.ProseMirror': {
+                      overflowX: 'hidden',
+                      minHeight: 'calc(100vh - 102px - 48px)',
+                    },
+                    '.tableWrapper': {
+                      width: '100%',
+                      overflowX: 'auto',
+                    },
+                  }}
+                >
+                  <Editor editor={editorRef.editor} />
+                </Box>
+              )}
+            </Box>
+          )}
         </Box>
-        <Toc headings={headings} fixed={fixedToc} setFixed={setFixedToc} />
+        <Toc
+          headings={headings}
+          fixed={fixedToc}
+          setFixed={setFixedToc}
+          isMarkdown={isMarkdown}
+          scrollToHeading={
+            isMarkdown
+              ? headingText =>
+                  markdownEditorRef.current?.scrollToHeading(headingText)
+              : undefined
+          }
+        />
       </Box>
 
       <AIGenerate
@@ -284,7 +329,7 @@ const Wrap = ({ detail: defaultDetail = {} }: WrapProps) => {
         open={confirmModalOpen}
         onCancel={() => setConfirmModalOpen(false)}
         onOk={async (reason: string, token: string) => {
-          const value = editorRef.getHTML();
+          const value = editorRef.getContent();
           updateDetail({
             content: value,
           });
