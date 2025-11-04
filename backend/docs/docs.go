@@ -7444,6 +7444,18 @@ const docTemplate = `{
                 "is_open": {
                     "type": "boolean"
                 },
+                "recommend_node_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "recommend_questions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "theme_mode": {
                     "type": "string"
                 }
