@@ -150,7 +150,7 @@ const Wrap = ({ detail: defaultDetail = {} }: WrapProps) => {
       return false;
     }
     return true;
-  }, [nodeDetail?.name, nodeDetail?.content]);
+  }, [nodeDetail]);
 
   useEffect(() => {
     document.addEventListener('keydown', handleGlobalSave);

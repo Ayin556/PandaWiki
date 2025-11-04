@@ -127,7 +127,7 @@ const MarkdownPreviewModal = ({
           >
             <IconWenjian /> {row?.node_name || '-'}
           </Stack>
-          <Box sx={{ overflowY: 'scroll', maxHeight: 'calc(100vh - 400px)' }}>
+          <Box sx={{ overflowY: 'auto', maxHeight: 'calc(100vh - 400px)' }}>
             <ReactDiffViewer
               oldValue={data?.original_node?.content || ''}
               newValue={data?.content || ''}
