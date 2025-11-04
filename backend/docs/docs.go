@@ -4964,6 +4964,34 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.BlockGridConfig": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "url": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.BrandGroup": {
             "type": "object",
             "properties": {
@@ -6750,6 +6778,31 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.QuestionConfig": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "question": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.RagInfo": {
             "type": "object",
             "properties": {
@@ -7230,6 +7283,9 @@ const docTemplate = `{
                 "basic_doc_config": {
                     "$ref": "#/definitions/domain.BasicDocConfig"
                 },
+                "block_grid_config": {
+                    "$ref": "#/definitions/domain.BlockGridConfig"
+                },
                 "carousel_config": {
                     "$ref": "#/definitions/domain.CarouselConfig"
                 },
@@ -7266,6 +7322,9 @@ const docTemplate = `{
                         "type": "string"
                     }
                 },
+                "question_config": {
+                    "$ref": "#/definitions/domain.QuestionConfig"
+                },
                 "simple_doc_config": {
                     "$ref": "#/definitions/domain.SimpleDocConfig"
                 },
@@ -7288,6 +7347,9 @@ const docTemplate = `{
                 },
                 "basic_doc_config": {
                     "$ref": "#/definitions/domain.BasicDocConfig"
+                },
+                "block_grid_config": {
+                    "$ref": "#/definitions/domain.BlockGridConfig"
                 },
                 "carousel_config": {
                     "$ref": "#/definitions/domain.CarouselConfig"
@@ -7330,6 +7392,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/domain.RecommendNodeListResp"
                     }
+                },
+                "question_config": {
+                    "$ref": "#/definitions/domain.QuestionConfig"
                 },
                 "simple_doc_config": {
                     "$ref": "#/definitions/domain.SimpleDocConfig"
