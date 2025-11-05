@@ -1,15 +1,11 @@
-import { ITreeItem, NodeListFilterData } from '@/api';
 import DragRecommend from '@/components/Drag/DragRecommend';
 import {
   DomainRecommendNodeListResp,
-  getApiV1NodeList,
   getApiV1NodeRecommendNodes,
 } from '@/request';
 import { useAppSelector } from '@/store';
-import { convertToTree } from '@/utils/drag';
-import { filterEmptyFolders } from '@/utils/tree';
-import { Button, Stack } from '@mui/material';
-import { useCallback, useEffect, useState } from 'react';
+import { Box, Button, Stack } from '@mui/material';
+import { useEffect, useState } from 'react';
 import AddRecommendContent from '../../AddRecommendContent';
 
 const RecommendDocDragList = ({
@@ -22,8 +18,6 @@ const RecommendDocDragList = ({
   const { kb_id } = useAppSelector(state => state.config);
   const [data, setData] = useState<DomainRecommendNodeListResp[]>([]);
   const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [list, setList] = useState<ITreeItem[]>([]);
 
   const getDetail = (node_ids: string[]) => {
     if (kb_id && node_ids.length > 0) {
@@ -36,35 +30,24 @@ const RecommendDocDragList = ({
     }
   };
 
-  const getData = useCallback(() => {
-    setLoading(true);
-    const params: NodeListFilterData = { kb_id };
-    getApiV1NodeList(params)
-      .then(res => {
-        const filterData =
-          res?.filter(item => item.type === 1 || item.status === 2) || [];
-        const filterTreeData = convertToTree(filterData);
-        const showTreeData = filterEmptyFolders(filterTreeData);
-        setList(showTreeData);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [kb_id]);
-
   useEffect(() => {
     getDetail(ids);
-  }, [ids]);
-
-  useEffect(() => {
-    if (kb_id) getData();
-  }, [kb_id, getData]);
+  }, [ids, kb_id]);
 
   return (
-    <Stack gap={1}>
-      <DragRecommend data={data} onChange={value => setData(value)} />
+    <Stack gap={1} flex={1}>
+      <Box>
+        <DragRecommend
+          data={data}
+          onChange={value => {
+            setData(value);
+            onChange(value.map(item => item.id!));
+          }}
+        />
+      </Box>
       <Button
         color='primary'
+        size='small'
         onClick={() => setOpen(true)}
         sx={{
           alignSelf: 'flex-start',

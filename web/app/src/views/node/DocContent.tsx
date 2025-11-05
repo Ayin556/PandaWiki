@@ -219,9 +219,9 @@ const DocContent = ({
           <>
             <Box>·</Box>
             <Box>
-              {info?.creator_account && info?.creator_account === 'admin'
+              {info?.editor_account && info?.editor_account === 'admin'
                 ? '管理员'
-                : info?.creator_account}{' '}
+                : info?.editor_account}{' '}
               {dayjs(info.updated_at).fromNow()}更新
             </Box>
           </>
