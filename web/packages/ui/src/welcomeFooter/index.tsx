@@ -345,7 +345,7 @@ const Footer = React.memo(
                     }}
                   >
                     <Box>{decodeBase64(PROJECT_NAME)}</Box>
-                    <img src={logo} alt='PandaWiki' width={16} height={16} />
+                    <img src={logo} alt='PandaWiki' width={0} height={0} />
                   </Stack>
                 </Link>
               </Stack>
