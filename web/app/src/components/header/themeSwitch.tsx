@@ -1,4 +1,4 @@
-import { IconButton } from '@mui/material';
+import { IconButton, alpha } from '@mui/material';
 import { IconDark, IconLight } from '../icons';
 import { useThemeStore } from '@/provider/themeStore';
 
@@ -9,7 +9,13 @@ const ThemeSwitch = () => {
       size='small'
       onClick={() => setThemeMode(themeMode === 'dark' ? 'light' : 'dark')}
     >
-      {themeMode === 'dark' ? <IconDark /> : <IconLight />}
+      {themeMode === 'dark' ? (
+        <IconDark
+          sx={theme => ({ color: alpha(theme.palette.text.primary, 0.65) })}
+        />
+      ) : (
+        <IconLight sx={{ fontSize: 20 }} />
+      )}
     </IconButton>
   );
 };
