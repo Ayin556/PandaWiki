@@ -40,8 +40,20 @@ const History = () => {
   );
   const [characterCount, setCharacterCount] = useState(0);
 
+  const [isMarkdown, setIsMarkdown] = useState(false);
+
   const editorRef = useTiptap({
     content: '',
+    editable: false,
+    immediatelyRender: true,
+    onUpdate: ({ editor }) => {
+      setCharacterCount((editor.storage as any).characterCount.characters());
+    },
+  });
+
+  const editorMdRef = useTiptap({
+    content: '',
+    contentType: 'markdown',
     editable: false,
     immediatelyRender: true,
     onUpdate: ({ editor }) => {
@@ -52,7 +64,13 @@ const History = () => {
   const getDetail = (v: DomainNodeReleaseListItem) => {
     getApiProV1NodeReleaseDetail({ id: v.id!, kb_id: kb_id! }).then(res => {
       setCurNode(res);
-      editorRef.setContent(res.content || '');
+      if (res.meta?.content_type === 'md') {
+        setIsMarkdown(true);
+        editorMdRef.setContent(res.content || '');
+      } else {
+        setIsMarkdown(false);
+        editorRef.setContent(res.content || '');
+      }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   };
@@ -249,13 +267,6 @@ const History = () => {
                 </Box>
               </Box>
             )}
-            {/* <EditorThemeProvider
-              colors={{ light }}
-              mode='light'
-              theme={{
-                components: componentStyleOverrides,
-              }}
-            > */}
             <Box
               sx={{
                 '.tiptap': {
@@ -267,9 +278,12 @@ const History = () => {
                 },
               }}
             >
-              <Editor editor={editorRef.editor} />
+              {isMarkdown ? (
+                <Editor editor={editorMdRef.editor} />
+              ) : (
+                <Editor editor={editorRef.editor} />
+              )}
             </Box>
-            {/* </EditorThemeProvider> */}
           </Box>
         )}
       </Box>
