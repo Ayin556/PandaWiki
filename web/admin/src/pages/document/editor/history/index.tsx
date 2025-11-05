@@ -196,24 +196,10 @@ const History = () => {
                     curNode.creator_account || curNode.publisher_account ? (
                       <Stack>
                         {curNode.creator_account && (
-                          <Stack
-                            direction={'row'}
-                            alignItems={'center'}
-                            gap={0.5}
-                          >
-                            <Icon type='icon-chuangjian' />
-                            {curNode.creator_account} 创建
-                          </Stack>
+                          <Box>创建：{curNode.creator_account}</Box>
                         )}
                         {curNode.publisher_account && (
-                          <Stack
-                            direction={'row'}
-                            alignItems={'center'}
-                            gap={0.5}
-                          >
-                            <Icon type='icon-fabu' />
-                            {curNode.publisher_account} 发布
-                          </Stack>
+                          <Box>上次发布：{curNode.publisher_account}</Box>
                         )}
                       </Stack>
                     ) : null
@@ -225,7 +211,7 @@ const History = () => {
                     gap={0.5}
                     sx={{ cursor: 'pointer' }}
                   >
-                    <Icon type='icon-tianjiawendang' />
+                    <Icon type='icon-tianjiawendang' sx={{ fontSize: 9 }} />
                     {curNode.editor_account} 编辑
                   </Stack>
                 </Tooltip>
