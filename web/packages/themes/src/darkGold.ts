@@ -1,18 +1,18 @@
 /// <reference path="../theme.d.ts" />
 import { PaletteOptions } from '@mui/material';
 
-const whitePalette: PaletteOptions = {
+const blackPalette: PaletteOptions = {
   mode: 'dark',
   primary: {
-    main: '#FFFFFF',
+    main: '#F4D1B4',
     contrastText: '#000000',
   },
   background: {
-    default: '#111111',
+    default: '#171717',
   },
   text: {
     primary: '#FFFFFF',
   },
 };
 
-export default whitePalette;
+export default blackPalette;
