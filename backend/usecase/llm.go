@@ -211,21 +211,11 @@ func (u *LLMUsecase) SummaryNode(ctx context.Context, model *domain.Model, name,
 
 	summaries := make([]string, 0, len(chunks))
 	for idx, chunk := range chunks {
-		summary, err := u.Generate(ctx, chatModel, []*schema.Message{
-			{
-				Role:    "system",
-				Content: "你是文档总结助手，请根据文档内容总结出文档的摘要。摘要是纯文本，应该简洁明了，不要超过160个字。",
-			},
-			{
-				Role:    "user",
-				Content: fmt.Sprintf("文档名称：%s\n文档内容：%s", name, chunk),
-			},
-		})
+		summary, err := u.requestSummary(ctx, chatModel, name, chunk)
 		if err != nil {
 			u.logger.Error("Failed to generate summary for chunk", log.Int("chunk_index", idx), log.Error(err))
 			continue
 		}
-		summary = strings.TrimSpace(u.trimThinking(summary))
 		if summary == "" {
 			u.logger.Warn("Empty summary returned for chunk", log.Int("chunk_index", idx))
 			continue
@@ -237,24 +227,7 @@ func (u *LLMUsecase) SummaryNode(ctx context.Context, model *domain.Model, name,
 		return "", fmt.Errorf("failed to generate summary for document %s", name)
 	}
 
-	contents, err := u.SplitByTokenLimit(strings.Join(summaries, "\n\n"), summaryChunkTokenLimit)
-	if err != nil {
-		return "", err
-	}
-	summary, err := u.Generate(ctx, chatModel, []*schema.Message{
-		{
-			Role:    "system",
-			Content: "你是文档总结助手，请根据文档内容总结出文档的摘要。摘要是纯文本，应该简洁明了，不要超过160个字。",
-		},
-		{
-			Role:    "user",
-			Content: fmt.Sprintf("文档名称：%s\n文档内容：%s", name, contents[0]),
-		},
-	})
-	if err != nil {
-		return "", err
-	}
-	return strings.TrimSpace(u.trimThinking(summary)), nil
+	return u.reduceSummaries(ctx, chatModel, name, summaries)
 }
 
 func (u *LLMUsecase) trimThinking(summary string) string {
@@ -266,6 +239,56 @@ func (u *LLMUsecase) trimThinking(summary string) string {
 		return summary
 	}
 	return strings.TrimSpace(summary[endIndex+len("</think>"):])
+}
+
+func (u *LLMUsecase) requestSummary(ctx context.Context, chatModel model.BaseChatModel, name, content string) (string, error) {
+	summary, err := u.Generate(ctx, chatModel, []*schema.Message{
+		{
+			Role:    "system",
+			Content: "你是文档总结助手，请根据文档内容总结出文档的摘要。摘要是纯文本，应该简洁明了，不要超过160个字。",
+		},
+		{
+			Role:    "user",
+			Content: fmt.Sprintf("文档名称：%s\n文档内容：%s", name, content),
+		},
+	})
+	if err != nil {
+		return "", err
+	}
+	return strings.TrimSpace(u.trimThinking(summary)), nil
+}
+
+func (u *LLMUsecase) reduceSummaries(ctx context.Context, chatModel model.BaseChatModel, name string, summaries []string) (string, error) {
+	current := summaries
+	for len(current) > 0 {
+		joined := strings.Join(current, "\n\n")
+		chunks, err := u.SplitByTokenLimit(joined, summaryChunkTokenLimit)
+		if err != nil {
+			return "", err
+		}
+		if len(chunks) == 1 {
+			return u.requestSummary(ctx, chatModel, name, chunks[0])
+		}
+
+		next := make([]string, 0, len(chunks))
+		for idx, chunk := range chunks {
+			summary, err := u.requestSummary(ctx, chatModel, name, chunk)
+			if err != nil {
+				u.logger.Error("Failed to reduce summary chunk", log.Int("reduce_chunk_index", idx), log.Error(err))
+				continue
+			}
+			if summary == "" {
+				u.logger.Warn("Empty summary returned while reducing", log.Int("reduce_chunk_index", idx))
+				continue
+			}
+			next = append(next, summary)
+		}
+		if len(next) == 0 {
+			break
+		}
+		current = next
+	}
+	return "", fmt.Errorf("failed to consolidate summary for document %s", name)
 }
 
 func (u *LLMUsecase) SplitByTokenLimit(text string, maxTokens int) ([]string, error) {
