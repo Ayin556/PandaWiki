@@ -38,7 +38,7 @@ type LLMUsecase struct {
 }
 
 const (
-	summaryChunkTokenLimit = 4096
+	summaryChunkTokenLimit = 16384
 	summaryMaxChunks       = 4
 )
 
