@@ -209,6 +209,7 @@ const SearchDocContent: React.FC<SearchDocContentProps> = ({
           alt='logo'
           width={46}
           height={46}
+          unoptimized
           style={{
             objectFit: 'contain',
           }}

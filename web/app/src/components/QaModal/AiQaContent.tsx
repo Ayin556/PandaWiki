@@ -707,6 +707,7 @@ const AiQaContent: React.FC<{
               alt='logo'
               width={46}
               height={46}
+              unoptimized
               style={{
                 objectFit: 'contain',
               }}
