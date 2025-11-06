@@ -16,8 +16,6 @@ import (
 	"github.com/cloudwego/eino/schema"
 	"github.com/pkoukk/tiktoken-go"
 	"github.com/samber/lo"
-	"github.com/samber/lo/parallel"
-	"golang.org/x/sync/semaphore"
 
 	"github.com/chaitin/panda-wiki/config"
 	"github.com/chaitin/panda-wiki/domain"
@@ -38,6 +36,11 @@ type LLMUsecase struct {
 	logger           *log.Logger
 	modelkit         *modelkit.ModelKit
 }
+
+const (
+	summaryChunkTokenLimit = 4096
+	summaryMaxChunks       = 4
+)
 
 func NewLLMUsecase(config *config.Config, rag rag.RAGService, conversationRepo *pg.ConversationRepository, kbRepo *pg.KnowledgeBaseRepository, nodeRepo *pg.NodeRepository, modelRepo *pg.ModelRepository, promptRepo *pg.PromptRepo, logger *log.Logger) *LLMUsecase {
 	tiktoken.SetBpeLoader(&utils.Localloader{})
@@ -197,17 +200,17 @@ func (u *LLMUsecase) SummaryNode(ctx context.Context, model *domain.Model, name,
 		return "", err
 	}
 
-	chunks, err := u.SplitByTokenLimit(content, int(math.Floor(1024*32*0.95)))
+	chunks, err := u.SplitByTokenLimit(content, summaryChunkTokenLimit)
 	if err != nil {
 		return "", err
 	}
-	sem := semaphore.NewWeighted(int64(10))
-	summaries := parallel.Map(chunks, func(chunk string, _ int) string {
-		if err := sem.Acquire(ctx, 1); err != nil {
-			u.logger.Error("Failed to acquire semaphore for chunk: ", log.Error(err))
-			return ""
-		}
-		defer sem.Release(1)
+	if len(chunks) > summaryMaxChunks {
+		u.logger.Debug("trim summary chunks for large document", log.String("node", name), log.Int("original_chunks", len(chunks)), log.Int("used_chunks", summaryMaxChunks))
+		chunks = chunks[:summaryMaxChunks]
+	}
+
+	summaries := make([]string, 0, len(chunks))
+	for idx, chunk := range chunks {
 		summary, err := u.Generate(ctx, chatModel, []*schema.Message{
 			{
 				Role:    "system",
@@ -219,27 +222,22 @@ func (u *LLMUsecase) SummaryNode(ctx context.Context, model *domain.Model, name,
 			},
 		})
 		if err != nil {
-			u.logger.Error("Failed to generate summary for chunk: ", log.Error(err))
-			return ""
+			u.logger.Error("Failed to generate summary for chunk", log.Int("chunk_index", idx), log.Error(err))
+			continue
 		}
-		if strings.HasPrefix(summary, "<think>") {
-			// remove <think> body </think>
-			endIndex := strings.Index(summary, "</think>")
-			if endIndex != -1 {
-				summary = strings.TrimSpace(summary[endIndex+8:]) // 8 is length of "</think>"
-			}
+		summary = strings.TrimSpace(u.trimThinking(summary))
+		if summary == "" {
+			u.logger.Warn("Empty summary returned for chunk", log.Int("chunk_index", idx))
+			continue
 		}
-		return summary
-	})
-	// 使用lo.Filter处理错误
-	defeatSummary := lo.Filter(summaries, func(summary string, index int) bool {
-		return summary == ""
-	})
-	if len(defeatSummary) > 0 {
-		return "", fmt.Errorf("failed to generate summaries for all chunks: %d/%d", len(defeatSummary), len(chunks))
+		summaries = append(summaries, summary)
 	}
 
-	contents, err := u.SplitByTokenLimit(strings.Join(summaries, "\n\n"), int(math.Floor(1024*32*0.95)))
+	if len(summaries) == 0 {
+		return "", fmt.Errorf("failed to generate summary for document %s", name)
+	}
+
+	contents, err := u.SplitByTokenLimit(strings.Join(summaries, "\n\n"), summaryChunkTokenLimit)
 	if err != nil {
 		return "", err
 	}
@@ -256,14 +254,18 @@ func (u *LLMUsecase) SummaryNode(ctx context.Context, model *domain.Model, name,
 	if err != nil {
 		return "", err
 	}
-	if strings.HasPrefix(summary, "<think>") {
-		// remove <think> body </think>
-		endIndex := strings.Index(summary, "</think>")
-		if endIndex != -1 {
-			summary = strings.TrimSpace(summary[endIndex+8:]) // 8 is length of "</think>"
-		}
+	return strings.TrimSpace(u.trimThinking(summary)), nil
+}
+
+func (u *LLMUsecase) trimThinking(summary string) string {
+	if !strings.HasPrefix(summary, "<think>") {
+		return summary
 	}
-	return summary, nil
+	endIndex := strings.Index(summary, "</think>")
+	if endIndex == -1 {
+		return summary
+	}
+	return strings.TrimSpace(summary[endIndex+len("</think>"):])
 }
 
 func (u *LLMUsecase) SplitByTokenLimit(text string, maxTokens int) ([]string, error) {
