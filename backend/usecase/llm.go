@@ -227,7 +227,8 @@ func (u *LLMUsecase) SummaryNode(ctx context.Context, model *domain.Model, name,
 		return "", fmt.Errorf("failed to generate summary for document %s", name)
 	}
 
-	return u.reduceSummaries(ctx, chatModel, name, summaries)
+	joined := strings.Join(summaries, "\n\n")
+	return u.requestSummary(ctx, chatModel, name, joined)
 }
 
 func (u *LLMUsecase) trimThinking(summary string) string {
@@ -256,39 +257,6 @@ func (u *LLMUsecase) requestSummary(ctx context.Context, chatModel model.BaseCha
 		return "", err
 	}
 	return strings.TrimSpace(u.trimThinking(summary)), nil
-}
-
-func (u *LLMUsecase) reduceSummaries(ctx context.Context, chatModel model.BaseChatModel, name string, summaries []string) (string, error) {
-	current := summaries
-	for len(current) > 0 {
-		joined := strings.Join(current, "\n\n")
-		chunks, err := u.SplitByTokenLimit(joined, summaryChunkTokenLimit)
-		if err != nil {
-			return "", err
-		}
-		if len(chunks) == 1 {
-			return u.requestSummary(ctx, chatModel, name, chunks[0])
-		}
-
-		next := make([]string, 0, len(chunks))
-		for idx, chunk := range chunks {
-			summary, err := u.requestSummary(ctx, chatModel, name, chunk)
-			if err != nil {
-				u.logger.Error("Failed to reduce summary chunk", log.Int("reduce_chunk_index", idx), log.Error(err))
-				continue
-			}
-			if summary == "" {
-				u.logger.Warn("Empty summary returned while reducing", log.Int("reduce_chunk_index", idx))
-				continue
-			}
-			next = append(next, summary)
-		}
-		if len(next) == 0 {
-			break
-		}
-		current = next
-	}
-	return "", fmt.Errorf("failed to consolidate summary for document %s", name)
 }
 
 func (u *LLMUsecase) SplitByTokenLimit(text string, maxTokens int) ([]string, error) {
