@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { CommonItem, StyledCommonWrapper } from '../../components/StyledCommon';
 import { TextField } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
-import DragList from './DragList';
+import DragList from '../../components/DragList';
+import SortableItem from '../../components/SortableItem';
+import Item from './Item';
 import { Empty } from '@ctzhian/ui';
 import type { ConfigProps } from '../type';
 import { useAppSelector } from '@/store';
@@ -124,6 +126,10 @@ const SimpleDocConfigConfig = ({ setIsEdit, id }: ConfigProps) => {
               setValue('nodes', value);
             }}
             setIsEdit={setIsEdit}
+            SortableItemComponent={sortableProps => (
+              <SortableItem {...sortableProps} ItemComponent={Item} />
+            )}
+            ItemComponent={Item}
           />
         )}
       </CommonItem>
