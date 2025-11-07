@@ -13,19 +13,53 @@ import {
   arrayMove,
   rectSortingStrategy,
   SortableContext,
+  SortingStrategy,
 } from '@dnd-kit/sortable';
-import { Stack } from '@mui/material';
-import { Dispatch, FC, SetStateAction, useCallback, useState } from 'react';
-import Item, { ItemType } from './Item';
-import SortableItem from './SortableItem';
+import { Stack, SxProps, Theme } from '@mui/material';
+import {
+  ComponentType,
+  CSSProperties,
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useState,
+} from 'react';
 
-interface FaqDragListProps {
-  data: ItemType[];
-  onChange: (data: ItemType[]) => void;
+export interface DragListProps<T extends { id?: string | null }> {
+  data: T[];
+  onChange: (data: T[]) => void;
   setIsEdit: Dispatch<SetStateAction<boolean>>;
+  SortableItemComponent: ComponentType<{
+    id: string;
+    item: T;
+    handleRemove: (id: string) => void;
+    handleUpdateItem: (item: T) => void;
+    setIsEdit: Dispatch<SetStateAction<boolean>>;
+  }>;
+  ItemComponent: ComponentType<{
+    isDragging?: boolean;
+    item: T;
+    style?: CSSProperties;
+    setIsEdit: Dispatch<SetStateAction<boolean>>;
+    handleUpdateItem?: (item: T) => void;
+  }>;
+  containerSx?: SxProps<Theme>;
+  sortingStrategy?: SortingStrategy;
+  direction?: 'row' | 'column';
+  gap?: number;
 }
 
-const FaqDragList: FC<FaqDragListProps> = ({ data, onChange, setIsEdit }) => {
+function DragList<T extends { id?: string | null }>({
+  data,
+  onChange,
+  setIsEdit,
+  SortableItemComponent,
+  ItemComponent,
+  containerSx,
+  sortingStrategy = rectSortingStrategy,
+  direction = 'row',
+  gap = 2,
+}: DragListProps<T>) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
 
@@ -37,8 +71,8 @@ const FaqDragList: FC<FaqDragListProps> = ({ data, onChange, setIsEdit }) => {
     (event: DragEndEvent) => {
       const { active, over } = event;
       if (active.id !== over?.id) {
-        const oldIndex = data.findIndex(item => item.id === active.id);
-        const newIndex = data.findIndex(item => item.id === over!.id);
+        const oldIndex = data.findIndex(item => (item.id || '') === active.id);
+        const newIndex = data.findIndex(item => (item.id || '') === over!.id);
         const newData = arrayMove(data, oldIndex, newIndex);
         onChange(newData);
       }
@@ -53,16 +87,16 @@ const FaqDragList: FC<FaqDragListProps> = ({ data, onChange, setIsEdit }) => {
 
   const handleRemove = useCallback(
     (id: string) => {
-      const newData = data.filter(item => item.id !== id);
+      const newData = data.filter(item => (item.id || '') !== id);
       onChange(newData);
     },
     [data, onChange],
   );
 
   const handleUpdateItem = useCallback(
-    (updatedItem: ItemType) => {
+    (updatedItem: T) => {
       const newData = data.map(item =>
-        item.id === updatedItem.id ? updatedItem : item,
+        (item.id || '') === (updatedItem.id || '') ? updatedItem : item,
       );
       onChange(newData);
     },
@@ -80,14 +114,19 @@ const FaqDragList: FC<FaqDragListProps> = ({ data, onChange, setIsEdit }) => {
       onDragCancel={handleDragCancel}
     >
       <SortableContext
-        items={data.map(item => item.id)}
-        strategy={rectSortingStrategy}
+        items={data.map(item => item.id || '')}
+        strategy={sortingStrategy}
       >
-        <Stack direction={'row'} flexWrap={'wrap'} gap={2}>
+        <Stack
+          direction={direction}
+          flexWrap={'wrap'}
+          gap={gap}
+          sx={containerSx}
+        >
           {data.map(item => (
-            <SortableItem
-              key={item.id}
-              id={item.id}
+            <SortableItemComponent
+              key={item.id || ''}
+              id={item.id || ''}
               item={item}
               handleRemove={handleRemove}
               handleUpdateItem={handleUpdateItem}
@@ -98,9 +137,9 @@ const FaqDragList: FC<FaqDragListProps> = ({ data, onChange, setIsEdit }) => {
       </SortableContext>
       <DragOverlay adjustScale style={{ transformOrigin: '0 0' }}>
         {activeId ? (
-          <Item
+          <ItemComponent
             isDragging
-            item={data.find(item => item.id === activeId)!}
+            item={data.find(item => (item.id || '') === activeId)!}
             setIsEdit={setIsEdit}
             handleUpdateItem={handleUpdateItem}
           />
@@ -108,6 +147,6 @@ const FaqDragList: FC<FaqDragListProps> = ({ data, onChange, setIsEdit }) => {
       </DragOverlay>
     </DndContext>
   );
-};
+}
 
-export default FaqDragList;
+export default DragList;

@@ -2,7 +2,9 @@ import React, { useEffect } from 'react';
 import { CommonItem, StyledCommonWrapper } from '../../components/StyledCommon';
 import { TextField } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
-import DragList from './DragList';
+import DragList from '../../components/DragList';
+import SortableItem from '../../components/SortableItem';
+import Item from './Item';
 import type { ConfigProps } from '../type';
 import { useAppSelector } from '@/store';
 import useDebounceAppPreviewData from '@/hooks/useDebounceAppPreviewData';
@@ -89,6 +91,10 @@ const Config = ({ setIsEdit, id }: ConfigProps) => {
             data={list}
             onChange={handleListChange}
             setIsEdit={setIsEdit}
+            SortableItemComponent={sortableProps => (
+              <SortableItem {...sortableProps} ItemComponent={Item} />
+            )}
+            ItemComponent={Item}
           />
         )}
       </CommonItem>

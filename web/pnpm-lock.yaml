@@ -262,9 +262,6 @@ importers:
       html-to-image:
         specifier: ^1.11.13
         version: 1.11.13
-      import-in-the-middle:
-        specifier: ^1.14.2
-        version: 1.15.0
       js-cookie:
         specifier: ^3.0.5
         version: 3.0.5
@@ -313,9 +310,6 @@ importers:
       remark-math:
         specifier: ^6.0.0
         version: 6.0.0
-      require-in-the-middle:
-        specifier: ^7.5.2
-        version: 7.5.2
       uuid:
         specifier: ^11.1.0
         version: 11.1.0

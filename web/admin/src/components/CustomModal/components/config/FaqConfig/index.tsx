@@ -2,13 +2,14 @@ import React, { useEffect } from 'react';
 import { CommonItem, StyledCommonWrapper } from '../../components/StyledCommon';
 import { TextField } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
-import FaqDragList from './FaqDragList';
+import DragList from '../../components/DragList';
+import SortableItem from '../../components/SortableItem';
+import FaqItem from './Item';
 import type { ConfigProps } from '../type';
 import { useAppSelector } from '@/store';
 import useDebounceAppPreviewData from '@/hooks/useDebounceAppPreviewData';
 import { Empty } from '@ctzhian/ui';
 import { DEFAULT_DATA } from '../../../constants';
-import ColorPickerField from '../../components/ColorPickerField';
 import { findConfigById, handleLandingConfigs } from '../../../utils';
 
 const FaqConfig = ({ setIsEdit, id }: ConfigProps) => {
@@ -111,10 +112,14 @@ const FaqConfig = ({ setIsEdit, id }: ConfigProps) => {
         {list.length === 0 ? (
           <Empty />
         ) : (
-          <FaqDragList
+          <DragList
             data={list}
             onChange={handleListChange}
             setIsEdit={setIsEdit}
+            SortableItemComponent={sortableProps => (
+              <SortableItem {...sortableProps} ItemComponent={FaqItem} />
+            )}
+            ItemComponent={FaqItem}
           />
         )}
       </CommonItem>
