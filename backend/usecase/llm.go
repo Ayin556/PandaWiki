@@ -37,8 +37,8 @@ type LLMUsecase struct {
 }
 
 const (
-	summaryChunkTokenLimit = 16384
-	summaryMaxChunks       = 4
+	summaryChunkTokenLimit = 30720 // 30KB tokens per chunk
+	summaryMaxChunks       = 4     // max chunks to process for summary
 )
 
 func NewLLMUsecase(config *config.Config, rag rag.RAGService, conversationRepo *pg.ConversationRepository, kbRepo *pg.KnowledgeBaseRepository, nodeRepo *pg.NodeRepository, modelRepo *pg.ModelRepository, promptRepo *pg.PromptRepo, logger *log.Logger) *LLMUsecase {
@@ -226,8 +226,18 @@ func (u *LLMUsecase) SummaryNode(ctx context.Context, model *domain.Model, name,
 		return "", fmt.Errorf("failed to generate summary for document %s", name)
 	}
 
+	// Join all summaries and generate final summary
 	joined := strings.Join(summaries, "\n\n")
-	return u.requestSummary(ctx, chatModel, name, joined)
+	finalSummary, err := u.requestSummary(ctx, chatModel, name, joined)
+	if err != nil {
+		u.logger.Error("Failed to generate final summary, using aggregated summaries", log.Error(err))
+		// Fallback: return the joined summaries directly
+		if len(joined) > 500 {
+			return joined[:500] + "...", nil
+		}
+		return joined, nil
+	}
+	return finalSummary, nil
 }
 
 func (u *LLMUsecase) trimThinking(summary string) string {
