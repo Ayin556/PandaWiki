@@ -1,4 +1,5 @@
 const light = {
+  cssVariables: true,
   primary: {
     main: '#3248F2',
     contrastText: '#fff',
@@ -55,7 +56,7 @@ const light = {
   text: {
     primary: '#21222D',
     secondary: 'rgba(33,34,35,0.7)',
-    tertiary: 'rgba(33,34,35,0.5)',
+    tertiary: '#646a73',
     slave: 'rgba(33,34,35,0.3)',
     disabled: 'rgba(33,34,35,0.2)',
     inverse: '#FFFFFF',
@@ -63,15 +64,13 @@ const light = {
     inverseDisabled: 'rgba(255,255,255,0.15)',
   },
   background: {
-    paper0: '#F1F2F8',
     paper: '#FFFFFF',
-    paper2: '#F8F9FA',
-
+    paper2: '#F1F2F8',
+    paper3: '#F8F9FA',
     default: '#FFFFFF',
     chip: '#FFFFFF',
     circle: '#E6E8EC',
     hover: 'rgba(243, 244, 245, 0.5)',
-    footer: '#14141B',
   },
   shadows: 'rgba(68, 80 ,91, 0.1)',
   table: {
@@ -93,47 +92,4 @@ const light = {
   },
 };
 
-const lightTheme = {
-  ...light,
-  mode: 'light',
-  primary: {
-    ...light.primary,
-    main: '#3248F2',
-  },
-  error: {
-    ...light.error,
-    main: '#F64E54',
-  },
-  success: {
-    ...light.success,
-    main: '#00DF98',
-  },
-  disabled: {
-    main: '#666',
-  },
-  dark: {
-    dark: '#000',
-    main: '#14141B',
-    light: '#20232A',
-    contrastText: '#fff',
-  },
-  light: {
-    main: '#fff',
-    contrastText: '#000',
-  },
-  background: {
-    ...light.background,
-    default: '#fff',
-    paper: '#F8F9FA',
-    footer: '#14141B',
-  },
-  text: {
-    ...light.text,
-    primary: '#21222D',
-    secondary: 'rgba(33,34,45, 0.7)',
-    tertiary: 'rgba(33,34,45, 0.5)',
-    disabled: 'rgba(33,34,45, 0.3)',
-  },
-  divider: '#ECEEF1',
-};
-export default lightTheme;
+export default light;
