@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { CommonItem, StyledCommonWrapper } from '../../components/StyledCommon';
 import { TextField } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
@@ -41,6 +41,12 @@ const SimpleDocConfigConfig = ({ setIsEdit, id }: ConfigProps) => {
     nodeRec(newList);
     setIsEdit(true);
   };
+
+  // 稳定的 SortableItemComponent 引用
+  const ItemSortableComponent = useMemo(
+    () => (props: any) => <SortableItem {...props} ItemComponent={Item} />,
+    [],
+  );
 
   useEffect(() => {
     reset(
@@ -126,9 +132,7 @@ const SimpleDocConfigConfig = ({ setIsEdit, id }: ConfigProps) => {
               setValue('nodes', value);
             }}
             setIsEdit={setIsEdit}
-            SortableItemComponent={sortableProps => (
-              <SortableItem {...sortableProps} ItemComponent={Item} />
-            )}
+            SortableItemComponent={ItemSortableComponent}
             ItemComponent={Item}
           />
         )}

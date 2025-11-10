@@ -22,6 +22,8 @@ import {
   Dispatch,
   SetStateAction,
   useCallback,
+  useEffect,
+  useRef,
   useState,
 } from 'react';
 
@@ -62,6 +64,12 @@ function DragList<T extends { id?: string | null }>({
 }: DragListProps<T>) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
+  const dataRef = useRef(data);
+
+  // 保持 ref 与 data 同步
+  useEffect(() => {
+    dataRef.current = data;
+  }, [data]);
 
   const handleDragStart = useCallback((event: DragStartEvent) => {
     setActiveId(event.active.id as string);
@@ -71,14 +79,19 @@ function DragList<T extends { id?: string | null }>({
     (event: DragEndEvent) => {
       const { active, over } = event;
       if (active.id !== over?.id) {
-        const oldIndex = data.findIndex(item => (item.id || '') === active.id);
-        const newIndex = data.findIndex(item => (item.id || '') === over!.id);
-        const newData = arrayMove(data, oldIndex, newIndex);
+        const currentData = dataRef.current;
+        const oldIndex = currentData.findIndex(
+          item => (item.id || '') === active.id,
+        );
+        const newIndex = currentData.findIndex(
+          item => (item.id || '') === over!.id,
+        );
+        const newData = arrayMove(currentData, oldIndex, newIndex);
         onChange(newData);
       }
       setActiveId(null);
     },
-    [data, onChange],
+    [onChange],
   );
 
   const handleDragCancel = useCallback(() => {
@@ -87,20 +100,22 @@ function DragList<T extends { id?: string | null }>({
 
   const handleRemove = useCallback(
     (id: string) => {
-      const newData = data.filter(item => (item.id || '') !== id);
+      const currentData = dataRef.current;
+      const newData = currentData.filter(item => (item.id || '') !== id);
       onChange(newData);
     },
-    [data, onChange],
+    [onChange],
   );
 
   const handleUpdateItem = useCallback(
     (updatedItem: T) => {
-      const newData = data.map(item =>
+      const currentData = dataRef.current;
+      const newData = currentData.map(item =>
         (item.id || '') === (updatedItem.id || '') ? updatedItem : item,
       );
       onChange(newData);
     },
-    [data, onChange],
+    [onChange],
   );
 
   if (data.length === 0) return null;

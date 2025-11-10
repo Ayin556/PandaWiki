@@ -46,14 +46,4 @@ function SortableItem<T extends { id?: string | null }>({
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function createSortableItem(ItemComponent: ComponentType<any>) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const WrappedComponent = (props: any) => (
-    <SortableItem {...props} ItemComponent={ItemComponent} />
-  );
-  WrappedComponent.displayName = `SortableItem(${ItemComponent.displayName || ItemComponent.name || 'Component'})`;
-  return WrappedComponent;
-}
-
 export default SortableItem;
