@@ -1,4 +1,5 @@
 const dark = {
+  cssVariables: true,
   primary: {
     main: '#fdfdfd',
     contrastText: '#000',
@@ -58,15 +59,14 @@ const dark = {
   },
   divider: '#ededed',
   background: {
-    paper0: '#060608',
     paper: '#18181b',
-    paper2: '#27272a',
+    paper2: '#060608',
+    paper3: '#27272a',
     default: 'rgba(255,255,255,0.6)',
     disabled: 'rgba(15,15,15,0.8)',
     chip: 'rgba(145,147,171,0.16)',
     circle: '#3B476A',
     focus: '#542996',
-    footer: '#242425',
   },
   common: {},
   shadows: 'transparent',
@@ -88,47 +88,4 @@ const dark = {
   },
 };
 
-const darkTheme = {
-  ...dark,
-  primary: {
-    ...dark.primary,
-    main: '#6E73FE',
-    contrastText: '#FFFFFF',
-  },
-  error: {
-    ...dark.error,
-    main: '#F64E54',
-  },
-  success: {
-    ...dark.success,
-    main: '#00DF98',
-  },
-  disabled: {
-    main: '#666',
-  },
-  dark: {
-    dark: '#000',
-    main: '#14141B',
-    light: '#202531',
-    contrastText: '#fff',
-  },
-  light: {
-    main: '#fff',
-    contrastText: '#000',
-  },
-  background: {
-    ...dark.background,
-    default: '#141923',
-    paper: '#202531',
-    footer: '#242425',
-  },
-  text: {
-    ...dark.text,
-    primary: '#FFFFFF',
-    secondary: 'rgba(255, 255, 255, 0.7)',
-    tertiary: 'rgba(255, 255, 255, 0.5)',
-    disabled: 'rgba(255, 255, 255, 0.3)',
-  },
-  divider: '#525770',
-};
-export default darkTheme;
+export default dark;
