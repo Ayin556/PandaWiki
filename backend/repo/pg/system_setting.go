@@ -16,11 +16,11 @@ type SystemSettingRepo struct {
 func NewSystemSettingRepo(db *pg.DB, logger *log.Logger) *SystemSettingRepo {
 	return &SystemSettingRepo{
 		db:     db,
-		logger: logger.WithModule("repo.pg.setting"),
+		logger: logger.WithModule("repo.pg.system_setting"),
 	}
 }
 
-func (r *SystemSettingRepo) GetModelModeSetting(ctx context.Context, key string) (*domain.SystemSetting, error) {
+func (r *SystemSettingRepo) GetSystemSetting(ctx context.Context, key string) (*domain.SystemSetting, error) {
 	var setting domain.SystemSetting
 	result := r.db.WithContext(ctx).Where("key = ?", key).First(&setting)
 	if result.Error != nil {
@@ -30,6 +30,6 @@ func (r *SystemSettingRepo) GetModelModeSetting(ctx context.Context, key string)
 	return &setting, nil
 }
 
-func (r *SystemSettingRepo) UpdateModelModeSetting(ctx context.Context, key, value string) error {
+func (r *SystemSettingRepo) UpdateSystemSetting(ctx context.Context, key, value string) error {
 	return r.db.WithContext(ctx).Model(&domain.SystemSetting{}).Where("key = ?", key).Update("value", value).Error
 }

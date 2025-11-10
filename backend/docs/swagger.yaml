@@ -131,6 +131,14 @@ definitions:
     - LicenseEditionFree
     - LicenseEditionContributor
     - LicenseEditionEnterprise
+  consts.ModelSettingMode:
+    enum:
+    - manual
+    - auto
+    type: string
+    x-enum-varnames:
+    - ModelSettingModeManual
+    - ModelSettingModeAuto
   consts.NodeAccessPerm:
     enum:
     - open
@@ -1637,8 +1645,9 @@ definitions:
         description: 自定义对话模型名称
         type: string
       mode:
+        allOf:
+        - $ref: '#/definitions/consts.ModelSettingMode'
         description: '模式: manual 或 auto'
-        type: string
     type: object
   domain.ModelType:
     enum:

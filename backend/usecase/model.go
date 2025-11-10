@@ -47,8 +47,18 @@ func NewModelUsecase(modelRepo *pg.ModelRepository, nodeRepo *pg.NodeRepository,
 }
 
 func (u *ModelUsecase) Create(ctx context.Context, model *domain.Model) error {
+	var updatedEmbeddingModel bool
+	if model.Type == domain.ModelTypeEmbedding {
+		updatedEmbeddingModel = true
+	}
 	if err := u.modelRepo.Create(ctx, model); err != nil {
 		return err
+	}
+	// 模型更新成功后，如果更新嵌入模型，则触发记录更新
+	if updatedEmbeddingModel {
+		if _, err := u.updateModeSettingConfig(ctx, "", "", "", true); err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -98,8 +108,18 @@ func (u *ModelUsecase) TriggerUpsertRecords(ctx context.Context) error {
 }
 
 func (u *ModelUsecase) Update(ctx context.Context, req *domain.UpdateModelReq) error {
+	var updatedEmbeddingModel bool
+	if req.Type == domain.ModelTypeEmbedding {
+		updatedEmbeddingModel = true
+	}
 	if err := u.modelRepo.Update(ctx, req); err != nil {
 		return err
+	}
+	// 模型更新成功后，如果更新嵌入模型，则触发记录更新
+	if updatedEmbeddingModel {
+		if _, err := u.updateModeSettingConfig(ctx, "", "", "", true); err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -111,7 +131,7 @@ func (u *ModelUsecase) GetChatModel(ctx context.Context) (*domain.Model, error) 
 	if err != nil {
 		u.logger.Error("get model mode setting failed, use manual mode", log.Error(err))
 	}
-	if err == nil && modelModeSetting.Mode == string(consts.ModelSettingModeAuto) && modelModeSetting.AutoModeAPIKey != "" {
+	if err == nil && modelModeSetting.Mode == consts.ModelSettingModeAuto && modelModeSetting.AutoModeAPIKey != "" {
 		modelName := modelModeSetting.ChatModel
 		if modelName == "" {
 			modelName = string(consts.AutoModeDefaultChatModel)
@@ -120,7 +140,7 @@ func (u *ModelUsecase) GetChatModel(ctx context.Context) (*domain.Model, error) 
 			Model:    modelName,
 			Type:     domain.ModelTypeChat,
 			IsActive: true,
-			BaseURL:  "https://model-square.app.baizhi.cloud/v1",
+			BaseURL:  consts.AutoModeBaseURL,
 			APIKey:   modelModeSetting.AutoModeAPIKey,
 			Provider: domain.ModelProviderBrandBaiZhiCloud,
 		}
@@ -156,7 +176,7 @@ func (u *ModelUsecase) SwitchMode(ctx context.Context, req *domain.SwitchModeReq
 		check, err := u.modelkit.CheckModel(ctx, &modelkitDomain.CheckModelReq{
 			Provider: string(domain.ModelProviderBrandBaiZhiCloud),
 			Model:    modelName,
-			BaseURL:  "https://model-square.app.baizhi.cloud/v1",
+			BaseURL:  consts.AutoModeBaseURL,
 			APIKey:   req.AutoModeAPIKey,
 			Type:     string(domain.ModelTypeChat),
 		})
@@ -180,18 +200,29 @@ func (u *ModelUsecase) SwitchMode(ctx context.Context, req *domain.SwitchModeReq
 		}
 	}
 
-	modelModeSetting, err := u.updateAutoModeSettingConfig(ctx, req.Mode, req.AutoModeAPIKey, req.ChatModel)
+	oldModelModeSetting, err := u.GetModelModeSetting(ctx)
 	if err != nil {
 		return err
 	}
 
-	return u.updateRAGModelsByMode(ctx, req.Mode, modelModeSetting.AutoModeAPIKey)
+	var isResetEmbeddingUpdateFlag = true
+	// 只有切换手动模式时，重置isManualEmbeddingUpdated为false
+	if req.Mode == string(consts.ModelSettingModeManual) {
+		isResetEmbeddingUpdateFlag = false
+	}
+
+	modelModeSetting, err := u.updateModeSettingConfig(ctx, req.Mode, req.AutoModeAPIKey, req.ChatModel, isResetEmbeddingUpdateFlag)
+	if err != nil {
+		return err
+	}
+
+	return u.updateRAGModelsByMode(ctx, req.Mode, modelModeSetting.AutoModeAPIKey, oldModelModeSetting)
 }
 
-// updateAutoModeSettingConfig 读取当前设置并更新，然后持久化
-func (u *ModelUsecase) updateAutoModeSettingConfig(ctx context.Context, mode, apiKey, chatModel string) (*domain.ModelModeSetting, error) {
+// updateModeSettingConfig 读取当前设置并更新，然后持久化
+func (u *ModelUsecase) updateModeSettingConfig(ctx context.Context, mode, apiKey, chatModel string, isManualEmbeddingUpdated bool) (*domain.ModelModeSetting, error) {
 	// 读取当前设置
-	setting, err := u.systemSettingRepo.GetModelModeSetting(ctx, domain.SystemSettingModelMode)
+	setting, err := u.systemSettingRepo.GetSystemSetting(ctx, string(consts.SystemSettingModelMode))
 	if err != nil {
 		return nil, fmt.Errorf("failed to get current model setting: %w", err)
 	}
@@ -209,22 +240,24 @@ func (u *ModelUsecase) updateAutoModeSettingConfig(ctx context.Context, mode, ap
 		config.ChatModel = chatModel
 	}
 	if mode != "" {
-		config.Mode = mode
+		config.Mode = consts.ModelSettingMode(mode)
 	}
+
+	config.IsManualEmbeddingUpdated = isManualEmbeddingUpdated
 
 	// 持久化设置
 	updatedValue, err := json.Marshal(config)
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal updated model setting: %w", err)
 	}
-	if err := u.systemSettingRepo.UpdateModelModeSetting(ctx, domain.SystemSettingModelMode, string(updatedValue)); err != nil {
+	if err := u.systemSettingRepo.UpdateSystemSetting(ctx, string(consts.SystemSettingModelMode), string(updatedValue)); err != nil {
 		return nil, fmt.Errorf("failed to update model setting: %w", err)
 	}
 	return &config, nil
 }
 
 func (u *ModelUsecase) GetModelModeSetting(ctx context.Context) (domain.ModelModeSetting, error) {
-	setting, err := u.systemSettingRepo.GetModelModeSetting(ctx, domain.SystemSettingModelMode)
+	setting, err := u.systemSettingRepo.GetSystemSetting(ctx, string(consts.SystemSettingModelMode))
 	if err != nil {
 		return domain.ModelModeSetting{}, fmt.Errorf("failed to get model mode setting: %w", err)
 	}
@@ -240,7 +273,14 @@ func (u *ModelUsecase) GetModelModeSetting(ctx context.Context) (domain.ModelMod
 }
 
 // updateRAGModelsByMode 根据模式更新 RAG 模型（embedding、rerank、analysis、analysisVL）
-func (u *ModelUsecase) updateRAGModelsByMode(ctx context.Context, mode string, autoModeAPIKey string) error {
+func (u *ModelUsecase) updateRAGModelsByMode(ctx context.Context, mode, autoModeAPIKey string, oldModelModeSetting domain.ModelModeSetting) error {
+	var isTriggerUpsertRecords = true
+
+	// 手动切换到手动模式, 根据IsManualEmbeddingUpdated字段决定
+	if oldModelModeSetting.Mode == consts.ModelSettingModeManual && mode == string(consts.ModelSettingModeManual) {
+		isTriggerUpsertRecords = oldModelModeSetting.IsManualEmbeddingUpdated
+	}
+
 	ragModelTypes := []domain.ModelType{
 		domain.ModelTypeEmbedding,
 		domain.ModelTypeRerank,
@@ -248,7 +288,6 @@ func (u *ModelUsecase) updateRAGModelsByMode(ctx context.Context, mode string, a
 		domain.ModelTypeAnalysisVL,
 	}
 
-	var hasEmbeddingModel bool
 	for _, modelType := range ragModelTypes {
 		var model *domain.Model
 
@@ -270,7 +309,7 @@ func (u *ModelUsecase) updateRAGModelsByMode(ctx context.Context, mode string, a
 				Model:    modelName,
 				Type:     modelType,
 				IsActive: true,
-				BaseURL:  "https://model-square.app.baizhi.cloud/v1",
+				BaseURL:  consts.AutoModeBaseURL,
 				APIKey:   autoModeAPIKey,
 				Provider: domain.ModelProviderBrandBaiZhiCloud,
 			}
@@ -285,15 +324,11 @@ func (u *ModelUsecase) updateRAGModelsByMode(ctx context.Context, mode string, a
 			}
 			u.logger.Info("successfully updated RAG model", log.String("model name: ", string(model.Model)))
 		}
-
-		// 检查是否有嵌入模型
-		if modelType == domain.ModelTypeEmbedding {
-			hasEmbeddingModel = true
-		}
 	}
 
-	// 如果有嵌入模型，触发记录更新
-	if hasEmbeddingModel {
+	// 触发记录更新
+	if isTriggerUpsertRecords {
+		u.logger.Info("embedding model updated, triggering upsert records")
 		return u.TriggerUpsertRecords(ctx)
 	}
 	return nil

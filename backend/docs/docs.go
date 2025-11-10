@@ -4085,6 +4085,17 @@ const docTemplate = `{
                 "LicenseEditionEnterprise"
             ]
         },
+        "consts.ModelSettingMode": {
+            "type": "string",
+            "enum": [
+                "manual",
+                "auto"
+            ],
+            "x-enum-varnames": [
+                "ModelSettingModeManual",
+                "ModelSettingModeAuto"
+            ]
+        },
         "consts.NodeAccessPerm": {
             "type": "string",
             "enum": [
@@ -6352,7 +6363,11 @@ const docTemplate = `{
                 },
                 "mode": {
                     "description": "模式: manual 或 auto",
-                    "type": "string"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/consts.ModelSettingMode"
+                        }
+                    ]
                 }
             }
         },

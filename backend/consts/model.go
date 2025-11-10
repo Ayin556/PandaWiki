@@ -6,7 +6,7 @@ const (
 	AutoModeDefaultChatModel       AutoModeDefaultModel = "qwen-vl-max-latest"
 	AutoModeDefaultEmbeddingModel  AutoModeDefaultModel = "bge-m3"
 	AutoModeDefaultRerankModel     AutoModeDefaultModel = "bge-reranker-v2-m3"
-	AutoModeDefaultAnalysisModel   AutoModeDefaultModel = "qwen2.5-3b"
+	AutoModeDefaultAnalysisModel   AutoModeDefaultModel = "qwen2.5-3b-instruct"
 	AutoModeDefaultAnalysisVLModel AutoModeDefaultModel = "qwen3-vl-max"
 )
 
@@ -32,4 +32,8 @@ type ModelSettingMode string
 const (
 	ModelSettingModeManual ModelSettingMode = "manual"
 	ModelSettingModeAuto   ModelSettingMode = "auto"
+)
+
+const (
+	AutoModeBaseURL = "https://model-square.app.baizhi.cloud/v1"
 )

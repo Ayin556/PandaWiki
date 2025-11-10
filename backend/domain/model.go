@@ -175,10 +175,3 @@ type SwitchModeReq struct {
 type SwitchModeResp struct {
 	Message string `json:"message"`
 }
-
-// ModelModeSetting 模型配置结构体
-type ModelModeSetting struct {
-	Mode           string `json:"mode"`              // 模式: manual 或 auto
-	AutoModeAPIKey string `json:"auto_mode_api_key"` // 百智云 API Key
-	ChatModel      string `json:"chat_model"`        // 自定义对话模型名称
-}

@@ -214,7 +214,7 @@ func (h *ModelHandler) GetProviderSupportedModelList(c echo.Context) error {
 	return h.NewResponseWithData(c, models)
 }
 
-// switch mode
+// SwitchMode
 //
 //	@Summary		switch mode
 //	@Description	switch model mode between manual and auto
@@ -244,7 +244,7 @@ func (h *ModelHandler) SwitchMode(c echo.Context) error {
 	return h.NewResponseWithData(c, resp)
 }
 
-// get model mode setting
+// GetModelModeSetting
 //
 //	@Summary		get model mode setting
 //	@Description	get current model mode setting including mode, API key and chat model
@@ -260,7 +260,7 @@ func (h *ModelHandler) GetModelModeSetting(c echo.Context) error {
 		// 如果获取失败，返回默认值（手动模式）
 		h.logger.Warn("failed to get model mode setting, return default", log.Error(err))
 		defaultSetting := domain.ModelModeSetting{
-			Mode:           string(consts.ModelSettingModeManual),
+			Mode:           consts.ModelSettingModeManual,
 			AutoModeAPIKey: "",
 			ChatModel:      "",
 		}
