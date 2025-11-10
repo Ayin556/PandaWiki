@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import { TextField } from '@mui/material';
 import { CommonItem, StyledCommonWrapper } from '../../components/StyledCommon';
 import type { ConfigProps } from '../type';
@@ -103,6 +103,19 @@ const Config: React.FC<ConfigProps> = ({ setIsEdit, id }) => {
     );
     setIsEdit(true);
   };
+
+  // 稳定的 SortableItemComponent 引用
+  const HotSearchSortableItem = useMemo(
+    () => (props: any) => (
+      <SortableItem {...props} ItemComponent={HotSearchItem} />
+    ),
+    [],
+  );
+
+  const ButtonSortableItem = useMemo(
+    () => (props: any) => <SortableItem {...props} ItemComponent={Item} />,
+    [],
+  );
 
   useEffect(() => {
     const callback = subscribe({
@@ -212,9 +225,7 @@ const Config: React.FC<ConfigProps> = ({ setIsEdit, id }) => {
             data={hotSearchList}
             onChange={handleHotSearchChange}
             setIsEdit={setIsEdit}
-            SortableItemComponent={sortableProps => (
-              <SortableItem {...sortableProps} ItemComponent={HotSearchItem} />
-            )}
+            SortableItemComponent={HotSearchSortableItem}
             ItemComponent={HotSearchItem}
           />
         )}
@@ -227,9 +238,7 @@ const Config: React.FC<ConfigProps> = ({ setIsEdit, id }) => {
             setIsEdit(true);
           }}
           setIsEdit={setIsEdit}
-          SortableItemComponent={sortableProps => (
-            <SortableItem {...sortableProps} ItemComponent={Item} />
-          )}
+          SortableItemComponent={ButtonSortableItem}
           ItemComponent={Item}
         />
       </CommonItem>
