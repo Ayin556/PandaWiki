@@ -664,6 +664,7 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
               ref={markdownEditorRef}
               editor={editorRef.editor}
               value={nodeDetail?.content || ''}
+              onUpload={handleUpload}
               onAceChange={value => {
                 updateDetail({
                   content: value,
