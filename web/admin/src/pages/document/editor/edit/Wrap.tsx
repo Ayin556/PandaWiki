@@ -283,13 +283,7 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
       }
     },
     [
-      editorRef,
-      onSave,
-      id,
-      summary,
-      nodeDetail?.meta?.emoji,
-      nodeDetail?.content,
-      isMarkdown,
+      changeCatalogItem,
     ],
   );
 
