@@ -15,10 +15,10 @@ import {
   Tooltip,
   useTheme,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import LottieIcon from '../LottieIcon';
 import Member from './component/Member';
-import ModelConfig from './component/ModelConfig';
+import ModelConfig, { ModelConfigRef } from './component/ModelConfig';
 
 const SystemTabs = [
   { label: '模型配置', id: 'model-config' },
@@ -33,6 +33,7 @@ const System = () => {
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('model-config');
   const dispatch = useAppDispatch();
+  const modelConfigRef = useRef<ModelConfigRef>(null);
   const [chatModelData, setChatModelData] =
     useState<GithubComChaitinPandaWikiDomainModelListItem | null>(null);
   const [embeddingModelData, setEmbeddingModelData] =
@@ -103,7 +104,13 @@ const System = () => {
         open={open}
         disableEnforceFocus={true}
         footer={null}
-        onCancel={() => setOpen(false)}
+        onCancel={() => {
+          if (activeTab === 'model-config' && modelConfigRef.current) {
+            modelConfigRef.current.handleClose();
+          } else {
+            setOpen(false);
+          }
+        }}
       >
         <Tabs
           value={activeTab}
@@ -118,6 +125,7 @@ const System = () => {
         {activeTab === 'user-management' && <Member />}
         {activeTab === 'model-config' && (
           <ModelConfig
+            ref={modelConfigRef}
             onCloseModal={() => setOpen(false)}
             chatModelData={chatModelData}
             embeddingModelData={embeddingModelData}

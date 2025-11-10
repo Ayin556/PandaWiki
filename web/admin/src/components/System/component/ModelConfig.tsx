@@ -8,7 +8,7 @@ import {
 } from '@/request/Model';
 import { GithubComChaitinPandaWikiDomainModelListItem } from '@/request/types';
 import { addOpacityToColor } from '@/utils';
-import { Icon, message } from '@ctzhian/ui';
+import { Icon, message, Modal } from '@ctzhian/ui';
 import {
   Box,
   Button,
@@ -43,6 +43,7 @@ const ModelModal = lazy(() =>
 
 export interface ModelConfigRef {
   getAutoConfigFormData: () => { apiKey: string; selectedModel: string } | null;
+  handleClose: () => void;
 }
 
 interface ModelConfigProps {
@@ -153,6 +154,26 @@ const ModelConfig = forwardRef<ModelConfigRef, ModelConfigProps>(
       switchToAutoMode();
     }, [autoSwitchToAutoMode, hasAutoSwitched, getModelList]);
 
+    // 处理关闭弹窗
+    const handleCloseModal = () => {
+      // 判断是否有未应用的更改
+      const hasUnappliedChanges = tempMode !== savedMode || hasConfigChanged;
+
+      if (hasUnappliedChanges) {
+        Modal.confirm({
+          title: '提示',
+          content: '有未应用的设置，是否确认关闭？',
+          onOk: () => {
+            onCloseModal();
+          },
+          okText: '确认',
+          cancelText: '取消',
+        });
+      } else {
+        onCloseModal();
+      }
+    };
+
     // 暴露方法给父组件
     useImperativeHandle(ref, () => ({
       getAutoConfigFormData: () => {
@@ -161,6 +182,7 @@ const ModelConfig = forwardRef<ModelConfigRef, ModelConfigProps>(
         }
         return null;
       },
+      handleClose: handleCloseModal,
     }));
 
     const handleSave = async () => {
