@@ -2117,6 +2117,58 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/node/restudy": {
+            "post": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "文档重新学习",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Node"
+                ],
+                "summary": "文档重新学习",
+                "operationId": "v1-NodeRestudy",
+                "parameters": [
+                    {
+                        "description": "para",
+                        "name": "param",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.NodeRestudyReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/v1.NodeRestudyResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/node/summary": {
             "post": {
                 "security": [
@@ -8270,6 +8322,23 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "v1.NodeRestudyReq": {
+            "type": "object",
+            "properties": {
+                "kb_id": {
+                    "type": "string"
+                },
+                "node_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "v1.NodeRestudyResp": {
+            "type": "object"
         },
         "v1.ResetPasswordReq": {
             "type": "object",
