@@ -133,7 +133,7 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
       URL.revokeObjectURL(url);
       message.success('导出成功');
     },
-    [nodeDetail?.content, isMarkdown],
+    [editorRef, nodeDetail?.content, nodeDetail?.name, isMarkdown],
   );
 
   const handleUpload = async (
