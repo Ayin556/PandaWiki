@@ -117,25 +117,6 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
     });
   };
 
-  const handleExport = useCallback(
-    async (type: string) => {
-      let value = editorRef?.getContent() || '';
-      if (isMarkdown) {
-        value = nodeDetail?.content || '';
-      }
-      if (!value) return;
-      const blob = new Blob([value], { type: `text/${type}` });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${nodeDetail?.name}.${type}`;
-      a.click();
-      URL.revokeObjectURL(url);
-      message.success('导出成功');
-    },
-    [editorRef, nodeDetail?.content, nodeDetail?.name, isMarkdown],
-  );
-
   const handleUpload = async (
     file: File,
     onProgress?: (progress: { progress: number }) => void,
@@ -213,6 +194,25 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
     onAiWritingGetSuggestion: handleAiWritingGetSuggestion,
   });
 
+  const handleExport = useCallback(
+    async (type: string) => {
+      let value = editorRef?.getContent() || '';
+      if (isMarkdown) {
+        value = nodeDetail?.content || '';
+      }
+      if (!value) return;
+      const blob = new Blob([value], { type: `text/${type}` });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${nodeDetail?.name}.${type}`;
+      a.click();
+      URL.revokeObjectURL(url);
+      message.success('导出成功');
+    },
+    [editorRef, nodeDetail?.content, nodeDetail?.name, isMarkdown],
+  );
+
   const checkIfEdited = useCallback(() => {
     let currentContent = editorRef?.getContent() || '';
     if (isMarkdown) {
@@ -282,9 +282,7 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
         changeCatalogItem();
       }
     },
-    [
-      changeCatalogItem,
-    ],
+    [changeCatalogItem],
   );
 
   const renderEditorTitleEmojiSummary = () => {
