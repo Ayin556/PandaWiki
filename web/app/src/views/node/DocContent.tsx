@@ -115,7 +115,11 @@ const DocContent = ({
         reset();
         commentInputRef.current?.clearImages();
         setCommentImages([]);
-        message.success('评论成功');
+        message.success(
+          appDetail?.web_app_comment_settings?.moderation_enable
+            ? '正在审核中...'
+            : '评论成功',
+        );
       } catch (error: any) {
         console.log(error.message || '评论发布失败');
       } finally {
