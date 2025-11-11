@@ -5,9 +5,8 @@ import (
 )
 
 type MigrationFuncs struct {
-	NodeMigration         *fns.MigrationNodeVersion
-	BotAuthMigration      *fns.MigrationCreateBotAuth
-	ModelSettingMigration *fns.MigrationAddModelSettingMode
+	NodeMigration    *fns.MigrationNodeVersion
+	BotAuthMigration *fns.MigrationCreateBotAuth
 }
 
 func (mf *MigrationFuncs) GetMigrationFuncs() []MigrationFunc {
@@ -19,10 +18,6 @@ func (mf *MigrationFuncs) GetMigrationFuncs() []MigrationFunc {
 	funcs = append(funcs, MigrationFunc{
 		Name: mf.BotAuthMigration.Name,
 		Fn:   mf.BotAuthMigration.Execute,
-	})
-	funcs = append(funcs, MigrationFunc{
-		Name: mf.ModelSettingMigration.Name,
-		Fn:   mf.ModelSettingMigration.Execute,
 	})
 	return funcs
 }

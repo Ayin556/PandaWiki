@@ -6354,6 +6354,10 @@
                     "description": "自定义对话模型名称",
                     "type": "string"
                 },
+                "is_manual_embedding_updated": {
+                    "description": "手动模式下嵌入模型是否更新",
+                    "type": "boolean"
+                },
                 "mode": {
                     "description": "模式: manual 或 auto",
                     "allOf": [

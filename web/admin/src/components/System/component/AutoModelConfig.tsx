@@ -43,7 +43,7 @@ const AutoModelConfig = forwardRef<AutoModelConfigRef, AutoModelConfigProps>(
 
     // 默认百智云 Chat 模型列表
     const DEFAULT_BAIZHI_CLOUD_CHAT_MODELS: string[] = [
-      'deepseek-v3.1',
+      'deepseek-chat',
       'deepseek-r1',
       'kimi-k2-0711-preview',
       'qwen-vl-max-latest',
