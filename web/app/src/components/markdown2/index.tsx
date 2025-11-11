@@ -15,7 +15,11 @@ import React, {
   useState,
 } from 'react';
 import { useSmartScroll } from '@/hooks';
-import { createImageRenderer, getImageBlobUrl } from './imageRenderer';
+import {
+  clearImageBlobCache,
+  createImageRenderer,
+  getImageBlobUrl,
+} from './imageRenderer';
 import { incrementalRender } from './incrementalRenderer';
 import { createMermaidRenderer } from './mermaidRenderer';
 import {
@@ -376,6 +380,7 @@ const MarkDown2: React.FC<MarkDown2Props> = ({
     container.addEventListener('click', handleClick);
 
     return () => {
+      clearImageBlobCache();
       container.removeEventListener('click', handleClick);
     };
   }, []);

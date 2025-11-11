@@ -44,6 +44,13 @@ export const getImageBlobUrl = (src: string): string | null => {
   return imageBlobCache.get(src) || null;
 };
 
+export const clearImageBlobCache = () => {
+  imageBlobCache.forEach(url => {
+    URL.revokeObjectURL(url);
+  });
+  imageBlobCache.clear();
+};
+
 const StyledErrorContainer = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
