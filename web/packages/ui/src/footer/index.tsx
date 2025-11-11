@@ -121,7 +121,7 @@ const Footer = React.memo(
                         fontWeight: 'bold',
                         lineHeight: '32px',
                         fontSize: 24,
-                        color: 'white',
+                        color: 'text.primary',
                       }}
                     >
                       {footerSetting?.brand_name}
@@ -263,7 +263,7 @@ const Footer = React.memo(
                         fontSize: 16,
                         lineHeight: '24px',
                         mb: 1,
-                        color: '#ffffff',
+                        color: 'text.primary',
                       }}
                     >
                       {group.name}
