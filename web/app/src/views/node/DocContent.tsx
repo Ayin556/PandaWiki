@@ -267,6 +267,9 @@ const DocContent = ({
                   ? '100%'
                   : DocWidth[docWidth as keyof typeof DocWidth].value,
               overflowX: 'auto',
+              ...(docWidth !== 'full' && {
+                maxWidth: '100%',
+              }),
               ...(mobile && {
                 width: '100%',
               }),
