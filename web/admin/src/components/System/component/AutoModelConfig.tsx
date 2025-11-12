@@ -85,6 +85,9 @@ const AutoModelConfig = forwardRef<AutoModelConfigRef, AutoModelConfigProps>(
         sx={{
           flex: 1,
           p: 2,
+          pl: 2,
+          pr: 0,
+          pt: 0,
           overflow: 'hidden',
           overflowY: 'auto',
         }}
@@ -130,28 +133,31 @@ const AutoModelConfig = forwardRef<AutoModelConfigRef, AutoModelConfigProps>(
             sx={{
               display: 'flex',
               alignItems: 'center',
-              fontSize: 14,
-              fontWeight: 'bold',
-              color: 'text.primary',
-              mb: 1.5,
+              justifyContent: 'space-between',
+              mb: '16px',
+              pt: '32px',
             }}
           >
             <Box
               sx={{
-                width: 3,
-                height: 14,
-                bgcolor: 'primary.main',
-                borderRadius: '2px',
-                mr: 1,
+                display: 'flex',
+                alignItems: 'center',
+                fontSize: 14,
+                fontWeight: 'bold',
+                color: 'text.primary',
               }}
-            />
-            API Key
-          </Box>
-          <Stack
-            direction={'row'}
-            alignItems={'center'}
-            justifyContent={'flex-end'}
-          >
+            >
+              <Box
+                sx={{
+                  width: 4,
+                  height: 10,
+                  bgcolor: 'primary.main',
+                  borderRadius: '30%',
+                  mr: 1,
+                }}
+              />
+              API Key
+            </Box>
             <Box
               component='a'
               href='https://model-square.app.baizhi.cloud/token'
@@ -167,7 +173,7 @@ const AutoModelConfig = forwardRef<AutoModelConfigRef, AutoModelConfigProps>(
               <Icon type='icon-key' sx={{ fontSize: 14 }} />
               获取百智云 API Key
             </Box>
-          </Stack>
+          </Box>
           <TextField
             fullWidth
             size='medium'
@@ -199,7 +205,7 @@ const AutoModelConfig = forwardRef<AutoModelConfigRef, AutoModelConfigProps>(
         </Box>
 
         {!showTip && (
-          <Box sx={{ mt: 3 }}>
+          <Box sx={{ mt: 0 }}>
             <Box
               sx={{
                 display: 'flex',
@@ -207,15 +213,16 @@ const AutoModelConfig = forwardRef<AutoModelConfigRef, AutoModelConfigProps>(
                 fontSize: 14,
                 fontWeight: 'bold',
                 color: 'text.primary',
-                mb: 1.5,
+                mb: '16px',
+                pt: '32px',
               }}
             >
               <Box
                 sx={{
-                  width: 3,
-                  height: 14,
+                  width: 4,
+                  height: 10,
                   bgcolor: 'primary.main',
-                  borderRadius: '2px',
+                  borderRadius: '30%',
                   mr: 1,
                 }}
               />

@@ -230,8 +230,14 @@ const ModelConfig = forwardRef<ModelConfigRef, ModelConfigProps>(
     };
 
     return (
-      <Stack gap={2}>
-        <Box sx={{ pl: 2, display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+      <Stack gap={0}>
+        <Box
+          sx={{
+            pl: 2,
+            display: 'flex',
+            alignItems: 'flex-start',
+          }}
+        >
           <Box sx={{ flex: 1 }}>
             <Box
               sx={{
@@ -240,15 +246,15 @@ const ModelConfig = forwardRef<ModelConfigRef, ModelConfigProps>(
                 fontSize: 14,
                 fontWeight: 'bold',
                 color: 'text.primary',
-                mb: 1,
+                mb: '16px',
               }}
             >
               <Box
                 sx={{
-                  width: 3,
-                  height: 14,
+                  width: 4,
+                  height: 10,
                   bgcolor: 'primary.main',
-                  borderRadius: '2px',
+                  borderRadius: '30%',
                   mr: 1,
                 }}
               />

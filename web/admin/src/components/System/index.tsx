@@ -116,24 +116,61 @@ const System = () => {
           value={activeTab}
           onChange={(event, newValue) => setActiveTab(newValue)}
           aria-label='system tabs'
-          sx={{ mb: 2 }}
+          sx={{
+            mb: 2,
+            ml: -2,
+            borderBottom: 1,
+            borderColor: 'divider',
+            '& .MuiTabs-indicator': {
+              display: 'none',
+            },
+            '& .MuiTab-root': {
+              minHeight: 48,
+              textTransform: 'none',
+              fontSize: '14px',
+              fontWeight: 400,
+              color: theme.palette.text.secondary,
+              position: 'relative',
+              '&.Mui-selected': {
+                color: theme.palette.primary.main,
+                fontWeight: 500,
+              },
+              '&.Mui-selected::after': {
+                content: '""',
+                position: 'absolute',
+                bottom: 0,
+                left: '50%',
+                transform: 'translateX(-50%)',
+                width: '40px',
+                height: '2px',
+                backgroundColor: theme.palette.primary.main,
+                zIndex: 1,
+              },
+            },
+          }}
         >
           {SystemTabs.map(tab => (
             <Tab key={tab.id} label={tab.label} value={tab.id} />
           ))}
         </Tabs>
-        {activeTab === 'user-management' && <Member />}
+        {activeTab === 'user-management' && (
+          <Box sx={{ ml: -2 }}>
+            <Member />
+          </Box>
+        )}
         {activeTab === 'model-config' && (
-          <ModelConfig
-            ref={modelConfigRef}
-            onCloseModal={() => setOpen(false)}
-            chatModelData={chatModelData}
-            embeddingModelData={embeddingModelData}
-            rerankModelData={rerankModelData}
-            analysisModelData={analysisModelData}
-            analysisVLModelData={analysisVLModelData}
-            getModelList={getModelList}
-          />
+          <Box sx={{ ml: -2 }}>
+            <ModelConfig
+              ref={modelConfigRef}
+              onCloseModal={() => setOpen(false)}
+              chatModelData={chatModelData}
+              embeddingModelData={embeddingModelData}
+              rerankModelData={rerankModelData}
+              analysisModelData={analysisModelData}
+              analysisVLModelData={analysisVLModelData}
+              getModelList={getModelList}
+            />
+          </Box>
         )}
       </Modal>
     </>
