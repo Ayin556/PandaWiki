@@ -269,7 +269,9 @@ func (h *ShareChatHandler) ChatCompletions(c echo.Context) error {
 	var lastUserMessage string
 	for i := len(req.Messages) - 1; i >= 0; i-- {
 		if req.Messages[i].Role == "user" {
-			lastUserMessage = req.Messages[i].Content
+			if req.Messages[i].Content != nil {
+				lastUserMessage = req.Messages[i].Content.String()
+			}
 			break
 		}
 	}
@@ -346,11 +348,18 @@ func (h *ShareChatHandler) handleOpenAIStreamResponse(c echo.Context, eventCh <-
 						Index: 0,
 						Delta: domain.OpenAIMessage{
 							Role:    "assistant",
-							Content: event.Content,
+							Content: &domain.MessageContent{},
 						},
 					},
 				},
 			}
+			// 使用临时变量设置 Content
+			content := &domain.MessageContent{}
+			*content = domain.MessageContent{}
+			// 手动设置为字符串类型
+			json.Unmarshal([]byte(`"`+event.Content+`"`), content)
+			streamResp.Choices[0].Delta.Content = content
+
 			if err := h.writeOpenAIStreamEvent(c, streamResp); err != nil {
 				return err
 			}
@@ -388,6 +397,10 @@ func (h *ShareChatHandler) handleOpenAINonStreamResponse(c echo.Context, eventCh
 			content += event.Content
 		case "done":
 			// send complete response
+			// 构造 MessageContent
+			messageContent := &domain.MessageContent{}
+			json.Unmarshal([]byte(`"`+content+`"`), messageContent)
+
 			resp := domain.OpenAICompletionsResponse{
 				ID:      responseID,
 				Object:  "chat.completion",
@@ -398,7 +411,7 @@ func (h *ShareChatHandler) handleOpenAINonStreamResponse(c echo.Context, eventCh
 						Index: 0,
 						Message: domain.OpenAIMessage{
 							Role:    "assistant",
-							Content: content,
+							Content: messageContent,
 						},
 						FinishReason: "stop",
 					},
