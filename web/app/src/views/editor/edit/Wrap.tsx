@@ -179,10 +179,14 @@ const Wrap = ({ detail: defaultDetail = {} }: WrapProps) => {
         }}
       >
         <Header
-          edit={isEditing}
           detail={nodeDetail!}
-          updateDetail={updateDetail}
           handleSave={async () => {
+            if (!isMarkdown) {
+              const value = editorRef.getContent();
+              updateDetail({
+                content: value,
+              });
+            }
             if (checkRequiredFields()) {
               setConfirmModalOpen(true);
             }
