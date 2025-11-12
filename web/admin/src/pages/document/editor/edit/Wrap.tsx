@@ -40,7 +40,7 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
   const { license } = useAppSelector(state => state.config);
 
   const state = useLocation().state as { node?: V1NodeDetailResp };
-  const { catalogOpen, nodeDetail, setNodeDetail, onSave, docWidth } =
+  const { catalogOpen, setCatalogOpen, nodeDetail, setNodeDetail, onSave } =
     useOutletContext<WrapContext>();
 
   const storageTocOpen = localStorage.getItem('toc-open');
@@ -280,14 +280,18 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
     isMarkdown,
   ]);
 
-  const handleGlobalSave = useCallback(
+  const handleGlobalKeydown = useCallback(
     (event: KeyboardEvent) => {
       if ((event.ctrlKey || event.metaKey) && event.key === 's') {
         event.preventDefault();
         changeCatalogItem();
       }
+      if ((event.ctrlKey || event.metaKey) && event.key === 'b') {
+        event.preventDefault();
+        setCatalogOpen(!catalogOpen);
+      }
     },
-    [changeCatalogItem],
+    [changeCatalogItem, catalogOpen, setCatalogOpen],
   );
 
   const renderEditorTitleEmojiSummary = () => {
@@ -525,11 +529,11 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
   }, [defaultDetail]);
 
   useEffect(() => {
-    document.addEventListener('keydown', handleGlobalSave);
+    document.addEventListener('keydown', handleGlobalKeydown);
     return () => {
-      document.removeEventListener('keydown', handleGlobalSave);
+      document.removeEventListener('keydown', handleGlobalKeydown);
     };
-  }, [handleGlobalSave]);
+  }, [handleGlobalKeydown]);
 
   useEffect(() => {
     if (state && state.node && editorRef.editor) {
@@ -659,7 +663,10 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
           <Toolbar editorRef={editorRef} handleAiGenerate={handleAiGenerate} />
         )}
       </Box>
-      <Box sx={{ ...(fixedToc && { display: 'flex' }) }}>
+      <Box
+        sx={{ ...(fixedToc && { display: 'flex' }) }}
+        onKeyDown={event => event.stopPropagation()}
+      >
         {isMarkdown ? (
           <Box
             sx={{
