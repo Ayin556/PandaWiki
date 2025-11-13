@@ -57,7 +57,7 @@ func (r *CommentRepository) GetCommentListByKbID(ctx context.Context, req *domai
 			return nil, 0, err
 		}
 	} else {
-		if edition != consts.LicenseEditionFree {
+		if domain.GetBaseEditionLimitation(ctx).AllowCommentAudit {
 			query = query.Where("comments.status = ?", *req.Status)
 		}
 		// 按照时间排序来查询kb_id的comments ->reject pending accepted

@@ -115,10 +115,11 @@ func (u *AppUsecase) ValidateUpdateApp(ctx context.Context, id string, req *doma
 		return domain.ErrPermissionDenied
 	}
 
-	if !limitation.AllowOpenAIBotSettings && app.Settings.OpenAIAPIBotSettings.IsEnabled != req.Settings.OpenAIAPIBotSettings.IsEnabled {
-		return domain.ErrPermissionDenied
+	if !limitation.AllowOpenAIBotSettings {
+		if app.Settings.OpenAIAPIBotSettings.IsEnabled != req.Settings.OpenAIAPIBotSettings.IsEnabled || app.Settings.OpenAIAPIBotSettings.SecretKey != req.Settings.OpenAIAPIBotSettings.SecretKey {
+			return domain.ErrPermissionDenied
+		}
 	}
-
 	return nil
 }
 

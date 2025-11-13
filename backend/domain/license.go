@@ -21,9 +21,23 @@ type BaseEditionLimitation struct {
 	AllowOpenAIBotSettings bool  `json:"allow_open_ai_bot_settings"` // 支持问答机器人
 }
 
+var baseEditionLimitationDefault = BaseEditionLimitation{
+	MaxKb:    1,
+	MaxAdmin: 1,
+	MaxNode:  300,
+}
+
 func GetBaseEditionLimitation(c context.Context) BaseEditionLimitation {
-	edition := c.Value(ContextKeyEditionLimitation)
+
+	edition, ok := c.Value(ContextKeyEditionLimitation).([]byte)
+	if !ok {
+		return baseEditionLimitationDefault
+	}
+
 	var editionLimitation BaseEditionLimitation
-	_ = json.Unmarshal(edition.([]byte), &editionLimitation)
+	if err := json.Unmarshal(edition, &editionLimitation); err != nil {
+		return baseEditionLimitationDefault
+	}
+
 	return editionLimitation
 }
