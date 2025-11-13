@@ -3,6 +3,7 @@ package domain
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 )
 
 // OpenAI API 请求结构体
@@ -69,19 +70,38 @@ func (mc MessageContent) MarshalJSON() ([]byte, error) {
 	return json.Marshal(mc.arrValue)
 }
 
+// NewStringContent 创建字符串类型的 MessageContent
+func NewStringContent(s string) *MessageContent {
+	return &MessageContent{
+		isString: true,
+		strValue: s,
+	}
+}
+
+// NewArrayContent 创建数组类型的 MessageContent
+func NewArrayContent(parts []OpenAIContentPart) *MessageContent {
+	return &MessageContent{
+		isString: false,
+		arrValue: parts,
+	}
+}
+
 // String 获取文本内容
 func (mc *MessageContent) String() string {
 	if mc.isString {
 		return mc.strValue
 	}
 	// 从数组中提取文本
-	var result string
-	for _, part := range mc.arrValue {
+	var builder strings.Builder
+	for i, part := range mc.arrValue {
 		if part.Type == "text" {
-			result += part.Text
+			if i > 0 && part.Text != "" {
+				builder.WriteString(" ")
+			}
+			builder.WriteString(part.Text)
 		}
 	}
-	return result
+	return builder.String()
 }
 
 type OpenAIMessage struct {

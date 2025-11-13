@@ -348,17 +348,11 @@ func (h *ShareChatHandler) handleOpenAIStreamResponse(c echo.Context, eventCh <-
 						Index: 0,
 						Delta: domain.OpenAIMessage{
 							Role:    "assistant",
-							Content: &domain.MessageContent{},
+							Content: domain.NewStringContent(event.Content),
 						},
 					},
 				},
 			}
-			// 使用临时变量设置 Content
-			content := &domain.MessageContent{}
-			*content = domain.MessageContent{}
-			// 手动设置为字符串类型
-			json.Unmarshal([]byte(`"`+event.Content+`"`), content)
-			streamResp.Choices[0].Delta.Content = content
 
 			if err := h.writeOpenAIStreamEvent(c, streamResp); err != nil {
 				return err
@@ -397,10 +391,6 @@ func (h *ShareChatHandler) handleOpenAINonStreamResponse(c echo.Context, eventCh
 			content += event.Content
 		case "done":
 			// send complete response
-			// 构造 MessageContent
-			messageContent := &domain.MessageContent{}
-			json.Unmarshal([]byte(`"`+content+`"`), messageContent)
-
 			resp := domain.OpenAICompletionsResponse{
 				ID:      responseID,
 				Object:  "chat.completion",
@@ -411,7 +401,7 @@ func (h *ShareChatHandler) handleOpenAINonStreamResponse(c echo.Context, eventCh
 						Index: 0,
 						Message: domain.OpenAIMessage{
 							Role:    "assistant",
-							Content: messageContent,
+							Content: domain.NewStringContent(content),
 						},
 						FinishReason: "stop",
 					},
