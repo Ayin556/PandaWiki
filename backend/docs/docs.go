@@ -7651,14 +7651,32 @@ const docTemplate = `{
         "domain.WidgetBotSettings": {
             "type": "object",
             "properties": {
+                "btn_id": {
+                    "type": "string"
+                },
                 "btn_logo": {
+                    "type": "string"
+                },
+                "btn_position": {
+                    "type": "string"
+                },
+                "btn_style": {
                     "type": "string"
                 },
                 "btn_text": {
                     "type": "string"
                 },
+                "disclaimer": {
+                    "type": "string"
+                },
                 "is_open": {
                     "type": "boolean"
+                },
+                "modal_position": {
+                    "type": "string"
+                },
+                "placeholder": {
+                    "type": "string"
                 },
                 "recommend_node_ids": {
                     "type": "array",
@@ -7671,6 +7689,9 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
+                },
+                "search_mode": {
+                    "type": "string"
                 },
                 "theme_mode": {
                     "type": "string"
