@@ -3509,6 +3509,52 @@ const docTemplate = `{
                 }
             }
         },
+        "/share/v1/chat/widget/search": {
+            "post": {
+                "description": "WidgetSearch",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Widget"
+                ],
+                "summary": "WidgetSearch",
+                "parameters": [
+                    {
+                        "description": "Comment",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.ChatSearchReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/domain.ChatSearchResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/share/v1/comment": {
             "post": {
                 "description": "CreateComment",
@@ -3909,52 +3955,6 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/domain.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/share/v1/widget/search": {
-            "post": {
-                "description": "WidgetSearch",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Widget"
-                ],
-                "summary": "WidgetSearch",
-                "parameters": [
-                    {
-                        "description": "Comment",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/domain.ChatSearchReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/domain.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/domain.ChatSearchResp"
-                                        }
-                                    }
-                                }
-                            ]
                         }
                     }
                 }
@@ -7180,6 +7180,35 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.ShareNodeListItemResp": {
+            "type": "object",
+            "properties": {
+                "emoji": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "parent_id": {
+                    "type": "string"
+                },
+                "permissions": {
+                    "$ref": "#/definitions/domain.NodePermissions"
+                },
+                "position": {
+                    "type": "number"
+                },
+                "type": {
+                    "$ref": "#/definitions/domain.NodeType"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.SimpleAuth": {
             "type": "object",
             "properties": {
@@ -8606,6 +8635,12 @@ const docTemplate = `{
                 },
                 "kb_id": {
                     "type": "string"
+                },
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.ShareNodeListItemResp"
+                    }
                 },
                 "meta": {
                     "$ref": "#/definitions/domain.NodeMeta"

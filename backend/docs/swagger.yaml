@@ -2150,6 +2150,25 @@ definitions:
       role:
         $ref: '#/definitions/schema.RoleType'
     type: object
+  domain.ShareNodeListItemResp:
+    properties:
+      emoji:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      parent_id:
+        type: string
+      permissions:
+        $ref: '#/definitions/domain.NodePermissions'
+      position:
+        type: number
+      type:
+        $ref: '#/definitions/domain.NodeType'
+      updated_at:
+        type: string
+    type: object
   domain.SimpleAuth:
     properties:
       enabled:
@@ -3093,6 +3112,10 @@ definitions:
         type: string
       kb_id:
         type: string
+      list:
+        items:
+          $ref: '#/definitions/domain.ShareNodeListItemResp'
+        type: array
       meta:
         $ref: '#/definitions/domain.NodeMeta'
       name:
@@ -5315,6 +5338,33 @@ paths:
       summary: ChatWidget
       tags:
       - Widget
+  /share/v1/chat/widget/search:
+    post:
+      consumes:
+      - application/json
+      description: WidgetSearch
+      parameters:
+      - description: Comment
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.ChatSearchReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.ChatSearchResp'
+              type: object
+      summary: WidgetSearch
+      tags:
+      - Widget
   /share/v1/comment:
     post:
       consumes:
@@ -5565,33 +5615,6 @@ paths:
       summary: RecordPage
       tags:
       - share_stat
-  /share/v1/widget/search:
-    post:
-      consumes:
-      - application/json
-      description: WidgetSearch
-      parameters:
-      - description: Comment
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/domain.ChatSearchReq'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/domain.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/domain.ChatSearchResp'
-              type: object
-      summary: WidgetSearch
-      tags:
-      - Widget
 securityDefinitions:
   bearerAuth:
     description: Type "Bearer" + a space + your token to authorize
