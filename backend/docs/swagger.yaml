@@ -5314,7 +5314,7 @@ paths:
             $ref: '#/definitions/domain.Response'
       summary: ChatWidget
       tags:
-      - share_chat
+      - Widget
   /share/v1/comment:
     post:
       consumes:
@@ -5565,6 +5565,33 @@ paths:
       summary: RecordPage
       tags:
       - share_stat
+  /share/v1/widget/search:
+    post:
+      consumes:
+      - application/json
+      description: WidgetSearch
+      parameters:
+      - description: Comment
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.ChatSearchReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.ChatSearchResp'
+              type: object
+      summary: WidgetSearch
+      tags:
+      - Widget
 securityDefinitions:
   bearerAuth:
     description: Type "Bearer" + a space + your token to authorize
