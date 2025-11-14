@@ -37,8 +37,14 @@ type MessageContent struct {
 
 // OpenAIContentPart 表示内容数组中的单个元素
 type OpenAIContentPart struct {
-	Type string `json:"type"`
-	Text string `json:"text,omitempty"`
+	Type     string                `json:"type"`
+	Text     string                `json:"text,omitempty"`
+	ImageURL *OpenAIContentPartURL `json:"image_url,omitempty"`
+}
+
+// OpenAIContentPartURL represents the image_url field in content parts
+type OpenAIContentPartURL struct {
+	URL string `json:"url"`
 }
 
 // UnmarshalJSON 自定义解析，支持 string 或 array 格式
@@ -63,7 +69,7 @@ func (mc *MessageContent) UnmarshalJSON(data []byte) error {
 }
 
 // MarshalJSON 自定义序列化
-func (mc MessageContent) MarshalJSON() ([]byte, error) {
+func (mc *MessageContent) MarshalJSON() ([]byte, error) {
 	if mc.isString {
 		return json.Marshal(mc.strValue)
 	}
@@ -93,9 +99,9 @@ func (mc *MessageContent) String() string {
 	}
 	// 从数组中提取文本
 	var builder strings.Builder
-	for i, part := range mc.arrValue {
+	for _, part := range mc.arrValue {
 		if part.Type == "text" {
-			if i > 0 && part.Text != "" {
+			if builder.Len() > 0 && part.Text != "" {
 				builder.WriteString(" ")
 			}
 			builder.WriteString(part.Text)
