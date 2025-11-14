@@ -495,7 +495,7 @@ func (h *ShareChatHandler) ChatSearch(c echo.Context) error {
 //	@Produce		json
 //	@Param			request	body		domain.ChatSearchReq	true	"Comment"
 //	@Success		200		{object}	domain.Response{data=domain.ChatSearchResp}
-//	@Router			/share/v1/widget/search [post]
+//	@Router			/share/v1/chat/widget/search [post]
 func (h *ShareChatHandler) WidgetSearch(c echo.Context) error {
 	var req domain.ChatSearchReq
 	if err := c.Bind(&req); err != nil {
