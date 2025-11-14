@@ -1189,6 +1189,17 @@ export interface DomainShareConversationMessage {
   role?: SchemaRoleType;
 }
 
+export interface DomainShareNodeListItemResp {
+  emoji?: string;
+  id?: string;
+  name?: string;
+  parent_id?: string;
+  permissions?: DomainNodePermissions;
+  position?: number;
+  type?: DomainNodeType;
+  updated_at?: string;
+}
+
 export interface DomainSimpleAuth {
   enabled?: boolean;
   password?: string;
@@ -1683,6 +1694,7 @@ export interface V1ShareNodeDetailResp {
   editor_id?: string;
   id?: string;
   kb_id?: string;
+  list?: DomainShareNodeListItemResp[];
   meta?: DomainNodeMeta;
   name?: string;
   parent_id?: string;
