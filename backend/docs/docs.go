@@ -6361,6 +6361,9 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.MessageContent": {
+            "type": "object"
+        },
         "domain.MessageFrom": {
             "type": "integer",
             "enum": [
@@ -6762,6 +6765,9 @@ const docTemplate = `{
                 "stream": {
                     "type": "boolean"
                 },
+                "stream_options": {
+                    "$ref": "#/definitions/domain.OpenAIStreamOptions"
+                },
                 "temperature": {
                     "type": "number"
                 },
@@ -6884,7 +6890,7 @@ const docTemplate = `{
             ],
             "properties": {
                 "content": {
-                    "type": "string"
+                    "$ref": "#/definitions/domain.MessageContent"
                 },
                 "name": {
                     "type": "string"
@@ -6911,6 +6917,14 @@ const docTemplate = `{
             "properties": {
                 "type": {
                     "type": "string"
+                }
+            }
+        },
+        "domain.OpenAIStreamOptions": {
+            "type": "object",
+            "properties": {
+                "include_usage": {
+                    "type": "boolean"
                 }
             }
         },

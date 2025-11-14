@@ -6354,6 +6354,9 @@
                 }
             }
         },
+        "domain.MessageContent": {
+            "type": "object"
+        },
         "domain.MessageFrom": {
             "type": "integer",
             "enum": [
@@ -6755,6 +6758,9 @@
                 "stream": {
                     "type": "boolean"
                 },
+                "stream_options": {
+                    "$ref": "#/definitions/domain.OpenAIStreamOptions"
+                },
                 "temperature": {
                     "type": "number"
                 },
@@ -6877,7 +6883,7 @@
             ],
             "properties": {
                 "content": {
-                    "type": "string"
+                    "$ref": "#/definitions/domain.MessageContent"
                 },
                 "name": {
                     "type": "string"
@@ -6904,6 +6910,14 @@
             "properties": {
                 "type": {
                     "type": "string"
+                }
+            }
+        },
+        "domain.OpenAIStreamOptions": {
+            "type": "object",
+            "properties": {
+                "include_usage": {
+                    "type": "boolean"
                 }
             }
         },
