@@ -1614,6 +1614,8 @@ definitions:
       url:
         type: string
     type: object
+  domain.MessageContent:
+    type: object
   domain.MessageFrom:
     enum:
     - 1
@@ -1875,6 +1877,8 @@ definitions:
         type: array
       stream:
         type: boolean
+      stream_options:
+        $ref: '#/definitions/domain.OpenAIStreamOptions'
       temperature:
         type: number
       tool_choice:
@@ -1956,7 +1960,7 @@ definitions:
   domain.OpenAIMessage:
     properties:
       content:
-        type: string
+        $ref: '#/definitions/domain.MessageContent'
       name:
         type: string
       role:
@@ -1976,6 +1980,11 @@ definitions:
         type: string
     required:
     - type
+    type: object
+  domain.OpenAIStreamOptions:
+    properties:
+      include_usage:
+        type: boolean
     type: object
   domain.OpenAITool:
     properties:

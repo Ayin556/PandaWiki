@@ -181,9 +181,9 @@ type OpenAIStreamResponse struct {
 }
 
 type OpenAIStreamChoice struct {
-	Index        int            `json:"index"`
-	Delta        OpenAIMessage  `json:"delta"`
-	FinishReason *string        `json:"finish_reason,omitempty"`
+	Index        int           `json:"index"`
+	Delta        OpenAIMessage `json:"delta"`
+	FinishReason *string       `json:"finish_reason,omitempty"`
 }
 
 // OpenAI 错误响应结构体
