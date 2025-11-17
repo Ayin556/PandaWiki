@@ -402,16 +402,14 @@ func (u *NodeUsecase) buildNodeTree(parentID string, childrenMap map[string][]*d
 			Meta:      child.Meta,
 			Emoji:     child.Emoji,
 			UpdatedAt: child.UpdatedAt,
-			Children:  make([]domain.ShareNodeDetailItem, 0),
+			Children:  make([]*domain.ShareNodeDetailItem, 0),
 		}
 
 		// 如果是文件夹，递归构建其子节点
 		if child.Type == domain.NodeTypeFolder {
 			childNodes := u.buildNodeTree(child.ID, childrenMap)
 			if len(childNodes) > 0 {
-				for _, childNode := range childNodes {
-					node.Children = append(node.Children, *childNode)
-				}
+				node.Children = append(node.Children, childNodes...)
 			}
 		}
 
