@@ -60,7 +60,7 @@
 
       const data = await response.json();
       widgetInfo = data.data.settings?.widget_bot_settings;
-
+      console.log(widgetInfo);
       // 验证返回的数据结构
       if (!widgetInfo || typeof widgetInfo !== 'object') {
         throw new Error('Invalid widget info response');
@@ -263,7 +263,6 @@
     // 触发显示动画
     setTimeout(() => {
       widgetButton.style.opacity = '1';
-      widgetButton.style.transform = 'translateY(0)';
     }, 100);
   }
 
@@ -700,30 +699,20 @@
     buttonSize.width = rect.width;
     buttonSize.height = rect.height;
 
-    // 先清除 transform，确保获取真实的位置
-    widgetButton.style.transform = 'none';
-
-    // 重新获取位置（清除 transform 后的真实位置）
     const realRect = widgetButton.getBoundingClientRect();
-
-    // 记录初始位置（基于清除 transform 后的真实位置）
     initialPosition.left = realRect.left;
     initialPosition.top = realRect.top;
 
     dragOffset.x = clientX - realRect.left;
     dragOffset.y = clientY - realRect.top;
 
-    // 确保使用 fixed 定位，使用真实位置
     widgetButton.style.position = 'fixed';
     widgetButton.style.top = realRect.top + 'px';
     widgetButton.style.left = realRect.left + 'px';
     widgetButton.style.right = 'auto';
     widgetButton.style.bottom = 'auto';
 
-    // 禁用过渡效果，提升拖拽性能
     widgetButton.style.transition = 'none';
-
-    // 提示浏览器优化（使用 left/top 定位）
     widgetButton.style.willChange = 'left, top';
 
     document.addEventListener('mousemove', drag, { passive: false });
@@ -771,13 +760,10 @@
     const maxLeft = windowWidth - buttonWidth;
     const constrainedLeft = Math.max(0, Math.min(newLeft, maxLeft));
 
-    // 直接使用 left/top 定位，实现无延迟的丝滑跟随
-    // 使用 transform: none 确保不会有任何 transform 干扰
     widgetButton.style.left = constrainedLeft + 'px';
     widgetButton.style.top = constrainedTop + 'px';
     widgetButton.style.right = 'auto';
     widgetButton.style.bottom = 'auto';
-    widgetButton.style.transform = 'none';
   }
 
   // 停止拖拽
@@ -838,9 +824,6 @@
 
       widgetButton.style.top = finalTop + 'px';
       widgetButton.style.bottom = 'auto';
-
-      // 清除 transform，使用 left/top 定位
-      widgetButton.style.transform = 'none';
 
       // 更新 border-radius（现在都是24px圆角）
       widgetButton.style.borderRadius = '24px';

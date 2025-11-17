@@ -450,7 +450,11 @@ const CardRobotWebComponent = ({ kb }: CardRobotWebComponentProps) => {
                 )}
                 <Collapse in={modalConfigOpen}>
                   <Stack spacing={2.5}>
-                    {/* <FormItem label='配色方案' sx={{ alignItems: 'flex-start' }} labelSx={{ mt: 1 }}>
+                    <FormItem
+                      label='配色方案'
+                      sx={{ alignItems: 'flex-start' }}
+                      labelSx={{ mt: 1 }}
+                    >
                       <Controller
                         control={control}
                         name='theme_mode'
@@ -473,20 +477,10 @@ const CardRobotWebComponent = ({ kb }: CardRobotWebComponentProps) => {
                               control={<Radio size='small' />}
                               label={<Box sx={{ width: 100 }}>深色模式</Box>}
                             />
-                            <FormControlLabel
-                              value='system'
-                              control={<Radio size='small' />}
-                              label={<Box sx={{ width: 100 }}>跟随系统</Box>}
-                            />
-                            <FormControlLabel
-                              value='wiki'
-                              control={<Radio size='small' />}
-                              label={<Box sx={{ width: 100 }}>跟随 WIKI 网站</Box>}
-                            />
                           </RadioGroup>
                         )}
                       />
-                    </FormItem> */}
+                    </FormItem>
                     <FormItem
                       label='弹窗位置'
                       sx={{ alignItems: 'flex-start' }}
