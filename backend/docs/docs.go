@@ -7194,14 +7194,23 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.ShareNodeListItemResp": {
+        "domain.ShareNodeDetailItem": {
             "type": "object",
             "properties": {
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.ShareNodeDetailItem"
+                    }
+                },
                 "emoji": {
                     "type": "string"
                 },
                 "id": {
                     "type": "string"
+                },
+                "meta": {
+                    "$ref": "#/definitions/domain.NodeMeta"
                 },
                 "name": {
                     "type": "string"
@@ -8653,7 +8662,7 @@ const docTemplate = `{
                 "list": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/domain.ShareNodeListItemResp"
+                        "$ref": "#/definitions/domain.ShareNodeDetailItem"
                     }
                 },
                 "meta": {
