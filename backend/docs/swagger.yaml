@@ -2159,12 +2159,18 @@ definitions:
       role:
         $ref: '#/definitions/schema.RoleType'
     type: object
-  domain.ShareNodeListItemResp:
+  domain.ShareNodeDetailItem:
     properties:
+      children:
+        items:
+          $ref: '#/definitions/domain.ShareNodeDetailItem'
+        type: array
       emoji:
         type: string
       id:
         type: string
+      meta:
+        $ref: '#/definitions/domain.NodeMeta'
       name:
         type: string
       parent_id:
@@ -3123,7 +3129,7 @@ definitions:
         type: string
       list:
         items:
-          $ref: '#/definitions/domain.ShareNodeListItemResp'
+          $ref: '#/definitions/domain.ShareNodeDetailItem'
         type: array
       meta:
         $ref: '#/definitions/domain.NodeMeta'
