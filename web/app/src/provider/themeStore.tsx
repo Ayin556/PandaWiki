@@ -36,9 +36,6 @@ export const ThemeStoreProvider = ({
     Cookies.set('theme_mode', themeMode, { expires: 365 * 10 });
   }, [themeMode]);
 
-  console.log('themeMode-------', themeMode);
-  console.log('themeMode-------', theme);
-
   return (
     <ThemeContext.Provider value={{ themeMode, setThemeMode }}>
       <ThemeProvider theme={theme}>{children}</ThemeProvider>
