@@ -20,6 +20,7 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 // Styled Components
 const StyledAccordion = styled(Accordion)({
   backgroundColor: 'transparent',
+  backgroundImage: 'none',
   padding: 0,
   border: 'none',
   boxShadow: 'none',
@@ -164,7 +165,6 @@ interface FolderListProps {
 }
 
 const FolderList: React.FC<FolderListProps> = ({ list = [] }) => {
-  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const { tree, setTree } = useStore();
 
   const handleCatalogExpand = (item: DomainShareNodeDetailItem) => {
@@ -238,25 +238,25 @@ const FolderList: React.FC<FolderListProps> = ({ list = [] }) => {
     return sortTree(list);
   }, [list]);
 
-  // 默认展开所有文件夹
-  useEffect(() => {
-    // 收集所有文件夹的 id
-    const getAllFolderIds = (items: DomainShareNodeDetailItem[]): string[] => {
-      const ids: string[] = [];
-      items.forEach(item => {
-        if (item.type === 1 && item.id) {
-          ids.push(item.id);
-          if (item.children && item.children.length > 0) {
-            ids.push(...getAllFolderIds(item.children));
-          }
+  // 收集所有文件夹的 id
+  const getAllFolderIds = (items: DomainShareNodeDetailItem[]): string[] => {
+    const ids: string[] = [];
+    items.forEach(item => {
+      if (item.type === 1 && item.id) {
+        ids.push(item.id);
+        if (item.children && item.children.length > 0) {
+          ids.push(...getAllFolderIds(item.children));
         }
-      });
-      return ids;
-    };
+      }
+    });
+    return ids;
+  };
 
+  // 这样在首次渲染时就会计算好展开项，避免闪烁
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(() => {
     const folderIds = getAllFolderIds(treeList);
-    setExpandedItems(new Set(folderIds));
-  }, [treeList]);
+    return new Set(folderIds);
+  });
 
   const handleToggle = (id: string) => {
     setExpandedItems(prev => {

@@ -22,7 +22,6 @@ const CatalogFolder = ({
   const { themeMode = 'light', setTree } = useStore();
   const params = useParams() || {};
   const activeId = params.id as string;
-  const router = useRouter();
 
   return (
     <Stack key={item.id} gap={0.5}>
