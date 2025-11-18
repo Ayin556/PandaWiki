@@ -17,7 +17,6 @@ import { useAppDispatch, useAppSelector } from '@/store';
 import { setIsRefreshDocList } from '@/store/slices/config';
 import { addOpacityToColor } from '@/utils';
 import { collapseAllFolders, convertToTree } from '@/utils/drag';
-import { Icon } from '@ctzhian/ui';
 import {
   Box,
   Button,
@@ -39,6 +38,7 @@ import DocSummary from './component/DocSummary';
 import MoveDocs from './component/MoveDocs';
 import RagErrorReStart from './component/RagErrorReStart';
 import Summary from './component/Summary';
+import { IconGengduo } from '@panda-wiki/icons';
 
 const Content = () => {
   const { kb_id, isRefreshDocList } = useAppSelector(state => state.config);
@@ -529,7 +529,7 @@ const Content = () => {
               context={
                 <Box>
                   <IconButton size='small'>
-                    <Icon type='icon-gengduo' />
+                    <IconGengduo sx={{ fontSize: '16px' }} />
                   </IconButton>
                 </Box>
               }
