@@ -170,7 +170,11 @@
     // 添加文字
     const textDiv = document.createElement('div');
     textDiv.className = 'widget-bot-text';
-    textDiv.innerHTML = createTwoLineText(widgetInfo.btn_text || '在线客服');
+    textDiv.textContent = widgetInfo.btn_text || '在线客服';
+    // 设置固定宽度、自动换行和居中
+    textDiv.style.wordWrap = 'break-word';
+    textDiv.style.whiteSpace = 'normal';
+    textDiv.style.textAlign = 'center';
     buttonContent.appendChild(textDiv);
 
     widgetButton.appendChild(buttonContent);

@@ -1391,6 +1391,8 @@ export interface DomainWidgetBotSettings {
   btn_position?: string;
   btn_style?: string;
   btn_text?: string;
+  copyright_hide_enabled?: boolean;
+  copyright_info?: string;
   disclaimer?: string;
   is_open?: boolean;
   modal_position?: string;
