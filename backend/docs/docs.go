@@ -7764,6 +7764,12 @@ const docTemplate = `{
                 "btn_text": {
                     "type": "string"
                 },
+                "copyright_hide_enabled": {
+                    "type": "boolean"
+                },
+                "copyright_info": {
+                    "type": "string"
+                },
                 "disclaimer": {
                     "type": "string"
                 },
