@@ -20,6 +20,7 @@
   will-change: transform;
   backface-visibility: hidden;
   -webkit-font-smoothing: antialiased;
+  transform-origin: center;
 }
 
 .widget-bot-button:hover {
