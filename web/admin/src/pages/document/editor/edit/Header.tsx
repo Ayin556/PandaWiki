@@ -4,8 +4,7 @@ import { postApiV1Node } from '@/request';
 import { V1NodeDetailResp } from '@/request/types';
 import { useAppSelector } from '@/store';
 import { addOpacityToColor, getShortcutKeyText } from '@/utils';
-import { Ellipsis, Icon, message } from '@ctzhian/ui';
-import InfoIcon from '@mui/icons-material/Info';
+import { Ellipsis, message } from '@ctzhian/ui';
 import {
   Box,
   Button,
@@ -24,6 +23,12 @@ import DocAddByCustomText from '../../component/DocAddByCustomText';
 import DocDelete from '../../component/DocDelete';
 import { BUSINESS_VERSION_PERMISSION } from '@/constant/version';
 import { VersionCanUse } from '@/components/VersionMask';
+import {
+  IconGengduo,
+  IconBaocun,
+  IconMuluzhankai,
+  IconDaochu,
+} from '@panda-wiki/icons';
 
 interface HeaderProps {
   edit: boolean;
@@ -101,8 +106,7 @@ const Header = ({
               },
             }}
           >
-            <Icon
-              type='icon-muluzhankai'
+            <IconMuluzhankai
               sx={{
                 fontSize: 24,
               }}
@@ -149,7 +153,7 @@ const Header = ({
             gap={0.5}
             sx={{ fontSize: 12, color: 'text.tertiary' }}
           >
-            <Icon type='icon-baocun' />
+            <IconBaocun sx={{ fontSize: 12 }} />
             {showSaveTip ? (
               '已保存'
             ) : nodeDetail?.updated_at ? (
@@ -367,7 +371,7 @@ const Header = ({
                 disabled={!detail.name}
                 sx={{ flexShrink: 0 }}
               >
-                <Icon type='icon-gengduo' />
+                <IconGengduo sx={{ fontSize: 14 }} />
               </IconButton>
             }
           />
@@ -435,7 +439,7 @@ const Header = ({
                 size='small'
                 variant='outlined'
                 disabled={!detail.name}
-                startIcon={<Icon type='icon-daochu' />}
+                startIcon={<IconDaochu sx={{ fontSize: 14 }} />}
               >
                 导出
               </Button>
@@ -511,7 +515,7 @@ const Header = ({
                 size='small'
                 variant='contained'
                 disabled={!detail.name}
-                startIcon={<Icon type='icon-baocun' />}
+                startIcon={<IconBaocun sx={{ fontSize: 14 }} />}
               >
                 保存
               </Button>
