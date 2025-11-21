@@ -125,7 +125,10 @@ func (u *AppUsecase) ValidateUpdateApp(ctx context.Context, id string, req *doma
 		if app.Settings.WidgetBotSettings.CopyrightHideEnabled != req.Settings.WidgetBotSettings.CopyrightHideEnabled || app.Settings.WidgetBotSettings.CopyrightInfo != req.Settings.WidgetBotSettings.CopyrightInfo {
 			return domain.ErrPermissionDenied
 		}
-		if app.Settings.ConversationSetting.CopyrightHideEnabled != req.Settings.ConversationSetting.CopyrightHideEnabled || app.Settings.ConversationSetting.CopyrightInfo != req.Settings.ConversationSetting.CopyrightInfo {
+		if app.Settings.ConversationSetting.CopyrightHideEnabled != req.Settings.ConversationSetting.CopyrightHideEnabled {
+			return domain.ErrPermissionDenied
+		}
+		if req.Settings.ConversationSetting.CopyrightInfo != domain.SettingCopyrightInfo && app.Settings.ConversationSetting.CopyrightInfo != req.Settings.ConversationSetting.CopyrightInfo {
 			return domain.ErrPermissionDenied
 		}
 	}
