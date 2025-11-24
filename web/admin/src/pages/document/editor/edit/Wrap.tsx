@@ -1,5 +1,6 @@
 import { uploadFile } from '@/api';
 import Emoji from '@/components/Emoji';
+import { BUSINESS_VERSION_PERMISSION } from '@/constant/version';
 import { postApiV1CreationTabComplete, putApiV1NodeDetail } from '@/request';
 import { V1NodeDetailResp } from '@/request/types';
 import { useAppSelector } from '@/store';
@@ -13,6 +14,12 @@ import {
 } from '@ctzhian/tiptap';
 import { message } from '@ctzhian/ui';
 import { Box, Stack, TextField, Tooltip } from '@mui/material';
+import {
+  IconAShijian2,
+  IconDJzhinengzhaiyao,
+  IconTianjiawendang,
+  IconZiti,
+} from '@panda-wiki/icons';
 import dayjs from 'dayjs';
 import { debounce } from 'lodash-es';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -29,13 +36,6 @@ import Header from './Header';
 import Summary from './Summary';
 import Toc from './Toc';
 import Toolbar from './Toolbar';
-import { BUSINESS_VERSION_PERMISSION } from '@/constant/version';
-import {
-  IconTianjiawendang,
-  IconAShijian2,
-  IconZiti,
-  IconDJzhinengzhaiyao,
-} from '@panda-wiki/icons';
 
 interface WrapProps {
   detail: V1NodeDetailResp;
@@ -672,7 +672,15 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
       </Box>
       <Box
         sx={{ ...(fixedToc && { display: 'flex' }) }}
-        onKeyDown={event => event.stopPropagation()}
+        onKeyDown={event => {
+          if (
+            (event.ctrlKey || event.metaKey) &&
+            (event.key === 's' || event.key === 'b')
+          ) {
+            return;
+          }
+          event.stopPropagation();
+        }}
       >
         {isMarkdown ? (
           <Box
