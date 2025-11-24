@@ -19,6 +19,7 @@ type BaseEditionLimitation struct {
 	AllowWatermark         bool  `json:"allow_watermark"`            // 支持水印
 	AllowCopyProtection    bool  `json:"allow_copy_protection"`      // 支持内容复制保护
 	AllowOpenAIBotSettings bool  `json:"allow_open_ai_bot_settings"` // 支持问答机器人
+	AllowMCPServer         bool  `json:"allow_mcp_server"`           // 支持创建MCP Server
 }
 
 var baseEditionLimitationDefault = BaseEditionLimitation{

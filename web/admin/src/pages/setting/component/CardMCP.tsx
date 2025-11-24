@@ -68,7 +68,7 @@ const CardMCP = ({ kb }: CardMCPProps) => {
       settings: {
         mcp_server_settings: {
           is_enabled: isEnabled,
-          get_docs_tool_settings: {
+          docs_tool_settings: {
             name: watch('tool_name'),
             desc: watch('tool_desc'),
           },
@@ -96,11 +96,11 @@ const CardMCP = ({ kb }: CardMCPProps) => {
       const accessVal = auth.enabled ? 'auth' : 'open';
       const tokenVal = auth.password ?? '';
       const toolName =
-        (res.settings as any)?.mcp_server_settings?.get_docs_tool_settings
-          ?.name ?? '';
+        (res.settings as any)?.mcp_server_settings?.docs_tool_settings?.name ??
+        '';
       const toolDesc =
-        (res.settings as any)?.mcp_server_settings?.get_docs_tool_settings
-          ?.desc ?? '';
+        (res.settings as any)?.mcp_server_settings?.docs_tool_settings?.desc ??
+        '';
       setValue('is_enabled', is_enabled);
       setValue('access', accessVal);
       setValue('token', tokenVal);

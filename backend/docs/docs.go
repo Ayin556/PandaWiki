@@ -6403,7 +6403,7 @@ const docTemplate = `{
         "domain.MCPServerSettings": {
             "type": "object",
             "properties": {
-                "get_docs_tool_settings": {
+                "docs_tool_settings": {
                     "$ref": "#/definitions/domain.MCPToolSettings"
                 },
                 "is_enabled": {

@@ -133,6 +133,12 @@ func (u *AppUsecase) ValidateUpdateApp(ctx context.Context, id string, req *doma
 		}
 	}
 
+	if !limitation.AllowMCPServer {
+		if app.Settings.MCPServerSettings.IsEnabled != req.Settings.MCPServerSettings.IsEnabled {
+			return domain.ErrPermissionDenied
+		}
+	}
+
 	return nil
 }
 

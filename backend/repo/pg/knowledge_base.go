@@ -140,29 +140,6 @@ func (r *KnowledgeBaseRepository) SyncKBAccessSettingsToCaddy(ctx context.Contex
 							{
 								"match": []map[string]any{
 									{
-										"path": []string{"/mcp"},
-									},
-								},
-								"handle": []map[string]any{
-									{
-										"handler": "headers",
-										"request": map[string]any{
-											"set": map[string][]any{
-												"X-KB-ID": {kb.ID},
-											},
-										},
-									},
-									{
-										"handler": "reverse_proxy",
-										"upstreams": []map[string]any{
-											{"dial": api},
-										},
-									},
-								},
-							},
-							{
-								"match": []map[string]any{
-									{
 										"path": []string{"/share/v1/chat/message"},
 									},
 								},
@@ -192,7 +169,7 @@ func (r *KnowledgeBaseRepository) SyncKBAccessSettingsToCaddy(ctx context.Contex
 							{
 								"match": []map[string]any{
 									{
-										"path": []string{"/share/v1/chat/completions", "/share/v1/app/wechat/app", "/share/v1/app/wechat/service", "/sitemap.xml", "/share/v1/app/wechat/official_account", "/share/v1/app/wechat/service/answer"},
+										"path": []string{"/share/v1/chat/completions", "/share/v1/app/wechat/app", "/share/v1/app/wechat/service", "/sitemap.xml", "/share/v1/app/wechat/official_account", "/share/v1/app/wechat/service/answer", "/mcp"},
 									},
 								},
 								"handle": []map[string]any{

@@ -185,9 +185,9 @@ type WebAppLandingTheme struct {
 }
 
 type MCPServerSettings struct {
-	IsEnabled           bool            `json:"is_enabled"`
-	GetDocsToolSettings MCPToolSettings `json:"get_docs_tool_settings"`
-	SampleAuth          SimpleAuth      `json:"sample_auth"`
+	IsEnabled        bool            `json:"is_enabled"`
+	DocsToolSettings MCPToolSettings `json:"docs_tool_settings"`
+	SampleAuth       SimpleAuth      `json:"sample_auth"`
 }
 
 type MCPToolSettings struct {
