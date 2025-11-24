@@ -673,9 +673,13 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
       <Box
         sx={{ ...(fixedToc && { display: 'flex' }) }}
         onKeyDown={event => {
+          if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+            return;
+          }
           if (
+            isMarkdown &&
             (event.ctrlKey || event.metaKey) &&
-            (event.key === 's' || event.key === 'b')
+            event.key === 'b'
           ) {
             return;
           }
