@@ -34,8 +34,8 @@ const CardMCP = ({ kb }: CardMCPProps) => {
       is_enabled: false,
       access: 'open' as 'open' | 'auth',
       token: '',
-      tool_name: '',
-      tool_desc: '',
+      tool_name: 'get_docs',
+      tool_desc: '为解决用户的问题从知识库中检索文档',
     },
   });
 
