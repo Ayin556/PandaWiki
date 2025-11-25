@@ -420,8 +420,6 @@ definitions:
         allOf:
         - $ref: '#/definitions/domain.AIFeedbackSettings'
         description: AI feedback
-      auto_sitemap:
-        type: boolean
       body_code:
         type: string
       btns:
@@ -601,8 +599,6 @@ definitions:
         allOf:
         - $ref: '#/definitions/domain.AIFeedbackSettings'
         description: AI feedback
-      auto_sitemap:
-        type: boolean
       body_code:
         type: string
       btns:

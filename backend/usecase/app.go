@@ -462,7 +462,6 @@ func (u *AppUsecase) GetAppDetailByKBIDAndAppType(ctx context.Context, kbID stri
 		RecommendNodeIDs:   app.Settings.RecommendNodeIDs,
 		Desc:               app.Settings.Desc,
 		Keyword:            app.Settings.Keyword,
-		AutoSitemap:        app.Settings.AutoSitemap,
 		HeadCode:           app.Settings.HeadCode,
 		BodyCode:           app.Settings.BodyCode,
 		// DingTalkBot
@@ -623,7 +622,6 @@ func (u *AppUsecase) ShareGetWebAppInfo(ctx context.Context, kbID string, authId
 			RecommendNodeIDs:   app.Settings.RecommendNodeIDs,
 			Desc:               app.Settings.Desc,
 			Keyword:            app.Settings.Keyword,
-			AutoSitemap:        app.Settings.AutoSitemap,
 			HeadCode:           app.Settings.HeadCode,
 			BodyCode:           app.Settings.BodyCode,
 			// theme

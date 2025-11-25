@@ -78,6 +78,7 @@ export enum DomainAppType {
   AppTypeOpenAIAPI = 9,
   AppTypeWecomAIBot = 10,
   AppTypeLarkBot = 11,
+  AppTypeMcpServer = 12,
 }
 
 export enum ConstsWatermarkSetting {
@@ -132,6 +133,7 @@ export enum ConstsSourceType {
   SourceTypeDiscordBot = "discord_bot",
   SourceTypeWechatOfficialAccount = "wechat_official_account",
   SourceTypeOpenAIAPI = "openai_api",
+  SourceTypeMcpServer = "mcp_server",
 }
 
 export enum ConstsNodeRagInfoStatus {
@@ -298,7 +300,6 @@ export interface DomainAppInfoResp {
 export interface DomainAppSettings {
   /** AI feedback */
   ai_feedback_settings?: DomainAIFeedbackSettings;
-  auto_sitemap?: boolean;
   body_code?: string;
   btns?: unknown[];
   /** catalog settings */
@@ -333,6 +334,8 @@ export interface DomainAppSettings {
   keyword?: string;
   /** LarkBot */
   lark_bot_settings?: DomainLarkBotSettings;
+  /** MCP Server Settings */
+  mcp_server_settings?: DomainMCPServerSettings;
   /** OpenAI API Bot settings */
   openai_api_bot_settings?: DomainOpenAIAPIBotSettings;
   recommend_node_ids?: string[];
@@ -384,7 +387,6 @@ export interface DomainAppSettings {
 export interface DomainAppSettingsResp {
   /** AI feedback */
   ai_feedback_settings?: DomainAIFeedbackSettings;
-  auto_sitemap?: boolean;
   body_code?: string;
   btns?: unknown[];
   /** catalog settings */
@@ -419,6 +421,8 @@ export interface DomainAppSettingsResp {
   keyword?: string;
   /** LarkBot */
   lark_bot_settings?: DomainLarkBotSettings;
+  /** MCP Server Settings */
+  mcp_server_settings?: DomainMCPServerSettings;
   /** OpenAI API settings */
   openai_api_bot_settings?: DomainOpenAIAPIBotSettings;
   recommend_node_ids?: string[];
@@ -924,6 +928,17 @@ export interface DomainLarkBotSettings {
 export interface DomainLink {
   name?: string;
   url?: string;
+}
+
+export interface DomainMCPServerSettings {
+  docs_tool_settings?: DomainMCPToolSettings;
+  is_enabled?: boolean;
+  sample_auth?: DomainSimpleAuth;
+}
+
+export interface DomainMCPToolSettings {
+  desc?: string;
+  name?: string;
 }
 
 export type DomainMessageContent = Record<string, any>;
@@ -1796,7 +1811,8 @@ export interface GetApiV1AuthGetParams {
     | "wechat_service_bot"
     | "discord_bot"
     | "wechat_official_account"
-    | "openai_api";
+    | "openai_api"
+    | "mcp_server";
 }
 
 export interface GetApiV1CommentParams {
