@@ -44,6 +44,7 @@ const ModelModal = lazy(() =>
 export interface ModelConfigRef {
   getAutoConfigFormData: () => { apiKey: string; selectedModel: string } | null;
   handleClose: () => void;
+  onSubmit: () => Promise<void>;
 }
 
 interface ModelConfigProps {
@@ -57,6 +58,7 @@ interface ModelConfigProps {
   autoSwitchToAutoMode?: boolean;
   hideDocumentationHint?: boolean;
   showTip?: boolean;
+  showSaveBtn?: boolean;
 }
 
 const ModelConfig = forwardRef<ModelConfigRef, ModelConfigProps>(
@@ -73,6 +75,7 @@ const ModelConfig = forwardRef<ModelConfigRef, ModelConfigProps>(
       autoSwitchToAutoMode = false,
       hideDocumentationHint = false,
       showTip = false,
+      showSaveBtn = true,
     } = props;
 
     const [autoConfigMode, setAutoConfigMode] = useState(false);
@@ -182,51 +185,58 @@ const ModelConfig = forwardRef<ModelConfigRef, ModelConfigProps>(
         }
         return null;
       },
+      onSubmit: handleSave,
       handleClose: handleCloseModal,
     }));
 
     const handleSave = async () => {
-      setIsSaving(true);
-      try {
-        const requestData: {
-          mode: 'auto' | 'manual';
-          auto_mode_api_key?: string;
-          chat_model?: string;
-        } = {
-          mode: tempMode,
-        };
+      if (tempMode !== savedMode || hasConfigChanged) {
+        setIsSaving(true);
+        try {
+          const requestData: {
+            mode: 'auto' | 'manual';
+            auto_mode_api_key?: string;
+            chat_model?: string;
+          } = {
+            mode: tempMode,
+          };
 
-        // 如果是自动模式，获取用户输入的 API Key 和 model
-        if (tempMode === 'auto' && autoConfigRef.current) {
-          const formData = autoConfigRef.current.getFormData();
-          if (formData) {
-            requestData.auto_mode_api_key = formData.apiKey;
-            requestData.chat_model = formData.selectedModel;
+          // 如果是自动模式，获取用户输入的 API Key 和 model
+          if (tempMode === 'auto' && autoConfigRef.current) {
+            const formData = autoConfigRef.current.getFormData();
+            if (formData) {
+              requestData.auto_mode_api_key = formData.apiKey;
+              requestData.chat_model = formData.selectedModel;
+            }
           }
-        }
 
-        await postApiV1ModelSwitchMode(requestData);
-        setSavedMode(tempMode);
-        setAutoConfigMode(tempMode === 'auto');
-        setHasConfigChanged(false); // 重置变更标记
+          await postApiV1ModelSwitchMode(requestData);
+          setSavedMode(tempMode);
+          setAutoConfigMode(tempMode === 'auto');
+          setHasConfigChanged(false); // 重置变更标记
 
-        // 更新保存的初始值
-        if (tempMode === 'auto' && autoConfigRef.current) {
-          const formData = autoConfigRef.current.getFormData();
-          if (formData) {
-            setInitialApiKey(formData.apiKey);
-            setInitialChatModel(formData.selectedModel);
+          // 更新保存的初始值
+          if (tempMode === 'auto' && autoConfigRef.current) {
+            const formData = autoConfigRef.current.getFormData();
+            if (formData) {
+              setInitialApiKey(formData.apiKey);
+              setInitialChatModel(formData.selectedModel);
+            }
           }
-        }
 
-        message.success(
-          tempMode === 'auto' ? '已切换为自动配置模式' : '已切换为手动配置模式',
-        );
-        getModelList(); // 刷新模型列表
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setIsSaving(false);
+          if (showSaveBtn) {
+            message.success(
+              tempMode === 'auto'
+                ? '已切换为自动配置模式'
+                : '已切换为手动配置模式',
+            );
+          }
+          getModelList(); // 刷新模型列表
+        } catch (err) {
+          console.error(err);
+        } finally {
+          setIsSaving(false);
+        }
       }
     };
 
@@ -310,7 +320,7 @@ const ModelConfig = forwardRef<ModelConfigRef, ModelConfigProps>(
               />
             </RadioGroup>
           </Box>
-          {(tempMode !== savedMode || hasConfigChanged) && (
+          {(tempMode !== savedMode || hasConfigChanged) && showSaveBtn && (
             <Button
               variant='contained'
               size='small'
