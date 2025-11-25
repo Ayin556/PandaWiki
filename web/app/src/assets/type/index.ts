@@ -69,7 +69,6 @@ export interface KBDetail {
     recommend_node_ids: string[];
     desc: string;
     keyword: string;
-    auto_sitemap: boolean;
     head_code: string;
     body_code: string;
     theme_mode?: 'light' | 'dark';

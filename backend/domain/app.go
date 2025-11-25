@@ -96,9 +96,8 @@ type AppSettings struct {
 	RecommendQuestions []string `json:"recommend_questions,omitempty"`
 	RecommendNodeIDs   []string `json:"recommend_node_ids,omitempty"`
 	// seo
-	Desc        string `json:"desc,omitempty"`
-	Keyword     string `json:"keyword,omitempty"`
-	AutoSitemap bool   `json:"auto_sitemap,omitempty"`
+	Desc    string `json:"desc,omitempty"`
+	Keyword string `json:"keyword,omitempty"`
 	// inject code
 	HeadCode string `json:"head_code,omitempty"`
 	BodyCode string `json:"body_code,omitempty"`
@@ -484,9 +483,8 @@ type AppSettingsResp struct {
 	RecommendQuestions []string `json:"recommend_questions,omitempty"`
 	RecommendNodeIDs   []string `json:"recommend_node_ids,omitempty"`
 	// seo
-	Desc        string `json:"desc,omitempty"`
-	Keyword     string `json:"keyword,omitempty"`
-	AutoSitemap bool   `json:"auto_sitemap,omitempty"`
+	Desc    string `json:"desc,omitempty"`
+	Keyword string `json:"keyword,omitempty"`
 	// inject code
 	HeadCode string `json:"head_code,omitempty"`
 	BodyCode string `json:"body_code,omitempty"`

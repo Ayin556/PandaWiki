@@ -4516,9 +4516,6 @@ const docTemplate = `{
                         }
                     ]
                 },
-                "auto_sitemap": {
-                    "type": "boolean"
-                },
                 "body_code": {
                     "type": "string"
                 },
@@ -4805,9 +4802,6 @@ const docTemplate = `{
                             "$ref": "#/definitions/domain.AIFeedbackSettings"
                         }
                     ]
-                },
-                "auto_sitemap": {
-                    "type": "boolean"
                 },
                 "body_code": {
                     "type": "string"
