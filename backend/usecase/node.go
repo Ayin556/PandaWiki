@@ -119,6 +119,12 @@ func (u *NodeUsecase) GetNodeByKBID(ctx context.Context, id, kbId, format string
 		node.PublisherAccount = nodeRelease.PublisherAccount
 	}
 
+	nodeStat, err := u.nodeRepo.GetNodeStatsByNodeId(ctx, node.ID)
+	if err != nil {
+		return nil, err
+	}
+	node.PV = nodeStat.PV
+
 	if node.Meta.ContentType == domain.ContentTypeMD {
 		return node, nil
 	}
@@ -219,6 +225,21 @@ func (u *NodeUsecase) GetNodeReleaseDetailByKBIDAndID(ctx context.Context, kbID,
 	}
 	if account, ok := userMap[node.PublisherId]; ok {
 		node.PublisherAccount = account
+	}
+
+	if domain.GetBaseEditionLimitation(ctx).AllowNodeStats {
+		webApp, err := u.appRepo.GetOrCreateAppByKBIDAndType(ctx, kbID, domain.AppTypeWeb)
+		if err != nil {
+			return nil, err
+		}
+
+		if webApp.Settings.StatsSetting.PVEnable {
+			nodeStat, err := u.nodeRepo.GetNodeStatsByNodeId(ctx, nodeId)
+			if err != nil {
+				return nil, err
+			}
+			node.PV = nodeStat.PV
+		}
 	}
 
 	if node.Meta.ContentType == domain.ContentTypeMD {

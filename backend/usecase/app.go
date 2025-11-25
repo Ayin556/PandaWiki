@@ -534,6 +534,7 @@ func (u *AppUsecase) GetAppDetailByKBIDAndAppType(ctx context.Context, kbID stri
 		WecomAIBotSettings: app.Settings.WecomAIBotSettings,
 
 		MCPServerSettings: app.Settings.MCPServerSettings,
+		StatsSetting:      app.Settings.StatsSetting,
 	}
 
 	if !domain.GetBaseEditionLimitation(ctx).AllowCustomCopyright {
@@ -651,6 +652,7 @@ func (u *AppUsecase) ShareGetWebAppInfo(ctx context.Context, kbID string, authId
 			ContributeSettings:  app.Settings.ContributeSettings,
 			HomePageSetting:     app.Settings.HomePageSetting,
 			ConversationSetting: app.Settings.ConversationSetting,
+			StatsSetting:        app.Settings.StatsSetting,
 		},
 	}
 	// init ai feedback string

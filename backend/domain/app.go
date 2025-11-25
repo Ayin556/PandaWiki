@@ -66,8 +66,6 @@ func (t AppType) ToSourceType() consts.SourceType {
 		return consts.SourceTypeOpenAIAPI
 	case AppTypeLarkBot:
 		return consts.SourceTypeLarkBot
-	case AppTypeMcpServer:
-		return consts.SourceTypeMcpServer
 	default:
 		return ""
 	}
@@ -172,6 +170,11 @@ type AppSettings struct {
 	ConversationSetting ConversationSetting     `json:"conversation_setting"`
 	// MCP Server Settings
 	MCPServerSettings MCPServerSettings `json:"mcp_server_settings,omitempty"`
+	StatsSetting      StatsSetting      `json:"stats_setting"`
+}
+
+type StatsSetting struct {
+	PVEnable bool `json:"pv_enable"`
 }
 
 type ConversationSetting struct {
@@ -561,6 +564,7 @@ type AppSettingsResp struct {
 	ConversationSetting  ConversationSetting       `json:"conversation_setting"`
 	// MCP Server Settings
 	MCPServerSettings MCPServerSettings `json:"mcp_server_settings,omitempty"`
+	StatsSetting      StatsSetting      `json:"stats_setting"`
 }
 
 type WebAppLandingConfigResp struct {

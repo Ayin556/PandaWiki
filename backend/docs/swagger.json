@@ -4648,6 +4648,9 @@
                 "search_placeholder": {
                     "type": "string"
                 },
+                "stats_setting": {
+                    "$ref": "#/definitions/domain.StatsSetting"
+                },
                 "theme_and_style": {
                     "$ref": "#/definitions/domain.ThemeAndStyle"
                 },
@@ -4925,6 +4928,9 @@
                 },
                 "search_placeholder": {
                     "type": "string"
+                },
+                "stats_setting": {
+                    "$ref": "#/definitions/domain.StatsSetting"
                 },
                 "theme_and_style": {
                     "$ref": "#/definitions/domain.ThemeAndStyle"
@@ -7370,6 +7376,14 @@
                 "StatPageSceneLogin"
             ]
         },
+        "domain.StatsSetting": {
+            "type": "object",
+            "properties": {
+                "pv_enable": {
+                    "type": "boolean"
+                }
+            }
+        },
         "domain.SwitchModeReq": {
             "type": "object",
             "required": [
@@ -8566,6 +8580,9 @@
                 "publisher_id": {
                     "type": "string"
                 },
+                "pv": {
+                    "type": "integer"
+                },
                 "status": {
                     "$ref": "#/definitions/domain.NodeStatus"
                 },
@@ -8742,6 +8759,9 @@
                 },
                 "publisher_id": {
                     "type": "string"
+                },
+                "pv": {
+                    "type": "integer"
                 },
                 "status": {
                     "$ref": "#/definitions/domain.NodeStatus"

@@ -236,6 +236,12 @@ const DocContent = ({
             <Box>{characterCount} 字</Box>
           </>
         )}
+        {(info.pv ?? 0) > 0 && (
+          <>
+            <Box>·</Box>
+            <Box>浏览量 {info.pv}</Box>
+          </>
+        )}
       </Stack>
       {info?.meta?.summary && (
         <Box
