@@ -202,23 +202,32 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
     onAiWritingGetSuggestion: handleAiWritingGetSuggestion,
   });
 
+  const exportFile = (value: string, type: string) => {
+    if (!value) return;
+    const content = completeIncompleteLinks(value);
+    const blob = new Blob([content], { type: `text/${type}` });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${nodeDetail?.name}.${type}`;
+    a.click();
+    URL.revokeObjectURL(url);
+    message.success('导出成功');
+  };
+
   const handleExport = useCallback(
     async (type: string) => {
-      if (editorRef) {
-        let value = nodeDetail?.content || '';
-        if (!isMarkdown) {
-          value = editorRef.getContent() || '';
+      if (type === 'html') {
+        const value = editorRef.getHTML() || '';
+        exportFile(value, type);
+      } else if (type === 'md') {
+        if (isMarkdown) {
+          let value = nodeDetail?.content || '';
+          exportFile(value, type);
+        } else if (editorRef) {
+          const value = editorRef.getMarkdown() || '';
+          exportFile(value, type);
         }
-        if (!value) return;
-        const content = completeIncompleteLinks(value);
-        const blob = new Blob([content], { type: `text/${type}` });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${nodeDetail?.name}.${type}`;
-        a.click();
-        URL.revokeObjectURL(url);
-        message.success('导出成功');
       }
     },
     [editorRef, nodeDetail?.content, nodeDetail?.name, isMarkdown],
