@@ -20,6 +20,7 @@ import {
   IconTianjiawendang,
   IconZiti,
 } from '@panda-wiki/icons';
+import IconPageview1 from '@panda-wiki/icons/IconPageview1';
 import dayjs from 'dayjs';
 import { debounce } from 'lodash-es';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -36,7 +37,6 @@ import Header from './Header';
 import Summary from './Summary';
 import Toc from './Toc';
 import Toolbar from './Toolbar';
-import IconPageview1 from '@panda-wiki/icons/IconPageview1';
 
 interface WrapProps {
   detail: V1NodeDetailResp;
@@ -691,7 +691,19 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
       </Box>
       <Box
         sx={{ ...(fixedToc && { display: 'flex' }) }}
-        onKeyDown={event => event.stopPropagation()}
+        onKeyDown={event => {
+          if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+            return;
+          }
+          if (
+            isMarkdown &&
+            (event.ctrlKey || event.metaKey) &&
+            event.key === 'b'
+          ) {
+            return;
+          }
+          event.stopPropagation();
+        }}
       >
         {isMarkdown ? (
           <Box
