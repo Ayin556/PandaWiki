@@ -4655,6 +4655,9 @@ const docTemplate = `{
                 "search_placeholder": {
                     "type": "string"
                 },
+                "stats_setting": {
+                    "$ref": "#/definitions/domain.StatsSetting"
+                },
                 "theme_and_style": {
                     "$ref": "#/definitions/domain.ThemeAndStyle"
                 },
@@ -4932,6 +4935,9 @@ const docTemplate = `{
                 },
                 "search_placeholder": {
                     "type": "string"
+                },
+                "stats_setting": {
+                    "$ref": "#/definitions/domain.StatsSetting"
                 },
                 "theme_and_style": {
                     "$ref": "#/definitions/domain.ThemeAndStyle"
@@ -7377,6 +7383,14 @@ const docTemplate = `{
                 "StatPageSceneLogin"
             ]
         },
+        "domain.StatsSetting": {
+            "type": "object",
+            "properties": {
+                "pv_enable": {
+                    "type": "boolean"
+                }
+            }
+        },
         "domain.SwitchModeReq": {
             "type": "object",
             "required": [
@@ -8573,6 +8587,9 @@ const docTemplate = `{
                 "publisher_id": {
                     "type": "string"
                 },
+                "pv": {
+                    "type": "integer"
+                },
                 "status": {
                     "$ref": "#/definitions/domain.NodeStatus"
                 },
@@ -8749,6 +8766,9 @@ const docTemplate = `{
                 },
                 "publisher_id": {
                     "type": "string"
+                },
+                "pv": {
+                    "type": "integer"
                 },
                 "status": {
                     "$ref": "#/definitions/domain.NodeStatus"

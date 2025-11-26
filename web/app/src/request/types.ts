@@ -341,6 +341,7 @@ export interface DomainAppSettings {
   recommend_node_ids?: string[];
   recommend_questions?: string[];
   search_placeholder?: string;
+  stats_setting?: DomainStatsSetting;
   theme_and_style?: DomainThemeAndStyle;
   /** theme */
   theme_mode?: string;
@@ -428,6 +429,7 @@ export interface DomainAppSettingsResp {
   recommend_node_ids?: string[];
   recommend_questions?: string[];
   search_placeholder?: string;
+  stats_setting?: DomainStatsSetting;
   theme_and_style?: DomainThemeAndStyle;
   /** theme */
   theme_mode?: string;
@@ -1256,6 +1258,10 @@ export interface DomainStatPageReq {
   scene: 1 | 2 | 3 | 4;
 }
 
+export interface DomainStatsSetting {
+  pv_enable?: boolean;
+}
+
 export interface DomainSwitchModeReq {
   /** 百智云 API Key */
   auto_mode_api_key?: string;
@@ -1675,6 +1681,7 @@ export interface V1NodeDetailResp {
   permissions?: DomainNodePermissions;
   publisher_account?: string;
   publisher_id?: string;
+  pv?: number;
   status?: DomainNodeStatus;
   type?: DomainNodeType;
   updated_at?: string;
@@ -1735,6 +1742,7 @@ export interface V1ShareNodeDetailResp {
   permissions?: DomainNodePermissions;
   publisher_account?: string;
   publisher_id?: string;
+  pv?: number;
   status?: DomainNodeStatus;
   type?: DomainNodeType;
   updated_at?: string;

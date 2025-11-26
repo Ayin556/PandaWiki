@@ -153,6 +153,7 @@ export { default as IconOllama } from './IconOllama';
 export { default as IconOpenrouter } from './IconOpenrouter';
 export { default as IconPCduan } from './IconPCduan';
 export { default as IconPDF } from './IconPDF';
+export { default as IconPageview1 } from './IconPageview1';
 export { default as IconPaperFull } from './IconPaperFull';
 export { default as IconPaperPlaneFill } from './IconPaperPlaneFill';
 export { default as IconPeizhi } from './IconPeizhi';

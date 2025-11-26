@@ -36,6 +36,7 @@ import Header from './Header';
 import Summary from './Summary';
 import Toc from './Toc';
 import Toolbar from './Toolbar';
+import IconPageview1 from '@panda-wiki/icons/IconPageview1';
 
 interface WrapProps {
   detail: V1NodeDetailResp;
@@ -434,6 +435,15 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
             <IconZiti sx={{ fontSize: 12 }} />
             {characterCount} 字
           </Stack>
+          <Stack
+            direction={'row'}
+            alignItems={'center'}
+            gap={0.5}
+            sx={{ fontSize: 12, color: 'text.tertiary' }}
+          >
+            <IconPageview1 sx={{ fontSize: 12 }} />
+            浏览量 {nodeDetail?.pv}
+          </Stack>
         </Stack>
         <Box
           sx={{
@@ -681,19 +691,7 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
       </Box>
       <Box
         sx={{ ...(fixedToc && { display: 'flex' }) }}
-        onKeyDown={event => {
-          if ((event.ctrlKey || event.metaKey) && event.key === 's') {
-            return;
-          }
-          if (
-            isMarkdown &&
-            (event.ctrlKey || event.metaKey) &&
-            event.key === 'b'
-          ) {
-            return;
-          }
-          event.stopPropagation();
-        }}
+        onKeyDown={event => event.stopPropagation()}
       >
         {isMarkdown ? (
           <Box
