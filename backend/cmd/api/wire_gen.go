@@ -185,7 +185,8 @@ func createApp() (*App, error) {
 		OpenapiV1Handler:         openapiV1Handler,
 		ShareCommonHandler:       shareCommonHandler,
 	}
-	client, err := telemetry.NewClient(logger, knowledgeBaseRepository)
+	mcpRepository := pg2.NewMCPRepository(db, logger)
+	client, err := telemetry.NewClient(logger, knowledgeBaseRepository, modelUsecase, userUsecase, nodeRepository, conversationRepository, mcpRepository, configConfig)
 	if err != nil {
 		return nil, err
 	}
