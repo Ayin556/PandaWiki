@@ -142,7 +142,7 @@ func (u *AppUsecase) ValidateUpdateApp(ctx context.Context, id string, req *doma
 			return domain.ErrPermissionDenied
 		}
 		if req.Settings.ConversationSetting.CopyrightInfo != domain.SettingCopyrightInfo && app.Settings.ConversationSetting.CopyrightInfo != req.Settings.ConversationSetting.CopyrightInfo {
-			return domain.ErrPermissionDenied
+			req.Settings.ConversationSetting.CopyrightInfo = domain.SettingCopyrightInfo
 		}
 	}
 
