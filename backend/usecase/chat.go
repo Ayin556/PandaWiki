@@ -219,7 +219,7 @@ func (u *ChatUsecase) Chat(ctx context.Context, req *domain.ChatRequest) (<-chan
 		}
 
 		// 4. retrieve documents and format prompt
-		messages, rankedNodes, err := u.llmUsecase.FormatConversationMessages(ctx, req.ConversationID, req.KBID, groupIds)
+		messages, rankedNodes, err := u.llmUsecase.FormatConversationMessages(ctx, req.ConversationID, req.KBID, groupIds, req.Prompt)
 		if err != nil {
 			u.logger.Error("failed to format chat messages", log.Error(err))
 			eventCh <- domain.SSEEvent{Type: "error", Content: "failed to format chat messages"}

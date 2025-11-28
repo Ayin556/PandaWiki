@@ -3024,6 +3024,50 @@ const docTemplate = `{
                 }
             }
         },
+        "/share/v1/app/wechat/info": {
+            "get": {
+                "description": "WechatAppInfo",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "share_chat"
+                ],
+                "summary": "WechatAppInfo",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "kb id",
+                        "name": "X-KB-ID",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/domain.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/v1.WechatAppInfoResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/share/v1/app/wechat/service/answer": {
             "get": {
                 "description": "GetWechatAnswer",
@@ -4710,6 +4754,9 @@ const docTemplate = `{
                 "web_app_landing_theme": {
                     "$ref": "#/definitions/domain.WebAppLandingTheme"
                 },
+                "wechat_app_advanced_setting": {
+                    "$ref": "#/definitions/domain.WeChatAppAdvancedSetting"
+                },
                 "wechat_app_agent_id": {
                     "type": "string"
                 },
@@ -4981,6 +5028,9 @@ const docTemplate = `{
                 },
                 "web_app_landing_theme": {
                     "$ref": "#/definitions/domain.WebAppLandingTheme"
+                },
+                "wechat_app_advanced_setting": {
+                    "$ref": "#/definitions/domain.WeChatAppAdvancedSetting"
                 },
                 "wechat_app_agent_id": {
                     "type": "string"
@@ -7629,6 +7679,29 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.WeChatAppAdvancedSetting": {
+            "type": "object",
+            "properties": {
+                "disclaimer_content": {
+                    "type": "string"
+                },
+                "feedback_enable": {
+                    "type": "boolean"
+                },
+                "feedback_type": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "prompt": {
+                    "type": "string"
+                },
+                "text_response_enable": {
+                    "type": "boolean"
+                }
+            }
+        },
         "domain.WebAppCommentSettings": {
             "type": "object",
             "properties": {
@@ -8849,6 +8922,26 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/v1.UserListItemResp"
                     }
+                }
+            }
+        },
+        "v1.WechatAppInfoResp": {
+            "type": "object",
+            "properties": {
+                "disclaimer_content": {
+                    "type": "string"
+                },
+                "feedback_enable": {
+                    "type": "boolean"
+                },
+                "feedback_type": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "wechat_app_is_enabled": {
+                    "type": "boolean"
                 }
             }
         }

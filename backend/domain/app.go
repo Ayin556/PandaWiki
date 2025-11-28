@@ -111,12 +111,13 @@ type AppSettings struct {
 	// LarkBot
 	LarkBotSettings LarkBotSettings `json:"lark_bot_settings,omitempty"`
 	// WechatAppBot 企业微信机器人
-	WeChatAppIsEnabled      *bool  `json:"wechat_app_is_enabled,omitempty"`
-	WeChatAppToken          string `json:"wechat_app_token,omitempty"`
-	WeChatAppEncodingAESKey string `json:"wechat_app_encodingaeskey,omitempty"`
-	WeChatAppCorpID         string `json:"wechat_app_corpid,omitempty"`
-	WeChatAppSecret         string `json:"wechat_app_secret,omitempty"`
-	WeChatAppAgentID        string `json:"wechat_app_agent_id,omitempty"`
+	WeChatAppIsEnabled       *bool                    `json:"wechat_app_is_enabled,omitempty"`
+	WeChatAppToken           string                   `json:"wechat_app_token,omitempty"`
+	WeChatAppEncodingAESKey  string                   `json:"wechat_app_encodingaeskey,omitempty"`
+	WeChatAppCorpID          string                   `json:"wechat_app_corpid,omitempty"`
+	WeChatAppSecret          string                   `json:"wechat_app_secret,omitempty"`
+	WeChatAppAgentID         string                   `json:"wechat_app_agent_id,omitempty"`
+	WeChatAppAdvancedSetting WeChatAppAdvancedSetting `json:"wechat_app_advanced_setting"`
 	// WecomAIBotSettings 企业微信智能机器人
 	WecomAIBotSettings WecomAIBotSettings `json:"wecom_ai_bot_settings"`
 	// WechatServiceBot
@@ -171,6 +172,14 @@ type AppSettings struct {
 	// MCP Server Settings
 	MCPServerSettings MCPServerSettings `json:"mcp_server_settings,omitempty"`
 	StatsSetting      StatsSetting      `json:"stats_setting"`
+}
+
+type WeChatAppAdvancedSetting struct {
+	TextResponseEnable bool     `json:"text_response_enable,omitempty"`
+	FeedbackEnable     bool     `json:"feedback_enable,omitempty"`
+	FeedbackType       []string `json:"feedback_type,omitempty"`
+	DisclaimerContent  string   `json:"disclaimer_content,omitempty"`
+	Prompt             string   `json:"prompt,omitempty"`
 }
 
 type StatsSetting struct {
@@ -503,12 +512,13 @@ type AppSettingsResp struct {
 	// LarkBot
 	LarkBotSettings LarkBotSettings `json:"lark_bot_settings,omitempty"`
 	// WechatAppBot
-	WeChatAppIsEnabled      *bool  `json:"wechat_app_is_enabled,omitempty"`
-	WeChatAppToken          string `json:"wechat_app_token,omitempty"`
-	WeChatAppEncodingAESKey string `json:"wechat_app_encodingaeskey,omitempty"`
-	WeChatAppCorpID         string `json:"wechat_app_corpid,omitempty"`
-	WeChatAppSecret         string `json:"wechat_app_secret,omitempty"`
-	WeChatAppAgentID        string `json:"wechat_app_agent_id,omitempty"`
+	WeChatAppIsEnabled       *bool                    `json:"wechat_app_is_enabled,omitempty"`
+	WeChatAppToken           string                   `json:"wechat_app_token,omitempty"`
+	WeChatAppEncodingAESKey  string                   `json:"wechat_app_encodingaeskey,omitempty"`
+	WeChatAppCorpID          string                   `json:"wechat_app_corpid,omitempty"`
+	WeChatAppSecret          string                   `json:"wechat_app_secret,omitempty"`
+	WeChatAppAgentID         string                   `json:"wechat_app_agent_id,omitempty"`
+	WeChatAppAdvancedSetting WeChatAppAdvancedSetting `json:"wechat_app_advanced_setting"`
 	// WechatServiceBot
 	WeChatServiceIsEnabled       *bool    `json:"wechat_service_is_enabled,omitempty"`
 	WeChatServiceToken           string   `json:"wechat_service_token,omitempty"`
