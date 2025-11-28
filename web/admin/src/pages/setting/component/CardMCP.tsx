@@ -95,12 +95,16 @@ const CardMCP = ({ kb }: CardMCPProps) => {
         (res.settings as any)?.mcp_server_settings?.sample_auth ?? {};
       const accessVal = auth.enabled ? 'auth' : 'open';
       const tokenVal = auth.password ?? '';
-      const toolName =
+      const toolNameRaw =
         (res.settings as any)?.mcp_server_settings?.docs_tool_settings?.name ??
         '';
-      const toolDesc =
+      const toolDescRaw =
         (res.settings as any)?.mcp_server_settings?.docs_tool_settings?.desc ??
         '';
+      const toolName = toolNameRaw.trim() ? toolNameRaw : 'get_docs';
+      const toolDesc = toolDescRaw.trim()
+        ? toolDescRaw
+        : '为解决用户的问题从知识库中检索文档';
       setValue('is_enabled', is_enabled);
       setValue('access', accessVal);
       setValue('token', tokenVal);

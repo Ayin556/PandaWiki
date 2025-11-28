@@ -1178,3 +1178,14 @@ func (r *NodeRepository) GetNodeIdsByDocIds(ctx context.Context, docIds []string
 
 	return docToNodeMap, nil
 }
+
+func (r *NodeRepository) GetNodeCount(ctx context.Context) (int, error) {
+	var count int64
+	err := r.db.WithContext(ctx).
+		Model(&domain.Node{}).
+		Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+	return int(count), nil
+}
