@@ -21,6 +21,7 @@ type ChatRequest struct {
 
 	RemoteIP string           `json:"-"`
 	Info     ConversationInfo `json:"-"`
+	Prompt   string           `json:"-"`
 }
 
 type ChatRagOnlyRequest struct {

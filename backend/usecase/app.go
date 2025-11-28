@@ -7,6 +7,7 @@ import (
 	"sync"
 	"time"
 
+	v1 "github.com/chaitin/panda-wiki/api/share/v1"
 	"github.com/chaitin/panda-wiki/config"
 	"github.com/chaitin/panda-wiki/consts"
 	"github.com/chaitin/panda-wiki/domain"
@@ -87,7 +88,7 @@ func NewAppUsecase(
 	return u
 }
 
-func (u *AppUsecase) ValidateUpdateApp(ctx context.Context, id string, req *domain.UpdateAppReq, edition consts.LicenseEdition) error {
+func (u *AppUsecase) ValidateUpdateApp(ctx context.Context, id string, req *domain.UpdateAppReq) error {
 	app, err := u.repo.GetAppDetail(ctx, id)
 	if err != nil {
 		return err
@@ -108,6 +109,18 @@ func (u *AppUsecase) ValidateUpdateApp(ctx context.Context, id string, req *doma
 		if !slices.Equal(app.Settings.WechatServiceContainKeywords, req.Settings.WechatServiceContainKeywords) ||
 			!slices.Equal(app.Settings.WechatServiceEqualKeywords, req.Settings.WechatServiceEqualKeywords) {
 			return domain.ErrPermissionDenied
+		}
+
+		if app.Settings.WeChatAppAdvancedSetting.FeedbackEnable != req.Settings.WeChatAppAdvancedSetting.FeedbackEnable ||
+			app.Settings.WeChatAppAdvancedSetting.TextResponseEnable != req.Settings.WeChatAppAdvancedSetting.TextResponseEnable ||
+			app.Settings.WeChatAppAdvancedSetting.Prompt != req.Settings.WeChatAppAdvancedSetting.Prompt ||
+			!slices.Equal(app.Settings.WeChatAppAdvancedSetting.FeedbackType, req.Settings.WeChatAppAdvancedSetting.FeedbackType) ||
+			app.Settings.WeChatAppAdvancedSetting.DisclaimerContent != req.Settings.WeChatAppAdvancedSetting.DisclaimerContent {
+			return domain.ErrPermissionDenied
+		}
+	} else {
+		if req.Settings.WeChatAppAdvancedSetting.Prompt == "" {
+			req.Settings.WeChatAppAdvancedSetting.Prompt = domain.SystemDefaultPrompt
 		}
 	}
 
@@ -476,12 +489,13 @@ func (u *AppUsecase) GetAppDetailByKBIDAndAppType(ctx context.Context, kbID stri
 		// LarkBot
 		LarkBotSettings: app.Settings.LarkBotSettings,
 		// WechatBot
-		WeChatAppIsEnabled:      app.Settings.WeChatAppIsEnabled,
-		WeChatAppToken:          app.Settings.WeChatAppToken,
-		WeChatAppCorpID:         app.Settings.WeChatAppCorpID,
-		WeChatAppEncodingAESKey: app.Settings.WeChatAppEncodingAESKey,
-		WeChatAppSecret:         app.Settings.WeChatAppSecret,
-		WeChatAppAgentID:        app.Settings.WeChatAppAgentID,
+		WeChatAppIsEnabled:       app.Settings.WeChatAppIsEnabled,
+		WeChatAppToken:           app.Settings.WeChatAppToken,
+		WeChatAppCorpID:          app.Settings.WeChatAppCorpID,
+		WeChatAppEncodingAESKey:  app.Settings.WeChatAppEncodingAESKey,
+		WeChatAppSecret:          app.Settings.WeChatAppSecret,
+		WeChatAppAgentID:         app.Settings.WeChatAppAgentID,
+		WeChatAppAdvancedSetting: app.Settings.WeChatAppAdvancedSetting,
 		// WechatServiceBot
 		WeChatServiceIsEnabled:       app.Settings.WeChatServiceIsEnabled,
 		WeChatServiceToken:           app.Settings.WeChatServiceToken,
@@ -715,6 +729,27 @@ func (u *AppUsecase) GetWidgetAppInfo(ctx context.Context, kbID string) (*domain
 	}
 
 	return appInfo, nil
+}
+
+func (u *AppUsecase) GetWechatAppInfo(ctx context.Context, kbID string) (*v1.WechatAppInfoResp, error) {
+	wechatApp, err := u.repo.GetOrCreateAppByKBIDAndType(ctx, kbID, domain.AppTypeWechatBot)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &v1.WechatAppInfoResp{}
+
+	if wechatApp.Settings.WeChatAppIsEnabled != nil {
+		resp.WeChatAppIsEnabled = *wechatApp.Settings.WeChatAppIsEnabled
+	}
+
+	if domain.GetBaseEditionLimitation(ctx).AllowAdvancedBot {
+		resp.FeedbackEnable = wechatApp.Settings.WeChatAppAdvancedSetting.FeedbackEnable
+		resp.FeedbackType = wechatApp.Settings.WeChatAppAdvancedSetting.FeedbackType
+		resp.DisclaimerContent = wechatApp.Settings.WeChatAppAdvancedSetting.DisclaimerContent
+	}
+
+	return resp, nil
 }
 
 func (u *AppUsecase) handleBotAuths(ctx context.Context, id string, newSettings *domain.AppSettings) error {

@@ -540,6 +540,8 @@ definitions:
         type: array
       web_app_landing_theme:
         $ref: '#/definitions/domain.WebAppLandingTheme'
+      wechat_app_advanced_setting:
+        $ref: '#/definitions/domain.WeChatAppAdvancedSetting'
       wechat_app_agent_id:
         type: string
       wechat_app_corpid:
@@ -711,6 +713,8 @@ definitions:
         type: array
       web_app_landing_theme:
         $ref: '#/definitions/domain.WebAppLandingTheme'
+      wechat_app_advanced_setting:
+        $ref: '#/definitions/domain.WeChatAppAdvancedSetting'
       wechat_app_agent_id:
         type: string
       wechat_app_corpid:
@@ -2444,6 +2448,21 @@ definitions:
       user_id:
         type: string
     type: object
+  domain.WeChatAppAdvancedSetting:
+    properties:
+      disclaimer_content:
+        type: string
+      feedback_enable:
+        type: boolean
+      feedback_type:
+        items:
+          type: string
+        type: array
+      prompt:
+        type: string
+      text_response_enable:
+        type: boolean
+    type: object
   domain.WebAppCommentSettings:
     properties:
       is_enable:
@@ -3249,6 +3268,19 @@ definitions:
         items:
           $ref: '#/definitions/v1.UserListItemResp'
         type: array
+    type: object
+  v1.WechatAppInfoResp:
+    properties:
+      disclaimer_content:
+        type: string
+      feedback_enable:
+        type: boolean
+      feedback_type:
+        items:
+          type: string
+        type: array
+      wechat_app_is_enabled:
+        type: boolean
     type: object
 info:
   contact: {}
@@ -5097,6 +5129,32 @@ paths:
       summary: GetAppInfo
       tags:
       - share_app
+  /share/v1/app/wechat/info:
+    get:
+      consumes:
+      - application/json
+      description: WechatAppInfo
+      parameters:
+      - description: kb id
+        in: header
+        name: X-KB-ID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/v1.WechatAppInfoResp'
+              type: object
+      summary: WechatAppInfo
+      tags:
+      - share_chat
   /share/v1/app/wechat/service/answer:
     get:
       consumes:
