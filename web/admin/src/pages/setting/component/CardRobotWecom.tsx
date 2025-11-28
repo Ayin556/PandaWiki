@@ -354,7 +354,7 @@ const CardRobotWecom = ({
                         color: 'primary.main',
                         display: 'block',
                         cursor: 'pointer',
-                        zIndex: 9999,
+                        zIndex: 1,
                       }}
                       onClick={onResetPrompt}
                     >
