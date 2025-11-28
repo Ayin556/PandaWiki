@@ -356,6 +356,7 @@ export interface DomainAppSettings {
   /** WebAppLandingConfigs */
   web_app_landing_configs?: DomainWebAppLandingConfig[];
   web_app_landing_theme?: DomainWebAppLandingTheme;
+  wechat_app_advanced_setting?: DomainWeChatAppAdvancedSetting;
   wechat_app_agent_id?: string;
   wechat_app_corpid?: string;
   wechat_app_encodingaeskey?: string;
@@ -444,6 +445,7 @@ export interface DomainAppSettingsResp {
   /** WebApp Landing Settings */
   web_app_landing_configs?: DomainWebAppLandingConfigResp[];
   web_app_landing_theme?: DomainWebAppLandingTheme;
+  wechat_app_advanced_setting?: DomainWeChatAppAdvancedSetting;
   wechat_app_agent_id?: string;
   wechat_app_corpid?: string;
   wechat_app_encodingaeskey?: string;
@@ -1346,6 +1348,14 @@ export interface DomainUserInfo {
   name?: string;
   real_name?: string;
   user_id?: string;
+}
+
+export interface DomainWeChatAppAdvancedSetting {
+  disclaimer_content?: string;
+  feedback_enable?: boolean;
+  feedback_type?: string[];
+  prompt?: string;
+  text_response_enable?: boolean;
 }
 
 export interface DomainWebAppCommentSettings {
