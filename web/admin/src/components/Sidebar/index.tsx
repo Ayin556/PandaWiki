@@ -134,6 +134,7 @@ const Sidebar = () => {
         position: 'fixed',
         top: 0,
         left: 0,
+        overflow: 'auto',
       }}
     >
       <Stack
@@ -156,7 +157,7 @@ const Sidebar = () => {
       >
         PandaWiki
       </Box>
-      <Stack sx={{ pt: 2, flexGrow: 1 }} gap={1}>
+      <Stack sx={{ py: 2, flexGrow: 1 }} gap={1}>
         {menus.map(it => {
           let isActive = false;
           if (it.value === '/') {
