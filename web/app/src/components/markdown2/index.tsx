@@ -157,8 +157,15 @@ const MarkDown2: React.FC<MarkDown2Props> = ({
         const token = tokens[idx];
         const src = token.attrGet('src') || '';
         const alt = token.attrGet('alt') || token.content;
-        const attrs = token.attrs || [];
-        return renderImage(src, alt, attrs, imageCount - 1);
+        const rawAttrs = token.attrs || [];
+        // 过滤潜在危险属性（如 onload/onerror 等事件处理）
+        const safeAttrs = rawAttrs.filter(([name]) => {
+          const lower = name.toLowerCase();
+          // 屏蔽所有以 on 开头的属性，例如 onload/onerror/onclick 等
+          if (lower.startsWith('on')) return false;
+          return true;
+        });
+        return renderImage(src, alt, safeAttrs, imageCount - 1);
       };
 
       // 自定义代码块渲染
@@ -184,7 +191,9 @@ const MarkDown2: React.FC<MarkDown2Props> = ({
       md.renderer.rules.code_inline = (tokens, idx) => {
         const token = tokens[idx];
         const code = token.content;
-        return `<code  style="cursor: pointer;">${code}</code>`;
+        // 对行内代码内容做 HTML 转义，避免 `<svg onload=...>` 等被当成真正标签解析
+        const safeCode = md.utils.escapeHtml(code);
+        return `<code  style="cursor: pointer;">${safeCode}</code>`;
       };
 
       // 自定义标题渲染（h1 -> h2）
@@ -252,11 +261,15 @@ const MarkDown2: React.FC<MarkDown2Props> = ({
 
           // 解析属性：匹配 name="value" 或 name='value' 或 name=value
           const attrRegex =
-            /(\w+)(?:=["']([^"']*)["']|=(?:["'])?([^\s>]+)(?:["'])?)?/g;
+            /([^\s=]+)(?:=["']([^"']*)["']|=(?:["'])?([^\s>]+)(?:["'])?)?/g;
           let attrMatch;
           while ((attrMatch = attrRegex.exec(attrsString)) !== null) {
             const name = attrMatch[1].toLowerCase();
             const value = attrMatch[2] || attrMatch[3] || '';
+            // 过滤所有事件处理属性（onload/onerror/onclick 等）
+            if (name.startsWith('on')) {
+              continue;
+            }
             attrs.push([name, value]);
             if (name === 'src') src = value;
             if (name === 'alt') alt = value;
