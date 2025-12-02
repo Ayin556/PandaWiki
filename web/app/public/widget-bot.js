@@ -60,7 +60,7 @@
 
       const data = await response.json();
       widgetInfo = data.data.settings?.widget_bot_settings;
-      console.log(widgetInfo);
+
       // 验证返回的数据结构
       if (!widgetInfo || typeof widgetInfo !== 'object') {
         throw new Error('Invalid widget info response');
