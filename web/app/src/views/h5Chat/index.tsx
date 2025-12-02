@@ -17,6 +17,7 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useStore } from '@/provider';
 import Feedback from '@/components/feedback';
 import { ConstsSourceType, V1WechatAppInfoResp } from '@/request/types';
+import { useBasePath } from '@/hooks';
 import {
   IconADiancaiWeixuanzhong2,
   IconDiancaiWeixuanzhong,
@@ -240,6 +241,7 @@ const H5Chat = () => {
   const [open, setOpen] = useState(false);
   const [question, setQuestion] = useState('');
   const { kbDetail } = useStore();
+  const basePath = useBasePath();
 
   const [showScrollTop, setShowScrollTop] = useState(false);
 
@@ -361,7 +363,7 @@ const H5Chat = () => {
     const id = searchParams.get('id');
 
     sseClientRef.current = new SSEClient({
-      url: `/share/v1/app/wechat/service/answer?id=${id}`,
+      url: `${basePath}/share/v1/app/wechat/service/answer?id=${id}`,
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -376,7 +378,7 @@ const H5Chat = () => {
     return () => {
       sseClientRef.current?.unsubscribe();
     };
-  }, [searchParams]);
+  }, [searchParams, basePath]);
 
   return (
     <StyledContainer>

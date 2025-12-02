@@ -6,10 +6,14 @@ const nextConfig: NextConfig = {
   reactStrictMode: false,
   allowedDevOrigins: ['10.10.18.71'],
   output: 'standalone',
+  assetPrefix: '/panda-wiki-app-assets',
   logging: {
     fetches: {
       fullUrl: true,
     },
+  },
+  images: {
+    unoptimized: true,
   },
   transpilePackages: ['mermaid'],
   async headers() {

@@ -23,6 +23,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { V1ShareNodeDetailResp } from '@/request/types';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
+import { getImagePath } from '@/utils/getImagePath';
+import { useBasePath } from '@/hooks';
 
 dayjs.extend(relativeTime);
 dayjs.locale('zh-cn');
@@ -41,7 +43,7 @@ const DocContent = ({
   characterCount?: number;
 }) => {
   const { mobile = false, authInfo, kbDetail, catalogWidth } = useStore();
-
+  const basePath = useBasePath();
   const params = useParams() || {};
   const [commentLoading, setCommentLoading] = useState(false);
   const docId = params.id as string;
@@ -86,7 +88,7 @@ const DocContent = ({
       try {
         const Cap = (await import('@cap.js/widget')).default;
         const cap = new Cap({
-          apiEndpoint: '/share/v1/captcha/',
+          apiEndpoint: `${basePath}/share/v1/captcha/`,
         });
         const solution = await cap.solve();
         token = solution.token;
@@ -131,7 +133,7 @@ const DocContent = ({
 
   useEffect(() => {
     window.CAP_CUSTOM_WASM_URL =
-      window.location.origin + '/cap@0.0.6/cap_wasm.min.js';
+      window.location.origin + `${basePath}/cap@0.0.6/cap_wasm.min.js`;
   }, []);
 
   if (!editorRef || !info) return null;
@@ -418,11 +420,11 @@ const DocContent = ({
                       }}
                     >
                       {(item.pic_urls || []).map((url: string) => (
-                        <PhotoView key={url} src={url}>
+                        <PhotoView key={url} src={getImagePath(url, basePath)}>
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             alt={url}
-                            src={url}
+                            src={getImagePath(url, basePath)}
                             width={80}
                             height={80}
                             style={{

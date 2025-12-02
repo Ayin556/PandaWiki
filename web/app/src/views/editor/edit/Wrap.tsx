@@ -23,6 +23,7 @@ import Header from './Header';
 import Toc from './Toc';
 import Toolbar from './Toolbar';
 import IconPageview1 from '@panda-wiki/icons/IconPageview1';
+import { useBasePath } from '@/hooks/useBasePath';
 
 interface WrapProps {
   detail: V1NodeDetailResp;
@@ -33,7 +34,7 @@ const Wrap = ({ detail: defaultDetail = {} }: WrapProps) => {
   const contentType = searchParams.get('contentType') || 'html';
   const { nodeDetail, setNodeDetail, onSave } = useWrapContext();
   const { id } = useParams();
-
+  const baseUrl = useBasePath();
   const markdownEditorRef = useRef<MarkdownEditorRef>(null);
   const [characterCount, setCharacterCount] = useState(0);
   const [headings, setHeadings] = useState<TocList>([]);
@@ -95,6 +96,7 @@ const Wrap = ({ detail: defaultDetail = {} }: WrapProps) => {
     immediatelyRender: false,
     editable: !isMarkdown,
     contentType: isMarkdown ? 'markdown' : 'html',
+    baseUrl: baseUrl,
     content: defaultDetail?.content || '',
     exclude: ['invisibleCharacters', 'youtube', 'mention'],
     onCreate: ({ editor: tiptapEditor }) => {

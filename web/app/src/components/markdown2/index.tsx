@@ -18,6 +18,7 @@ import { useSmartScroll } from '@/hooks';
 import { clearImageBlobCache, createImageRenderer } from './imageRenderer';
 import { incrementalRender } from './incrementalRenderer';
 import { createMermaidRenderer } from './mermaidRenderer';
+import { getImagePath } from '@/utils/getImagePath';
 import {
   processThinkingContent,
   useThinkingRenderer,
@@ -155,7 +156,7 @@ const MarkDown2: React.FC<MarkDown2Props> = ({
       md.renderer.rules.image = (tokens, idx) => {
         imageCount++;
         const token = tokens[idx];
-        const src = token.attrGet('src') || '';
+        const src = getImagePath(token.attrGet('src') || '');
         const alt = token.attrGet('alt') || token.content;
         const rawAttrs = token.attrs || [];
         // 过滤潜在危险属性（如 onload/onerror 等事件处理）
@@ -271,7 +272,7 @@ const MarkDown2: React.FC<MarkDown2Props> = ({
               continue;
             }
             attrs.push([name, value]);
-            if (name === 'src') src = value;
+            if (name === 'src') src = getImagePath(value);
             if (name === 'alt') alt = value;
           }
 

@@ -1,6 +1,7 @@
 import { ITreeItem } from '@/assets/type';
 import { IconXiajiantou, IconWenjianjia, IconWenjian } from '@panda-wiki/icons';
 import { useStore } from '@/provider';
+import { useBasePath } from '@/hooks';
 import { addOpacityToColor } from '@/utils';
 import { Ellipsis } from '@ctzhian/ui';
 import { Box, Stack, useTheme, IconButton } from '@mui/material';
@@ -22,6 +23,7 @@ const CatalogFolder = ({
   const { themeMode = 'light', setTree } = useStore();
   const params = useParams() || {};
   const activeId = params.id as string;
+  const basePath = useBasePath();
 
   return (
     <Stack key={item.id} gap={0.5}>
@@ -55,7 +57,7 @@ const CatalogFolder = ({
       >
         {item.type === 2 ? (
           <Box sx={{ flex: 1 }}>
-            <Link href={`/node/${item.id}`} prefetch={false}>
+            <Link href={`${basePath}/node/${item.id}`} prefetch={false}>
               <Box sx={{ pl: depth * 2, pr: 1 }}>
                 <Stack direction='row' alignItems='center' gap={1}>
                   {item.emoji ? (
@@ -78,7 +80,7 @@ const CatalogFolder = ({
             sx={{ flex: 1, pl: depth * 2, pr: 1 }}
           >
             <Link
-              href={`/node/${item.id}`}
+              href={`${basePath}/node/${item.id}`}
               prefetch={false}
               style={{ flex: 1 }}
             >

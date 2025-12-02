@@ -189,6 +189,7 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
     contentType: isMarkdown ? 'markdown' : 'html',
     immediatelyRender: true,
     content: defaultDetail.content,
+    baseUrl: window.__BASENAME__ || '',
     exclude: ['invisibleCharacters', 'youtube', 'mention'],
     onCreate: ({ editor: tiptapEditor }) => {
       const characterCount = (
@@ -223,7 +224,7 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
         exportFile(value, type);
       } else if (type === 'md') {
         if (isMarkdown) {
-          let value = nodeDetail?.content || '';
+          const value = nodeDetail?.content || '';
           exportFile(value, type);
         } else if (editorRef) {
           const value = editorRef.getMarkdown() || '';

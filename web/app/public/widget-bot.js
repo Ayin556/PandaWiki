@@ -7,7 +7,7 @@
 
   // 获取当前脚本的域名
   const currentScript = document.currentScript || document.querySelector('script[src*="widget-bot.js"]');
-  const widgetDomain = currentScript ? new URL(currentScript.src).origin : window.location.origin;
+  const widgetDomain = currentScript.src.replace('/widget-bot.js', '');
 
   let widgetInfo = null;
   let widgetButton = null;

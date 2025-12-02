@@ -1,6 +1,7 @@
 'use client';
 import { V1NodeDetailResp } from '@/request/types';
 import { useTiptap } from '@ctzhian/tiptap';
+import { useBasePath } from '@/hooks/useBasePath';
 import { Box, Skeleton, Stack } from '@mui/material';
 import { useState } from 'react';
 import Header from './Header';
@@ -16,12 +17,13 @@ const LoadingEditorWrap = () => {
       color: string;
     }>
   >([]);
-
+  const baseUrl = useBasePath();
   const editorRef = useTiptap({
     editable: false,
     content: '',
     exclude: ['invisibleCharacters', 'youtube', 'mention'],
     immediatelyRender: false,
+    baseUrl: baseUrl,
   });
 
   return (

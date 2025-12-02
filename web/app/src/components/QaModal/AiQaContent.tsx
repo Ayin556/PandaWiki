@@ -14,6 +14,7 @@ import { handleThinkingContent } from './utils';
 import { useSmartScroll } from '@/hooks';
 import { useTheme } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
+import { useBasePath } from '@/hooks';
 import { IconCopy } from '@/components/icons';
 import {
   IconADiancaiWeixuanzhong2,
@@ -74,6 +75,8 @@ import {
   StyledHotSearchColumnItem,
 } from './StyledComponents';
 
+import { getImagePath } from '@/utils/getImagePath';
+
 export interface ConversationItem {
   q: string;
   a: string;
@@ -106,7 +109,13 @@ const LoadingContent = ({
   if (thinking === 4 || thinking === 2) return null;
   return (
     <Stack direction='row' alignItems='center' gap={1} sx={{ pb: 1 }}>
-      <Image src={aiLoading} alt='ai-loading' width={20} height={20} />
+      <Image
+        src={aiLoading}
+        alt='ai-loading'
+        unoptimized
+        width={20}
+        height={20}
+      />
       <Typography
         variant='body2'
         sx={theme => ({
@@ -154,6 +163,7 @@ const AiQaContent: React.FC<{
   const [showFuzzySuggestions, setShowFuzzySuggestions] = useState(false);
 
   const searchParams = useSearchParams();
+  const basePath = useBasePath();
 
   // 使用智能滚动 hook（内置 ResizeObserver 自动监听内容高度变化，自动滚动）
   const { setShouldAutoScroll } = useSmartScroll({
@@ -376,9 +386,9 @@ const AiQaContent: React.FC<{
 
     let token = '';
 
-    const Cap = (await import('@cap.js/widget')).default;
+    const Cap = (await import(`@cap.js/widget`)).default;
     const cap = new Cap({
-      apiEndpoint: '/share/v1/captcha/',
+      apiEndpoint: `${basePath}/share/v1/captcha/`,
     });
     try {
       const solution = await cap.solve();
@@ -499,7 +509,7 @@ const AiQaContent: React.FC<{
   useEffect(() => {
     // @ts-ignore
     window.CAP_CUSTOM_WASM_URL =
-      window.location.origin + '/cap@0.0.6/cap_wasm.min.js';
+      window.location.origin + `${basePath}/cap@0.0.6/cap_wasm.min.js`;
   }, []);
 
   const onSearch = (q: string, reset: boolean = false) => {
@@ -565,7 +575,7 @@ const AiQaContent: React.FC<{
 
   useEffect(() => {
     sseClientRef.current = new SSEClient({
-      url: `/share/v1/chat/message`,
+      url: `${basePath}/share/v1/chat/message`,
       headers: {
         'Content-Type': 'application/json',
       },
@@ -706,7 +716,7 @@ const AiQaContent: React.FC<{
           {/* Logo区域 */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, my: 8 }}>
             <Image
-              src={kbDetail?.settings?.icon || Logo.src}
+              src={getImagePath(kbDetail?.settings?.icon || Logo.src, basePath)}
               alt='logo'
               width={46}
               height={46}
@@ -839,7 +849,10 @@ const AiQaContent: React.FC<{
                                 color: alpha(theme.palette.text.primary, 0.5),
                               })}
                               onClick={() => {
-                                window.open(`/node/${chunk.node_id}`, '_blank');
+                                window.open(
+                                  `${basePath}/node/${chunk.node_id}`,
+                                  '_blank',
+                                );
                               }}
                             >
                               {chunk.name}

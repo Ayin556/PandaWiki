@@ -13,17 +13,3 @@ export const AnswerStatus = {
 } as const;
 
 export type AnswerStatusType = keyof typeof AnswerStatus;
-
-// CAP配置
-export const CAP_CONFIG = {
-  apiEndpoint: '/share/v1/captcha/',
-  wasmUrl: '/cap@0.0.6/cap_wasm.min.js',
-} as const;
-
-// SSE配置
-export const SSE_CONFIG = {
-  url: '/share/v1/chat/message',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-} as const;

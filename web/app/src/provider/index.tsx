@@ -79,7 +79,9 @@ export default function StoreProvider({
   });
 
   useEffect(() => {
-    if (kbDetail) setCatalogShow(catalogSettings?.catalog_visible !== 2);
+    if (kbDetail) {
+      setCatalogShow(catalogSettings?.catalog_visible !== 2);
+    }
   }, [kbDetail]);
 
   useEffect(() => {
