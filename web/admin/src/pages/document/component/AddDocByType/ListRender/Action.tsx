@@ -269,6 +269,7 @@ const BatchActionBar = (props: BatchActionBarProps) => {
               const nodeResp = await postApiV1Node({
                 name: item.title!,
                 content: pollResult.content || '',
+                content_type: item.file_type === 'md' ? 'md' : undefined,
                 parent_id: actualParentId,
                 type: 2, // 文件类型
                 kb_id,
