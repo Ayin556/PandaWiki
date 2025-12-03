@@ -1,14 +1,15 @@
-import { useState, useRef, useEffect } from 'react';
-import { Box, Stepper, Step, StepLabel } from '@mui/material';
-import { Modal, message } from '@ctzhian/ui';
-import { useLocation } from 'react-router-dom';
-import {
-  setKbC,
-  setIsRefreshDocList,
-  setIsCreateWikiModalOpen,
-} from '@/store/slices/config';
-import { useAppSelector, useAppDispatch } from '@/store';
 import { postApiV1KnowledgeBaseRelease } from '@/request/KnowledgeBase';
+import { useAppDispatch, useAppSelector } from '@/store';
+import {
+  setIsCreateWikiModalOpen,
+  setIsRefreshDocList,
+  setKbC,
+} from '@/store/slices/config';
+import { Modal, message } from '@ctzhian/ui';
+import { Box, Step, StepLabel, Stepper } from '@mui/material';
+import dayjs from 'dayjs';
+import { useEffect, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import {
   Step1Model,
   Step2Config,
@@ -18,7 +19,6 @@ import {
   Step6Decorate,
   Step7Complete,
 } from './steps';
-import dayjs from 'dayjs';
 
 // Remove interface as we're using Redux state
 
@@ -166,6 +166,10 @@ const CreateWikiModal = () => {
   useEffect(() => {
     if (kbList?.length === 0) setOpen(true);
   }, [kbList]);
+
+  useEffect(() => {
+    if (kbList && kbList.length > 0 && activeStep === 0) setActiveStep(1);
+  }, [activeStep, kbList]);
 
   return (
     <Modal
