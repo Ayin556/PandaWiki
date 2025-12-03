@@ -79,7 +79,7 @@ type InstantPageResp struct {
 
 type ConversationDistribution struct {
 	AppType AppType `json:"app_type"`
-	AppID   string  `json:"app_id"`
+	AppID   string  `json:"-"`
 	Count   int64   `json:"count"`
 }
 

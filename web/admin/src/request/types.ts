@@ -645,12 +645,6 @@ export interface DomainConversationDetailResp {
   subject?: string;
 }
 
-export interface DomainConversationDistribution {
-  app_id?: string;
-  app_type?: DomainAppType;
-  count?: number;
-}
-
 export interface DomainConversationInfo {
   user_info?: DomainUserInfo;
 }
@@ -1758,6 +1752,11 @@ export interface V1ShareNodeDetailResp {
   updated_at?: string;
 }
 
+export interface V1StatConversationDistributionResp {
+  app_type?: DomainAppType;
+  count?: number;
+}
+
 export interface V1StatCountResp {
   conversation_count?: number;
   ip_count?: number;
@@ -1784,6 +1783,13 @@ export interface V1UserListItemResp {
 
 export interface V1UserListResp {
   users?: V1UserListItemResp[];
+}
+
+export interface V1WechatAppInfoResp {
+  disclaimer_content?: string;
+  feedback_enable?: boolean;
+  feedback_type?: string[];
+  wechat_app_is_enabled?: boolean;
 }
 
 export interface PutApiV1AppParams {

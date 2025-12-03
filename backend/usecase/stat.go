@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"slices"
 	"sort"
-	"strconv"
 
+	"github.com/jinzhu/copier"
 	"github.com/samber/lo"
 
 	v1 "github.com/chaitin/panda-wiki/api/stat/v1"
@@ -325,7 +325,7 @@ func (u *StatUseCase) GetGeoCount(ctx context.Context, kbID string, day consts.S
 
 }
 
-func (u *StatUseCase) GetConversationDistribution(ctx context.Context, kbID string, day consts.StatDay) ([]domain.ConversationDistribution, error) {
+func (u *StatUseCase) GetConversationDistribution(ctx context.Context, kbID string, day consts.StatDay) ([]v1.StatConversationDistributionResp, error) {
 	appMap, err := u.appRepo.GetAppList(ctx, kbID)
 	if err != nil {
 		return nil, err
@@ -337,36 +337,27 @@ func (u *StatUseCase) GetConversationDistribution(ctx context.Context, kbID stri
 	}
 
 	if day > consts.StatDay1 {
+		mergedDistributions := make(map[domain.AppType]*domain.ConversationDistribution)
+		for _, dist := range distributions {
+			if app, ok := appMap[dist.AppID]; ok {
+				mergedDistributions[app.Type] = &domain.ConversationDistribution{
+					AppType: app.Type,
+					Count:   dist.Count,
+				}
+			}
+		}
+
 		m, err := u.conversationRepo.GetConversationDistributionByHour(ctx, kbID, int64(day)*24)
 		if err != nil {
 			return nil, err
 		}
 
-		// 使用map合并避免重复遍历
-		mergedDistributions := make(map[string]*domain.ConversationDistribution)
-		for _, dist := range distributions {
-			key := fmt.Sprintf("%d|%s", dist.AppType, dist.AppID)
-			mergedDistributions[key] = &domain.ConversationDistribution{
-				AppType: dist.AppType,
-				AppID:   dist.AppID,
-				Count:   dist.Count,
-			}
-		}
-
-		for k, v := range m {
-			t, err := strconv.Atoi(k)
-			if err != nil {
-				continue
-			}
-
-			// 假设AppID为空，因为从map中只能获取AppType
-			key := fmt.Sprintf("%d|", t)
-			if existDist, ok := mergedDistributions[key]; ok {
+		for appType, v := range m {
+			if existDist, ok := mergedDistributions[appType]; ok {
 				existDist.Count += v
 			} else {
-				mergedDistributions[key] = &domain.ConversationDistribution{
-					AppType: domain.AppType(t),
-					AppID:   "",
+				mergedDistributions[appType] = &domain.ConversationDistribution{
+					AppType: appType,
 					Count:   v,
 				}
 			}
@@ -379,14 +370,12 @@ func (u *StatUseCase) GetConversationDistribution(ctx context.Context, kbID stri
 		}
 	}
 
-	// 更新AppType
-	for i := range distributions {
-		if app, ok := appMap[distributions[i].AppID]; ok {
-			distributions[i].AppType = app.Type
-		}
+	var resp []v1.StatConversationDistributionResp
+	if err := copier.Copy(&resp, distributions); err != nil {
+		return nil, fmt.Errorf("copy distributions to resp failed: %w", err)
 	}
 
-	return distributions, nil
+	return resp, nil
 }
 
 // AggregateHourlyStats 聚合上一小时的统计数据到stat_page_hours表
