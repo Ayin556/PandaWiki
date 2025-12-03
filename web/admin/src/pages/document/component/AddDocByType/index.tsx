@@ -75,10 +75,13 @@ const AddDocByType = ({
 
   const handleCancel = useCallback(() => {
     onCancel();
-    refresh?.();
+    // 如果有导入成功的文档，刷新列表
+    if (data.some(item => item.status === 'imported')) {
+      refresh?.();
+    }
     setData([]);
     setChecked([]);
-  }, [onCancel, refresh]);
+  }, [onCancel, refresh, data]);
 
   return (
     <Modal
