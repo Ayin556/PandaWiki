@@ -180,28 +180,45 @@ func (c *Client) startPeriodicReport() {
 	}
 }
 
-// 计算下一次数据上报的延迟，使其在每天 0:00:00–0:29:59 窗口内随机触发。
-// 若当前时间位于当日窗口内，返回窗口剩余时间内的随机秒数；否则返回到次日窗口的随机偏移。
+// 计算下一次数据上报的延迟，使其在每天 23:30:00–23:58:00 窗口内随机触发。
+// 若当前时间位于当日窗口内，返回窗口剩余时间内的随机秒数；否则返回到最近窗口的随机偏移。
 func (c *Client) nextReportDataDelay() time.Duration {
 	now := time.Now()
 	loc := now.Location()
+	start := time.Date(now.Year(), now.Month(), now.Day(), 23, 30, 0, 0, loc)
+	end := time.Date(now.Year(), now.Month(), now.Day(), 23, 58, 0, 0, loc)
+	window := end.Sub(start)
 
-	if now.Hour() == 0 && now.Minute() < 30 {
-		end := time.Date(now.Year(), now.Month(), now.Day(), 0, 29, 59, 0, loc)
+	// 如果当前时间在窗口之前，安排在今日窗口的随机时间
+	if now.Before(start) {
+		sec := int(window / time.Second)
+		// 防止 sec 为 0
+		if sec <= 0 {
+			sec = 1
+		}
+		offset := time.Duration(rand.Intn(sec)) * time.Second
+		return time.Until(start.Add(offset))
+	}
+
+	// 如果当前时间在窗口内，返回窗口剩余时间内的随机秒数
+	if !now.After(end) {
 		remaining := end.Sub(now)
 		sec := int(remaining / time.Second)
 		if sec <= 0 {
-			nextMidnight := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, loc).Add(24 * time.Hour)
-			offset := time.Duration(rand.Intn(30*60)) * time.Second
-			return time.Until(nextMidnight.Add(offset))
+			sec = 1
 		}
 		offset := rand.Intn(sec) + 1
 		return time.Duration(offset) * time.Second
 	}
 
-	nextMidnight := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, loc).Add(24 * time.Hour)
-	offset := time.Duration(rand.Intn(30*60)) * time.Second
-	return time.Until(nextMidnight.Add(offset))
+	// 否则安排在次日窗口的随机时间
+	nextStart := start.Add(24 * time.Hour)
+	sec := int(window / time.Second)
+	if sec <= 0 {
+		sec = 1
+	}
+	offset := time.Duration(rand.Intn(sec)) * time.Second
+	return time.Until(nextStart.Add(offset))
 }
 
 // reportInstallation reports installation information
