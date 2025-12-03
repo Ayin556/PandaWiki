@@ -1119,15 +1119,6 @@ definitions:
       subject:
         type: string
     type: object
-  domain.ConversationDistribution:
-    properties:
-      app_id:
-        type: string
-      app_type:
-        $ref: '#/definitions/domain.AppType'
-      count:
-        type: integer
-    type: object
   domain.ConversationInfo:
     properties:
       user_info:
@@ -3223,6 +3214,13 @@ definitions:
       updated_at:
         type: string
     type: object
+  v1.StatConversationDistributionResp:
+    properties:
+      app_type:
+        $ref: '#/definitions/domain.AppType'
+      count:
+        type: integer
+    type: object
   v1.StatCountResp:
     properties:
       conversation_count:
@@ -4754,7 +4752,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/domain.ConversationDistribution'
+                    $ref: '#/definitions/v1.StatConversationDistributionResp'
                   type: array
               type: object
       security:

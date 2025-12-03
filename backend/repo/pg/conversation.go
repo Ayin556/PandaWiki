@@ -2,6 +2,7 @@ package pg
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/cloudwego/eino/schema"
 	"gorm.io/gorm"
@@ -244,8 +245,8 @@ func (r *ConversationRepository) GetMessageFeedBackList(ctx context.Context, req
 	return count, messageAnswers, nil
 }
 
-func (r *ConversationRepository) GetConversationDistributionByHour(ctx context.Context, kbID string, startHour int64) (map[string]int64, error) {
-	counts := make(map[string]int64)
+func (r *ConversationRepository) GetConversationDistributionByHour(ctx context.Context, kbID string, startHour int64) (map[domain.AppType]int64, error) {
+	counts := make(map[domain.AppType]int64)
 
 	distributions := make([]domain.MapStrInt64, 0)
 	if err := r.db.WithContext(ctx).Model(&domain.StatPageHour{}).
@@ -257,7 +258,11 @@ func (r *ConversationRepository) GetConversationDistributionByHour(ctx context.C
 	}
 	for i := range distributions {
 		for k, v := range distributions[i] {
-			counts[k] += v
+			appType, err := strconv.Atoi(k)
+			if err != nil {
+				continue
+			}
+			counts[domain.AppType(appType)] += v
 		}
 	}
 

@@ -2413,7 +2413,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/domain.ConversationDistribution"
+                                                "$ref": "#/definitions/v1.StatConversationDistributionResp"
                                             }
                                         }
                                     }
@@ -5638,20 +5638,6 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.ConversationDistribution": {
-            "type": "object",
-            "properties": {
-                "app_id": {
-                    "type": "string"
-                },
-                "app_type": {
-                    "$ref": "#/definitions/domain.AppType"
-                },
-                "count": {
-                    "type": "integer"
-                }
-            }
-        },
         "domain.ConversationInfo": {
             "type": "object",
             "properties": {
@@ -8851,6 +8837,17 @@ const docTemplate = `{
                 },
                 "updated_at": {
                     "type": "string"
+                }
+            }
+        },
+        "v1.StatConversationDistributionResp": {
+            "type": "object",
+            "properties": {
+                "app_type": {
+                    "$ref": "#/definitions/domain.AppType"
+                },
+                "count": {
+                    "type": "integer"
                 }
             }
         },
