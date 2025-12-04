@@ -9,6 +9,7 @@ import (
 
 	modelkitDomain "github.com/chaitin/ModelKit/v2/domain"
 	modelkit "github.com/chaitin/ModelKit/v2/usecase"
+
 	"github.com/chaitin/panda-wiki/config"
 	"github.com/chaitin/panda-wiki/consts"
 	"github.com/chaitin/panda-wiki/domain"
@@ -222,7 +223,7 @@ func (u *ModelUsecase) SwitchMode(ctx context.Context, req *domain.SwitchModeReq
 // updateModeSettingConfig 读取当前设置并更新，然后持久化
 func (u *ModelUsecase) updateModeSettingConfig(ctx context.Context, mode, apiKey, chatModel string, isManualEmbeddingUpdated bool) (*domain.ModelModeSetting, error) {
 	// 读取当前设置
-	setting, err := u.systemSettingRepo.GetSystemSetting(ctx, string(consts.SystemSettingModelMode))
+	setting, err := u.systemSettingRepo.GetSystemSetting(ctx, consts.SystemSettingModelMode)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get current model setting: %w", err)
 	}
@@ -257,7 +258,7 @@ func (u *ModelUsecase) updateModeSettingConfig(ctx context.Context, mode, apiKey
 }
 
 func (u *ModelUsecase) GetModelModeSetting(ctx context.Context) (domain.ModelModeSetting, error) {
-	setting, err := u.systemSettingRepo.GetSystemSetting(ctx, string(consts.SystemSettingModelMode))
+	setting, err := u.systemSettingRepo.GetSystemSetting(ctx, consts.SystemSettingModelMode)
 	if err != nil {
 		return domain.ModelModeSetting{}, fmt.Errorf("failed to get model mode setting: %w", err)
 	}

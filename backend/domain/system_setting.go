@@ -27,3 +27,9 @@ type ModelModeSetting struct {
 	ChatModel                string                  `json:"chat_model"`                  // 自定义对话模型名称
 	IsManualEmbeddingUpdated bool                    `json:"is_manual_embedding_updated"` // 手动模式下嵌入模型是否更新
 }
+
+// UploadDeniedExtensionsSetting 上传禁止扩展名配置
+// INSERT INTO "public"."system_settings" ("key", "value") VALUES ('upload', '{"denied_extensions": ["jsp"]}')
+type UploadDeniedExtensionsSetting struct {
+	DeniedExtensions []string `json:"denied_extensions"` // 禁止上传的文件扩展名列表，不带点，如 ["jsp", "php", "exe"]
+}

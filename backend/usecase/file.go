@@ -3,6 +3,8 @@ package usecase
 import (
 	"bytes"
 	"context"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"mime"
@@ -12,24 +14,29 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/minio/minio-go/v7"
+	"gorm.io/gorm"
 
 	"github.com/chaitin/panda-wiki/config"
+	"github.com/chaitin/panda-wiki/consts"
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/log"
+	"github.com/chaitin/panda-wiki/repo/pg"
 	"github.com/chaitin/panda-wiki/store/s3"
 )
 
 type FileUsecase struct {
-	logger   *log.Logger
-	s3Client *s3.MinioClient
-	config   *config.Config
+	logger            *log.Logger
+	s3Client          *s3.MinioClient
+	config            *config.Config
+	systemSettingRepo *pg.SystemSettingRepo
 }
 
-func NewFileUsecase(logger *log.Logger, s3Client *s3.MinioClient, config *config.Config) *FileUsecase {
+func NewFileUsecase(logger *log.Logger, s3Client *s3.MinioClient, config *config.Config, systemSettingRepo *pg.SystemSettingRepo) *FileUsecase {
 	return &FileUsecase{
-		s3Client: s3Client,
-		logger:   logger.WithModule("usecase.file"),
-		config:   config,
+		s3Client:          s3Client,
+		logger:            logger.WithModule("usecase.file"),
+		config:            config,
+		systemSettingRepo: systemSettingRepo,
 	}
 }
 
@@ -49,6 +56,12 @@ func (u *FileUsecase) UploadFile(ctx context.Context, kbID string, file *multipa
 	defer src.Close()
 
 	ext := strings.ToLower(filepath.Ext(file.Filename))
+
+	// Check denied extensions
+	if err := u.checkDeniedExtension(ctx, ext); err != nil {
+		return "", err
+	}
+
 	filename := fmt.Sprintf("%s/%s%s", kbID, uuid.New().String(), ext)
 
 	size := file.Size
@@ -83,6 +96,12 @@ func (u *FileUsecase) UploadFileFromBytes(ctx context.Context, kbID string, file
 	reader := bytes.NewReader(fileBytes)
 
 	ext := strings.ToLower(filepath.Ext(filename))
+
+	// Check denied extensions
+	if err := u.checkDeniedExtension(ctx, ext); err != nil {
+		return "", err
+	}
+
 	s3Filename := fmt.Sprintf("%s/%s%s", kbID, uuid.New().String(), ext)
 
 	size := int64(len(fileBytes))
@@ -122,6 +141,12 @@ func (u *FileUsecase) UploadFileFromReader(
 ) (string, error) {
 	// 生成唯一文件名
 	ext := strings.ToLower(filepath.Ext(filename))
+
+	// Check denied extensions
+	if err := u.checkDeniedExtension(ctx, ext); err != nil {
+		return "", err
+	}
+
 	s3Filename := fmt.Sprintf("%s/%s%s", kbID, uuid.New().String(), ext)
 
 	// 获取内容类型
@@ -160,6 +185,11 @@ func (u *FileUsecase) AnyDocUploadFile(ctx context.Context, file *multipart.File
 
 	ext := strings.ToLower(filepath.Ext(file.Filename))
 
+	// Check denied extensions
+	if err := u.checkDeniedExtension(ctx, ext); err != nil {
+		return "", err
+	}
+
 	size := file.Size
 
 	contentType := file.Header.Get("Content-Type")
@@ -185,4 +215,38 @@ func (u *FileUsecase) AnyDocUploadFile(ctx context.Context, file *multipart.File
 	}
 
 	return resp.Key, nil
+}
+
+// checkDeniedExtension checks if the file extension is in the denied list
+func (u *FileUsecase) checkDeniedExtension(ctx context.Context, ext string) error {
+	// Remove leading dot from extension
+	ext = strings.TrimPrefix(ext, ".")
+	if ext == "" {
+		return nil
+	}
+
+	// Get denied extensions from system settings
+	setting, err := u.systemSettingRepo.GetSystemSetting(ctx, consts.SystemSettingUpload)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil
+		}
+		u.logger.Error("failed to get upload denied extensions setting", "error", err)
+		return nil // Don't block upload if we can't read settings
+	}
+
+	var deniedSetting domain.UploadDeniedExtensionsSetting
+	if err := json.Unmarshal(setting.Value, &deniedSetting); err != nil {
+		u.logger.Error("failed to unmarshal denied extensions setting", "error", err)
+		return nil // Don't block upload if settings are malformed
+	}
+
+	// Check if extension is denied
+	for _, deniedExt := range deniedSetting.DeniedExtensions {
+		if strings.EqualFold(ext, deniedExt) {
+			return fmt.Errorf("file extension '.%s' is not allowed for upload", ext)
+		}
+	}
+
+	return nil
 }

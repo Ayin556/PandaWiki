@@ -3,6 +3,7 @@ package pg
 import (
 	"context"
 
+	"github.com/chaitin/panda-wiki/consts"
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/log"
 	"github.com/chaitin/panda-wiki/store/pg"
@@ -20,7 +21,7 @@ func NewSystemSettingRepo(db *pg.DB, logger *log.Logger) *SystemSettingRepo {
 	}
 }
 
-func (r *SystemSettingRepo) GetSystemSetting(ctx context.Context, key string) (*domain.SystemSetting, error) {
+func (r *SystemSettingRepo) GetSystemSetting(ctx context.Context, key consts.SystemSettingKey) (*domain.SystemSetting, error) {
 	var setting domain.SystemSetting
 	result := r.db.WithContext(ctx).Where("key = ?", key).First(&setting)
 	if result.Error != nil {
