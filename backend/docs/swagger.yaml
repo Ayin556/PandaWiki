@@ -405,6 +405,8 @@ definitions:
     type: object
   domain.AppInfoResp:
     properties:
+      base_url:
+        type: string
       name:
         type: string
       recommend_nodes:

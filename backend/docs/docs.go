@@ -4535,6 +4535,9 @@ const docTemplate = `{
         "domain.AppInfoResp": {
             "type": "object",
             "properties": {
+                "base_url": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
                 },

@@ -627,7 +627,7 @@ type CreateAppReq struct {
 type AppInfoResp struct {
 	Name string `json:"name"`
 
-	Settings AppSettingsResp `json:"settings" gorm:"type:jsonb"`
-
+	Settings       AppSettingsResp          `json:"settings" gorm:"type:jsonb"`
+	BaseUrl        string                   `json:"base_url"`
 	RecommendNodes []*RecommendNodeListResp `json:"recommend_nodes,omitempty" gorm:"-"`
 }
