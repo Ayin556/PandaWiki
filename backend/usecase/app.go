@@ -25,6 +25,7 @@ type AppUsecase struct {
 	repo          *pg.AppRepository
 	authRepo      *pg.AuthRepo
 	nodeRepo      *pg.NodeRepository
+	kbRepo        *pg.KnowledgeBaseRepository
 	nodeUsecase   *NodeUsecase
 	chatUsecase   *ChatUsecase
 	logger        *log.Logger
@@ -44,6 +45,7 @@ func NewAppUsecase(
 	repo *pg.AppRepository,
 	authRepo *pg.AuthRepo,
 	nodeRepo *pg.NodeRepository,
+	kbRepo *pg.KnowledgeBaseRepository,
 	nodeUsecase *NodeUsecase,
 	logger *log.Logger,
 	config *config.Config,
@@ -56,6 +58,7 @@ func NewAppUsecase(
 		chatUsecase:  chatUsecase,
 		authRepo:     authRepo,
 		nodeRepo:     nodeRepo,
+		kbRepo:       kbRepo,
 		logger:       logger.WithModule("usecase.app"),
 		config:       config,
 		cache:        cache,
@@ -592,6 +595,12 @@ func (u *AppUsecase) GetMCPServerAppInfo(ctx context.Context, kbID string) (*dom
 }
 
 func (u *AppUsecase) ShareGetWebAppInfo(ctx context.Context, kbID string, authId uint) (*domain.AppInfoResp, error) {
+	kb, err := u.kbRepo.GetKnowledgeBaseByID(ctx, kbID)
+	if err != nil {
+		u.logger.Error("get kb failed", log.Error(err), log.String("kb_id", kbID))
+		return nil, err
+	}
+
 	app, err := u.repo.GetOrCreateAppByKBIDAndType(ctx, kbID, domain.AppTypeWeb)
 	if err != nil {
 		return nil, err
@@ -626,7 +635,8 @@ func (u *AppUsecase) ShareGetWebAppInfo(ctx context.Context, kbID string, authId
 		webAppLandingConfigs = append(webAppLandingConfigs, webAppLandingConfigResp)
 	}
 	appInfo := &domain.AppInfoResp{
-		Name: app.Name,
+		Name:    app.Name,
+		BaseUrl: kb.AccessSettings.BaseURL,
 		Settings: domain.AppSettingsResp{
 			Title:              app.Settings.Title,
 			Icon:               app.Settings.Icon,
