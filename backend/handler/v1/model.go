@@ -34,7 +34,7 @@ func NewModelHandler(echo *echo.Echo, baseHandler *handler.BaseHandler, logger *
 		llmUsecase:  llmUsecase,
 		modelkit:    modelkit,
 	}
-	group := echo.Group("/api/v1/model", handler.auth.Authorize)
+	group := echo.Group("/api/v1/model", handler.auth.Authorize, handler.auth.ValidateUserRole(consts.UserRoleAdmin))
 	group.GET("/list", handler.GetModelList)
 	group.POST("", handler.CreateModel)
 	group.POST("/check", handler.CheckModel)
