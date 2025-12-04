@@ -59,8 +59,13 @@ const useAuth = (hasAuth: boolean) => {
   };
 
   const initData = () => {
-    Promise.all([getModel(), getUser(), getKbList()]).then(
-      ([modelStatus, user, kbList]) => {
+    getUser().then(user => {
+      Promise.all([
+        user.role === ConstsUserRole.UserRoleAdmin
+          ? getModel()
+          : Promise.resolve(null),
+        getKbList(),
+      ]).then(([modelStatus, kbList]) => {
         if (
           user.role === ConstsUserRole.UserRoleUser &&
           kbList.length === 0 &&
@@ -68,8 +73,8 @@ const useAuth = (hasAuth: boolean) => {
         ) {
           navigate('401');
         }
-      },
-    );
+      });
+    });
   };
 
   useEffect(() => {
