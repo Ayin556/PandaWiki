@@ -19,8 +19,9 @@ const (
 type NodeRagInfoStatus string
 
 const (
-	NodeRagStatusPending   NodeRagInfoStatus = "PENDING"
-	NodeRagStatusRunning   NodeRagInfoStatus = "RUNNING"
-	NodeRagStatusFailed    NodeRagInfoStatus = "FAILED"
-	NodeRagStatusSucceeded NodeRagInfoStatus = "SUCCEEDED"
+	NodeRagStatusPending    NodeRagInfoStatus = "PENDING"   // 等待处理
+	NodeRagStatusRunning    NodeRagInfoStatus = "RUNNING"   // 正在进行处理（文本分割、向量化等）
+	NodeRagStatusFailed     NodeRagInfoStatus = "FAILED"    // 处理失败
+	NodeRagStatusSucceeded  NodeRagInfoStatus = "SUCCEEDED" // 处理成功
+	NodeRagStatusReindexing NodeRagInfoStatus = "REINDEX"   // 重新索引中
 )

@@ -4237,13 +4237,29 @@
                 "PENDING",
                 "RUNNING",
                 "FAILED",
-                "SUCCEEDED"
+                "SUCCEEDED",
+                "REINDEX"
+            ],
+            "x-enum-comments": {
+                "NodeRagStatusFailed": "处理失败",
+                "NodeRagStatusPending": "等待处理",
+                "NodeRagStatusReindexing": "重新索引中",
+                "NodeRagStatusRunning": "正在进行处理（文本分割、向量化等）",
+                "NodeRagStatusSucceeded": "处理成功"
+            },
+            "x-enum-descriptions": [
+                "等待处理",
+                "正在进行处理（文本分割、向量化等）",
+                "处理失败",
+                "处理成功",
+                "重新索引中"
             ],
             "x-enum-varnames": [
                 "NodeRagStatusPending",
                 "NodeRagStatusRunning",
                 "NodeRagStatusFailed",
-                "NodeRagStatusSucceeded"
+                "NodeRagStatusSucceeded",
+                "NodeRagStatusReindexing"
             ]
         },
         "consts.RedeemCaptchaReq": {

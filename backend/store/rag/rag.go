@@ -30,15 +30,18 @@ type UpsertRecordsRequest struct {
 	Tags      []string
 }
 
+type DocumentMetadata struct {
+	GroupIDs []int `json:"group_ids"`
+}
+
 type Document struct {
-	ID          string         `json:"id"`
-	Name        string         `json:"name"`
-	DatasetID   string         `json:"dataset_id"`
-	GroupIDs    []int          `json:"group_ids"`
-	Status      string         `json:"status"`
-	ProgressMsg string         `json:"progress_msg"`
-	MetaData    map[string]any `json:"meta_data"`
-	Tags        []string       `json:"tags"`
+	ID          string           `json:"id"`
+	Name        string           `json:"name"`
+	DatasetID   string           `json:"dataset_id"`
+	Status      string           `json:"status"`
+	ProgressMsg string           `json:"progress_msg"`
+	MetaData    DocumentMetadata `json:"meta_data"`
+	Tags        []string         `json:"tags"`
 }
 
 type RAGService interface {
