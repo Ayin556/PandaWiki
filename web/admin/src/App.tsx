@@ -30,7 +30,7 @@ function App() {
   }, [token]);
 
   if (!token && !onlyAllowShareApi) {
-    window.location.href = '/login';
+    window.location.href = window.__BASENAME__ + '/login';
     return null;
   }
 

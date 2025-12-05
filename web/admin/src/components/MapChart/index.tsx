@@ -23,11 +23,15 @@ const MapChart = ({ map, data: chartData, tooltipText }: Props) => {
     const load = async () => {
       try {
         const [echartsUrl, chinaUrl, geoUrl] = await Promise.all([
-          import('/echarts/echarts.5.4.1.min.js?url').then(
+          import(
+            window.__BASENAME__ + '/echarts/echarts.5.4.1.min.js?url'
+          ).then(m => m.default as string),
+          import(window.__BASENAME__ + '/echarts/china.js?url').then(
             m => m.default as string,
           ),
-          import('/echarts/china.js?url').then(m => m.default as string),
-          import('/geo/geo.js?url').then(m => m.default as string),
+          import(window.__BASENAME__ + '/geo/geo.js?url').then(
+            m => m.default as string,
+          ),
         ]);
         await loadScript(echartsUrl);
         await loadScriptsInOrder([chinaUrl, geoUrl]);

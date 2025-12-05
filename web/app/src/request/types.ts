@@ -292,6 +292,7 @@ export interface DomainAppDetailResp {
 }
 
 export interface DomainAppInfoResp {
+  base_url?: string;
   name?: string;
   recommend_nodes?: DomainRecommendNodeListResp[];
   settings?: DomainAppSettingsResp;
@@ -643,12 +644,6 @@ export interface DomainConversationDetailResp {
   references?: DomainConversationReference[];
   remote_ip?: string;
   subject?: string;
-}
-
-export interface DomainConversationDistribution {
-  app_id?: string;
-  app_type?: DomainAppType;
-  count?: number;
 }
 
 export interface DomainConversationInfo {
@@ -1756,6 +1751,11 @@ export interface V1ShareNodeDetailResp {
   status?: DomainNodeStatus;
   type?: DomainNodeType;
   updated_at?: string;
+}
+
+export interface V1StatConversationDistributionResp {
+  app_type?: DomainAppType;
+  count?: number;
 }
 
 export interface V1StatCountResp {

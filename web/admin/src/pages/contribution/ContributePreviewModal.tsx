@@ -36,6 +36,7 @@ export default function ContributePreviewModal(
     content: '',
     editable: false,
     immediatelyRender: true,
+    baseUrl: window.__BASENAME__ || '',
   });
 
   useEffect(() => {
@@ -166,6 +167,7 @@ export default function ContributePreviewModal(
               <EditorDiff
                 oldHtml={data?.original_node?.content || ''}
                 newHtml={data?.content || ''}
+                baseUrl={window.__BASENAME__ || ''}
               />
             )}
         </Stack>

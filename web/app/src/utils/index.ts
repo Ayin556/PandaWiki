@@ -1,6 +1,8 @@
 import { message } from '@ctzhian/ui';
 import { ResolvingMetadata } from 'next';
 import { ITreeItem } from '@/assets/type';
+export { getBasePath } from './getBasePath';
+export { getImagePath } from './getImagePath';
 
 export function addOpacityToColor(color: string, opacity: number) {
   let red, green, blue;

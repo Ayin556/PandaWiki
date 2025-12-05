@@ -54,6 +54,7 @@ interface HeaderProps {
   btns?: NavBtn[];
   children?: React.ReactNode;
   onQaClick?: () => void;
+  homePath?: string;
 }
 const Header = React.memo(
   ({
@@ -70,6 +71,7 @@ const Header = React.memo(
     btns,
     children,
     onQaClick,
+    homePath = '/',
   }: HeaderProps) => {
     const [ctrlKShortcut, setCtrlKShortcut] = useState('');
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -155,7 +157,7 @@ const Header = React.memo(
             //   }),
           }}
         >
-          <Link href={'/'} sx={{ flex: 1, minWidth: 0 }}>
+          <Link href={homePath} sx={{ flex: 1, minWidth: 0 }}>
             <Stack
               direction='row'
               alignItems='center'
@@ -166,7 +168,7 @@ const Header = React.memo(
                 '&:hover': { color: 'primary.main' },
               }}
             >
-              <img src={logo} alt='logo' height={36} />
+              {logo && <img src={logo} alt='logo' height={36} />}
               <Box
                 sx={{
                   fontSize: 20,
@@ -384,7 +386,14 @@ const Header = React.memo(
               )}
             </Stack>
           )}
-          {mobile && <NavBtns logo={logo} title={title} btns={btns} />}
+          {mobile && (
+            <NavBtns
+              logo={logo}
+              title={title}
+              btns={btns}
+              homePath={homePath}
+            />
+          )}
         </Stack>
         {children}
       </Stack>

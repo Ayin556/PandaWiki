@@ -21,6 +21,8 @@ import { DomainNodeContentChunkSSE } from '@/request/types';
 import { message } from '@ctzhian/ui';
 import { IconWenjian } from '@panda-wiki/icons';
 import { useStore } from '@/provider';
+import { useBasePath } from '@/hooks';
+import { getImagePath } from '@/utils/getImagePath';
 
 const StyledSearchResultItem = styled(Stack)(({ theme }) => ({
   position: 'relative',
@@ -75,6 +77,7 @@ const SearchDocContent: React.FC<SearchDocContentProps> = ({
   placeholder,
 }) => {
   const { kbDetail } = useStore();
+  const basePath = useBasePath();
   // 模糊搜索相关状态
   const [fuzzySuggestions, setFuzzySuggestions] = useState<string[]>([]);
   const [showFuzzySuggestions, setShowFuzzySuggestions] = useState(false);
@@ -131,9 +134,9 @@ const SearchDocContent: React.FC<SearchDocContentProps> = ({
     setFuzzySuggestions([]);
 
     let token = '';
-    const Cap = (await import('@cap.js/widget')).default;
+    const Cap = (await import(`@cap.js/widget`)).default;
     const cap = new Cap({
-      apiEndpoint: '/share/v1/captcha/',
+      apiEndpoint: `${basePath}/share/v1/captcha/`,
     });
     try {
       const solution = await cap.solve();
@@ -156,7 +159,7 @@ const SearchDocContent: React.FC<SearchDocContentProps> = ({
 
   // 处理搜索结果点击
   const handleSearchResultClick = (result: DomainNodeContentChunkSSE) => {
-    window.open(`/node/${result.node_id}`, '_blank');
+    window.open(`${basePath}/node/${result.node_id}`, '_blank');
   };
 
   // 处理键盘事件
@@ -205,7 +208,7 @@ const SearchDocContent: React.FC<SearchDocContentProps> = ({
         sx={{ mb: 3, mt: 1 }}
       >
         <Image
-          src={kbDetail?.settings?.icon || Logo.src}
+          src={getImagePath(kbDetail?.settings?.icon || Logo.src, basePath)}
           alt='logo'
           width={46}
           height={46}

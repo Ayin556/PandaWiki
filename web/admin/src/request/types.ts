@@ -292,6 +292,7 @@ export interface DomainAppDetailResp {
 }
 
 export interface DomainAppInfoResp {
+  base_url?: string;
   name?: string;
   recommend_nodes?: DomainRecommendNodeListResp[];
   settings?: DomainAppSettingsResp;

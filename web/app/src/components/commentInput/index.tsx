@@ -19,6 +19,7 @@ import Picker from '@emoji-mart/react';
 import zh from '../emoji/emoji-data/zh.json';
 import { useTheme } from '@mui/material/styles';
 import React, { useRef, useState } from 'react';
+import { useBasePath } from '@/hooks';
 
 export interface ImageItem {
   id: string;
@@ -63,6 +64,7 @@ const CommentInput = React.forwardRef<CommentInputRef, CommentInputProps>(
     ref,
   ) => {
     const theme = useTheme();
+    const basePath = useBasePath();
     const [images, setImages] = useState<ImageItem[]>([]);
     const [uploading, setUploading] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -133,9 +135,9 @@ const CommentInput = React.forwardRef<CommentInputRef, CommentInputProps>(
             let token = '';
 
             try {
-              const Cap = (await import('@cap.js/widget')).default;
+              const Cap = (await import(`@cap.js/widget`)).default;
               const cap = new Cap({
-                apiEndpoint: '/share/v1/captcha/',
+                apiEndpoint: `${basePath}/share/v1/captcha/`,
               });
               const solution = await cap.solve();
               token = solution.token;

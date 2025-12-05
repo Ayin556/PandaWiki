@@ -73,6 +73,8 @@ import {
   StyledUserBubble,
 } from './StyledComponents';
 import { handleThinkingContent } from './utils';
+import { useBasePath } from '@/hooks';
+import { getImagePath } from '@/utils/getImagePath';
 
 export interface ConversationItem {
   q: string;
@@ -375,9 +377,9 @@ const AiQaContent: React.FC<{
 
     let token = '';
 
-    const Cap = (await import('@cap.js/widget')).default;
+    const Cap = (await import(`@cap.js/widget`)).default;
     const cap = new Cap({
-      apiEndpoint: '/share/v1/captcha/',
+      apiEndpoint: `${basePath}/share/v1/captcha/`,
     });
     try {
       const solution = await cap.solve();
@@ -492,9 +494,8 @@ const AiQaContent: React.FC<{
   };
 
   useEffect(() => {
-    // @ts-ignore
     window.CAP_CUSTOM_WASM_URL =
-      window.location.origin + '/cap@0.0.6/cap_wasm.min.js';
+      window.location.origin + `${basePath}/cap@0.0.6/cap_wasm.min.js`;
   }, []);
 
   const onSearch = (q: string, reset: boolean = false) => {
@@ -529,7 +530,7 @@ const AiQaContent: React.FC<{
   };
 
   const { mobile = false, kbDetail } = useStore();
-
+  const basePath = useBasePath();
   const isFeedbackEnabled =
     // @ts-ignore
     kbDetail?.settings?.ai_feedback_settings?.is_enabled ?? true;
@@ -558,7 +559,7 @@ const AiQaContent: React.FC<{
 
   useEffect(() => {
     sseClientRef.current = new SSEClient({
-      url: `/share/v1/chat/widget`,
+      url: `${basePath}/share/v1/chat/widget`,
       headers: {
         'Content-Type': 'application/json',
       },
@@ -695,7 +696,7 @@ const AiQaContent: React.FC<{
           {/* Logo区域 */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, my: 8 }}>
             <Image
-              src={kbDetail?.settings?.icon || Logo.src}
+              src={getImagePath(kbDetail?.settings?.icon || Logo.src, basePath)}
               alt='logo'
               width={46}
               height={46}
@@ -819,7 +820,10 @@ const AiQaContent: React.FC<{
                                 color: alpha(theme.palette.text.primary, 0.5),
                               })}
                               onClick={() => {
-                                window.open(`/node/${chunk.node_id}`, '_blank');
+                                window.open(
+                                  `${basePath}/node/${chunk.node_id}`,
+                                  '_blank',
+                                );
                               }}
                             >
                               {chunk.name}

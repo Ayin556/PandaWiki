@@ -1,4 +1,5 @@
 import SSEClient from '@/utils/fetch';
+import { useBasePath } from '@/hooks/useBasePath';
 import { Editor, useTiptap, UseTiptapReturn } from '@ctzhian/tiptap';
 import { Modal } from '@ctzhian/ui';
 import { Box, Divider, Stack } from '@mui/material';
@@ -18,7 +19,7 @@ const AIGenerate = ({
   editorRef,
 }: AIGenerateProps) => {
   const sseClientRef = useRef<SSEClient<string> | null>(null);
-
+  const baseUrl = useBasePath();
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState('');
 
@@ -30,6 +31,7 @@ const AIGenerate = ({
   const readEditor = useTiptap({
     editable: false,
     immediatelyRender: false,
+    baseUrl: baseUrl,
   });
 
   const onGenerate = useCallback(() => {

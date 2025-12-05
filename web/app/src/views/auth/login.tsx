@@ -47,7 +47,8 @@ import { message } from '@ctzhian/ui';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-
+import { useBasePath } from '@/hooks';
+import { getImagePath } from '@/utils/getImagePath';
 function isWeComByUA() {
   if (typeof navigator === 'undefined') {
     return false;
@@ -70,10 +71,11 @@ export default function Login() {
   const [licenseEdition, setLicenseEdition] = useState<ConstsLicenseEdition>();
   const [sourceType, setSourceType] = useState<ConstsSourceType>();
   const { kbDetail, themeMode, mobile = false, setNodeList } = useStore();
+  const basePath = useBasePath();
+
   const redirectUrl =
     typeof window !== 'undefined'
-      ? window.location.origin +
-        decodeURIComponent(searchParams.get('redirect') || '')
+      ? `${window.location.origin}${basePath}${decodeURIComponent(searchParams.get('redirect') || '')}`
       : '';
 
   const handleLogin = async () => {
@@ -239,7 +241,7 @@ export default function Login() {
             <Stack alignItems='center' gap={1} sx={{ mb: 5 }}>
               {kbDetail?.settings?.icon ? (
                 <img
-                  src={kbDetail?.settings?.icon}
+                  src={getImagePath(kbDetail?.settings?.icon, basePath)}
                   alt='logo'
                   width={40}
                   height={40}

@@ -58,6 +58,7 @@ export interface ThemeAndStyleSetting {
 
 export interface KBDetail {
   name: string;
+  base_url?: string;
   settings: {
     conversation_setting: DomainConversationSetting;
     title: string;

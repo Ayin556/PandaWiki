@@ -13,6 +13,7 @@ import { Box, Fab, Skeleton, Zoom } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 import DocAnchor from './DocAnchor';
 import DocContent from './DocContent';
+import { useBasePath } from '@/hooks/useBasePath';
 
 const Doc = ({
   node,
@@ -29,12 +30,13 @@ const Doc = ({
   const isMarkdown = useMemo(() => {
     return node?.meta?.content_type === 'md';
   }, [node?.meta?.content_type]);
-
+  const baseUrl = useBasePath();
   const editorRef = useTiptap({
     content: node?.content || '',
     editable: false,
     contentType: isMarkdown ? 'markdown' : 'html',
     immediatelyRender: false,
+    baseUrl: baseUrl,
     onTocUpdate: (toc: TocList) => {
       setHeadings(toc);
     },

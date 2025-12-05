@@ -13,6 +13,7 @@ const LoadingEditorWrap = () => {
     editable: false,
     content: '',
     exclude: ['invisibleCharacters', 'youtube', 'mention'],
+    baseUrl: window.__BASENAME__ || '',
   });
 
   return (

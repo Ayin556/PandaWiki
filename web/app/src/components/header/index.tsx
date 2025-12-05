@@ -5,7 +5,6 @@ import { Stack, Box, IconButton, alpha, Tooltip } from '@mui/material';
 import { postShareProV1AuthLogout } from '@/request/pro/ShareAuth';
 import { IconDengchu } from '@panda-wiki/icons';
 import { useStore } from '@/provider';
-import { usePathname } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import ErrorIcon from '@mui/icons-material/Error';
 import { Modal } from '@ctzhian/ui';
@@ -15,6 +14,8 @@ import {
 } from '@panda-wiki/ui';
 import QaModal from '../QaModal';
 import ThemeSwitch from './themeSwitch';
+import { getImagePath } from '@/utils/getImagePath';
+import { useBasePath } from '@/hooks';
 interface HeaderProps {
   isDocPage?: boolean;
   isWelcomePage?: boolean;
@@ -72,7 +73,7 @@ const Header = ({ isDocPage = false, isWelcomePage = false }: HeaderProps) => {
     setQaModalOpen,
     authInfo,
   } = useStore();
-  const pathname = usePathname();
+  const basePath = useBasePath();
   const docWidth = useMemo(() => {
     if (isWelcomePage) return 'full';
     return kbDetail?.settings?.theme_and_style?.doc_width || 'full';
@@ -89,23 +90,26 @@ const Header = ({ isDocPage = false, isWelcomePage = false }: HeaderProps) => {
     }
   };
 
-  const showSearch = useMemo(() => {
-    return pathname !== '/welcome' && !pathname.startsWith('/chat');
-  }, [pathname]);
-
   return (
     <CustomHeader
       isDocPage={isDocPage}
       mobile={mobile}
       docWidth={docWidth}
       catalogWidth={catalogWidth}
-      logo={kbDetail?.settings?.icon || Logo.src}
+      logo={getImagePath(kbDetail?.settings?.icon || Logo.src, basePath)}
       title={kbDetail?.settings?.title}
       placeholder={
         kbDetail?.settings?.web_app_custom_style?.header_search_placeholder
       }
       showSearch
-      btns={kbDetail?.settings?.btns}
+      homePath={basePath}
+      btns={
+        kbDetail?.settings?.btns?.map((item: any) => ({
+          ...item,
+          url: getImagePath(item.url, basePath),
+          icon: getImagePath(item.icon, basePath),
+        })) || []
+      }
       onSearch={handleSearch}
       onQaClick={() => setQaModalOpen?.(true)}
     >
@@ -119,6 +123,7 @@ const Header = ({ isDocPage = false, isWelcomePage = false }: HeaderProps) => {
 };
 
 export const WelcomeHeader = () => {
+  const basePath = useBasePath();
   const {
     mobile = false,
     kbDetail,
@@ -142,13 +147,20 @@ export const WelcomeHeader = () => {
       mobile={mobile}
       docWidth='full'
       catalogWidth={catalogWidth}
-      logo={kbDetail?.settings?.icon || Logo.src}
+      logo={getImagePath(kbDetail?.settings?.icon || Logo.src, basePath)}
       title={kbDetail?.settings?.title}
       placeholder={
         kbDetail?.settings?.web_app_custom_style?.header_search_placeholder
       }
       showSearch
-      btns={kbDetail?.settings?.btns}
+      homePath={basePath}
+      btns={
+        kbDetail?.settings?.btns?.map((item: any) => ({
+          ...item,
+          url: getImagePath(item.url, basePath),
+          icon: getImagePath(item.icon, basePath),
+        })) || []
+      }
       onSearch={handleSearch}
       onQaClick={() => setQaModalOpen?.(true)}
     >

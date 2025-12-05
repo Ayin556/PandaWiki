@@ -12,6 +12,7 @@ import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import { IconXiajiantou } from '@panda-wiki/icons';
+import { getBasePath } from '@/utils/getBasePath';
 
 interface MarkDownProps {
   loading?: boolean;
@@ -156,11 +157,12 @@ const MarkDown = ({ loading = false, content }: MarkDownProps) => {
             </a>
           ),
           img: (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
-            const { style, alt, ...rest } = props;
+            const { style, alt, src, ...rest } = props;
             return (
               <img
                 alt={alt || 'markdown-img'}
                 {...rest}
+                src={getBasePath(src || '')}
                 style={{
                   ...style,
                   borderRadius: '10px',

@@ -53,6 +53,7 @@ const History = () => {
   const editorRef = useTiptap({
     content: '',
     editable: false,
+    baseUrl: window.__BASENAME__ || '',
     immediatelyRender: true,
     onUpdate: ({ editor }) => {
       setCharacterCount((editor.storage as any).characterCount.characters());
@@ -63,6 +64,7 @@ const History = () => {
     content: '',
     contentType: 'markdown',
     editable: false,
+    baseUrl: window.__BASENAME__ || '',
     immediatelyRender: true,
     onUpdate: ({ editor }) => {
       setCharacterCount((editor.storage as any).characterCount.characters());
