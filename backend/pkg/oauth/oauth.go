@@ -46,9 +46,10 @@ type UserInfo struct {
 
 // NewClient 创建OAuth客户端
 func NewClient(ctx context.Context, logger *log.Logger, config Config) (*Client, error) {
-	redirectURL, _ := url.Parse(config.RedirectURI)
-	redirectURL.Path = callbackPath
-	redirectURI := redirectURL.String()
+	redirectURI, err := url.JoinPath(config.RedirectURI, callbackPath)
+	if err != nil {
+		return nil, err
+	}
 
 	return &Client{
 		ctx:    ctx,
