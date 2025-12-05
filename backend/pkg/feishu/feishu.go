@@ -54,9 +54,10 @@ type UserInfo struct {
 }
 
 func NewClient(ctx context.Context, logger *log.Logger, appID, appSecret, redirectURI string) (*Client, error) {
-	redirectURL, _ := url.Parse(redirectURI)
-	redirectURL.Path = callbackPath
-	redirectURI = redirectURL.String()
+	redirectURI, err := url.JoinPath(redirectURI, callbackPath)
+	if err != nil {
+		return nil, err
+	}
 
 	oauthConfig := &oauth2.Config{
 		ClientID:     appID,
