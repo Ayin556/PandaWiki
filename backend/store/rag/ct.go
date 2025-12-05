@@ -48,7 +48,7 @@ func (s *CTRAG) CreateKnowledgeBase(ctx context.Context) (string, error) {
 	return dataset.ID, nil
 }
 
-func (s *CTRAG) QueryRecords(ctx context.Context, req *QueryRecordsRequest) ([]*domain.NodeContentChunk, error) {
+func (s *CTRAG) QueryRecords(ctx context.Context, req *QueryRecordsRequest) (string, []*domain.NodeContentChunk, error) {
 	var chatMsgs []rag.ChatMessage
 	for _, msg := range req.HistoryMsgs {
 		switch msg.Role {
@@ -82,11 +82,10 @@ func (s *CTRAG) QueryRecords(ctx context.Context, req *QueryRecordsRequest) ([]*
 		data.Tags = req.Tags
 	}
 	res, err := s.client.Search.Retrieve(ctx, data)
-	s.logger.Info("retrieve chunks result", log.Int("chunks count", len(res.Results)), log.String("query", req.Query))
-
 	if err != nil {
-		return nil, err
+		return "", nil, err
 	}
+	s.logger.Info("retrieve chunks result", log.Int("chunks count", len(res.Results)), log.String("query", req.Query))
 	nodeChunks := make([]*domain.NodeContentChunk, len(res.Results))
 	for i, chunk := range res.Results {
 		nodeChunks[i] = &domain.NodeContentChunk{
@@ -95,7 +94,7 @@ func (s *CTRAG) QueryRecords(ctx context.Context, req *QueryRecordsRequest) ([]*
 			DocID:   chunk.DocumentID,
 		}
 	}
-	return nodeChunks, nil
+	return res.Query, nodeChunks, nil
 }
 
 func (s *CTRAG) UpsertRecords(ctx context.Context, req *UpsertRecordsRequest) (string, error) {

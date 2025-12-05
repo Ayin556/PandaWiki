@@ -44,7 +44,7 @@ type Document struct {
 type RAGService interface {
 	CreateKnowledgeBase(ctx context.Context) (string, error)
 	UpsertRecords(ctx context.Context, req *UpsertRecordsRequest) (string, error)
-	QueryRecords(ctx context.Context, req *QueryRecordsRequest) ([]*domain.NodeContentChunk, error)
+	QueryRecords(ctx context.Context, req *QueryRecordsRequest) (string, []*domain.NodeContentChunk, error)
 	DeleteRecords(ctx context.Context, datasetID string, docIDs []string) error
 	DeleteKnowledgeBase(ctx context.Context, datasetID string) error
 	UpdateDocumentGroupIDs(ctx context.Context, datasetID string, docID string, groupIds []int) error

@@ -85,7 +85,7 @@ func (u *LLMUsecase) FormatConversationMessages(
 		}
 		if len(historyMessages) > 0 {
 			question := historyMessages[len(historyMessages)-1].Content
-
+			var rewrittenQuery string
 			if systemPrompt == "" {
 				if settingPrompt, err := u.promptRepo.GetPrompt(ctx, kbID); err != nil {
 					u.logger.Error("get prompt from settings failed", log.Error(err))
@@ -106,7 +106,7 @@ func (u *LLMUsecase) FormatConversationMessages(
 			if err != nil {
 				return nil, nil, fmt.Errorf("get kb failed: %w", err)
 			}
-			rankedNodes, err = u.GetRankNodes(ctx, kb.DatasetID, question, groupIDs, 0, historyMessages[:len(historyMessages)-1])
+			rewrittenQuery, rankedNodes, err = u.GetRankNodes(ctx, kb.DatasetID, question, groupIDs, 0, historyMessages[:len(historyMessages)-1])
 			if err != nil {
 				return nil, nil, fmt.Errorf("get rank nodes failed: %w", err)
 			}
@@ -115,7 +115,7 @@ func (u *LLMUsecase) FormatConversationMessages(
 
 			formattedMessages, err := template.Format(ctx, map[string]any{
 				"CurrentDate": time.Now().Format("2006-01-02"),
-				"Question":    question,
+				"Question":    rewrittenQuery,
 				"Documents":   documents,
 			})
 			if err != nil {
@@ -310,10 +310,10 @@ func (u *LLMUsecase) GetRankNodes(
 	groupIDs []int,
 	similarityThreshold float64,
 	historyMessages []*schema.Message,
-) ([]*domain.RankedNodeChunks, error) {
+) (string, []*domain.RankedNodeChunks, error) {
 	var rankedNodes []*domain.RankedNodeChunks
 	// get related documents from raglite
-	records, err := u.rag.QueryRecords(ctx, &rag.QueryRecordsRequest{
+	rewrittenQuery, records, err := u.rag.QueryRecords(ctx, &rag.QueryRecordsRequest{
 		DatasetID:           datasetID,
 		Query:               question,
 		GroupIDs:            groupIDs,
@@ -321,7 +321,7 @@ func (u *LLMUsecase) GetRankNodes(
 		HistoryMsgs:         historyMessages,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("get records from raglite failed: %w", err)
+		return "", nil, fmt.Errorf("get records from raglite failed: %w", err)
 	}
 	u.logger.Info("get related documents from raglite", log.Any("record_count", len(records)))
 	rankedNodesMap := make(map[string]*domain.RankedNodeChunks)
@@ -333,7 +333,7 @@ func (u *LLMUsecase) GetRankNodes(
 		u.logger.Info("node chunk doc ids", log.Any("docIDs", docIDs))
 		docIDNode, err := u.nodeRepo.GetNodeReleasesWithPathsByDocIDs(ctx, docIDs)
 		if err != nil {
-			return nil, fmt.Errorf("get nodes by ids failed: %w", err)
+			return "", nil, fmt.Errorf("get nodes by ids failed: %w", err)
 		}
 		u.logger.Info("get node release by doc ids", log.Any("docIDNode", lo.Keys(docIDNode)))
 		for _, record := range records {
@@ -355,5 +355,5 @@ func (u *LLMUsecase) GetRankNodes(
 			}
 		}
 	}
-	return rankedNodes, nil
+	return rewrittenQuery, rankedNodes, nil
 }
