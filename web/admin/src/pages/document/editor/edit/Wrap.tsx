@@ -712,6 +712,7 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
               mt: '56px',
               px: 10,
               pt: 4,
+              pb: 3,
               flex: 1,
             }}
           >
@@ -727,7 +728,7 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
                   content: value,
                 });
               }}
-              height='calc(100vh - 103px)'
+              height='calc(100vh - 127px)'
             />
           </Box>
         ) : (
