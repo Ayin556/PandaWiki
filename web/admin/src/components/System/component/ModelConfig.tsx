@@ -232,8 +232,6 @@ const ModelConfig = forwardRef<ModelConfigRef, ModelConfigProps>(
             );
           }
           getModelList(); // 刷新模型列表
-        } catch (err) {
-          console.error(err);
         } finally {
           setIsSaving(false);
         }
