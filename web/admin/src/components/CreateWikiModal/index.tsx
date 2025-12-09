@@ -72,9 +72,6 @@ const CreateWikiModal = () => {
         .then(() => {
           setActiveStep(prev => prev + 1);
         })
-        .catch(error => {
-          message.error(error.message || '模型配置验证失败');
-        })
         .finally(() => {
           setLoading(false);
         });
