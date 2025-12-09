@@ -56,7 +56,7 @@ export const validateFormData = (
  */
 export const pollCrawlerResults = async (
   taskId: string,
-  maxAttempts = 60,
+  maxAttempts = 60 * 15,
   interval = 2000,
 ): Promise<{ status: ConstsCrawlerStatus; content?: string }> => {
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
