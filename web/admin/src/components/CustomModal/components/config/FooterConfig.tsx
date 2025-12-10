@@ -68,6 +68,7 @@ const FooterConfig = ({ data, setIsEdit, isEdit }: FooterConfigProps) => {
       show_brand_info: false,
       social_media_accounts: [],
       footer_show_intro: true,
+      brand_groups: [],
     },
   });
 
@@ -325,7 +326,7 @@ const FooterConfig = ({ data, setIsEdit, isEdit }: FooterConfigProps) => {
                   }}
                   onClick={() => {
                     const newAccounts = [
-                      ...social_media_accounts,
+                      ...(social_media_accounts || []),
                       {
                         icon: '',
                         channel: '',
@@ -353,7 +354,7 @@ const FooterConfig = ({ data, setIsEdit, isEdit }: FooterConfigProps) => {
                 </Stack>
               </Stack>
               <DragSocialInfo
-                data={social_media_accounts}
+                data={social_media_accounts || []}
                 control={control}
                 onChange={(data: DomainSocialMediaAccount[]) => {
                   setValue('social_media_accounts', data);
@@ -394,7 +395,7 @@ const FooterConfig = ({ data, setIsEdit, isEdit }: FooterConfigProps) => {
               }}
               onClick={() => {
                 const newGroups = [
-                  ...brand_groups,
+                  ...(brand_groups || []),
                   { name: '', links: [{ name: '', url: '' }] },
                 ];
                 setValue('brand_groups', newGroups);
@@ -420,7 +421,7 @@ const FooterConfig = ({ data, setIsEdit, isEdit }: FooterConfigProps) => {
 
           <DragBrand
             control={control}
-            data={brand_groups}
+            data={brand_groups || []}
             onChange={brand_groups => {
               setValue('brand_groups', brand_groups);
               setIsEdit(true);
