@@ -106,7 +106,13 @@ func (u *LLMUsecase) FormatConversationMessages(
 			if err != nil {
 				return nil, nil, fmt.Errorf("get kb failed: %w", err)
 			}
-			rewrittenQuery, rankedNodes, err = u.GetRankNodes(ctx, kb.DatasetID, question, groupIDs, 0, historyMessages[:len(historyMessages)-1])
+			rewrittenQuery, rankedNodes, err = u.GetRankNodes(ctx, GetRankNodesRequest{
+				DatasetID:           kb.DatasetID,
+				Question:            question,
+				GroupIDs:            groupIDs,
+				SimilarityThreshold: 0,
+				HistoryMessages:     historyMessages[:len(historyMessages)-1],
+			})
 			if err != nil {
 				return nil, nil, fmt.Errorf("get rank nodes failed: %w", err)
 			}
@@ -303,22 +309,25 @@ func (u *LLMUsecase) SplitByTokenLimit(text string, maxTokens int) ([]string, er
 	return result, nil
 }
 
-func (u *LLMUsecase) GetRankNodes(
-	ctx context.Context,
-	datasetID string,
-	question string,
-	groupIDs []int,
-	similarityThreshold float64,
-	historyMessages []*schema.Message,
-) (string, []*domain.RankedNodeChunks, error) {
+type GetRankNodesRequest struct {
+	DatasetID           string
+	Question            string
+	GroupIDs            []int
+	SimilarityThreshold float64
+	HistoryMessages     []*schema.Message
+	MaxChunksPerDoc     int
+}
+
+func (u *LLMUsecase) GetRankNodes(ctx context.Context, req GetRankNodesRequest) (string, []*domain.RankedNodeChunks, error) {
 	var rankedNodes []*domain.RankedNodeChunks
 	// get related documents from raglite
 	rewrittenQuery, records, err := u.rag.QueryRecords(ctx, &rag.QueryRecordsRequest{
-		DatasetID:           datasetID,
-		Query:               question,
-		GroupIDs:            groupIDs,
-		SimilarityThreshold: similarityThreshold,
-		HistoryMsgs:         historyMessages,
+		DatasetID:           req.DatasetID,
+		Query:               req.Question,
+		GroupIDs:            req.GroupIDs,
+		SimilarityThreshold: req.SimilarityThreshold,
+		HistoryMsgs:         req.HistoryMessages,
+		MaxChunksPerDoc:     req.MaxChunksPerDoc,
 	})
 	if err != nil {
 		return "", nil, fmt.Errorf("get records from raglite failed: %w", err)

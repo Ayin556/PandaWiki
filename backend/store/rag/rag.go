@@ -19,6 +19,7 @@ type QueryRecordsRequest struct {
 	Tags                []string
 	SimilarityThreshold float64
 	HistoryMsgs         []*schema.Message
+	MaxChunksPerDoc     int
 }
 
 type UpsertRecordsRequest struct {
