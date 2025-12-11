@@ -99,6 +99,7 @@ export const copyText = (
   msgText?: string,
 ) => {
   const isNotHttps = !/^https:\/\//.test(window.location.origin);
+  const dur = duration ?? 1.5;
 
   if (msgText) {
     msgText = ` ` + msgText;
@@ -109,7 +110,7 @@ export const copyText = (
   if (isNotHttps) {
     message.error(
       '非 https 协议下不支持复制，请使用 https 协议' + msgText,
-      duration ?? 1500,
+      dur,
     );
     return;
   }
@@ -117,7 +118,7 @@ export const copyText = (
   try {
     if (navigator.clipboard && window.isSecureContext) {
       navigator.clipboard.writeText(text);
-      message.success('复制成功' + msgText, duration ?? 1500);
+      message.success('复制成功' + msgText, dur);
       callback?.();
     } else {
       const textArea = document.createElement('textarea');
