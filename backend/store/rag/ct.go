@@ -74,6 +74,7 @@ func (s *CTRAG) QueryRecords(ctx context.Context, req *QueryRecordsRequest) (str
 		Tags:                make([]string, 0),
 		SimilarityThreshold: req.SimilarityThreshold,
 		ChatHistory:         chatMsgs,
+		MaxChunksPerDoc:     req.MaxChunksPerDoc,
 	}
 	if len(req.GroupIDs) > 0 {
 		data.Metadata["group_ids"] = req.GroupIDs
