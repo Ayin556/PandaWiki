@@ -141,6 +141,7 @@ const AiQaContent: React.FC<{
   }> | null>(null);
   const { palette } = useTheme();
   const messageIdRef = useRef('');
+  const lastResultExpendRef = useRef(false);
   const [fullAnswer, setFullAnswer] = useState<string>('');
   const [conversation, setConversation] = useState<ConversationItem[]>([]);
   const [loading, setLoading] = useState(false);
@@ -479,7 +480,7 @@ const AiQaContent: React.FC<{
                 if (lastConversation) {
                   lastConversation.a = answerContent;
                   lastConversation.thinking_content = thinkingContent;
-                  lastConversation.result_expend = false;
+                  lastConversation.result_expend = lastResultExpendRef.current;
                   lastConversation.thinking_expend = false;
                 }
                 return newConversation;
@@ -520,6 +521,7 @@ const AiQaContent: React.FC<{
       : conversation.some(item => item.source === 'history')
         ? []
         : [...conversation];
+    lastResultExpendRef.current = false;
     newConversation.push({
       q,
       a: '',
@@ -818,6 +820,9 @@ const AiQaContent: React.FC<{
                     onChange={(event, expanded) => {
                       setConversation(prev => {
                         const newConversation = [...prev];
+                        if (index === conversation.length - 1) {
+                          lastResultExpendRef.current = expanded;
+                        }
                         newConversation[index].result_expend = expanded;
                         return newConversation;
                       });
@@ -838,7 +843,7 @@ const AiQaContent: React.FC<{
                     </StyledChunkAccordionSummary>
 
                     <StyledChunkAccordionDetails>
-                      <Stack gap={1}>
+                      <Stack gap={1} alignItems='flex-start'>
                         {item.chunk_result.map((chunk, chunkIndex) => (
                           <StyledChunkItem key={chunkIndex}>
                             <Typography

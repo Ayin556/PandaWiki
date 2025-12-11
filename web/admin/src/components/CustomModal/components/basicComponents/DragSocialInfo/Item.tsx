@@ -17,7 +17,6 @@ import {
   forwardRef,
   HTMLAttributes,
   SetStateAction,
-  useId,
 } from 'react';
 import { Control, Controller } from 'react-hook-form';
 import { options } from '../../config/FooterConfig';
@@ -36,7 +35,7 @@ const Item = forwardRef<HTMLDivElement, SocialInfoProps>(
   (
     {
       item,
-      data,
+      data = [],
       control,
       setIsEdit,
       index,
@@ -48,7 +47,6 @@ const Item = forwardRef<HTMLDivElement, SocialInfoProps>(
     },
     ref,
   ) => {
-    const id = useId();
     const inlineStyles: CSSProperties = {
       opacity: withOpacity ? '0.5' : '1',
       borderRadius: '10px',

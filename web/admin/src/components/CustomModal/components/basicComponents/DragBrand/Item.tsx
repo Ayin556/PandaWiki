@@ -445,7 +445,7 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(
             </Stack>
             {/* 链接拖拽区域 */}
 
-            {item.links.length > 0 && (
+            {item.links && item.links.length > 0 && (
               <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
