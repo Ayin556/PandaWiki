@@ -42,11 +42,11 @@ export async function generateMetadata(): Promise<Metadata> {
   const kbDetail: any = await getShareV1AppWebInfo();
   const basePath = getBasePath(kbDetail?.base_url || '');
   const icon = getImagePath(kbDetail?.settings?.icon || '', basePath);
-
   return {
     metadataBase: new URL(process.env.TARGET || ''),
     title: kbDetail?.settings?.title || 'Panda-Wiki',
     description: kbDetail?.settings?.desc || '',
+    keywords: kbDetail?.settings?.keyword || '',
     icons: {
       icon: icon || `${basePath}/favicon.png`,
     },
