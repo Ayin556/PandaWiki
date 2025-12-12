@@ -614,7 +614,7 @@ func (r *KnowledgeBaseRepository) CreateKBRelease(ctx context.Context, release *
 				CreatedAt:     time.Now(),
 			}
 		}
-		if err := tx.CreateInBatches(&kbReleaseNodeReleases, 100).Error; err != nil {
+		if err := tx.CreateInBatches(&kbReleaseNodeReleases, 2000).Error; err != nil {
 			return err
 		}
 		return nil
