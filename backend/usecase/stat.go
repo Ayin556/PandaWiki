@@ -336,17 +336,17 @@ func (u *StatUseCase) GetConversationDistribution(ctx context.Context, kbID stri
 		return nil, err
 	}
 
-	if day > consts.StatDay1 {
-		mergedDistributions := make(map[domain.AppType]*domain.ConversationDistribution)
-		for _, dist := range distributions {
-			if app, ok := appMap[dist.AppID]; ok {
-				mergedDistributions[app.Type] = &domain.ConversationDistribution{
-					AppType: app.Type,
-					Count:   dist.Count,
-				}
+	mergedDistributions := make(map[domain.AppType]*domain.ConversationDistribution)
+	for _, dist := range distributions {
+		if app, ok := appMap[dist.AppID]; ok {
+			mergedDistributions[app.Type] = &domain.ConversationDistribution{
+				AppType: app.Type,
+				Count:   dist.Count,
 			}
 		}
+	}
 
+	if day > consts.StatDay1 {
 		m, err := u.conversationRepo.GetConversationDistributionByHour(ctx, kbID, int64(day)*24)
 		if err != nil {
 			return nil, err
@@ -362,12 +362,12 @@ func (u *StatUseCase) GetConversationDistribution(ctx context.Context, kbID stri
 				}
 			}
 		}
+	}
 
-		// 转换回slice
-		distributions = make([]domain.ConversationDistribution, 0, len(mergedDistributions))
-		for _, dist := range mergedDistributions {
-			distributions = append(distributions, *dist)
-		}
+	// 转换回slice
+	distributions = make([]domain.ConversationDistribution, 0, len(mergedDistributions))
+	for _, dist := range mergedDistributions {
+		distributions = append(distributions, *dist)
 	}
 
 	var resp []v1.StatConversationDistributionResp
