@@ -154,6 +154,7 @@ func (s *CTRAG) AddModel(ctx context.Context, model *domain.Model) (string, erro
 		Name:      model.Model,
 		Provider:  string(model.Provider),
 		ModelType: string(model.Type),
+		ModelName: model.Model,
 		Config: raglite.AIModelConfig{
 			APIBase:         model.BaseURL,
 			APIKey:          model.APIKey,
