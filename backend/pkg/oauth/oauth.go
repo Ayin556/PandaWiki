@@ -45,8 +45,8 @@ type UserInfo struct {
 }
 
 // NewClient 创建OAuth客户端
-func NewClient(ctx context.Context, logger *log.Logger, config Config) (*Client, error) {
-	redirectURI, err := url.JoinPath(config.RedirectURI, callbackPath)
+func NewClient(ctx context.Context, logger *log.Logger, baseUrl string, config Config) (*Client, error) {
+	redirectURI, err := url.JoinPath(baseUrl, callbackPath)
 	if err != nil {
 		return nil, err
 	}
