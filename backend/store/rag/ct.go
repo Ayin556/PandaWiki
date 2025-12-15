@@ -67,20 +67,16 @@ func (s *CTRAG) QueryRecords(ctx context.Context, req *QueryRecordsRequest) (str
 	}
 	s.logger.Debug("retrieving by history msgs", log.Any("history_msgs", req.HistoryMsgs), log.Any("chat_msgs", chatMsgs))
 	data := &raglite.RetrieveRequest{
-		DatasetID:           req.DatasetID,
-		Query:               req.Query,
-		TopK:                10,
-		Metadata:            make(map[string]interface{}),
-		Tags:                make([]string, 0),
+		DatasetID: req.DatasetID,
+		Query:     req.Query,
+		TopK:      10,
+		Metadata: map[string]interface{}{
+			"group_ids": req.GroupIDs,
+		},
+		Tags:                req.Tags,
 		SimilarityThreshold: req.SimilarityThreshold,
 		ChatHistory:         chatMsgs,
 		MaxChunksPerDoc:     req.MaxChunksPerDoc,
-	}
-	if len(req.GroupIDs) > 0 {
-		data.Metadata["group_ids"] = req.GroupIDs
-	}
-	if len(req.Tags) > 0 {
-		data.Tags = req.Tags
 	}
 	res, err := s.client.Search.Retrieve(ctx, data)
 	if err != nil {
