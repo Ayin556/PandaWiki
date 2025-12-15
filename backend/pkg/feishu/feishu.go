@@ -53,8 +53,8 @@ type UserInfo struct {
 	EmployeeNo      string `json:"employee_no"`
 }
 
-func NewClient(ctx context.Context, logger *log.Logger, appID, appSecret, redirectURI string) (*Client, error) {
-	redirectURI, err := url.JoinPath(redirectURI, callbackPath)
+func NewClient(ctx context.Context, logger *log.Logger, appID, appSecret, baseUrl string) (*Client, error) {
+	redirectURI, err := url.JoinPath(baseUrl, callbackPath)
 	if err != nil {
 		return nil, err
 	}
