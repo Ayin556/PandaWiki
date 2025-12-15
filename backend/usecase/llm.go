@@ -110,7 +110,7 @@ func (u *LLMUsecase) FormatConversationMessages(
 				DatasetID:           kb.DatasetID,
 				Question:            question,
 				GroupIDs:            groupIDs,
-				SimilarityThreshold: 0,
+				SimilarityThreshold: 0.2,
 				HistoryMessages:     historyMessages[:len(historyMessages)-1],
 			})
 			if err != nil {
