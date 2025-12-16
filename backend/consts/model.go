@@ -7,7 +7,7 @@ const (
 	AutoModeDefaultEmbeddingModel  AutoModeDefaultModel = "bge-m3"
 	AutoModeDefaultRerankModel     AutoModeDefaultModel = "bge-reranker-v2-m3"
 	AutoModeDefaultAnalysisModel   AutoModeDefaultModel = "qwen2.5-3b-instruct"
-	AutoModeDefaultAnalysisVLModel AutoModeDefaultModel = "qwen-vl-max"
+	AutoModeDefaultAnalysisVLModel AutoModeDefaultModel = "qwen-vl-max-latest"
 )
 
 func GetAutoModeDefaultModel(modelType string) string {
