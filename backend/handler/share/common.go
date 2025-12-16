@@ -58,15 +58,25 @@ func NewShareCommonHandler(
 //	@Param			X-KB-ID			header		string	true	"kb id"
 //	@Param			file			formData	file	true	"File"
 //	@Param			captcha_token	formData	string	true	"captcha_token"
-//	@Success		200				{object}	domain.Response{data=v1.FileUploadResp}
+//	@Success		200				{object}	domain.Response{data=v1.ShareFileUploadReq}
 //	@Router			/share/v1/common/file/upload [post]
 func (h *ShareCommonHandler) FileUpload(c echo.Context) error {
 	ctx := c.Request().Context()
 
-	var req v1.FileUploadReq
+	var req v1.ShareFileUploadReq
 	if err := c.Bind(&req); err != nil {
 		return h.NewResponseWithError(c, "invalid request parameters", err)
 	}
+
+	if err := c.Validate(req); err != nil {
+		return h.NewResponseWithError(c, "validate request body failed", err)
+	}
+
+	kbID := c.Request().Header.Get("X-KB-ID")
+	if kbID == "" {
+		return h.NewResponseWithError(c, "kb_id is required", nil)
+	}
+	req.KbId = kbID
 
 	file, err := c.FormFile("file")
 	if err != nil {

@@ -3733,7 +3733,7 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/v1.FileUploadResp"
+                                            "$ref": "#/definitions/v1.ShareFileUploadReq"
                                         }
                                     }
                                 }
@@ -5364,8 +5364,7 @@
         "domain.ChatRequest": {
             "type": "object",
             "required": [
-                "app_type",
-                "message"
+                "app_type"
             ],
             "properties": {
                 "app_type": {
@@ -5384,6 +5383,13 @@
                 },
                 "conversation_id": {
                     "type": "string"
+                },
+                "image_paths": {
+                    "type": "array",
+                    "maxItems": 3,
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "message": {
                     "type": "string"
@@ -5692,6 +5698,12 @@
                 },
                 "id": {
                     "type": "string"
+                },
+                "image_paths": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "info": {
                     "description": "feedbackinfo",
@@ -7276,6 +7288,12 @@
                 "created_at": {
                     "type": "string"
                 },
+                "image_paths": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "role": {
                     "$ref": "#/definitions/schema.RoleType"
                 }
@@ -8481,14 +8499,6 @@
                 }
             }
         },
-        "v1.FileUploadResp": {
-            "type": "object",
-            "properties": {
-                "key": {
-                    "type": "string"
-                }
-            }
-        },
         "v1.KBUserInviteReq": {
             "type": "object",
             "required": [
@@ -8756,6 +8766,20 @@
                 "new_password": {
                     "type": "string",
                     "minLength": 8
+                }
+            }
+        },
+        "v1.ShareFileUploadReq": {
+            "type": "object",
+            "required": [
+                "captcha_token"
+            ],
+            "properties": {
+                "captcha_token": {
+                    "type": "string"
+                },
+                "file": {
+                    "type": "string"
                 }
             }
         },

@@ -165,6 +165,7 @@ func (u *ChatUsecase) Chat(ctx context.Context, req *domain.ChatRequest) (<-chan
 			AppID:          req.AppID,
 			Role:           schema.User,
 			Content:        req.Message,
+			ImagePaths:     req.ImagePaths,
 			RemoteIP:       req.RemoteIP,
 		}); err != nil {
 			u.logger.Error("failed to save user question to conversation message", log.Error(err))

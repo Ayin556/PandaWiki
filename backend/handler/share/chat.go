@@ -88,6 +88,17 @@ func (h *ShareChatHandler) ChatMessage(c echo.Context) error {
 		h.logger.Error("validate request failed", log.Error(err))
 		return h.sendErrMsg(c, "validate request failed")
 	}
+
+	for _, path := range req.ImagePaths {
+		if !strings.HasPrefix(path, "/static-file/") {
+			return h.sendErrMsg(c, "invalid image path")
+		}
+	}
+
+	if req.Message == "" && len(req.ImagePaths) == 0 {
+		return h.sendErrMsg(c, "message is empty")
+	}
+
 	if req.AppType != domain.AppTypeWeb {
 		return h.sendErrMsg(c, "invalid app type")
 	}
@@ -153,6 +164,15 @@ func (h *ShareChatHandler) ChatWidget(c echo.Context) error {
 	if req.AppType != domain.AppTypeWidget {
 		return h.sendErrMsg(c, "invalid app type")
 	}
+	if req.Message == "" && len(req.ImagePaths) == 0 {
+		return h.sendErrMsg(c, "message is empty")
+	}
+	for _, path := range req.ImagePaths {
+		if !strings.HasPrefix(path, "/static-file/") {
+			return h.sendErrMsg(c, "invalid image path")
+		}
+	}
+
 	// get widget app info
 	widgetAppInfo, err := h.appUsecase.GetWidgetAppInfo(c.Request().Context(), req.KBID)
 	if err != nil {

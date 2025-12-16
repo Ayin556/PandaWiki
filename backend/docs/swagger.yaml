@@ -951,13 +951,17 @@ definitions:
         type: string
       conversation_id:
         type: string
+      image_paths:
+        items:
+          type: string
+        maxItems: 3
+        type: array
       message:
         type: string
       nonce:
         type: string
     required:
     - app_type
-    - message
     type: object
   domain.ChatSearchReq:
     properties:
@@ -1153,6 +1157,10 @@ definitions:
         type: string
       id:
         type: string
+      image_paths:
+        items:
+          type: string
+        type: array
       info:
         allOf:
         - $ref: '#/definitions/domain.FeedBackInfo'
@@ -2182,6 +2190,10 @@ definitions:
         type: string
       created_at:
         type: string
+      image_paths:
+        items:
+          type: string
+        type: array
       role:
         $ref: '#/definitions/schema.RoleType'
     type: object
@@ -2976,11 +2988,6 @@ definitions:
       user_access_token:
         type: string
     type: object
-  v1.FileUploadResp:
-    properties:
-      key:
-        type: string
-    type: object
   v1.KBUserInviteReq:
     properties:
       kb_id:
@@ -3160,6 +3167,15 @@ definitions:
     required:
     - id
     - new_password
+    type: object
+  v1.ShareFileUploadReq:
+    properties:
+      captcha_token:
+        type: string
+      file:
+        type: string
+    required:
+    - captcha_token
     type: object
   v1.ShareNodeDetailResp:
     properties:
@@ -5567,7 +5583,7 @@ paths:
             - $ref: '#/definitions/domain.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/v1.FileUploadResp'
+                  $ref: '#/definitions/v1.ShareFileUploadReq'
               type: object
       summary: 文件上传
       tags:
