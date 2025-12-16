@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@ctzhian/tiptap':
-        specifier: ^2.9.1
-        version: 2.9.1(6818e5a9680408749cb290af4dd5728c)
+        specifier: ^2.9.2
+        version: 2.9.2(6818e5a9680408749cb290af4dd5728c)
       '@ctzhian/ui':
         specifier: ^7.0.5
         version: 7.0.5(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.3))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.3))(@types/react@19.2.7)(react@19.2.3))(@mui/icons-material@7.3.4(@mui/material@7.3.4(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.3))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.3))(@types/react@19.2.7)(react@19.2.3))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@types/react@19.2.7)(react@19.2.3))(@mui/material@7.3.4(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.3))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.3))(@types/react@19.2.7)(react@19.2.3))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@mui/utils@7.3.3(@types/react@19.2.7)(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -520,8 +520,8 @@ packages:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
 
-  '@ctzhian/tiptap@2.9.1':
-    resolution: {integrity: sha512-mTv20078YTFmN1QJdy5pE4gcfzNzGzj79p6tpixbdNGEp0w5DfCgRo5sInp2HkUNhBQZxYTyA1msHXUBz2JdnQ==}
+  '@ctzhian/tiptap@2.9.2':
+    resolution: {integrity: sha512-NmCm2+aoVsYlPLNVRNyl16ImWnRVmWqGe/Bn6KTBWTCjAo0kh+AfZDgM6nvYHhfCeFByaZYGbtVJbu5LuxTvHg==}
     peerDependencies:
       '@emotion/react': ^11
       '@emotion/styled': ^11
@@ -6056,7 +6056,7 @@ snapshots:
       - react-native
       - typescript
 
-  '@ctzhian/tiptap@2.9.1(6818e5a9680408749cb290af4dd5728c)':
+  '@ctzhian/tiptap@2.9.2(6818e5a9680408749cb290af4dd5728c)':
     dependencies:
       '@emotion/react': 11.14.0(@types/react@19.2.7)(react@19.2.3)
       '@emotion/styled': 11.14.1(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.3))(@types/react@19.2.7)(react@19.2.3)
