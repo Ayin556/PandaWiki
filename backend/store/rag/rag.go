@@ -56,6 +56,7 @@ type RAGService interface {
 
 	GetModelList(ctx context.Context) ([]*domain.Model, error)
 	AddModel(ctx context.Context, model *domain.Model) (string, error)
+	UpdateModel(ctx context.Context, model *domain.Model) error
 	UpsertModel(ctx context.Context, model *domain.Model) error
 	DeleteModel(ctx context.Context, model *domain.Model) error
 }
