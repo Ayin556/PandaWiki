@@ -559,7 +559,9 @@ export interface DomainChatRequest {
   app_type: 1 | 2;
   captcha_token?: string;
   conversation_id?: string;
-  message: string;
+  /** @maxItems 3 */
+  image_paths?: string[];
+  message?: string;
   nonce?: string;
 }
 
@@ -665,6 +667,7 @@ export interface DomainConversationMessage {
   conversation_id?: string;
   created_at?: string;
   id?: string;
+  image_paths?: string[];
   /** feedbackinfo */
   info?: DomainFeedBackInfo;
   kb_id?: string;
@@ -1209,6 +1212,7 @@ export interface DomainShareConversationDetailResp {
 export interface DomainShareConversationMessage {
   content?: string;
   created_at?: string;
+  image_paths?: string[];
   role?: SchemaRoleType;
 }
 
@@ -1814,24 +1818,24 @@ export interface DeleteApiV1AuthDeleteParams {
 export interface GetApiV1AuthGetParams {
   kb_id?: string;
   source_type:
-  | "dingtalk"
-  | "feishu"
-  | "wecom"
-  | "oauth"
-  | "github"
-  | "cas"
-  | "ldap"
-  | "widget"
-  | "dingtalk_bot"
-  | "feishu_bot"
-  | "lark_bot"
-  | "wechat_bot"
-  | "wecom_ai_bot"
-  | "wechat_service_bot"
-  | "discord_bot"
-  | "wechat_official_account"
-  | "openai_api"
-  | "mcp_server";
+    | "dingtalk"
+    | "feishu"
+    | "wecom"
+    | "oauth"
+    | "github"
+    | "cas"
+    | "ldap"
+    | "widget"
+    | "dingtalk_bot"
+    | "feishu_bot"
+    | "lark_bot"
+    | "wechat_bot"
+    | "wecom_ai_bot"
+    | "wechat_service_bot"
+    | "discord_bot"
+    | "wechat_official_account"
+    | "openai_api"
+    | "mcp_server";
 }
 
 export interface GetApiV1CommentParams {

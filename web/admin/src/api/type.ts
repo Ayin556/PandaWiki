@@ -586,6 +586,7 @@ export type ChatConversationItem = {
 
 export type ChatConversationPair = {
   user: string;
+  image_paths: string[];
   assistant: string;
   thinking_content: string;
   created_at: string;

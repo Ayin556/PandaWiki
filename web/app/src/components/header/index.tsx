@@ -102,7 +102,7 @@ const Header = ({ isDocPage = false, isWelcomePage = false }: HeaderProps) => {
         kbDetail?.settings?.web_app_custom_style?.header_search_placeholder
       }
       showSearch
-      homePath={basePath}
+      homePath={basePath || '/'}
       btns={
         kbDetail?.settings?.btns?.map((item: any) => ({
           ...item,
@@ -153,7 +153,7 @@ export const WelcomeHeader = () => {
         kbDetail?.settings?.web_app_custom_style?.header_search_placeholder
       }
       showSearch
-      homePath={basePath}
+      homePath={basePath || '/'}
       btns={
         kbDetail?.settings?.btns?.map((item: any) => ({
           ...item,

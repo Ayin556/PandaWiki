@@ -6,6 +6,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Card from '@/components/Card';
 import MarkDown from '@/components/MarkDown';
 import { useAppSelector } from '@/store';
+import { getBasePath } from '@/utils/getBasePath';
 import {
   Accordion,
   AccordionDetails,
@@ -17,7 +18,7 @@ import {
   alpha,
   Typography,
 } from '@mui/material';
-import { Ellipsis, Icon, Modal } from '@ctzhian/ui';
+import { Ellipsis, Modal, Image } from '@ctzhian/ui';
 import { useEffect, useState } from 'react';
 import { IconDitu_diqiu } from '@panda-wiki/icons';
 
@@ -202,19 +203,15 @@ const Detail = ({
       let currentPair: Partial<ChatConversationPair> = {};
       res.messages?.forEach(message => {
         if (message.role === 'user') {
-          if (currentPair.user) {
-            pairs.push({
-              user: currentPair.user,
-              assistant: '',
-              created_at: '',
-              info: { score: 0 },
-            } as ChatConversationPair);
-          }
           currentPair = {
             user: message.content,
+            image_paths: message.image_paths,
           };
         } else if (message.role === 'assistant') {
-          if (currentPair.user) {
+          if (
+            currentPair.user ||
+            (currentPair.image_paths && currentPair.image_paths.length > 0)
+          ) {
             const { thinkingContent, answerContent } = handleThinkingContent(
               message.content || '',
             );
@@ -229,9 +226,13 @@ const Detail = ({
         }
       });
 
-      if (currentPair.user) {
+      if (
+        currentPair.user ||
+        (currentPair.image_paths && currentPair.image_paths.length > 0)
+      ) {
         pairs.push({
           user: currentPair.user,
+          image_paths: currentPair.image_paths,
           assistant: '',
           created_at: '',
           info: { score: 0 },
@@ -331,8 +332,35 @@ const Detail = ({
             {conversations &&
               conversations.map((item, index) => (
                 <StyledConversationItem key={index}>
+                  {item.image_paths.length > 0 && (
+                    <Image.PreviewGroup>
+                      <Stack
+                        direction='row'
+                        gap={1}
+                        sx={{ alignSelf: 'flex-end' }}
+                      >
+                        {item.image_paths.map((url: string) => (
+                          <Image
+                            key={url}
+                            alt={url}
+                            src={getBasePath(url)}
+                            width={100}
+                            height={100}
+                            style={{
+                              borderRadius: '10px',
+                              objectFit: 'cover',
+                              cursor: 'pointer',
+                            }}
+                            referrerPolicy='no-referrer'
+                          />
+                        ))}
+                      </Stack>
+                    </Image.PreviewGroup>
+                  )}
                   {/* 用户问题气泡 - 右对齐 */}
-                  <StyledUserBubble>{item.user}</StyledUserBubble>
+                  {item.user && (
+                    <StyledUserBubble>{item.user}</StyledUserBubble>
+                  )}
 
                   {/* AI回答气泡 - 左对齐 */}
                   <StyledAiBubble>
