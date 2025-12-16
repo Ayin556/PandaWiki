@@ -154,10 +154,12 @@ func (s *CTRAG) AddModel(ctx context.Context, model *domain.Model) (string, erro
 		Config: raglite.AIModelConfig{
 			APIBase:         model.BaseURL,
 			APIKey:          model.APIKey,
+			APIHeader:       model.APIHeader,
+			APIVersion:      model.APIVersion,
 			MaxTokens:       raglite.Ptr(maxTokens),
 			ExtraParameters: model.Parameters.Map(),
 		},
-		IsDefault: model.IsActive,
+		IsDefault: true,
 	})
 	if err != nil {
 		return "", err
@@ -178,12 +180,42 @@ func (s *CTRAG) UpsertModel(ctx context.Context, model *domain.Model) error {
 		Config: raglite.AIModelConfig{
 			APIBase:         model.BaseURL,
 			APIKey:          model.APIKey,
+			APIHeader:       model.APIHeader,
+			APIVersion:      model.APIVersion,
 			MaxTokens:       raglite.Ptr(maxTokens),
 			ExtraParameters: model.Parameters.Map(),
 		},
-		IsDefault: model.IsActive,
+		IsDefault: true,
+		IsActive:  model.IsActive,
 	}
 	_, err := s.client.Models.Upsert(ctx, &data)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *CTRAG) UpdateModel(ctx context.Context, model *domain.Model) error {
+	maxTokens := model.Parameters.MaxTokens
+	if maxTokens == 0 {
+		maxTokens = 8192
+	}
+	data := raglite.UpdateModelRequest{
+		Name:      raglite.Ptr(model.Model),
+		Provider:  raglite.Ptr(string(model.Provider)),
+		ModelName: raglite.Ptr(model.Model),
+		Config: &raglite.AIModelConfig{
+			APIBase:         model.BaseURL,
+			APIKey:          model.APIKey,
+			APIHeader:       model.APIHeader,
+			APIVersion:      model.APIVersion,
+			MaxTokens:       raglite.Ptr(maxTokens),
+			ExtraParameters: model.Parameters.Map(),
+		},
+		IsDefault: raglite.Ptr(true),
+		IsActive:  raglite.Ptr(model.IsActive),
+	}
+	_, err := s.client.Models.Update(ctx, model.ID, &data)
 	if err != nil {
 		return err
 	}
