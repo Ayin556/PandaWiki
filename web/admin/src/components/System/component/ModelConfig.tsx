@@ -1378,6 +1378,7 @@ const ModelConfig = forwardRef<ModelConfigRef, ModelConfigProps>(
               language='zh-CN'
               messageComponent={message}
               is_close_model_remark={true}
+              addingModelTutorialURL='https://pandawiki.docs.baizhi.cloud/node/019a160d-0528-736a-b88e-32a2d1207f3e'
             />
           </Suspense>
         )}
