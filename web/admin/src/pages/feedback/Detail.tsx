@@ -29,7 +29,7 @@ const Detail = ({
 }) => {
   const [conversations, setConversations] = useState<Omit<
     ChatConversationPair,
-    'info'
+    'info' | 'image_paths'
   > | null>(null);
   const { kb_id = '' } = useAppSelector(state => state.config);
 

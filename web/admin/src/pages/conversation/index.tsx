@@ -49,7 +49,7 @@ const Conversation = () => {
                   setOpen(true);
                 }}
               >
-                {text}
+                {text || '图片问答'}
               </Ellipsis>
             </Stack>
             <Box sx={{ color: 'text.tertiary', fontSize: 12 }}>

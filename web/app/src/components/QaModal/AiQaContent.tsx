@@ -3,12 +3,13 @@ import { useStore } from '@/provider';
 import SSEClient from '@/utils/fetch';
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { postShareV1CommonFileUpload } from '@/request/ShareFile';
 import dayjs from 'dayjs';
 import { ChunkResultItem } from '@/assets/type';
 import Logo from '@/assets/images/logo.png';
 import aiLoading from '@/assets/images/ai-loading.gif';
 import { getShareV1ConversationDetail } from '@/request/ShareConversation';
-import { message } from '@ctzhian/ui';
+import { message, Image as ImagePreview } from '@ctzhian/ui';
 import Feedback from '@/components/feedback';
 import { handleThinkingContent } from './utils';
 import { useSmartScroll } from '@/hooks';
@@ -78,6 +79,7 @@ import {
 import { getImagePath } from '@/utils/getImagePath';
 
 export interface ConversationItem {
+  image_paths: string[];
   q: string;
   a: string;
   score: number;
@@ -193,16 +195,8 @@ const AiQaContent: React.FC<{
   };
 
   const handleSearch = (reset: boolean = false) => {
-    if (input.length > 0) {
+    if (input.length > 0 || uploadedImages.length > 0) {
       onSearch(input, reset);
-      setInput('');
-      // 清理图片URL
-      uploadedImages.forEach(img => {
-        if (img.url.startsWith('blob:')) {
-          URL.revokeObjectURL(img.url);
-        }
-      });
-      setUploadedImages([]);
     }
   };
 
@@ -215,7 +209,7 @@ const AiQaContent: React.FC<{
   const handleImageSelect = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
 
-    const maxImages = 9; // 最多9张图片
+    const maxImages = 3;
     const remainingSlots = maxImages - uploadedImages.length;
     if (remainingSlots <= 0) {
       message.warning(`最多只能上传 ${maxImages} 张图片`);
@@ -381,9 +375,49 @@ const AiQaContent: React.FC<{
     }
   };
 
+  // 上传所有图片到服务器
+  const uploadAllImages = async (): Promise<string[]> => {
+    if (uploadedImages.length === 0) return [];
+
+    const uploadedUrls: string[] = [];
+
+    try {
+      for (const image of uploadedImages) {
+        let token = '';
+        try {
+          const Cap = (await import(`@cap.js/widget`)).default;
+          const cap = new Cap({
+            apiEndpoint: `${basePath}/share/v1/captcha/`,
+          });
+          const solution = await cap.solve();
+          token = solution.token;
+        } catch (error) {
+          message.error('验证失败');
+          console.log(error, 'error---------');
+          return Promise.reject(error);
+        }
+        // 上传新图片
+        const result = await postShareV1CommonFileUpload({
+          file: image.file,
+          captcha_token: token,
+        });
+        const serverUrl = '/static-file/' + result.key;
+        uploadedUrls.push(serverUrl);
+      }
+
+      return uploadedUrls;
+    } catch (error: any) {
+      setLoading(false);
+      message.error(error.message || '图片上传失败');
+      throw error;
+    }
+  };
+
   const chatAnswer = async (q: string) => {
     setLoading(true);
     setThinking(1);
+
+    const imagePaths = await uploadAllImages();
 
     let token = '';
 
@@ -404,6 +438,7 @@ const AiQaContent: React.FC<{
 
     const reqData = {
       message: q,
+      image_paths: imagePaths,
       nonce: '',
       conversation_id: '',
       app_type: 1,
@@ -514,7 +549,7 @@ const AiQaContent: React.FC<{
   }, []);
 
   const onSearch = (q: string, reset: boolean = false) => {
-    if (loading || !q.trim()) return;
+    if (loading || (!q.trim() && uploadedImages.length === 0)) return;
     setShouldAutoScroll(true); // 开始新搜索时，重置为自动滚动
     const newConversation = reset
       ? []
@@ -523,6 +558,7 @@ const AiQaContent: React.FC<{
         : [...conversation];
     lastResultExpendRef.current = false;
     newConversation.push({
+      image_paths: uploadedImages.map(img => img.url),
       q,
       a: '',
       score: 0,
@@ -538,7 +574,11 @@ const AiQaContent: React.FC<{
     messageIdRef.current = '';
     setConversation(newConversation);
     setFullAnswer('');
-    setTimeout(() => chatAnswer(q), 0);
+    setTimeout(() => {
+      chatAnswer(q);
+      setInput('');
+      setUploadedImages([]);
+    }, 0);
   };
 
   const handleSearchAbort = () => {
@@ -547,7 +587,7 @@ const AiQaContent: React.FC<{
     setThinking(4);
   };
 
-  const { mobile = false, kbDetail } = useStore();
+  const { mobile = false, kbDetail, qaModalOpen } = useStore();
 
   const isFeedbackEnabled =
     // @ts-ignore
@@ -641,30 +681,18 @@ const AiQaContent: React.FC<{
           };
           res.messages.forEach(message => {
             if (message.role === 'user') {
-              if (current.q) {
-                conversation.push({
-                  q: current.q,
-                  a: '',
-                  score: 0,
-                  update_time: '',
-                  message_id: '',
-                  source: 'history',
-                  chunk_result: [],
-                  thinking_content: '',
-                  result_expend: true,
-                  thinking_expend: true,
-                  id: uuidv4(),
-                });
-              }
               current = {
+                image_paths: message.image_paths || [],
                 q: message.content,
                 chunk_result: [],
               };
             } else if (message.role === 'assistant') {
-              if (current.q) {
+              if (
+                current.q ||
+                (current.image_paths && current.image_paths.length > 0)
+              ) {
                 const { thinkingContent, answerContent } =
                   handleThinkingContent(message.content || '');
-
                 current.a = answerContent;
                 current.update_time = message.created_at;
                 current.score = 0;
@@ -677,10 +705,13 @@ const AiQaContent: React.FC<{
               }
             }
           });
-
-          if (current.q) {
+          if (
+            current.q ||
+            (current.image_paths && current.image_paths.length > 0)
+          ) {
             conversation.push({
-              q: current.q,
+              image_paths: current.image_paths || [],
+              q: current.q || '',
               a: '',
               score: 0,
               update_time: '',
@@ -699,6 +730,18 @@ const AiQaContent: React.FC<{
       });
     }
   }, []);
+
+  useEffect(() => {
+    if (!qaModalOpen) {
+      conversation.forEach(item => {
+        item.image_paths.forEach(image => {
+          if (image.startsWith('blob:')) {
+            URL.revokeObjectURL(image);
+          }
+        });
+      });
+    }
+  }, [qaModalOpen, conversation]);
 
   return (
     <StyledMainContainer className={palette.mode === 'dark' ? 'md-dark' : ''}>
@@ -808,9 +851,30 @@ const AiQaContent: React.FC<{
         <Stack gap={2}>
           {conversation.map((item, index) => (
             <StyledConversationItem key={item.id}>
-              {/* 用户问题气泡 - 右对齐 */}
-              <StyledUserBubble>{item.q}</StyledUserBubble>
+              {item.image_paths.length > 0 && (
+                <ImagePreview.PreviewGroup>
+                  <Stack direction='row' gap={1} sx={{ alignSelf: 'flex-end' }}>
+                    {item.image_paths.map((url: string) => (
+                      <ImagePreview
+                        alt={url}
+                        key={url}
+                        src={getImagePath(url, basePath)}
+                        width={100}
+                        height={100}
+                        style={{
+                          borderRadius: '10px',
+                          objectFit: 'cover',
+                          cursor: 'pointer',
+                        }}
+                        referrerPolicy='no-referrer'
+                      />
+                    ))}
+                  </Stack>
+                </ImagePreview.PreviewGroup>
+              )}
 
+              {/* 用户问题气泡 - 右对齐 */}
+              {item.q && <StyledUserBubble>{item.q}</StyledUserBubble>}
               {/* AI回答气泡 - 左对齐 */}
               <StyledAiBubble>
                 {/* 搜索结果 */}
@@ -1063,7 +1127,7 @@ const AiQaContent: React.FC<{
               if (
                 e.key === 'Enter' &&
                 !e.shiftKey &&
-                input.length > 0 &&
+                (input.length > 0 || uploadedImages.length > 0) &&
                 !isComposing
               ) {
                 e.preventDefault();
@@ -1086,18 +1150,16 @@ const AiQaContent: React.FC<{
               style={{ display: 'none' }}
               onChange={handleImageUpload}
             />
-            <Tooltip title='敬请期待'>
-              <IconButton
-                size='small'
-                // onClick={() => fileInputRef.current?.click()}
-                disabled={loading}
-                sx={{
-                  flexShrink: 0,
-                }}
-              >
-                <IconTupian sx={{ fontSize: 20, color: 'text.secondary' }} />
-              </IconButton>
-            </Tooltip>
+            <IconButton
+              size='small'
+              onClick={() => fileInputRef.current?.click()}
+              disabled={loading}
+              sx={{
+                flexShrink: 0,
+              }}
+            >
+              <IconTupian sx={{ fontSize: 20, color: 'text.secondary' }} />
+            </IconButton>
 
             <Box
               sx={{
@@ -1117,8 +1179,9 @@ const AiQaContent: React.FC<{
               ) : (
                 <IconButton
                   size='small'
+                  disabled={input.length === 0 && uploadedImages.length === 0}
                   onClick={() => {
-                    if (input.length > 0) {
+                    if (input.length > 0 || uploadedImages.length > 0) {
                       handleSearchAbort();
                       setThinking(1);
                       handleSearch();
@@ -1129,7 +1192,9 @@ const AiQaContent: React.FC<{
                     sx={{
                       fontSize: 16,
                       color:
-                        input.length > 0 ? 'primary.main' : 'text.disabled',
+                        input.length > 0 || uploadedImages.length > 0
+                          ? 'primary.main'
+                          : 'text.disabled',
                     }}
                   />
                 </IconButton>

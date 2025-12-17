@@ -58,7 +58,8 @@ const createMarkdownIt = (): MarkdownIt => {
 
   // 添加 KaTeX 数学公式支持
   try {
-    md.use(mk);
+    // 由于 @vscode/markdown-it-katex 和 markdown-it 类型版本不一致，这里通过 any 断言绕过类型不兼容
+    (md as any).use(mk as any);
   } catch (error) {
     console.warn('markdown-it-katex not available:', error);
   }
