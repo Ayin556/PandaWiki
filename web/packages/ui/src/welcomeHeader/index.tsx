@@ -129,6 +129,7 @@ const Header = React.memo(
           left: 0,
           right: 0,
           height: 64,
+          flexShrink: 0,
           backgroundColor: isAtTop
             ? 'transparent'
             : theme.palette.background.default,
