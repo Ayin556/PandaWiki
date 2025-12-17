@@ -3740,7 +3740,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/v1.FileUploadResp"
+                                            "$ref": "#/definitions/v1.ShareFileUploadReq"
                                         }
                                     }
                                 }
@@ -5371,8 +5371,7 @@ const docTemplate = `{
         "domain.ChatRequest": {
             "type": "object",
             "required": [
-                "app_type",
-                "message"
+                "app_type"
             ],
             "properties": {
                 "app_type": {
@@ -5391,6 +5390,13 @@ const docTemplate = `{
                 },
                 "conversation_id": {
                     "type": "string"
+                },
+                "image_paths": {
+                    "type": "array",
+                    "maxItems": 3,
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "message": {
                     "type": "string"
@@ -5699,6 +5705,12 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "string"
+                },
+                "image_paths": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "info": {
                     "description": "feedbackinfo",
@@ -7283,6 +7295,12 @@ const docTemplate = `{
                 "created_at": {
                     "type": "string"
                 },
+                "image_paths": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "role": {
                     "$ref": "#/definitions/schema.RoleType"
                 }
@@ -8488,14 +8506,6 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.FileUploadResp": {
-            "type": "object",
-            "properties": {
-                "key": {
-                    "type": "string"
-                }
-            }
-        },
         "v1.KBUserInviteReq": {
             "type": "object",
             "required": [
@@ -8763,6 +8773,20 @@ const docTemplate = `{
                 "new_password": {
                     "type": "string",
                     "minLength": 8
+                }
+            }
+        },
+        "v1.ShareFileUploadReq": {
+            "type": "object",
+            "required": [
+                "captcha_token"
+            ],
+            "properties": {
+                "captcha_token": {
+                    "type": "string"
+                },
+                "file": {
+                    "type": "string"
                 }
             }
         },

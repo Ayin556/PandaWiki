@@ -80,7 +80,8 @@ func (u *LLMUsecase) BuildConversationMessageWithRAG(
 			case schema.Assistant:
 				historyMessages = append(historyMessages, schema.AssistantMessage(msg.Content, nil))
 			case schema.User:
-				historyMessages = append(historyMessages, schema.UserMessage(msg.Content))
+				content := u.formatMessageWithImages(msg.Content, msg.ImagePaths)
+				historyMessages = append(historyMessages, schema.UserMessage(content))
 			default:
 				continue
 			}
@@ -370,4 +371,18 @@ func (u *LLMUsecase) GetRankNodes(ctx context.Context, req GetRankNodesRequest) 
 		}
 	}
 	return rewrittenQuery, rankedNodes, nil
+}
+
+// formatMessageWithImages converts image paths to markdown format and appends to message
+func (u *LLMUsecase) formatMessageWithImages(message string, imagePaths []string) string {
+	if len(imagePaths) == 0 {
+		return message
+	}
+	var builder strings.Builder
+	builder.WriteString(message)
+	for _, path := range imagePaths {
+		builder.WriteString("\n")
+		builder.WriteString(fmt.Sprintf("![](%s)", path))
+	}
+	return builder.String()
 }
