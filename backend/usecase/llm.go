@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"slices"
@@ -57,7 +58,7 @@ func NewLLMUsecase(config *config.Config, rag rag.RAGService, conversationRepo *
 	}
 }
 
-func (u *LLMUsecase) FormatConversationMessages(
+func (u *LLMUsecase) BuildConversationMessageWithRAG(
 	ctx context.Context,
 	conversationID string,
 	kbID string,
@@ -69,7 +70,8 @@ func (u *LLMUsecase) FormatConversationMessages(
 
 	msgs, err := u.conversationRepo.GetConversationMessagesByID(ctx, conversationID)
 	if err != nil {
-		return nil, nil, fmt.Errorf("get conversation messages failed: %w", err)
+		u.logger.Error("get conversation messages failed", log.Error(err))
+		return nil, nil, errors.New("get conversation messages failed")
 	}
 	if len(msgs) > 0 {
 		historyMessages := make([]*schema.Message, 0)
@@ -104,7 +106,8 @@ func (u *LLMUsecase) FormatConversationMessages(
 			)
 			kb, err := u.kbRepo.GetKnowledgeBaseByID(ctx, kbID)
 			if err != nil {
-				return nil, nil, fmt.Errorf("get kb failed: %w", err)
+				u.logger.Error("get kb failed", log.Error(err))
+				return nil, nil, errors.New("get kb failed")
 			}
 			rewrittenQuery, rankedNodes, err = u.GetRankNodes(ctx, GetRankNodesRequest{
 				DatasetID:           kb.DatasetID,
@@ -114,7 +117,8 @@ func (u *LLMUsecase) FormatConversationMessages(
 				HistoryMessages:     historyMessages[:len(historyMessages)-1],
 			})
 			if err != nil {
-				return nil, nil, fmt.Errorf("get rank nodes failed: %w", err)
+				u.logger.Error("get rank nodes failed", log.Error(err))
+				return nil, nil, errors.New("get rank nodes failed")
 			}
 			documents := domain.FormatNodeChunks(rankedNodes, kb.AccessSettings.BaseURL)
 			u.logger.Debug("documents", log.String("documents", documents))
@@ -125,7 +129,8 @@ func (u *LLMUsecase) FormatConversationMessages(
 				"Documents":   documents,
 			})
 			if err != nil {
-				return nil, nil, fmt.Errorf("format messages failed: %w", err)
+				u.logger.Error("format messages failed", log.Error(err))
+				return nil, nil, errors.New("format messages failed")
 			}
 			messages = slices.Insert(formattedMessages, 1, historyMessages[:len(historyMessages)-1]...)
 		}
