@@ -332,7 +332,7 @@ const Detail = ({
             {conversations &&
               conversations.map((item, index) => (
                 <StyledConversationItem key={index}>
-                  {item.image_paths.length > 0 && (
+                  {item.image_paths && item.image_paths.length > 0 && (
                     <Image.PreviewGroup>
                       <Stack
                         direction='row'

@@ -209,7 +209,7 @@ const AiQaContent: React.FC<{
   const handleImageSelect = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
 
-    const maxImages = 3; // 最多9张图片
+    const maxImages = 3;
     const remainingSlots = maxImages - uploadedImages.length;
     if (remainingSlots <= 0) {
       message.warning(`最多只能上传 ${maxImages} 张图片`);
@@ -668,8 +668,6 @@ const AiQaContent: React.FC<{
     }
   }, [conversationId]);
 
-  console.log(conversation);
-
   useEffect(() => {
     const cid = searchParams.get('cid');
     if (cid) {
@@ -743,7 +741,7 @@ const AiQaContent: React.FC<{
         });
       });
     }
-  }, [qaModalOpen]);
+  }, [qaModalOpen, conversation]);
 
   return (
     <StyledMainContainer className={palette.mode === 'dark' ? 'md-dark' : ''}>
@@ -859,6 +857,7 @@ const AiQaContent: React.FC<{
                     {item.image_paths.map((url: string) => (
                       <ImagePreview
                         alt={url}
+                        key={url}
                         src={getImagePath(url, basePath)}
                         width={100}
                         height={100}
