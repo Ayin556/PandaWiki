@@ -126,6 +126,7 @@ const Header = React.memo(
           sx={{
             position: 'relative',
             width: '100%',
+            minWidth: 0,
             // ...(isDocPage &&
             //   !mobile &&
             //   docWidth !== 'full' && {
