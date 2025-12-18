@@ -624,16 +624,18 @@ func (r *KnowledgeBaseRepository) CreateKBRelease(ctx context.Context, release *
 	return nil
 }
 
-func (r *KnowledgeBaseRepository) GetKBReleaseList(ctx context.Context, kbID string) (int64, []domain.KBReleaseListItemResp, error) {
+func (r *KnowledgeBaseRepository) GetKBReleaseList(ctx context.Context, kbID string, offset, limit int) (int64, []domain.KBReleaseListItemResp, error) {
 	var total int64
 	if err := r.db.Model(&domain.KBRelease{}).Where("kb_id = ?", kbID).Count(&total).Error; err != nil {
 		return 0, nil, err
 	}
 
 	var releases []domain.KBReleaseListItemResp
-	if err := r.db.Model(&domain.KBRelease{}).
+	if err := r.db.WithContext(ctx).Model(&domain.KBRelease{}).
 		Where("kb_id = ?", kbID).
 		Order("created_at DESC").
+		Offset(offset).
+		Limit(limit).
 		Find(&releases).Error; err != nil {
 		return 0, nil, err
 	}

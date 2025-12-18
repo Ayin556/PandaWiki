@@ -184,7 +184,7 @@ func (u *KnowledgeBaseUsecase) CreateKBRelease(ctx context.Context, req *domain.
 }
 
 func (u *KnowledgeBaseUsecase) GetKBReleaseList(ctx context.Context, req *domain.GetKBReleaseListReq) (*domain.GetKBReleaseListResp, error) {
-	total, releases, err := u.repo.GetKBReleaseList(ctx, req.KBID)
+	total, releases, err := u.repo.GetKBReleaseList(ctx, req.KBID, req.Offset(), req.Limit())
 	if err != nil {
 		return nil, err
 	}
