@@ -286,7 +286,7 @@ const Footer = React.memo(
 
             {!(
               customStyle?.footer_show_intro === false &&
-              footerSetting?.brand_groups?.length === 0
+              (footerSetting?.brand_groups || []).length === 0
             ) && (
               <Stack
                 sx={theme => ({
@@ -299,26 +299,28 @@ const Footer = React.memo(
               ></Stack>
             )}
             {!!footerSetting?.corp_name && (
-              <Box
+              <Stack
+                direction={'row'}
+                alignItems={'center'}
                 sx={theme => ({
-                  height: 40,
-                  lineHeight: '40px',
+                  minHeight: 40,
                   color: alpha(theme.palette.text.primary, 0.3),
                 })}
               >
                 {footerSetting?.corp_name}
-              </Box>
+              </Stack>
             )}
             {!!footerSetting?.icp && (
-              <Box
+              <Stack
+                direction={'row'}
+                alignItems={'center'}
                 sx={theme => ({
-                  height: 40,
-                  lineHeight: '40px',
+                  minHeight: 40,
                   color: alpha(theme.palette.text.primary, 0.3),
                 })}
               >
                 {footerSetting?.icp}
-              </Box>
+              </Stack>
             )}
             {customStyle?.show_brand_info !== false && (
               <Stack
@@ -326,8 +328,7 @@ const Footer = React.memo(
                 alignItems={'center'}
                 gap={0.5}
                 sx={theme => ({
-                  height: 40,
-                  lineHeight: '40px',
+                  minHeight: 40,
                   color: alpha(theme.palette.text.primary, 0.3),
                 })}
               >
@@ -688,7 +689,7 @@ const Footer = React.memo(
 
           {!(
             customStyle?.footer_show_intro === false &&
-            footerSetting?.brand_groups?.length === 0
+            (footerSetting?.brand_groups || [])?.length === 0
           ) && (
             <Stack
               sx={theme => ({
