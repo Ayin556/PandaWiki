@@ -92,7 +92,8 @@ const Release = () => {
       .then(res => {
         setData(res.data || []);
         setTotal(res.total || 0);
-        if (res.data && res.data.length > 0) setCurVersionId(res.data[0].id!);
+        if (res.data && res.data.length > 0 && page === 1)
+          setCurVersionId(res.data[0].id!);
       })
       .finally(() => {
         setLoading(false);
