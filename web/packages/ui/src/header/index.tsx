@@ -107,6 +107,7 @@ const Header = React.memo(
           left: 0,
           right: 0,
           height: 64,
+          flexShrink: 0,
           bgcolor: 'background.default',
           borderBottom: '1px solid',
           borderColor: 'divider',
@@ -138,13 +139,12 @@ const Header = React.memo(
               alignItems='center'
               gap={1.5}
               sx={{
-                py: '20px',
                 cursor: 'pointer',
                 color: 'text.primary',
                 '&:hover': { color: 'primary.main' },
               }}
             >
-              {logo && <img src={logo} alt='logo' width={36} />}
+              {logo && <img src={logo} alt='logo' height={36} />}
               <Box
                 sx={{
                   fontSize: 20,
