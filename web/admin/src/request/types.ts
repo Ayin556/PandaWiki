@@ -204,6 +204,7 @@ export enum ConstsCrawlerSource {
   CrawlerSourceSitemap = "sitemap",
   CrawlerSourceNotion = "notion",
   CrawlerSourceFeishu = "feishu",
+  CrawlerSourceDingtalk = "dingtalk",
   CrawlerSourceFile = "file",
   CrawlerSourceEpub = "epub",
   CrawlerSourceYuque = "yuque",
@@ -234,6 +235,21 @@ export enum ConstsAuthType {
 export interface AnydocChild {
   children?: AnydocChild[];
   value?: AnydocValue;
+}
+
+export interface AnydocDingtalkSetting {
+  app_id?: string;
+  app_secret?: string;
+  phone?: string;
+  space_id?: string;
+  unionid?: string;
+}
+
+export interface AnydocFeishuSetting {
+  app_id?: string;
+  app_secret?: string;
+  space_id?: string;
+  user_access_token?: string;
 }
 
 export interface AnydocValue {
@@ -1584,7 +1600,8 @@ export interface V1CrawlerExportResp {
 
 export interface V1CrawlerParseReq {
   crawler_source: ConstsCrawlerSource;
-  feishu_setting?: V1FeishuSetting;
+  dingtalk_setting?: AnydocDingtalkSetting;
+  feishu_setting?: AnydocFeishuSetting;
   filename?: string;
   kb_id: string;
   key?: string;
@@ -1628,17 +1645,6 @@ export interface V1CreateUserReq {
 
 export interface V1CreateUserResp {
   id?: string;
-}
-
-export interface V1FeishuSetting {
-  app_id?: string;
-  app_secret?: string;
-  space_id?: string;
-  user_access_token?: string;
-}
-
-export interface V1FileUploadResp {
-  key?: string;
 }
 
 export interface V1KBUserInviteReq {
@@ -1727,6 +1733,11 @@ export interface V1ResetPasswordReq {
   id: string;
   /** @minLength 8 */
   new_password: string;
+}
+
+export interface V1ShareFileUploadReq {
+  captcha_token: string;
+  file?: string;
 }
 
 export interface V1ShareNodeDetailResp {

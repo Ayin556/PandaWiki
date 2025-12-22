@@ -249,6 +249,12 @@ const Content = () => {
                     handleUrl(item, ConstsCrawlerSource.CrawlerSourceFeishu),
                 },
                 {
+                  label: '通过钉钉文档导入',
+                  key: ConstsCrawlerSource.CrawlerSourceDingtalk,
+                  onClick: () =>
+                    handleUrl(item, ConstsCrawlerSource.CrawlerSourceDingtalk),
+                },
+                {
                   label: '通过 Confluence 导入',
                   key: ConstsCrawlerSource.CrawlerSourceConfluence,
                   onClick: () =>
