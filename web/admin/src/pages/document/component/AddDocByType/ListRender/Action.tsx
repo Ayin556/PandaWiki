@@ -194,8 +194,6 @@ const BatchActionBar = (props: BatchActionBarProps) => {
             const mappedParentId = idMapping.get(item.parent_id);
             if (mappedParentId) {
               actualParentId = mappedParentId;
-            } else if (!importingFolderIds.has(item.parent_id)) {
-              actualParentId = parent_id || undefined;
             } else {
               actualParentId = parent_id || undefined;
             }
