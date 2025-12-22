@@ -3740,7 +3740,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/v1.ShareFileUploadReq"
+                                            "$ref": "#/definitions/v1.FileUploadResp"
                                         }
                                     }
                                 }
@@ -8531,6 +8531,14 @@ const docTemplate = `{
                 }
             }
         },
+        "v1.FileUploadResp": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string"
+                }
+            }
+        },
         "v1.KBUserInviteReq": {
             "type": "object",
             "required": [
@@ -8798,20 +8806,6 @@ const docTemplate = `{
                 "new_password": {
                     "type": "string",
                     "minLength": 8
-                }
-            }
-        },
-        "v1.ShareFileUploadReq": {
-            "type": "object",
-            "required": [
-                "captcha_token"
-            ],
-            "properties": {
-                "captcha_token": {
-                    "type": "string"
-                },
-                "file": {
-                    "type": "string"
                 }
             }
         },

@@ -3005,6 +3005,11 @@ definitions:
       id:
         type: string
     type: object
+  v1.FileUploadResp:
+    properties:
+      key:
+        type: string
+    type: object
   v1.KBUserInviteReq:
     properties:
       kb_id:
@@ -3184,15 +3189,6 @@ definitions:
     required:
     - id
     - new_password
-    type: object
-  v1.ShareFileUploadReq:
-    properties:
-      captcha_token:
-        type: string
-      file:
-        type: string
-    required:
-    - captcha_token
     type: object
   v1.ShareNodeDetailResp:
     properties:
@@ -5600,7 +5596,7 @@ paths:
             - $ref: '#/definitions/domain.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/v1.ShareFileUploadReq'
+                  $ref: '#/definitions/v1.FileUploadResp'
               type: object
       summary: 文件上传
       tags:
