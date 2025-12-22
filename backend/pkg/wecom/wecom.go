@@ -123,7 +123,7 @@ func NewClient(ctx context.Context, logger *log.Logger, corpID, corpSecret, agen
 	}
 
 	oauthConfig := &oauth2.Config{
-		ClientID:     corpID,
+		ClientID:     fmt.Sprintf("%s-%s", corpID, agentID),
 		ClientSecret: corpSecret,
 		RedirectURL:  redirectURI,
 		Endpoint: oauth2.Endpoint{
