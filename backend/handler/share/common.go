@@ -58,7 +58,7 @@ func NewShareCommonHandler(
 //	@Param			X-KB-ID			header		string	true	"kb id"
 //	@Param			file			formData	file	true	"File"
 //	@Param			captcha_token	formData	string	true	"captcha_token"
-//	@Success		200				{object}	domain.Response{data=v1.ShareFileUploadReq}
+//	@Success		200				{object}	domain.Response{data=v1.FileUploadResp}
 //	@Router			/share/v1/common/file/upload [post]
 func (h *ShareCommonHandler) FileUpload(c echo.Context) error {
 	ctx := c.Request().Context()
