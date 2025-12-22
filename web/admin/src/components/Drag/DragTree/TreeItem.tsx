@@ -409,6 +409,7 @@ const TreeItem = React.forwardRef<
                     variant='outlined'
                     size='small'
                     onClick={e => {
+                      console.log('cancel');
                       e.stopPropagation();
                       if (!item.name) {
                         removeItem(item.id);
@@ -418,6 +419,7 @@ const TreeItem = React.forwardRef<
                           ...item,
                           isEditting: false,
                         });
+                        updateData?.(temp);
                       }
                     }}
                   >
