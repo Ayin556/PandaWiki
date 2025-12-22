@@ -4015,6 +4015,43 @@
                 }
             }
         },
+        "anydoc.DingtalkSetting": {
+            "type": "object",
+            "properties": {
+                "app_id": {
+                    "type": "string"
+                },
+                "app_secret": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "space_id": {
+                    "type": "string"
+                },
+                "unionid": {
+                    "type": "string"
+                }
+            }
+        },
+        "anydoc.FeishuSetting": {
+            "type": "object",
+            "properties": {
+                "app_id": {
+                    "type": "string"
+                },
+                "app_secret": {
+                    "type": "string"
+                },
+                "space_id": {
+                    "type": "string"
+                },
+                "user_access_token": {
+                    "type": "string"
+                }
+            }
+        },
         "anydoc.Value": {
             "type": "object",
             "properties": {
@@ -4089,6 +4126,7 @@
                 "sitemap",
                 "notion",
                 "feishu",
+                "dingtalk",
                 "file",
                 "epub",
                 "yuque",
@@ -4103,6 +4141,7 @@
                 "CrawlerSourceSitemap",
                 "CrawlerSourceNotion",
                 "CrawlerSourceFeishu",
+                "CrawlerSourceDingtalk",
                 "CrawlerSourceFile",
                 "CrawlerSourceEpub",
                 "CrawlerSourceYuque",
@@ -8354,8 +8393,11 @@
                 "crawler_source": {
                     "$ref": "#/definitions/consts.CrawlerSource"
                 },
+                "dingtalk_setting": {
+                    "$ref": "#/definitions/anydoc.DingtalkSetting"
+                },
                 "feishu_setting": {
-                    "$ref": "#/definitions/v1.FeishuSetting"
+                    "$ref": "#/definitions/anydoc.FeishuSetting"
                 },
                 "filename": {
                     "type": "string"
@@ -8478,23 +8520,6 @@
             "type": "object",
             "properties": {
                 "id": {
-                    "type": "string"
-                }
-            }
-        },
-        "v1.FeishuSetting": {
-            "type": "object",
-            "properties": {
-                "app_id": {
-                    "type": "string"
-                },
-                "app_secret": {
-                    "type": "string"
-                },
-                "space_id": {
-                    "type": "string"
-                },
-                "user_access_token": {
                     "type": "string"
                 }
             }

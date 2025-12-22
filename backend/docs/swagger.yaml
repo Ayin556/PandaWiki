@@ -9,6 +9,30 @@ definitions:
       value:
         $ref: '#/definitions/anydoc.Value'
     type: object
+  anydoc.DingtalkSetting:
+    properties:
+      app_id:
+        type: string
+      app_secret:
+        type: string
+      phone:
+        type: string
+      space_id:
+        type: string
+      unionid:
+        type: string
+    type: object
+  anydoc.FeishuSetting:
+    properties:
+      app_id:
+        type: string
+      app_secret:
+        type: string
+      space_id:
+        type: string
+      user_access_token:
+        type: string
+    type: object
   anydoc.Value:
     properties:
       file:
@@ -65,6 +89,7 @@ definitions:
     - sitemap
     - notion
     - feishu
+    - dingtalk
     - file
     - epub
     - yuque
@@ -79,6 +104,7 @@ definitions:
     - CrawlerSourceSitemap
     - CrawlerSourceNotion
     - CrawlerSourceFeishu
+    - CrawlerSourceDingtalk
     - CrawlerSourceFile
     - CrawlerSourceEpub
     - CrawlerSourceYuque
@@ -2892,8 +2918,10 @@ definitions:
     properties:
       crawler_source:
         $ref: '#/definitions/consts.CrawlerSource'
+      dingtalk_setting:
+        $ref: '#/definitions/anydoc.DingtalkSetting'
       feishu_setting:
-        $ref: '#/definitions/v1.FeishuSetting'
+        $ref: '#/definitions/anydoc.FeishuSetting'
       filename:
         type: string
       kb_id:
@@ -2975,17 +3003,6 @@ definitions:
   v1.CreateUserResp:
     properties:
       id:
-        type: string
-    type: object
-  v1.FeishuSetting:
-    properties:
-      app_id:
-        type: string
-      app_secret:
-        type: string
-      space_id:
-        type: string
-      user_access_token:
         type: string
     type: object
   v1.KBUserInviteReq:

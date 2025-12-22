@@ -4022,6 +4022,43 @@ const docTemplate = `{
                 }
             }
         },
+        "anydoc.DingtalkSetting": {
+            "type": "object",
+            "properties": {
+                "app_id": {
+                    "type": "string"
+                },
+                "app_secret": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "space_id": {
+                    "type": "string"
+                },
+                "unionid": {
+                    "type": "string"
+                }
+            }
+        },
+        "anydoc.FeishuSetting": {
+            "type": "object",
+            "properties": {
+                "app_id": {
+                    "type": "string"
+                },
+                "app_secret": {
+                    "type": "string"
+                },
+                "space_id": {
+                    "type": "string"
+                },
+                "user_access_token": {
+                    "type": "string"
+                }
+            }
+        },
         "anydoc.Value": {
             "type": "object",
             "properties": {
@@ -4096,6 +4133,7 @@ const docTemplate = `{
                 "sitemap",
                 "notion",
                 "feishu",
+                "dingtalk",
                 "file",
                 "epub",
                 "yuque",
@@ -4110,6 +4148,7 @@ const docTemplate = `{
                 "CrawlerSourceSitemap",
                 "CrawlerSourceNotion",
                 "CrawlerSourceFeishu",
+                "CrawlerSourceDingtalk",
                 "CrawlerSourceFile",
                 "CrawlerSourceEpub",
                 "CrawlerSourceYuque",
@@ -8361,8 +8400,11 @@ const docTemplate = `{
                 "crawler_source": {
                     "$ref": "#/definitions/consts.CrawlerSource"
                 },
+                "dingtalk_setting": {
+                    "$ref": "#/definitions/anydoc.DingtalkSetting"
+                },
                 "feishu_setting": {
-                    "$ref": "#/definitions/v1.FeishuSetting"
+                    "$ref": "#/definitions/anydoc.FeishuSetting"
                 },
                 "filename": {
                     "type": "string"
@@ -8485,23 +8527,6 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "id": {
-                    "type": "string"
-                }
-            }
-        },
-        "v1.FeishuSetting": {
-            "type": "object",
-            "properties": {
-                "app_id": {
-                    "type": "string"
-                },
-                "app_secret": {
-                    "type": "string"
-                },
-                "space_id": {
-                    "type": "string"
-                },
-                "user_access_token": {
                     "type": "string"
                 }
             }
