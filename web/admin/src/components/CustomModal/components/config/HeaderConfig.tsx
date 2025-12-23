@@ -167,7 +167,7 @@ const HeaderConfig = ({ data, setIsEdit, isEdit }: CardWebHeaderProps) => {
               },
             }}
           >
-            Logo 文字
+            页面标题 / Logo文本
           </Box>
           <Controller
             control={control}
