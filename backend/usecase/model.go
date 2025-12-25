@@ -339,7 +339,7 @@ func (u *ModelUsecase) updateRAGModelsByMode(ctx context.Context, mode, autoMode
 			// rag store中更新失败不影响其他模型更新
 			if err := u.ragStore.UpsertModel(ctx, model); err != nil {
 				u.logger.Error("failed to update model in RAG store", log.String("model_id", model.ID), log.String("type", string(modelType)), log.Any("error", err))
-				continue
+				return fmt.Errorf("failed to update model in RAG store: %s", model.Type)
 			}
 			u.logger.Info("successfully updated RAG model", log.String("model name: ", string(model.Model)))
 		}
