@@ -182,8 +182,8 @@ func (u *ModelUsecase) UpdateUsage(ctx context.Context, modelID string, usage *s
 }
 
 func (u *ModelUsecase) SwitchMode(ctx context.Context, req *domain.SwitchModeReq) error {
-	// 只有配置正确才能切换模式
-	if req.Mode == string(consts.ModelSettingModeAuto) {
+	switch consts.ModelSettingMode(req.Mode) {
+	case consts.ModelSettingModeAuto:
 		if req.AutoModeAPIKey == "" {
 			return fmt.Errorf("auto mode api key is required")
 		}
@@ -205,7 +205,7 @@ func (u *ModelUsecase) SwitchMode(ctx context.Context, req *domain.SwitchModeReq
 		if check.Error != "" {
 			return fmt.Errorf("百智云模型 API Key 检查失败: %s", check.Error)
 		}
-	} else {
+	case consts.ModelSettingModeManual:
 		needModelTypes := []domain.ModelType{
 			domain.ModelTypeChat,
 			domain.ModelTypeEmbedding,
@@ -213,10 +213,21 @@ func (u *ModelUsecase) SwitchMode(ctx context.Context, req *domain.SwitchModeReq
 			domain.ModelTypeAnalysis,
 		}
 		for _, modelType := range needModelTypes {
-			if _, err := u.modelRepo.GetModelByType(ctx, modelType); err != nil {
+			model, err := u.modelRepo.GetModelByType(ctx, modelType)
+			if err != nil {
 				return fmt.Errorf("需要配置 %s 模型", modelType)
 			}
+
+			if !model.IsActive {
+				if err := u.modelRepo.Updates(ctx, model.ID, map[string]any{
+					"is_active": true,
+				}); err != nil {
+					return err
+				}
+			}
 		}
+	default:
+		return fmt.Errorf("invalid req mode: %s", req.Mode)
 	}
 
 	oldModelModeSetting, err := u.GetModelModeSetting(ctx)
@@ -235,7 +246,11 @@ func (u *ModelUsecase) SwitchMode(ctx context.Context, req *domain.SwitchModeReq
 		return err
 	}
 
-	return u.updateRAGModelsByMode(ctx, req.Mode, modelModeSetting.AutoModeAPIKey, oldModelModeSetting)
+	if err := u.updateRAGModelsByMode(ctx, req.Mode, modelModeSetting.AutoModeAPIKey, oldModelModeSetting); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // updateModeSettingConfig 读取当前设置并更新，然后持久化
@@ -291,7 +306,7 @@ func (u *ModelUsecase) GetModelModeSetting(ctx context.Context) (domain.ModelMod
 	return config, nil
 }
 
-// updateRAGModelsByMode 根据模式更新 RAG 模型（embedding、rerank、analysis、analysisVL）
+// updateRAGModelsByMode 根据模式更新 RAG 模型
 func (u *ModelUsecase) updateRAGModelsByMode(ctx context.Context, mode, autoModeAPIKey string, oldModelModeSetting domain.ModelModeSetting) error {
 	var isTriggerUpsertRecords = true
 
@@ -305,6 +320,7 @@ func (u *ModelUsecase) updateRAGModelsByMode(ctx context.Context, mode, autoMode
 		domain.ModelTypeRerank,
 		domain.ModelTypeAnalysis,
 		domain.ModelTypeAnalysisVL,
+		domain.ModelTypeChat,
 	}
 
 	for _, modelType := range ragModelTypes {
