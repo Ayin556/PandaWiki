@@ -127,6 +127,11 @@ func (h *ModelHandler) UpdateModel(c echo.Context) error {
 		return h.NewResponseWithError(c, "invalid request", err)
 	}
 
+	// 不支持修改非视觉模型的启用状态
+	if req.IsActive != nil && req.Type != domain.ModelTypeAnalysisVL {
+		return h.NewResponseWithError(c, "仅支持修改视觉模型的启用状态", nil)
+	}
+
 	ctx := c.Request().Context()
 	if err := h.usecase.Update(ctx, &req); err != nil {
 		return h.NewResponseWithError(c, "update model failed", err)
