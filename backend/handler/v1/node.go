@@ -408,7 +408,7 @@ func (h *NodeHandler) NodeRestudy(c echo.Context) error {
 	}
 
 	if err := h.usecase.NodeRestudy(c.Request().Context(), &req); err != nil {
-		return h.NewResponseWithError(c, "node restudy failed", err)
+		return h.NewResponseWithError(c, err.Error(), err)
 	}
 
 	return h.NewResponseWithData(c, nil)

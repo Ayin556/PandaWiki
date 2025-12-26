@@ -7,7 +7,7 @@ import {
   TreeMenuOptions,
 } from '@/components/Drag/DragTree/TreeMenu';
 import { useURLSearchParams } from '@/hooks';
-import { getApiV1NodeList } from '@/request/Node';
+import { getApiV1NodeList, postApiV1NodeRestudy } from '@/request/Node';
 import {
   ConstsCrawlerSource,
   ConstsNodeRagInfoStatus,
@@ -133,8 +133,26 @@ const Content = () => {
   };
 
   const handleRestudy = (item: ITreeItem) => {
-    setRagOpen(true);
-    setRagIds([item.id]);
+    const ragStatus = item.rag_status;
+    // 只有 Failed 或 Pending 状态才弹窗，其他状态直接调用接口
+    if (
+      ragStatus &&
+      [
+        ConstsNodeRagInfoStatus.NodeRagStatusFailed,
+        ConstsNodeRagInfoStatus.NodeRagStatusPending,
+      ].includes(ragStatus)
+    ) {
+      setRagOpen(true);
+      setRagIds([item.id]);
+    } else {
+      postApiV1NodeRestudy({
+        kb_id,
+        node_ids: [item.id],
+      }).then(() => {
+        message.success('正在学习');
+        getData();
+      });
+    }
   };
 
   const handleProperties = (item: ITreeItem) => {
@@ -285,12 +303,7 @@ const Content = () => {
             // },
           ]
         : []),
-      ...(item.type === 2 &&
-      item.rag_status &&
-      [
-        ConstsNodeRagInfoStatus.NodeRagStatusFailed,
-        ConstsNodeRagInfoStatus.NodeRagStatusPending,
-      ].includes(item.rag_status)
+      ...(item.type === 2
         ? [
             {
               label:

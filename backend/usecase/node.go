@@ -682,7 +682,12 @@ func (u *NodeUsecase) SyncRagNodeStatus(ctx context.Context) error {
 func (u *NodeUsecase) NodeRestudy(ctx context.Context, req *v1.NodeRestudyReq) error {
 	nodeReleases, err := u.nodeRepo.GetLatestNodeReleaseByNodeIDs(ctx, req.KbId, req.NodeIds)
 	if err != nil {
-		return fmt.Errorf("get latest node release failed: %w", err)
+		u.logger.Error("get latest node release failed", log.Error(err))
+		return fmt.Errorf("get latest node release failed")
+	}
+
+	if len(nodeReleases) == 0 {
+		return fmt.Errorf("文档未首次发布，无法重新学习")
 	}
 
 	for _, nodeRelease := range nodeReleases {
