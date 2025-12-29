@@ -88,9 +88,10 @@ const CommentInput = React.forwardRef<CommentInputRef, CommentInputProps>(
         const newImages: ImageItem[] = [];
 
         for (const file of filesToAdd) {
-          // 验证文件类型
-          if (!file.type.startsWith('image/')) {
-            message.error('只支持上传图片文件');
+          // 验证文件类型（只允许 jpg、jpeg、png、webp）
+          const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+          if (!allowedTypes.includes(file.type)) {
+            message.error('只支持上传 jpg、jpeg、png、webp 格式的图片');
             continue;
           }
 
@@ -403,7 +404,7 @@ const CommentInput = React.forwardRef<CommentInputRef, CommentInputProps>(
         <input
           ref={fileInputRef}
           type='file'
-          accept='image/*'
+          accept='.jpg,.jpeg,.png,.webp'
           multiple
           style={{ display: 'none' }}
           onChange={handleFileInputChange}
