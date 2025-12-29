@@ -1647,6 +1647,10 @@ export interface V1CreateUserResp {
   id?: string;
 }
 
+export interface V1FileUploadResp {
+  key?: string;
+}
+
 export interface V1KBUserInviteReq {
   kb_id: string;
   perm: "full_control" | "doc_manage" | "data_operate";
@@ -1733,11 +1737,6 @@ export interface V1ResetPasswordReq {
   id: string;
   /** @minLength 8 */
   new_password: string;
-}
-
-export interface V1ShareFileUploadReq {
-  captcha_token: string;
-  file?: string;
 }
 
 export interface V1ShareNodeDetailResp {
