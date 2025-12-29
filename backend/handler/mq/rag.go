@@ -147,7 +147,7 @@ func (h *RAGMQHandler) HandleNodeContentVectorRequest(ctx context.Context, msg t
 			return nil
 		}
 
-		summary, err := h.llmUsecase.SummaryNode(ctx, model, node.Name, node.Content)
+		summary, err := h.llmUsecase.SummaryNode(ctx, request.KBID, model, node.Name, node.Content)
 		if err != nil {
 			h.logger.Error("summary node content failed", log.Error(err))
 			return nil
