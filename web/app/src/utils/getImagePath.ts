@@ -4,7 +4,7 @@ export const getImagePath = (path: string, basePath?: string) => {
     return path;
   }
   const basePathValue =
-    basePath || (typeof window !== 'undefined' ? window._BASE_PATH_ : '');
+    basePath || (typeof window !== 'undefined' ? window._BASE_PATH_ || '' : '');
   if (path.startsWith(basePathValue as string)) {
     return path;
   }
