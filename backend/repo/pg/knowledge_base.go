@@ -197,6 +197,14 @@ func (r *KnowledgeBaseRepository) SyncKBAccessSettingsToCaddy(ctx context.Contex
 								},
 								"handle": []map[string]any{
 									{
+										"handler": "headers",
+										"response": map[string]any{
+											"set": map[string][]string{
+												"Content-Disposition": {"attachment"},
+											},
+										},
+									},
+									{
 										"handler": "reverse_proxy",
 										"upstreams": []map[string]any{
 											{"dial": staticFile},
