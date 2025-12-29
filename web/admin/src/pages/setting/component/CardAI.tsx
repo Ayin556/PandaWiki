@@ -7,6 +7,7 @@ import { Box, Slider, TextField } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { FormItem, SettingCardItem } from './Common';
+import { DomainCreatePromptReq } from '@/request/pro/types';
 
 interface CardAIProps {
   kb: DomainKnowledgeBaseDetail;
@@ -16,10 +17,11 @@ const CardAI = ({ kb }: CardAIProps) => {
   const [isEdit, setIsEdit] = useState(false);
   const { license } = useAppSelector(state => state.config);
 
-  const { control, handleSubmit, setValue } = useForm({
+  const { control, handleSubmit, setValue, getValues } = useForm({
     defaultValues: {
       interval: 0,
       content: '',
+      summary_content: '',
     },
   });
 
@@ -27,6 +29,7 @@ const CardAI = ({ kb }: CardAIProps) => {
     await postApiProV1Prompt({
       kb_id: kb.id!,
       content: data.content,
+      summary_content: data.summary_content,
     });
 
     message.success('保存成功');
@@ -42,20 +45,30 @@ const CardAI = ({ kb }: CardAIProps) => {
       return;
     getApiProV1Prompt({ kb_id: kb.id! }).then(res => {
       setValue('content', res.content || '');
+      setValue('summary_content', res.summary_content || '');
     });
   }, [kb, isPro]);
 
-  const onResetPrompt = () => {
+  const onResetPrompt = (type: 'content' | 'summary_content' = 'content') => {
     Modal.confirm({
       title: '提示',
-      content: '确定要重置为默认提示词吗？',
+      content: `确定要重置为默认${type === 'content' ? '智能问答' : '智能摘要'}提示词吗？`,
       onOk: () => {
-        postApiProV1Prompt({
+        let params: DomainCreatePromptReq = {
           kb_id: kb.id!,
           content: '',
-        }).then(() => {
+          summary_content: getValues('summary_content'),
+        };
+        if (type === 'summary_content') {
+          params = {
+            kb_id: kb.id!,
+            summary_content: '',
+            content: getValues('content'),
+          };
+        }
+        postApiProV1Prompt(params).then(() => {
           getApiProV1Prompt({ kb_id: kb.id! }).then(res => {
-            setValue('content', res.content || '');
+            setValue(type, res[type] || '');
           });
         });
       },
@@ -82,7 +95,7 @@ const CardAI = ({ kb }: CardAIProps) => {
                 display: 'block',
                 cursor: 'pointer',
               }}
-              onClick={onResetPrompt}
+              onClick={() => onResetPrompt('content')}
             >
               重置为默认提示词
             </Box>
@@ -108,7 +121,6 @@ const CardAI = ({ kb }: CardAIProps) => {
             )}
           />
         </FormItem>
-
         <FormItem vertical label='连续提问时间间隔（敬请期待）'>
           <Controller
             control={control}
@@ -166,6 +178,43 @@ const CardAI = ({ kb }: CardAIProps) => {
                 }}
                 onChange={(e, value) => {
                   field.onChange(+value);
+                  setIsEdit(true);
+                }}
+              />
+            )}
+          />
+        </FormItem>
+        <FormItem
+          vertical
+          permission={PROFESSION_VERSION_PERMISSION}
+          extra={
+            <Box
+              sx={{
+                fontSize: 12,
+                color: 'primary.main',
+                display: 'block',
+                cursor: 'pointer',
+              }}
+              onClick={() => onResetPrompt('summary_content')}
+            >
+              重置为默认提示词
+            </Box>
+          }
+          label='智能摘要提示词'
+        >
+          <Controller
+            control={control}
+            name='summary_content'
+            render={({ field }) => (
+              <TextField
+                {...field}
+                fullWidth
+                disabled={!isPro}
+                multiline
+                rows={5}
+                placeholder='智能摘要提示词'
+                onChange={e => {
+                  field.onChange(e.target.value);
                   setIsEdit(true);
                 }}
               />

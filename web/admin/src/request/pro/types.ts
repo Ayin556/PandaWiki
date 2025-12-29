@@ -80,6 +80,7 @@ export interface DomainCommentModerateListReq {
 export interface DomainCreatePromptReq {
   content?: string;
   kb_id: string;
+  summary_content?: string;
 }
 
 export interface DomainDocumentFeedbackInfo {
@@ -166,6 +167,7 @@ export interface DomainPWResponse {
 
 export interface DomainPrompt {
   content?: string;
+  summary_content?: string;
 }
 
 export interface DomainResponse {
