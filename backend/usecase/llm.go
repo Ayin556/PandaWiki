@@ -205,7 +205,7 @@ func (u *LLMUsecase) Generate(
 	return resp.Content, nil
 }
 
-func (u *LLMUsecase) SummaryNode(ctx context.Context, model *domain.Model, name, content string) (string, error) {
+func (u *LLMUsecase) SummaryNode(ctx context.Context, kbID string, model *domain.Model, name, content string) (string, error) {
 	modelkitModel, err := model.ToModelkitModel()
 	if err != nil {
 		return "", err
@@ -226,7 +226,7 @@ func (u *LLMUsecase) SummaryNode(ctx context.Context, model *domain.Model, name,
 
 	summaries := make([]string, 0, len(chunks))
 	for idx, chunk := range chunks {
-		summary, err := u.requestSummary(ctx, chatModel, name, chunk)
+		summary, err := u.requestSummary(ctx, kbID, chatModel, name, chunk)
 		if err != nil {
 			u.logger.Error("Failed to generate summary for chunk", log.Int("chunk_index", idx), log.Error(err))
 			continue
@@ -244,7 +244,7 @@ func (u *LLMUsecase) SummaryNode(ctx context.Context, model *domain.Model, name,
 
 	// Join all summaries and generate final summary
 	joined := strings.Join(summaries, "\n\n")
-	finalSummary, err := u.requestSummary(ctx, chatModel, name, joined)
+	finalSummary, err := u.requestSummary(ctx, kbID, chatModel, name, joined)
 	if err != nil {
 		u.logger.Error("Failed to generate final summary, using aggregated summaries", log.Error(err))
 		// Fallback: return the joined summaries directly
@@ -267,11 +267,16 @@ func (u *LLMUsecase) trimThinking(summary string) string {
 	return strings.TrimSpace(summary[endIndex+len("</think>"):])
 }
 
-func (u *LLMUsecase) requestSummary(ctx context.Context, chatModel model.BaseChatModel, name, content string) (string, error) {
+func (u *LLMUsecase) requestSummary(ctx context.Context, kbID string, chatModel model.BaseChatModel, name, content string) (string, error) {
+	summaryPrompt, err := u.promptRepo.GetSummaryPrompt(ctx, kbID)
+	if err != nil {
+		return "", err
+	}
+
 	summary, err := u.Generate(ctx, chatModel, []*schema.Message{
 		{
 			Role:    "system",
-			Content: "你是文档总结助手，请根据文档内容总结出文档的摘要。摘要是纯文本，应该简洁明了，不要超过160个字。",
+			Content: summaryPrompt,
 		},
 		{
 			Role:    "user",

@@ -6,6 +6,8 @@ import (
 	"strings"
 )
 
+var SystemDefaultSummaryPrompt = `你是文档总结助手，请根据文档内容总结出文档的摘要。摘要是纯文本，应该简洁明了，不要超过160个字。`
+
 var SystemDefaultPrompt = `
 你是一个专业的AI知识库问答助手，要按照以下步骤回答用户问题。
 

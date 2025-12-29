@@ -270,7 +270,7 @@ func (u *NodeUsecase) SummaryNode(ctx context.Context, req *domain.NodeSummaryRe
 		if err != nil {
 			return "", fmt.Errorf("get latest node release failed: %w", err)
 		}
-		summary, err := u.llmUsecase.SummaryNode(ctx, model, node.Name, node.Content)
+		summary, err := u.llmUsecase.SummaryNode(ctx, req.KBID, model, node.Name, node.Content)
 		if err != nil {
 			return "", fmt.Errorf("summary node failed: %w", err)
 		}
