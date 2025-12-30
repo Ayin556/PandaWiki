@@ -1,19 +1,19 @@
 'use client';
 
 import DocFab from '@/components/docFab';
-import { usePathname } from 'next/navigation';
 import ErrorComponent from '@/components/error';
 import { DocWidth } from '@/constant';
+import { useBasePath } from '@/hooks/useBasePath';
 import useCopy from '@/hooks/useCopy';
 import { useStore } from '@/provider';
 import { ConstsCopySetting } from '@/request/types';
 import { TocList, useTiptap } from '@ctzhian/tiptap';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { Box, Fab, Skeleton, Zoom } from '@mui/material';
+import { usePathname } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import DocAnchor from './DocAnchor';
 import DocContent from './DocContent';
-import { useBasePath } from '@/hooks/useBasePath';
 
 const Doc = ({
   node,
