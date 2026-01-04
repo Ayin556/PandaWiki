@@ -62,8 +62,9 @@ func (Node) TableName() string {
 }
 
 type RagInfo struct {
-	Status  consts.NodeRagInfoStatus `json:"status"`
-	Message string                   `json:"message"`
+	Status   consts.NodeRagInfoStatus `json:"status"`
+	Message  string                   `json:"message"`
+	SyncedAt time.Time                `json:"synced_at"`
 }
 
 func (d *RagInfo) Value() (driver.Value, error) {
