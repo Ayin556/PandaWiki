@@ -532,7 +532,7 @@ const TreeItem = React.forwardRef<
                               ('warning' as any)
                             }
                           >
-                            {RAG_SOURCES[item.rag_status]?.name || '处理中'}
+                            {RAG_SOURCES[item.rag_status]?.name || '处理失败'}
                           </StyledTag>
                         </Tooltip>
                       )}

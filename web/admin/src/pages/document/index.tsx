@@ -382,10 +382,12 @@ const Content = () => {
           it =>
             it.type === 2 &&
             it.rag_info?.status &&
-            [
-              ConstsNodeRagInfoStatus.NodeRagStatusFailed,
-              ConstsNodeRagInfoStatus.NodeRagStatusPending,
-            ].includes(it.rag_info.status),
+            it.rag_info.status !==
+              ConstsNodeRagInfoStatus.NodeRagStatusSucceeded &&
+            it.rag_info.status !==
+              ConstsNodeRagInfoStatus.NodeRagStatusRunning &&
+            it.rag_info.status !==
+              ConstsNodeRagInfoStatus.NodeRagStatusReindexing,
         ).length,
       );
       const collapsedAll = collapseAllFolders(convertToTree(res || []), true);

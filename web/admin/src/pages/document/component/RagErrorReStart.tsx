@@ -39,10 +39,12 @@ const RagErrorReStart = ({
           item =>
             item.type === 2 &&
             item.rag_info?.status &&
-            [
-              ConstsNodeRagInfoStatus.NodeRagStatusFailed,
-              ConstsNodeRagInfoStatus.NodeRagStatusPending,
-            ].includes(item.rag_info.status),
+            item.rag_info.status !==
+              ConstsNodeRagInfoStatus.NodeRagStatusSucceeded &&
+            item.rag_info.status !==
+              ConstsNodeRagInfoStatus.NodeRagStatusRunning &&
+            item.rag_info.status !==
+              ConstsNodeRagInfoStatus.NodeRagStatusReindexing,
         ) || [];
       setList(ragErrorData);
       setSelected(
