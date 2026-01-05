@@ -322,20 +322,17 @@ export function completeIncompleteLinks(
 
   // 处理 Markdown 图片: ![alt](url) 或 ![alt](url "title")
   // 注意：需要在处理链接之前处理图片，避免冲突
-  const mdImageRe = /!\[([^\]]*)\]\(([^)]+)\)/g;
-  text = text.replace(mdImageRe, (_m, alt: string, urlWithTitle: string) => {
-    // 提取 URL（去掉可能的 title 部分，title 格式为 "title" 或 'title'）
-    const urlMatch = urlWithTitle.match(
-      /^([^\s"']+)(?:\s+(?:"([^"]*)"|'([^']*)'))?$/,
-    );
-    const url = urlMatch ? urlMatch[1] : urlWithTitle.trim();
-    const title = urlMatch?.[2] ?? urlMatch?.[3];
-    const completed = resolveHref(url);
-    // 如果有 title，保留它
-    return title
-      ? `![${alt}](${completed} "${title}")`
-      : `![${alt}](${completed})`;
-  });
+  const mdImageRe = /!\[([^\]]*)\]\((\S+?)(?:\s+["']([^"']+)["'])?\)/g;
+  text = text.replace(
+    mdImageRe,
+    (_m, alt: string, url: string, title?: string) => {
+      const completed = resolveHref(url);
+      // 如果有 title，保留它
+      return title
+        ? `![${alt}](${completed} "${title}")`
+        : `![${alt}](${completed})`;
+    },
+  );
 
   // 处理 Markdown 链接: [text](href)
   const mdRe = /\[([^\]]+)\]\(([^)]+)\)/g;
