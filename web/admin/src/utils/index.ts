@@ -325,9 +325,11 @@ export function completeIncompleteLinks(
   const mdImageRe = /!\[([^\]]*)\]\(([^)]+)\)/g;
   text = text.replace(mdImageRe, (_m, alt: string, urlWithTitle: string) => {
     // 提取 URL（去掉可能的 title 部分，title 格式为 "title" 或 'title'）
-    const urlMatch = urlWithTitle.match(/^([^\s"']+)(?:\s+["']([^"']+)["'])?$/);
+    const urlMatch = urlWithTitle.match(
+      /^([^\s"']+)(?:\s+(?:"([^"]*)"|'([^']*)'))?$/,
+    );
     const url = urlMatch ? urlMatch[1] : urlWithTitle.trim();
-    const title = urlMatch?.[2];
+    const title = urlMatch?.[2] ?? urlMatch?.[3];
     const completed = resolveHref(url);
     // 如果有 title，保留它
     return title
