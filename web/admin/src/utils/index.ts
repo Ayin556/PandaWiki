@@ -205,6 +205,7 @@ export interface CompleteLinksOptions {
 /**
  * 将文本中的所有链接补全为完整链接（含协议的绝对地址）
  * - 处理 Markdown 链接: [title](href)
+ * - 处理 Markdown 图片: ![alt](url)
  * - 处理 HTML 链接: <a href="...">...</a>
  * - 处理 HTML 标签的 src 属性: <img src="...">, <iframe src="...">, <script src="..."> 等
  * - 相对/根路径/上级路径 将基于 window.location.href 解析为绝对地址
@@ -319,7 +320,22 @@ export function completeIncompleteLinks(
     return trimmed;
   };
 
-  // 处理 Markdown: [text](href)
+  // 处理 Markdown 图片: ![alt](url) 或 ![alt](url "title")
+  // 注意：需要在处理链接之前处理图片，避免冲突
+  const mdImageRe = /!\[([^\]]*)\]\(([^)]+)\)/g;
+  text = text.replace(mdImageRe, (_m, alt: string, urlWithTitle: string) => {
+    // 提取 URL（去掉可能的 title 部分，title 格式为 "title" 或 'title'）
+    const urlMatch = urlWithTitle.match(/^([^\s"']+)(?:\s+["']([^"']+)["'])?$/);
+    const url = urlMatch ? urlMatch[1] : urlWithTitle.trim();
+    const title = urlMatch?.[2];
+    const completed = resolveHref(url);
+    // 如果有 title，保留它
+    return title
+      ? `![${alt}](${completed} "${title}")`
+      : `![${alt}](${completed})`;
+  });
+
+  // 处理 Markdown 链接: [text](href)
   const mdRe = /\[([^\]]+)\]\(([^)]+)\)/g;
   text = text.replace(mdRe, (_m, label: string, href: string) => {
     const completed = resolveHref(href);
