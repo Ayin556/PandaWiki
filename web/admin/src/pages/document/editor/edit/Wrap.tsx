@@ -206,9 +206,7 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
 
   const exportFile = (value: string, type: string) => {
     if (!value) return;
-    console.log('original value', value);
     const content = completeIncompleteLinks(value);
-    console.log('complete value', content);
     const blob = new Blob([content], { type: `text/${type}` });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
