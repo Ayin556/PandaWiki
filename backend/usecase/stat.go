@@ -117,7 +117,7 @@ func (u *StatUseCase) GetHotPages(ctx context.Context, kbID string, day consts.S
 		}
 
 		for pageKey, count := range hotPagesMap {
-			hotPageMapHour[pageKey] = +count
+			hotPageMapHour[pageKey] += count
 		}
 
 		finalPage := make([]*domain.HotPage, 0)

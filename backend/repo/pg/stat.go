@@ -33,6 +33,7 @@ func (r *StatRepository) GetHotPages(ctx context.Context, kbID string) ([]*domai
 	var hotPages []*domain.HotPage
 	if err := r.db.WithContext(ctx).Model(&domain.StatPage{}).
 		Where("kb_id = ?", kbID).
+		Where("node_id != '' ").
 		Where("scene = ?", domain.StatPageSceneNodeDetail).
 		Group("node_id").
 		Select("node_id, COUNT(*) as count").
@@ -48,6 +49,7 @@ func (r *StatRepository) GetHotPagesNoLimit(ctx context.Context, kbID string) ([
 	var hotPages []*domain.HotPage
 	if err := r.db.WithContext(ctx).Model(&domain.StatPage{}).
 		Where("kb_id = ?", kbID).
+		Where("node_id != '' ").
 		Where("scene = ?", domain.StatPageSceneNodeDetail).
 		Group("node_id").
 		Select("node_id, COUNT(*) as count").
@@ -74,7 +76,7 @@ func (r *StatRepository) GetHotScene(ctx context.Context, kbID string) (map[doma
 func (r *StatRepository) GetHotRefererHosts(ctx context.Context, kbID string) ([]*domain.HotRefererHost, error) {
 	var hotRefererHosts []*domain.HotRefererHost
 	if err := r.db.WithContext(ctx).Model(&domain.StatPage{}).
-		Where("kb_id = ?", kbID).
+		Where("kb_id = ? AND referer_host != ?", kbID, "").
 		Group("referer_host").
 		Select("referer_host, COUNT(*) as count").
 		Order("count DESC").
@@ -92,6 +94,7 @@ func (r *StatRepository) GetHotBrowsers(ctx context.Context, kbID string) (*doma
 
 	query := r.db.WithContext(ctx).Model(&domain.StatPage{}).
 		Where("kb_id = ?", kbID).
+		Where("browser_name != '' ").
 		Group("browser_name").
 		Select("browser_name as name, COUNT(*) as count")
 	if err := query.Order("count DESC").Limit(10).Find(&browserCount).Error; err != nil {
@@ -100,6 +103,7 @@ func (r *StatRepository) GetHotBrowsers(ctx context.Context, kbID string) (*doma
 
 	query = r.db.WithContext(ctx).Model(&domain.StatPage{}).
 		Where("kb_id = ?", kbID).
+		Where("browser_os != '' ").
 		Group("browser_os").
 		Select("browser_os as name, COUNT(*) as count")
 	if err := query.Order("count DESC").Limit(10).Find(&osCount).Error; err != nil {
