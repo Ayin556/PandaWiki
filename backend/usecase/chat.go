@@ -3,14 +3,17 @@ package usecase
 import (
 	"context"
 	"fmt"
+	"slices"
 	"strings"
 	"time"
 
 	modelkit "github.com/chaitin/ModelKit/v2/usecase"
 	"github.com/cloudwego/eino/schema"
 	"github.com/google/uuid"
+	"github.com/samber/lo"
 	"gorm.io/gorm"
 
+	"github.com/chaitin/panda-wiki/consts"
 	"github.com/chaitin/panda-wiki/domain"
 	"github.com/chaitin/panda-wiki/log"
 	"github.com/chaitin/panda-wiki/repo/pg"
@@ -24,13 +27,14 @@ type ChatUsecase struct {
 	appRepo             *pg.AppRepository
 	blockWordRepo       *pg.BlockWordRepo
 	kbRepo              *pg.KnowledgeBaseRepository
+	nodeRepo            *pg.NodeRepository
 	AuthRepo            *pg.AuthRepo
 	logger              *log.Logger
 	modelkit            *modelkit.ModelKit
 }
 
 func NewChatUsecase(llmUsecase *LLMUsecase, kbRepo *pg.KnowledgeBaseRepository, conversationUsecase *ConversationUsecase, modelUsecase *ModelUsecase, appRepo *pg.AppRepository,
-	blockWordRepo *pg.BlockWordRepo, authRepo *pg.AuthRepo, logger *log.Logger) (*ChatUsecase, error) {
+	blockWordRepo *pg.BlockWordRepo, nodeRepo *pg.NodeRepository, authRepo *pg.AuthRepo, logger *log.Logger) (*ChatUsecase, error) {
 	modelkit := modelkit.NewModelKit(logger.Logger)
 	u := &ChatUsecase{
 		llmUsecase:          llmUsecase,
@@ -39,6 +43,7 @@ func NewChatUsecase(llmUsecase *LLMUsecase, kbRepo *pg.KnowledgeBaseRepository, 
 		appRepo:             appRepo,
 		blockWordRepo:       blockWordRepo,
 		kbRepo:              kbRepo,
+		nodeRepo:            nodeRepo,
 		AuthRepo:            authRepo,
 		logger:              logger.WithModule("usecase.chat"),
 		modelkit:            modelkit,
@@ -447,8 +452,46 @@ func (u *ChatUsecase) Search(ctx context.Context, req *domain.ChatSearchReq) (*d
 	if err != nil {
 		return nil, err
 	}
+
+	// Get node IDs from ranked nodes for permission check
+	nodeIDs := lo.Map(rankedNodes, func(node *domain.RankedNodeChunks, _ int) string {
+		return node.NodeID
+	})
+
+	// Get nodes with permissions
+	nodesMap, err := u.nodeRepo.GetNodesByIDs(ctx, nodeIDs)
+	if err != nil {
+		return nil, err
+	}
+
+	// Get user's visitable node IDs (for partial permission check)
+	userGroupIds := lo.Map(groupIds, func(id int, _ int) uint {
+		return uint(id)
+	})
+	visitableNodeGroups, err := u.nodeRepo.GetNodeGroupsByGroupIdsPerm(ctx, userGroupIds, consts.NodePermNameVisitable)
+	if err != nil {
+		return nil, err
+	}
+	visitableNodeIds := lo.Map(visitableNodeGroups, func(v domain.NodeAuthGroup, _ int) string {
+		return v.NodeID
+	})
+
 	resp := domain.ChatSearchResp{}
 	for _, node := range rankedNodes {
+		// Check visitable permission
+		if nodeInfo, ok := nodesMap[node.NodeID]; ok {
+			switch nodeInfo.Permissions.Visitable {
+			case consts.NodeAccessPermClosed:
+				// Skip nodes with closed visitable permission
+				continue
+			case consts.NodeAccessPermPartial:
+				// Skip if user doesn't have visitable permission for this node
+				if !slices.Contains(visitableNodeIds, node.NodeID) {
+					continue
+				}
+			}
+		}
+
 		chunkResult := domain.NodeContentChunkSSE{
 			NodeID:        node.NodeID,
 			Name:          node.NodeName,

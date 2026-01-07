@@ -373,6 +373,25 @@ func (r *NodeRepository) GetNodeByID(ctx context.Context, id string) (*domain.No
 	return node, nil
 }
 
+// GetNodesByIDs retrieves nodes by their IDs
+func (r *NodeRepository) GetNodesByIDs(ctx context.Context, ids []string) (map[string]*domain.Node, error) {
+	if len(ids) == 0 {
+		return make(map[string]*domain.Node), nil
+	}
+	var nodes []*domain.Node
+	if err := r.db.WithContext(ctx).
+		Model(&domain.Node{}).
+		Where("id IN ?", ids).
+		Find(&nodes).Error; err != nil {
+		return nil, err
+	}
+	nodesMap := make(map[string]*domain.Node, len(nodes))
+	for _, node := range nodes {
+		nodesMap[node.ID] = node
+	}
+	return nodesMap, nil
+}
+
 // buildNodePath builds the directory path for a node release by traversing up the parent hierarchy (max 5 levels)
 func (r *NodeRepository) buildNodePath(ctx context.Context, kbID string, nodeRelease *domain.NodeRelease) (string, error) {
 	// Build path by traversing up max 5 levels
