@@ -6388,6 +6388,9 @@ const docTemplate = `{
                 "message": {
                     "type": "string"
                 },
+                "publisher_account": {
+                    "type": "string"
+                },
                 "tag": {
                     "type": "string"
                 }
@@ -7201,6 +7204,9 @@ const docTemplate = `{
                 },
                 "status": {
                     "$ref": "#/definitions/consts.NodeRagInfoStatus"
+                },
+                "synced_at": {
+                    "type": "string"
                 }
             }
         },

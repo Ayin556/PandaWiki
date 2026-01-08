@@ -640,6 +640,8 @@ func (r *KnowledgeBaseRepository) GetKBReleaseList(ctx context.Context, kbID str
 
 	var releases []domain.KBReleaseListItemResp
 	if err := r.db.WithContext(ctx).Model(&domain.KBRelease{}).
+		Select("publish.account as publisher_account, kb_releases.*").
+		Joins("left join users publish on kb_releases.publisher_id = publish.id").
 		Where("kb_id = ?", kbID).
 		Order("created_at DESC").
 		Offset(offset).

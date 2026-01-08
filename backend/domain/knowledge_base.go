@@ -136,11 +136,12 @@ type KnowledgeBaseDetail struct {
 
 // table: kb_releases
 type KBRelease struct {
-	ID        string    `json:"id" gorm:"primaryKey"`
-	KBID      string    `json:"kb_id" gorm:"index"`
-	Tag       string    `json:"tag"`
-	Message   string    `json:"message"`
-	CreatedAt time.Time `json:"created_at"`
+	ID          string    `json:"id" gorm:"primaryKey"`
+	KBID        string    `json:"kb_id" gorm:"index"`
+	Tag         string    `json:"tag"`
+	Message     string    `json:"message"`
+	PublisherId string    `json:"publisher_id"`
+	CreatedAt   time.Time `json:"created_at"`
 }
 
 // table: kb_release_node_releases
@@ -165,11 +166,12 @@ type CreateKBReleaseReq struct {
 }
 
 type KBReleaseListItemResp struct {
-	ID        string    `json:"id"`
-	KBID      string    `json:"kb_id"`
-	Message   string    `json:"message"`
-	Tag       string    `json:"tag"`
-	CreatedAt time.Time `json:"created_at"`
+	ID               string    `json:"id"`
+	KBID             string    `json:"kb_id"`
+	PublisherAccount string    `json:"publisher_account"`
+	Message          string    `json:"message"`
+	Tag              string    `json:"tag"`
+	CreatedAt        time.Time `json:"created_at"`
 }
 
 type GetKBReleaseListReq struct {

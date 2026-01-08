@@ -906,6 +906,7 @@ export interface DomainKBReleaseListItemResp {
   id?: string;
   kb_id?: string;
   message?: string;
+  publisher_account?: string;
   tag?: string;
 }
 
@@ -1184,6 +1185,7 @@ export interface DomainQuestionConfig {
 export interface DomainRagInfo {
   message?: string;
   status?: ConstsNodeRagInfoStatus;
+  synced_at?: string;
 }
 
 export interface DomainRecommendNodeListResp {
