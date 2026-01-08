@@ -170,11 +170,12 @@ func (u *KnowledgeBaseUsecase) CreateKBRelease(ctx context.Context, req *domain.
 	}
 
 	release := &domain.KBRelease{
-		ID:        uuid.New().String(),
-		KBID:      req.KBID,
-		Message:   req.Message,
-		Tag:       req.Tag,
-		CreatedAt: time.Now(),
+		ID:          uuid.New().String(),
+		KBID:        req.KBID,
+		Message:     req.Message,
+		Tag:         req.Tag,
+		PublisherId: userId,
+		CreatedAt:   time.Now(),
 	}
 	if err := u.repo.CreateKBRelease(ctx, release); err != nil {
 		return "", fmt.Errorf("failed to create kb release: %w", err)

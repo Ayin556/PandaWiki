@@ -1599,6 +1599,8 @@ definitions:
         type: string
       message:
         type: string
+      publisher_account:
+        type: string
       tag:
         type: string
     type: object
@@ -2130,6 +2132,8 @@ definitions:
         type: string
       status:
         $ref: '#/definitions/consts.NodeRagInfoStatus'
+      synced_at:
+        type: string
     type: object
   domain.RecommendNodeListResp:
     properties:
