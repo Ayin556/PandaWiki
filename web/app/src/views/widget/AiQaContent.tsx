@@ -604,7 +604,6 @@ const AiQaContent: React.FC<{
   useEffect(() => {
     if (conversationId) {
       const currentUrl = new URL(window.location.href);
-      currentUrl.searchParams.delete('sid');
       currentUrl.searchParams.set('cid', conversationId);
       window.history.replaceState(null, '', currentUrl.toString());
     }
