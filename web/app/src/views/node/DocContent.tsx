@@ -4,27 +4,28 @@ import CommentInput, {
   CommentInputRef,
   ImageItem,
 } from '@/components/commentInput';
-import { IconWenjianjia, IconWenjian } from '@panda-wiki/icons';
-import FolderList from './folderList';
 import { DocWidth } from '@/constant';
+import { useBasePath } from '@/hooks';
 import { useStore } from '@/provider';
 import {
   getShareV1CommentList,
   postShareV1Comment,
 } from '@/request/ShareComment';
+import { V1ShareNodeDetailResp } from '@/request/types';
+import { findAdjacentDocuments } from '@/utils';
+import { getImagePath } from '@/utils/getImagePath';
 import { Editor, UseTiptapReturn } from '@ctzhian/tiptap';
-import { message, Image } from '@ctzhian/ui';
+import { Image, message } from '@ctzhian/ui';
 import { Box, Button, Divider, Stack, TextField, alpha } from '@mui/material';
+import { IconMianbaoxie, IconWenjian, IconWenjianjia } from '@panda-wiki/icons';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { V1ShareNodeDetailResp } from '@/request/types';
-import { PhotoProvider, PhotoView } from 'react-photo-view';
-import { getImagePath } from '@/utils/getImagePath';
-import { useBasePath } from '@/hooks';
+import FolderList from './folderList';
 
 dayjs.extend(relativeTime);
 dayjs.locale('zh-cn');
@@ -42,7 +43,7 @@ const DocContent = ({
   commentList?: any[];
   characterCount?: number;
 }) => {
-  const { mobile = false, authInfo, kbDetail, catalogWidth } = useStore();
+  const { mobile = false, authInfo, kbDetail, catalogWidth, tree } = useStore();
   const basePath = useBasePath();
   const params = useParams() || {};
   const [commentLoading, setCommentLoading] = useState(false);
@@ -64,6 +65,14 @@ const DocContent = ({
   const commentInputRef = useRef<CommentInputRef>(null);
   const [contentFocused, setContentFocused] = useState(false);
   const [commentImages, setCommentImages] = useState<ImageItem[]>([]);
+
+  // 计算上一篇和下一篇文档
+  const adjacentDocs = useMemo(() => {
+    if (!tree || !docId || info?.type !== 2) {
+      return undefined;
+    }
+    return findAdjacentDocuments(tree, docId);
+  }, [tree, docId, info?.type]);
 
   const getComment = async () => {
     const res = await getShareV1CommentList({ id: docId });
@@ -291,6 +300,92 @@ const DocContent = ({
         )}
         {info.type === 1 && <FolderList list={info.list} />}
       </Box>
+      {adjacentDocs && (adjacentDocs.prev || adjacentDocs.next) && (
+        <Stack
+          direction='row'
+          justifyContent='space-between'
+          alignItems='center'
+          sx={{
+            mt: 4,
+            mb: appDetail?.web_app_comment_settings?.is_enable ? 0 : 2,
+            gap: 2,
+          }}
+        >
+          {adjacentDocs.prev ? (
+            <Box
+              component={Link}
+              href={`${basePath}/node/${adjacentDocs.prev.id}`}
+              sx={{
+                flex: 1,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                color: 'text.tertiary',
+                textDecoration: 'none',
+                maxWidth: '48%',
+                '&:hover': {
+                  color: 'text.primary',
+                },
+                transition: 'color 0.2s ease-in-out',
+              }}
+            >
+              <IconMianbaoxie
+                sx={{
+                  flexShrink: 0,
+                  fontSize: 14,
+                  transform: 'rotate(180deg)',
+                }}
+              />
+              <Box
+                sx={{
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  textAlign: 'left',
+                }}
+              >
+                上一篇：{adjacentDocs.prev.name}
+              </Box>
+            </Box>
+          ) : (
+            <Box sx={{ flex: 1 }} />
+          )}
+          {adjacentDocs.next ? (
+            <Box
+              component={Link}
+              href={`${basePath}/node/${adjacentDocs.next.id}`}
+              sx={{
+                flex: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'flex-end',
+                gap: 1,
+                color: 'text.tertiary',
+                textDecoration: 'none',
+                maxWidth: '48%',
+                '&:hover': {
+                  color: 'text.primary',
+                },
+                transition: 'color 0.2s ease-in-out',
+              }}
+            >
+              <Box
+                sx={{
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  textAlign: 'right',
+                }}
+              >
+                下一篇：{adjacentDocs.next.name}
+              </Box>
+              <IconMianbaoxie sx={{ flexShrink: 0, fontSize: 14 }} />
+            </Box>
+          ) : (
+            <Box sx={{ flex: 1 }} />
+          )}
+        </Stack>
+      )}
       {appDetail?.web_app_comment_settings?.is_enable && (
         <>
           {' '}
