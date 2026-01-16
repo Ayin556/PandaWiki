@@ -168,7 +168,14 @@ func (m *JWTMiddleware) ValidateKBUserPerm(perm consts.UserKBPermission) echo.Mi
 					})
 				}
 
-				if authInfo.Permission != consts.UserKBPermissionFullControl && authInfo.Permission != perm {
+				if perm == consts.UserKBPermissionNotNull {
+					if authInfo.Permission == consts.UserKBPermissionNull {
+						return c.JSON(http.StatusForbidden, domain.PWResponse{
+							Success: false,
+							Message: "Unauthorized ValidateTokenKBPerm",
+						})
+					}
+				} else if authInfo.Permission != consts.UserKBPermissionFullControl && authInfo.Permission != perm {
 					return c.JSON(http.StatusForbidden, domain.PWResponse{
 						Success: false,
 						Message: "Unauthorized ValidateTokenKBPerm",
