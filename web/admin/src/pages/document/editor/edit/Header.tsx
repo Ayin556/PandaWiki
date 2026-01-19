@@ -49,6 +49,11 @@ const Header = ({
   const navigate = useNavigate();
   const firstLoad = useRef(true);
   const [wikiUrl, setWikiUrl] = useState<string>('');
+  const wikiUrlRef = useRef(wikiUrl);
+
+  useEffect(() => {
+    wikiUrlRef.current = wikiUrl;
+  }, [wikiUrl]);
 
   const { kb_id, license, kbList } = useAppSelector(state => state.config);
 
@@ -219,7 +224,10 @@ const Header = ({
                     message.warning('当前文档未发布，无法查看前台文档');
                     return;
                   }
-                  window.open(`${wikiUrl}/node/${detail.id}`, '_blank');
+                  window.open(
+                    `${wikiUrlRef.current}/node/${detail.id}`,
+                    '_blank',
+                  );
                 },
               },
               {
