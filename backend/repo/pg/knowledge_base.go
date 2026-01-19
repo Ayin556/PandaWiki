@@ -197,23 +197,43 @@ func (r *KnowledgeBaseRepository) SyncKBAccessSettingsToCaddy(ctx context.Contex
 								},
 								"handle": []map[string]any{
 									{
-										"handler": "headers",
-										"response": map[string]any{
-											"set": map[string][]string{
-												"Content-Disposition": {"attachment"},
+										"handler": "subroute",
+										"routes": []map[string]any{
+											{
+												"match": []map[string]any{
+													{
+														"not": []map[string]any{
+															{"path_regexp": map[string]string{"pattern": `(?i)\.pdf($|\?)`}},
+														},
+													},
+												},
+												"handle": []map[string]any{
+													{
+														"handler": "headers",
+														"response": map[string]any{
+															"set": map[string][]string{
+																"Content-Disposition": {"attachment"},
+															},
+														},
+													},
+												},
 											},
-										},
-									},
-									{
-										"handler": "reverse_proxy",
-										"upstreams": []map[string]any{
-											{"dial": staticFile},
-										},
-										"flush_interval": -1,
-										"transport": map[string]any{
-											"protocol":      "http",
-											"read_timeout":  "10m",
-											"write_timeout": "10m",
+											{
+												"handle": []map[string]any{
+													{
+														"handler": "reverse_proxy",
+														"upstreams": []map[string]any{
+															{"dial": staticFile},
+														},
+														"flush_interval": -1,
+														"transport": map[string]any{
+															"protocol":      "http",
+															"read_timeout":  "10m",
+															"write_timeout": "10m",
+														},
+													},
+												},
+											},
 										},
 									},
 								},
