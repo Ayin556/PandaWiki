@@ -108,10 +108,6 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
         id: defaultDetail.id!,
         kb_id: defaultDetail.kb_id!,
         name: newTitle,
-      }).then(() => {
-        updateDetail({
-          name: newTitle,
-        });
       });
     }, 500),
     [defaultDetail.id, defaultDetail.kb_id],
@@ -365,6 +361,9 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
             }}
             onChange={e => {
               setTitle(e.target.value);
+              updateDetail({
+                name: e.target.value,
+              });
               debouncedUpdateTitle(e.target.value);
             }}
           />
