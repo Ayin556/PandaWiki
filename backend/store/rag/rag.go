@@ -26,6 +26,7 @@ type UpsertRecordsRequest struct {
 	ID        string
 	DatasetID string
 	DocID     string
+	Title     string
 	Content   string
 	GroupIDs  []int
 	Tags      []string

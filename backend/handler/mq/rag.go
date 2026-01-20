@@ -87,6 +87,7 @@ func (h *RAGMQHandler) HandleNodeContentVectorRequest(ctx context.Context, msg t
 		// upsert node content chunks
 		docID, err := h.rag.UpsertRecords(ctx, &rag.UpsertRecordsRequest{
 			ID:        nodeRelease.ID,
+			Title:     nodeRelease.Name,
 			DatasetID: kb.DatasetID,
 			DocID:     nodeRelease.DocID,
 			Content:   nodeRelease.Content,

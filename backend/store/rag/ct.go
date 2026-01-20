@@ -107,6 +107,7 @@ func (s *CTRAG) UpsertRecords(ctx context.Context, req *UpsertRecordsRequest) (s
 	data := &raglite.UploadDocumentRequest{
 		DatasetID:  req.DatasetID,
 		DocumentID: req.DocID,
+		Title:      req.Title,
 		File:       strings.NewReader(markdown),
 		Filename:   fmt.Sprintf("%s.md", req.ID),
 		Metadata:   make(map[string]interface{}),
