@@ -44,7 +44,7 @@ func NewUserHandler(e *echo.Echo, baseHandler *handler.BaseHandler, logger *log.
 	group.GET("", h.GetUserInfo, h.auth.Authorize)
 	group.GET("/list", h.ListUsers, h.auth.Authorize)
 	group.POST("/create", h.CreateUser, h.auth.Authorize, h.auth.ValidateUserRole(consts.UserRoleAdmin))
-	group.PUT("/reset_password", h.ResetPassword, h.auth.Authorize)
+	group.PUT("/reset_password", h.ResetPassword, h.auth.Authorize, h.auth.ValidateUserRole(consts.UserRoleAdmin))
 	group.DELETE("/delete", h.DeleteUser, h.auth.Authorize, h.auth.ValidateUserRole(consts.UserRoleAdmin))
 
 	return h
@@ -216,11 +216,6 @@ func (h *UserHandler) ResetPassword(c echo.Context) error {
 		return h.NewResponseWithError(c, "failed to get user", err)
 	}
 
-	// 非超级管理员没有改密码权限
-	if user.Role != consts.UserRoleAdmin {
-		return h.NewResponseWithErrCode(c, domain.ErrCodePermissionDenied)
-	}
-
 	if user.Account == "admin" {
 		// admin 改不了自己的密码
 		if authInfo.UserId == req.ID {
@@ -282,8 +277,20 @@ func (h *UserHandler) DeleteUser(c echo.Context) error {
 		return h.NewResponseWithError(c, "failed to get user", err)
 	}
 
-	if user.Role != consts.UserRoleAdmin {
-		return h.NewResponseWithError(c, "只有管理员可以删除用户", nil)
+	targetUser, err := h.usecase.GetUser(ctx, req.UserID)
+	if err != nil {
+		return h.NewResponseWithError(c, "failed to get target user", err)
+	}
+
+	if targetUser.Account == "admin" {
+		return h.NewResponseWithError(c, "cannot delete admin user", nil)
+	}
+
+	// 非admin账号的管理员只能删除普通用户的账户
+	if user.Account != "admin" {
+		if targetUser.Role != consts.UserRoleUser {
+			return h.NewResponseWithError(c, "cannot delete other admin users", nil)
+		}
 	}
 
 	err = h.usecase.DeleteUser(ctx, req.UserID)
