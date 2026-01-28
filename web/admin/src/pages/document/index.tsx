@@ -287,15 +287,16 @@ const Content = () => {
         : []),
       ...(item.type === 2
         ? [
-            ...(item.status === 1
+            ...(item.status === 1 || item.status === 0
               ? [
                   {
-                    label: '更新发布',
+                    label: item.status === 1 ? '发布更新' : '发布文档',
                     key: 'update_publish',
                     onClick: () => handlePublish(item),
                   },
                 ]
               : []),
+
             // {
             //   label: item.summary ? '查看摘要' : '生成摘要',
             //   key: 'summary',
@@ -303,7 +304,7 @@ const Content = () => {
             // },
           ]
         : []),
-      ...(item.type === 2
+      ...(item.type === 2 && item.status !== 0
         ? [
             {
               label:
@@ -375,7 +376,8 @@ const Content = () => {
     getApiV1NodeList(params).then(res => {
       setList(res || []);
       setPublish({
-        unpublished: res.filter(it => it.status === 1).length,
+        unpublished: res.filter(it => it.status === 1 || it.status === 0)
+          .length,
       });
       setRagStartCount(
         res.filter(
