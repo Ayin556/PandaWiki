@@ -312,19 +312,37 @@ export default function Login() {
             {authType === ConstsAuthType.AuthTypeEnterprise && (
               <>
                 {sourceType === ConstsSourceType.SourceTypeDingTalk && (
-                  <IconButton onClick={handleDingTalkLogin}>
-                    <IconDingDing sx={{ fontSize: 40 }}></IconDingDing>
-                  </IconButton>
+                  <Button
+                    fullWidth
+                    variant='contained'
+                    onClick={handleDingTalkLogin}
+                    startIcon={<IconDingDing />}
+                    sx={{ height: '50px', fontSize: 16 }}
+                  >
+                    登录
+                  </Button>
                 )}
                 {sourceType === ConstsSourceType.SourceTypeFeishu && (
-                  <IconButton onClick={handleFeishuLogin}>
-                    <IconFeishu sx={{ fontSize: 40 }}></IconFeishu>
-                  </IconButton>
+                  <Button
+                    fullWidth
+                    variant='contained'
+                    onClick={handleFeishuLogin}
+                    startIcon={<IconFeishu />}
+                    sx={{ height: '50px', fontSize: 16 }}
+                  >
+                    登录
+                  </Button>
                 )}
                 {sourceType === ConstsSourceType.SourceTypeWeCom && (
-                  <IconButton onClick={handleQiyeweixinLogin}>
-                    <IconQiyeweixin sx={{ fontSize: 28 }}></IconQiyeweixin>
-                  </IconButton>
+                  <Button
+                    fullWidth
+                    variant='contained'
+                    onClick={handleQiyeweixinLogin}
+                    startIcon={<IconQiyeweixin />}
+                    sx={{ height: '50px', fontSize: 16 }}
+                  >
+                    登录
+                  </Button>
                 )}
                 {sourceType === ConstsSourceType.SourceTypeOAuth && (
                   <Button
@@ -349,9 +367,15 @@ export default function Login() {
                 )}
 
                 {sourceType === ConstsSourceType.SourceTypeCAS && (
-                  <IconButton onClick={handleCASLogin}>
-                    <IconCAS sx={{ fontSize: 40 }}></IconCAS>
-                  </IconButton>
+                  <Button
+                    fullWidth
+                    variant='contained'
+                    onClick={handleCASLogin}
+                    startIcon={<IconCAS />}
+                    sx={{ height: '50px', fontSize: 16 }}
+                  >
+                    登录
+                  </Button>
                 )}
 
                 {sourceType === ConstsSourceType.SourceTypeLDAP && (
