@@ -333,7 +333,12 @@ const Content = () => {
       ...(!isEditing
         ? [{ label: '重命名', key: 'rename', onClick: renameItem }]
         : []),
-      { label: '删除', key: 'delete', onClick: () => handleDelete(item) },
+      {
+        label: '删除',
+        color: 'error',
+        key: 'delete',
+        onClick: () => handleDelete(item),
+      },
     ];
   };
 

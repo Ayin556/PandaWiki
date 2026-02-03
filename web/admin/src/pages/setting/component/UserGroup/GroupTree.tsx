@@ -428,6 +428,9 @@ export const ActionsMenu = ({
       )}
       {canEdit && (
         <MenuItem
+          sx={{
+            color: 'error.main',
+          }}
           onClick={e => {
             e.stopPropagation();
             onClose(e);

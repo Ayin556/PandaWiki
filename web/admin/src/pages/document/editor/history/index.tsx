@@ -1,11 +1,16 @@
 import EmojiPicker from '@/components/Emoji';
+import dayjs from 'dayjs';
+import { putApiV1NodeDetail } from '@/request';
 import { DocWidth } from '@/constant/enums';
+import { IconCorrection } from '@panda-wiki/icons';
 import {
   DomainGetNodeReleaseDetailResp,
   DomainNodeReleaseListItem,
   getApiProV1NodeReleaseDetail,
   getApiProV1NodeReleaseList,
 } from '@/request/pro';
+import { getApiV1NodeDetail } from '@/request';
+import { DomainNodeStatus, V1NodeDetailResp } from '@/request/types';
 import { useAppSelector } from '@/store';
 import { Editor, useTiptap } from '@ctzhian/tiptap';
 import { Ellipsis } from '@ctzhian/ui';
@@ -40,9 +45,12 @@ const History = () => {
   const theme = useTheme();
 
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [list, setList] = useState<DomainNodeReleaseListItem[]>([]);
-  const [curVersion, setCurVersion] =
-    useState<DomainNodeReleaseListItem | null>(null);
+  const [list, setList] = useState<
+    (DomainNodeReleaseListItem & V1NodeDetailResp)[]
+  >([]);
+  const [curVersion, setCurVersion] = useState<
+    (DomainNodeReleaseListItem & V1NodeDetailResp) | null
+  >(null);
   const [curNode, setCurNode] = useState<DomainGetNodeReleaseDetailResp | null>(
     null,
   );
@@ -85,22 +93,50 @@ const History = () => {
     });
   };
 
+  const getDraftDetail = () => {
+    getApiV1NodeDetail({ id: id, kb_id: kb_id }).then(res => {
+      setCurNode(res);
+      if (res.meta?.content_type === 'md') {
+        setIsMarkdown(true);
+        editorMdRef.setContent(res.content || '');
+      } else {
+        setIsMarkdown(false);
+        editorRef.setContent(res.content || '');
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  };
+
   useEffect(() => {
-    if (curVersion) {
+    if (!curVersion) return;
+    if (curVersion.status !== DomainNodeStatus.NodeStatusReleased) {
+      getDraftDetail();
+    } else {
       getDetail(curVersion);
     }
   }, [curVersion]);
 
   useEffect(() => {
     if (!id || !kb_id) return;
-    getApiProV1NodeReleaseList({
-      node_id: id,
-      kb_id: kb_id,
-    }).then(res => {
-      setList(res || []);
-      if (res.length > 0) {
-        setCurVersion(res[0]);
+    Promise.all([
+      getApiV1NodeDetail({ id: id, kb_id: kb_id }),
+      getApiProV1NodeReleaseList({
+        node_id: id,
+        kb_id: kb_id,
+      }),
+    ]).then(([node, releases]) => {
+      const releaseList = releases.map(item => ({
+        ...item,
+        status: DomainNodeStatus.NodeStatusReleased,
+      }));
+      if (node.status !== DomainNodeStatus.NodeStatusReleased) {
+        // @ts-expect-error 忽略类型错误
+        releaseList.unshift(node);
+        setCurVersion(node);
+      } else if (releases.length > 0) {
+        setCurVersion(releases[0]);
       }
+      setList(releaseList);
     });
   }, [id, kb_id]);
 
@@ -227,7 +263,11 @@ const History = () => {
               )}
               <Stack direction={'row'} alignItems={'center'} gap={0.5}>
                 <IconAShijian2 sx={{ fontSize: 12 }} />
-                {curVersion?.release_message}
+                {curVersion?.status !== DomainNodeStatus.NodeStatusReleased
+                  ? dayjs(curVersion?.updated_at).format(
+                      'YYYY 年 MM 月 DD 日 HH 时 mm 分 ss 秒',
+                    ) + ' 编辑'
+                  : curVersion?.release_message}
               </Stack>
               <Stack direction={'row'} alignItems={'center'} gap={0.5}>
                 <IconZiti sx={{ fontSize: 12 }} />
@@ -321,10 +361,16 @@ const History = () => {
               }}
             >
               <Ellipsis sx={{ color: 'text.primary' }}>
-                {item.release_name}
+                {item.status !== DomainNodeStatus.NodeStatusReleased
+                  ? '未发布的草稿'
+                  : item.release_name}
               </Ellipsis>
               <Box sx={{ fontSize: 13, color: 'text.tertiary' }}>
-                {item.release_message}
+                {item.status !== DomainNodeStatus.NodeStatusReleased
+                  ? dayjs(item.updated_at).format(
+                      'YYYY 年 MM 月 DD 日 HH 时 mm 分 ss 秒',
+                    ) + ' 编辑'
+                  : item.release_message}
               </Box>
               <Stack
                 direction={'row'}
@@ -332,13 +378,33 @@ const History = () => {
                 justifyContent={'space-between'}
                 sx={{ mt: 1, height: 21 }}
               >
-                {item.publisher_account ? (
+                {item.status === DomainNodeStatus.NodeStatusReleased ? (
+                  item.publisher_account && (
+                    <Stack
+                      direction={'row'}
+                      alignItems={'center'}
+                      gap={0.5}
+                      sx={{
+                        bgcolor: 'primary.main',
+                        display: 'inline-flex',
+                        color: 'white',
+                        borderRadius: '4px',
+                        p: 0.5,
+                        fontSize: 12,
+                        lineHeight: 1,
+                      }}
+                    >
+                      <IconFabu sx={{ fontSize: 16 }} />
+                      {item.publisher_account}
+                    </Stack>
+                  )
+                ) : (
                   <Stack
                     direction={'row'}
                     alignItems={'center'}
                     gap={0.5}
                     sx={{
-                      bgcolor: 'primary.main',
+                      bgcolor: 'text.disabled',
                       display: 'inline-flex',
                       color: 'white',
                       borderRadius: '4px',
@@ -347,31 +413,31 @@ const History = () => {
                       lineHeight: 1,
                     }}
                   >
-                    <IconFabu sx={{ fontSize: 16 }} />
-                    {item.publisher_account}
+                    <IconCorrection sx={{ fontSize: 14 }} />
+                    {item.editor_account}
                   </Stack>
-                ) : (
-                  <Box></Box>
                 )}
-                {curVersion?.id === item.id && (
-                  <Box
-                    sx={{
-                      fontSize: 14,
-                      color: 'primary.main',
-                      borderRadius: '4px',
-                      px: 1,
-                      ':hover': {
-                        bgcolor: 'action.hover',
-                      },
-                    }}
-                    onClick={event => {
-                      event.stopPropagation();
-                      setConfirmOpen(true);
-                    }}
-                  >
-                    还原
-                  </Box>
-                )}
+
+                {curVersion?.id === item.id &&
+                  item.status === DomainNodeStatus.NodeStatusReleased && (
+                    <Box
+                      sx={{
+                        fontSize: 14,
+                        color: 'primary.main',
+                        borderRadius: '4px',
+                        px: 1,
+                        ':hover': {
+                          bgcolor: 'action.hover',
+                        },
+                      }}
+                      onClick={event => {
+                        event.stopPropagation();
+                        setConfirmOpen(true);
+                      }}
+                    >
+                      还原
+                    </Box>
+                  )}
               </Stack>
             </Box>
             {idx !== list.length - 1 && <Divider sx={{ my: 0.5 }} />}
@@ -382,6 +448,11 @@ const History = () => {
         open={confirmOpen}
         onClose={() => setConfirmOpen(false)}
         onOk={async () => {
+          await putApiV1NodeDetail({
+            id: id,
+            kb_id: kb_id,
+            content: curNode?.content,
+          });
           navigate(`/doc/editor/${id}`, {
             state: {
               node: curNode,
