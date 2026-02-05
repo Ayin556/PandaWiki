@@ -123,6 +123,23 @@ const Wrap = ({ detail: defaultDetail = {} }: WrapProps) => {
     }
   }, [editorRef.editor]);
 
+  const checkRequiredFields = useCallback(
+    (content?: string) => {
+      if (!nodeDetail?.name?.trim()) {
+        message.error('请先输入文档名称');
+        return false;
+      }
+      const contentToCheck =
+        content !== undefined ? content : nodeDetail?.content;
+      if (!contentToCheck?.trim()) {
+        message.error('请先输入文档内容');
+        return false;
+      }
+      return true;
+    },
+    [nodeDetail],
+  );
+
   const handleGlobalSave = useCallback(
     (event: KeyboardEvent) => {
       if ((event.ctrlKey || event.metaKey) && event.key === 's') {
@@ -132,28 +149,14 @@ const Wrap = ({ detail: defaultDetail = {} }: WrapProps) => {
           updateDetail({
             content: value,
           });
-          setTimeout(() => {
-            if (checkRequiredFields()) {
-              setConfirmModalOpen(true);
-            }
-          }, 10);
+          if (checkRequiredFields(value)) {
+            setConfirmModalOpen(true);
+          }
         }
       }
     },
-    [editorRef],
+    [editorRef, checkRequiredFields],
   );
-
-  const checkRequiredFields = useCallback(() => {
-    if (!nodeDetail?.name?.trim()) {
-      message.error('请先输入文档名称');
-      return false;
-    }
-    if (!nodeDetail?.content?.trim()) {
-      message.error('请先输入文档内容');
-      return false;
-    }
-    return true;
-  }, [nodeDetail]);
 
   useEffect(() => {
     document.addEventListener('keydown', handleGlobalSave);
@@ -184,13 +187,14 @@ const Wrap = ({ detail: defaultDetail = {} }: WrapProps) => {
         <Header
           detail={nodeDetail!}
           handleSave={async () => {
+            let content = nodeDetail?.content || '';
             if (!isMarkdown) {
-              const value = editorRef.getContent();
+              content = editorRef.getContent();
               updateDetail({
-                content: value,
+                content: content,
               });
             }
-            if (checkRequiredFields()) {
+            if (checkRequiredFields(content)) {
               setConfirmModalOpen(true);
             }
           }}
