@@ -27,46 +27,56 @@ export function addOpacityToColor(color: string, opacity: number) {
   return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
 }
 
+/**
+ * 复制文本到剪贴板
+ * 优先使用现代 Clipboard API（需要安全上下文：HTTPS 或 localhost）
+ * 降级使用 document.execCommand（兼容非 HTTPS 环境）
+ */
 export const copyText = (text: string, callback?: () => void) => {
-  const isNotHttps = !/^https:\/\//.test(window.location.origin);
+  // 使用降级方案的辅助函数
+  const fallbackCopy = () => {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.opacity = '0';
+    textArea.style.left = '-9999px';
+    textArea.style.top = '-9999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
 
-  if (isNotHttps) {
-    message.error('非 https 协议下不支持复制，请使用 https 协议');
-    return;
-  }
+    try {
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textArea);
 
-  try {
-    if (navigator.clipboard && window.isSecureContext) {
-      navigator.clipboard.writeText(text);
-      message.success('复制成功');
-      callback?.();
-    } else {
-      const textArea = document.createElement('textarea');
-      textArea.style.position = 'fixed';
-      textArea.style.opacity = '0';
-      textArea.style.left = '-9999px';
-      textArea.style.top = '-9999px';
-      textArea.value = text;
-      document.body.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
-      try {
-        const successful = document.execCommand('copy');
-        if (successful) {
-          message.success('复制成功');
-          callback?.();
-        } else {
-          message.error('复制失败，请手动复制');
-        }
-      } catch (err) {
-        console.error(err);
+      if (successful) {
+        message.success('复制成功');
+        callback?.();
+      } else {
         message.error('复制失败，请手动复制');
       }
+    } catch (err) {
       document.body.removeChild(textArea);
+      console.error('复制失败:', err);
+      message.error('复制失败，请手动复制');
     }
-  } catch (err) {
-    console.error(err);
-    message.error('复制失败，请手动复制');
+  };
+
+  // 优先使用现代 Clipboard API
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        message.success('复制成功');
+        callback?.();
+      })
+      .catch(err => {
+        console.error('Clipboard API 失败，尝试降级方案:', err);
+        fallbackCopy();
+      });
+  } else {
+    // 非安全上下文（如 HTTP）使用降级方案
+    fallbackCopy();
   }
 };
 

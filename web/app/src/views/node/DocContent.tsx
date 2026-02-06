@@ -7,6 +7,7 @@ import CommentInput, {
 import { DocWidth } from '@/constant';
 import { useBasePath } from '@/hooks';
 import { useStore } from '@/provider';
+import { copyText } from '@/utils';
 import {
   getShareV1CommentList,
   postShareV1Comment,
@@ -16,8 +17,21 @@ import { findAdjacentDocuments } from '@/utils';
 import { getImagePath } from '@/utils/getImagePath';
 import { Editor, UseTiptapReturn } from '@ctzhian/tiptap';
 import { Image, message } from '@ctzhian/ui';
-import { Box, Button, Divider, Stack, TextField, alpha } from '@mui/material';
-import { IconMianbaoxie, IconWenjian, IconWenjianjia } from '@panda-wiki/icons';
+import {
+  Box,
+  Button,
+  Divider,
+  IconButton,
+  Stack,
+  TextField,
+  alpha,
+} from '@mui/material';
+import {
+  IconFuzhi,
+  IconMianbaoxie,
+  IconWenjian,
+  IconWenjianjia,
+} from '@panda-wiki/icons';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -159,6 +173,11 @@ const DocContent = ({
     );
   };
 
+  const onCopyDocMd = () => {
+    const context = editorRef.getMarkdown() || '';
+    copyText(context);
+  };
+
   return (
     <Box
       id='doc-content'
@@ -214,46 +233,58 @@ const DocContent = ({
       </Stack>
       <Stack
         direction='row'
+        justifyContent='space-between'
         alignItems='center'
-        gap={1}
-        sx={{
-          fontSize: 14,
-          mb: 4,
-          color: 'text.tertiary',
-        }}
+        sx={{ mb: 4 }}
       >
-        {info?.created_at && (
-          <Box>
-            {info?.creator_account && info?.creator_account === 'admin'
-              ? '管理员'
-              : info?.creator_account}{' '}
-            {dayjs(info?.created_at).fromNow()}创建
-          </Box>
-        )}
-        {info?.updated_at && info.updated_at.slice(0, 1) !== '0' && (
-          <>
-            <Box>·</Box>
+        <Stack
+          direction='row'
+          alignItems='center'
+          gap={1}
+          sx={{
+            fontSize: 14,
+            color: 'text.tertiary',
+          }}
+        >
+          {info?.created_at && (
             <Box>
-              {info?.editor_account && info?.editor_account === 'admin'
+              {info?.creator_account && info?.creator_account === 'admin'
                 ? '管理员'
-                : info?.editor_account}{' '}
-              {dayjs(info.updated_at).fromNow()}更新
+                : info?.creator_account}{' '}
+              {dayjs(info?.created_at).fromNow()}创建
             </Box>
-          </>
-        )}
-        {!!characterCount && characterCount > 0 && (
-          <>
-            <Box>·</Box>
-            <Box>{characterCount} 字</Box>
-          </>
-        )}
-        {(info.pv ?? 0) > 0 && (
-          <>
-            <Box>·</Box>
-            <Box>浏览量 {info.pv}</Box>
-          </>
+          )}
+          {info?.updated_at && info.updated_at.slice(0, 1) !== '0' && (
+            <>
+              <Box>·</Box>
+              <Box>
+                {info?.editor_account && info?.editor_account === 'admin'
+                  ? '管理员'
+                  : info?.editor_account}{' '}
+                {dayjs(info.updated_at).fromNow()}更新
+              </Box>
+            </>
+          )}
+          {!!characterCount && characterCount > 0 && (
+            <>
+              <Box>·</Box>
+              <Box>{characterCount} 字</Box>
+            </>
+          )}
+          {(info.pv ?? 0) > 0 && (
+            <>
+              <Box>·</Box>
+              <Box>浏览量 {info.pv}</Box>
+            </>
+          )}
+        </Stack>
+        {info?.type === 2 && (
+          <IconButton size='small' onClick={onCopyDocMd}>
+            <IconFuzhi sx={{ fontSize: 16 }} />
+          </IconButton>
         )}
       </Stack>
+
       {info?.meta?.summary && (
         <Box
           sx={{
