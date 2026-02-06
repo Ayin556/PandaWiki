@@ -2,7 +2,6 @@ import ErrorJSON from '@/assets/json/error.json';
 import Card from '@/components/Card';
 import { ModelProvider } from '@/constant/enums';
 import { AddModelForm } from '@ctzhian/modelkit';
-import { postApiV1ModelCheck, postApiV1Model } from '@/request/Model';
 import {
   postApiV1ModelSwitchMode,
   putApiV1Model,
@@ -33,7 +32,6 @@ import {
 } from 'react';
 import {
   convertLocalModelToUIModel,
-  convertUICheckToLocalCheck,
   modelService,
 } from '@/services/modelService';
 import AutoModelConfig, { AutoModelConfigRef } from './AutoModelConfig';
@@ -82,6 +80,7 @@ const ModelConfig = forwardRef<ModelConfigRef, ModelConfigProps>(
     } = props;
 
     const [autoConfigMode, setAutoConfigMode] = useState(false);
+    const [modelModalLoading, setModelModalLoading] = useState(false);
     const [hasAutoSwitched, setHasAutoSwitched] = useState(false);
     const [tempMode, setTempMode] = useState<'auto' | 'manual'>('manual');
     const [savedMode, setSavedMode] = useState<'auto' | 'manual'>('manual');
@@ -95,7 +94,7 @@ const ModelConfig = forwardRef<ModelConfigRef, ModelConfigProps>(
       embedding: embeddingModelData,
       rerank: rerankModelData,
       analysis: analysisModelData,
-      analysisVL: analysisVLModelData,
+      'analysis-vl': analysisVLModelData,
     });
 
     const cacheModelData = useRef<Record<string, any>>({});
@@ -124,7 +123,14 @@ const ModelConfig = forwardRef<ModelConfigRef, ModelConfigProps>(
       }
     };
 
-    const onModelModalOk = (value: AddModelForm) => {
+    const onModelModalOk = async (value: AddModelForm) => {
+      setModelModalLoading(true);
+      const res = await onCheckModel(value).finally(() => {
+        setModelModalLoading(false);
+      });
+      if (!res) {
+        return;
+      }
       const currentModelData = {
         provider: value.provider,
         model: value.model_name,
@@ -180,7 +186,7 @@ const ModelConfig = forwardRef<ModelConfigRef, ModelConfigProps>(
           cacheModelData.current['analysis-vl'] = value;
           setModelData({
             ...modelData,
-            analysisVL: {
+            'analysis-vl': {
               ...currentModelData,
               id: analysisVLModelData?.id,
             },
@@ -217,14 +223,14 @@ const ModelConfig = forwardRef<ModelConfigRef, ModelConfigProps>(
       return forceUseOriginalHost() ? baseUrl : `${baseUrl}/v1`;
     };
 
-    const onSubmitModelConfig = (value: AddModelForm, id: string = '') => {
+    const onCheckModel = async (value: AddModelForm) => {
       let header = '';
       if (value.api_header_key && value.api_header_value) {
         header = value.api_header_key + '=' + value.api_header_value;
       }
       return modelService
         .checkModel({
-          model_type: addType,
+          model_type: value.model_type,
           model_name: value.model_name,
           api_key: value.api_key,
           // @ts-expect-error 忽略类型错误
@@ -243,84 +249,83 @@ const ModelConfig = forwardRef<ModelConfigRef, ModelConfigProps>(
           },
         })
         .then(res => {
-          // 错误处理
-          if (res.error) {
-            message.error(value.model_name + ' 模型检查失败');
-          } else if (id) {
-            modelService
-              .updateModel({
-                api_key: value.api_key,
-                model_type: addType,
-                // @ts-expect-error 忽略类型错误
-                base_url: getProcessedUrl(value.base_url, value.provider),
-                model_name: value.model_name,
-                api_header: value.api_header || header,
-                api_version: value.api_version,
-                id: id,
-                provider: value.provider as Exclude<
-                  typeof value.provider,
-                  'Other'
-                >,
-                show_name: value.show_name,
-                // 添加高级设置字段到 param 对象中
-                param: {
-                  context_window: value.context_window_size,
-                  max_tokens: value.max_output_tokens,
-                  r1_enabled: value.enable_r1_params,
-                  support_images: value.support_image,
-                  support_computer_use: value.support_compute,
-                  support_prompt_cache: value.support_prompt_caching,
-                },
-              })
-              .then(res => {
-                if (res.error) {
-                  message.error(value.model_name + ' 修改模型失败');
-                } else {
-                  message.success(value.model_name + ' 修改成功');
-                }
-              })
-              .catch(res => {
-                message.error(value.model_name + ' 修改模型失败');
-              });
-          } else {
-            modelService
-              .createModel({
-                model_type: addType,
-                api_key: value.api_key,
-                // @ts-expect-error 忽略类型错误
-                base_url: getProcessedUrl(value.base_url, value.provider),
-                model_name: value.model_name,
-                api_header: value.api_header || header,
-                provider: value.provider as Exclude<
-                  typeof value.provider,
-                  'Other'
-                >,
-                show_name: value.show_name,
-                // 添加高级设置字段到 param 对象中
-                param: {
-                  context_window: value.context_window_size,
-                  max_tokens: value.max_output_tokens,
-                  r1_enabled: value.enable_r1_params,
-                  support_images: value.support_image,
-                  support_computer_use: value.support_compute,
-                  support_prompt_cache: value.support_prompt_caching,
-                },
-              })
-              .then(res => {
-                if (res.error) {
-                  message.error(value.model_name + ' 添加模型失败');
-                } else {
-                  message.success(value.model_name + ' 添加成功');
-                }
-              })
-              .catch(res => {
-                message.error(value.model_name + ' 添加模型失败');
-              });
-          }
+          return value;
         })
         .catch(res => {
           message.error(value.model_name + ' 检查模型失败');
         });
+    };
+
+    const onSubmitModelConfig = (value: AddModelForm, id: string = '') => {
+      let header = '';
+      if (value.api_header_key && value.api_header_value) {
+        header = value.api_header_key + '=' + value.api_header_value;
+      }
+      if (id) {
+        return modelService
+          .updateModel({
+            api_key: value.api_key,
+            model_type: value.model_type,
+            // @ts-expect-error 忽略类型错误
+            base_url: getProcessedUrl(value.base_url, value.provider),
+            model_name: value.model_name,
+            api_header: value.api_header || header,
+            api_version: value.api_version,
+            id: id,
+            provider: value.provider as Exclude<typeof value.provider, 'Other'>,
+            show_name: value.show_name,
+            // 添加高级设置字段到 param 对象中
+            param: {
+              context_window: value.context_window_size,
+              max_tokens: value.max_output_tokens,
+              r1_enabled: value.enable_r1_params,
+              support_images: value.support_image,
+              support_computer_use: value.support_compute,
+              support_prompt_cache: value.support_prompt_caching,
+            },
+          })
+          .then(res => {
+            if (res.error) {
+              message.error(value.model_name + ' 修改模型失败');
+            } else {
+              message.success(value.model_name + ' 修改成功');
+            }
+          })
+          .catch(res => {
+            message.error(value.model_name + ' 修改模型失败');
+          });
+      } else {
+        return modelService
+          .createModel({
+            model_type: value.model_type,
+            api_key: value.api_key,
+            // @ts-expect-error 忽略类型错误
+            base_url: getProcessedUrl(value.base_url, value.provider),
+            model_name: value.model_name,
+            api_header: value.api_header || header,
+            provider: value.provider as Exclude<typeof value.provider, 'Other'>,
+            show_name: value.show_name,
+            // 添加高级设置字段到 param 对象中
+            param: {
+              context_window: value.context_window_size,
+              max_tokens: value.max_output_tokens,
+              r1_enabled: value.enable_r1_params,
+              support_images: value.support_image,
+              support_computer_use: value.support_compute,
+              support_prompt_cache: value.support_prompt_caching,
+            },
+          })
+          .then(res => {
+            if (res.error) {
+              message.error(value.model_name + ' 添加模型失败');
+            } else {
+              message.success(value.model_name + ' 添加成功');
+            }
+          })
+          .catch(res => {
+            message.error(value.model_name + ' 添加模型失败');
+          });
+      }
     };
 
     // 组件挂载时,获取当前配置
@@ -407,7 +412,7 @@ const ModelConfig = forwardRef<ModelConfigRef, ModelConfigProps>(
         embedding: embeddingModelData,
         rerank: rerankModelData,
         analysis: analysisModelData,
-        analysisVL: analysisVLModelData,
+        'analysis-vl': analysisVLModelData,
       });
     }, [
       chatModelData,
@@ -418,6 +423,10 @@ const ModelConfig = forwardRef<ModelConfigRef, ModelConfigProps>(
     ]);
 
     const handleSave = async () => {
+      if (!showSaveBtn) {
+        return await performSave();
+      }
+
       if (tempMode !== savedMode || hasConfigChanged) {
         // 检测是否切换了模式
         const isModeChanged = tempMode !== savedMode;
@@ -444,7 +453,6 @@ const ModelConfig = forwardRef<ModelConfigRef, ModelConfigProps>(
     const performSave = async () => {
       setIsSaving(true);
       const modelConfigList = Object.keys(cacheModelData.current);
-
       if (modelConfigList.length > 0) {
         await Promise.all(
           modelConfigList.map(async modelType => {
@@ -494,7 +502,7 @@ const ModelConfig = forwardRef<ModelConfigRef, ModelConfigProps>(
           );
         }
         cacheModelData.current = {};
-        getModelList(); // 刷新模型列表
+        await getModelList(); // 刷新模型列表
       } finally {
         setIsSaving(false);
       }
@@ -521,9 +529,9 @@ const ModelConfig = forwardRef<ModelConfigRef, ModelConfigProps>(
           .icon
       : null;
 
-    const IconAnalysisVLModel = modelData.analysisVL
+    const IconAnalysisVLModel = modelData['analysis-vl']
       ? ModelProvider[
-          modelData.analysisVL.provider as keyof typeof ModelProvider
+          modelData['analysis-vl'].provider as keyof typeof ModelProvider
         ].icon
       : null;
 
@@ -582,27 +590,29 @@ const ModelConfig = forwardRef<ModelConfigRef, ModelConfigProps>(
                   label='手动配置'
                 />
               </RadioGroup>
-              <Box
-                sx={{
-                  fontSize: 12,
-                  color: 'text.tertiary',
-                  ml: 2,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 0.5,
-                }}
-              >
+              {showSaveBtn && (
                 <Box
-                  component='span'
                   sx={{
-                    color: 'warning.main',
-                    fontWeight: 'bold',
+                    fontSize: 12,
+                    color: 'text.tertiary',
+                    ml: 2,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0.5,
                   }}
                 >
-                  提示：
+                  <Box
+                    component='span'
+                    sx={{
+                      color: 'warning.main',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    提示：
+                  </Box>
+                  切换配置模式或修改向量模型会触发重新学习
                 </Box>
-                切换配置模式或修改向量模型会触发重新学习
-              </Box>
+              )}
             </Stack>
           </Box>
           {(tempMode !== savedMode || hasConfigChanged) && showSaveBtn && (
@@ -1480,7 +1490,7 @@ const ModelConfig = forwardRef<ModelConfigRef, ModelConfigProps>(
                     gap={1}
                     sx={{ width: 500 }}
                   >
-                    {modelData.analysisVL ? (
+                    {modelData['analysis-vl'] ? (
                       <>
                         {IconAnalysisVLModel && (
                           <IconAnalysisVLModel sx={{ fontSize: 18 }} />
@@ -1493,11 +1503,11 @@ const ModelConfig = forwardRef<ModelConfigRef, ModelConfigProps>(
                           }}
                         >
                           {ModelProvider[
-                            modelData.analysisVL
+                            modelData['analysis-vl']
                               .provider as keyof typeof ModelProvider
                           ].cn ||
                             ModelProvider[
-                              modelData.analysisVL
+                              modelData['analysis-vl']
                                 .provider as keyof typeof ModelProvider
                             ].label ||
                             '其他'}
@@ -1511,7 +1521,7 @@ const ModelConfig = forwardRef<ModelConfigRef, ModelConfigProps>(
                             ml: -0.5,
                           }}
                         >
-                          {modelData.analysisVL.model}
+                          {modelData['analysis-vl'].model}
                         </Box>
                         <Box
                           sx={{
@@ -1568,14 +1578,14 @@ const ModelConfig = forwardRef<ModelConfigRef, ModelConfigProps>(
                     >
                       可选
                     </Box>
-                    {modelData.analysisVL && (
+                    {modelData['analysis-vl'] && (
                       <Switch
                         size='small'
-                        checked={modelData.analysisVL.is_active}
+                        checked={modelData['analysis-vl'].is_active}
                         onChange={() => {
                           putApiV1Model({
-                            ...modelData.analysisVL,
-                            is_active: !modelData.analysisVL.is_active,
+                            ...modelData['analysis-vl'],
+                            is_active: !modelData['analysis-vl'].is_active,
                           }).then(() => {
                             message.success('修改成功');
                             getModelList();
@@ -1599,7 +1609,7 @@ const ModelConfig = forwardRef<ModelConfigRef, ModelConfigProps>(
                   </Box>
                 </Box>
                 <Box sx={{ flexGrow: 1, flexSelf: 'flex-start' }}>
-                  {modelData.analysisVL ? (
+                  {modelData['analysis-vl'] ? (
                     <Box
                       sx={{
                         display: 'inline-block',
@@ -1640,7 +1650,7 @@ const ModelConfig = forwardRef<ModelConfigRef, ModelConfigProps>(
                   loading={openingAdd === 'analysis-vl'}
                   onClick={() => handleOpenAdd('analysis-vl')}
                 >
-                  {modelData.analysisVL ? '修改' : '配置'}
+                  {modelData['analysis-vl'] ? '修改' : '配置'}
                 </Button>
               </Stack>
             </Card>
@@ -1652,6 +1662,7 @@ const ModelConfig = forwardRef<ModelConfigRef, ModelConfigProps>(
               open={addOpen}
               model_type={addType}
               onOk={onModelModalOk}
+              loading={modelModalLoading}
               data={
                 addType === 'chat'
                   ? convertLocalModelToUIModel(modelData.chat)
@@ -1662,7 +1673,7 @@ const ModelConfig = forwardRef<ModelConfigRef, ModelConfigProps>(
                       : addType === 'analysis'
                         ? convertLocalModelToUIModel(modelData.analysis)
                         : addType === 'analysis-vl'
-                          ? convertLocalModelToUIModel(modelData.analysisVL)
+                          ? convertLocalModelToUIModel(modelData['analysis-vl'])
                           : null
               }
               onClose={() => {
