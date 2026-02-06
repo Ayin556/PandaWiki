@@ -29,6 +29,7 @@ import {
   useRef,
   forwardRef,
   useImperativeHandle,
+  useMemo,
 } from 'react';
 import {
   convertLocalModelToUIModel,
@@ -249,10 +250,11 @@ const ModelConfig = forwardRef<ModelConfigRef, ModelConfigProps>(
           },
         })
         .then(res => {
+          if (res.error) {
+            message.error(value.model_name + ' 检查模型失败');
+            return Promise.reject(res.error);
+          }
           return value;
-        })
-        .catch(res => {
-          message.error(value.model_name + ' 检查模型失败');
         });
     };
 
@@ -534,6 +536,26 @@ const ModelConfig = forwardRef<ModelConfigRef, ModelConfigProps>(
           modelData['analysis-vl'].provider as keyof typeof ModelProvider
         ].icon
       : null;
+
+    const modelModalChatData = useMemo(() => {
+      return convertLocalModelToUIModel(modelData.chat);
+    }, [modelData.chat]);
+
+    const modelModalEmbeddingData = useMemo(() => {
+      return convertLocalModelToUIModel(modelData.embedding);
+    }, [modelData.embedding]);
+
+    const modelModalRerankData = useMemo(() => {
+      return convertLocalModelToUIModel(modelData.rerank);
+    }, [modelData.rerank]);
+
+    const modelModalAnalysisData = useMemo(() => {
+      return convertLocalModelToUIModel(modelData.analysis);
+    }, [modelData.analysis]);
+
+    const modelModalAnalysisVLData = useMemo(() => {
+      return convertLocalModelToUIModel(modelData['analysis-vl']);
+    }, [modelData['analysis-vl']]);
 
     return (
       <Stack gap={0}>
@@ -1665,15 +1687,15 @@ const ModelConfig = forwardRef<ModelConfigRef, ModelConfigProps>(
               loading={modelModalLoading}
               data={
                 addType === 'chat'
-                  ? convertLocalModelToUIModel(modelData.chat)
+                  ? modelModalChatData
                   : addType === 'embedding'
-                    ? convertLocalModelToUIModel(modelData.embedding)
+                    ? modelModalEmbeddingData
                     : addType === 'rerank'
-                      ? convertLocalModelToUIModel(modelData.rerank)
+                      ? modelModalRerankData
                       : addType === 'analysis'
-                        ? convertLocalModelToUIModel(modelData.analysis)
+                        ? modelModalAnalysisData
                         : addType === 'analysis-vl'
-                          ? convertLocalModelToUIModel(modelData['analysis-vl'])
+                          ? modelModalAnalysisVLData
                           : null
               }
               onClose={() => {
