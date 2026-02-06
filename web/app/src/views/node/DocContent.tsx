@@ -12,7 +12,7 @@ import {
   getShareV1CommentList,
   postShareV1Comment,
 } from '@/request/ShareComment';
-import { V1ShareNodeDetailResp } from '@/request/types';
+import { ConstsCopySetting, V1ShareNodeDetailResp } from '@/request/types';
 import { findAdjacentDocuments } from '@/utils';
 import { getImagePath } from '@/utils/getImagePath';
 import { Editor, UseTiptapReturn } from '@ctzhian/tiptap';
@@ -24,6 +24,7 @@ import {
   IconButton,
   Stack,
   TextField,
+  Tooltip,
   alpha,
 } from '@mui/material';
 import {
@@ -174,7 +175,13 @@ const DocContent = ({
   };
 
   const onCopyDocMd = () => {
-    const context = editorRef.getMarkdown() || '';
+    let context = editorRef.getMarkdown() || '';
+    // 如果设置了追加尾缀，则在复制内容后添加尾缀
+    if (
+      kbDetail?.settings?.copy_setting === ConstsCopySetting.CopySettingAppend
+    ) {
+      context += `\n\n-----------------------------------------\n内容来自 ${typeof window !== 'undefined' ? window.location.href : ''}`;
+    }
     copyText(context);
   };
 
@@ -278,11 +285,15 @@ const DocContent = ({
             </>
           )}
         </Stack>
-        {info?.type === 2 && (
-          <IconButton size='small' onClick={onCopyDocMd}>
-            <IconFuzhi sx={{ fontSize: 16 }} />
-          </IconButton>
-        )}
+        {info?.type === 2 &&
+          kbDetail?.settings?.copy_setting !==
+            ConstsCopySetting.CopySettingDisabled && (
+            <Tooltip title='复制 MarkDown 格式' arrow placement='top'>
+              <IconButton size='small' onClick={onCopyDocMd}>
+                <IconFuzhi sx={{ fontSize: 16 }} />
+              </IconButton>
+            </Tooltip>
+          )}
       </Stack>
 
       {info?.meta?.summary && (
