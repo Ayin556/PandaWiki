@@ -261,7 +261,7 @@ const Header = ({
               {
                 key: 'copy',
                 textSx: { flex: 1 },
-                label: <StyledMenuSelect>复制</StyledMenuSelect>,
+                label: <StyledMenuSelect>创建副本</StyledMenuSelect>,
                 onClick: () => {
                   if (kb_id) {
                     postApiV1Node({
