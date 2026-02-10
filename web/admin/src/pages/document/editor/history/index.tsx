@@ -31,10 +31,14 @@ import {
   IconZiti,
 } from '@panda-wiki/icons';
 import dayjs from 'dayjs';
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
+import ReactDiffViewer from 'react-diff-viewer';
 import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
 import { WrapContext } from '..';
 import VersionRollback from '../../component/VersionRollback';
+
+/** 目录栏宽度，与右侧版本列表宽度一致 */
+const CATALOG_WIDTH = 292;
 
 const History = () => {
   const { id = '' } = useParams();
@@ -62,7 +66,6 @@ const History = () => {
     useState<DomainGetNodeReleaseDetailResp | null>(null);
   const [diffLoading, setDiffLoading] = useState(false);
   const currentVersionIdRef = useRef<string | undefined | null>(null);
-  const releasesListRef = useRef<DomainNodeReleaseListItem[]>([]);
 
   const editorRef = useTiptap({
     content: '',
@@ -86,7 +89,14 @@ const History = () => {
   });
 
   useEffect(() => {
-    if (!curVersion) return;
+    if (!curVersion || !kb_id) return;
+    if (
+      curVersion.status === DomainNodeStatus.NodeStatusReleased &&
+      !curVersion.id
+    ) {
+      setDiffLoading(false);
+      return;
+    }
 
     const versionId = curVersion.id;
     currentVersionIdRef.current = versionId ?? null;
@@ -114,26 +124,29 @@ const History = () => {
               return res;
             });
           })
-        : getApiProV1NodeReleaseDetail({
-            id: curVersion.id!,
-            kb_id: kb_id!,
-          }).then(res => {
-            if (currentVersionIdRef.current === versionId) {
-              setCurNode(res);
-              if (res.meta?.content_type === 'md') {
-                setIsMarkdown(true);
-                editorMdRef.setContent(res.content || '');
-              } else {
-                setIsMarkdown(false);
-                editorRef.setContent(res.content || '');
+        : (() => {
+            const releaseId = curVersion.id;
+            if (!releaseId) return Promise.resolve(null);
+            return getApiProV1NodeReleaseDetail({
+              id: releaseId,
+              kb_id: kb_id,
+            }).then(res => {
+              if (currentVersionIdRef.current === versionId) {
+                setCurNode(res);
+                if (res.meta?.content_type === 'md') {
+                  setIsMarkdown(true);
+                  editorMdRef.setContent(res.content || '');
+                } else {
+                  setIsMarkdown(false);
+                  editorRef.setContent(res.content || '');
+                }
+                window.scrollTo({ top: 0, behavior: 'smooth' });
               }
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-            return res;
-          });
+              return res;
+            });
+          })();
 
     const currentIndex = list.findIndex(item => item.id === curVersion.id);
-    const releases = releasesListRef.current;
 
     let prevVersionPromise: Promise<DomainGetNodeReleaseDetailResp | null> =
       Promise.resolve(null);
@@ -142,40 +155,40 @@ const History = () => {
       currentIndex === 0 &&
       curVersion.status !== DomainNodeStatus.NodeStatusReleased
     ) {
-      if (releases.length > 0) {
-        const firstRelease = releases[0];
-        prevVersionPromise = getApiProV1NodeReleaseDetail({
-          id: firstRelease.id!,
-          kb_id: kb_id!,
-        }).then(res => {
-          if (currentVersionIdRef.current === versionId) {
-            return res;
-          }
-          return null;
-        });
+      // 草稿场景：上一版本为 list[1]（首个已发布版本）
+      if (list.length > 1) {
+        const firstRelease = list[1];
+        if (firstRelease.id) {
+          prevVersionPromise = getApiProV1NodeReleaseDetail({
+            id: firstRelease.id,
+            kb_id: kb_id,
+          }).then(res => {
+            if (currentVersionIdRef.current === versionId) {
+              return res;
+            }
+            return null;
+          });
+        }
       }
     } else if (curVersion.status === DomainNodeStatus.NodeStatusReleased) {
-      const currentReleaseIndex = releases.findIndex(
-        item => item.id === curVersion.id,
-      );
-      if (
-        currentReleaseIndex >= 0 &&
-        currentReleaseIndex < releases.length - 1
-      ) {
-        const nextRelease = releases[currentReleaseIndex + 1];
-        prevVersionPromise = getApiProV1NodeReleaseDetail({
-          id: nextRelease.id!,
-          kb_id: kb_id!,
-        }).then(res => {
-          if (currentVersionIdRef.current === versionId) {
-            return res;
-          }
-          return null;
-        });
+      // 已发布场景：上一版本为 list[currentIndex + 1]（更早的发布版本）
+      if (currentIndex >= 0 && currentIndex < list.length - 1) {
+        const nextRelease = list[currentIndex + 1];
+        if (nextRelease.id) {
+          prevVersionPromise = getApiProV1NodeReleaseDetail({
+            id: nextRelease.id,
+            kb_id: kb_id,
+          }).then(res => {
+            if (currentVersionIdRef.current === versionId) {
+              return res;
+            }
+            return null;
+          });
+        }
       }
     }
-    Promise.all([currentVersionPromise, prevVersionPromise]).then(
-      ([currentRes, prevRes]) => {
+    Promise.all([currentVersionPromise, prevVersionPromise])
+      .then(([, prevRes]) => {
         if (currentVersionIdRef.current === versionId) {
           if (prevRes) {
             setPrevVersionContent(prevRes.content || '');
@@ -186,8 +199,12 @@ const History = () => {
           }
           setDiffLoading(false);
         }
-      },
-    );
+      })
+      .catch(() => {
+        if (currentVersionIdRef.current === versionId) {
+          setDiffLoading(false);
+        }
+      });
   }, [curVersion, list, id, kb_id]);
 
   useEffect(() => {
@@ -198,25 +215,35 @@ const History = () => {
         node_id: id,
         kb_id: kb_id,
       }),
-    ]).then(([node, releases]) => {
-      const releaseList = releases.map(item => ({
-        ...item,
-        status: DomainNodeStatus.NodeStatusReleased,
-      }));
+    ])
+      .then(([node, releases]) => {
+        const releaseList = releases.map(item => ({
+          ...item,
+          status: DomainNodeStatus.NodeStatusReleased,
+        }));
 
-      releasesListRef.current = releases;
-
-      if (node.status !== DomainNodeStatus.NodeStatusReleased) {
-        // @ts-expect-error 忽略类型错误
-        releaseList.unshift(node);
-        setCurVersion(node);
-      } else {
-        if (releases.length > 0) {
-          setCurVersion(releases[0]);
+        if (node.status !== DomainNodeStatus.NodeStatusReleased) {
+          // @ts-expect-error 忽略类型错误
+          releaseList.unshift(node);
+          setCurVersion(node);
+        } else {
+          if (releases.length > 0) {
+            setCurVersion(releases[0]);
+          } else {
+            // 已发布但无历史版本：将当前文档作为唯一版本展示
+            const nodeAsRelease = {
+              ...node,
+              status: DomainNodeStatus.NodeStatusReleased,
+            };
+            releaseList.push(nodeAsRelease);
+            setCurVersion(nodeAsRelease);
+          }
         }
-      }
-      setList(releaseList);
-    });
+        setList(releaseList);
+      })
+      .catch(() => {
+        // 接口失败时保持初始状态
+      });
   }, [id, kb_id]);
 
   return (
@@ -229,7 +256,7 @@ const History = () => {
         sx={{
           position: 'fixed',
           top: 0,
-          left: catalogOpen ? 292 : 0,
+          left: catalogOpen ? CATALOG_WIDTH : 0,
           right: 0,
           zIndex: 2,
           bgcolor: 'background.default',
@@ -271,7 +298,7 @@ const History = () => {
           <IconChahao sx={{ fontSize: 16 }} />
         </IconButton>
       </Stack>
-      <Box sx={{ mt: '56px', mr: '292px' }}>
+      <Box sx={{ mt: '56px', mr: `${CATALOG_WIDTH}px` }}>
         {curNode && (
           <Box
             sx={{
@@ -313,11 +340,11 @@ const History = () => {
               gap={2}
               sx={{ mb: 4, fontSize: 12, color: 'text.tertiary' }}
             >
-              {curNode.editor_account && (
-                <Tooltip
-                  arrow
-                  title={
-                    curNode.creator_account || curNode.publisher_account ? (
+              {curNode.editor_account &&
+                (curNode.creator_account || curNode.publisher_account ? (
+                  <Tooltip
+                    arrow
+                    title={
                       <Stack>
                         {curNode.creator_account && (
                           <Box>创建：{curNode.creator_account}</Box>
@@ -326,20 +353,29 @@ const History = () => {
                           <Box>上次发布：{curNode.publisher_account}</Box>
                         )}
                       </Stack>
-                    ) : null
-                  }
-                >
+                    }
+                  >
+                    <Stack
+                      direction={'row'}
+                      alignItems={'center'}
+                      gap={0.5}
+                      sx={{ cursor: 'pointer' }}
+                    >
+                      <IconTianjiawendang sx={{ fontSize: 9 }} />
+                      {curNode.editor_account} 编辑
+                    </Stack>
+                  </Tooltip>
+                ) : (
                   <Stack
                     direction={'row'}
                     alignItems={'center'}
                     gap={0.5}
-                    sx={{ cursor: 'pointer' }}
+                    sx={{ cursor: 'default' }}
                   >
                     <IconTianjiawendang sx={{ fontSize: 9 }} />
                     {curNode.editor_account} 编辑
                   </Stack>
-                </Tooltip>
-              )}
+                ))}
               <Stack direction={'row'} alignItems={'center'} gap={0.5}>
                 <IconAShijian2 sx={{ fontSize: 12 }} />
                 {curVersion?.status !== DomainNodeStatus.NodeStatusReleased
@@ -407,11 +443,22 @@ const History = () => {
                 curNode?.content &&
                 prevVersionNode?.meta?.content_type ===
                   curNode.meta?.content_type ? (
-                <EditorDiff
-                  oldHtml={prevVersionContent}
-                  newHtml={curNode.content || ''}
-                  baseUrl={window.__BASENAME__ || ''}
-                />
+                isMarkdown ? (
+                  <Box
+                    sx={{ overflowY: 'auto', maxHeight: 'calc(100vh - 56px)' }}
+                  >
+                    <ReactDiffViewer
+                      oldValue={prevVersionContent}
+                      newValue={curNode.content || ''}
+                    />
+                  </Box>
+                ) : (
+                  <EditorDiff
+                    oldHtml={prevVersionContent}
+                    newHtml={curNode.content || ''}
+                    baseUrl={window.__BASENAME__ || ''}
+                  />
+                )
               ) : isMarkdown ? (
                 <Editor editor={editorMdRef.editor} />
               ) : (
@@ -427,7 +474,7 @@ const History = () => {
           top: 56,
           right: 0,
           flexShrink: 0,
-          width: 292,
+          width: CATALOG_WIDTH,
           p: 0.5,
           bgcolor: 'background.paper3',
           height: 'calc(100vh - 56px)',
@@ -437,9 +484,8 @@ const History = () => {
         }}
       >
         {list.map((item, idx) => (
-          <>
+          <Fragment key={item.id}>
             <Box
-              key={item.id}
               sx={{
                 borderRadius: 1,
                 p: 2,
@@ -540,7 +586,7 @@ const History = () => {
               </Stack>
             </Box>
             {idx !== list.length - 1 && <Divider sx={{ my: 0.5 }} />}
-          </>
+          </Fragment>
         ))}
       </Stack>
       <VersionRollback
