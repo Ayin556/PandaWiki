@@ -48,7 +48,11 @@ const statusColorMap = {
 } as const;
 
 export default function ContributionPage() {
-  const { kb_id = '', license } = useAppSelector(state => state.config);
+  const {
+    kb_id = '',
+    nav_id = '',
+    license,
+  } = useAppSelector(state => state.config);
   const [searchParams, setSearchParams] = useURLSearchParams();
   const page = Number(searchParams.get('page') || '1');
   const pageSize = Number(searchParams.get('page_size') || '20');
@@ -81,6 +85,7 @@ export default function ContributionPage() {
     postApiProV1ContributeAudit({
       id: previewRow!.id!,
       kb_id,
+      nav_id,
       parent_id: id,
       status: 'approved',
     }).then(() => {
@@ -102,6 +107,7 @@ export default function ContributionPage() {
           postApiProV1ContributeAudit({
             id: previewRow!.id!,
             kb_id,
+            nav_id,
             status: 'approved',
           }).then(() => {
             getData();
@@ -121,6 +127,7 @@ export default function ContributionPage() {
         postApiProV1ContributeAudit({
           id: previewRow!.id!,
           kb_id,
+          nav_id,
           status: 'rejected',
         }).then(() => {
           getData();

@@ -21,6 +21,7 @@ const DragTree = forwardRef<DragTreeHandle, DragTreeProps>(
       data,
       menu,
       updateData,
+      refresh,
       ui = 'move',
       readOnly = false,
       selected,
@@ -50,6 +51,7 @@ const DragTree = forwardRef<DragTreeHandle, DragTreeProps>(
           menu,
           data,
           updateData,
+          refresh,
           readOnly,
           selected,
           onSelectChange,
@@ -84,6 +86,7 @@ const DragTree = forwardRef<DragTreeHandle, DragTreeProps>(
                 kb_id: kb_id,
               }).then(() => {
                 updateData?.(newItems);
+                refresh?.();
               });
             } else {
               updateData?.(newItems);
