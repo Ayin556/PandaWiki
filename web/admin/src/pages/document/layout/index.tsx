@@ -28,6 +28,7 @@ const Content = () => {
   const [groups, setGroups] = useState<V1NodeListGroupNavResp[]>([]);
   const [navList, setNavList] = useState<V1NavListResp[]>([]);
   const [loading, setLoading] = useState(false);
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
 
   const getData = useCallback(() => {
     if (!kb_id) {
@@ -61,6 +62,7 @@ const Content = () => {
         } else {
           dispatch(setNavId(''));
         }
+        setHasLoadedOnce(true);
       })
       .finally(() => setLoading(false));
   }, [search, kb_id, dispatch]);
@@ -141,7 +143,7 @@ const Content = () => {
             setGroups(prev => prev.filter(g => g.nav_id !== navId));
           }}
           isSearching={!!search}
-          loading={loading}
+          loading={loading && !hasLoadedOnce}
         />
         <DocPageList
           groups={groups}
@@ -149,7 +151,7 @@ const Content = () => {
           search={search}
           refresh={refresh}
           wikiUrl={wikiUrl}
-          loading={loading}
+          loading={loading && !hasLoadedOnce}
           onPublishOpen={ids => {
             setPublishIds(ids ?? []);
             setPublishOpen(true);
