@@ -5,7 +5,7 @@ import { useBasePath } from '@/hooks/useBasePath';
 import { useStore } from '@/provider';
 import { deepSearchFirstNode } from '@/utils';
 import { convertToTree, filterEmptyFolders } from '@/utils/tree';
-import { Box, Stack, Tab, Tabs } from '@mui/material';
+import { Box, Tab, Tabs } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useCallback, useMemo } from 'react';
 
@@ -61,12 +61,22 @@ const NavBar = ({
       docContentWidth +
       CONTENT_GAP +
       DOC_ANCHOR_WIDTH;
-    return { width: totalWidth, minWidth: totalWidth, maxWidth: totalWidth };
+    // minWidth: 0 是关键：否则 minWidth > maxWidth 时 CSS 会优先采用 minWidth，导致撑破屏幕
+    return {
+      width: totalWidth,
+      minWidth: 0,
+      maxWidth: '100%',
+    };
   }, [docWidth, catalogWidth]);
 
   return (
     <Box
       sx={{
+        position: 'sticky',
+        top: 64,
+        left: 0,
+        zIndex: 100,
+        bgcolor: 'background.default',
         borderBottom: '1px solid',
         borderColor: 'divider',
         display: 'flex',
@@ -74,29 +84,28 @@ const NavBar = ({
         px: { xs: 2, sm: 5 },
       }}
     >
-      <Stack sx={contentWidthStyle}>
-        <Tabs
-          value={tabValue}
-          onChange={handleNavChange}
-          variant='scrollable'
-          scrollButtons='auto'
-          allowScrollButtonsMobile
-          sx={{
+      <Tabs
+        value={tabValue}
+        onChange={handleNavChange}
+        variant='scrollable'
+        scrollButtons='auto'
+        allowScrollButtonsMobile
+        sx={{
+          ...contentWidthStyle,
+          minHeight: 44,
+          '& .MuiTab-root': {
             minHeight: 44,
-            '& .MuiTab-root': {
-              minHeight: 44,
-              py: 1.5,
-              fontSize: 14,
-              textTransform: 'none',
-            },
-            '& .MuiTabs-indicator': { height: 2 },
-          }}
-        >
-          {navList.map(nav => (
-            <Tab key={nav.id} label={nav.name} value={nav.id} />
-          ))}
-        </Tabs>
-      </Stack>
+            py: 1.5,
+            fontSize: 14,
+            textTransform: 'none',
+          },
+          '& .MuiTabs-indicator': { height: 2 },
+        }}
+      >
+        {navList.map(nav => (
+          <Tab key={nav.id} label={nav.name} value={nav.id} />
+        ))}
+      </Tabs>
     </Box>
   );
 };
