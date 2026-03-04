@@ -122,7 +122,11 @@ const Header = ({ isDocPage = false, isWelcomePage = false }: HeaderProps) => {
   );
 };
 
-export const WelcomeHeader = () => {
+export const WelcomeHeader = ({
+  showSearch = true,
+}: {
+  showSearch?: boolean;
+}) => {
   const basePath = useBasePath();
   const {
     mobile = false,
@@ -152,7 +156,7 @@ export const WelcomeHeader = () => {
       placeholder={
         kbDetail?.settings?.web_app_custom_style?.header_search_placeholder
       }
-      showSearch
+      showSearch={showSearch}
       homePath={basePath || '/'}
       btns={
         kbDetail?.settings?.btns?.map((item: any) => ({
