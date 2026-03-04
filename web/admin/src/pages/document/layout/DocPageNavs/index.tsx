@@ -282,7 +282,11 @@ const DocPageNavs = ({
       const oldIndex = current.findIndex(n => (n.id || '') === active.id);
       const newIndex = current.findIndex(n => (n.id || '') === over.id);
       if (oldIndex === -1 || newIndex === -1) return;
-      const next = arrayMove(current, oldIndex, newIndex);
+      const reordered = arrayMove(current, oldIndex, newIndex);
+      const next = reordered.map((item, index) => ({
+        ...item,
+        position: index,
+      }));
       onNavListChange(next);
       const prevId = next[newIndex - 1]?.id;
       const nextId = next[newIndex + 1]?.id;

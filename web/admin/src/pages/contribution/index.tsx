@@ -79,14 +79,14 @@ export default function ContributionPage() {
     setPreviewRow(null);
   };
 
-  const handleDocModalOk = (id: string) => {
+  const handleDocModalOk = (params: { nav_id: string; parent_id: string }) => {
     setDocModalOpen(false);
     setPreviewRow(null);
     postApiProV1ContributeAudit({
       id: previewRow!.id!,
       kb_id,
-      nav_id,
-      parent_id: id,
+      nav_id: params.nav_id,
+      parent_id: params.parent_id,
       status: 'approved',
     }).then(() => {
       getData();
