@@ -1,6 +1,7 @@
 'use client';
 
-import useScroll from '@/utils/useScroll';
+import { DOC_ANCHOR_WIDTH } from '@/constant';
+import useScroll from '@/hooks/useScroll';
 import { TocItem, TocList } from '@ctzhian/tiptap';
 import { Box, Stack } from '@mui/material';
 import { useEffect, useMemo, useRef } from 'react';
@@ -169,7 +170,7 @@ const DocAnchor = ({ headings }: DocAnchorProps) => {
         zIndex: 5,
         top: 114,
         flexShrink: 0,
-        width: 240,
+        width: DOC_ANCHOR_WIDTH,
       }}
     >
       {headings.length > 0 && (
