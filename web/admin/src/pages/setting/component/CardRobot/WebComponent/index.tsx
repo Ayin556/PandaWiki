@@ -208,11 +208,7 @@ const CardRobotWebComponent = ({ kb }: CardRobotWebComponentProps) => {
         </FormItem>
         {isEnabled && (
           <>
-            <FormItem
-              label='嵌入代码'
-              sx={{ alignItems: 'flex-start' }}
-              labelSx={{ mt: 1 }}
-            >
+            <FormItem label='嵌入代码' sx={{ alignItems: 'flex-start' }}>
               {url ? (
                 <ShowText
                   noEllipsis
@@ -231,9 +227,6 @@ const CardRobotWebComponent = ({ kb }: CardRobotWebComponentProps) => {
                   sx={{
                     color: 'warning.main',
                     fontSize: 14,
-                    p: 1.5,
-                    borderRadius: 1,
-                    bgcolor: 'warning.light',
                   }}
                 >
                   <IconJinggao sx={{ fontSize: 16 }} />
