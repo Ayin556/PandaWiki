@@ -3,10 +3,13 @@ import {
   TreeMenuItem,
   TreeMenuOptions,
 } from '@/components/Drag/DragTree/TreeMenu';
-import { ConstsCrawlerSource, V1NodeListGroupNavResp } from '@/request/types';
+import {
+  ConstsCrawlerSource,
+  GithubComChaitinPandaWikiApiNodeV1NodeListGroupNavResp,
+} from '@/request/types';
 
 export interface DocPageListContainerProps {
-  groups: V1NodeListGroupNavResp[];
+  groups: GithubComChaitinPandaWikiApiNodeV1NodeListGroupNavResp[];
   nav_id: string | undefined;
   search: string;
   refresh: () => void;

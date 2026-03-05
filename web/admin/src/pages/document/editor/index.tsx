@@ -2,7 +2,10 @@ import { ITreeItem } from '@/api';
 import { getApiV1AppDetail } from '@/request';
 import { getApiV1KnowledgeBaseList } from '@/request/KnowledgeBase';
 import { getApiV1NodeListGroupNav, putApiV1NodeDetail } from '@/request/Node';
-import { V1NodeDetailResp, V1NodeListGroupNavResp } from '@/request/types';
+import {
+  GithubComChaitinPandaWikiApiNodeV1NodeListGroupNavResp,
+  V1NodeDetailResp,
+} from '@/request/types';
 import { useAppDispatch, useAppSelector } from '@/store';
 import {
   setKbDetail,
@@ -25,9 +28,11 @@ export interface WrapContext {
   onSave: (content: string) => void;
   docWidth: string;
   catalogData: ITreeItem[];
-  groups: V1NodeListGroupNavResp[];
+  groups: GithubComChaitinPandaWikiApiNodeV1NodeListGroupNavResp[];
   nav_id: string;
-  refreshCatalog: () => Promise<V1NodeListGroupNavResp[]>;
+  refreshCatalog: () => Promise<
+    GithubComChaitinPandaWikiApiNodeV1NodeListGroupNavResp[]
+  >;
   saveCurrentDocRef: React.MutableRefObject<(() => Promise<void>) | null>;
 }
 
@@ -38,7 +43,9 @@ const DocEditor = () => {
   const { kb_id = '' } = useAppSelector(state => state.config);
   const [nodeDetail, setNodeDetail] = useState<V1NodeDetailResp>({});
   const [catalogOpen, setCatalogOpen] = useState(true);
-  const [groups, setGroups] = useState<V1NodeListGroupNavResp[]>([]);
+  const [groups, setGroups] = useState<
+    GithubComChaitinPandaWikiApiNodeV1NodeListGroupNavResp[]
+  >([]);
   const [catalogLoading, setCatalogLoading] = useState(false);
   const nav_id = useAppSelector(state => state.config.nav_id) || '';
 
@@ -72,7 +79,9 @@ const DocEditor = () => {
     });
   };
 
-  const refreshCatalog = async (): Promise<V1NodeListGroupNavResp[]> => {
+  const refreshCatalog = async (): Promise<
+    GithubComChaitinPandaWikiApiNodeV1NodeListGroupNavResp[]
+  > => {
     const params = {
       kb_id: kb_id || localStorage.getItem('kb_id') || '',
     };

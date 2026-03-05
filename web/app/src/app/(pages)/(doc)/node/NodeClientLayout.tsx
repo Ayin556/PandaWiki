@@ -1,10 +1,10 @@
 'use client';
 
 import { FooterSetting } from '@/assets/type';
-import { CONTENT_GAP } from '@/constant';
 import EmptyDocPlaceholder from '@/components/emptyDocPlaceholder';
 import { FooterProvider } from '@/components/footer';
 import Header from '@/components/header';
+import { CONTENT_GAP } from '@/constant';
 import { useSyncNavByDocId } from '@/hooks/useSyncNavByDocId';
 import { useStore } from '@/provider';
 import Catalog from '@/views/node/Catalog';

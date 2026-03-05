@@ -1475,6 +1475,15 @@ export interface GithubComChaitinPandaWikiApiAuthV1AuthGetResp {
   source_type?: ConstsSourceType;
 }
 
+export interface GithubComChaitinPandaWikiApiNodeV1NodeListGroupNavResp {
+  count?: number;
+  is_released?: boolean;
+  list?: DomainNodeListItemResp[];
+  nav_id?: string;
+  nav_name?: string;
+  position?: number;
+}
+
 export interface GithubComChaitinPandaWikiApiShareV1AuthGetResp {
   auth_type?: ConstsAuthType;
   license_edition?: ConstsLicenseEdition;
@@ -1744,12 +1753,10 @@ export interface V1NodeDetailResp {
   updated_at?: string;
 }
 
-export interface V1NodeListGroupNavResp {
-  count?: number;
-  list?: DomainNodeListItemResp[];
-  nav_id?: string;
-  nav_name?: string;
-  position?: number;
+export interface V1NodeMoveNavReq {
+  id: string;
+  kb_id: string;
+  nav_id: string;
 }
 
 export interface V1NodePermissionEditReq {
@@ -1788,6 +1795,8 @@ export type V1NodeRestudyResp = Record<string, any>;
 export interface V1NodeStatsResp {
   /** 未发布的文档数 */
   unpublished_count?: number;
+  /** 未发布目录数量 */
+  unreleased_nav_count?: number;
   /** 未学习的文档数 */
   unstudied_count?: number;
 }
@@ -2128,11 +2137,6 @@ export interface GetShareV1NodeDetailParams {
   id: string;
   /** format */
   format: string;
-}
-
-export interface GetShareV1NodeListParams {
-  kb_id: string;
-  nav_id?: string;
 }
 
 export interface GetShareV1OpenapiGithubCallbackParams {

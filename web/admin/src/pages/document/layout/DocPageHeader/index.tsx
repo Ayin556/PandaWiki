@@ -19,6 +19,7 @@ const DocPageHeader = ({
 }: DocPageHeaderProps) => {
   const { kb_id, isRefreshDocList } = useAppSelector(state => state.config);
   const [stats, setStats] = useState({
+    unreleased_nav_count: 0,
     unpublished_count: 0,
     unstudied_count: 0,
   });
@@ -28,6 +29,7 @@ const DocPageHeader = ({
     getApiV1NodeStats({ kb_id }).then(res => {
       if (res) {
         setStats({
+          unreleased_nav_count: res.unreleased_nav_count ?? 0,
           unpublished_count: res.unpublished_count ?? 0,
           unstudied_count: res.unstudied_count ?? 0,
         });
@@ -62,18 +64,37 @@ const DocPageHeader = ({
           sx={{ fontSize: 16, fontWeight: 700 }}
         >
           <Box>目录</Box>
-          {stats.unpublished_count > 0 && (
+          {(stats.unpublished_count > 0 || stats.unreleased_nav_count > 0) && (
             <>
-              <Box
-                sx={{
-                  color: 'error.main',
-                  fontSize: 12,
-                  fontWeight: 'normal',
-                  ml: 2,
-                }}
+              <Stack
+                direction={'row'}
+                alignItems={'center'}
+                gap={0}
+                sx={{ ml: 2 }}
               >
-                {stats.unpublished_count} 个 文档/文件夹未发布，
-              </Box>
+                {stats.unreleased_nav_count > 0 && (
+                  <Box
+                    sx={{
+                      color: 'error.main',
+                      fontSize: 12,
+                      fontWeight: 'normal',
+                    }}
+                  >
+                    {stats.unreleased_nav_count} 个 目录未发布，
+                  </Box>
+                )}
+                {stats.unpublished_count > 0 && (
+                  <Box
+                    sx={{
+                      color: 'error.main',
+                      fontSize: 12,
+                      fontWeight: 'normal',
+                    }}
+                  >
+                    {stats.unpublished_count} 个 文档/文件夹未发布，
+                  </Box>
+                )}
+              </Stack>
               <ButtonBase
                 disableRipple
                 sx={{

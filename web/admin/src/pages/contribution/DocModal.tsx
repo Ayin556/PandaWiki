@@ -2,7 +2,10 @@ import { ITreeItem } from '@/api';
 import Card from '@/components/Card';
 import DragTree from '@/components/Drag/DragTree';
 import { getApiV1NodeListGroupNav } from '@/request/Node';
-import { DomainNodeType, V1NodeListGroupNavResp } from '@/request/types';
+import {
+  DomainNodeType,
+  GithubComChaitinPandaWikiApiNodeV1NodeListGroupNavResp,
+} from '@/request/types';
 import { useAppSelector } from '@/store';
 import { convertToTree } from '@/utils/drag';
 import { Ellipsis, Modal } from '@ctzhian/ui';
@@ -18,7 +21,9 @@ interface DocDeleteProps {
 
 const DocModal = ({ open, onClose, onOk }: DocDeleteProps) => {
   const { kb_id } = useAppSelector(state => state.config);
-  const [groups, setGroups] = useState<V1NodeListGroupNavResp[]>([]);
+  const [groups, setGroups] = useState<
+    GithubComChaitinPandaWikiApiNodeV1NodeListGroupNavResp[]
+  >([]);
   const [selectedNavId, setSelectedNavId] = useState<string | null>(null);
   const [tree, setTree] = useState<ITreeItem[]>([]);
   const [folderIds, setFolderIds] = useState<string[]>([]);

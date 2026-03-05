@@ -142,6 +142,9 @@ const DocPageListContainer = ({
     if (groups.length === 0) {
       setList([]);
       setData([]);
+      setSelected([]);
+      setOpraData([]);
+      setBatchOpen(false);
       return;
     }
     const curGroup = groups.find(g => g.nav_id === nav_id) || groups[0];
@@ -153,6 +156,10 @@ const DocPageListContainer = ({
       ? reopenFolders(collapsedAll, openIds)
       : collapsedAll;
     setData(next);
+    // 切换目录时清空全选数据
+    setSelected([]);
+    setOpraData([]);
+    setBatchOpen(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nav_id, groups]);
 

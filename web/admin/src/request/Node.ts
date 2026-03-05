@@ -27,8 +27,9 @@ import {
   GetApiV1NodeListParams,
   GetApiV1NodeRecommendNodesParams,
   GetApiV1NodeStatsParams,
+  GithubComChaitinPandaWikiApiNodeV1NodeListGroupNavResp,
   V1NodeDetailResp,
-  V1NodeListGroupNavResp,
+  V1NodeMoveNavReq,
   V1NodeRestudyReq,
   V1NodeRestudyResp,
   V1NodeStatsResp,
@@ -221,7 +222,7 @@ export const getApiV1NodeList = (
  * @request GET:/api/v1/node/list/group/nav
  * @secure
  * @response `200` `(DomainPWResponse & {
-    data?: (V1NodeListGroupNavResp)[],
+    data?: (GithubComChaitinPandaWikiApiNodeV1NodeListGroupNavResp)[],
 
 })` OK
  */
@@ -232,7 +233,7 @@ export const getApiV1NodeListGroupNav = (
 ) =>
   httpRequest<
     DomainPWResponse & {
-      data?: V1NodeListGroupNavResp[];
+      data?: GithubComChaitinPandaWikiApiNodeV1NodeListGroupNavResp[];
     }
   >({
     path: `/api/v1/node/list/group/nav`,
@@ -261,6 +262,31 @@ export const postApiV1NodeMove = (
 ) =>
   httpRequest<DomainResponse>({
     path: `/api/v1/node/move`,
+    method: "POST",
+    body: body,
+    secure: true,
+    type: ContentType.Json,
+    format: "json",
+    ...params,
+  });
+
+/**
+ * @description Move node (and all its descendants if folder) to a different nav
+ *
+ * @tags node
+ * @name PostApiV1NodeMoveNav
+ * @summary Move Node to Nav
+ * @request POST:/api/v1/node/move/nav
+ * @secure
+ * @response `200` `DomainResponse` OK
+ */
+
+export const postApiV1NodeMoveNav = (
+  body: V1NodeMoveNavReq,
+  params: RequestParams = {},
+) =>
+  httpRequest<DomainResponse>({
+    path: `/api/v1/node/move/nav`,
     method: "POST",
     body: body,
     secure: true,

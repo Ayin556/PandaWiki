@@ -1,7 +1,10 @@
 import { useURLSearchParams } from '@/hooks';
 import VersionPublish from '@/pages/release/components/VersionPublish';
 import { getApiV1NodeListGroupNav } from '@/request/Node';
-import { V1NavListResp, V1NodeListGroupNavResp } from '@/request/types';
+import {
+  GithubComChaitinPandaWikiApiNodeV1NodeListGroupNavResp,
+  V1NavListResp,
+} from '@/request/types';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { setIsRefreshDocList, setNavId } from '@/store/slices/config';
 import { Stack } from '@mui/material';
@@ -25,7 +28,9 @@ const Content = () => {
   const [publishIds, setPublishIds] = useState<string[]>([]);
   const [ragOpen, setRagOpen] = useState(false);
   const [ragIds, setRagIds] = useState<string[]>([]);
-  const [groups, setGroups] = useState<V1NodeListGroupNavResp[]>([]);
+  const [groups, setGroups] = useState<
+    GithubComChaitinPandaWikiApiNodeV1NodeListGroupNavResp[]
+  >([]);
   const [navList, setNavList] = useState<V1NavListResp[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
@@ -142,6 +147,7 @@ const Content = () => {
           onNavDeleted={navId => {
             setGroups(prev => prev.filter(g => g.nav_id !== navId));
           }}
+          refresh={refresh}
           isSearching={!!search}
           loading={loading && !hasLoadedOnce}
         />

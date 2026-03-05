@@ -4,8 +4,8 @@ import Loading from '@/components/Loading';
 import { setProperty } from '@/components/TreeDragSortable/utilities';
 import {
   DomainNodeListItemResp,
+  GithubComChaitinPandaWikiApiNodeV1NodeListGroupNavResp,
   V1NodeDetailResp,
-  V1NodeListGroupNavResp,
 } from '@/request/types';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { setNavId } from '@/store/slices/config';
@@ -57,10 +57,12 @@ interface CatalogProps {
   curNode: V1NodeDetailResp;
   setCatalogOpen: (open: boolean) => void;
   catalogData: ITreeItem[];
-  groups: V1NodeListGroupNavResp[];
+  groups: GithubComChaitinPandaWikiApiNodeV1NodeListGroupNavResp[];
   nav_id: string;
   loading?: boolean;
-  onRefresh: () => Promise<V1NodeListGroupNavResp[]>;
+  onRefresh: () => Promise<
+    GithubComChaitinPandaWikiApiNodeV1NodeListGroupNavResp[]
+  >;
   onSaveCurrentDoc?: () => Promise<void>;
 }
 

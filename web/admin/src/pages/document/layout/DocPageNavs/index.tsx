@@ -38,6 +38,7 @@ const SortableNavItem = ({
   onDelete,
   showDelete,
   isLast,
+  selectedItemRef,
 }: {
   nav: V1NavListResp;
   selected: boolean;
@@ -46,6 +47,7 @@ const SortableNavItem = ({
   onDelete: () => void;
   showDelete: boolean;
   isLast: boolean;
+  selectedItemRef?: React.RefObject<HTMLDivElement | null>;
 }) => {
   const theme = useTheme();
   const id = nav.id || '';
@@ -57,6 +59,18 @@ const SortableNavItem = ({
     transition,
     isDragging,
   } = useSortable({ id });
+
+  const setRef = useCallback(
+    (el: HTMLDivElement | null) => {
+      setNodeRef(el);
+      if (selected && selectedItemRef) {
+        (
+          selectedItemRef as React.MutableRefObject<HTMLDivElement | null>
+        ).current = el;
+      }
+    },
+    [setNodeRef, selected, selectedItemRef],
+  );
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -121,7 +135,7 @@ const SortableNavItem = ({
 
   return (
     <Box
-      ref={setNodeRef}
+      ref={setRef}
       style={style}
       sx={{
         position: 'relative',
@@ -201,6 +215,8 @@ interface DocPageNavsProps {
   navList: V1NavListResp[];
   onNavListChange: React.Dispatch<React.SetStateAction<V1NavListResp[]>>;
   onNavDeleted?: (navId: string) => void;
+  /** 目录修改/移动后刷新 Header 统计 */
+  refresh?: () => void;
   isSearching?: boolean;
   loading?: boolean;
 }
@@ -209,6 +225,7 @@ const DocPageNavs = ({
   navList: navListProp,
   onNavListChange,
   onNavDeleted,
+  refresh,
   isSearching = false,
   loading = false,
 }: DocPageNavsProps) => {
@@ -221,6 +238,8 @@ const DocPageNavs = ({
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [deletingNav, setDeletingNav] = useState<V1NavListResp | null>(null);
   const dataRef = useRef<V1NavListResp[]>([]);
+  const selectedItemRef = useRef<HTMLDivElement | null>(null);
+  const hasScrolledToSelectedRef = useRef(false);
 
   const navs = navListProp || [];
   const sortedNavs = [...navs].sort(
@@ -266,6 +285,29 @@ const DocPageNavs = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [kb_id, navListProp]);
 
+  // 首次刷新时自动滚动到当前选中的 nav
+  useEffect(() => {
+    if (
+      !selectedId ||
+      !sortedNavs.length ||
+      hasScrolledToSelectedRef.current ||
+      !selectedItemRef.current
+    ) {
+      return;
+    }
+    hasScrolledToSelectedRef.current = true;
+    selectedItemRef.current.scrollIntoView({
+      behavior: 'auto',
+      block: 'nearest',
+      inline: 'nearest',
+    });
+  }, [selectedId, sortedNavs.length]);
+
+  // 切换 kb 时重置，以便新 kb 首次加载也能滚动
+  useEffect(() => {
+    hasScrolledToSelectedRef.current = false;
+  }, [kb_id]);
+
   const handleSelect = useCallback(
     (id: string) => {
       setSelectedId(id);
@@ -297,9 +339,10 @@ const DocPageNavs = ({
         next_id: nextId,
       }).then(() => {
         message.success('顺序已更新');
+        refresh?.();
       });
     },
-    [kb_id, onNavListChange],
+    [kb_id, onNavListChange, refresh],
   );
 
   const handleEdit = useCallback((nav: V1NavListResp) => {
@@ -325,12 +368,13 @@ const DocPageNavs = ({
             n.id === updated.id ? { ...n, name: updated.name } : n,
           ),
         );
+        refresh?.();
       } else {
         dispatch(setIsRefreshDocList(true));
       }
       handleEditClose();
     },
-    [onNavListChange, handleEditClose, dispatch],
+    [onNavListChange, handleEditClose, dispatch, refresh],
   );
 
   const handleDeleteClick = useCallback((nav: V1NavListResp) => {
@@ -352,6 +396,7 @@ const DocPageNavs = ({
       const next = (navListProp || []).filter(n => n.id !== nav.id);
       onNavListChange(next);
       onNavDeleted?.(nav.id!);
+      refresh?.();
       if (selectedId === nav.id && next.length > 0) {
         const first = next[0];
         if (first?.id) {
@@ -378,6 +423,7 @@ const DocPageNavs = ({
     handleDeleteConfirmClose,
     onNavListChange,
     onNavDeleted,
+    refresh,
     dispatch,
   ]);
 
@@ -385,7 +431,7 @@ const DocPageNavs = ({
 
   return (
     <>
-      <Card sx={{ width: 220, minWidth: 220 }}>
+      <Card sx={{ width: 220 }}>
         {loading ? (
           <Loading sx={{ py: 4 }} />
         ) : showEmptySearch ? (
@@ -401,7 +447,9 @@ const DocPageNavs = ({
                 items={sortedNavs.map(n => n.id || '')}
                 strategy={verticalListSortingStrategy}
               >
-                <Stack>
+                <Stack
+                  sx={{ height: 'calc(100vh - 216px)', overflowY: 'auto' }}
+                >
                   {sortedNavs.map((nav, i) => (
                     <SortableNavItem
                       key={nav.id}
@@ -412,13 +460,14 @@ const DocPageNavs = ({
                       onDelete={() => handleDeleteClick(nav)}
                       showDelete={sortedNavs.length > 1}
                       isLast={i === sortedNavs.length - 1}
+                      selectedItemRef={selectedItemRef}
                     />
                   ))}
                 </Stack>
               </SortableContext>
             </DndContext>
             {!isSearching && (
-              <Box sx={{ p: 2, pt: 1, borderTop: 1, borderColor: 'divider' }}>
+              <Box sx={{ px: 2, py: 1, borderTop: 1, borderColor: 'divider' }}>
                 <Button
                   fullWidth
                   variant='text'

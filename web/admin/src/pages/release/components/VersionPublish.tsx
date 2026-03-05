@@ -4,18 +4,27 @@ import { postApiV1KnowledgeBaseRelease } from '@/request/KnowledgeBase';
 import { getApiV1NodeListGroupNav } from '@/request/Node';
 import {
   DomainNodeListItemResp,
-  V1NodeListGroupNavResp,
+  GithubComChaitinPandaWikiApiNodeV1NodeListGroupNavResp,
 } from '@/request/types';
 import { useAppSelector } from '@/store';
 import { convertToTree } from '@/utils/drag';
 import { message, Modal } from '@ctzhian/ui';
-import { Box, Checkbox, IconButton, Stack, TextField } from '@mui/material';
+import {
+  Box,
+  Checkbox,
+  Chip,
+  IconButton,
+  Stack,
+  TextField,
+} from '@mui/material';
 import { IconXiajiantou } from '@panda-wiki/icons';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
-function normalizeNavGroupResponse(res: any): V1NodeListGroupNavResp[] {
+function normalizeNavGroupResponse(
+  res: any,
+): GithubComChaitinPandaWikiApiNodeV1NodeListGroupNavResp[] {
   if (Array.isArray(res)) return res;
   if (res && typeof res === 'object') {
     for (const key of ['list', 'data', 'groups', 'items']) {
@@ -26,7 +35,9 @@ function normalizeNavGroupResponse(res: any): V1NodeListGroupNavResp[] {
 }
 
 function getNavNodeList(
-  nav: V1NodeListGroupNavResp | Record<string, any>,
+  nav:
+    | GithubComChaitinPandaWikiApiNodeV1NodeListGroupNavResp
+    | Record<string, any>,
 ): DomainNodeListItemResp[] {
   return (
     (nav as any).list ||
@@ -54,7 +65,9 @@ const VersionPublish = ({
 
   const [selected, setSelected] = useState<string[]>([]);
   const [folderIds, setFolderIds] = useState<string[]>([]);
-  const [navList, setNavList] = useState<V1NodeListGroupNavResp[]>([]);
+  const [navList, setNavList] = useState<
+    GithubComChaitinPandaWikiApiNodeV1NodeListGroupNavResp[]
+  >([]);
   const [expandedNavIds, setExpandedNavIds] = useState<Set<string>>(new Set());
   const [list, setList] = useState<DomainNodeListItemResp[]>([]);
 
@@ -119,6 +132,10 @@ const VersionPublish = ({
 
   const selectedTotal = list.filter(it => selected.includes(it.id!)).length;
 
+  const releasedNavs = navList.filter(
+    nav => (nav as any).is_released === false || nav.is_released === false,
+  );
+
   return (
     <Modal title='发布新版本' open={open} onCancel={onClose} onOk={onSubmit}>
       <>
@@ -166,6 +183,39 @@ const VersionPublish = ({
             />
           )}
         />
+        {releasedNavs.length > 0 && (
+          <Stack sx={{ mt: 1 }}>
+            <Box sx={{ fontSize: 14, mb: 0.5 }}>
+              未发布目录
+              <Box
+                component='span'
+                sx={{ color: 'text.tertiary', fontSize: 12, pl: 1 }}
+              >
+                共 {releasedNavs.length} 个
+              </Box>
+            </Box>
+            <Stack direction='row' flexWrap='wrap' gap={0.5} useFlexGap>
+              {releasedNavs.map((nav, idx) => {
+                const navId =
+                  nav.nav_id || (nav as any).navId || `released-nav-${idx}`;
+                return (
+                  <Chip
+                    key={navId}
+                    label={nav.nav_name || (nav as any).navName || '未分类'}
+                    size='small'
+                    variant='outlined'
+                    sx={{
+                      fontSize: 12,
+                      height: 24,
+                      borderRadius: 2,
+                      '& .MuiChip-label': { px: 1 },
+                    }}
+                  />
+                );
+              })}
+            </Stack>
+          </Stack>
+        )}
         <Stack
           direction='row'
           component='label'

@@ -1,16 +1,21 @@
-import { ITreeItem } from '@/api';
 import Card from '@/components/Card';
 import DragTree from '@/components/Drag/DragTree';
 import { postApiV1NodeRestudy } from '@/request';
 import { getApiV1NodeListGroupNav } from '@/request/Node';
 import {
   DomainNodeListItemResp,
-  V1NodeListGroupNavResp,
+  GithubComChaitinPandaWikiApiNodeV1NodeListGroupNavResp,
 } from '@/request/types';
 import { useAppSelector } from '@/store';
 import { convertToTree } from '@/utils/drag';
+import { message, Modal } from '@ctzhian/ui';
+import { Box, Checkbox, IconButton, Stack } from '@mui/material';
+import { IconXiajiantou } from '@panda-wiki/icons';
+import { useEffect, useState } from 'react';
 
-function normalizeNavGroupResponse(res: any): V1NodeListGroupNavResp[] {
+function normalizeNavGroupResponse(
+  res: any,
+): GithubComChaitinPandaWikiApiNodeV1NodeListGroupNavResp[] {
   if (Array.isArray(res)) return res;
   if (res && typeof res === 'object') {
     for (const key of ['list', 'data', 'groups', 'items']) {
@@ -21,7 +26,9 @@ function normalizeNavGroupResponse(res: any): V1NodeListGroupNavResp[] {
 }
 
 function getNavNodeList(
-  nav: V1NodeListGroupNavResp | Record<string, any>,
+  nav:
+    | GithubComChaitinPandaWikiApiNodeV1NodeListGroupNavResp
+    | Record<string, any>,
 ): DomainNodeListItemResp[] {
   return (
     (nav as any).list ||
@@ -31,10 +38,6 @@ function getNavNodeList(
     []
   );
 }
-import { IconXiajiantou } from '@panda-wiki/icons';
-import { message, Modal } from '@ctzhian/ui';
-import { Box, Checkbox, IconButton, Stack } from '@mui/material';
-import { useEffect, useState } from 'react';
 
 interface RagErrorReStartProps {
   open: boolean;
@@ -52,7 +55,9 @@ const RagErrorReStart = ({
   const { kb_id } = useAppSelector(state => state.config);
 
   const [selected, setSelected] = useState<string[]>([]);
-  const [navList, setNavList] = useState<V1NodeListGroupNavResp[]>([]);
+  const [navList, setNavList] = useState<
+    GithubComChaitinPandaWikiApiNodeV1NodeListGroupNavResp[]
+  >([]);
   const [expandedNavIds, setExpandedNavIds] = useState<Set<string>>(new Set());
   const [list, setList] = useState<DomainNodeListItemResp[]>([]);
 
