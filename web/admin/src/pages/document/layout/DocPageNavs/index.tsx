@@ -25,7 +25,14 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import { Box, Button, IconButton, Stack, useTheme } from '@mui/material';
+import {
+  Box,
+  Button,
+  IconButton,
+  Stack,
+  TextField,
+  useTheme,
+} from '@mui/material';
 import { IconDrag, IconGengduo, IconJiahao } from '@panda-wiki/icons';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import NavEditModal from './NavEditModal';
@@ -237,6 +244,7 @@ const DocPageNavs = ({
   const [editingNav, setEditingNav] = useState<V1NavListResp | null>(null);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [deletingNav, setDeletingNav] = useState<V1NavListResp | null>(null);
+  const [deleteConfirmInput, setDeleteConfirmInput] = useState('');
   const dataRef = useRef<V1NavListResp[]>([]);
   const selectedItemRef = useRef<HTMLDivElement | null>(null);
   const hasScrolledToSelectedRef = useRef(false);
@@ -385,6 +393,7 @@ const DocPageNavs = ({
   const handleDeleteConfirmClose = useCallback(() => {
     setDeleteConfirmOpen(false);
     setDeletingNav(null);
+    setDeleteConfirmInput('');
   }, []);
 
   const handleDeleteConfirm = useCallback(() => {
@@ -504,7 +513,10 @@ const DocPageNavs = ({
         open={deleteConfirmOpen}
         width={480}
         okText='确认删除'
-        okButtonProps={{ sx: { bgcolor: 'error.main' } }}
+        okButtonProps={{
+          sx: { bgcolor: 'error.main' },
+          disabled: deleteConfirmInput !== (deletingNav?.name || '未命名'),
+        }}
         onCancel={handleDeleteConfirmClose}
         onOk={handleDeleteConfirm}
       >
@@ -523,6 +535,26 @@ const DocPageNavs = ({
               不可恢复
             </Box>
             ，请谨慎操作。
+          </Box>
+          <Box sx={{ mt: 2 }}>
+            <TextField
+              fullWidth
+              size='small'
+              placeholder={`请输入当前目录名称，并确认删除`}
+              value={deleteConfirmInput}
+              onChange={e => setDeleteConfirmInput(e.target.value)}
+              error={
+                deleteConfirmInput.length > 0 &&
+                deleteConfirmInput !== (deletingNav?.name || '未命名')
+              }
+              helperText={
+                deleteConfirmInput.length > 0 &&
+                deleteConfirmInput !== (deletingNav?.name || '未命名')
+                  ? '名称不正确，请输入正确的目录名称'
+                  : ''
+              }
+              sx={{ '& .MuiFormHelperText-root': { m: 0, mt: 0.5 } }}
+            />
           </Box>
         </Box>
       </Modal>
