@@ -1,7 +1,7 @@
 'use client';
-import { IconMulu } from '@panda-wiki/icons';
 import { useStore } from '@/provider';
 import { Box, Stack, SxProps, Tooltip } from '@mui/material';
+import { IconMulu } from '@panda-wiki/icons';
 import { useParams } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 import CatalogFolder from './CatalogFolder';
@@ -56,8 +56,8 @@ const Catalog = ({ sx }: { sx?: SxProps }) => {
       alignItems={docWidth === 'full' ? 'flex-start' : 'flex-end'}
       sx={{
         position: 'sticky',
-        top: 114,
-        maxHeight: 'calc(100vh - 164px)',
+        top: 160,
+        maxHeight: 'calc(100vh - 164px - 44px)',
         zIndex: 9,
         fontSize: 14,
         width: catalogWidth,

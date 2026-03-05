@@ -168,7 +168,7 @@ const DocAnchor = ({ headings }: DocAnchorProps) => {
       sx={{
         position: 'sticky',
         zIndex: 5,
-        top: 114,
+        top: 160,
         flexShrink: 0,
         width: DOC_ANCHOR_WIDTH,
       }}
@@ -177,7 +177,7 @@ const DocAnchor = ({ headings }: DocAnchorProps) => {
         <Stack
           gap={'8px'}
           sx={{
-            maxHeight: 'calc(100vh - 164px)',
+            maxHeight: 'calc(100vh - 164px - 44px)',
             overflowY: 'auto',
             overflowX: 'hidden',
             fontSize: 14,
