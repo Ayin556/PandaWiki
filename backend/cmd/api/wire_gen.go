@@ -73,7 +73,8 @@ func createApp() (*App, error) {
 	ragRepository := mq2.NewRAGRepository(mqProducer)
 	userRepository := pg2.NewUserRepository(db, logger)
 	kbRepo := cache2.NewKBRepo(cacheCache)
-	knowledgeBaseUsecase, err := usecase.NewKnowledgeBaseUsecase(knowledgeBaseRepository, nodeRepository, ragRepository, userRepository, ragService, kbRepo, logger, configConfig)
+	navRepository := pg2.NewNavRepository(db, logger)
+	knowledgeBaseUsecase, err := usecase.NewKnowledgeBaseUsecase(knowledgeBaseRepository, nodeRepository, navRepository, ragRepository, userRepository, ragService, kbRepo, logger, configConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -90,7 +91,6 @@ func createApp() (*App, error) {
 	promptRepo := pg2.NewPromptRepo(db, logger)
 	llmUsecase := usecase.NewLLMUsecase(configConfig, ragService, conversationRepository, knowledgeBaseRepository, nodeRepository, modelRepository, promptRepo, logger)
 	knowledgeBaseHandler := v1.NewKnowledgeBaseHandler(baseHandler, echo, knowledgeBaseUsecase, llmUsecase, authMiddleware, logger)
-	navRepository := pg2.NewNavRepository(db, logger)
 	appRepository := pg2.NewAppRepository(db, logger)
 	minioClient, err := s3.NewMinioClient(configConfig)
 	if err != nil {

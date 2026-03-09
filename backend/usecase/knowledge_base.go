@@ -21,6 +21,7 @@ import (
 type KnowledgeBaseUsecase struct {
 	repo     *pg.KnowledgeBaseRepository
 	nodeRepo *pg.NodeRepository
+	navRepo  *pg.NavRepository
 	ragRepo  *mq.RAGRepository
 	userRepo *pg.UserRepository
 	rag      rag.RAGService
@@ -29,10 +30,11 @@ type KnowledgeBaseUsecase struct {
 	config   *config.Config
 }
 
-func NewKnowledgeBaseUsecase(repo *pg.KnowledgeBaseRepository, nodeRepo *pg.NodeRepository, ragRepo *mq.RAGRepository, userRepo *pg.UserRepository, rag rag.RAGService, kbCache *cache.KBRepo, logger *log.Logger, config *config.Config) (*KnowledgeBaseUsecase, error) {
+func NewKnowledgeBaseUsecase(repo *pg.KnowledgeBaseRepository, nodeRepo *pg.NodeRepository, navRepo *pg.NavRepository, ragRepo *mq.RAGRepository, userRepo *pg.UserRepository, rag rag.RAGService, kbCache *cache.KBRepo, logger *log.Logger, config *config.Config) (*KnowledgeBaseUsecase, error) {
 	u := &KnowledgeBaseUsecase{
 		repo:     repo,
 		nodeRepo: nodeRepo,
+		navRepo:  navRepo,
 		ragRepo:  ragRepo,
 		userRepo: userRepo,
 		rag:      rag,
@@ -66,6 +68,16 @@ func (u *KnowledgeBaseUsecase) CreateKnowledgeBase(ctx context.Context, req *dom
 	if err := u.repo.CreateKnowledgeBase(ctx, req.MaxKB, kb); err != nil {
 		return "", err
 	}
+
+	nav := &domain.Nav{
+		ID:   uuid.New().String(),
+		Name: req.Name,
+		KbID: kbID,
+	}
+	if err := u.navRepo.Create(ctx, nav, nil); err != nil {
+		return "", err
+	}
+
 	return kbID, nil
 }
 
