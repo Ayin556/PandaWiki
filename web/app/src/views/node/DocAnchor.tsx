@@ -2,6 +2,7 @@
 
 import { DOC_ANCHOR_WIDTH } from '@/constant';
 import useScroll from '@/hooks/useScroll';
+import { useStore } from '@/provider';
 import { TocItem, TocList } from '@ctzhian/tiptap';
 import { Box, Stack } from '@mui/material';
 import { useEffect, useMemo, useRef } from 'react';
@@ -21,6 +22,7 @@ const HeadingSx = [
 ];
 
 const DocAnchor = ({ headings }: DocAnchorProps) => {
+  const { navList = [] } = useStore();
   const { activeHeading, scrollToElement } = useScroll(
     headings,
     'scroll-container',
@@ -28,6 +30,13 @@ const DocAnchor = ({ headings }: DocAnchorProps) => {
   const activeId = activeHeading?.id;
   const listRef = useRef<HTMLDivElement>(null);
   const hasScrolledRef = useRef(false);
+
+  const hasNavBar = navList.length > 1;
+  const NAV_BAR_HEIGHT = 44;
+  const stickyTop = hasNavBar ? 160 : 160 - NAV_BAR_HEIGHT;
+  const listMaxHeight = hasNavBar
+    ? `calc(100vh - 164px - ${NAV_BAR_HEIGHT}px)`
+    : 'calc(100vh - 164px)';
 
   const levels = Array.from(
     new Set(headings?.map(it => it.level).sort((a, b) => a - b)),
@@ -168,7 +177,7 @@ const DocAnchor = ({ headings }: DocAnchorProps) => {
       sx={{
         position: 'sticky',
         zIndex: 5,
-        top: 160,
+        top: stickyTop,
         flexShrink: 0,
         width: DOC_ANCHOR_WIDTH,
       }}
@@ -177,7 +186,7 @@ const DocAnchor = ({ headings }: DocAnchorProps) => {
         <Stack
           gap={'8px'}
           sx={{
-            maxHeight: 'calc(100vh - 164px - 44px)',
+            maxHeight: listMaxHeight,
             overflowY: 'auto',
             overflowX: 'hidden',
             fontSize: 14,
