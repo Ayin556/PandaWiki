@@ -1,6 +1,9 @@
 package fns
 
 import (
+	"errors"
+	"time"
+
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
@@ -44,6 +47,31 @@ func (m *MigrationCreateFirstNavs) Execute(tx *gorm.DB) error {
 		if err := tx.Model(&domain.Node{}).
 			Where("kb_id = ?", kb.ID).
 			Update("nav_id", nav.ID).Error; err != nil {
+			return err
+		}
+
+		var release domain.KBRelease
+		err := tx.Model(&domain.KBRelease{}).
+			Where("kb_id = ?", kb.ID).
+			Order("created_at DESC").
+			First(&release).Error
+		if err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				continue
+			}
+			return err
+		}
+
+		navRelease := &domain.NavRelease{
+			ID:        uuid.New().String(),
+			NavID:     nav.ID,
+			ReleaseID: release.ID,
+			KbID:      release.KBID,
+			Name:      nav.Name,
+			Position:  nav.Position,
+			CreatedAt: time.Now(),
+		}
+		if err := tx.Model(&domain.NavRelease{}).Create(navRelease).Error; err != nil {
 			return err
 		}
 	}
