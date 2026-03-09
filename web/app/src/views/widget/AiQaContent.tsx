@@ -3,20 +3,15 @@ import aiLoading from '@/assets/images/ai-loading.gif';
 import Logo from '@/assets/images/logo.png';
 import { ChunkResultItem } from '@/assets/type';
 import Feedback from '@/components/feedback';
-import {
-  IconADiancaiWeixuanzhong2,
-  IconDiancaiWeixuanzhong,
-  IconDianzanXuanzhong1,
-  IconDianzanWeixuanzhong,
-} from '@panda-wiki/icons';
 import { IconCopy } from '@/components/icons';
 import MarkDown2 from '@/components/markdown2';
-import { useSmartScroll } from '@/hooks';
+import { useBasePath, useSmartScroll } from '@/hooks';
 import { useStore } from '@/provider';
 import { postShareV1ChatFeedback } from '@/request/ShareChat';
 import { getShareV1ConversationDetail } from '@/request/ShareConversation';
 import { copyText } from '@/utils';
 import SSEClient from '@/utils/fetch';
+import { getImagePath } from '@/utils/getImagePath';
 import { message } from '@ctzhian/ui';
 import CloseIcon from '@mui/icons-material/Close';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -31,6 +26,10 @@ import {
   useTheme,
 } from '@mui/material';
 import {
+  IconADiancaiWeixuanzhong2,
+  IconDiancaiWeixuanzhong,
+  IconDianzanWeixuanzhong,
+  IconDianzanXuanzhong1,
   IconFasong,
   IconTupian,
   IconXinduihua,
@@ -73,8 +72,6 @@ import {
   StyledUserBubble,
 } from './StyledComponents';
 import { handleThinkingContent } from './utils';
-import { useBasePath } from '@/hooks';
-import { getImagePath } from '@/utils/getImagePath';
 
 export interface ConversationItem {
   q: string;
@@ -386,7 +383,6 @@ const AiQaContent: React.FC<{
       token = solution.token;
     } catch (error) {
       message.error('验证失败');
-      console.log(error, 'error---------');
       return;
     }
 

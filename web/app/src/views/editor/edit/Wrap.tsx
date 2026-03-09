@@ -226,9 +226,7 @@ const Wrap = ({ detail: defaultDetail = {} }: WrapProps) => {
             }
           }}
         />
-        {!isMarkdown && (
-          <Toolbar editorRef={editorRef} handleAiGenerate={handleAiGenerate} />
-        )}
+        {!isMarkdown && <Toolbar editorRef={editorRef} />}
       </Box>
       <Box
         sx={{
