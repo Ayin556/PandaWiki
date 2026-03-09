@@ -16,6 +16,7 @@ const Catalog = ({ sx }: { sx?: SxProps }) => {
     setCatalogShow,
     catalogWidth,
     tree = [],
+    navList = [],
   } = useStore();
 
   const docWidth = kbDetail?.settings?.theme_and_style?.doc_width || 'full';
@@ -48,6 +49,13 @@ const Catalog = ({ sx }: { sx?: SxProps }) => {
     return () => cancelAnimationFrame(raf);
   }, [id, catalogShow, tree]);
 
+  const hasNavBar = navList.length > 1;
+  const NAV_BAR_HEIGHT = 44;
+  const stickyTop = hasNavBar ? 160 : 160 - NAV_BAR_HEIGHT;
+  const stickyMaxHeight = hasNavBar
+    ? `calc(100vh - 164px - ${NAV_BAR_HEIGHT}px)`
+    : 'calc(100vh - 164px)';
+
   if (mobile) return null;
 
   return (
@@ -56,8 +64,8 @@ const Catalog = ({ sx }: { sx?: SxProps }) => {
       alignItems={docWidth === 'full' ? 'flex-start' : 'flex-end'}
       sx={{
         position: 'sticky',
-        top: 160,
-        maxHeight: 'calc(100vh - 164px - 44px)',
+        top: stickyTop,
+        maxHeight: stickyMaxHeight,
         zIndex: 9,
         fontSize: 14,
         width: catalogWidth,
