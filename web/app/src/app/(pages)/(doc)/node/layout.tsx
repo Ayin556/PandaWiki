@@ -16,7 +16,6 @@ export default async function Layout({
     getShareV1NodeList(),
     getServerPathname(),
   ]);
-  console.log(nodeListRes);
 
   const { page, id } = parsePathname(pathname);
   const nodeId = page === 'node' ? id : undefined;

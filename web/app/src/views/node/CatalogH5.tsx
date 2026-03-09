@@ -18,7 +18,6 @@ const CatalogH5 = () => {
   const params = useParams() || {};
   const id = params.id as string;
   const { tree: initialTree, kbDetail, nodeList } = useStore();
-  console.log(nodeList);
   const debouncedSearchTerm = useDebounce(searchTerm, { wait: 300 });
 
   const catalogSetting = kbDetail?.settings?.catalog_settings;

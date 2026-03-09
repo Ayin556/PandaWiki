@@ -1,25 +1,25 @@
 'use client';
 
+import { useBasePath } from '@/hooks';
 import { postShareV1CommonFileUpload } from '@/request/ShareFile';
 import { message } from '@ctzhian/ui';
-import {
-  Box,
-  IconButton,
-  Stack,
-  TextField,
-  TextFieldProps,
-  alpha,
-  Popover,
-} from '@mui/material';
+import data from '@emoji-mart/data';
+import Picker from '@emoji-mart/react';
 import CloseIcon from '@mui/icons-material/Close';
 import ImageIcon from '@mui/icons-material/Image';
 import InsertEmoticonIcon from '@mui/icons-material/InsertEmoticon';
-import data from '@emoji-mart/data';
-import Picker from '@emoji-mart/react';
-import zh from '../emoji/emoji-data/zh.json';
+import {
+  alpha,
+  Box,
+  IconButton,
+  Popover,
+  Stack,
+  TextField,
+  TextFieldProps,
+} from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import React, { useRef, useState } from 'react';
-import { useBasePath } from '@/hooks';
+import zh from '../emoji/emoji-data/zh.json';
 
 export interface ImageItem {
   id: string;
@@ -144,7 +144,6 @@ const CommentInput = React.forwardRef<CommentInputRef, CommentInputProps>(
               token = solution.token;
             } catch (error) {
               message.error('验证失败');
-              console.log(error, 'error---------');
               setUploading(false);
               return Promise.reject(error);
             }

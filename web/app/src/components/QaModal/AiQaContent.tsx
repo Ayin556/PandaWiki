@@ -1,31 +1,19 @@
 'use client';
-import { useStore } from '@/provider';
-import SSEClient from '@/utils/fetch';
-import { useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { postShareV1CommonFileUpload } from '@/request/ShareFile';
-import dayjs from 'dayjs';
-import { ChunkResultItem } from '@/assets/type';
-import Logo from '@/assets/images/logo.png';
 import aiLoading from '@/assets/images/ai-loading.gif';
-import { getShareV1ConversationDetail } from '@/request/ShareConversation';
-import { message, Image as ImagePreview } from '@ctzhian/ui';
+import Logo from '@/assets/images/logo.png';
+import { ChunkResultItem } from '@/assets/type';
 import Feedback from '@/components/feedback';
-import { handleThinkingContent } from './utils';
-import { useSmartScroll } from '@/hooks';
-import { useTheme } from '@mui/material';
-import { v4 as uuidv4 } from 'uuid';
-import { useBasePath } from '@/hooks';
 import { IconCopy } from '@/components/icons';
-import {
-  IconADiancaiWeixuanzhong2,
-  IconDiancaiWeixuanzhong,
-  IconDianzanXuanzhong1,
-  IconDianzanWeixuanzhong,
-} from '@panda-wiki/icons';
 import MarkDown2 from '@/components/markdown2';
+import { useBasePath, useSmartScroll } from '@/hooks';
+import { useStore } from '@/provider';
 import { postShareV1ChatFeedback } from '@/request/ShareChat';
+import { getShareV1ConversationDetail } from '@/request/ShareConversation';
+import { postShareV1CommonFileUpload } from '@/request/ShareFile';
 import { copyText } from '@/utils';
+import SSEClient from '@/utils/fetch';
+import { Image as ImagePreview, message } from '@ctzhian/ui';
+import CloseIcon from '@mui/icons-material/Close';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
   Box,
@@ -33,48 +21,56 @@ import {
   IconButton,
   Stack,
   Typography,
-  Tooltip,
   alpha,
+  useTheme,
 } from '@mui/material';
+import {
+  IconADiancaiWeixuanzhong2,
+  IconDiancaiWeixuanzhong,
+  IconDianzanWeixuanzhong,
+  IconDianzanXuanzhong1,
+  IconFasong,
+  IconTupian,
+  IconXinduihua,
+  IconXingxing,
+} from '@panda-wiki/icons';
+import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import ChatLoading from '../../views/chat/ChatLoading';
 import {
-  IconTupian,
-  IconFasong,
-  IconXingxing,
-  IconXinduihua,
-} from '@panda-wiki/icons';
-import CloseIcon from '@mui/icons-material/Close';
-import Image from 'next/image';
-import {
-  StyledMainContainer,
-  StyledConversationContainer,
-  StyledConversationItem,
-  StyledUserBubble,
+  StyledActionButtonStack,
+  StyledActionStack,
   StyledAiBubble,
   StyledAiBubbleContent,
   StyledChunkAccordion,
-  StyledChunkAccordionSummary,
   StyledChunkAccordionDetails,
+  StyledChunkAccordionSummary,
   StyledChunkItem,
-  StyledThinkingAccordion,
-  StyledThinkingAccordionSummary,
-  StyledThinkingAccordionDetails,
-  StyledActionStack,
-  StyledInputContainer,
-  StyledInputWrapper,
-  StyledImagePreviewStack,
-  StyledImagePreviewItem,
-  StyledImageRemoveButton,
-  StyledTextField,
-  StyledActionButtonStack,
-  StyledFuzzySuggestionsStack,
+  StyledConversationContainer,
+  StyledConversationItem,
   StyledFuzzySuggestionItem,
-  StyledHotSearchContainer,
+  StyledFuzzySuggestionsStack,
   StyledHotSearchColumn,
   StyledHotSearchColumnItem,
+  StyledHotSearchContainer,
+  StyledImagePreviewItem,
+  StyledImagePreviewStack,
+  StyledImageRemoveButton,
+  StyledInputContainer,
+  StyledInputWrapper,
+  StyledMainContainer,
+  StyledTextField,
+  StyledThinkingAccordion,
+  StyledThinkingAccordionDetails,
+  StyledThinkingAccordionSummary,
+  StyledUserBubble,
 } from './StyledComponents';
+import { handleThinkingContent } from './utils';
 
 import { getImagePath } from '@/utils/getImagePath';
 
@@ -393,7 +389,6 @@ const AiQaContent: React.FC<{
           token = solution.token;
         } catch (error) {
           message.error('验证失败');
-          console.log(error, 'error---------');
           return Promise.reject(error);
         }
         // 上传新图片
@@ -432,7 +427,6 @@ const AiQaContent: React.FC<{
       setLoading(false);
       setThinking(4);
       message.error('验证失败');
-      console.log(error, 'error---------');
       return;
     }
 

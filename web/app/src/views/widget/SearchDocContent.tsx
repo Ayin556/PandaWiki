@@ -1,11 +1,12 @@
 'use client';
 import Logo from '@/assets/images/logo.png';
 import noDocImage from '@/assets/images/no-doc.png';
+import { useBasePath } from '@/hooks';
 import { useStore } from '@/provider';
 import { postShareV1ChatWidgetSearch } from '@/request';
 import { DomainNodeContentChunkSSE } from '@/request/types';
-import { message } from '@ctzhian/ui';
 import { getImagePath } from '@/utils/getImagePath';
+import { message } from '@ctzhian/ui';
 import {
   alpha,
   Box,
@@ -26,7 +27,6 @@ import {
 } from '@panda-wiki/icons';
 import Image from 'next/image';
 import React, { useState } from 'react';
-import { useBasePath } from '@/hooks';
 
 const StyledSearchResultItem = styled(Stack)(({ theme }) => ({
   position: 'relative',
@@ -147,7 +147,6 @@ const SearchDocContent: React.FC<SearchDocContentProps> = ({
       token = solution.token;
     } catch (error) {
       message.error('验证失败');
-      console.log(error, 'error---------');
       setIsSearching(false);
       return;
     }

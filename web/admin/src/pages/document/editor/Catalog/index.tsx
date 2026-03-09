@@ -426,24 +426,26 @@ const Catalog = ({
         gap={1}
       >
         <KBSwitch />
-        <Stack
-          alignItems='center'
-          justifyContent='space-between'
-          onClick={() => setCatalogOpen(false)}
-          sx={{
-            cursor: 'pointer',
-            color: 'text.tertiary',
-            ':hover': {
-              color: 'text.primary',
-            },
-          }}
-        >
-          <IconMulushouqi
+        {data.length > 0 && (
+          <Stack
+            alignItems='center'
+            justifyContent='space-between'
+            onClick={() => setCatalogOpen(false)}
             sx={{
-              fontSize: 24,
+              cursor: 'pointer',
+              color: 'text.tertiary',
+              ':hover': {
+                color: 'text.primary',
+              },
             }}
-          />
-        </Stack>
+          >
+            <IconMulushouqi
+              sx={{
+                fontSize: 24,
+              }}
+            />
+          </Stack>
+        )}
       </Stack>
       <Stack
         direction={'row'}
@@ -473,7 +475,7 @@ const Catalog = ({
             minWidth: 0,
             fontSize: 14,
             fontWeight: 'bold',
-            color: 'text.tertiary',
+            color: 'text.primary',
             textTransform: 'none',
             '&:hover':
               navList.length > 0
@@ -485,7 +487,7 @@ const Catalog = ({
             {currentNav?.name || '目录'}
           </Ellipsis>
         </Button>
-        {renderAdd('')}
+        {data.length > 0 && renderAdd('')}
         <Popover
           open={!!navPopoverAnchor}
           anchorEl={navPopoverAnchor}
@@ -537,22 +539,38 @@ const Catalog = ({
         {loading ? (
           <Loading />
         ) : data.length === 0 ? (
-          <Button
-            fullWidth
-            variant='text'
-            startIcon={<IconJiahao sx={{ fontSize: '10px !important' }} />}
-            onClick={() => {
-              setOpraParentId('');
-              setDocFileKey(2);
-              setCustomDocOpen(true);
-            }}
-            sx={{
-              justifyContent: 'center',
-              textTransform: 'none',
-            }}
-          >
-            添加文档
-          </Button>
+          <Stack gap={1}>
+            <Button
+              variant='outlined'
+              startIcon={<IconJiahao sx={{ fontSize: '10px !important' }} />}
+              onClick={() => {
+                setOpraParentId('');
+                setDocFileKey(1);
+                setCustomDocOpen(true);
+              }}
+              sx={{
+                justifyContent: 'center',
+                textTransform: 'none',
+              }}
+            >
+              添加文件夹
+            </Button>
+            <Button
+              variant='outlined'
+              startIcon={<IconJiahao sx={{ fontSize: '10px !important' }} />}
+              onClick={() => {
+                setOpraParentId('');
+                setDocFileKey(2);
+                setCustomDocOpen(true);
+              }}
+              sx={{
+                justifyContent: 'center',
+                textTransform: 'none',
+              }}
+            >
+              添加文档
+            </Button>
+          </Stack>
         ) : (
           renderTree(data)
         )}

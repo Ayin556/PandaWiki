@@ -1,28 +1,32 @@
 'use client';
-import React, { useState } from 'react';
-import {
-  Box,
-  TextField,
-  IconButton,
-  InputAdornment,
-  Typography,
-  Stack,
-  CircularProgress,
-  alpha,
-  Skeleton,
-  styled,
-} from '@mui/material';
 import Logo from '@/assets/images/logo.png';
 import noDocImage from '@/assets/images/no-doc.png';
-import Image from 'next/image';
-import { IconJinsousuo, IconFasong, IconMianbaoxie } from '@panda-wiki/icons';
+import { useBasePath } from '@/hooks';
+import { useStore } from '@/provider';
 import { postShareV1ChatSearch } from '@/request/ShareChatSearch';
 import { DomainNodeContentChunkSSE } from '@/request/types';
-import { message } from '@ctzhian/ui';
-import { IconWenjian } from '@panda-wiki/icons';
-import { useStore } from '@/provider';
-import { useBasePath } from '@/hooks';
 import { getImagePath } from '@/utils/getImagePath';
+import { message } from '@ctzhian/ui';
+import {
+  alpha,
+  Box,
+  CircularProgress,
+  IconButton,
+  InputAdornment,
+  Skeleton,
+  Stack,
+  styled,
+  TextField,
+  Typography,
+} from '@mui/material';
+import {
+  IconFasong,
+  IconJinsousuo,
+  IconMianbaoxie,
+  IconWenjian,
+} from '@panda-wiki/icons';
+import Image from 'next/image';
+import React, { useState } from 'react';
 
 const StyledSearchResultItem = styled(Stack)(({ theme }) => ({
   position: 'relative',
@@ -143,7 +147,6 @@ const SearchDocContent: React.FC<SearchDocContentProps> = ({
       token = solution.token;
     } catch (error) {
       message.error('验证失败');
-      console.log(error, 'error---------');
       setIsSearching(false);
       return;
     }

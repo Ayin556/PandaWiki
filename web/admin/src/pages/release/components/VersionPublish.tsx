@@ -101,11 +101,15 @@ const VersionPublish = ({
   };
 
   const onSubmit = handleSubmit(data => {
-    if (selected.length > 0) {
+    const nodeIds = Array.from(new Set([...selected, ...folderIds]));
+    const hasReleasedNavs = releasedNavs.length > 0;
+
+    // 有选中的文档/文件夹，或存在未发布目录时，允许提交
+    if (nodeIds.length > 0 || hasReleasedNavs) {
       postApiV1KnowledgeBaseRelease({
         kb_id,
         ...data,
-        node_ids: [...selected, ...folderIds],
+        ...(nodeIds.length ? { node_ids: nodeIds } : {}),
       }).then(() => {
         message.success(`${data.tag} 版本发布成功`);
         reset();
@@ -114,7 +118,9 @@ const VersionPublish = ({
         refresh();
       });
     } else {
-      message.error(list.length > 0 ? '请选择要发布的文档' : '暂无未发布文档');
+      message.error(
+        list.length > 0 ? '请选择要发布的文档' : '暂无未发布文档或目录',
+      );
     }
   });
 
@@ -137,7 +143,15 @@ const VersionPublish = ({
   );
 
   return (
-    <Modal title='发布新版本' open={open} onCancel={onClose} onOk={onSubmit}>
+    <Modal
+      title='发布新版本'
+      open={open}
+      onCancel={onClose}
+      onOk={onSubmit}
+      okButtonProps={{
+        disabled: releasedNavs.length === 0 && list.length === 0,
+      }}
+    >
       <>
         <Box sx={{ fontSize: 14, lineHeight: '32px' }}>
           版本号
@@ -216,49 +230,56 @@ const VersionPublish = ({
             </Stack>
           </Stack>
         )}
-        <Stack
-          direction='row'
-          component='label'
-          alignItems='center'
-          justifyContent='space-between'
-          gap={1}
-          sx={{
-            py: 1,
-            pr: 1.5,
-            cursor: 'pointer',
-            borderRadius: '10px',
-            fontSize: 14,
-            mt: 1,
-          }}
-        >
-          <Box>
-            未发布文档/文件夹
-            <Box
-              component='span'
-              sx={{ color: 'text.tertiary', fontSize: 12, pl: 1 }}
-            >
-              共 {list.length} 个，已选中 {selectedTotal} 个
+        {list.length > 0 && (
+          <Stack
+            direction='row'
+            component='label'
+            alignItems='center'
+            justifyContent='space-between'
+            gap={1}
+            sx={{
+              py: 1,
+              pr: 1.5,
+              cursor: 'pointer',
+              borderRadius: '10px',
+              fontSize: 14,
+              mt: 1,
+            }}
+          >
+            <Box>
+              未发布文档/文件夹
+              <Box
+                component='span'
+                sx={{ color: 'text.tertiary', fontSize: 12, pl: 1 }}
+              >
+                共 {list.length} 个，已选中 {selectedTotal} 个
+              </Box>
             </Box>
-          </Box>
-          <Stack direction='row' alignItems='center'>
-            <Box sx={{ color: 'text.tertiary', fontSize: 12 }}>全选</Box>
-            <Checkbox
-              size='small'
-              sx={{
-                p: 0,
-                color: 'text.disabled',
-                width: '35px',
-                height: '35px',
-              }}
-              checked={list.length > 0 && selectedTotal === list.length}
-              onChange={() => {
-                setSelected(
-                  selectedTotal === list.length ? [] : list.map(it => it.id!),
-                );
-              }}
-            />
+            <Stack direction='row' alignItems='center'>
+              <Box sx={{ color: 'text.tertiary', fontSize: 12 }}>全选</Box>
+              <Checkbox
+                size='small'
+                sx={{
+                  p: 0,
+                  color: 'text.disabled',
+                  width: '35px',
+                  height: '35px',
+                }}
+                checked={list.length > 0 && selectedTotal === list.length}
+                onChange={() => {
+                  setSelected(
+                    selectedTotal === list.length ? [] : list.map(it => it.id!),
+                  );
+                }}
+              />
+            </Stack>
           </Stack>
-        </Stack>
+        )}
+        {releasedNavs.length === 0 && list.length === 0 && (
+          <Box sx={{ mt: 1, fontSize: 13, color: 'text.tertiary' }}>
+            暂无未发布文档或目录
+          </Box>
+        )}
         <Box
           sx={{
             fontSize: 14,

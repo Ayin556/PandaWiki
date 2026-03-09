@@ -1,9 +1,9 @@
 'use effect';
-import React, { useEffect, useState } from 'react';
-import { Modal, message } from '@ctzhian/ui';
-import { Box, TextField, Typography, styled, FormLabel } from '@mui/material';
-import { IconCorrection } from '@panda-wiki/icons';
 import { useBasePath } from '@/hooks';
+import { Modal, message } from '@ctzhian/ui';
+import { Box, FormLabel, TextField, Typography, styled } from '@mui/material';
+import { IconCorrection } from '@panda-wiki/icons';
+import { useEffect, useState } from 'react';
 
 interface ConfirmModalProps {
   open: boolean;
@@ -85,7 +85,6 @@ const ConfirmModal = ({ open, onCancel, onOk }: ConfirmModalProps) => {
       token = solution.token;
     } catch (error) {
       message.error('验证失败');
-      console.log(error, 'error---------');
       return;
     }
     return onOk(reason, token);
