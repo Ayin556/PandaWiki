@@ -74,6 +74,12 @@ func (m *MigrationCreateFirstNavs) Execute(tx *gorm.DB) error {
 		if err := tx.Model(&domain.NavRelease{}).Create(navRelease).Error; err != nil {
 			return err
 		}
+
+		if err := tx.Model(&domain.KBReleaseNodeRelease{}).
+			Where("kb_id = ? AND release_id = ?", kb.ID, release.ID).
+			Update("nav_id", nav.ID).Error; err != nil {
+			return err
+		}
 	}
 
 	return nil
