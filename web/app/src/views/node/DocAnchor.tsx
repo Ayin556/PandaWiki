@@ -153,12 +153,13 @@ const DocAnchor = ({ headings }: DocAnchorProps) => {
     heading: TocItem,
   ) => {
     e.preventDefault();
+    const BASE_OFFSET = 80;
+    const offset = hasNavBar ? BASE_OFFSET + NAV_BAR_HEIGHT : BASE_OFFSET;
     if (scrollToElement) {
-      scrollToElement(heading.id, 80);
+      scrollToElement(heading.id, offset);
     } else {
       const element = document.getElementById(heading.id);
       if (element) {
-        const offset = 80;
         const elementPosition = element.getBoundingClientRect().top;
         const offsetPosition = elementPosition + window.pageYOffset - offset;
         window.scrollTo({
