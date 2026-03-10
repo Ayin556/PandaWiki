@@ -975,6 +975,12 @@ func (r *NodeRepository) MoveNodeNav(ctx context.Context, kbID, nodeID, navID st
 		}
 
 		if err := tx.Model(&domain.Node{}).
+			Where("kb_id = ? AND id = ?", kbID, nodeID).
+			Update("parent_id", "").Error; err != nil {
+			return err
+		}
+
+		if err := tx.Model(&domain.Node{}).
 			Where("kb_id = ? AND id IN ?", kbID, allIDs).
 			Where("status = ?", domain.NodeStatusReleased).
 			Update("status", domain.NodeStatusDraft).Error; err != nil {
