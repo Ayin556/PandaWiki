@@ -319,6 +319,11 @@ func (r *NodeRepository) Delete(ctx context.Context, kbID string, ids []string) 
 			Delete(&nodes).Error; err != nil {
 			return err
 		}
+		// backup node releases before deletion
+		if err := r.backupNodeReleasesTx(tx, allIDs); err != nil {
+			return err
+		}
+
 		// delete node release
 		var nodeReleases []*domain.NodeRelease
 		if err := tx.Model(&domain.NodeRelease{}).
@@ -342,6 +347,40 @@ func (r *NodeRepository) Delete(ctx context.Context, kbID string, ids []string) 
 		return nil, err
 	}
 	return lo.Uniq(docIDs), nil
+}
+
+func (r *NodeRepository) backupNodeReleasesTx(tx *gorm.DB, nodeIDs []string) error {
+	var nodeReleases []*domain.NodeRelease
+	if err := tx.Model(&domain.NodeRelease{}).
+		Where("node_id IN ?", nodeIDs).
+		Find(&nodeReleases).Error; err != nil {
+		return err
+	}
+	if len(nodeReleases) == 0 {
+		return nil
+	}
+	now := time.Now()
+	backups := make([]*domain.NodeReleaseBackup, len(nodeReleases))
+	for i, nr := range nodeReleases {
+		backups[i] = &domain.NodeReleaseBackup{
+			ID:          nr.ID,
+			KBID:        nr.KBID,
+			PublisherId: nr.PublisherId,
+			EditorId:    nr.EditorId,
+			NodeID:      nr.NodeID,
+			DocID:       nr.DocID,
+			Type:        nr.Type,
+			Name:        nr.Name,
+			Meta:        nr.Meta,
+			Content:     nr.Content,
+			Position:    nr.Position,
+			ParentID:    nr.ParentID,
+			DeletedAt:   now,
+			CreatedAt:   nr.CreatedAt,
+			UpdatedAt:   nr.UpdatedAt,
+		}
+	}
+	return tx.Clauses(clause.OnConflict{DoNothing: true}).CreateInBatches(&backups, 500).Error
 }
 
 // collectAllChildNodeIDs recursively collects all child node IDs for the given parent IDs
@@ -1246,6 +1285,12 @@ func (r *NodeRepository) GetNodeIdsByDocIds(ctx context.Context, docIds []string
 	}
 
 	return docToNodeMap, nil
+}
+
+func (r *NodeRepository) DeleteOldNodeReleaseBackups(ctx context.Context, before time.Time) error {
+	return r.db.WithContext(ctx).
+		Where("deleted_at < ?", before).
+		Delete(&domain.NodeReleaseBackup{}).Error
 }
 
 func (r *NodeRepository) GetNodeCount(ctx context.Context) (int, error) {
