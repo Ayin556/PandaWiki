@@ -322,6 +322,29 @@ func (NodeRelease) TableName() string {
 	return "node_releases"
 }
 
+// table: node_release_backup
+type NodeReleaseBackup struct {
+	ID          string    `json:"id" gorm:"primaryKey"`
+	KBID        string    `json:"kb_id" gorm:"index"`
+	PublisherId string    `json:"publisher_id"`
+	EditorId    string    `json:"editor_id"`
+	NodeID      string    `json:"node_id" gorm:"index"`
+	DocID       string    `json:"doc_id"`
+	Type        NodeType  `json:"type"`
+	Name        string    `json:"name"`
+	Meta        NodeMeta  `json:"meta" gorm:"type:jsonb"`
+	Content     string    `json:"content"`
+	Position    float64   `json:"position"`
+	ParentID    string    `json:"parent_id"`
+	DeletedAt   time.Time `json:"deleted_at"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+}
+
+func (NodeReleaseBackup) TableName() string {
+	return "node_release_backup"
+}
+
 // NodeReleaseWithDirPath extends NodeRelease with directory path information
 type NodeReleaseWithDirPath struct {
 	*NodeRelease
