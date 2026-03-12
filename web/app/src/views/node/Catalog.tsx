@@ -1,4 +1,5 @@
 'use client';
+import { NAV_BAR_HEIGHT } from '@/constant';
 import { useStore } from '@/provider';
 import { Box, Stack, SxProps, Tooltip } from '@mui/material';
 import { IconMulu } from '@panda-wiki/icons';
@@ -50,7 +51,6 @@ const Catalog = ({ sx }: { sx?: SxProps }) => {
   }, [id, catalogShow, tree]);
 
   const hasNavBar = navList.length > 1;
-  const NAV_BAR_HEIGHT = 44;
   const stickyTop = hasNavBar ? 160 : 160 - NAV_BAR_HEIGHT;
   const stickyMaxHeight = hasNavBar
     ? `calc(100vh - 164px - ${NAV_BAR_HEIGHT}px)`

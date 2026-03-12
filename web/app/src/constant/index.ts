@@ -12,6 +12,8 @@ export const VisitSceneEnums = {
 
 export const CONTENT_GAP = 96;
 export const DOC_ANCHOR_WIDTH = 240;
+export const NAV_BAR_HEIGHT = 44;
+export const BASE_SCROLL_OFFSET = 80;
 
 export const DocWidth = {
   full: {

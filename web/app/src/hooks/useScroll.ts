@@ -1,7 +1,7 @@
 import { TocItem, TocList } from '@ctzhian/tiptap';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-const useScroll = (headings: TocList, domId: string) => {
+const useScroll = (headings: TocList, domId: string, defaultOffset = 80) => {
   const [activeHeading, setActiveHeading] = useState<TocItem | null>(null);
   const isFirstLoad = useRef(true);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -20,7 +20,7 @@ const useScroll = (headings: TocList, domId: string) => {
   };
 
   const scrollToElement = useCallback(
-    (elementId: string, offset = 80) => {
+    (elementId: string, offset = defaultOffset) => {
       const element = document.getElementById(elementId);
       if (element) {
         const container = document.getElementById(domId) || window;
@@ -46,7 +46,7 @@ const useScroll = (headings: TocList, domId: string) => {
         }
       }
     },
-    [headings],
+    [headings, defaultOffset, domId],
   );
 
   const findActiveHeading = useCallback(() => {
@@ -114,7 +114,8 @@ const useScroll = (headings: TocList, domId: string) => {
                 'scrollY' in container
                   ? container.scrollY
                   : container.scrollTop;
-              const offsetPosition = elementPosition + scrollTop - 80;
+              const offsetPosition =
+                elementPosition + scrollTop - defaultOffset;
 
               container.scrollTo({
                 top: offsetPosition,
@@ -129,7 +130,7 @@ const useScroll = (headings: TocList, domId: string) => {
       }
       isFirstLoad.current = false;
     }
-  }, [headings, findActiveHeading]);
+  }, [headings, defaultOffset, domId]);
 
   useEffect(() => {
     if (headings.length === 0) return;

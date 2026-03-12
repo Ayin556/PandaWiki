@@ -1,6 +1,10 @@
 'use client';
 
-import { DOC_ANCHOR_WIDTH } from '@/constant';
+import {
+  DOC_ANCHOR_WIDTH,
+  NAV_BAR_HEIGHT,
+  BASE_SCROLL_OFFSET,
+} from '@/constant';
 import useScroll from '@/hooks/useScroll';
 import { useStore } from '@/provider';
 import { TocItem, TocList } from '@ctzhian/tiptap';
@@ -23,16 +27,20 @@ const HeadingSx = [
 
 const DocAnchor = ({ headings }: DocAnchorProps) => {
   const { navList = [] } = useStore();
+  const hasNavBar = navList.length > 1;
+  const offset = hasNavBar
+    ? BASE_SCROLL_OFFSET + NAV_BAR_HEIGHT
+    : BASE_SCROLL_OFFSET;
+
   const { activeHeading, scrollToElement } = useScroll(
     headings,
     'scroll-container',
+    offset,
   );
   const activeId = activeHeading?.id;
   const listRef = useRef<HTMLDivElement>(null);
   const hasScrolledRef = useRef(false);
 
-  const hasNavBar = navList.length > 1;
-  const NAV_BAR_HEIGHT = 44;
   const stickyTop = hasNavBar ? 160 : 160 - NAV_BAR_HEIGHT;
   const listMaxHeight = hasNavBar
     ? `calc(100vh - 164px - ${NAV_BAR_HEIGHT}px)`
@@ -153,8 +161,6 @@ const DocAnchor = ({ headings }: DocAnchorProps) => {
     heading: TocItem,
   ) => {
     e.preventDefault();
-    const BASE_OFFSET = 80;
-    const offset = hasNavBar ? BASE_OFFSET + NAV_BAR_HEIGHT : BASE_OFFSET;
     if (scrollToElement) {
       scrollToElement(heading.id, offset);
     } else {
