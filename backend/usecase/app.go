@@ -110,7 +110,8 @@ func (u *AppUsecase) ValidateUpdateApp(ctx context.Context, id string, req *doma
 
 	if !limitation.AllowAdvancedBot {
 		if !slices.Equal(app.Settings.WechatServiceContainKeywords, req.Settings.WechatServiceContainKeywords) ||
-			!slices.Equal(app.Settings.WechatServiceEqualKeywords, req.Settings.WechatServiceEqualKeywords) {
+			!slices.Equal(app.Settings.WechatServiceEqualKeywords, req.Settings.WechatServiceEqualKeywords) ||
+			app.Settings.WechatServiceLogo != req.Settings.WechatServiceLogo {
 			return domain.ErrPermissionDenied
 		}
 
@@ -507,6 +508,7 @@ func (u *AppUsecase) GetAppDetailByKBIDAndAppType(ctx context.Context, kbID stri
 		WeChatServiceSecret:          app.Settings.WeChatServiceSecret,
 		WechatServiceContainKeywords: app.Settings.WechatServiceContainKeywords,
 		WechatServiceEqualKeywords:   app.Settings.WechatServiceEqualKeywords,
+		WechatServiceLogo:            app.Settings.WechatServiceLogo,
 		// Discord
 		DiscordBotIsEnabled: app.Settings.DiscordBotIsEnabled,
 		DiscordBotToken:     app.Settings.DiscordBotToken,

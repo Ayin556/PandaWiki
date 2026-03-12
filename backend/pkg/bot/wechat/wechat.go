@@ -22,16 +22,16 @@ import (
 
 const wechatMessageMaxBytes = 2000
 
-func NewWechatConfig(ctx context.Context, CorpID, Token, EncodingAESKey string, kbid string, secret string, agentID string, logger *log.Logger) (*WechatConfig, error) {
+func NewWechatAppConfig(ctx context.Context, logger *log.Logger, kbId, CorpID, Token, EncodingAESKey, secret, agentID string) (*WechatConfig, error) {
 	return &WechatConfig{
 		Ctx:            ctx,
+		logger:         logger,
+		kbID:           kbId,
 		CorpID:         CorpID,
 		Token:          Token,
 		EncodingAESKey: EncodingAESKey,
-		kbID:           kbid,
 		Secret:         secret,
 		AgentID:        agentID,
-		logger:         logger,
 	}, nil
 }
 

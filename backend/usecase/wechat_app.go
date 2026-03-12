@@ -64,15 +64,15 @@ func (u *WechatAppUsecase) Wechat(ctx context.Context, msg *wechat.ReceivedMessa
 }
 
 func (u *WechatAppUsecase) NewWechatConfig(ctx context.Context, appInfo *domain.AppDetailResp, kbID string) (*wechat.WechatConfig, error) {
-	return wechat.NewWechatConfig(
+	return wechat.NewWechatAppConfig(
 		ctx,
+		u.logger,
+		kbID,
 		appInfo.Settings.WeChatAppCorpID,
 		appInfo.Settings.WeChatAppToken,
 		appInfo.Settings.WeChatAppEncodingAESKey,
-		kbID,
 		appInfo.Settings.WeChatAppSecret,
 		appInfo.Settings.WeChatAppAgentID,
-		u.logger,
 	)
 }
 
