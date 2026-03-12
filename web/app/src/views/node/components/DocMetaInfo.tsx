@@ -66,9 +66,9 @@ const DocMetaInfo = ({
           <>
             <Box>·</Box>
             <Box>
-              {info?.editor_account === 'admin'
+              {info?.publisher_account === 'admin'
                 ? '管理员'
-                : info?.editor_account}{' '}
+                : info?.publisher_account}{' '}
               {dayjs(info.updated_at).fromNow()}更新
             </Box>
           </>
