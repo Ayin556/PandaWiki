@@ -126,6 +126,7 @@ type AppSettings struct {
 	WeChatServiceEncodingAESKey  string   `json:"wechat_service_encodingaeskey,omitempty"`
 	WeChatServiceCorpID          string   `json:"wechat_service_corpid,omitempty"`
 	WeChatServiceSecret          string   `json:"wechat_service_secret,omitempty"`
+	WechatServiceLogo            string   `json:"wechat_service_logo,omitempty"`
 	WechatServiceContainKeywords []string `json:"wechat_service_contain_keywords"`
 	WechatServiceEqualKeywords   []string `json:"wechat_service_equal_keywords"`
 	// DisCordBot
@@ -525,6 +526,7 @@ type AppSettingsResp struct {
 	WeChatServiceEncodingAESKey  string   `json:"wechat_service_encodingaeskey,omitempty"`
 	WeChatServiceCorpID          string   `json:"wechat_service_corpid,omitempty"`
 	WeChatServiceSecret          string   `json:"wechat_service_secret,omitempty"`
+	WechatServiceLogo            string   `json:"wechat_service_logo,omitempty"`
 	WechatServiceContainKeywords []string `json:"wechat_service_contain_keywords"`
 	WechatServiceEqualKeywords   []string `json:"wechat_service_equal_keywords"`
 

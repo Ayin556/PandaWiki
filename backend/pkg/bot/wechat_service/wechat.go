@@ -1,4 +1,4 @@
-package wechatservice
+package wechat_service
 
 import (
 	"bytes"
@@ -22,17 +22,18 @@ import (
 	"github.com/chaitin/panda-wiki/pkg/bot"
 )
 
-func NewWechatServiceConfig(ctx context.Context, logger *log.Logger, CorpID, Token, EncodingAESKey string, kbid string, secret string, containKeywords, equalKeywords []string) (*WechatServiceConfig, error) {
+func NewWechatServiceConfig(ctx context.Context, logger *log.Logger, KbId, CorpID, Token, EncodingAESKey, secret, logo string, containKeywords, equalKeywords []string) (*WechatServiceConfig, error) {
 	return &WechatServiceConfig{
 		Ctx:             ctx,
+		kbID:            KbId,
 		CorpID:          CorpID,
 		Token:           Token,
 		EncodingAESKey:  EncodingAESKey,
-		kbID:            kbid,
 		Secret:          secret,
 		logger:          logger,
 		containKeywords: containKeywords,
 		equalKeywords:   equalKeywords,
+		logoUrl:         logo,
 	}, nil
 }
 
@@ -184,21 +185,40 @@ func (cfg *WechatServiceConfig) Processmessage(msgRet *MsgRet, Kfmsg *WeixinUser
 	return cfg.SendResponseToKfUrl(userId, openkfId, conversationID, token, content, info.BaseUrl, info.ImagePath)
 }
 
-func (cfg *WechatServiceConfig) SendResponseToKfUrl(userId, openkfId, conversationID, token, question, baseUrl, image string) error {
+func (cfg *WechatServiceConfig) getImageID(token, image string) (string, error) {
+	const minioPrefix = "http://panda-wiki-minio:9000"
+
+	// 优先使用配置的logoUrl
+	if cfg.logoUrl != "" {
+		image = cfg.logoUrl
+	}
+
 	var imageId string
 	var err error
-	if image != "" && !strings.HasPrefix(image, "data:image/") { // user own image and not base64 image
-		imageId, err = GetUserImageID(token, fmt.Sprintf("%s%s", "http://panda-wiki-minio:9000", image))
-	} else if strings.HasPrefix(image, "data:image/") {
-		// 解析base64
+
+	switch {
+	case image == "":
+	case strings.HasPrefix(image, "data:image/"):
 		imageId, err = GetDefaultImageID(token, image)
+	default:
+		imageId, err = GetUserImageID(token, fmt.Sprintf("%s%s", minioPrefix, image))
 	}
-	// 如果获取失败或没有设置图片，使用默认图片
-	if err != nil || imageId == "" {
-		imageId, err = GetDefaultImageID(token, domain.DefaultPandaWikiIconB64)
-		if err != nil {
-			return err
-		}
+
+	if imageId != "" && err == nil {
+		return imageId, nil
+	}
+
+	if err != nil {
+		cfg.logger.Error("failed to get image ID, using default", log.Error(err))
+	}
+
+	return GetDefaultImageID(token, domain.DefaultPandaWikiIconB64)
+}
+
+func (cfg *WechatServiceConfig) SendResponseToKfUrl(userId, openkfId, conversationID, token, question, baseUrl, image string) error {
+	imageId, err := cfg.getImageID(token, image)
+	if err != nil {
+		return err
 	}
 
 	reply := ReplyMsgUrl{

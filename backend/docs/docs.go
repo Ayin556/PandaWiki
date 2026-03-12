@@ -5339,6 +5339,9 @@ const docTemplate = `{
                     "description": "WechatServiceBot",
                     "type": "boolean"
                 },
+                "wechat_service_logo": {
+                    "type": "string"
+                },
                 "wechat_service_secret": {
                     "type": "string"
                 },
@@ -5613,6 +5616,9 @@ const docTemplate = `{
                 "wechat_service_is_enabled": {
                     "description": "WechatServiceBot",
                     "type": "boolean"
+                },
+                "wechat_service_logo": {
+                    "type": "string"
                 },
                 "wechat_service_secret": {
                     "type": "string"
