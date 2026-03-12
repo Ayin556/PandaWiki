@@ -393,6 +393,7 @@ export interface DomainAppSettings {
   wechat_service_equal_keywords?: string[];
   /** WechatServiceBot */
   wechat_service_is_enabled?: boolean;
+  wechat_service_logo?: string;
   wechat_service_secret?: string;
   wechat_service_token?: string;
   /** WecomAIBotSettings 企业微信智能机器人 */
@@ -482,6 +483,7 @@ export interface DomainAppSettingsResp {
   wechat_service_equal_keywords?: string[];
   /** WechatServiceBot */
   wechat_service_is_enabled?: boolean;
+  wechat_service_logo?: string;
   wechat_service_secret?: string;
   wechat_service_token?: string;
   wecom_ai_bot_settings?: DomainWecomAIBotSettings;
@@ -1379,6 +1381,7 @@ export interface DomainWeChatAppAdvancedSetting {
   disclaimer_content?: string;
   feedback_enable?: boolean;
   feedback_type?: string[];
+  logo?: string;
   prompt?: string;
   text_response_enable?: boolean;
 }
@@ -1875,6 +1878,7 @@ export interface V1WechatAppInfoResp {
   disclaimer_content?: string;
   feedback_enable?: boolean;
   feedback_type?: string[];
+  logo?: string;
   wechat_app_is_enabled?: boolean;
 }
 
