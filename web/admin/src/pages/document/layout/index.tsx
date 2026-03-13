@@ -169,7 +169,7 @@ const Content = () => {
         // 文档树节点拖到目录
         treeDragHandlersRef.current?.onDragCancel?.();
         postApiV1NodeMoveNav({
-          id: active.id as string,
+          ids: [active.id as string],
           kb_id: kb_id!,
           nav_id: over.id as string,
         }).then(() => {
