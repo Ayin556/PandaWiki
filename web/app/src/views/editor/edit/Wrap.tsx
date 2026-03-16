@@ -1,8 +1,10 @@
 'use client';
 import Emoji from '@/components/emoji';
 import { useBasePath } from '@/hooks/useBasePath';
-import { postShareV1CommonFileUploadUrl } from '@/request';
-import { postShareProV1FileUploadWithProgress } from '@/request/pro/otherCustomer';
+import {
+  postShareV1CommonFileUpload,
+  postShareV1CommonFileUploadUrl,
+} from '@/request';
 import { V1NodeDetailResp } from '@/request/types';
 import {
   Editor,
@@ -64,18 +66,27 @@ const Wrap = ({ detail: defaultDetail = {} }: WrapProps) => {
   const handleUpload = async (
     file: File,
     onProgress?: (progress: { progress: number }) => void,
-    abortSignal?: AbortSignal,
+    _abortSignal?: AbortSignal,
   ) => {
-    const { key } = await postShareProV1FileUploadWithProgress(
-      { file },
-      {
-        onprogress: ({ progress }) => {
-          onProgress?.({ progress: progress / 100 });
-        },
-        abortSignal,
-      },
-    );
-    return Promise.resolve('/static-file/' + key);
+    let token = '';
+    try {
+      const Cap = (await import('@cap.js/widget')).default;
+      const cap = new Cap({
+        apiEndpoint: `${baseUrl}/share/v1/captcha/`,
+      });
+      const solution = await cap.solve();
+      token = solution.token;
+      onProgress?.({ progress: 0 });
+      const { key } = await postShareV1CommonFileUpload({
+        file,
+        captcha_token: token,
+      });
+      onProgress?.({ progress: 1 });
+      return Promise.resolve('/static-file/' + key);
+    } catch (error) {
+      message.error('验证失败');
+      return Promise.reject(error);
+    }
   };
 
   const handleUploadByImgUrl = async (
@@ -344,6 +355,7 @@ const Wrap = ({ detail: defaultDetail = {} }: WrapProps) => {
                   ref={markdownEditorRef}
                   editor={editorRef.editor}
                   value={nodeDetail?.content || defaultDetail?.content || ''}
+                  onUpload={handleUpload}
                   placeholder='请输入文档内容'
                   onAceChange={value => {
                     updateDetail({
