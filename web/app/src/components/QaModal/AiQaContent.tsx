@@ -11,7 +11,7 @@ import { postShareV1ChatFeedback } from '@/request/ShareChat';
 import { getShareV1ConversationDetail } from '@/request/ShareConversation';
 import { postShareV1CommonFileUpload } from '@/request/ShareFile';
 import { copyText } from '@/utils';
-import SSEClient from '@/utils/fetch';
+import SSEClient, { SSEHttpError } from '@/utils/fetch';
 import { Image as ImagePreview, message } from '@ctzhian/ui';
 import CloseIcon from '@mui/icons-material/Close';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -614,6 +614,16 @@ const AiQaContent: React.FC<{
       url: `${basePath}/share/v1/chat/message`,
       headers: {
         'Content-Type': 'application/json',
+      },
+      onError: error => {
+        setLoading(false);
+        setThinking(4);
+        if (error instanceof SSEHttpError && error.status === 401) {
+          const current = window.location;
+          window.location.href = `${basePath}/auth/login?redirect=${encodeURIComponent(current.pathname + current.search)}`;
+          return;
+        }
+        message.error(error.message || '请求失败');
       },
       onCancel: () => {
         setLoading(false);
