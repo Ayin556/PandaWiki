@@ -729,6 +729,24 @@ func (r *NodeRepository) GetRecommendNodeListByIDs(ctx context.Context, kbID str
 	return nodes, nil
 }
 
+// GetRecommendNodeListByNavIDs get node list by nav ids
+func (r *NodeRepository) GetRecommendNodeListByNavIDs(ctx context.Context, kbID string, releaseID string, navIds []string) ([]*domain.RecommendNodeListResp, error) {
+	var nodes []*domain.RecommendNodeListResp
+	if err := r.db.WithContext(ctx).
+		Model(&domain.KBReleaseNodeRelease{}).
+		Joins("LEFT JOIN node_releases ON node_releases.id = kb_release_node_releases.node_release_id").
+		Joins("LEFT JOIN nodes ON nodes.id = node_releases.node_id").
+		Where("node_releases.kb_id = ?", kbID).
+		Where("kb_release_node_releases.release_id = ?", releaseID).
+		Where("nodes.nav_id IN ?", navIds).
+		Select("node_releases.node_id as id, node_releases.name, node_releases.type, node_releases.meta->>'summary' as summary, node_releases.meta->>'emoji' as emoji, node_releases.parent_id, node_releases.position, nodes.permissions, nodes.nav_id").
+		Order("node_releases.position ASC").
+		Find(&nodes).Error; err != nil {
+		return nil, err
+	}
+	return nodes, nil
+}
+
 func (r *NodeRepository) GetRecommendNodeListByParentIDs(ctx context.Context, kbID string, releaseID string, parentIDs []string) (map[string][]*domain.RecommendNodeListResp, error) {
 	var nodes []*domain.RecommendNodeListResp
 	if err := r.db.WithContext(ctx).
@@ -852,7 +870,7 @@ func (r *NodeRepository) MoveNodeBetween(ctx context.Context, id, parentID, prev
 
 		querySet := tx.Model(&domain.Node{}).Where("id = ?", id).Update("position", newPos).Update("parent_id", parentID)
 
-		if node.Status == domain.NodeStatusReleased {
+		if node.Status == domain.NodeStatusPublished {
 			querySet = querySet.Update("status", domain.NodeStatusDraft)
 		}
 
@@ -938,7 +956,7 @@ func (r *NodeRepository) CreateNodeReleases(ctx context.Context, kbID, userId st
 		if err := tx.Model(&domain.Node{}).
 			Where("kb_id = ?", kbID).
 			Where("id IN ?", nodeIDs).
-			Update("status", domain.NodeStatusReleased).
+			Update("status", domain.NodeStatusPublished).
 			Find(&updatedNodes).Error; err != nil {
 			return err
 		}
@@ -1023,7 +1041,7 @@ func (r *NodeRepository) MoveNodeNav(ctx context.Context, kbID, navID string, no
 
 		if err := tx.Model(&domain.Node{}).
 			Where("kb_id = ? AND id IN ?", kbID, allIDs).
-			Where("status = ?", domain.NodeStatusReleased).
+			Where("status = ?", domain.NodeStatusPublished).
 			Update("status", domain.NodeStatusDraft).Error; err != nil {
 			return err
 		}
@@ -1044,7 +1062,7 @@ func (r *NodeRepository) BatchMove(ctx context.Context, req *domain.BatchMoveReq
 		if err := tx.WithContext(ctx).Model(&domain.Node{}).
 			Where("kb_id = ?", req.KBID).
 			Where("id IN ?", req.IDs).
-			Where("status = ?", domain.NodeStatusReleased).
+			Where("status = ?", domain.NodeStatusPublished).
 			Update("status", domain.NodeStatusDraft).
 			Error; err != nil {
 			return err
@@ -1344,6 +1362,9 @@ func (r *NodeRepository) GetNodeListByStatus(ctx context.Context, kbId, status, 
 	}
 
 	switch status {
+	// 发布后允许可配置的
+	case "released":
+		query = query.Where("nodes.status IN ?", []domain.NodeStatus{domain.NodeStatusDraft, domain.NodeStatusPublished})
 	case "unpublished":
 		query = query.Where("nodes.status IN ?", []domain.NodeStatus{domain.NodeStatusUnreleased, domain.NodeStatusDraft})
 	case "unstudied":

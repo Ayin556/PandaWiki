@@ -311,21 +311,36 @@ func (u *NodeUsecase) GetRecommendNodeList(ctx context.Context, req *domain.GetR
 		}
 		return nil, err
 	}
-	nodes, err := u.nodeRepo.GetRecommendNodeListByIDs(ctx, req.KBID, kbRelease.ID, req.NodeIDs)
-	if err != nil {
-		return nil, err
+
+	var nodes []*domain.RecommendNodeListResp
+
+	// 优先通过 NavIds 搜索，如果 NavIds 为空则使用 NodeIDs
+	if len(req.NavIds) > 0 {
+		nodes, err = u.nodeRepo.GetRecommendNodeListByNavIDs(ctx, req.KBID, kbRelease.ID, req.NavIds)
+		if err != nil {
+			return nil, err
+		}
+	} else if len(req.NodeIDs) > 0 {
+		nodes, err = u.nodeRepo.GetRecommendNodeListByIDs(ctx, req.KBID, kbRelease.ID, req.NodeIDs)
+		if err != nil {
+			return nil, err
+		}
 	}
+
 	if len(nodes) > 0 {
-		// sort nodes by req.NodeIDs order
-		nodesMap := lo.SliceToMap(nodes, func(item *domain.RecommendNodeListResp) (string, *domain.RecommendNodeListResp) {
-			return item.ID, item
-		})
-		nodes = make([]*domain.RecommendNodeListResp, 0)
-		for _, id := range req.NodeIDs {
-			if node, ok := nodesMap[id]; ok {
-				nodes = append(nodes, node)
+		// 如果是通过 NodeIDs 查询，按照 req.NodeIDs 的顺序排序
+		if len(req.NodeIDs) > 0 && len(req.NavIds) == 0 {
+			nodesMap := lo.SliceToMap(nodes, func(item *domain.RecommendNodeListResp) (string, *domain.RecommendNodeListResp) {
+				return item.ID, item
+			})
+			nodes = make([]*domain.RecommendNodeListResp, 0)
+			for _, id := range req.NodeIDs {
+				if node, ok := nodesMap[id]; ok {
+					nodes = append(nodes, node)
+				}
 			}
 		}
+
 		// get folder nodes
 		folderNodeIds := lo.Filter(nodes, func(item *domain.RecommendNodeListResp, _ int) bool {
 			return item.Type == domain.NodeTypeFolder
@@ -790,18 +805,18 @@ func (u *NodeUsecase) GetNodeStats(ctx context.Context, kbId string) (*v1.NodeSt
 	return resp, nil
 }
 
-func (u *NodeUsecase) GetNodeListGroupByNav(ctx context.Context, kbId, status, search string) ([]*v1.NodeListGroupNavResp, error) {
-	nodes, err := u.nodeRepo.GetNodeListByStatus(ctx, kbId, status, search)
+func (u *NodeUsecase) GetNodeListGroupByNav(ctx context.Context, req v1.NodeListGroupNavReq) ([]*v1.NodeListGroupNavResp, error) {
+	nodes, err := u.nodeRepo.GetNodeListByStatus(ctx, req.KbId, req.Status, req.Search)
 	if err != nil {
 		return nil, err
 	}
 
-	navs, err := u.navRepo.GetList(ctx, kbId)
+	navs, err := u.navRepo.GetListByIds(ctx, req.KbId, req.NavIds)
 	if err != nil {
 		return nil, err
 	}
 
-	navsReleased, err := u.navRepo.GetReleaseList(ctx, kbId)
+	navsReleased, err := u.navRepo.GetReleaseList(ctx, req.KbId)
 	if err != nil {
 		return nil, err
 	}
@@ -834,7 +849,7 @@ func (u *NodeUsecase) GetNodeListGroupByNav(ctx context.Context, kbId, status, s
 	}
 
 	// 搜索时过滤掉空分组
-	if search != "" {
+	if req.Search != "" {
 		filtered := make([]*v1.NodeListGroupNavResp, 0, len(result))
 		for _, group := range result {
 			if group.Count > 0 {

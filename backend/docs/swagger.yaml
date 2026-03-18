@@ -1759,6 +1759,15 @@ definitions:
     - id
     - kb_id
     type: object
+  domain.NavDocConfig:
+    properties:
+      nav_ids:
+        items:
+          type: string
+        type: array
+      title:
+        type: string
+    type: object
   domain.NodeActionReq:
     properties:
       action:
@@ -1882,16 +1891,16 @@ definitions:
     type: integer
     x-enum-comments:
       NodeStatusDraft: 更新未发布
-      NodeStatusReleased: 已发布
-      NodeStatusUnreleased: 未发布
+      NodeStatusPublished: 已发布
+      NodeStatusUnreleased: 草稿
     x-enum-descriptions:
-    - 未发布
+    - 草稿
     - 更新未发布
     - 已发布
     x-enum-varnames:
     - NodeStatusUnreleased
     - NodeStatusDraft
-    - NodeStatusReleased
+    - NodeStatusPublished
   domain.NodeSummaryReq:
     properties:
       ids:
@@ -2165,6 +2174,10 @@ definitions:
       id:
         type: string
       name:
+        type: string
+      nav_id:
+        type: string
+      nav_name:
         type: string
       parent_id:
         type: string
@@ -2570,6 +2583,8 @@ definitions:
         $ref: '#/definitions/domain.ImgTextConfig'
       metrics_config:
         $ref: '#/definitions/domain.MetricsConfig'
+      nav_doc_config:
+        $ref: '#/definitions/domain.NavDocConfig'
       node_ids:
         items:
           type: string
@@ -2613,6 +2628,8 @@ definitions:
         $ref: '#/definitions/domain.ImgTextConfig'
       metrics_config:
         $ref: '#/definitions/domain.MetricsConfig'
+      nav_doc_config:
+        $ref: '#/definitions/domain.NavDocConfig'
       node_ids:
         items:
           type: string
@@ -4840,10 +4857,17 @@ paths:
         name: kb_id
         required: true
         type: string
+      - collectionFormat: csv
+        in: query
+        items:
+          type: string
+        name: nav_ids
+        type: array
       - in: query
         name: search
         type: string
       - enum:
+        - released
         - unpublished
         - unstudied
         in: query
@@ -4992,8 +5016,13 @@ paths:
         in: query
         items:
           type: string
+        name: nav_ids
+        type: array
+      - collectionFormat: csv
+        in: query
+        items:
+          type: string
         name: node_ids
-        required: true
         type: array
       produces:
       - application/json

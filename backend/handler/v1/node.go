@@ -176,7 +176,7 @@ func (h *NodeHandler) NodeListGroupNav(c echo.Context) error {
 		return h.NewResponseWithError(c, "validate request params failed", err)
 	}
 	ctx := c.Request().Context()
-	result, err := h.usecase.GetNodeListGroupByNav(ctx, req.KbId, req.Status, req.Search)
+	result, err := h.usecase.GetNodeListGroupByNav(ctx, req)
 	if err != nil {
 		return h.NewResponseWithError(c, "get node list group by nav failed", err)
 	}
@@ -372,6 +372,9 @@ func (h *NodeHandler) RecommendNodes(c echo.Context) error {
 	}
 	if err := c.Validate(req); err != nil {
 		return h.NewResponseWithError(c, "validate request params failed", err)
+	}
+	if len(req.NodeIDs) == 0 && len(req.NavIds) == 0 {
+		return h.NewResponseWithError(c, "node_ids or nav_ids is required", nil)
 	}
 	ctx := c.Request().Context()
 	nodes, err := h.usecase.GetRecommendNodeList(ctx, &req)

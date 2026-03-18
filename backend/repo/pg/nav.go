@@ -43,6 +43,23 @@ func (r *NavRepository) GetList(ctx context.Context, kbId string) ([]v1.NavListR
 	return navs, nil
 }
 
+func (r *NavRepository) GetListByIds(ctx context.Context, kbId string, ids []string) ([]v1.NavListResp, error) {
+	navs := make([]v1.NavListResp, 0)
+	query := r.db.WithContext(ctx).
+		Model(&domain.Nav{}).
+		Where("kb_id = ?", kbId).
+		Order("position ASC")
+
+	if len(ids) > 0 {
+		query = query.Where("id IN (?)", ids)
+	}
+
+	if err := query.Find(&navs).Error; err != nil {
+		return nil, err
+	}
+	return navs, nil
+}
+
 func (r *NavRepository) getMaxPosByKbId(tx *gorm.DB, kbId string) (float64, error) {
 	var maxPos float64
 	if err := tx.Model(&domain.Nav{}).

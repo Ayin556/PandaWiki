@@ -27,9 +27,9 @@ const (
 type NodeStatus uint16
 
 const (
-	NodeStatusUnreleased NodeStatus = 0 // 未发布
+	NodeStatusUnreleased NodeStatus = 0 // 草稿
 	NodeStatusDraft      NodeStatus = 1 // 更新未发布
-	NodeStatusReleased   NodeStatus = 2 // 已发布
+	NodeStatusPublished  NodeStatus = 2 // 已发布
 )
 
 const (
@@ -220,6 +220,8 @@ type NodeContentChunkSSE struct {
 
 type RecommendNodeListResp struct {
 	ID             string                   `json:"id"`
+	NavId          string                   `json:"nav_id"`
+	NavName        string                   `json:"nav_name"`
 	Name           string                   `json:"name"`
 	Type           NodeType                 `json:"type"`
 	Summary        string                   `json:"summary"`
@@ -293,7 +295,8 @@ type NodeSummaryReq struct {
 
 type GetRecommendNodeListReq struct {
 	KBID    string   `json:"kb_id" validate:"required" query:"kb_id"`
-	NodeIDs []string `json:"node_ids" validate:"required" query:"node_ids[]"`
+	NodeIDs []string `json:"node_ids" query:"node_ids[]"`
+	NavIds  []string `json:"nav_ids" query:"nav_ids[]"`
 }
 
 // table: node_releases

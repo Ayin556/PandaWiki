@@ -25,6 +25,7 @@ type AppUsecase struct {
 	repo          *pg.AppRepository
 	authRepo      *pg.AuthRepo
 	nodeRepo      *pg.NodeRepository
+	navRepo       *pg.NavRepository
 	kbRepo        *pg.KnowledgeBaseRepository
 	nodeUsecase   *NodeUsecase
 	chatUsecase   *ChatUsecase
@@ -44,6 +45,7 @@ type AppUsecase struct {
 func NewAppUsecase(
 	repo *pg.AppRepository,
 	authRepo *pg.AuthRepo,
+	navRepo *pg.NavRepository,
 	nodeRepo *pg.NodeRepository,
 	kbRepo *pg.KnowledgeBaseRepository,
 	nodeUsecase *NodeUsecase,
@@ -57,6 +59,7 @@ func NewAppUsecase(
 		nodeUsecase:  nodeUsecase,
 		chatUsecase:  chatUsecase,
 		authRepo:     authRepo,
+		navRepo:      navRepo,
 		nodeRepo:     nodeRepo,
 		kbRepo:       kbRepo,
 		logger:       logger.WithModule("usecase.app"),
@@ -452,6 +455,7 @@ func (u *AppUsecase) GetAppDetailByKBIDAndAppType(ctx context.Context, kbID stri
 			BannerConfig:    app.Settings.WebAppLandingConfigs[i].BannerConfig,
 			BasicDocConfig:  app.Settings.WebAppLandingConfigs[i].BasicDocConfig,
 			DirDocConfig:    app.Settings.WebAppLandingConfigs[i].DirDocConfig,
+			NavDocConfig:    app.Settings.WebAppLandingConfigs[i].NavDocConfig,
 			SimpleDocConfig: app.Settings.WebAppLandingConfigs[i].SimpleDocConfig,
 			CarouselConfig:  app.Settings.WebAppLandingConfigs[i].CarouselConfig,
 			FaqConfig:       app.Settings.WebAppLandingConfigs[i].FaqConfig,
@@ -614,6 +618,7 @@ func (u *AppUsecase) ShareGetWebAppInfo(ctx context.Context, kbID string, authId
 			BannerConfig:    app.Settings.WebAppLandingConfigs[i].BannerConfig,
 			BasicDocConfig:  app.Settings.WebAppLandingConfigs[i].BasicDocConfig,
 			DirDocConfig:    app.Settings.WebAppLandingConfigs[i].DirDocConfig,
+			NavDocConfig:    app.Settings.WebAppLandingConfigs[i].NavDocConfig,
 			SimpleDocConfig: app.Settings.WebAppLandingConfigs[i].SimpleDocConfig,
 			CarouselConfig:  app.Settings.WebAppLandingConfigs[i].CarouselConfig,
 			FaqConfig:       app.Settings.WebAppLandingConfigs[i].FaqConfig,
@@ -629,11 +634,19 @@ func (u *AppUsecase) ShareGetWebAppInfo(ctx context.Context, kbID string, authId
 			ComConfigOrder:  app.Settings.WebAppLandingConfigs[i].ComConfigOrder,
 			NodeIds:         app.Settings.WebAppLandingConfigs[i].NodeIds,
 		}
-		nodes, err := u.GetRecommendNodesByIds(ctx, kbID, app.Settings.WebAppLandingConfigs[i].NodeIds, authId)
-		if err != nil {
-			return nil, err
+		if app.Settings.WebAppLandingConfigs[i].NavDocConfig != nil {
+			navNodes, err := u.GetRecommendNodesByNavIds(ctx, kbID, app.Settings.WebAppLandingConfigs[i].NavDocConfig.NavIds, authId)
+			if err != nil {
+				return nil, err
+			}
+			webAppLandingConfigResp.Nodes = navNodes
+		} else {
+			nodes, err := u.GetRecommendNodesByIds(ctx, kbID, app.Settings.WebAppLandingConfigs[i].NodeIds, authId)
+			if err != nil {
+				return nil, err
+			}
+			webAppLandingConfigResp.Nodes = nodes
 		}
-		webAppLandingConfigResp.Nodes = nodes
 		webAppLandingConfigs = append(webAppLandingConfigs, webAppLandingConfigResp)
 	}
 	appInfo := &domain.AppInfoResp{
@@ -905,29 +918,12 @@ func (u *AppUsecase) GetOpenAIAPIAppInfo(ctx context.Context, kbID string) (*dom
 	return appInfo, nil
 }
 
-// GetRecommendNodesByIds 根据nodeIds获取nodes详情（需要authId对node验证权限)
-func (u *AppUsecase) GetRecommendNodesByIds(ctx context.Context, kbId string, nodeIds []string, authId uint) ([]*domain.RecommendNodeListResp, error) {
-	nodes, err := u.nodeUsecase.GetRecommendNodeList(ctx, &domain.GetRecommendNodeListReq{
-		KBID:    kbId,
-		NodeIDs: nodeIds,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	recommendNodes := make([]*domain.RecommendNodeListResp, 0)
-
-	nodeVisibleGroupIds, err := u.nodeUsecase.GetNodeIdsByAuthId(ctx, authId, consts.NodePermNameVisible)
-	if err != nil {
-		return nil, err
-	}
-
-	nodeVisitableGroupIds, err := u.nodeUsecase.GetNodeIdsByAuthId(ctx, authId, consts.NodePermNameVisitable)
-	if err != nil {
-		return nil, err
-	}
+// filterNodesByPermissions 对节点列表进行权限过滤
+func (u *AppUsecase) filterNodesByPermissions(nodes []*domain.RecommendNodeListResp, nodeVisibleGroupIds, nodeVisitableGroupIds []string) []*domain.RecommendNodeListResp {
+	filteredNodes := make([]*domain.RecommendNodeListResp, 0)
 
 	for i, node := range nodes {
+		// 处理 Visitable 权限
 		switch node.Permissions.Visitable {
 		case consts.NodeAccessPermClosed:
 			nodes[i].Summary = ""
@@ -937,15 +933,17 @@ func (u *AppUsecase) GetRecommendNodesByIds(ctx context.Context, kbId string, no
 			}
 		}
 
+		// 处理 Visible 权限
 		switch node.Permissions.Visible {
 		case consts.NodeAccessPermOpen:
-			recommendNodes = append(recommendNodes, nodes[i])
+			filteredNodes = append(filteredNodes, nodes[i])
 		case consts.NodeAccessPermPartial:
 			if slices.Contains(nodeVisibleGroupIds, node.ID) {
-				recommendNodes = append(recommendNodes, nodes[i])
+				filteredNodes = append(filteredNodes, nodes[i])
 			}
 		}
 
+		// 如果是文件夹类型，处理其子节点的权限
 		if node.Type == domain.NodeTypeFolder {
 			newFileNodes := make([]*domain.RecommendNodeListResp, 0)
 
@@ -963,5 +961,80 @@ func (u *AppUsecase) GetRecommendNodesByIds(ctx context.Context, kbId string, no
 			node.RecommendNodes = newFileNodes
 		}
 	}
+
+	return filteredNodes
+}
+
+func (u *AppUsecase) GetRecommendNodesByIds(ctx context.Context, kbId string, nodeIds []string, authId uint) ([]*domain.RecommendNodeListResp, error) {
+	nodes, err := u.nodeUsecase.GetRecommendNodeList(ctx, &domain.GetRecommendNodeListReq{
+		KBID:    kbId,
+		NodeIDs: nodeIds,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	nodeVisibleGroupIds, err := u.nodeUsecase.GetNodeIdsByAuthId(ctx, authId, consts.NodePermNameVisible)
+	if err != nil {
+		return nil, err
+	}
+
+	nodeVisitableGroupIds, err := u.nodeUsecase.GetNodeIdsByAuthId(ctx, authId, consts.NodePermNameVisitable)
+	if err != nil {
+		return nil, err
+	}
+
+	// 使用抽象的权限过滤方法
+	return u.filterNodesByPermissions(nodes, nodeVisibleGroupIds, nodeVisitableGroupIds), nil
+}
+
+func (u *AppUsecase) GetRecommendNodesByNavIds(ctx context.Context, kbId string, navIds []string, authId uint) ([]*domain.RecommendNodeListResp, error) {
+	// 获取用户的可见和可访问权限节点列表
+	nodeVisibleGroupIds, err := u.nodeUsecase.GetNodeIdsByAuthId(ctx, authId, consts.NodePermNameVisible)
+	if err != nil {
+		return nil, err
+	}
+
+	nodeVisitableGroupIds, err := u.nodeUsecase.GetNodeIdsByAuthId(ctx, authId, consts.NodePermNameVisitable)
+	if err != nil {
+		return nil, err
+	}
+
+	navList, err := u.navRepo.GetListByIds(ctx, kbId, navIds)
+	if err != nil {
+		return nil, err
+	}
+
+	// 构建 navId -> navName 的 map
+	navMap := make(map[string]string)
+	for _, nav := range navList {
+		navMap[nav.ID] = nav.Name
+	}
+
+	allNodes, err := u.nodeUsecase.GetRecommendNodeList(ctx, &domain.GetRecommendNodeListReq{
+		KBID:   kbId,
+		NavIds: navIds,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	filteredAll := u.filterNodesByPermissions(allNodes, nodeVisibleGroupIds, nodeVisitableGroupIds)
+
+	// 按 navId 分组，保持 navIds 的原始顺序
+	nodesByNav := make(map[string][]*domain.RecommendNodeListResp, len(navIds))
+	for _, node := range filteredAll {
+		nodesByNav[node.NavId] = append(nodesByNav[node.NavId], node)
+	}
+
+	recommendNodes := make([]*domain.RecommendNodeListResp, 0, len(navIds))
+	for _, navId := range navIds {
+		recommendNodes = append(recommendNodes, &domain.RecommendNodeListResp{
+			NavId:          navId,
+			NavName:        navMap[navId],
+			RecommendNodes: nodesByNav[navId],
+		})
+	}
+
 	return recommendNodes, nil
 }
