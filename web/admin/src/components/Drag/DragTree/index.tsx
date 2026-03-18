@@ -28,6 +28,7 @@ const DragTree = forwardRef<DragTreeHandle, DragTreeProps>(
       onSelectChange,
       supportSelect = true,
       relativeSelect = true,
+      selectionModel = 'cascade-parent-sync',
       disabled,
       virtualized = false,
       virtualizedHeight,
@@ -58,6 +59,7 @@ const DragTree = forwardRef<DragTreeHandle, DragTreeProps>(
           onSelectChange,
           supportSelect,
           relativeSelect,
+          selectionModel,
           disabled,
           scrollToItem: (itemId: string) => {
             sortableTreeRef.current?.scrollToItem(itemId);
