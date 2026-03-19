@@ -101,6 +101,9 @@ const DocPageListContent = ({
                 height: '35px',
               }}
               checked={selected.length === list.length}
+              indeterminate={
+                selected.length > 0 && selected.length < list.length
+              }
               onChange={e => {
                 e.stopPropagation();
                 if (selected.length === list.length) {
@@ -258,6 +261,7 @@ const DocPageListContent = ({
             selected={selected}
             onSelectChange={onSelectChange}
             supportSelect={supportSelect}
+            selectionModel='parent-controls-child'
             virtualized={true}
             registerDragHandlers={registerTreeDragHandlers}
           />

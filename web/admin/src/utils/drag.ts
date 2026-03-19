@@ -27,6 +27,7 @@ export interface DragTreeProps {
   supportSelect?: boolean;
   onSelectChange?: (value: string[], id?: string) => void;
   relativeSelect?: boolean;
+  selectionModel?: 'cascade-parent-sync' | 'parent-controls-child';
   traverseFolder?: boolean;
   disabled?: (value: ITreeItem) => boolean;
   virtualized?: boolean;
