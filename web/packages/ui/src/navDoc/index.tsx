@@ -7,31 +7,33 @@ import {
   StyledTopicTitle,
   StyledEllipsis,
 } from '../component/styledCommon';
-import { IconWenjianjia, IconWenjian } from '@panda-wiki/icons';
+import { IconWenjianjia, IconWenjian, IconMulushu } from '@panda-wiki/icons';
 import {
   useFadeInText,
   useCardFadeInAnimation,
 } from '../hooks/useGsapAnimation';
-interface DirDocProps {
+
+interface NavDocProps {
   mobile?: boolean;
   title?: string;
   bgColor?: string;
   titleColor?: string;
   items?: {
-    id: string;
-    name: string;
+    nav_id: string;
+    nav_name: string;
     emoji?: string;
-    recommend_nodes: {
+    list: {
       id: string;
       name: string;
       emoji?: string;
+      type?: number;
       position?: number;
     }[];
   }[];
   basePath?: string;
 }
 
-const StyledDirDocItem = styled('div')(({ theme }) => ({
+const StyledNavDocItem = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'flex-start',
@@ -51,7 +53,20 @@ const StyledDirDocItem = styled('div')(({ theme }) => ({
   opacity: 0,
 }));
 
-const StyledDirDocItemTitle = styled('h3')(({ theme }) => ({
+/** 顶部目录大图标区域 */
+const StyledNavDocItemIcon = styled('div')(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: 30,
+  height: 30,
+  borderRadius: '4px',
+  backgroundColor: alpha(theme.palette.primary.main, 0.1),
+  flexShrink: 0,
+}));
+
+/** 目录标题行 */
+const StyledNavDocItemTitle = styled('h3')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   color: theme.palette.text.primary,
@@ -59,18 +74,17 @@ const StyledDirDocItemTitle = styled('h3')(({ theme }) => ({
   fontSize: 20,
   fontWeight: 700,
   width: '100%',
-  cursor: 'pointer',
-  '&:hover': {
-    color: theme.palette.primary.main,
-  },
+  margin: 0,
 }));
 
-const StyledDirDocItemFiles = styled('div')(({ theme }) => ({
+/** 子文件/文件夹列表容器 */
+const StyledNavDocItemFiles = styled('div')(({ theme }) => ({
   display: 'flex',
   flex: '1 0 auto',
   flexDirection: 'column',
   justifyContent: 'flex-start',
   gap: theme.spacing(2),
+  marginLeft: theme.spacing(0.5),
   fontSize: 14,
   fontWeight: 400,
   height: 129,
@@ -78,7 +92,8 @@ const StyledDirDocItemFiles = styled('div')(({ theme }) => ({
   lineHeight: 1.5,
 }));
 
-const StyledDirDocItemFile = styled('a')(({ theme }) => ({
+/** 单条子节点链接 */
+const StyledNavDocItemFile = styled('a')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   gap: theme.spacing(1),
@@ -91,8 +106,8 @@ const StyledDirDocItemFile = styled('a')(({ theme }) => ({
 }));
 
 // 单个卡片组件，带动画效果
-const DirDocItem: React.FC<{
-  item: any;
+const NavDocItem: React.FC<{
+  item: NonNullable<NavDocProps['items']>[number];
   index: number;
   basePath: string;
   size: any;
@@ -100,38 +115,41 @@ const DirDocItem: React.FC<{
   const cardRef = useCardFadeInAnimation(0.2 + index * 0.1, 0.1);
 
   return (
-    <Grid size={size} key={index}>
-      <StyledDirDocItem ref={cardRef as React.Ref<HTMLDivElement>}>
-        <StyledDirDocItemTitle
-          onClick={() => {
-            window.open(`${basePath}/node/${item.id}`, '_blank');
-          }}
-        >
-          {item.emoji ? (
-            <Box>{item.emoji}</Box>
-          ) : (
-            <IconWenjianjia sx={{ fontSize: 16, flexShrink: 0 }} />
-          )}
-          <StyledEllipsis>{item.name}</StyledEllipsis>
-        </StyledDirDocItemTitle>
-        <StyledDirDocItemFiles>
-          {item.recommend_nodes.slice(0, 4).map((it: any) => (
-            <StyledDirDocItemFile
+    <Grid size={size}>
+      <StyledNavDocItem ref={cardRef as React.Ref<HTMLDivElement>}>
+        {/* 图标 + 目录名称（同一行） */}
+        <StyledNavDocItemTitle>
+          <StyledNavDocItemIcon>
+            <IconMulushu sx={{ fontSize: 20, color: 'primary.main' }} />
+          </StyledNavDocItemIcon>
+          <StyledEllipsis>{item.nav_name}</StyledEllipsis>
+        </StyledNavDocItemTitle>
+
+        {/* 下级文件/文件夹列表（最多展示 4 条） */}
+        <StyledNavDocItemFiles>
+          {item.list?.slice(0, 4).map(it => (
+            <StyledNavDocItemFile
               key={it.id}
               href={`${basePath}/node/${it.id}`}
               target='_blank'
             >
               {it.emoji ? (
-                <Box>{it.emoji}</Box>
+                <Box sx={{ fontSize: 14, lineHeight: 1, flexShrink: 0 }}>
+                  {it.emoji}
+                </Box>
+              ) : it.type === 1 ? (
+                <IconWenjianjia sx={{ fontSize: 14, flexShrink: 0 }} />
               ) : (
                 <IconWenjian sx={{ fontSize: 14, flexShrink: 0 }} />
               )}
               <StyledEllipsis>{it.name}</StyledEllipsis>
-            </StyledDirDocItemFile>
+            </StyledNavDocItemFile>
           ))}
-        </StyledDirDocItemFiles>
+        </StyledNavDocItemFiles>
+
+        {/* 查看更多按钮，跳转到目录页面 */}
         <Button
-          href={`${basePath}/node/${item.recommend_nodes[0]?.id}`}
+          href={item.list?.[0]?.id ? `${basePath}/node/${item.list[0].id}` : ''}
           target='_blank'
           sx={{ gap: 1, alignSelf: 'flex-end' }}
           variant='text'
@@ -139,17 +157,19 @@ const DirDocItem: React.FC<{
         >
           查看更多
         </Button>
-      </StyledDirDocItem>
+      </StyledNavDocItem>
     </Grid>
   );
 });
 
-const DirDoc: React.FC<DirDocProps> = React.memo(
+NavDocItem.displayName = 'NavDocItem';
+
+const NavDoc: React.FC<NavDocProps> = React.memo(
   ({ title, items = [], mobile, basePath = '' }) => {
     const size =
       typeof mobile === 'boolean' ? (mobile ? 12 : 4) : { xs: 12, md: 4 };
 
-    // 添加标题淡入动画
+    // 标题淡入动画
     const titleRef = useFadeInText(0.2, 0.1);
 
     return (
@@ -157,8 +177,8 @@ const DirDoc: React.FC<DirDocProps> = React.memo(
         <StyledTopicTitle ref={titleRef}>{title}</StyledTopicTitle>
         <Grid container spacing={3} sx={{ width: '100%' }}>
           {items.map((item, index) => (
-            <DirDocItem
-              key={index}
+            <NavDocItem
+              key={item.nav_id || index}
               item={item}
               index={index}
               basePath={basePath}
@@ -171,4 +191,6 @@ const DirDoc: React.FC<DirDocProps> = React.memo(
   },
 );
 
-export default React.memo(DirDoc);
+NavDoc.displayName = 'NavDoc';
+
+export default NavDoc;

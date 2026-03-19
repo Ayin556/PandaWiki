@@ -41,12 +41,12 @@ export enum DomainNodeType {
 
 /** @format int32 */
 export enum DomainNodeStatus {
-  /** 未发布 */
+  /** 草稿 */
   NodeStatusUnreleased = 0,
   /** 更新未发布 */
   NodeStatusDraft = 1,
   /** 已发布 */
-  NodeStatusReleased = 2,
+  NodeStatusPublished = 2,
 }
 
 export enum DomainModelType {
@@ -393,6 +393,7 @@ export interface DomainAppSettings {
   wechat_service_equal_keywords?: string[];
   /** WechatServiceBot */
   wechat_service_is_enabled?: boolean;
+  wechat_service_logo?: string;
   wechat_service_secret?: string;
   wechat_service_token?: string;
   /** WecomAIBotSettings 企业微信智能机器人 */
@@ -482,6 +483,7 @@ export interface DomainAppSettingsResp {
   wechat_service_equal_keywords?: string[];
   /** WechatServiceBot */
   wechat_service_is_enabled?: boolean;
+  wechat_service_logo?: string;
   wechat_service_secret?: string;
   wechat_service_token?: string;
   wecom_ai_bot_settings?: DomainWecomAIBotSettings;
@@ -992,6 +994,11 @@ export interface DomainMoveNodeReq {
   prev_id?: string;
 }
 
+export interface DomainNavDocConfig {
+  nav_ids?: string[];
+  title?: string;
+}
+
 export interface DomainNodeActionReq {
   action: "delete";
   ids: string[];
@@ -1409,6 +1416,7 @@ export interface DomainWebAppLandingConfig {
   feature_config?: DomainFeatureConfig;
   img_text_config?: DomainImgTextConfig;
   metrics_config?: DomainMetricsConfig;
+  nav_doc_config?: DomainNavDocConfig;
   node_ids?: string[];
   question_config?: DomainQuestionConfig;
   simple_doc_config?: DomainSimpleDocConfig;
@@ -1430,6 +1438,7 @@ export interface DomainWebAppLandingConfigResp {
   feature_config?: DomainFeatureConfig;
   img_text_config?: DomainImgTextConfig;
   metrics_config?: DomainMetricsConfig;
+  nav_doc_config?: DomainNavDocConfig;
   node_ids?: string[];
   nodes?: DomainRecommendNodeListResp[];
   question_config?: DomainQuestionConfig;
@@ -1477,6 +1486,7 @@ export interface GithubComChaitinPandaWikiApiAuthV1AuthGetResp {
 
 export interface GithubComChaitinPandaWikiApiNodeV1NodeListGroupNavResp {
   count?: number;
+  is_released?: boolean;
   list?: DomainNodeListItemResp[];
   nav_id?: string;
   nav_name?: string;
@@ -1752,6 +1762,13 @@ export interface V1NodeDetailResp {
   updated_at?: string;
 }
 
+export interface V1NodeMoveNavReq {
+  /** @minItems 1 */
+  ids: string[];
+  kb_id: string;
+  nav_id: string;
+}
+
 export interface V1NodePermissionEditReq {
   /** 可被问答 */
   answerable_groups?: number[];
@@ -1788,6 +1805,8 @@ export type V1NodeRestudyResp = Record<string, any>;
 export interface V1NodeStatsResp {
   /** 未发布的文档数 */
   unpublished_count?: number;
+  /** 未发布目录数量 */
+  unreleased_nav_count?: number;
   /** 未学习的文档数 */
   unstudied_count?: number;
 }
@@ -2028,7 +2047,7 @@ export interface GetApiV1NodeListParams {
 export interface GetApiV1NodeListGroupNavParams {
   kb_id: string;
   search?: string;
-  status?: "unpublished" | "unstudied";
+  status?: "released" | "unpublished" | "unstudied";
 }
 
 export interface GetApiV1NodePermissionParams {

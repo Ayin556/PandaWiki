@@ -41,12 +41,12 @@ export enum DomainNodeType {
 
 /** @format int32 */
 export enum DomainNodeStatus {
-  /** 未发布 */
+  /** 草稿 */
   NodeStatusUnreleased = 0,
   /** 更新未发布 */
   NodeStatusDraft = 1,
   /** 已发布 */
-  NodeStatusReleased = 2,
+  NodeStatusPublished = 2,
 }
 
 export enum DomainModelType {
@@ -994,6 +994,11 @@ export interface DomainMoveNodeReq {
   prev_id?: string;
 }
 
+export interface DomainNavDocConfig {
+  nav_ids?: string[];
+  title?: string;
+}
+
 export interface DomainNodeActionReq {
   action: "delete";
   ids: string[];
@@ -1411,6 +1416,7 @@ export interface DomainWebAppLandingConfig {
   feature_config?: DomainFeatureConfig;
   img_text_config?: DomainImgTextConfig;
   metrics_config?: DomainMetricsConfig;
+  nav_doc_config?: DomainNavDocConfig;
   node_ids?: string[];
   question_config?: DomainQuestionConfig;
   simple_doc_config?: DomainSimpleDocConfig;
@@ -1432,6 +1438,7 @@ export interface DomainWebAppLandingConfigResp {
   feature_config?: DomainFeatureConfig;
   img_text_config?: DomainImgTextConfig;
   metrics_config?: DomainMetricsConfig;
+  nav_doc_config?: DomainNavDocConfig;
   node_ids?: string[];
   nodes?: DomainRecommendNodeListResp[];
   question_config?: DomainQuestionConfig;
@@ -2039,8 +2046,9 @@ export interface GetApiV1NodeListParams {
 
 export interface GetApiV1NodeListGroupNavParams {
   kb_id: string;
+  nav_ids?: string[];
   search?: string;
-  status?: "unpublished" | "unstudied";
+  status?: "released" | "unpublished" | "unstudied";
 }
 
 export interface GetApiV1NodePermissionParams {
@@ -2050,7 +2058,8 @@ export interface GetApiV1NodePermissionParams {
 
 export interface GetApiV1NodeRecommendNodesParams {
   kb_id: string;
-  node_ids: string[];
+  nav_ids?: string[];
+  node_ids?: string[];
 }
 
 export interface GetApiV1NodeStatsParams {

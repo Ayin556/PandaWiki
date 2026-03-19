@@ -3,7 +3,7 @@
 import { Banner } from '@panda-wiki/ui';
 import dynamic from 'next/dynamic';
 import { DomainRecommendNodeListResp } from '@/request/types';
-
+import { convertToTree } from '@/utils/tree';
 import { useStore } from '@/provider';
 import { useBasePath } from '@/hooks';
 import { getImagePath } from '@/utils/getImagePath';
@@ -40,7 +40,7 @@ const handleDirDocProps = (
   basePath: string,
 ) => {
   return {
-    title: config.title || '文档目录卡片',
+    title: config.title || '文件夹卡片',
     basePath,
     items:
       docs?.map(item => ({
@@ -50,6 +50,25 @@ const handleDirDocProps = (
         recommend_nodes: [...(item.recommend_nodes || [])].sort(
           (a, b) => (a.position ?? 0) - (b.position ?? 0),
         ),
+      })) || [],
+  };
+};
+
+const handleNavDocProps = (
+  config: any = {},
+  docs: DomainRecommendNodeListResp[],
+  basePath: string,
+) => {
+  return {
+    title: config.title || '目录卡片',
+    basePath,
+    items:
+      docs?.map(item => ({
+        id: item.id,
+        name: item.name,
+        ...item,
+        // @ts-ignore
+        list: convertToTree(item.recommend_nodes || []),
       })) || [],
   };
 };
@@ -187,6 +206,7 @@ const componentMap = {
   carousel: dynamic(() => import('@panda-wiki/ui').then(mod => mod.Carousel)),
   faq: dynamic(() => import('@panda-wiki/ui').then(mod => mod.Faq)),
   text: dynamic(() => import('@panda-wiki/ui').then(mod => mod.Text)),
+  nav_doc: dynamic(() => import('@panda-wiki/ui').then(mod => mod.NavDoc)),
   case: dynamic(() => import('@panda-wiki/ui').then(mod => mod.Case)),
   metrics: dynamic(() => import('@panda-wiki/ui').then(mod => mod.Metrics)),
   feature: dynamic(() => import('@panda-wiki/ui').then(mod => mod.Feature)),
@@ -220,6 +240,7 @@ const Welcome = () => {
   const TYPE_TO_CONFIG_LABEL = {
     banner: 'banner_config',
     basic_doc: 'basic_doc_config',
+    nav_doc: 'nav_doc_config',
     dir_doc: 'dir_doc_config',
     simple_doc: 'simple_doc_config',
     carousel: 'carousel_config',
@@ -248,6 +269,8 @@ const Welcome = () => {
         return handleBasicDocProps(config, data.nodes, basePath);
       case 'dir_doc':
         return handleDirDocProps(config, data.nodes, basePath);
+      case 'nav_doc':
+        return handleNavDocProps(config, data.nodes, basePath);
       case 'simple_doc':
         return handleSimpleDocProps(config, data.nodes, basePath);
       case 'carousel':

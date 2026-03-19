@@ -91,7 +91,7 @@ const History = () => {
   useEffect(() => {
     if (!curVersion || !kb_id) return;
     if (
-      curVersion.status === DomainNodeStatus.NodeStatusReleased &&
+      curVersion.status === DomainNodeStatus.NodeStatusPublished &&
       !curVersion.id
     ) {
       setDiffLoading(false);
@@ -106,7 +106,7 @@ const History = () => {
     setDiffLoading(true);
 
     const currentVersionPromise =
-      curVersion.status !== DomainNodeStatus.NodeStatusReleased
+      curVersion.status !== DomainNodeStatus.NodeStatusPublished
         ? Promise.resolve().then(() => {
             const versionId = curVersion.id;
             return getApiV1NodeDetail({ id: id, kb_id: kb_id }).then(res => {
@@ -153,7 +153,7 @@ const History = () => {
 
     if (
       currentIndex === 0 &&
-      curVersion.status !== DomainNodeStatus.NodeStatusReleased
+      curVersion.status !== DomainNodeStatus.NodeStatusPublished
     ) {
       // 草稿场景：上一版本为 list[1]（首个已发布版本）
       if (list.length > 1) {
@@ -170,7 +170,7 @@ const History = () => {
           });
         }
       }
-    } else if (curVersion.status === DomainNodeStatus.NodeStatusReleased) {
+    } else if (curVersion.status === DomainNodeStatus.NodeStatusPublished) {
       // 已发布场景：上一版本为 list[currentIndex + 1]（更早的发布版本）
       if (currentIndex >= 0 && currentIndex < list.length - 1) {
         const nextRelease = list[currentIndex + 1];
@@ -219,10 +219,10 @@ const History = () => {
       .then(([node, releases]) => {
         const releaseList = releases.map(item => ({
           ...item,
-          status: DomainNodeStatus.NodeStatusReleased,
+          status: DomainNodeStatus.NodeStatusPublished,
         }));
 
-        if (node.status !== DomainNodeStatus.NodeStatusReleased) {
+        if (node.status !== DomainNodeStatus.NodeStatusPublished) {
           // @ts-expect-error 忽略类型错误
           releaseList.unshift(node);
           setCurVersion(node);
@@ -233,7 +233,7 @@ const History = () => {
             // 已发布但无历史版本：将当前文档作为唯一版本展示
             const nodeAsRelease = {
               ...node,
-              status: DomainNodeStatus.NodeStatusReleased,
+              status: DomainNodeStatus.NodeStatusPublished,
             };
             releaseList.push(nodeAsRelease);
             setCurVersion(nodeAsRelease);
@@ -378,7 +378,7 @@ const History = () => {
                 ))}
               <Stack direction={'row'} alignItems={'center'} gap={0.5}>
                 <IconAShijian2 sx={{ fontSize: 12 }} />
-                {curVersion?.status !== DomainNodeStatus.NodeStatusReleased
+                {curVersion?.status !== DomainNodeStatus.NodeStatusPublished
                   ? dayjs(curVersion?.updated_at).format(
                       'YYYY 年 MM 月 DD 日 HH 时 mm 分 ss 秒',
                     ) + ' 编辑'
@@ -506,12 +506,12 @@ const History = () => {
               }}
             >
               <Ellipsis sx={{ color: 'text.primary' }}>
-                {item.status !== DomainNodeStatus.NodeStatusReleased
+                {item.status !== DomainNodeStatus.NodeStatusPublished
                   ? '未发布的草稿'
                   : item.release_name}
               </Ellipsis>
               <Box sx={{ fontSize: 13, color: 'text.tertiary' }}>
-                {item.status !== DomainNodeStatus.NodeStatusReleased
+                {item.status !== DomainNodeStatus.NodeStatusPublished
                   ? dayjs(item.updated_at).format(
                       'YYYY 年 MM 月 DD 日 HH 时 mm 分 ss 秒',
                     ) + ' 编辑'
@@ -523,7 +523,7 @@ const History = () => {
                 justifyContent={'space-between'}
                 sx={{ mt: 1, height: 21 }}
               >
-                {item.status === DomainNodeStatus.NodeStatusReleased ? (
+                {item.status === DomainNodeStatus.NodeStatusPublished ? (
                   item.publisher_account && (
                     <Stack
                       direction={'row'}
@@ -564,7 +564,7 @@ const History = () => {
                 )}
 
                 {curVersion?.id === item.id &&
-                  item.status === DomainNodeStatus.NodeStatusReleased && (
+                  item.status === DomainNodeStatus.NodeStatusPublished && (
                     <Box
                       sx={{
                         fontSize: 14,

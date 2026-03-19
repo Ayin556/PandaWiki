@@ -6,21 +6,20 @@ import DragList from '../../components/DragList';
 import SortableItem from '../../components/SortableItem';
 import Item from './Item';
 import { Empty } from '@ctzhian/ui';
-import { DomainNodeType } from '@/request/types';
 import type { ConfigProps } from '../type';
 import { useAppSelector } from '@/store';
-import AddRecommendContent from '@/pages/setting/component/AddRecommendContent';
-import { getApiV1NodeRecommendNodes } from '@/request/Node';
+import { getApiV1NodeListGroupNav } from '@/request/Node';
+import { convertToTree } from '@/utils/drag';
+import AddNavContent from './AddNavContent';
 import useDebounceAppPreviewData from '@/hooks/useDebounceAppPreviewData';
 import { DEFAULT_DATA } from '../../../constants';
 import { findConfigById, handleLandingConfigs } from '../../../utils';
 
-const DirDocConfig = ({ setIsEdit, id }: ConfigProps) => {
-  const { kb_id } = useAppSelector(state => state.config);
-  const { appPreviewData } = useAppSelector(state => state.config);
+const NavDocConfig = ({ setIsEdit, id }: ConfigProps) => {
+  const { appPreviewData, kb_id } = useAppSelector(state => state.config);
   const debouncedDispatch = useDebounceAppPreviewData();
   const { control, setValue, watch, subscribe, reset } = useForm<
-    typeof DEFAULT_DATA.dir_doc
+    typeof DEFAULT_DATA.nav_doc
   >({
     defaultValues: findConfigById(
       appPreviewData?.settings?.web_app_landing_configs || [],
@@ -32,14 +31,27 @@ const DirDocConfig = ({ setIsEdit, id }: ConfigProps) => {
   const [open, setOpen] = useState(false);
 
   const nodeRec = (ids: string[]) => {
-    getApiV1NodeRecommendNodes({ kb_id, node_ids: ids }).then(res => {
-      setValue('nodes', res);
-    });
+    getApiV1NodeListGroupNav({ kb_id, nav_ids: ids, status: 'released' }).then(
+      res => {
+        setValue(
+          'nodes',
+          res.map(item => {
+            const navTreeList = item.list ? convertToTree(item.list || []) : [];
+            return {
+              ...item,
+              id: item.nav_id!,
+              name: item.nav_name,
+              list: navTreeList,
+            };
+          }),
+        );
+      },
+    );
   };
 
-  const handleListChange = (newList: string[]) => {
+  const handleListChange = (ids: string[]) => {
     setIsEdit(true);
-    nodeRec(newList);
+    nodeRec(ids);
   };
 
   // 稳定的 SortableItemComponent 引用
@@ -86,6 +98,7 @@ const DirDocConfig = ({ setIsEdit, id }: ConfigProps) => {
 
   return (
     <StyledCommonWrapper>
+      {/* 标题配置 */}
       <CommonItem title='标题'>
         <Controller
           control={control}
@@ -94,34 +107,10 @@ const DirDocConfig = ({ setIsEdit, id }: ConfigProps) => {
             <TextField label='文字' {...field} placeholder='请输入' />
           )}
         />
-        {/* <Controller
-          control={control}
-          name='title_color'
-          render={({ field }) => (
-            <ColorPickerField
-              label='标题颜色'
-              value={field.value}
-              onChange={field.onChange}
-              sx={{ flex: 1 }}
-            />
-          )}
-        /> */}
       </CommonItem>
 
-      {/* <CommonItem title='背景颜色'>
-        <Controller
-          control={control}
-          name='bg_color'
-          render={({ field }) => (
-            <ColorPickerField
-              value={field.value}
-              onChange={field.onChange}
-              sx={{ flex: 1 }}
-            />
-          )}
-        />
-      </CommonItem> */}
-      <CommonItem title='推荐文件夹' onAdd={() => setOpen(true)}>
+      {/* 推荐目录列表 */}
+      <CommonItem title='推荐目录' onAdd={() => setOpen(true)}>
         {nodes.length === 0 ? (
           <Empty />
         ) : (
@@ -137,16 +126,16 @@ const DirDocConfig = ({ setIsEdit, id }: ConfigProps) => {
           />
         )}
       </CommonItem>
-      <AddRecommendContent
+
+      {/* 添加目录弹窗：只选择导航目录名称 */}
+      <AddNavContent
         open={open}
-        selected={nodes.map(item => item.id!)}
+        selected={nodes.map(item => item.nav_id!)}
         onChange={handleListChange}
         onClose={() => setOpen(false)}
-        disabled={item => item.type === DomainNodeType.NodeTypeDocument}
-        nodeType={DomainNodeType.NodeTypeFolder}
       />
     </StyledCommonWrapper>
   );
 };
 
-export default DirDocConfig;
+export default NavDocConfig;
