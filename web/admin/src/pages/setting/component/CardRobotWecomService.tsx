@@ -19,7 +19,7 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { FormItem, SettingCardItem } from './Common';
+import { FormItem, SettingCardItem, SecretTextField } from './Common';
 import UploadFile from '@/components/UploadFile';
 import VersionMask from '@/components/VersionMask';
 import { PROFESSION_VERSION_PERMISSION } from '@/constant/version';
@@ -202,7 +202,7 @@ const CardRobotWecomService = ({
                 required: 'Corp Secret',
               }}
               render={({ field }) => (
-                <TextField
+                <SecretTextField
                   {...field}
                   fullWidth
                   placeholder=''
@@ -224,7 +224,7 @@ const CardRobotWecomService = ({
                 required: 'Suite Token',
               }}
               render={({ field }) => (
-                <TextField
+                <SecretTextField
                   {...field}
                   fullWidth
                   placeholder=''
@@ -246,7 +246,7 @@ const CardRobotWecomService = ({
                 required: 'Suite Encoding Aes Key',
               }}
               render={({ field }) => (
-                <TextField
+                <SecretTextField
                   {...field}
                   fullWidth
                   placeholder=''
