@@ -43,13 +43,6 @@ const MoveDocs = ({
       .then(res => {
         const list = (res || []) as V1NavListResp[];
         setNavList(list);
-        if (!targetNavId && list.length > 0) {
-          const current =
-            (nav_id &&
-              list.find(item => item.id && item.id === String(nav_id))) ||
-            null;
-          setTargetNavId(current?.id || list[0]?.id || null);
-        }
         setHasLoadedNavs(true);
       })
       .finally(() => {
@@ -163,6 +156,7 @@ const MoveDocs = ({
                 if (isActive) {
                   setTargetNavId(null);
                 } else {
+                  setFolderIds([]);
                   setTargetNavId(item.id || null);
                 }
               };
@@ -228,6 +222,7 @@ const MoveDocs = ({
                         sx={{ fontSize: 14, cursor: 'pointer' }}
                         onClick={e => {
                           e.stopPropagation();
+                          setTargetNavId(null);
                           setFolderIds(
                             folderIds.includes('root') ? [] : ['root'],
                           );
@@ -253,6 +248,7 @@ const MoveDocs = ({
                         readOnly={true}
                         relativeSelect={false}
                         onSelectChange={(ids, id = '') => {
+                          setTargetNavId(null);
                           if (folderIds.includes(id)) {
                             setFolderIds([]);
                           } else {
