@@ -232,8 +232,21 @@ const Wrap = ({ detail: defaultDetail }: WrapProps) => {
 
   const exportFile = (value: string, type: string) => {
     if (!value) return;
-    const content = completeIncompleteLinks(value);
-    const blob = new Blob([content], { type: `text/${type}` });
+    const completed = completeIncompleteLinks(value);
+    let content = completed;
+    let mimeType = `text/${type}`;
+    if (type === 'html') {
+      mimeType = 'text/html;charset=utf-8';
+      const safeTitle = (nodeDetail?.name || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+      content = `<!DOCTYPE html>\n<html>\n<head>\n<meta charset="utf-8" />\n<title>${safeTitle}</title>\n</head>\n<body>\n${completed}\n</body>\n</html>`;
+    } else if (type === 'md') {
+      mimeType = 'text/markdown;charset=utf-8';
+    }
+    const blob = new Blob([content], { type: mimeType });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
