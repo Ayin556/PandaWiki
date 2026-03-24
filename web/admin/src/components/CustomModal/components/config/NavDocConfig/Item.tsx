@@ -1,18 +1,17 @@
-import { postApiV1NodeSummary } from '@/request/Node';
-import { DomainRecommendNodeListResp } from '@/request/types';
-import { useAppSelector } from '@/store';
+import { GithubComChaitinPandaWikiApiNodeV1NodeListGroupNavResp } from '@/request/types';
 import { Box, IconButton, Stack } from '@mui/material';
-import { Ellipsis, message } from '@ctzhian/ui';
+import { Ellipsis } from '@ctzhian/ui';
 import {
   IconShanchu2,
   IconDrag,
   IconWenjianjia,
   IconWenjian,
+  IconMulushu,
 } from '@panda-wiki/icons';
-import { CSSProperties, forwardRef, HTMLAttributes, useState } from 'react';
+import { CSSProperties, forwardRef, HTMLAttributes } from 'react';
 
 export type ItemProps = HTMLAttributes<HTMLDivElement> & {
-  item: DomainRecommendNodeListResp;
+  item: GithubComChaitinPandaWikiApiNodeV1NodeListGroupNavResp & { id: string };
   withOpacity?: boolean;
   isDragging?: boolean;
   dragHandleProps?: any;
@@ -34,7 +33,6 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(
     },
     ref,
   ) => {
-    const { kb_id } = useAppSelector(state => state.config);
     const inlineStyles: CSSProperties = {
       opacity: withOpacity ? '0.5' : '1',
       borderRadius: '10px',
@@ -44,21 +42,8 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(
       minWidth: '0px',
       ...style,
     };
-    const [loading, setLoading] = useState(false);
 
-    const handleCreateSummary = () => {
-      setLoading(true);
-      postApiV1NodeSummary({ ids: [item.id!], kb_id })
-        .then(() => {
-          message.success('生成摘要成功');
-          refresh?.();
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    };
-
-    const recommend_nodes = [...(item.recommend_nodes || [])];
+    const recommend_nodes = [...(item.list || [])];
 
     return (
       <Box ref={ref} style={inlineStyles} {...props}>
@@ -84,46 +69,13 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(
             }}
           >
             <Stack direction={'row'} alignItems={'center'} gap={1}>
-              {item.emoji ? (
-                <Box sx={{ fontSize: 14, color: '#2f80f7', flexShrink: 0 }}>
-                  {item.emoji}
-                </Box>
-              ) : item.type === 1 ? (
-                <IconWenjianjia
-                  sx={{ fontSize: 14, color: '#2f80f7', flexShrink: 0 }}
-                />
-              ) : (
-                <IconWenjian
-                  sx={{ fontSize: 14, color: '#2f80f7', flexShrink: 0 }}
-                />
-              )}
+              <IconMulushu
+                sx={{ fontSize: 14, color: '#2f80f7', flexShrink: 0 }}
+              />
               <Ellipsis sx={{ flex: 1, width: 0, lineHeight: '32px' }}>
-                {item.name}
+                {item.nav_name}
               </Ellipsis>
             </Stack>
-            {item.summary ? (
-              <Box
-                className='ellipsis-5'
-                sx={{
-                  fontSize: 14,
-                  color: 'text.tertiary',
-                  lineHeight: '21px',
-                }}
-              >
-                {item.summary}
-              </Box>
-            ) : item.type === 2 ? (
-              <Box
-                sx={{ color: 'warning.main', fontSize: 12, lineHeight: '21px' }}
-              >
-                暂无摘要，可前往文档页生成并发布
-              </Box>
-            ) : null}
-            {/* : item.type === 2 ? <Button size='small' loading={loading} sx={{
-            height: '21px',
-            px: 0,
-            ml: '18px',
-          }} onClick={handleCreateSummary}>生成摘要</Button> : null} */}
             {recommend_nodes.length > 0 && (
               <Stack sx={{ fontSize: 14, color: 'text.tertiary', pl: '20px' }}>
                 {recommend_nodes
@@ -134,7 +86,7 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(
                       direction={'row'}
                       alignItems={'center'}
                       gap={1}
-                      key={it.id}
+                      key={item.nav_id}
                     >
                       {it.emoji ? (
                         <Box
@@ -163,7 +115,7 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(
               size='small'
               onClick={e => {
                 e.stopPropagation();
-                handleRemove?.(item.id!);
+                handleRemove?.(item.nav_id!);
               }}
               sx={{
                 color: 'text.tertiary',
