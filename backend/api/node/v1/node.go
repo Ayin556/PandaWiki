@@ -84,9 +84,10 @@ type NodeMoveNavReq struct {
 }
 
 type NodeListGroupNavReq struct {
-	KbId   string `json:"kb_id" query:"kb_id" validate:"required"`
-	Search string `json:"search" query:"search"`
-	Status string `json:"status" query:"status" validate:"omitempty,oneof=unpublished unstudied"`
+	KbId   string   `json:"kb_id" query:"kb_id" validate:"required"`
+	NavIds []string `json:"nav_ids" query:"nav_ids[]"`
+	Search string   `json:"search" query:"search"`
+	Status string   `json:"status" query:"status" validate:"omitempty,oneof=released unpublished unstudied"`
 }
 
 type NodeListGroupNavResp struct {

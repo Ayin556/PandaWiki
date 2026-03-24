@@ -2280,12 +2280,22 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "name": "nav_ids",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "search",
                         "in": "query"
                     },
                     {
                         "enum": [
+                            "released",
                             "unpublished",
                             "unstudied"
                         ],
@@ -2535,9 +2545,17 @@ const docTemplate = `{
                             "type": "string"
                         },
                         "collectionFormat": "csv",
+                        "name": "nav_ids",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
                         "name": "node_ids",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -7119,6 +7137,20 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.NavDocConfig": {
+            "type": "object",
+            "properties": {
+                "nav_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.NodeActionReq": {
             "type": "object",
             "required": [
@@ -7308,18 +7340,18 @@ const docTemplate = `{
             ],
             "x-enum-comments": {
                 "NodeStatusDraft": "更新未发布",
-                "NodeStatusReleased": "已发布",
-                "NodeStatusUnreleased": "未发布"
+                "NodeStatusPublished": "已发布",
+                "NodeStatusUnreleased": "草稿"
             },
             "x-enum-descriptions": [
-                "未发布",
+                "草稿",
                 "更新未发布",
                 "已发布"
             ],
             "x-enum-varnames": [
                 "NodeStatusUnreleased",
                 "NodeStatusDraft",
-                "NodeStatusReleased"
+                "NodeStatusPublished"
             ]
         },
         "domain.NodeSummaryReq": {
@@ -7740,6 +7772,12 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name": {
+                    "type": "string"
+                },
+                "nav_id": {
+                    "type": "string"
+                },
+                "nav_name": {
                     "type": "string"
                 },
                 "parent_id": {
@@ -8355,6 +8393,9 @@ const docTemplate = `{
                 "metrics_config": {
                     "$ref": "#/definitions/domain.MetricsConfig"
                 },
+                "nav_doc_config": {
+                    "$ref": "#/definitions/domain.NavDocConfig"
+                },
                 "node_ids": {
                     "type": "array",
                     "items": {
@@ -8419,6 +8460,9 @@ const docTemplate = `{
                 },
                 "metrics_config": {
                     "$ref": "#/definitions/domain.MetricsConfig"
+                },
+                "nav_doc_config": {
+                    "$ref": "#/definitions/domain.NavDocConfig"
                 },
                 "node_ids": {
                     "type": "array",
