@@ -149,12 +149,27 @@ const Header = React.memo(
                 color: 'text.primary',
                 textDecoration: 'none',
                 '&:hover': { color: 'primary.main' },
+                ...(mobile && {
+                  minWidth: 0,
+                  overflow: 'hidden',
+                }),
               }}
             >
-              {logo && <img src={logo} alt='logo' height={36} />}
+              {logo && (
+                <img
+                  src={logo}
+                  alt='logo'
+                  height={36}
+                  style={{
+                    flexShrink: mobile ? 1 : 0,
+                    maxWidth: mobile ? '100%' : 'none',
+                    objectFit: 'contain',
+                  }}
+                />
+              )}
               <Box
                 sx={{
-                  fontSize: 20,
+                  fontSize: mobile ? 16 : 20,
                   whiteSpace: 'nowrap',
                   textOverflow: 'ellipsis',
                   overflow: 'hidden',
