@@ -12,6 +12,7 @@ import (
 	"slices"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/google/uuid"
 	"github.com/samber/lo"
@@ -221,6 +222,10 @@ func (cfg *WechatServiceConfig) SendResponseToKfUrl(userId, openkfId, conversati
 		return err
 	}
 
+	if utf8.RuneCountInString(question) > 35 {
+		question = string([]rune(question)[:35]) + "......"
+	}
+
 	reply := ReplyMsgUrl{
 		Touser:   userId,
 		OpenKfid: openkfId,
@@ -284,7 +289,7 @@ func (cfg *WechatServiceConfig) SendMessage(jsonData []byte, token string) error
 	}
 
 	if res.ErrCode != 0 {
-		cfg.logger.Error("发送给微信客服消息失败", log.Any("errcode", res.ErrCode))
+		cfg.logger.Error("发送给微信客服消息失败", log.Any("errcode", res.ErrCode), log.Any("errmsg", res.ErrMsg), log.Any("jsonData", string(jsonData)))
 		return err
 	}
 	// 发送消息给微信客服成功
