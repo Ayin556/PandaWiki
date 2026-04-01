@@ -5121,7 +5121,31 @@ paths:
             $ref: '#/definitions/domain.Response'
       security:
       - bearerAuth: []
-      summary: Summary Node
+      summary: Summary Node 异步后台生成
+      tags:
+      - node
+  /api/v1/node/summary/stream:
+    post:
+      consumes:
+      - application/json
+      description: Stream Summary Node for single document
+      parameters:
+      - description: Summary Node
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/domain.NodeSummaryReq'
+      produces:
+      - text/event-stream
+      responses:
+        "200":
+          description: SSE stream
+          schema:
+            type: string
+      security:
+      - bearerAuth: []
+      summary: Stream Summary Node
       tags:
       - node
   /api/v1/stat/browsers:

@@ -121,14 +121,16 @@ const DocPageListContent = ({
                   已选中 {selected.length} 项
                 </Box>
                 <Stack direction={'row'} alignItems={'center'} gap={1}>
-                  <Button
-                    size='small'
-                    color='primary'
-                    sx={{ minWidth: 0, p: 0, lineHeight: 1 }}
-                    onClick={onMoreSummaryOpen}
-                  >
-                    生成摘要
-                  </Button>
+                  {selected.length > 1 && (
+                    <Button
+                      size='small'
+                      color='primary'
+                      sx={{ minWidth: 0, p: 0, lineHeight: 1 }}
+                      onClick={onMoreSummaryOpen}
+                    >
+                      生成摘要
+                    </Button>
+                  )}
                   <Button
                     size='small'
                     color='primary'

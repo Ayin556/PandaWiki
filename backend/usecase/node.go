@@ -267,39 +267,51 @@ func (u *NodeUsecase) MoveNode(ctx context.Context, req *domain.MoveNodeReq) err
 	return u.nodeRepo.MoveNodeBetween(ctx, req.ID, req.ParentID, req.PrevID, req.NextID, req.KbID)
 }
 
-func (u *NodeUsecase) SummaryNode(ctx context.Context, req *domain.NodeSummaryReq) (string, error) {
+func (u *NodeUsecase) SummaryNode(ctx context.Context, req *domain.NodeSummaryReq) error {
+	_, err := u.modelUsecase.GetChatModel(ctx)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return domain.ErrModelNotConfigured
+		}
+		return err
+	}
+	// async create node summary
+	nodeVectorContentRequests := make([]*domain.NodeReleaseVectorRequest, 0)
+	for _, id := range req.IDs {
+		nodeVectorContentRequests = append(nodeVectorContentRequests, &domain.NodeReleaseVectorRequest{
+			KBID:   req.KBID,
+			NodeID: id,
+			Action: "summary",
+		})
+	}
+	if err := u.ragRepo.AsyncUpdateNodeReleaseVector(ctx, nodeVectorContentRequests); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (u *NodeUsecase) StreamSummaryNode(ctx context.Context, req *domain.NodeSummaryReq, onChunk func(ctx context.Context, dataType, chunk string) error) error {
 	model, err := u.modelUsecase.GetChatModel(ctx)
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return "", domain.ErrModelNotConfigured
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return domain.ErrModelNotConfigured
 		}
-		return "", err
+		return err
 	}
-	if len(req.IDs) == 1 {
-		node, err := u.nodeRepo.GetNodeByID(ctx, req.IDs[0])
-		if err != nil {
-			return "", fmt.Errorf("get latest node release failed: %w", err)
-		}
-		summary, err := u.llmUsecase.SummaryNode(ctx, req.KBID, model, node.Name, node.Content)
-		if err != nil {
-			return "", fmt.Errorf("summary node failed: %w", err)
-		}
-		return summary, nil
-	} else {
-		// async create node summary
-		nodeVectorContentRequests := make([]*domain.NodeReleaseVectorRequest, 0)
-		for _, id := range req.IDs {
-			nodeVectorContentRequests = append(nodeVectorContentRequests, &domain.NodeReleaseVectorRequest{
-				KBID:   req.KBID,
-				NodeID: id,
-				Action: "summary",
-			})
-		}
-		if err := u.ragRepo.AsyncUpdateNodeReleaseVector(ctx, nodeVectorContentRequests); err != nil {
-			return "", err
-		}
+	if len(req.IDs) != 1 {
+		return fmt.Errorf("stream summary only supports single node")
 	}
-	return "", nil
+
+	node, err := u.nodeRepo.GetNodeByID(ctx, req.IDs[0])
+	if err != nil {
+		return fmt.Errorf("get latest node release failed: %w", err)
+	}
+
+	if err := u.llmUsecase.StreamSummaryNode(ctx, req.KBID, model, node.Name, node.Content, onChunk); err != nil {
+		return fmt.Errorf("summary node failed: %w", err)
+	}
+	return nil
 }
 
 func (u *NodeUsecase) GetRecommendNodeList(ctx context.Context, req *domain.GetRecommendNodeListReq) ([]*domain.RecommendNodeListResp, error) {

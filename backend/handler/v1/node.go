@@ -1,7 +1,10 @@
 package v1
 
 import (
+	"context"
+	"encoding/json"
 	"errors"
+	"fmt"
 
 	"github.com/labstack/echo/v4"
 
@@ -44,6 +47,7 @@ func NewNodeHandler(
 	group.GET("/detail", h.GetNodeDetail)
 	group.PUT("/detail", h.UpdateNodeDetail)
 	group.POST("/summary", h.SummaryNode)
+	group.POST("/summary/stream", h.SummaryNodeStream)
 
 	group.POST("/action", h.NodeAction)
 	group.POST("/move", h.MoveNode)
@@ -324,7 +328,7 @@ func (h *NodeHandler) NodeMoveNav(c echo.Context) error {
 
 // SummaryNode
 //
-//	@Summary		Summary Node
+//	@Summary		Summary Node 异步后台生成
 //	@Description	Summary Node
 //	@Tags			node
 //	@Accept			json
@@ -342,16 +346,73 @@ func (h *NodeHandler) SummaryNode(c echo.Context) error {
 		return h.NewResponseWithError(c, "validate request body failed", err)
 	}
 	ctx := c.Request().Context()
-	summary, err := h.usecase.SummaryNode(ctx, req)
+	err := h.usecase.SummaryNode(ctx, req)
 	if err != nil {
-		if err == domain.ErrModelNotConfigured {
+		if errors.Is(err, domain.ErrModelNotConfigured) {
 			return h.NewResponseWithError(c, "请前往管理后台，点击右上角的“系统设置”配置推理大模型。", err)
 		}
 		return h.NewResponseWithError(c, "summary node failed", err)
 	}
-	return h.NewResponseWithData(c, map[string]any{
-		"summary": summary,
+	return h.NewResponseWithData(c, nil)
+}
+
+// SummaryNodeStream
+//
+//	@Summary		Stream Summary Node
+//	@Description	Stream Summary Node for single document
+//	@Tags			node
+//	@Accept			json
+//	@Produce		text/event-stream
+//	@Security		bearerAuth
+//	@Param			body	body		domain.NodeSummaryReq	true	"Summary Node"
+//	@Success		200		{string}	string					"SSE stream"
+//	@Router			/api/v1/node/summary/stream [post]
+func (h *NodeHandler) SummaryNodeStream(c echo.Context) error {
+	req := &domain.NodeSummaryReq{}
+	if err := c.Bind(req); err != nil {
+		return h.NewResponseWithError(c, "request body is invalid", err)
+	}
+	if err := c.Validate(req); err != nil {
+		return h.NewResponseWithError(c, "validate request body failed", err)
+	}
+	if len(req.IDs) != 1 {
+		return h.NewResponseWithError(c, "stream summary only supports single node", nil)
+	}
+	ctx := c.Request().Context()
+
+	c.Response().Header().Set("Content-Type", "text/event-stream")
+	c.Response().Header().Set("Cache-Control", "no-cache")
+	c.Response().Header().Set("Connection", "keep-alive")
+	c.Response().Header().Set("Transfer-Encoding", "chunked")
+
+	err := h.usecase.StreamSummaryNode(ctx, req, func(ctx context.Context, dataType, chunk string) error {
+		return h.writeSSEEvent(c, domain.SSEEvent{Type: dataType, Content: chunk})
 	})
+	if err != nil {
+		msg := "summary node failed"
+		if errors.Is(err, domain.ErrModelNotConfigured) {
+			msg = "请前往管理后台，点击右上角的“系统设置”配置推理大模型。"
+		}
+		if writeErr := h.writeSSEEvent(c, domain.SSEEvent{Type: "error", Content: msg, Error: err.Error()}); writeErr != nil {
+			return writeErr
+		}
+		return nil
+	}
+	return h.writeSSEEvent(c, domain.SSEEvent{Type: "done"})
+}
+
+func (h *NodeHandler) writeSSEEvent(c echo.Context, data any) error {
+	jsonContent, err := json.Marshal(data)
+	if err != nil {
+		return err
+	}
+
+	sseMessage := fmt.Sprintf("data: %s\n\n", string(jsonContent))
+	if _, err := c.Response().Write([]byte(sseMessage)); err != nil {
+		return err
+	}
+	c.Response().Flush()
+	return nil
 }
 
 // RecommendNodes

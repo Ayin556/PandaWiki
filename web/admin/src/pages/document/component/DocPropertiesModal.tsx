@@ -1,11 +1,16 @@
 import Card from '@/components/Card';
 import DragTree from '@/components/Drag/DragTree';
 import { Form, FormItem } from '@/pages/setting/component/Common';
-import { postApiV1NodeSummary, putApiV1NodeDetail } from '@/request/Node';
+import { putApiV1NodeDetail } from '@/request/Node';
 import {
   getApiV1NodePermission,
   patchApiV1NodePermissionEdit,
 } from '@/request/NodePermission';
+import {
+  createNodeSummaryStream,
+  subscribeNodeSummaryStream,
+  type StreamSummaryEvent,
+} from '@/request/nodeStream';
 import { getApiProV1AuthGroupList } from '@/request/pro/AuthGroup';
 import { GithubComChaitinPandaWikiProApiAuthV1AuthGroupListItem } from '@/request/pro/types';
 import {
@@ -29,11 +34,12 @@ import {
   styled,
 } from '@mui/material';
 import dayjs from 'dayjs';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { BUSINESS_VERSION_PERMISSION } from '@/constant/version';
 import { VersionCanUse } from '@/components/VersionMask';
 import { IconShuaxin } from '@panda-wiki/icons';
+import SSEClient from '@/utils/fetch';
 
 interface DocPropertiesModalProps {
   open: boolean;
@@ -77,6 +83,8 @@ const DocPropertiesModal = ({
 }: DocPropertiesModalProps) => {
   const { kb_id, nav_id, license } = useAppSelector(state => state.config);
   const [loading, setLoading] = useState(false);
+  const [summaryLoading, setSummaryLoading] = useState(false);
+  const sseClientRef = useRef<SSEClient<StreamSummaryEvent> | null>(null);
   const [userGroups, setUserGroups] = useState<
     GithubComChaitinPandaWikiProApiAuthV1AuthGroupListItem[]
   >([]);
@@ -108,18 +116,36 @@ const DocPropertiesModal = ({
   const watchVisible = watch('visible');
 
   const onGenerateSummary = () => {
-    setLoading(true);
-    postApiV1NodeSummary({
-      ids: [data[0].id!],
-      kb_id: kb_id!,
-    })
-      .then(res => {
-        // @ts-expect-error 类型不匹配
-        setValue('summary', res.summary);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    setSummaryLoading(true);
+    let nextSummary = '';
+    sseClientRef.current?.unsubscribe();
+    sseClientRef.current = createNodeSummaryStream({
+      onComplete: () => setSummaryLoading(false),
+      onError: error => {
+        setSummaryLoading(false);
+        message.error(error.message || '生成摘要失败');
+      },
+    });
+    setValue('summary', '');
+    subscribeNodeSummaryStream(
+      sseClientRef.current,
+      {
+        ids: [data[0].id!],
+        kb_id: kb_id!,
+      },
+      event => {
+        if (event.type === 'data') {
+          nextSummary += event.content || '';
+          setValue('summary', nextSummary);
+          return;
+        }
+        if (event.type === 'error') {
+          setSummaryLoading(false);
+          message.error(event.content || event.error || '生成摘要失败');
+          sseClientRef.current?.unsubscribe();
+        }
+      },
+    );
   };
 
   const onSubmit = handleSubmit(values => {
@@ -221,11 +247,20 @@ const DocPropertiesModal = ({
     }
   }, [open]);
 
+  useEffect(() => {
+    return () => {
+      sseClientRef.current?.unsubscribe();
+    };
+  }, []);
+
   return (
     <Modal
       title={isBatch ? '批量设置权限' : '文档属性'}
       open={open}
-      onCancel={onCancel}
+      onCancel={() => {
+        sseClientRef.current?.unsubscribe();
+        onCancel();
+      }}
       width={700}
       okButtonProps={{
         loading: loading,
@@ -472,12 +507,12 @@ const DocPropertiesModal = ({
                   <Button
                     sx={{ minWidth: 'auto', mt: 1 }}
                     onClick={onGenerateSummary}
-                    disabled={loading}
+                    disabled={loading || summaryLoading}
                     startIcon={
                       <IconShuaxin
                         sx={{
                           fontSize: '16px !important',
-                          ...(loading
+                          ...(summaryLoading
                             ? { animation: 'loadingRotate 1s linear infinite' }
                             : {}),
                         }}
