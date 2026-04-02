@@ -67,15 +67,16 @@ const Doc = ({
   });
 
   useEffect(() => {
-    if (node && editorRef) {
-      requestAnimationFrame(() => {
-        editorRef.setContent(
-          node?.content || '',
-          isMarkdown ? 'markdown' : 'html',
-        );
-      });
-    }
-  }, [node]);
+    if (!node || !editorRef.editor) return;
+
+    setHeadings([]);
+    requestAnimationFrame(() => {
+      editorRef.setContent(
+        node?.content || '',
+        isMarkdown ? 'markdown' : 'html',
+      );
+    });
+  }, [editorRef.editor, isMarkdown, node]);
 
   useEffect(() => {
     document.querySelector('#scroll-container')?.scrollTo({ top: 0 });
