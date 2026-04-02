@@ -2700,7 +2700,7 @@ const docTemplate = `{
                 "tags": [
                     "node"
                 ],
-                "summary": "Summary Node",
+                "summary": "Summary Node 异步后台生成",
                 "parameters": [
                     {
                         "description": "Summary Node",
@@ -2717,6 +2717,45 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/domain.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/node/summary/stream": {
+            "post": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "Stream Summary Node for single document",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "text/event-stream"
+                ],
+                "tags": [
+                    "node"
+                ],
+                "summary": "Stream Summary Node",
+                "parameters": [
+                    {
+                        "description": "Summary Node",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.NodeSummaryReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "SSE stream",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 }

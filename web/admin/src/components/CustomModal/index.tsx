@@ -149,10 +149,9 @@ const CustomModal = ({
         };
 
         if (config!.type === 'nav_doc') {
-          params.nav_doc_config.nav_ids = (config!.nodes?.map(
-            // @ts-expect-error 忽略类型
-            node => node?.nav_id,
-          ) || []) as string[];
+          params.nav_doc_config.nav_ids = ((
+            config!.nodes as Array<{ nav_id?: string }> | undefined
+          )?.map(node => node?.nav_id) || []) as string[];
           delete params.node_ids;
         }
 

@@ -396,7 +396,7 @@ export const getApiV1NodeStats = (
  *
  * @tags node
  * @name PostApiV1NodeSummary
- * @summary Summary Node
+ * @summary Summary Node 异步后台生成
  * @request POST:/api/v1/node/summary
  * @secure
  * @response `200` `DomainResponse` OK
@@ -413,5 +413,29 @@ export const postApiV1NodeSummary = (
     secure: true,
     type: ContentType.Json,
     format: "json",
+    ...params,
+  });
+
+/**
+ * @description Stream Summary Node for single document
+ *
+ * @tags node
+ * @name PostApiV1NodeSummaryStream
+ * @summary Stream Summary Node
+ * @request POST:/api/v1/node/summary/stream
+ * @secure
+ * @response `200` `string` SSE stream
+ */
+
+export const postApiV1NodeSummaryStream = (
+  body: DomainNodeSummaryReq,
+  params: RequestParams = {},
+) =>
+  httpRequest<string>({
+    path: `/api/v1/node/summary/stream`,
+    method: "POST",
+    body: body,
+    secure: true,
+    type: ContentType.Json,
     ...params,
   });

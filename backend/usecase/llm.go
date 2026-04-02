@@ -241,6 +241,9 @@ func (u *LLMUsecase) SummaryNode(ctx context.Context, kbID string, model *domain
 	if len(summaries) == 0 {
 		return "", fmt.Errorf("failed to generate summary for document %s", name)
 	}
+	if len(summaries) == 1 {
+		return summaries[0], nil
+	}
 
 	// Join all summaries and generate final summary
 	joined := strings.Join(summaries, "\n\n")
@@ -254,6 +257,72 @@ func (u *LLMUsecase) SummaryNode(ctx context.Context, kbID string, model *domain
 		return joined, nil
 	}
 	return finalSummary, nil
+}
+
+func (u *LLMUsecase) StreamSummaryNode(
+	ctx context.Context,
+	kbID string,
+	model *domain.Model,
+	name, content string,
+	onChunk func(ctx context.Context, dataType, chunk string) error,
+) error {
+	modelkitModel, err := model.ToModelkitModel()
+	if err != nil {
+		return err
+	}
+	chatModel, err := u.modelkit.GetChatModel(ctx, modelkitModel)
+	if err != nil {
+		return err
+	}
+
+	chunks, err := u.SplitByTokenLimit(content, summaryChunkTokenLimit)
+	if err != nil {
+		return err
+	}
+	if len(chunks) > summaryMaxChunks {
+		u.logger.Debug("trim summary chunks for large document", log.String("node", name), log.Int("original_chunks", len(chunks)), log.Int("used_chunks", summaryMaxChunks))
+		chunks = chunks[:summaryMaxChunks]
+	}
+
+	if len(chunks) == 1 {
+		return u.streamSummary(ctx, kbID, chatModel, name, chunks[0], onChunk)
+	}
+
+	summaries := make([]string, 0, len(chunks))
+	for idx, chunk := range chunks {
+		summary, summaryErr := u.requestSummary(ctx, kbID, chatModel, name, chunk)
+		if summaryErr != nil {
+			u.logger.Error("Failed to generate summary for chunk", log.Int("chunk_index", idx), log.Error(summaryErr))
+			continue
+		}
+		if summary == "" {
+			u.logger.Warn("Empty summary returned for chunk", log.Int("chunk_index", idx))
+			continue
+		}
+		summaries = append(summaries, summary)
+	}
+
+	if len(summaries) == 0 {
+		return fmt.Errorf("failed to generate summary for document %s", name)
+	}
+	if len(summaries) == 1 {
+		if err := onChunk(ctx, "data", summaries[0]); err != nil {
+			return fmt.Errorf("on chunk data: %w", err)
+		}
+		return nil
+	}
+
+	joined := strings.Join(summaries, "\n\n")
+	if err := u.streamSummary(ctx, kbID, chatModel, name, joined, onChunk); err != nil {
+		u.logger.Error("Failed to generate final summary, using aggregated summaries", log.Error(err))
+		if len(joined) > 500 {
+			joined = joined[:500] + "..."
+		}
+		if chunkErr := onChunk(ctx, "data", joined); chunkErr != nil {
+			return fmt.Errorf("on chunk data: %w", chunkErr)
+		}
+	}
+	return nil
 }
 
 func (u *LLMUsecase) trimThinking(summary string) string {
@@ -287,6 +356,71 @@ func (u *LLMUsecase) requestSummary(ctx context.Context, kbID string, chatModel 
 		return "", err
 	}
 	return strings.TrimSpace(u.trimThinking(summary)), nil
+}
+
+func (u *LLMUsecase) streamSummary(
+	ctx context.Context,
+	kbID string,
+	chatModel model.BaseChatModel,
+	name, content string,
+	onChunk func(ctx context.Context, dataType, chunk string) error,
+) error {
+	summaryPrompt, err := u.promptRepo.GetSummaryPrompt(ctx, kbID)
+	if err != nil {
+		return err
+	}
+
+	usage := schema.TokenUsage{}
+	filter := newThinkingStreamFilter()
+	return u.ChatWithAgent(ctx, chatModel, []*schema.Message{
+		{
+			Role:    "system",
+			Content: summaryPrompt,
+		},
+		{
+			Role:    "user",
+			Content: fmt.Sprintf("文档名称：%s\n文档内容：%s", name, content),
+		},
+	}, &usage, func(ctx context.Context, dataType, chunk string) error {
+		if dataType != "data" {
+			return onChunk(ctx, dataType, chunk)
+		}
+		cleaned := filter.Append(chunk)
+		if cleaned == "" {
+			return nil
+		}
+		return onChunk(ctx, dataType, cleaned)
+	})
+}
+
+type thinkingStreamFilter struct {
+	buffer strings.Builder
+	done   bool
+}
+
+func newThinkingStreamFilter() *thinkingStreamFilter {
+	return &thinkingStreamFilter{}
+}
+
+func (f *thinkingStreamFilter) Append(chunk string) string {
+	if f.done {
+		return chunk
+	}
+	f.buffer.WriteString(chunk)
+	content := f.buffer.String()
+	if !strings.HasPrefix(content, "<think>") {
+		f.done = true
+		f.buffer.Reset()
+		return content
+	}
+	endIndex := strings.Index(content, "</think>")
+	if endIndex == -1 {
+		return ""
+	}
+	cleaned := strings.TrimSpace(content[endIndex+len("</think>"):])
+	f.done = true
+	f.buffer.Reset()
+	return cleaned
 }
 
 func (u *LLMUsecase) SplitByTokenLimit(text string, maxTokens int) ([]string, error) {

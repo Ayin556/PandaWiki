@@ -13,5 +13,6 @@ export * from './Node'
 export * from './NodePermission'
 export * from './Stat'
 export * from './User'
+export * from './nodeStream'
 export * from './types'
 

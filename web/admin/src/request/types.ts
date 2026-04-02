@@ -1207,6 +1207,8 @@ export interface DomainRecommendNodeListResp {
   emoji?: string;
   id?: string;
   name?: string;
+  nav_id?: string;
+  nav_name?: string;
   parent_id?: string;
   permissions?: DomainNodePermissions;
   position?: number;
