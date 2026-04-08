@@ -587,6 +587,37 @@ func (u *AppUsecase) GetAppDetailByKBIDAndAppType(ctx context.Context, kbID stri
 	return appDetailResp, nil
 }
 
+func (u *AppUsecase) SanitizeAppDetailForDocManage(app *domain.AppDetailResp) *domain.AppDetailResp {
+	if app == nil {
+		return nil
+	}
+
+	sanitized := &domain.AppDetailResp{
+		ID:   app.ID,
+		KBID: app.KBID,
+		Name: app.Name,
+		Type: app.Type,
+	}
+
+	if app.Type != domain.AppTypeWeb {
+		return sanitized
+	}
+
+	sanitized.Settings = domain.AppSettingsResp{
+		ThemeMode:           app.Settings.ThemeMode,
+		ThemeAndStyle:       app.Settings.ThemeAndStyle,
+		CatalogSettings:     app.Settings.CatalogSettings,
+		WatermarkContent:    app.Settings.WatermarkContent,
+		WatermarkSetting:    app.Settings.WatermarkSetting,
+		CopySetting:         app.Settings.CopySetting,
+		ContributeSettings:  app.Settings.ContributeSettings,
+		ConversationSetting: app.Settings.ConversationSetting,
+		HomePageSetting:     app.Settings.HomePageSetting,
+	}
+
+	return sanitized
+}
+
 func (u *AppUsecase) GetMCPServerAppInfo(ctx context.Context, kbID string) (*domain.AppInfoResp, error) {
 	apiApp, err := u.repo.GetOrCreateAppByKBIDAndType(ctx, kbID, domain.AppTypeMcpServer)
 	if err != nil {
