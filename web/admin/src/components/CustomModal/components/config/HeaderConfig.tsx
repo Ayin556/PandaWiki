@@ -39,6 +39,7 @@ const HeaderConfig = ({ data, setIsEdit, isEdit }: CardWebHeaderProps) => {
   const header_search_placeholder = watch('header_search_placeholder');
   const allow_theme_switching = watch('allow_theme_switching');
   const isHydratingRef = useRef(true);
+  const latestAppPreviewDataRef = useRef(appPreviewData);
 
   const handleAddButton = () => {
     const id = Date.now().toString();
@@ -59,6 +60,10 @@ const HeaderConfig = ({ data, setIsEdit, isEdit }: CardWebHeaderProps) => {
   };
 
   useEffect(() => {
+    latestAppPreviewDataRef.current = appPreviewData;
+  }, [appPreviewData]);
+
+  useEffect(() => {
     const source =
       isEdit && appPreviewData ? appPreviewData.settings : data?.settings;
     if (!source) return;
@@ -76,21 +81,22 @@ const HeaderConfig = ({ data, setIsEdit, isEdit }: CardWebHeaderProps) => {
   }, [appPreviewData?.id, data?.id, reset]);
 
   useEffect(() => {
-    if (!appPreviewData) return;
+    if (!latestAppPreviewDataRef.current) return;
     if (isHydratingRef.current) {
       isHydratingRef.current = false;
       return;
     }
 
+    const currentAppPreviewData = latestAppPreviewDataRef.current;
     const previewData = {
-      ...appPreviewData,
+      ...currentAppPreviewData,
       settings: {
-        ...appPreviewData.settings,
+        ...currentAppPreviewData.settings,
         title: title,
         btns: btns,
         icon: icon,
         web_app_custom_style: {
-          ...appPreviewData?.settings?.web_app_custom_style,
+          ...currentAppPreviewData.settings?.web_app_custom_style,
           header_search_placeholder: header_search_placeholder,
           allow_theme_switching: allow_theme_switching,
         },
@@ -103,7 +109,6 @@ const HeaderConfig = ({ data, setIsEdit, isEdit }: CardWebHeaderProps) => {
     };
   }, [
     allow_theme_switching,
-    appPreviewData,
     btns,
     debouncedDispatch,
     header_search_placeholder,

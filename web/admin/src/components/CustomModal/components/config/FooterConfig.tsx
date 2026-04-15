@@ -85,6 +85,11 @@ const FooterConfig = ({ data, setIsEdit, isEdit }: FooterConfigProps) => {
   );
   const footer_show_intro = watch('footer_show_intro');
   const isHydratingRef = useRef(true);
+  const latestAppPreviewDataRef = useRef(appPreviewData);
+
+  useEffect(() => {
+    latestAppPreviewDataRef.current = appPreviewData;
+  }, [appPreviewData]);
 
   useEffect(() => {
     const source =
@@ -107,18 +112,19 @@ const FooterConfig = ({ data, setIsEdit, isEdit }: FooterConfigProps) => {
     });
   }, [appPreviewData?.id, data?.id, reset]);
   useEffect(() => {
-    if (!appPreviewData) return;
+    if (!latestAppPreviewDataRef.current) return;
     if (isHydratingRef.current) {
       isHydratingRef.current = false;
       return;
     }
 
+    const currentAppPreviewData = latestAppPreviewDataRef.current;
     const previewData = {
-      ...appPreviewData,
+      ...currentAppPreviewData,
       settings: {
-        ...appPreviewData.settings,
+        ...currentAppPreviewData.settings,
         footer_settings: {
-          ...appPreviewData?.settings?.footer_settings,
+          ...currentAppPreviewData.settings?.footer_settings,
           corp_name,
           icp,
           brand_name,
@@ -127,7 +133,7 @@ const FooterConfig = ({ data, setIsEdit, isEdit }: FooterConfigProps) => {
           brand_groups,
         },
         web_app_custom_style: {
-          ...appPreviewData?.settings?.web_app_custom_style,
+          ...currentAppPreviewData.settings?.web_app_custom_style,
           show_brand_info,
           social_media_accounts,
           footer_show_intro,
@@ -136,7 +142,6 @@ const FooterConfig = ({ data, setIsEdit, isEdit }: FooterConfigProps) => {
     };
     dispatch(setAppPreviewData(previewData));
   }, [
-    appPreviewData,
     corp_name,
     icp,
     brand_name,
