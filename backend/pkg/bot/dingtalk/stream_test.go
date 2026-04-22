@@ -131,3 +131,81 @@ func TestOnChatBotMessageReceivedReturnsBeforeProcessingCompletes(t *testing.T) 
 
 	close(unblock)
 }
+
+func TestOnChatBotMessageReceivedAllowsRetryAfterProcessingError(t *testing.T) {
+	client := newTestDingTalkClient(t)
+
+	attempts := make(chan struct{}, 4)
+	client.processMessageFn = func(context.Context, *chatbot.BotCallbackDataModel) error {
+		attempts <- struct{}{}
+		return assert.AnError
+	}
+
+	data := &chatbot.BotCallbackDataModel{
+		MsgId: "msg-retry",
+		Text: chatbot.BotCallbackDataTextModel{
+			Content: "retry please",
+		},
+	}
+
+	resp, err := client.OnChatBotMessageReceived(context.Background(), data)
+	require.NoError(t, err)
+	assert.Equal(t, []byte(""), resp)
+
+	select {
+	case <-attempts:
+	case <-time.After(time.Second):
+		t.Fatal("expected first message to be processed")
+	}
+
+	require.Eventually(t, func() bool {
+		_, callErr := client.OnChatBotMessageReceived(context.Background(), data)
+		require.NoError(t, callErr)
+
+		select {
+		case <-attempts:
+			return true
+		default:
+			return false
+		}
+	}, time.Second, 20*time.Millisecond)
+}
+
+func TestOnChatBotMessageReceivedRecoversBackgroundPanic(t *testing.T) {
+	client := newTestDingTalkClient(t)
+
+	attempts := make(chan struct{}, 4)
+	client.processMessageFn = func(context.Context, *chatbot.BotCallbackDataModel) error {
+		attempts <- struct{}{}
+		panic("boom")
+	}
+
+	data := &chatbot.BotCallbackDataModel{
+		MsgId: "msg-panic",
+		Text: chatbot.BotCallbackDataTextModel{
+			Content: "panic please",
+		},
+	}
+
+	resp, err := client.OnChatBotMessageReceived(context.Background(), data)
+	require.NoError(t, err)
+	assert.Equal(t, []byte(""), resp)
+
+	select {
+	case <-attempts:
+	case <-time.After(time.Second):
+		t.Fatal("expected background processing to start")
+	}
+
+	require.Eventually(t, func() bool {
+		_, callErr := client.OnChatBotMessageReceived(context.Background(), data)
+		require.NoError(t, callErr)
+
+		select {
+		case <-attempts:
+			return true
+		default:
+			return false
+		}
+	}, 200*time.Millisecond, 20*time.Millisecond)
+}

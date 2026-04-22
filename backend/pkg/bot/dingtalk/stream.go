@@ -248,6 +248,28 @@ func (c *DingTalkClient) tryMarkMessage(msgID string) bool {
 	return true
 }
 
+func (c *DingTalkClient) markMessageCompleted(msgID string) {
+	if strings.TrimSpace(msgID) == "" {
+		return
+	}
+
+	c.messageMu.Lock()
+	defer c.messageMu.Unlock()
+
+	c.messageSeenAt[msgID] = c.nowFunc()
+}
+
+func (c *DingTalkClient) clearMessageMark(msgID string) {
+	if strings.TrimSpace(msgID) == "" {
+		return
+	}
+
+	c.messageMu.Lock()
+	defer c.messageMu.Unlock()
+
+	delete(c.messageSeenAt, msgID)
+}
+
 func (c *DingTalkClient) OnChatBotMessageReceived(ctx context.Context, data *chatbot.BotCallbackDataModel) ([]byte, error) {
 	select {
 	case <-c.ctx.Done():
@@ -267,13 +289,26 @@ func (c *DingTalkClient) OnChatBotMessageReceived(ctx context.Context, data *cha
 	}
 
 	payload := *data
-	go func() {
-		if err := processor(c.ctx, &payload); err != nil {
-			c.logger.Error("process dingtalk message failed", log.String("msg_id", payload.MsgId), log.Error(err))
+	go c.processMessageAsync(c.ctx, &payload, processor)
+
+	return []byte(""), nil
+}
+
+func (c *DingTalkClient) processMessageAsync(ctx context.Context, data *chatbot.BotCallbackDataModel, processor func(context.Context, *chatbot.BotCallbackDataModel) error) {
+	defer func() {
+		if r := recover(); r != nil {
+			c.clearMessageMark(data.MsgId)
+			c.logger.Error("process dingtalk message panicked", log.String("msg_id", data.MsgId), log.Any("panic", r))
 		}
 	}()
 
-	return []byte(""), nil
+	if err := processor(ctx, data); err != nil {
+		c.clearMessageMark(data.MsgId)
+		c.logger.Error("process dingtalk message failed", log.String("msg_id", data.MsgId), log.Error(err))
+		return
+	}
+
+	c.markMessageCompleted(data.MsgId)
 }
 
 func (c *DingTalkClient) processMessage(ctx context.Context, data *chatbot.BotCallbackDataModel) error {
@@ -292,7 +327,7 @@ func (c *DingTalkClient) processMessage(ctx context.Context, data *chatbot.BotCa
 
 	if err := c.UpdateAIStreamCard(trackID, initialContent, false); err != nil {
 		c.logger.Error("UpdateInteractiveCard", log.Error(err))
-		return nil
+		return err
 	}
 	// 初始化 默认为空
 	convInfo := &domain.ConversationInfo{
@@ -320,8 +355,9 @@ func (c *DingTalkClient) processMessage(ctx context.Context, data *chatbot.BotCa
 	contentCh, err := c.getQA(ctx, question, *convInfo, "")
 	if err != nil {
 		c.logger.Error("dingtalk client failed to get answer", log.Error(err))
-		if err := c.UpdateAIStreamCard(trackID, "出错了，请稍后再试", true); err != nil {
-			c.logger.Error("UpdateInteractiveCard in contentCh failed", log.Error(err))
+		if updateErr := c.UpdateAIStreamCard(trackID, "出错了，请稍后再试", true); updateErr != nil {
+			c.logger.Error("UpdateInteractiveCard in contentCh failed", log.Error(updateErr))
+			return fmt.Errorf("get answer failed: %w; update error card failed: %w", err, updateErr)
 		}
 		return nil
 	}
@@ -337,8 +373,9 @@ func (c *DingTalkClient) processMessage(ctx context.Context, data *chatbot.BotCa
 			if !ok {
 				if err := c.UpdateAIStreamCard(trackID, fullContent, true); err != nil {
 					c.logger.Error("UpdateInteractiveCard in contentCh", log.Error(err))
-					if err := c.UpdateAIStreamCard(trackID, "出错了，请稍后再试", true); err != nil {
-						c.logger.Error("UpdateInteractiveCard in contentCh failed", log.Error(err))
+					if updateErr := c.UpdateAIStreamCard(trackID, "出错了，请稍后再试", true); updateErr != nil {
+						c.logger.Error("UpdateInteractiveCard in contentCh failed", log.Error(updateErr))
+						return fmt.Errorf("final update card failed: %w; fallback update failed: %w", err, updateErr)
 					}
 				}
 				return nil
@@ -350,8 +387,9 @@ func (c *DingTalkClient) processMessage(ctx context.Context, data *chatbot.BotCa
 			}
 			if err := c.UpdateAIStreamCard(trackID, fullContent, false); err != nil {
 				c.logger.Error("UpdateInteractiveCard in ticker", log.Error(err))
-				if err := c.UpdateAIStreamCard(trackID, "出错了，请稍后再试", true); err != nil {
-					c.logger.Error("UpdateInteractiveCard in ticker failed", log.Error(err))
+				if updateErr := c.UpdateAIStreamCard(trackID, "出错了，请稍后再试", true); updateErr != nil {
+					c.logger.Error("UpdateInteractiveCard in ticker failed", log.Error(updateErr))
+					return fmt.Errorf("stream update card failed: %w; fallback update failed: %w", err, updateErr)
 				}
 				return nil
 			}
