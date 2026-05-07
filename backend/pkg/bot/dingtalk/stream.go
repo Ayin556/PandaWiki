@@ -41,10 +41,15 @@ type DingTalkClient struct {
 	}
 	tokenMutex       sync.RWMutex
 	messageMu        sync.Mutex
-	messageSeenAt    map[string]time.Time
+	messageSeenAt    map[string]messageMark
 	messageTTL       time.Duration
 	nowFunc          func() time.Time
 	processMessageFn func(ctx context.Context, data *chatbot.BotCallbackDataModel) error
+}
+
+type messageMark struct {
+	seenAt   time.Time
+	inFlight bool
 }
 
 func NewDingTalkClient(ctx context.Context, cancel context.CancelFunc, clientId, clientSecret, templateID string, logger *log.Logger, getQA bot.GetQAFun) (*DingTalkClient, error) {
@@ -69,7 +74,7 @@ func NewDingTalkClient(ctx context.Context, cancel context.CancelFunc, clientId,
 		cardClient:    cardClient,
 		getQA:         getQA,
 		logger:        logger,
-		messageSeenAt: make(map[string]time.Time),
+		messageSeenAt: make(map[string]messageMark),
 		messageTTL:    5 * time.Minute,
 		nowFunc:       time.Now,
 	}
@@ -223,8 +228,11 @@ func (c *DingTalkClient) cleanupExpiredMessages() {
 	c.messageMu.Lock()
 	defer c.messageMu.Unlock()
 
-	for msgID, seenAt := range c.messageSeenAt {
-		if now.Sub(seenAt) > c.messageTTL {
+	for msgID, mark := range c.messageSeenAt {
+		if mark.inFlight {
+			continue
+		}
+		if now.Sub(mark.seenAt) > c.messageTTL {
 			delete(c.messageSeenAt, msgID)
 		}
 	}
@@ -240,11 +248,16 @@ func (c *DingTalkClient) tryMarkMessage(msgID string) bool {
 	c.messageMu.Lock()
 	defer c.messageMu.Unlock()
 
-	if seenAt, ok := c.messageSeenAt[msgID]; ok && now.Sub(seenAt) <= c.messageTTL {
-		return false
+	if mark, ok := c.messageSeenAt[msgID]; ok {
+		if mark.inFlight || now.Sub(mark.seenAt) <= c.messageTTL {
+			return false
+		}
 	}
 
-	c.messageSeenAt[msgID] = now
+	c.messageSeenAt[msgID] = messageMark{
+		seenAt:   now,
+		inFlight: true,
+	}
 	return true
 }
 
@@ -256,7 +269,10 @@ func (c *DingTalkClient) markMessageCompleted(msgID string) {
 	c.messageMu.Lock()
 	defer c.messageMu.Unlock()
 
-	c.messageSeenAt[msgID] = c.nowFunc()
+	c.messageSeenAt[msgID] = messageMark{
+		seenAt:   c.nowFunc(),
+		inFlight: false,
+	}
 }
 
 func (c *DingTalkClient) clearMessageMark(msgID string) {

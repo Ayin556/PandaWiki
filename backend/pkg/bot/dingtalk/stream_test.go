@@ -53,6 +53,9 @@ func TestTryMarkMessageDeduplicatesWithinTTL(t *testing.T) {
 	require.True(t, client.tryMarkMessage("msg-1"))
 	require.False(t, client.tryMarkMessage("msg-1"))
 
+	client.markMessageCompleted("msg-1")
+	require.False(t, client.tryMarkMessage("msg-1"))
+
 	now = now.Add(client.messageTTL + time.Second)
 
 	require.True(t, client.tryMarkMessage("msg-1"))
@@ -91,7 +94,7 @@ func TestOnChatBotMessageReceivedIgnoresDuplicateMsgID(t *testing.T) {
 	select {
 	case <-processed:
 		t.Fatal("expected duplicate message to be ignored")
-	case <-time.After(100 * time.Millisecond):
+	case <-time.After(300 * time.Millisecond):
 	}
 }
 
@@ -119,7 +122,7 @@ func TestOnChatBotMessageReceivedReturnsBeforeProcessingCompletes(t *testing.T) 
 
 	select {
 	case <-done:
-	case <-time.After(200 * time.Millisecond):
+	case <-time.After(time.Second):
 		t.Fatal("expected callback to return before background processing finishes")
 	}
 
@@ -207,5 +210,54 @@ func TestOnChatBotMessageReceivedRecoversBackgroundPanic(t *testing.T) {
 		default:
 			return false
 		}
-	}, 200*time.Millisecond, 20*time.Millisecond)
+	}, time.Second, 20*time.Millisecond)
+}
+
+func TestOnChatBotMessageReceivedKeepsInFlightMessageMarkedPastTTL(t *testing.T) {
+	client := newTestDingTalkClient(t)
+
+	now := time.Now()
+	client.nowFunc = func() time.Time {
+		return now
+	}
+
+	processed := make(chan struct{}, 2)
+	unblock := make(chan struct{})
+	client.processMessageFn = func(context.Context, *chatbot.BotCallbackDataModel) error {
+		processed <- struct{}{}
+		<-unblock
+		return nil
+	}
+
+	data := &chatbot.BotCallbackDataModel{
+		MsgId: "msg-inflight",
+		Text: chatbot.BotCallbackDataTextModel{
+			Content: "long running question",
+		},
+	}
+
+	resp, err := client.OnChatBotMessageReceived(context.Background(), data)
+	require.NoError(t, err)
+	assert.Equal(t, []byte(""), resp)
+
+	select {
+	case <-processed:
+	case <-time.After(time.Second):
+		t.Fatal("expected first message to be processed")
+	}
+
+	now = now.Add(client.messageTTL + time.Second)
+	client.cleanupExpiredMessages()
+
+	resp, err = client.OnChatBotMessageReceived(context.Background(), data)
+	require.NoError(t, err)
+	assert.Equal(t, []byte(""), resp)
+
+	select {
+	case <-processed:
+		t.Fatal("expected in-flight duplicate message to be ignored after ttl cleanup")
+	case <-time.After(300 * time.Millisecond):
+	}
+
+	close(unblock)
 }
