@@ -40,6 +40,11 @@ const nextConfig: NextConfig = {
             basePath: false as const,
           },
           {
+            source: '/:basePath/static-file/:path*',
+            destination: `${process.env.STATIC_FILE_TARGET}/static-file/:path*`,
+            basePath: false as const,
+          },
+          {
             source: '/share/v1/:path*',
             destination: `${process.env.TARGET}/share/v1/:path*`,
             basePath: false as const,

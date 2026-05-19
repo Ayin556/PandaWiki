@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
 import { getShareV1AppWidgetInfo } from './request/ShareApp';
 
-import { parsePathname } from '@/utils';
+import { getBasePath, parsePathname } from '@/utils';
 import { postShareV1StatPage } from '@/request/ShareStat';
 import { getShareV1NodeList } from '@/request/ShareNode';
 import { getShareV1AppWebInfo } from '@/request/ShareApp';
@@ -40,12 +40,25 @@ const getHomePath = async () => {
   return info?.settings?.home_page_setting;
 };
 
+const stripBasePath = (pathname: string, basePath: string) => {
+  if (!basePath) return pathname;
+  if (pathname === basePath) return '/';
+  if (pathname.startsWith(`${basePath}/`)) {
+    return pathname.slice(basePath.length) || '/';
+  }
+  return pathname;
+};
+
 const homeProxy = async (
   request: NextRequest,
   headers: Record<string, string>,
   session: string,
+  pathname?: string,
 ) => {
   const url = request.nextUrl.clone();
+  if (pathname) {
+    url.pathname = pathname;
+  }
   const { page, id } = parsePathname(url.pathname);
   try {
     // 获取节点列表
@@ -81,6 +94,11 @@ const homeProxy = async (
       );
     }
 
+    if (pathname && pathname !== request.nextUrl.pathname) {
+      return NextResponse.rewrite(
+        new URL(`${url.pathname}${url.search}`, request.url),
+      );
+    }
     return NextResponse.next();
   } catch (error) {
     if (
@@ -98,16 +116,21 @@ const homeProxy = async (
     }
   }
 
+  if (pathname && pathname !== request.nextUrl.pathname) {
+    return NextResponse.rewrite(
+      new URL(`${url.pathname}${url.search}`, request.url),
+    );
+  }
   return NextResponse.next();
 };
 
-const proxyShare = async (request: NextRequest) => {
+const proxyShare = async (request: NextRequest, pathname?: string) => {
   // 转发到 process.env.TARGET
   const kb_id = request.headers.get('x-kb-id') || process.env.DEV_KB_ID || '';
 
   const targetOrigin = process.env.TARGET!;
   const targetUrl = new URL(
-    request.nextUrl.pathname + request.nextUrl.search,
+    (pathname || request.nextUrl.pathname) + request.nextUrl.search,
     targetOrigin,
   );
   // 构造 fetch 选项
@@ -134,7 +157,11 @@ const proxyShare = async (request: NextRequest) => {
 export async function proxy(request: NextRequest) {
   const url = request.nextUrl.clone();
   const pathname = url.pathname;
-  if (pathname.startsWith('/widget')) {
+  const kbDetail = await getShareV1AppWebInfo();
+  const basePath = getBasePath(kbDetail?.base_url || '');
+  const appPathname = stripBasePath(pathname, basePath);
+
+  if (appPathname.startsWith('/widget')) {
     const widgetInfo: any = await getShareV1AppWidgetInfo();
     if (widgetInfo) {
       if (!widgetInfo?.settings?.widget_bot_settings?.is_open) {
@@ -159,10 +186,10 @@ export async function proxy(request: NextRequest) {
 
   let response: NextResponse;
 
-  if (pathname.startsWith('/share/')) {
-    response = await proxyShare(request);
+  if (appPathname.startsWith('/share/')) {
+    response = await proxyShare(request, appPathname);
   } else {
-    response = await homeProxy(request, headers, sessionId);
+    response = await homeProxy(request, headers, sessionId, appPathname);
   }
 
   if (needSetSessionId) {
@@ -171,8 +198,8 @@ export async function proxy(request: NextRequest) {
       maxAge: 60 * 60 * 24 * 365, // 1 年
     });
   }
-  if (!pathname.startsWith('/share')) {
-    response.headers.set('x-current-path', pathname);
+  if (!appPathname.startsWith('/share')) {
+    response.headers.set('x-current-path', appPathname);
     response.headers.set('x-current-search', url.search);
   }
   return response;
@@ -182,12 +209,20 @@ export const config = {
   matcher: [
     '/',
     '/home',
+    '/:basePath/home',
     '/share/:path*',
+    '/:basePath/share/:path*',
     '/chat/:path*',
+    '/:basePath/chat/:path*',
     '/widget',
+    '/:basePath/widget',
     '/welcome',
+    '/:basePath/welcome',
     '/auth/login',
+    '/:basePath/auth/login',
     '/node/:path*',
+    '/:basePath/node/:path*',
     '/node',
+    '/:basePath/node',
   ],
 };
