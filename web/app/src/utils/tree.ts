@@ -176,7 +176,8 @@ export const addExpandState = (
 
   const addExpand = (nodes: ITreeItem[]): ITreeItem[] => {
     return nodes.map(node => {
-      const isExpanded = parentSet.has(node.id) ? true : defaultExpand;
+      const isExpanded =
+        node.expanded ?? (parentSet.has(node.id) ? true : defaultExpand);
       if (node.children && node.children.length > 0) {
         return {
           ...node,
