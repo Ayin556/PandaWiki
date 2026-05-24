@@ -2,10 +2,10 @@
 
 from datetime import datetime
 
-from sqlalchemy import String, Integer, Text, Float, ForeignKey, DateTime
+from sqlalchemy import String, Integer, Float, ForeignKey, DateTime
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.models.base import Base, TimestampMixin
+from app.models.base import Base, TimestampMixin, JSONType
 
 
 class Auth(Base, TimestampMixin):
@@ -19,7 +19,8 @@ class Auth(Base, TimestampMixin):
     source_type: Mapped[str] = mapped_column(String(50), default="")
     last_login_time: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     user_info: Mapped[dict] = mapped_column(
-        "user_info", Text,
+        JSONType,
+        default=dict,
         comment="用户信息 JSON (username, avatar_url, email)",
     )
 
@@ -36,7 +37,11 @@ class AuthGroup(Base, TimestampMixin):
     kb_id: Mapped[str] = mapped_column(String(36), nullable=False)
     parent_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
     position: Mapped[float] = mapped_column(Float, default=0.0)
-    auth_ids: Mapped[str] = mapped_column(Text, default="[]", comment="包含的认证用户ID列表 JSON")
+    auth_ids: Mapped[list] = mapped_column(
+        JSONType,
+        default=list,
+        comment="包含的认证用户ID列表 JSON",
+    )
     sync_id: Mapped[str] = mapped_column(String(255), default="")
     sync_parent_id: Mapped[str] = mapped_column(String(255), default="")
     source_type: Mapped[str] = mapped_column(String(50), default="")
@@ -52,7 +57,8 @@ class AuthConfig(Base, TimestampMixin):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     kb_id: Mapped[str] = mapped_column(String(36), nullable=False)
     auth_setting: Mapped[dict] = mapped_column(
-        "auth_setting", Text,
+        JSONType,
+        default=dict,
         comment="认证配置 JSON (client_id, client_secret, proxy)",
     )
     source_type: Mapped[str] = mapped_column(String(50), unique=True, default="")

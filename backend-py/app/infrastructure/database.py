@@ -1,7 +1,8 @@
 """数据库基础设施 - SQLAlchemy 2.0 async"""
 
+from loguru import logger
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-from sqlalchemy.orm import DeclarativeBase
 
 from app.core.config import settings
 
@@ -22,16 +23,14 @@ async_session_factory = async_sessionmaker(
 )
 
 
-class Base(DeclarativeBase):
-    """SQLAlchemy 声明式基类"""
-    pass
-
-
 async def init_db():
-    """初始化数据库连接"""
-    # 注意: 表创建由 Alembic 管理，这里仅验证连接
-    async with engine.begin() as conn:
-        await conn.execute(text("SELECT 1"))
+    """初始化数据库连接，验证数据库可达性（启动时容错）"""
+    try:
+        async with engine.begin() as conn:
+            await conn.execute(text("SELECT 1"))
+        logger.info("Database connection established")
+    except Exception as e:
+        logger.warning(f"Database not available at startup, will retry on request: {e}")
 
 
 async def get_db() -> AsyncSession:
@@ -41,7 +40,3 @@ async def get_db() -> AsyncSession:
             yield session
         finally:
             await session.close()
-
-
-# 需要在 init_db 之前导入所有模型以注册表结构
-from sqlalchemy import text  # noqa: E402

@@ -5,7 +5,7 @@ from datetime import datetime
 from sqlalchemy import String, Integer, Float, Text, ForeignKey, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import Base, TimestampMixin, UUIDPrimaryKey
+from app.models.base import Base, TimestampMixin, UUIDPrimaryKey, JSONType
 
 
 class Node(Base, UUIDPrimaryKey, TimestampMixin):
@@ -17,13 +17,15 @@ class Node(Base, UUIDPrimaryKey, TimestampMixin):
     type: Mapped[int] = mapped_column(Integer, default=2, comment="1=文件夹,2=文档")
     status: Mapped[int] = mapped_column(Integer, default=0, comment="0=未发布,1=更新未发布,2=已发布")
     rag_info: Mapped[dict] = mapped_column(
-        "rag_info", Text,
+        JSONType,
+        default=dict,
         comment="RAG信息 JSON (status, message, synced_at)",
     )
     name: Mapped[str] = mapped_column(String(255), default="")
     content: Mapped[str] = mapped_column(Text, default="")
     meta: Mapped[dict] = mapped_column(
-        "meta", Text,
+        JSONType,
+        default=dict,
         comment="元数据 JSON (summary, emoji, content_type)",
     )
     parent_id: Mapped[str] = mapped_column(String(36), default="")
@@ -33,7 +35,8 @@ class Node(Base, UUIDPrimaryKey, TimestampMixin):
     editor_id: Mapped[str] = mapped_column(String(36), default="")
     edit_time: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     permissions: Mapped[dict] = mapped_column(
-        "permissions", Text,
+        JSONType,
+        default=dict,
         comment="权限 JSON (answerable/visitable/visible: open/partial/closed)",
     )
 
@@ -56,7 +59,7 @@ class NodeRelease(Base, UUIDPrimaryKey, TimestampMixin):
     doc_id: Mapped[str] = mapped_column(String(255), default="", index=True)
     type: Mapped[int] = mapped_column(Integer, default=2)
     name: Mapped[str] = mapped_column(String(255), default="")
-    meta: Mapped[dict] = mapped_column("meta", Text, comment="元数据 JSON")
+    meta: Mapped[dict] = mapped_column(JSONType, default=dict, comment="元数据 JSON")
     content: Mapped[str] = mapped_column(Text, default="")
     position: Mapped[float] = mapped_column(Float, default=0.0)
     parent_id: Mapped[str] = mapped_column(String(36), default="")
@@ -79,7 +82,7 @@ class NodeReleaseBackup(Base, UUIDPrimaryKey, TimestampMixin):
     doc_id: Mapped[str] = mapped_column(String(255), default="", index=True)
     type: Mapped[int] = mapped_column(Integer, default=2)
     name: Mapped[str] = mapped_column(String(255), default="")
-    meta: Mapped[dict] = mapped_column("meta", Text, comment="元数据 JSON")
+    meta: Mapped[dict] = mapped_column(JSONType, default=dict, comment="元数据 JSON")
     content: Mapped[str] = mapped_column(Text, default="")
     position: Mapped[float] = mapped_column(Float, default=0.0)
     parent_id: Mapped[str] = mapped_column(String(36), default="")

@@ -1,9 +1,9 @@
 """AI模型配置 - 对应 Go 版 domain/model.go"""
 
-from sqlalchemy import String, Integer, BigInteger, Text
+from sqlalchemy import String, BigInteger
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.models.base import Base, TimestampMixin, UUIDPrimaryKey
+from app.models.base import Base, TimestampMixin, UUIDPrimaryKey, JSONType
 
 
 class Model(Base, UUIDPrimaryKey, TimestampMixin):
@@ -22,7 +22,8 @@ class Model(Base, UUIDPrimaryKey, TimestampMixin):
     completion_tokens: Mapped[int] = mapped_column(BigInteger, default=0)
     total_tokens: Mapped[int] = mapped_column(BigInteger, default=0)
     parameters: Mapped[dict] = mapped_column(
-        "parameters", Text,
+        JSONType,
+        default=dict,
         comment="模型参数 JSON (context_window, max_tokens, r1_enabled, temperature等)",
     )
 

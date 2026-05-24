@@ -1,9 +1,9 @@
 """设置模型 - 对应 Go 版 domain/setting.go"""
 
-from sqlalchemy import String, Integer, Text
+from sqlalchemy import String, Integer
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.models.base import Base, TimestampMixin
+from app.models.base import Base, TimestampMixin, JSONType
 
 
 class Setting(Base, TimestampMixin):
@@ -13,7 +13,7 @@ class Setting(Base, TimestampMixin):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     kb_id: Mapped[str] = mapped_column(String(36), nullable=False)
     key: Mapped[str] = mapped_column(String(255), nullable=False, comment="设置键 (system_prompt, block_words 等)")
-    value: Mapped[dict] = mapped_column("value", Text, comment="设置值 JSON")
+    value: Mapped[dict] = mapped_column(JSONType, default=dict, comment="设置值 JSON")
     description: Mapped[str] = mapped_column(String(500), default="")
 
     def __repr__(self) -> str:
@@ -26,7 +26,7 @@ class SystemSetting(Base, TimestampMixin):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     key: Mapped[str] = mapped_column(String(255), nullable=False, comment="设置键 (model_setting_mode, upload 等)")
-    value: Mapped[dict] = mapped_column("value", Text, comment="设置值 JSON")
+    value: Mapped[dict] = mapped_column(JSONType, default=dict, comment="设置值 JSON")
     description: Mapped[str] = mapped_column(String(500), default="")
 
     def __repr__(self) -> str:

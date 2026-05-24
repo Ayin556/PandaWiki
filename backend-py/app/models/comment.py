@@ -3,7 +3,7 @@
 from sqlalchemy import String, Integer, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.models.base import Base, TimestampMixin, UUIDPrimaryKey
+from app.models.base import Base, TimestampMixin, UUIDPrimaryKey, JSONType
 
 
 class Comment(Base, UUIDPrimaryKey):
@@ -14,14 +14,19 @@ class Comment(Base, UUIDPrimaryKey):
     user_id: Mapped[str] = mapped_column(String(36), default="")
     node_id: Mapped[str] = mapped_column(String(36), default="", index=True)
     info: Mapped[dict] = mapped_column(
-        "info", Text,
+        JSONType,
+        default=dict,
         comment="评论者信息 JSON",
     )
     parent_id: Mapped[str] = mapped_column(String(36), default="")
     root_id: Mapped[str] = mapped_column(String(36), default="")
     content: Mapped[str] = mapped_column(Text, default="")
     status: Mapped[int] = mapped_column(Integer, default=0, comment="-1=拒绝,0=待审,1=通过")
-    pic_urls: Mapped[str] = mapped_column(Text, default="[]", comment="图片URL JSON数组")
+    pic_urls: Mapped[list] = mapped_column(
+        JSONType,
+        default=list,
+        comment="图片URL JSON数组",
+    )
     created_at: Mapped[str] = mapped_column(String(50), default="")
 
     def __repr__(self) -> str:

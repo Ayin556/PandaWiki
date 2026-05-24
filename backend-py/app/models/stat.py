@@ -2,10 +2,10 @@
 
 from datetime import datetime
 
-from sqlalchemy import String, Integer, BigInteger, Text, DateTime
+from sqlalchemy import String, Integer, BigInteger, DateTime
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.models.base import Base, IntPrimaryKey
+from app.models.base import Base, IntPrimaryKey, JSONType
 
 
 class StatPage(Base, IntPrimaryKey):
@@ -39,12 +39,12 @@ class StatPageHour(Base, IntPrimaryKey):
     session_count: Mapped[int] = mapped_column(BigInteger, default=0)
     page_visit_count: Mapped[int] = mapped_column(BigInteger, default=0)
     conversation_count: Mapped[int] = mapped_column(BigInteger, default=0)
-    geo_count: Mapped[dict] = mapped_column("geo_count", Text, default="{}", comment="地理分布 JSON")
-    conversation_distribution: Mapped[dict] = mapped_column("conversation_distribution", Text, default="{}", comment="对话分布 JSON")
-    hot_referer_host: Mapped[dict] = mapped_column("hot_referer_host", Text, default="{}", comment="热来源 JSON")
-    hot_page: Mapped[dict] = mapped_column("hot_page", Text, default="{}", comment="热页面 JSON")
-    hot_browser: Mapped[dict] = mapped_column("hot_browser", Text, default="{}", comment="热浏览器 JSON")
-    hot_os: Mapped[dict] = mapped_column("hot_os", Text, default="{}", comment="热操作系统 JSON")
+    geo_count: Mapped[dict] = mapped_column(JSONType, default=dict, comment="地理分布 JSON")
+    conversation_distribution: Mapped[dict] = mapped_column(JSONType, default=dict, comment="对话分布 JSON")
+    hot_referer_host: Mapped[dict] = mapped_column(JSONType, default=dict, comment="热来源 JSON")
+    hot_page: Mapped[dict] = mapped_column(JSONType, default=dict, comment="热页面 JSON")
+    hot_browser: Mapped[dict] = mapped_column(JSONType, default=dict, comment="热浏览器 JSON")
+    hot_os: Mapped[dict] = mapped_column(JSONType, default=dict, comment="热操作系统 JSON")
 
     def __repr__(self) -> str:
         return f"<StatPageHour(id={self.id}, kb_id={self.kb_id})>"

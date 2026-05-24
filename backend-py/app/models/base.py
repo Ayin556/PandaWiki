@@ -1,15 +1,34 @@
 """SQLAlchemy 模型基类"""
 
+import json
 import uuid
 from datetime import datetime, timezone
 
-from sqlalchemy import String, DateTime, func
+from sqlalchemy import String, DateTime, func, types
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
 class Base(DeclarativeBase):
-    """声明式基类"""
+    """声明式基类 - 全局唯一，供所有 ORM 模型和 Alembic 共享"""
     pass
+
+
+class JSONType(types.TypeDecorator):
+    """PostgreSQL JSONB 类型，Python 侧自动序列化/反序列化"""
+    impl = types.Text
+    cache_ok = True
+
+    def process_bind_param(self, value, dialect):
+        if value is not None:
+            return json.dumps(value, ensure_ascii=False)
+        return None
+
+    def process_result_value(self, value, dialect):
+        if value is not None:
+            if isinstance(value, dict | list):
+                return value
+            return json.loads(value)
+        return None
 
 
 class TimestampMixin:

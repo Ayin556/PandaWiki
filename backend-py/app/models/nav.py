@@ -1,6 +1,6 @@
 """栏目/导航模型 - 对应 Go 版 domain/nav.go"""
 
-from sqlalchemy import String, Float, Text
+from sqlalchemy import String, Float, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base, TimestampMixin, UUIDPrimaryKey

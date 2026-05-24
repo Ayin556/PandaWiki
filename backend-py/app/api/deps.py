@@ -94,7 +94,18 @@ async def require_full_control(
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
     if user.role == "admin":
         return user
-    # TODO: 检查 kb_users 表中的权限
+    # 检查 kb_users 表中的权限
+    from app.models.user import KBUser
+    from sqlalchemy import select
+    result = await db.execute(
+        select(KBUser.perm).where(KBUser.kb_id == kb_id, KBUser.user_id == user.id)
+    )
+    perm = result.scalar_one_or_none()
+    if not perm or perm not in ("full_control",):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Full control access required",
+        )
     return user
 
 

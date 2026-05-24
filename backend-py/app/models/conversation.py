@@ -1,9 +1,9 @@
 """对话模型 - 对应 Go 版 domain/conversation.go"""
 
 from sqlalchemy import String, Integer, Text, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import Base, TimestampMixin, UUIDPrimaryKey
+from app.models.base import Base, TimestampMixin, UUIDPrimaryKey, JSONType
 
 
 class Conversation(Base, UUIDPrimaryKey, TimestampMixin):
@@ -16,7 +16,8 @@ class Conversation(Base, UUIDPrimaryKey, TimestampMixin):
     subject: Mapped[str] = mapped_column(String(500), default="")
     remote_ip: Mapped[str] = mapped_column(String(50), default="")
     info: Mapped[dict] = mapped_column(
-        "info", Text,
+        JSONType,
+        default=dict,
         comment="用户信息 JSON",
     )
 
@@ -37,7 +38,11 @@ class ConversationMessage(Base, UUIDPrimaryKey, TimestampMixin):
     kb_id: Mapped[str] = mapped_column(String(36), default="")
     role: Mapped[str] = mapped_column(String(50), nullable=False, comment="user/assistant")
     content: Mapped[str] = mapped_column(Text, default="")
-    image_paths: Mapped[str] = mapped_column(Text, default="[]", comment="图片路径 JSON 数组")
+    image_paths: Mapped[list] = mapped_column(
+        JSONType,
+        default=list,
+        comment="图片路径 JSON 数组",
+    )
     provider: Mapped[str] = mapped_column(String(100), default="")
     model: Mapped[str] = mapped_column(String(255), default="")
     prompt_tokens: Mapped[int] = mapped_column(Integer, default=0)
@@ -45,7 +50,8 @@ class ConversationMessage(Base, UUIDPrimaryKey, TimestampMixin):
     total_tokens: Mapped[int] = mapped_column(Integer, default=0)
     remote_ip: Mapped[str] = mapped_column(String(50), default="")
     info: Mapped[dict] = mapped_column(
-        "info", Text,
+        JSONType,
+        default=dict,
         comment="反馈信息 JSON (score, type, content)",
     )
     parent_id: Mapped[str] = mapped_column(String(36), default="")

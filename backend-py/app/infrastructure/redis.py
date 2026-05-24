@@ -3,6 +3,7 @@
 from typing import Optional
 
 import redis.asyncio as aioredis
+from loguru import logger
 
 from app.core.config import settings
 
@@ -10,13 +11,19 @@ _redis: Optional[aioredis.Redis] = None
 
 
 async def init_redis():
-    """初始化 Redis 连接"""
+    """初始化 Redis 连接（启动时容错）"""
     global _redis
-    _redis = aioredis.from_url(
-        settings.redis_url,
-        encoding="utf-8",
-        decode_responses=True,
-    )
+    try:
+        _redis = aioredis.from_url(
+            settings.redis_url,
+            encoding="utf-8",
+            decode_responses=True,
+        )
+        await _redis.ping()
+        logger.info("Redis connection established")
+    except Exception as e:
+        logger.warning(f"Redis not available at startup, will retry on request: {e}")
+        _redis = None
 
 
 async def close_redis():

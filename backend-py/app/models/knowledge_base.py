@@ -3,8 +3,7 @@
 from sqlalchemy import String, Text, ForeignKey, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import Base, TimestampMixin, UUIDPrimaryKey
-from app.infrastructure.database import Base as DBBase
+from app.models.base import Base, TimestampMixin, UUIDPrimaryKey, JSONType
 
 
 class KnowledgeBase(Base, UUIDPrimaryKey, TimestampMixin):
@@ -14,7 +13,8 @@ class KnowledgeBase(Base, UUIDPrimaryKey, TimestampMixin):
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     dataset_id: Mapped[str] = mapped_column(String(255), default="")
     access_settings: Mapped[dict] = mapped_column(
-        "access_settings", Text,
+        JSONType,
+        default=dict,
         comment="访问设置 JSON",
     )
 

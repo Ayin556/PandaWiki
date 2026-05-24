@@ -3,7 +3,7 @@
 所有数据库实体模型，映射到 Go 版的27张数据库表。
 """
 
-from app.models.base import Base, TimestampMixin, UUIDPrimaryKey, IntPrimaryKey
+from app.models.base import Base, TimestampMixin, UUIDPrimaryKey, IntPrimaryKey, JSONType
 from app.models.user import User, KBUser
 from app.models.knowledge_base import KnowledgeBase, KBRelease, KBReleaseNodeRelease
 from app.models.app import App
@@ -19,7 +19,7 @@ from app.models.api_token import APIToken
 
 __all__ = [
     # Base
-    "Base", "TimestampMixin", "UUIDPrimaryKey", "IntPrimaryKey",
+    "Base", "TimestampMixin", "UUIDPrimaryKey", "IntPrimaryKey", "JSONType",
     # User
     "User", "KBUser",
     # KnowledgeBase

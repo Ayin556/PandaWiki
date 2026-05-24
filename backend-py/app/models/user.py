@@ -1,5 +1,7 @@
 """用户模型 - 对应 Go 版 domain/user.go"""
 
+from datetime import datetime
+
 from sqlalchemy import String, Integer, ForeignKey, DateTime, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
