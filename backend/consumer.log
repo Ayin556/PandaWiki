@@ -1,0 +1,780 @@
+time=2026-05-23T20:55:38.218+08:00 level=WARN msg="caddy sync skipped: caddy is disabled (CADDY_ENABLED=false)" module=repo.pg.knowledge_base
+time=2026-05-23T20:55:38.223+08:00 level=INFO msg="registering handler for topic" module=mq.nats topic=apps.panda-wiki.vector.task
+time=2026-05-23T20:55:38.225+08:00 level=INFO msg="successfully subscribed to topic via JetStream" module=mq.nats topic=apps.panda-wiki.vector.task
+time=2026-05-23T20:55:38.225+08:00 level=INFO msg="registering handler for topic" module=mq.nats topic=raglite.events.doc.update
+time=2026-05-23T20:55:38.226+08:00 level=INFO msg="successfully subscribed to topic via JetStream" module=mq.nats topic=raglite.events.doc.update
+time=2026-05-23T20:55:38.251+08:00 level=INFO msg="add cron job" module=handler.mq.cron cron_id=aggregate_hourly_stats
+time=2026-05-23T20:55:38.251+08:00 level=INFO msg="add cron job" module=handler.mq.cron cron_id=remove_old_stat_data
+time=2026-05-23T20:55:38.251+08:00 level=INFO msg="add cron job" module=handler.mq.cron cron_id=cleanup_old_hourly_stats
+time=2026-05-23T20:55:38.251+08:00 level=INFO msg="add cron job" module=handler.mq.cron cron_id=sync_rag_node_status
+time=2026-05-23T20:55:38.251+08:00 level=INFO msg="add cron job" module=handler.mq.cron cron_id=cleanup_old_node_release_backups
+time=2026-05-23T20:55:38.252+08:00 level=INFO msg="start cron jobs" module=handler.mq.cron
+time=2026-05-23T20:55:38.290+08:00 level=INFO msg="received rag doc update event" module=mq.rag_doc_update doc_id=ab50fcb1-000e-47d4-9879-580ff881d1b6 status=PENDING message="waiting for indexing"
+time=2026-05-23T20:55:38.291+08:00 level=ERROR msg="failed to get node id by doc id" module=mq.rag_doc_update doc_id=ab50fcb1-000e-47d4-9879-580ff881d1b6 error="node not found for doc_id: ab50fcb1-000e-47d4-9879-580ff881d1b6"
+time=2026-05-23T20:55:38.291+08:00 level=ERROR msg="handle message failed" module=mq.nats topic=raglite.events.doc.update error="node not found for doc_id: ab50fcb1-000e-47d4-9879-580ff881d1b6"
+time=2026-05-23T20:55:38.301+08:00 level=INFO msg="received rag doc update event" module=mq.rag_doc_update doc_id=ab50fcb1-000e-47d4-9879-580ff881d1b6 status=RUNNING message="Starting document indexing"
+time=2026-05-23T20:55:38.302+08:00 level=ERROR msg="failed to get node id by doc id" module=mq.rag_doc_update doc_id=ab50fcb1-000e-47d4-9879-580ff881d1b6 error="node not found for doc_id: ab50fcb1-000e-47d4-9879-580ff881d1b6"
+time=2026-05-23T20:55:38.302+08:00 level=ERROR msg="handle message failed" module=mq.nats topic=raglite.events.doc.update error="node not found for doc_id: ab50fcb1-000e-47d4-9879-580ff881d1b6"
+time=2026-05-23T20:55:38.305+08:00 level=INFO msg="upsert node content vector success" module=mq.rag updated_ids=55d6fca3-ad5b-48c7-862d-782e6df46d5d
+time=2026-05-23T20:55:38.314+08:00 level=INFO msg="received rag doc update event" module=mq.rag_doc_update doc_id=f1279fa1-c032-4060-86a3-88e5b7c669eb status=PENDING message="waiting for indexing"
+time=2026-05-23T20:55:38.315+08:00 level=ERROR msg="failed to get node id by doc id" module=mq.rag_doc_update doc_id=f1279fa1-c032-4060-86a3-88e5b7c669eb error="node not found for doc_id: f1279fa1-c032-4060-86a3-88e5b7c669eb"
+time=2026-05-23T20:55:38.315+08:00 level=ERROR msg="handle message failed" module=mq.nats topic=raglite.events.doc.update error="node not found for doc_id: f1279fa1-c032-4060-86a3-88e5b7c669eb"
+time=2026-05-23T20:55:38.316+08:00 level=INFO msg="received rag doc update event" module=mq.rag_doc_update doc_id=f1279fa1-c032-4060-86a3-88e5b7c669eb status=RUNNING message="Starting document indexing"
+time=2026-05-23T20:55:38.316+08:00 level=ERROR msg="failed to get node id by doc id" module=mq.rag_doc_update doc_id=f1279fa1-c032-4060-86a3-88e5b7c669eb error="node not found for doc_id: f1279fa1-c032-4060-86a3-88e5b7c669eb"
+time=2026-05-23T20:55:38.316+08:00 level=ERROR msg="handle message failed" module=mq.nats topic=raglite.events.doc.update error="node not found for doc_id: f1279fa1-c032-4060-86a3-88e5b7c669eb"
+time=2026-05-23T20:55:38.317+08:00 level=INFO msg="upsert node content vector success" module=mq.rag updated_ids=4751a698-0dba-4846-a65d-fc6291f77a48
+time=2026-05-23T20:55:38.332+08:00 level=INFO msg="received rag doc update event" module=mq.rag_doc_update doc_id=6a8e996e-cc73-4eec-ad4d-fdce0b8358d6 status=PENDING message="waiting for indexing"
+time=2026-05-23T20:55:38.332+08:00 level=ERROR msg="failed to get node id by doc id" module=mq.rag_doc_update doc_id=6a8e996e-cc73-4eec-ad4d-fdce0b8358d6 error="node not found for doc_id: 6a8e996e-cc73-4eec-ad4d-fdce0b8358d6"
+time=2026-05-23T20:55:38.332+08:00 level=ERROR msg="handle message failed" module=mq.nats topic=raglite.events.doc.update error="node not found for doc_id: 6a8e996e-cc73-4eec-ad4d-fdce0b8358d6"
+time=2026-05-23T20:55:38.333+08:00 level=INFO msg="received rag doc update event" module=mq.rag_doc_update doc_id=6a8e996e-cc73-4eec-ad4d-fdce0b8358d6 status=RUNNING message="Starting document indexing"
+time=2026-05-23T20:55:38.333+08:00 level=INFO msg="upsert node content vector success" module=mq.rag updated_ids=bd24f1cc-95e9-413d-a842-6940b929ffd6
+time=2026-05-23T20:55:38.337+08:00 level=INFO msg="received rag doc update event" module=mq.rag_doc_update doc_id=9d184d5c-f05b-41e5-a06b-a1d63dd47ae4 status=PENDING message="waiting for indexing"
+time=2026-05-23T20:55:38.338+08:00 level=ERROR msg="failed to get node id by doc id" module=mq.rag_doc_update doc_id=9d184d5c-f05b-41e5-a06b-a1d63dd47ae4 error="node not found for doc_id: 9d184d5c-f05b-41e5-a06b-a1d63dd47ae4"
+time=2026-05-23T20:55:38.338+08:00 level=ERROR msg="handle message failed" module=mq.nats topic=raglite.events.doc.update error="node not found for doc_id: 9d184d5c-f05b-41e5-a06b-a1d63dd47ae4"
+time=2026-05-23T20:55:38.338+08:00 level=INFO msg="received rag doc update event" module=mq.rag_doc_update doc_id=9d184d5c-f05b-41e5-a06b-a1d63dd47ae4 status=RUNNING message="Starting document indexing"
+time=2026-05-23T20:55:38.339+08:00 level=ERROR msg="failed to get node id by doc id" module=mq.rag_doc_update doc_id=9d184d5c-f05b-41e5-a06b-a1d63dd47ae4 error="node not found for doc_id: 9d184d5c-f05b-41e5-a06b-a1d63dd47ae4"
+time=2026-05-23T20:55:38.339+08:00 level=ERROR msg="handle message failed" module=mq.nats topic=raglite.events.doc.update error="node not found for doc_id: 9d184d5c-f05b-41e5-a06b-a1d63dd47ae4"
+time=2026-05-23T20:55:38.339+08:00 level=INFO msg="upsert node content vector success" module=mq.rag updated_ids=e0bfd6d3-4318-4e07-821a-fb4045c4b6eb
+time=2026-05-23T20:55:39.510+08:00 level=INFO msg="received rag doc update event" module=mq.rag_doc_update doc_id=6a8e996e-cc73-4eec-ad4d-fdce0b8358d6 status=RUNNING message="Loading document content"
+time=2026-05-23T20:55:39.520+08:00 level=INFO msg="received rag doc update event" module=mq.rag_doc_update doc_id=6a8e996e-cc73-4eec-ad4d-fdce0b8358d6 status=RUNNING message="Splitting document into chunks"
+time=2026-05-23T20:55:39.548+08:00 level=INFO msg="received rag doc update event" module=mq.rag_doc_update doc_id=6a8e996e-cc73-4eec-ad4d-fdce0b8358d6 status=RUNNING message="Enhancing content with AI"
+time=2026-05-23T20:55:39.712+08:00 level=INFO msg="received rag doc update event" module=mq.rag_doc_update doc_id=f1279fa1-c032-4060-86a3-88e5b7c669eb status=RUNNING message="Loading document content"
+time=2026-05-23T20:55:39.717+08:00 level=INFO msg="received rag doc update event" module=mq.rag_doc_update doc_id=f1279fa1-c032-4060-86a3-88e5b7c669eb status=RUNNING message="Splitting document into chunks"
+time=2026-05-23T20:55:39.724+08:00 level=INFO msg="received rag doc update event" module=mq.rag_doc_update doc_id=9d184d5c-f05b-41e5-a06b-a1d63dd47ae4 status=RUNNING message="Loading document content"
+time=2026-05-23T20:55:39.748+08:00 level=INFO msg="received rag doc update event" module=mq.rag_doc_update doc_id=ab50fcb1-000e-47d4-9879-580ff881d1b6 status=RUNNING message="Loading document content"
+time=2026-05-23T20:55:39.755+08:00 level=INFO msg="received rag doc update event" module=mq.rag_doc_update doc_id=ab50fcb1-000e-47d4-9879-580ff881d1b6 status=RUNNING message="Splitting document into chunks"
+time=2026-05-23T20:55:39.759+08:00 level=INFO msg="received rag doc update event" module=mq.rag_doc_update doc_id=ab50fcb1-000e-47d4-9879-580ff881d1b6 status=RUNNING message="Enhancing content with AI"
+time=2026-05-23T20:55:39.812+08:00 level=INFO msg="received rag doc update event" module=mq.rag_doc_update doc_id=f1279fa1-c032-4060-86a3-88e5b7c669eb status=RUNNING message="Enhancing content with AI"
+time=2026-05-23T20:55:39.814+08:00 level=INFO msg="received rag doc update event" module=mq.rag_doc_update doc_id=9d184d5c-f05b-41e5-a06b-a1d63dd47ae4 status=RUNNING message="Splitting document into chunks"
+time=2026-05-23T20:55:39.816+08:00 level=INFO msg="received rag doc update event" module=mq.rag_doc_update doc_id=9d184d5c-f05b-41e5-a06b-a1d63dd47ae4 status=RUNNING message="Enhancing content with AI"
+time=2026-05-23T20:55:42.639+08:00 level=INFO msg="received rag doc update event" module=mq.rag_doc_update doc_id=6a8e996e-cc73-4eec-ad4d-fdce0b8358d6 status=RUNNING message="Generating embeddings"
+time=2026-05-23T20:55:43.750+08:00 level=INFO msg="received rag doc update event" module=mq.rag_doc_update doc_id=6a8e996e-cc73-4eec-ad4d-fdce0b8358d6 status=RUNNING message="Storing data"
+time=2026-05-23T20:55:43.914+08:00 level=INFO msg="received rag doc update event" module=mq.rag_doc_update doc_id=6a8e996e-cc73-4eec-ad4d-fdce0b8358d6 status=SUCCEEDED message="Document indexing completed"
+time=2026-05-23T20:55:44.509+08:00 level=INFO msg="received rag doc update event" module=mq.rag_doc_update doc_id=ab50fcb1-000e-47d4-9879-580ff881d1b6 status=RUNNING message="Generating embeddings"
+time=2026-05-23T20:55:44.606+08:00 level=INFO msg="received rag doc update event" module=mq.rag_doc_update doc_id=9d184d5c-f05b-41e5-a06b-a1d63dd47ae4 status=RUNNING message="Generating embeddings"
+time=2026-05-23T20:55:44.992+08:00 level=INFO msg="received rag doc update event" module=mq.rag_doc_update doc_id=ab50fcb1-000e-47d4-9879-580ff881d1b6 status=RUNNING message="Storing data"
+time=2026-05-23T20:55:45.011+08:00 level=INFO msg="received rag doc update event" module=mq.rag_doc_update doc_id=ab50fcb1-000e-47d4-9879-580ff881d1b6 status=SUCCEEDED message="Document indexing completed"
+time=2026-05-23T20:55:45.050+08:00 level=INFO msg="received rag doc update event" module=mq.rag_doc_update doc_id=9d184d5c-f05b-41e5-a06b-a1d63dd47ae4 status=RUNNING message="Storing data"
+time=2026-05-23T20:55:45.061+08:00 level=INFO msg="received rag doc update event" module=mq.rag_doc_update doc_id=9d184d5c-f05b-41e5-a06b-a1d63dd47ae4 status=SUCCEEDED message="Document indexing completed"
+time=2026-05-23T20:55:48.141+08:00 level=INFO msg="received rag doc update event" module=mq.rag_doc_update doc_id=f1279fa1-c032-4060-86a3-88e5b7c669eb status=RUNNING message="Generating embeddings"
+time=2026-05-23T20:55:48.748+08:00 level=INFO msg="received rag doc update event" module=mq.rag_doc_update doc_id=f1279fa1-c032-4060-86a3-88e5b7c669eb status=RUNNING message="Storing data"
+time=2026-05-23T20:55:48.783+08:00 level=INFO msg="received rag doc update event" module=mq.rag_doc_update doc_id=f1279fa1-c032-4060-86a3-88e5b7c669eb status=SUCCEEDED message="Document indexing completed"
+time=2026-05-23T21:00:00.026+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+time=2026-05-23T21:00:00.130+08:00 level=INFO msg="aggregate hourly stats successful" module=handler.mq.cron
+time=2026-05-23T21:01:00.029+08:00 level=INFO msg="remove old stat data start" module=handler.mq.cron
+time=2026-05-23T21:01:00.045+08:00 level=INFO msg="remove old stat data successful" module=handler.mq.cron
+time=2026-05-23T21:10:00.013+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/23 21:10:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[36.019ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-23T21:10:00.060+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-23T21:20:00.028+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/23 21:20:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[9.181ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-23T21:20:00.045+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-23T21:26:00.023+08:00 level=INFO msg="sync rag node status" module=handler.mq.cron
+
+2026/05/23 21:26:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[6.053ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-23T21:26:00.035+08:00 level=ERROR msg="sync rag node status failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-23T21:30:00.015+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/23 21:30:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[5.991ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-23T21:30:00.028+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-23T21:40:00.024+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/23 21:40:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[9.014ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-23T21:40:00.044+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-23T21:50:00.016+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/23 21:50:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[12.028ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-23T21:50:00.041+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-23T22:00:00.016+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/23 22:00:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[10.084ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-23T22:00:00.048+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-23T22:01:00.010+08:00 level=INFO msg="remove old stat data start" module=handler.mq.cron
+time=2026-05-23T22:01:00.019+08:00 level=ERROR msg="remove old stat data failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-23T22:01:00.019+08:00 level=INFO msg="remove old stat data successful" module=handler.mq.cron
+time=2026-05-23T22:10:00.028+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/23 22:10:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[8.635ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-23T22:10:00.051+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-23T22:20:00.026+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/23 22:20:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[11.419ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-23T22:20:00.046+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-23T22:26:00.014+08:00 level=INFO msg="sync rag node status" module=handler.mq.cron
+
+2026/05/23 22:26:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[14.060ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-23T22:26:00.040+08:00 level=ERROR msg="sync rag node status failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-23T22:30:00.015+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/23 22:30:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[5.073ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-23T22:30:00.025+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-23T22:40:00.006+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/23 22:40:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[6.885ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-23T22:40:00.021+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-23T22:50:00.012+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/23 22:50:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[12.493ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-23T22:50:00.034+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-23T23:00:00.014+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/23 23:00:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[10.212ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-23T23:00:00.035+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-23T23:01:00.030+08:00 level=INFO msg="remove old stat data start" module=handler.mq.cron
+time=2026-05-23T23:01:00.038+08:00 level=ERROR msg="remove old stat data failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-23T23:01:00.038+08:00 level=INFO msg="remove old stat data successful" module=handler.mq.cron
+time=2026-05-23T23:10:00.022+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/23 23:10:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[11.541ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-23T23:10:00.046+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-23T23:20:00.010+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/23 23:20:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[10.948ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-23T23:20:00.030+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-23T23:26:00.016+08:00 level=INFO msg="sync rag node status" module=handler.mq.cron
+
+2026/05/23 23:26:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[9.383ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-23T23:26:00.033+08:00 level=ERROR msg="sync rag node status failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-23T23:30:00.011+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/23 23:30:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[7.416ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-23T23:30:00.026+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-23T23:40:00.005+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/23 23:40:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[3.484ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-23T23:40:00.011+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-23T23:50:00.003+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/23 23:50:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[15.174ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-23T23:50:00.028+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T00:00:00.041+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 00:00:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[22.806ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T00:00:00.080+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T00:01:00.046+08:00 level=INFO msg="remove old stat data start" module=handler.mq.cron
+
+2026/05/24 00:01:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/stat.go:181 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[14.227ms] [rows:0] SELECT node_id, COUNT(*) as count FROM "stat_pages" WHERE created_at < '2026-05-24 00:00:00' AND created_at >= '2026-05-23 00:00:00' AND node_id != '' GROUP BY "node_id"
+time=2026-05-24T00:01:00.072+08:00 level=ERROR msg="failed to get yesterday PV data" module=usecase.stats error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T00:01:00.072+08:00 level=ERROR msg="migrate yesterday PV data to node_stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T00:01:00.073+08:00 level=ERROR msg="remove old stat data failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T00:01:00.073+08:00 level=INFO msg="remove old stat data successful" module=handler.mq.cron
+time=2026-05-24T00:03:00.011+08:00 level=INFO msg="cleanup old hourly stats start" module=handler.mq.cron
+time=2026-05-24T00:03:00.019+08:00 level=ERROR msg="cleanup old hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T00:10:00.012+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 00:10:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[9.507ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T00:10:00.035+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T00:20:00.008+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 00:20:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[5.017ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T00:20:00.017+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T00:26:00.006+08:00 level=INFO msg="sync rag node status" module=handler.mq.cron
+
+2026/05/24 00:26:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[5.402ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T00:26:00.015+08:00 level=ERROR msg="sync rag node status failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T00:30:00.007+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 00:30:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[7.310ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T00:30:00.025+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T00:40:00.032+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 00:40:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[7.293ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T00:40:00.048+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T00:50:00.022+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 00:50:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[11.027ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T00:50:00.048+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T01:00:00.005+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 01:00:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[9.834ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T01:00:00.023+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T01:01:00.003+08:00 level=INFO msg="remove old stat data start" module=handler.mq.cron
+time=2026-05-24T01:01:00.018+08:00 level=ERROR msg="remove old stat data failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T01:01:00.018+08:00 level=INFO msg="remove old stat data successful" module=handler.mq.cron
+time=2026-05-24T01:10:00.005+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 01:10:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[8.672ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T01:10:00.030+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T01:20:00.006+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 01:20:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[11.457ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T01:20:00.033+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T01:26:00.005+08:00 level=INFO msg="sync rag node status" module=handler.mq.cron
+
+2026/05/24 01:26:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[7.118ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T01:26:00.019+08:00 level=ERROR msg="sync rag node status failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T01:30:00.002+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 01:30:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[3.738ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T01:30:00.011+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T01:40:00.003+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 01:40:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[1.822ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T01:40:00.007+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T01:50:00.031+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 01:50:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[1.275ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T01:50:00.033+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T02:00:00.020+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+time=2026-05-24T02:00:00.020+08:00 level=INFO msg="cleanup old node release backups start" module=handler.mq.cron
+
+2026/05/24 02:00:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[7.337ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T02:00:00.032+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T02:00:00.040+08:00 level=ERROR msg="cleanup old node release backups failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T02:01:00.026+08:00 level=INFO msg="remove old stat data start" module=handler.mq.cron
+time=2026-05-24T02:01:00.037+08:00 level=ERROR msg="remove old stat data failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T02:01:00.037+08:00 level=INFO msg="remove old stat data successful" module=handler.mq.cron
+time=2026-05-24T02:10:00.013+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 02:10:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[4.554ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T02:10:00.026+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T02:20:00.013+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 02:20:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[2.473ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T02:20:00.022+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T02:26:00.011+08:00 level=INFO msg="sync rag node status" module=handler.mq.cron
+
+2026/05/24 02:26:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[9.530ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T02:26:00.025+08:00 level=ERROR msg="sync rag node status failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T02:30:00.012+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 02:30:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[3.980ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T02:30:00.023+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T02:40:00.014+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 02:40:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[9.790ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T02:40:00.032+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T02:50:00.003+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 02:50:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[6.944ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T02:50:00.021+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T03:00:00.042+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 03:00:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.998ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T03:00:00.044+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T03:01:00.004+08:00 level=INFO msg="remove old stat data start" module=handler.mq.cron
+time=2026-05-24T03:01:00.020+08:00 level=ERROR msg="remove old stat data failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T03:01:00.020+08:00 level=INFO msg="remove old stat data successful" module=handler.mq.cron
+time=2026-05-24T03:10:00.010+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 03:10:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[9.851ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T03:10:00.034+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T03:20:00.012+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 03:20:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[11.896ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T03:20:00.034+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T03:26:00.004+08:00 level=INFO msg="sync rag node status" module=handler.mq.cron
+
+2026/05/24 03:26:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[4.032ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T03:26:00.014+08:00 level=ERROR msg="sync rag node status failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T03:30:00.011+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 03:30:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[3.259ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T03:30:00.015+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T03:40:00.011+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 03:40:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[2.776ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T03:40:00.016+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T03:50:00.007+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 03:50:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[5.432ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T03:50:00.016+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T04:00:00.011+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 04:00:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[5.881ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T04:00:00.019+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T04:01:00.006+08:00 level=INFO msg="remove old stat data start" module=handler.mq.cron
+time=2026-05-24T04:01:00.018+08:00 level=ERROR msg="remove old stat data failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T04:01:00.018+08:00 level=INFO msg="remove old stat data successful" module=handler.mq.cron
+time=2026-05-24T04:10:00.019+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 04:10:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[9.355ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T04:10:00.037+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T04:20:00.010+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 04:20:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[2.531ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T04:20:00.015+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T04:26:00.003+08:00 level=INFO msg="sync rag node status" module=handler.mq.cron
+
+2026/05/24 04:26:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[3.672ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T04:26:00.014+08:00 level=ERROR msg="sync rag node status failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T04:30:00.004+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 04:30:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[6.633ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T04:30:00.019+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T04:40:00.010+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 04:40:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[13.128ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T04:40:00.035+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T04:50:00.008+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 04:50:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[2.453ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T04:50:00.014+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T05:00:00.003+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 05:00:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[8.192ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T05:00:00.014+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T05:01:00.011+08:00 level=INFO msg="remove old stat data start" module=handler.mq.cron
+time=2026-05-24T05:01:00.029+08:00 level=ERROR msg="remove old stat data failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T05:01:00.029+08:00 level=INFO msg="remove old stat data successful" module=handler.mq.cron
+time=2026-05-24T05:10:00.016+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 05:10:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[12.826ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T05:10:00.039+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T05:20:00.012+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 05:20:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[11.389ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T05:20:00.032+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T05:26:00.006+08:00 level=INFO msg="sync rag node status" module=handler.mq.cron
+
+2026/05/24 05:26:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[3.791ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T05:26:00.014+08:00 level=ERROR msg="sync rag node status failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T05:30:00.004+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 05:30:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[3.913ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T05:30:00.010+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T05:40:00.003+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 05:40:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[14.802ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T05:40:00.025+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T05:50:00.034+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 05:50:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[2.312ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T05:50:00.042+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T06:00:00.020+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 06:00:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[3.814ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T06:00:00.026+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T06:01:00.014+08:00 level=INFO msg="remove old stat data start" module=handler.mq.cron
+time=2026-05-24T06:01:00.027+08:00 level=ERROR msg="remove old stat data failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T06:01:00.027+08:00 level=INFO msg="remove old stat data successful" module=handler.mq.cron
+time=2026-05-24T06:10:00.010+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 06:10:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[8.405ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T06:10:00.024+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T06:20:00.003+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 06:20:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[2.730ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T06:20:00.009+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T06:26:00.004+08:00 level=INFO msg="sync rag node status" module=handler.mq.cron
+
+2026/05/24 06:26:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[2.320ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T06:26:00.011+08:00 level=ERROR msg="sync rag node status failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T06:30:00.005+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 06:30:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[4.059ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T06:30:00.012+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T06:40:00.011+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 06:40:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[10.041ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T06:40:00.028+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T06:50:00.007+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 06:50:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[2.090ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T06:50:00.012+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T07:00:00.023+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 07:00:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[2.479ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T07:00:00.027+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T07:01:00.025+08:00 level=INFO msg="remove old stat data start" module=handler.mq.cron
+time=2026-05-24T07:01:00.033+08:00 level=ERROR msg="remove old stat data failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T07:01:00.033+08:00 level=INFO msg="remove old stat data successful" module=handler.mq.cron
+time=2026-05-24T07:10:00.013+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 07:10:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[9.935ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T07:10:00.032+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T07:20:00.011+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 07:20:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[8.711ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T07:20:00.029+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T07:26:00.011+08:00 level=INFO msg="sync rag node status" module=handler.mq.cron
+
+2026/05/24 07:26:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[2.745ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T07:26:00.018+08:00 level=ERROR msg="sync rag node status failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T07:30:00.004+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 07:30:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[8.141ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T07:30:00.014+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T07:40:00.004+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 07:40:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[1.439ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T07:40:00.009+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T07:50:00.005+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 07:50:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[2.097ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T07:50:00.010+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T08:00:00.008+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 08:00:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[14.189ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T08:00:00.025+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T08:01:00.007+08:00 level=INFO msg="remove old stat data start" module=handler.mq.cron
+time=2026-05-24T08:01:00.020+08:00 level=ERROR msg="remove old stat data failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T08:01:00.020+08:00 level=INFO msg="remove old stat data successful" module=handler.mq.cron
+time=2026-05-24T08:10:00.010+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 08:10:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[9.536ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T08:10:00.028+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T08:20:00.006+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 08:20:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[1.384ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T08:20:00.010+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T08:26:00.004+08:00 level=INFO msg="sync rag node status" module=handler.mq.cron
+
+2026/05/24 08:26:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[2.477ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T08:26:00.011+08:00 level=ERROR msg="sync rag node status failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T08:30:00.003+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 08:30:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[2.778ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T08:30:00.028+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T08:40:00.005+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 08:40:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[2.206ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T08:40:00.009+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T08:50:00.006+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 08:50:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[1.934ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T08:50:00.010+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T09:00:00.009+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 09:00:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[4.897ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T09:00:00.016+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T09:01:00.009+08:00 level=INFO msg="remove old stat data start" module=handler.mq.cron
+time=2026-05-24T09:01:00.035+08:00 level=ERROR msg="remove old stat data failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T09:01:00.035+08:00 level=INFO msg="remove old stat data successful" module=handler.mq.cron
+time=2026-05-24T09:10:00.009+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 09:10:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[7.626ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T09:10:00.024+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T09:20:00.008+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 09:20:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[9.702ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T09:20:00.029+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T09:26:00.003+08:00 level=INFO msg="sync rag node status" module=handler.mq.cron
+
+2026/05/24 09:26:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[3.407ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T09:26:00.013+08:00 level=ERROR msg="sync rag node status failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T09:30:00.040+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 09:30:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[3.931ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T09:30:00.046+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T09:40:00.006+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 09:40:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[11.174ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T09:40:00.039+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T09:50:00.007+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 09:50:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[12.770ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T09:50:00.034+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T10:00:00.013+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 10:00:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[22.166ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T10:00:00.055+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T10:01:00.014+08:00 level=INFO msg="remove old stat data start" module=handler.mq.cron
+time=2026-05-24T10:01:00.027+08:00 level=ERROR msg="remove old stat data failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T10:01:00.027+08:00 level=INFO msg="remove old stat data successful" module=handler.mq.cron
+time=2026-05-24T10:10:00.010+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 10:10:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[9.757ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T10:10:00.029+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T10:20:00.007+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 10:20:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[14.995ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T10:20:00.034+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T10:26:00.008+08:00 level=INFO msg="sync rag node status" module=handler.mq.cron
+
+2026/05/24 10:26:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[11.073ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T10:26:00.027+08:00 level=ERROR msg="sync rag node status failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T10:30:00.006+08:00 level=INFO msg="aggregate hourly stats start" module=handler.mq.cron
+
+2026/05/24 10:30:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:508 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[5.911ms] [rows:0] SELECT "id" FROM "knowledge_bases"
+time=2026-05-24T10:30:00.018+08:00 level=ERROR msg="aggregate hourly stats failed" module=handler.mq.cron error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
