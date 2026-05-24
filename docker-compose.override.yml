@@ -1,0 +1,46 @@
+# macOS 本地开发 Docker 覆盖配置
+# 仅启动中间件服务，暴露端口到宿主机
+# 使用方式: docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d
+
+services:
+  # 禁用不需要的容器（本地直接运行后端和前端）
+  caddy:
+    profiles:
+      - production
+  nginx:
+    profiles:
+      - production
+  app:
+    profiles:
+      - production
+  api:
+    profiles:
+      - production
+  consumer:
+    profiles:
+      - production
+  crawler:
+    profiles:
+      - production
+
+  # 中间件服务 - 暴露端口到宿主机
+  postgres:
+    ports:
+      - "5432:5432"
+  redis:
+    ports:
+      - "6379:6379"
+  minio:
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+  nats:
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+  qdrant:
+    ports:
+      - "6333:6333"
+  raglite:
+    ports:
+      - "5050:5050"

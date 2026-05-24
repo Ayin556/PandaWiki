@@ -1,0 +1,5 @@
+panic: new with database instance failed: failed to open source, "file://migration": open .: no such file or directory
+
+goroutine 1 [running]:
+main.main()
+	/Users/ayin/AIproject/PandaWiki/backend/cmd/api/main.go:20 +0x1a8
