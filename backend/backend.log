@@ -659,3 +659,9 @@ time=2026-05-24T08:35:11.268+08:00 level=ERROR msg="get knowledge base list fail
 [21.209ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
 time=2026-05-24T09:35:11.220+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
 time=2026-05-24T09:58:37.849+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/swagger/doc.json status=200 latency=37
+
+2026/05/24 10:35:11 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[31.692ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T10:35:11.225+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"

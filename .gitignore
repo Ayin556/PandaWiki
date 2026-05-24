@@ -8,6 +8,11 @@
 *.so
 *.dylib
 
+# Compiled binaries
+backend/cmd/*/panda-wiki-*
+backend/cmd/backend.log
+backend/consumer.log
+
 # Test binary, built with `go test -c`
 *.test
 
