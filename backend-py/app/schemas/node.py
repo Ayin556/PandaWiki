@@ -90,17 +90,17 @@ class NodeMoveRequest(BaseModel):
 
 
 class NodeMoveNavRequest(BaseModel):
-    """移动到其他栏目请求"""
-    node_ids: list[str]
+    """移动到其他栏目请求 - 字段名与前端 V1NodeMoveNavReq 对齐"""
+    ids: list[str]
     kb_id: str
     nav_id: str
 
 
 class BatchMoveRequest(BaseModel):
-    """批量移动请求"""
-    node_ids: list[str]
+    """批量移动请求 - 字段名与前端 DomainBatchMoveReq 对齐"""
+    ids: list[str]
     kb_id: str
-    parent_id: str
+    parent_id: str = ""
 
 
 class NodeSummaryRequest(BaseModel):

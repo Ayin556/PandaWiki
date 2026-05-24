@@ -1,12 +1,13 @@
 """对话模型 - 对应 Go 版 domain/conversation.go"""
 
 from sqlalchemy import String, Integer, Text, ForeignKey
+from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import Base, TimestampMixin, UUIDPrimaryKey, JSONType
+from app.models.base import Base, CreatedAtMixin, UUIDPrimaryKey, JSONType
 
 
-class Conversation(Base, UUIDPrimaryKey, TimestampMixin):
+class Conversation(Base, UUIDPrimaryKey, CreatedAtMixin):
     """对话表"""
     __tablename__ = "conversations"
 
@@ -29,7 +30,7 @@ class Conversation(Base, UUIDPrimaryKey, TimestampMixin):
         return f"<Conversation(id={self.id}, kb_id={self.kb_id})>"
 
 
-class ConversationMessage(Base, UUIDPrimaryKey, TimestampMixin):
+class ConversationMessage(Base, UUIDPrimaryKey, CreatedAtMixin):
     """对话消息表"""
     __tablename__ = "conversation_messages"
 
@@ -38,10 +39,10 @@ class ConversationMessage(Base, UUIDPrimaryKey, TimestampMixin):
     kb_id: Mapped[str] = mapped_column(String(36), default="")
     role: Mapped[str] = mapped_column(String(50), nullable=False, comment="user/assistant")
     content: Mapped[str] = mapped_column(Text, default="")
-    image_paths: Mapped[list] = mapped_column(
-        JSONType,
+    image_paths: Mapped[list[str]] = mapped_column(
+        ARRAY(String),
         default=list,
-        comment="图片路径 JSON 数组",
+        comment="图片路径数组",
     )
     provider: Mapped[str] = mapped_column(String(100), default="")
     model: Mapped[str] = mapped_column(String(255), default="")
@@ -63,16 +64,22 @@ class ConversationMessage(Base, UUIDPrimaryKey, TimestampMixin):
         return f"<ConversationMessage(id={self.id}, role={self.role})>"
 
 
-class ConversationReference(Base, TimestampMixin):
-    """对话引用表"""
+class ConversationReference(Base):
+    """对话引用表（无独立主键，与数据库一致）"""
     __tablename__ = "conversation_references"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    conversation_id: Mapped[str] = mapped_column(String(36), ForeignKey("conversations.id"), nullable=False, index=True)
+    # SQLAlchemy ORM 需要主键，用 conversation_id + node_id + url 做复合主键
+    __table_args__ = (
+        # 声明式映射，不需要数据库层面主键约束
+        {"extend_existing": True},
+    )
+
+    conversation_id: Mapped[str] = mapped_column(String(36), ForeignKey("conversations.id"), primary_key=True)
     app_id: Mapped[str] = mapped_column(String(36), default="")
-    node_id: Mapped[str] = mapped_column(String(36), default="")
+    node_id: Mapped[str] = mapped_column(String(36), primary_key=True)
     name: Mapped[str] = mapped_column(String(255), default="")
-    url: Mapped[str] = mapped_column(String(500), default="")
+    url: Mapped[str] = mapped_column(String(500), primary_key=True)
+    favicon: Mapped[str] = mapped_column(String(500), default="")
 
     # 关系
     conversation: Mapped["Conversation"] = relationship(back_populates="references")  # noqa: F821

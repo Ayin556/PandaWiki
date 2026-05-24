@@ -1,14 +1,14 @@
 """前台认证 API"""
 
 from fastapi import APIRouter
-from app.api.deps import DbSession
+from app.api.deps import DbSession, KbId
 from app.services.auth import AuthService
 
 router = APIRouter()
 
 
 @router.get("/get")
-async def auth_get(kb_id: str, db: DbSession):
+async def auth_get(kb_id: KbId, db: DbSession):
     """获取认证类型 - 对应 Go 版 ShareAuthHandler.AuthGet"""
     service = AuthService(db)
     return await service.get_share_auth(kb_id)

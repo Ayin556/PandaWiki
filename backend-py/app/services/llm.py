@@ -38,7 +38,7 @@ class LLMService:
         conversation_id: str,
         query: str,
         system_prompt: str = "",
-        group_ids: list[str] = None,
+        group_ids: list[int] = None,
     ) -> list:
         """构建带RAG的对话消息 - 对应 Go 版 BuildConversationMessageWithRAG"""
         messages = []

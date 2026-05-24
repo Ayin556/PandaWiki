@@ -11,12 +11,11 @@ from app.services.model import ModelService
 router = APIRouter()
 
 
-@router.get("/list", response_model=ModelListResponse)
+@router.get("/list")
 async def get_model_list(admin: AdminUser, db: DbSession):
-    """获取模型列表 - 对应 Go 版 ModelHandler.GetModelList"""
+    """获取模型列表 - 对应 Go 版 ModelHandler.GetModelList，直接返回数组"""
     service = ModelService(db)
-    models = await service.get_list()
-    return ModelListResponse(list=models)
+    return await service.get_list()
 
 
 @router.post("")
@@ -53,8 +52,7 @@ async def get_provider_supported_models(admin: AdminUser, db: DbSession):
 async def switch_mode(req: SwitchModeRequest, admin: AdminUser, db: DbSession):
     """切换模型模式 - 对应 Go 版 ModelHandler.SwitchMode"""
     service = ModelService(db)
-    await service.switch_mode(req)
-    return {"message": "Mode switched successfully"}
+    return await service.switch_mode(req)
 
 
 @router.get("/mode-setting")

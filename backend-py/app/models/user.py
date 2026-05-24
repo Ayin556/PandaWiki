@@ -5,12 +5,12 @@ from datetime import datetime
 from sqlalchemy import String, Integer, ForeignKey, DateTime, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import Base, TimestampMixin, UUIDPrimaryKey
+from app.models.base import Base, CreatedAtMixin, UUIDPrimaryKey
 from app.core.constants import UserRole
 
 
-class User(Base, UUIDPrimaryKey, TimestampMixin):
-    """用户表"""
+class User(Base, UUIDPrimaryKey, CreatedAtMixin):
+    """用户表（无 updated_at，与数据库一致）"""
     __tablename__ = "users"
 
     account: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
@@ -25,7 +25,7 @@ class User(Base, UUIDPrimaryKey, TimestampMixin):
         return f"<User(id={self.id}, account={self.account}, role={self.role})>"
 
 
-class KBUser(Base, TimestampMixin):
+class KBUser(Base, CreatedAtMixin):
     """知识库-用户关联表"""
     __tablename__ = "kb_users"
 

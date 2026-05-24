@@ -135,6 +135,7 @@ class LangChainRAG(RAGService):
             for doc, score in results:
                 metadata = doc.metadata or {}
                 chunk = RankedNodeChunk(
+                    chunk_id=metadata.get("node_id", ""),  # LangChain 无 chunk_id
                     node_id=metadata.get("node_id", ""),
                     node_name=metadata.get("node_name", ""),
                     content=doc.page_content,
@@ -184,7 +185,7 @@ class LangChainRAG(RAGService):
             logger.warning(f"Delete knowledge base failed (may not exist): {e}")
 
     async def update_document_group_ids(
-        self, dataset_id: str, doc_id: str, group_ids: list[str]
+        self, dataset_id: str, doc_id: str, group_ids: list[int]
     ) -> None:
         """更新文档分组ID"""
         # Chroma 不直接支持 metadata 更新，需要删除后重新添加

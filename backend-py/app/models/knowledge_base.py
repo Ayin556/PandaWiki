@@ -3,10 +3,10 @@
 from sqlalchemy import String, Text, ForeignKey, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import Base, TimestampMixin, UUIDPrimaryKey, JSONType
+from app.models.base import Base, CreatedAtMixin, UUIDPrimaryKey, JSONType
 
 
-class KnowledgeBase(Base, UUIDPrimaryKey, TimestampMixin):
+class KnowledgeBase(Base, UUIDPrimaryKey, CreatedAtMixin):
     """知识库表"""
     __tablename__ = "knowledge_bases"
 
@@ -28,7 +28,7 @@ class KnowledgeBase(Base, UUIDPrimaryKey, TimestampMixin):
         return f"<KnowledgeBase(id={self.id}, name={self.name})>"
 
 
-class KBRelease(Base, UUIDPrimaryKey, TimestampMixin):
+class KBRelease(Base, UUIDPrimaryKey, CreatedAtMixin):
     """知识库发布版本表"""
     __tablename__ = "kb_releases"
 
@@ -45,7 +45,7 @@ class KBRelease(Base, UUIDPrimaryKey, TimestampMixin):
         return f"<KBRelease(id={self.id}, kb_id={self.kb_id}, tag={self.tag})>"
 
 
-class KBReleaseNodeRelease(Base, UUIDPrimaryKey, TimestampMixin):
+class KBReleaseNodeRelease(Base, UUIDPrimaryKey, CreatedAtMixin):
     """知识库发布-节点发布关联表"""
     __tablename__ = "kb_release_node_releases"
 

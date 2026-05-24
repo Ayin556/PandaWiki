@@ -3,10 +3,10 @@
 from sqlalchemy import String, Integer, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.models.base import Base, TimestampMixin, UUIDPrimaryKey, JSONType
+from app.models.base import Base, CreatedAtMixin, UUIDPrimaryKey, JSONType
 
 
-class Comment(Base, UUIDPrimaryKey):
+class Comment(Base, UUIDPrimaryKey, CreatedAtMixin):
     """评论表"""
     __tablename__ = "comments"
 
@@ -27,7 +27,6 @@ class Comment(Base, UUIDPrimaryKey):
         default=list,
         comment="图片URL JSON数组",
     )
-    created_at: Mapped[str] = mapped_column(String(50), default="")
 
     def __repr__(self) -> str:
         return f"<Comment(id={self.id}, node_id={self.node_id})>"

@@ -665,3 +665,11 @@ time=2026-05-24T09:58:37.849+08:00 level=INFO msg=REQUEST remote_ip=::1 method=G
 	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
 [31.692ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
 time=2026-05-24T10:35:11.225+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 13:35:11 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 sql: Scan error on column index 3, name "access_settings": json: cannot unmarshal string into Go value of type domain.AccessSettings
+[23.802ms] [rows:2] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T13:35:11.186+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="sql: Scan error on column index 3, name \"access_settings\": json: cannot unmarshal string into Go value of type domain.AccessSettings"
+
+2026/05/24 14:35:11 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 sql: Scan error on column index 3, name "access_settings": json: cannot unmarshal string into Go value of type domain.AccessSettings
+[26.913ms] [rows:2] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T14:35:11.301+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="sql: Scan error on column index 3, name \"access_settings\": json: cannot unmarshal string into Go value of type domain.AccessSettings"

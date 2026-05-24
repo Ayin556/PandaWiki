@@ -13,9 +13,9 @@ class PandaWikiRetriever(BaseRetriever):
     """PandaWiki 自定义检索器 - 对应 Go 版的 RAG 查询"""
 
     dataset_id: str = ""
-    top_k: int = 5
-    score_threshold: float = 0.5
-    group_ids: list[str] = []
+    top_k: int = 10  # 对齐 Go 版 TopK=10
+    score_threshold: float = 0.2  # 对齐 Go 版 SimilarityThreshold=0.2
+    group_ids: list[int] = []  # Go 版 group_ids 为 []int
 
     def _get_relevant_documents(
         self,

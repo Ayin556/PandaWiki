@@ -1,0 +1,1147 @@
+INFO:     Started server process [2365]
+INFO:     Waiting for application startup.
+2026-05-24 14:25:53.418 | INFO     | app.main:lifespan:28 - Starting PandaWiki Backend...
+2026-05-24 14:25:53,443 INFO sqlalchemy.engine.Engine select pg_catalog.version()
+2026-05-24 14:25:53,443 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-24 14:25:53,448 INFO sqlalchemy.engine.Engine select current_schema()
+2026-05-24 14:25:53,448 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-24 14:25:53,450 INFO sqlalchemy.engine.Engine show standard_conforming_strings
+2026-05-24 14:25:53,450 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-24 14:25:53,451 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:25:53,451 INFO sqlalchemy.engine.Engine SELECT 1
+2026-05-24 14:25:53,451 INFO sqlalchemy.engine.Engine [generated in 0.00006s] ()
+2026-05-24 14:25:53,452 INFO sqlalchemy.engine.Engine COMMIT
+2026-05-24 14:25:53.453 | INFO     | app.infrastructure.database:init_db:31 - Database connection established
+2026-05-24 14:25:53.458 | INFO     | app.infrastructure.redis:init_redis:23 - Redis connection established
+2026-05-24 14:25:53.458 | INFO     | app.main:lifespan:33 - PandaWiki Backend started successfully
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-05-24 14:26:03.253 | INFO     | app.core.middleware:dispatch:38 - GET /openapi.json status=200 duration=44.1ms ip=127.0.0.1
+INFO:     127.0.0.1:54876 - "GET /openapi.json HTTP/1.1" 200 OK
+2026-05-24 14:26:18.122 | INFO     | app.core.middleware:dispatch:38 - GET /api/share/v1/chat/message status=404 duration=2.7ms ip=127.0.0.1
+INFO:     127.0.0.1:55001 - "GET /api/share/v1/chat/message?kb_id=c188352a-182f-4c55-93ab-70798b2e54e4&message=%E5%BB%96%E5%AE%B6%E9%93%B6%E5%9C%A8%E5%93%AA%E4%B8%8A%E7%8F%AD HTTP/1.1" 404 Not Found
+2026-05-24 14:26:50.436 | INFO     | app.core.middleware:dispatch:38 - POST /api/share/v1/chat/message status=404 duration=7.7ms ip=127.0.0.1
+INFO:     127.0.0.1:55239 - "POST /api/share/v1/chat/message HTTP/1.1" 404 Not Found
+/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/jwt/api_jwt.py:368: InsecureKeyLengthWarning: The HMAC key is 12 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+  decoded = self.decode_complete(
+2026-05-24 14:27:38,798 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:27:38,856 INFO sqlalchemy.engine.Engine SELECT users.account, users.password, users.role, users.last_access, users.id, users.created_at 
+FROM users 
+WHERE users.id = $1::VARCHAR
+2026-05-24 14:27:38,856 INFO sqlalchemy.engine.Engine [generated in 0.00057s] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:27:38,880 INFO sqlalchemy.engine.Engine SELECT navs.name, navs.kb_id, navs.position, navs.id, navs.created_at, navs.updated_at 
+FROM navs 
+WHERE navs.kb_id = $1::VARCHAR ORDER BY navs.position
+2026-05-24 14:27:38,881 INFO sqlalchemy.engine.Engine [generated in 0.00042s] ('c188352a-182f-4c55-93ab-70798b2e54e4',)
+2026-05-24 14:27:38,892 INFO sqlalchemy.engine.Engine SELECT nodes.kb_id, nodes.nav_id, nodes.type, nodes.status, nodes.rag_info, nodes.name, nodes.content, nodes.meta, nodes.parent_id, nodes.position, nodes.doc_id, nodes.creator_id, nodes.editor_id, nodes.edit_time, nodes.permissions, nodes.id, nodes.created_at, nodes.updated_at 
+FROM nodes 
+WHERE nodes.kb_id = $1::VARCHAR ORDER BY nodes.position, nodes.created_at
+2026-05-24 14:27:38,892 INFO sqlalchemy.engine.Engine [generated in 0.00030s] ('c188352a-182f-4c55-93ab-70798b2e54e4',)
+2026-05-24 14:27:38,902 INFO sqlalchemy.engine.Engine SELECT users.id, users.account 
+FROM users 
+WHERE users.id IN ($1::VARCHAR)
+2026-05-24 14:27:38,902 INFO sqlalchemy.engine.Engine [generated in 0.00041s] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:27:38.909 | INFO     | app.core.middleware:dispatch:38 - GET /api/v1/node/list/group/nav status=200 duration=307.6ms ip=127.0.0.1
+2026-05-24 14:27:38,910 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:55632 - "GET /api/v1/node/list/group/nav?kb_id=c188352a-182f-4c55-93ab-70798b2e54e4 HTTP/1.1" 200 OK
+2026-05-24 14:27:44,195 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:27:44,220 INFO sqlalchemy.engine.Engine SELECT users.account, users.password, users.role, users.last_access, users.id, users.created_at 
+FROM users 
+WHERE users.id = $1::VARCHAR
+2026-05-24 14:27:44,221 INFO sqlalchemy.engine.Engine [cached since 5.365s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:27:44.265 | INFO     | app.core.middleware:dispatch:38 - GET /api/v1/user status=200 duration=188.8ms ip=127.0.0.1
+2026-05-24 14:27:44,266 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:55692 - "GET /api/v1/user HTTP/1.1" 200 OK
+2026-05-24 14:27:44,406 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:27:44,406 INFO sqlalchemy.engine.Engine SELECT users.account, users.password, users.role, users.last_access, users.id, users.created_at 
+FROM users 
+WHERE users.id = $1::VARCHAR
+2026-05-24 14:27:44,406 INFO sqlalchemy.engine.Engine [cached since 5.55s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:27:44.435 | INFO     | app.core.middleware:dispatch:38 - GET /api/v1/license status=200 duration=316.9ms ip=127.0.0.1
+2026-05-24 14:27:44,437 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:55693 - "GET /api/v1/license HTTP/1.1" 200 OK
+2026-05-24 14:27:44,462 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:27:44,463 INFO sqlalchemy.engine.Engine SELECT users.account, users.password, users.role, users.last_access, users.id, users.created_at 
+FROM users 
+WHERE users.id = $1::VARCHAR
+2026-05-24 14:27:44,463 INFO sqlalchemy.engine.Engine [cached since 5.607s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:27:44,466 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:27:44,466 INFO sqlalchemy.engine.Engine SELECT users.account, users.password, users.role, users.last_access, users.id, users.created_at 
+FROM users 
+WHERE users.id = $1::VARCHAR
+2026-05-24 14:27:44,466 INFO sqlalchemy.engine.Engine [cached since 5.611s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:27:44,471 INFO sqlalchemy.engine.Engine SELECT models.provider, models.model, models.api_key, models.api_header, models.base_url, models.api_version, models.type, models.is_active, models.prompt_tokens, models.completion_tokens, models.total_tokens, models.parameters, models.id, models.created_at, models.updated_at 
+FROM models ORDER BY models.created_at
+2026-05-24 14:27:44,471 INFO sqlalchemy.engine.Engine [generated in 0.00021s] ()
+2026-05-24 14:27:44,475 INFO sqlalchemy.engine.Engine SELECT knowledge_bases.name, knowledge_bases.dataset_id, knowledge_bases.access_settings, knowledge_bases.id, knowledge_bases.created_at 
+FROM knowledge_bases JOIN kb_users ON kb_users.kb_id = knowledge_bases.id 
+WHERE kb_users.user_id = $1::VARCHAR
+2026-05-24 14:27:44,475 INFO sqlalchemy.engine.Engine [generated in 0.00024s] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:27:44.513 | INFO     | app.core.middleware:dispatch:38 - GET /api/v1/model/list status=200 duration=68.3ms ip=127.0.0.1
+2026-05-24 14:27:44.514 | INFO     | app.core.middleware:dispatch:38 - GET /api/v1/knowledge_base/list status=200 duration=58.2ms ip=127.0.0.1
+2026-05-24 14:27:44,514 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-05-24 14:27:44,516 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:55702 - "GET /api/v1/model/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55704 - "GET /api/v1/knowledge_base/list HTTP/1.1" 200 OK
+/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/jwt/api_jwt.py:368: InsecureKeyLengthWarning: The HMAC key is 12 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+  decoded = self.decode_complete(
+2026-05-24 14:27:44,618 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:27:44,618 INFO sqlalchemy.engine.Engine SELECT users.account, users.password, users.role, users.last_access, users.id, users.created_at 
+FROM users 
+WHERE users.id = $1::VARCHAR
+2026-05-24 14:27:44,618 INFO sqlalchemy.engine.Engine [cached since 5.762s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:27:44,622 INFO sqlalchemy.engine.Engine SELECT knowledge_bases.name, knowledge_bases.dataset_id, knowledge_bases.access_settings, knowledge_bases.id, knowledge_bases.created_at 
+FROM knowledge_bases 
+WHERE knowledge_bases.id = $1::VARCHAR
+2026-05-24 14:27:44,622 INFO sqlalchemy.engine.Engine [generated in 0.00040s] ('c188352a-182f-4c55-93ab-70798b2e54e4',)
+2026-05-24 14:27:44.634 | INFO     | app.core.middleware:dispatch:38 - GET /api/v1/knowledge_base/detail status=200 duration=19.3ms ip=127.0.0.1
+2026-05-24 14:27:44,635 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:55712 - "GET /api/v1/knowledge_base/detail?id=c188352a-182f-4c55-93ab-70798b2e54e4 HTTP/1.1" 200 OK
+2026-05-24 14:27:44,781 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:27:44,783 INFO sqlalchemy.engine.Engine SELECT users.account, users.password, users.role, users.last_access, users.id, users.created_at 
+FROM users 
+WHERE users.id = $1::VARCHAR
+2026-05-24 14:27:44,783 INFO sqlalchemy.engine.Engine [cached since 5.927s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:27:44,792 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
+FROM nodes 
+WHERE nodes.kb_id = $1::VARCHAR AND nodes.status != $2::INTEGER
+2026-05-24 14:27:44,792 INFO sqlalchemy.engine.Engine [generated in 0.00026s] ('c188352a-182f-4c55-93ab-70798b2e54e4', 2)
+2026-05-24 14:27:44,794 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:27:44,795 INFO sqlalchemy.engine.Engine SELECT users.account, users.password, users.role, users.last_access, users.id, users.created_at 
+FROM users 
+WHERE users.id = $1::VARCHAR
+2026-05-24 14:27:44,795 INFO sqlalchemy.engine.Engine [cached since 5.939s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:27:44,797 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
+FROM nodes 
+WHERE nodes.kb_id = $1::VARCHAR AND nodes.status = $2::INTEGER
+2026-05-24 14:27:44,797 INFO sqlalchemy.engine.Engine [generated in 0.00012s] ('c188352a-182f-4c55-93ab-70798b2e54e4', 2)
+2026-05-24 14:27:44,801 INFO sqlalchemy.engine.Engine SELECT navs.name, navs.kb_id, navs.position, navs.id, navs.created_at, navs.updated_at 
+FROM navs 
+WHERE navs.kb_id = $1::VARCHAR ORDER BY navs.position
+2026-05-24 14:27:44,802 INFO sqlalchemy.engine.Engine [cached since 5.921s ago] ('c188352a-182f-4c55-93ab-70798b2e54e4',)
+2026-05-24 14:27:44,804 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
+FROM navs 
+WHERE navs.kb_id = $1::VARCHAR
+2026-05-24 14:27:44,804 INFO sqlalchemy.engine.Engine [generated in 0.00017s] ('c188352a-182f-4c55-93ab-70798b2e54e4',)
+2026-05-24 14:27:44,805 INFO sqlalchemy.engine.Engine SELECT nodes.kb_id, nodes.nav_id, nodes.type, nodes.status, nodes.rag_info, nodes.name, nodes.content, nodes.meta, nodes.parent_id, nodes.position, nodes.doc_id, nodes.creator_id, nodes.editor_id, nodes.edit_time, nodes.permissions, nodes.id, nodes.created_at, nodes.updated_at 
+FROM nodes 
+WHERE nodes.kb_id = $1::VARCHAR ORDER BY nodes.position, nodes.created_at
+2026-05-24 14:27:44,805 INFO sqlalchemy.engine.Engine [cached since 5.913s ago] ('c188352a-182f-4c55-93ab-70798b2e54e4',)
+2026-05-24 14:27:44,806 INFO sqlalchemy.engine.Engine SELECT users.id, users.account 
+FROM users 
+WHERE users.id IN ($1::VARCHAR)
+2026-05-24 14:27:44,806 INFO sqlalchemy.engine.Engine [cached since 5.904s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:27:44.806 | INFO     | app.core.middleware:dispatch:38 - GET /api/v1/node/stats status=200 duration=31.1ms ip=127.0.0.1
+2026-05-24 14:27:44,806 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:55715 - "GET /api/v1/node/stats?kb_id=c188352a-182f-4c55-93ab-70798b2e54e4 HTTP/1.1" 200 OK
+2026-05-24 14:27:44.807 | INFO     | app.core.middleware:dispatch:38 - GET /api/v1/node/list/group/nav status=200 duration=14.9ms ip=127.0.0.1
+2026-05-24 14:27:44,807 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:55717 - "GET /api/v1/node/list/group/nav?kb_id=c188352a-182f-4c55-93ab-70798b2e54e4 HTTP/1.1" 200 OK
+2026-05-24 14:28:05.410 | INFO     | app.core.middleware:dispatch:38 - POST /share/v1/chat/message status=400 duration=3.6ms ip=127.0.0.1
+INFO:     127.0.0.1:55807 - "POST /share/v1/chat/message HTTP/1.1" 400 Bad Request
+2026-05-24 14:28:14.541 | INFO     | app.core.middleware:dispatch:38 - GET /share/v1/captcha status=404 duration=2.3ms ip=127.0.0.1
+INFO:     127.0.0.1:55848 - "GET /share/v1/captcha HTTP/1.1" 404 Not Found
+2026-05-24 14:28:24.476 | INFO     | app.core.middleware:dispatch:38 - GET /share/v1/captcha status=404 duration=1.3ms ip=127.0.0.1
+INFO:     127.0.0.1:55889 - "GET /share/v1/captcha HTTP/1.1" 404 Not Found
+2026-05-24 14:28:31.850 | INFO     | app.core.middleware:dispatch:38 - GET /share/v1/captcha status=404 duration=0.3ms ip=127.0.0.1
+INFO:     127.0.0.1:55914 - "GET /share/v1/captcha HTTP/1.1" 404 Not Found
+2026-05-24 14:30:23,262 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:30:23,266 INFO sqlalchemy.engine.Engine SELECT apps.kb_id, apps.name, apps.type, apps.settings, apps.id, apps.created_at, apps.updated_at 
+FROM apps 
+WHERE apps.kb_id = $1::VARCHAR AND apps.type = $2::INTEGER
+2026-05-24 14:30:23,267 INFO sqlalchemy.engine.Engine [generated in 0.00078s] ('43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3', 1)
+2026-05-24 14:30:23,278 INFO sqlalchemy.engine.Engine SELECT knowledge_bases.name, knowledge_bases.dataset_id, knowledge_bases.access_settings, knowledge_bases.id, knowledge_bases.created_at 
+FROM knowledge_bases 
+WHERE knowledge_bases.id = $1::VARCHAR
+2026-05-24 14:30:23,279 INFO sqlalchemy.engine.Engine [cached since 158.7s ago] ('43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3',)
+2026-05-24 14:30:23.282 | INFO     | app.core.middleware:dispatch:38 - GET /share/v1/app/web/info status=200 duration=40.6ms ip=127.0.0.1
+2026-05-24 14:30:23,283 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:56287 - "GET /share/v1/app/web/info HTTP/1.1" 200 OK
+2026-05-24 14:30:23.310 | INFO     | app.core.middleware:dispatch:38 - POST /share/v1/captcha/challenge status=200 duration=2.4ms ip=::1
+INFO:     ::1:0 - "POST /share/v1/captcha/challenge HTTP/1.1" 200 OK
+2026-05-24 14:30:23,511 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:30:23,512 INFO sqlalchemy.engine.Engine SELECT apps.kb_id, apps.name, apps.type, apps.settings, apps.id, apps.created_at, apps.updated_at 
+FROM apps 
+WHERE apps.kb_id = $1::VARCHAR AND apps.type = $2::INTEGER
+2026-05-24 14:30:23,512 INFO sqlalchemy.engine.Engine [cached since 0.2462s ago] ('43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3', 1)
+2026-05-24 14:30:23,519 INFO sqlalchemy.engine.Engine SELECT knowledge_bases.name, knowledge_bases.dataset_id, knowledge_bases.access_settings, knowledge_bases.id, knowledge_bases.created_at 
+FROM knowledge_bases 
+WHERE knowledge_bases.id = $1::VARCHAR
+2026-05-24 14:30:23,519 INFO sqlalchemy.engine.Engine [cached since 158.9s ago] ('43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3',)
+2026-05-24 14:30:23.520 | INFO     | app.core.middleware:dispatch:38 - GET /share/v1/app/web/info status=200 duration=12.2ms ip=127.0.0.1
+2026-05-24 14:30:23,521 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:56287 - "GET /share/v1/app/web/info HTTP/1.1" 200 OK
+2026-05-24 14:30:23.525 | INFO     | app.core.middleware:dispatch:38 - POST /share/v1/captcha/redeem status=200 duration=1.9ms ip=::1
+INFO:     ::1:0 - "POST /share/v1/captcha/redeem HTTP/1.1" 200 OK
+2026-05-24 14:30:23,544 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:30:23,544 INFO sqlalchemy.engine.Engine SELECT apps.kb_id, apps.name, apps.type, apps.settings, apps.id, apps.created_at, apps.updated_at 
+FROM apps 
+WHERE apps.kb_id = $1::VARCHAR AND apps.type = $2::INTEGER
+2026-05-24 14:30:23,544 INFO sqlalchemy.engine.Engine [cached since 0.2785s ago] ('43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3', 1)
+2026-05-24 14:30:23,547 INFO sqlalchemy.engine.Engine SELECT knowledge_bases.name, knowledge_bases.dataset_id, knowledge_bases.access_settings, knowledge_bases.id, knowledge_bases.created_at 
+FROM knowledge_bases 
+WHERE knowledge_bases.id = $1::VARCHAR
+2026-05-24 14:30:23,547 INFO sqlalchemy.engine.Engine [cached since 158.9s ago] ('43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3',)
+2026-05-24 14:30:23.549 | INFO     | app.core.middleware:dispatch:38 - GET /share/v1/app/web/info status=200 duration=6.9ms ip=127.0.0.1
+2026-05-24 14:30:23,549 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:56287 - "GET /share/v1/app/web/info HTTP/1.1" 200 OK
+2026-05-24 14:30:23.554 | INFO     | app.core.middleware:dispatch:38 - POST /share/v1/chat/message status=200 duration=2.2ms ip=::1
+INFO:     ::1:0 - "POST /share/v1/chat/message HTTP/1.1" 200 OK
+2026-05-24 14:30:23,556 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:30:23,558 INFO sqlalchemy.engine.Engine INSERT INTO conversations (nonce, kb_id, app_id, subject, remote_ip, info, id) VALUES ($1::VARCHAR, $2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::JSONB, $7::VARCHAR) RETURNING conversations.created_at
+2026-05-24 14:30:23,558 INFO sqlalchemy.engine.Engine [generated in 0.00022s] ('6a115742-2cef-4379-8677-1b8645680342', '', '', '廖家银在哪里上班', '', '"{}"', '9ff93eeb-4bad-4e40-acfe-54bffe2ead40')
+2026-05-24 14:30:23,564 INFO sqlalchemy.engine.Engine COMMIT
+2026-05-24 14:30:23,568 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:30:23,569 INFO sqlalchemy.engine.Engine SELECT conversations.nonce, conversations.kb_id, conversations.app_id, conversations.subject, conversations.remote_ip, conversations.info, conversations.id, conversations.created_at 
+FROM conversations 
+WHERE conversations.id = $1::VARCHAR
+2026-05-24 14:30:23,569 INFO sqlalchemy.engine.Engine [generated in 0.00006s] ('9ff93eeb-4bad-4e40-acfe-54bffe2ead40',)
+2026-05-24 14:30:23,574 INFO sqlalchemy.engine.Engine INSERT INTO conversation_messages (conversation_id, app_id, kb_id, role, content, image_paths, provider, model, prompt_tokens, completion_tokens, total_tokens, remote_ip, info, parent_id, id) VALUES ($1::VARCHAR, $2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR[], $7::VARCHAR, $8::VARCHAR, $9::INTEGER, $10::INTEGER, $11::INTEGER, $12::VARCHAR, $13::JSONB, $14::VARCHAR, $15::VARCHAR) RETURNING conversation_messages.created_at
+2026-05-24 14:30:23,574 INFO sqlalchemy.engine.Engine [generated in 0.00045s] ('9ff93eeb-4bad-4e40-acfe-54bffe2ead40', '', '', 'user', '廖家银在哪里上班', [], '', '', 0, 0, 0, '', '"{}"', '', '5f632245-54db-4bf3-bdf2-d088f97e1ad2')
+2026-05-24 14:30:23,624 INFO sqlalchemy.engine.Engine COMMIT
+2026-05-24 14:30:23,628 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:30:23,629 INFO sqlalchemy.engine.Engine SELECT system_settings.id, system_settings.key, system_settings.value, system_settings.description, system_settings.created_at, system_settings.updated_at 
+FROM system_settings 
+WHERE system_settings.key = $1::VARCHAR
+2026-05-24 14:30:23,629 INFO sqlalchemy.engine.Engine [generated in 0.00020s] ('model_setting_mode',)
+2026-05-24 14:30:23,632 INFO sqlalchemy.engine.Engine SELECT settings.id, settings.kb_id, settings.key, settings.value, settings.description, settings.created_at, settings.updated_at 
+FROM settings 
+WHERE settings.kb_id = $1::VARCHAR AND settings.key = $2::VARCHAR
+2026-05-24 14:30:23,633 INFO sqlalchemy.engine.Engine [generated in 0.00013s] ('', 'system_prompt')
+2026-05-24 14:30:23,634 INFO sqlalchemy.engine.Engine SELECT knowledge_bases.name, knowledge_bases.dataset_id, knowledge_bases.access_settings, knowledge_bases.id, knowledge_bases.created_at 
+FROM knowledge_bases 
+WHERE knowledge_bases.id = $1::VARCHAR
+2026-05-24 14:30:23,634 INFO sqlalchemy.engine.Engine [cached since 159s ago] ('',)
+2026-05-24 14:30:23,635 INFO sqlalchemy.engine.Engine SELECT conversation_messages.conversation_id, conversation_messages.app_id, conversation_messages.kb_id, conversation_messages.role, conversation_messages.content, conversation_messages.image_paths, conversation_messages.provider, conversation_messages.model, conversation_messages.prompt_tokens, conversation_messages.completion_tokens, conversation_messages.total_tokens, conversation_messages.remote_ip, conversation_messages.info, conversation_messages.parent_id, conversation_messages.id, conversation_messages.created_at 
+FROM conversation_messages 
+WHERE conversation_messages.conversation_id = $1::VARCHAR ORDER BY conversation_messages.created_at
+2026-05-24 14:30:23,635 INFO sqlalchemy.engine.Engine [generated in 0.00007s] ('9ff93eeb-4bad-4e40-acfe-54bffe2ead40',)
+2026-05-24 14:30:23.711 | ERROR    | app.infrastructure.rag.ct_rag:query_records:236 - Query records failed: Client error '400 Bad Request' for url 'http://localhost:5050/api/v1/search'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400
+2026-05-24 14:30:25,590 INFO sqlalchemy.engine.Engine INSERT INTO conversation_messages (conversation_id, app_id, kb_id, role, content, image_paths, provider, model, prompt_tokens, completion_tokens, total_tokens, remote_ip, info, parent_id, id) VALUES ($1::VARCHAR, $2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR[], $7::VARCHAR, $8::VARCHAR, $9::INTEGER, $10::INTEGER, $11::INTEGER, $12::VARCHAR, $13::JSONB, $14::VARCHAR, $15::VARCHAR) RETURNING conversation_messages.created_at
+2026-05-24 14:30:25,590 INFO sqlalchemy.engine.Engine [generated in 0.00025s] ('9ff93eeb-4bad-4e40-acfe-54bffe2ead40', '', '', 'assistant', '根据提供的参考资料，没有找到关于廖家银工作单位的具体信息。建议通过其他渠道或更详细的背景资料进行核实。', [], 'BaiZhiCloud', 'deepseek-chat', 0, 0, 0, '', '"{}"', '5f632245-54db-4bf3-bdf2-d088f97e1ad2', 'c7484d29-76fe-470e-b5d5-4ada2c1fb184')
+2026-05-24 14:30:25,608 INFO sqlalchemy.engine.Engine COMMIT
+/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/jwt/api_jwt.py:368: InsecureKeyLengthWarning: The HMAC key is 12 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+  decoded = self.decode_complete(
+2026-05-24 14:31:21,163 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:31:21,167 INFO sqlalchemy.engine.Engine SELECT users.account, users.password, users.role, users.last_access, users.id, users.created_at 
+FROM users 
+WHERE users.id = $1::VARCHAR
+2026-05-24 14:31:21,167 INFO sqlalchemy.engine.Engine [cached since 222.3s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:31:21,189 INFO sqlalchemy.engine.Engine SELECT navs.name, navs.kb_id, navs.position, navs.id, navs.created_at, navs.updated_at 
+FROM navs 
+WHERE navs.kb_id = $1::VARCHAR ORDER BY navs.position
+2026-05-24 14:31:21,189 INFO sqlalchemy.engine.Engine [cached since 222.3s ago] ('c188352a-182f-4c55-93ab-70798b2e54e4',)
+2026-05-24 14:31:21,195 INFO sqlalchemy.engine.Engine SELECT nodes.kb_id, nodes.nav_id, nodes.type, nodes.status, nodes.rag_info, nodes.name, nodes.content, nodes.meta, nodes.parent_id, nodes.position, nodes.doc_id, nodes.creator_id, nodes.editor_id, nodes.edit_time, nodes.permissions, nodes.id, nodes.created_at, nodes.updated_at 
+FROM nodes 
+WHERE nodes.kb_id = $1::VARCHAR ORDER BY nodes.position, nodes.created_at
+2026-05-24 14:31:21,195 INFO sqlalchemy.engine.Engine [cached since 222.3s ago] ('c188352a-182f-4c55-93ab-70798b2e54e4',)
+2026-05-24 14:31:21,200 INFO sqlalchemy.engine.Engine SELECT users.id, users.account 
+FROM users 
+WHERE users.id IN ($1::VARCHAR)
+2026-05-24 14:31:21,200 INFO sqlalchemy.engine.Engine [cached since 222.3s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:31:21.204 | INFO     | app.core.middleware:dispatch:38 - GET /api/v1/node/list/group/nav status=200 duration=74.3ms ip=127.0.0.1
+2026-05-24 14:31:21,205 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:56534 - "GET /api/v1/node/list/group/nav?kb_id=c188352a-182f-4c55-93ab-70798b2e54e4 HTTP/1.1" 200 OK
+2026-05-24 14:31:22,818 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:31:22,819 INFO sqlalchemy.engine.Engine SELECT users.account, users.password, users.role, users.last_access, users.id, users.created_at 
+FROM users 
+WHERE users.id = $1::VARCHAR
+2026-05-24 14:31:22,819 INFO sqlalchemy.engine.Engine [cached since 224s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:31:22,819 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:31:22,819 INFO sqlalchemy.engine.Engine SELECT users.account, users.password, users.role, users.last_access, users.id, users.created_at 
+FROM users 
+WHERE users.id = $1::VARCHAR
+2026-05-24 14:31:22,820 INFO sqlalchemy.engine.Engine [cached since 224s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:31:22.826 | INFO     | app.core.middleware:dispatch:38 - GET /api/v1/license status=200 duration=12.0ms ip=127.0.0.1
+2026-05-24 14:31:22.826 | INFO     | app.core.middleware:dispatch:38 - GET /api/v1/user status=200 duration=13.5ms ip=127.0.0.1
+2026-05-24 14:31:22,831 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-05-24 14:31:22,845 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:56559 - "GET /api/v1/license HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56558 - "GET /api/v1/user HTTP/1.1" 200 OK
+2026-05-24 14:31:22,935 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:31:22,935 INFO sqlalchemy.engine.Engine SELECT users.account, users.password, users.role, users.last_access, users.id, users.created_at 
+FROM users 
+WHERE users.id = $1::VARCHAR
+2026-05-24 14:31:22,935 INFO sqlalchemy.engine.Engine [cached since 224.1s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:31:22,936 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:31:22,937 INFO sqlalchemy.engine.Engine SELECT users.account, users.password, users.role, users.last_access, users.id, users.created_at 
+FROM users 
+WHERE users.id = $1::VARCHAR
+2026-05-24 14:31:22,937 INFO sqlalchemy.engine.Engine [cached since 224.1s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:31:22,938 INFO sqlalchemy.engine.Engine SELECT models.provider, models.model, models.api_key, models.api_header, models.base_url, models.api_version, models.type, models.is_active, models.prompt_tokens, models.completion_tokens, models.total_tokens, models.parameters, models.id, models.created_at, models.updated_at 
+FROM models ORDER BY models.created_at
+2026-05-24 14:31:22,938 INFO sqlalchemy.engine.Engine [cached since 218.5s ago] ()
+2026-05-24 14:31:22,940 INFO sqlalchemy.engine.Engine SELECT knowledge_bases.name, knowledge_bases.dataset_id, knowledge_bases.access_settings, knowledge_bases.id, knowledge_bases.created_at 
+FROM knowledge_bases JOIN kb_users ON kb_users.kb_id = knowledge_bases.id 
+WHERE kb_users.user_id = $1::VARCHAR
+2026-05-24 14:31:22,940 INFO sqlalchemy.engine.Engine [cached since 218.5s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:31:22.944 | INFO     | app.core.middleware:dispatch:38 - GET /api/v1/model/list status=200 duration=17.2ms ip=127.0.0.1
+2026-05-24 14:31:22,944 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:56561 - "GET /api/v1/model/list HTTP/1.1" 200 OK
+2026-05-24 14:31:22.946 | INFO     | app.core.middleware:dispatch:38 - GET /api/v1/knowledge_base/list status=200 duration=17.8ms ip=127.0.0.1
+2026-05-24 14:31:22,947 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:56563 - "GET /api/v1/knowledge_base/list HTTP/1.1" 200 OK
+/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/jwt/api_jwt.py:368: InsecureKeyLengthWarning: The HMAC key is 12 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+  decoded = self.decode_complete(
+2026-05-24 14:31:23,163 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:31:23,163 INFO sqlalchemy.engine.Engine SELECT users.account, users.password, users.role, users.last_access, users.id, users.created_at 
+FROM users 
+WHERE users.id = $1::VARCHAR
+2026-05-24 14:31:23,163 INFO sqlalchemy.engine.Engine [cached since 224.3s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:31:23,163 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:31:23,164 INFO sqlalchemy.engine.Engine SELECT users.account, users.password, users.role, users.last_access, users.id, users.created_at 
+FROM users 
+WHERE users.id = $1::VARCHAR
+2026-05-24 14:31:23,164 INFO sqlalchemy.engine.Engine [cached since 224.3s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:31:23,169 INFO sqlalchemy.engine.Engine SELECT nodes.kb_id, nodes.nav_id, nodes.type, nodes.status, nodes.rag_info, nodes.name, nodes.content, nodes.meta, nodes.parent_id, nodes.position, nodes.doc_id, nodes.creator_id, nodes.editor_id, nodes.edit_time, nodes.permissions, nodes.id, nodes.created_at, nodes.updated_at 
+FROM nodes 
+WHERE nodes.id = $1::VARCHAR AND nodes.kb_id = $2::VARCHAR
+2026-05-24 14:31:23,169 INFO sqlalchemy.engine.Engine [generated in 0.00010s] ('f575cc9c-a48e-475b-8fd0-4d6a603c5584', 'c188352a-182f-4c55-93ab-70798b2e54e4')
+2026-05-24 14:31:23,169 INFO sqlalchemy.engine.Engine SELECT navs.name, navs.kb_id, navs.position, navs.id, navs.created_at, navs.updated_at 
+FROM navs 
+WHERE navs.kb_id = $1::VARCHAR ORDER BY navs.position
+2026-05-24 14:31:23,169 INFO sqlalchemy.engine.Engine [cached since 224.3s ago] ('c188352a-182f-4c55-93ab-70798b2e54e4',)
+2026-05-24 14:31:23,170 INFO sqlalchemy.engine.Engine SELECT nodes.kb_id, nodes.nav_id, nodes.type, nodes.status, nodes.rag_info, nodes.name, nodes.content, nodes.meta, nodes.parent_id, nodes.position, nodes.doc_id, nodes.creator_id, nodes.editor_id, nodes.edit_time, nodes.permissions, nodes.id, nodes.created_at, nodes.updated_at 
+FROM nodes 
+WHERE nodes.kb_id = $1::VARCHAR ORDER BY nodes.position, nodes.created_at
+2026-05-24 14:31:23,170 INFO sqlalchemy.engine.Engine [cached since 224.3s ago] ('c188352a-182f-4c55-93ab-70798b2e54e4',)
+2026-05-24 14:31:23,184 INFO sqlalchemy.engine.Engine SELECT users.id, users.account 
+FROM users 
+WHERE users.id IN ($1::VARCHAR)
+2026-05-24 14:31:23,184 INFO sqlalchemy.engine.Engine [cached since 224.3s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:31:23,186 INFO sqlalchemy.engine.Engine SELECT users.account 
+FROM users 
+WHERE users.id = $1::VARCHAR
+2026-05-24 14:31:23,186 INFO sqlalchemy.engine.Engine [generated in 0.00031s] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:31:23.190 | INFO     | app.core.middleware:dispatch:38 - GET /api/v1/node/list/group/nav status=200 duration=33.3ms ip=127.0.0.1
+2026-05-24 14:31:23,191 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-05-24 14:31:23,191 INFO sqlalchemy.engine.Engine SELECT users.account 
+FROM users 
+WHERE users.id = $1::VARCHAR
+2026-05-24 14:31:23,191 INFO sqlalchemy.engine.Engine [cached since 0.005632s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+INFO:     127.0.0.1:56575 - "GET /api/v1/node/list/group/nav?kb_id=c188352a-182f-4c55-93ab-70798b2e54e4 HTTP/1.1" 200 OK
+2026-05-24 14:31:23,192 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:31:23,193 INFO sqlalchemy.engine.Engine SELECT users.account, users.password, users.role, users.last_access, users.id, users.created_at 
+FROM users 
+WHERE users.id = $1::VARCHAR
+2026-05-24 14:31:23,193 INFO sqlalchemy.engine.Engine [cached since 224.3s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:31:23.193 | INFO     | app.core.middleware:dispatch:38 - GET /api/v1/node/detail status=200 duration=35.2ms ip=127.0.0.1
+2026-05-24 14:31:23,194 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:56576 - "GET /api/v1/node/detail?id=f575cc9c-a48e-475b-8fd0-4d6a603c5584&kb_id=c188352a-182f-4c55-93ab-70798b2e54e4 HTTP/1.1" 200 OK
+2026-05-24 14:31:23,197 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:31:23,197 INFO sqlalchemy.engine.Engine SELECT users.account, users.password, users.role, users.last_access, users.id, users.created_at 
+FROM users 
+WHERE users.id = $1::VARCHAR
+2026-05-24 14:31:23,197 INFO sqlalchemy.engine.Engine [cached since 224.3s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:31:23,198 INFO sqlalchemy.engine.Engine SELECT apps.kb_id, apps.name, apps.type, apps.settings, apps.id, apps.created_at, apps.updated_at 
+FROM apps 
+WHERE apps.kb_id = $1::VARCHAR AND apps.type = $2::INTEGER
+2026-05-24 14:31:23,198 INFO sqlalchemy.engine.Engine [cached since 59.93s ago] ('c188352a-182f-4c55-93ab-70798b2e54e4', 1)
+2026-05-24 14:31:23,199 INFO sqlalchemy.engine.Engine SELECT navs.name, navs.kb_id, navs.position, navs.id, navs.created_at, navs.updated_at 
+FROM navs 
+WHERE navs.kb_id = $1::VARCHAR ORDER BY navs.position
+2026-05-24 14:31:23,199 INFO sqlalchemy.engine.Engine [cached since 224.3s ago] ('c188352a-182f-4c55-93ab-70798b2e54e4',)
+2026-05-24 14:31:23,200 INFO sqlalchemy.engine.Engine SELECT nodes.kb_id, nodes.nav_id, nodes.type, nodes.status, nodes.rag_info, nodes.name, nodes.content, nodes.meta, nodes.parent_id, nodes.position, nodes.doc_id, nodes.creator_id, nodes.editor_id, nodes.edit_time, nodes.permissions, nodes.id, nodes.created_at, nodes.updated_at 
+FROM nodes 
+WHERE nodes.kb_id = $1::VARCHAR ORDER BY nodes.position, nodes.created_at
+2026-05-24 14:31:23,200 INFO sqlalchemy.engine.Engine [cached since 224.3s ago] ('c188352a-182f-4c55-93ab-70798b2e54e4',)
+2026-05-24 14:31:23,203 INFO sqlalchemy.engine.Engine SELECT users.id, users.account 
+FROM users 
+WHERE users.id IN ($1::VARCHAR)
+2026-05-24 14:31:23,203 INFO sqlalchemy.engine.Engine [cached since 224.3s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:31:23.204 | INFO     | app.core.middleware:dispatch:38 - GET /api/v1/app/detail status=200 duration=45.2ms ip=127.0.0.1
+2026-05-24 14:31:23,204 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:56577 - "GET /api/v1/app/detail?kb_id=c188352a-182f-4c55-93ab-70798b2e54e4&type=1 HTTP/1.1" 200 OK
+2026-05-24 14:31:23.206 | INFO     | app.core.middleware:dispatch:38 - GET /api/v1/node/list/group/nav status=200 duration=10.7ms ip=127.0.0.1
+2026-05-24 14:31:23,206 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:56580 - "GET /api/v1/node/list/group/nav?kb_id=c188352a-182f-4c55-93ab-70798b2e54e4 HTTP/1.1" 200 OK
+2026-05-24 14:31:30,267 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:31:30,276 INFO sqlalchemy.engine.Engine SELECT users.account, users.password, users.role, users.last_access, users.id, users.created_at 
+FROM users 
+WHERE users.id = $1::VARCHAR
+2026-05-24 14:31:30,276 INFO sqlalchemy.engine.Engine [cached since 231.4s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:31:30,284 INFO sqlalchemy.engine.Engine SELECT knowledge_bases.name, knowledge_bases.dataset_id, knowledge_bases.access_settings, knowledge_bases.id, knowledge_bases.created_at 
+FROM knowledge_bases 
+WHERE knowledge_bases.id = $1::VARCHAR
+2026-05-24 14:31:30,284 INFO sqlalchemy.engine.Engine [cached since 225.7s ago] ('c188352a-182f-4c55-93ab-70798b2e54e4',)
+2026-05-24 14:31:30,285 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:31:30,289 INFO sqlalchemy.engine.Engine SELECT users.account, users.password, users.role, users.last_access, users.id, users.created_at 
+FROM users 
+WHERE users.id = $1::VARCHAR
+2026-05-24 14:31:30,289 INFO sqlalchemy.engine.Engine [cached since 231.4s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:31:30.293 | INFO     | app.core.middleware:dispatch:38 - GET /api/v1/knowledge_base/detail status=200 duration=60.4ms ip=127.0.0.1
+2026-05-24 14:31:30.293 | INFO     | app.core.middleware:dispatch:38 - GET /api/v1/user status=200 duration=40.9ms ip=127.0.0.1
+2026-05-24 14:31:30,293 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-05-24 14:31:30,294 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:56613 - "GET /api/v1/knowledge_base/detail?id=c188352a-182f-4c55-93ab-70798b2e54e4 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56615 - "GET /api/v1/user HTTP/1.1" 200 OK
+2026-05-24 14:31:30,327 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:31:30,327 INFO sqlalchemy.engine.Engine SELECT users.account, users.password, users.role, users.last_access, users.id, users.created_at 
+FROM users 
+WHERE users.id = $1::VARCHAR
+2026-05-24 14:31:30,328 INFO sqlalchemy.engine.Engine [cached since 231.5s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:31:30,329 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:31:30,329 INFO sqlalchemy.engine.Engine SELECT users.account, users.password, users.role, users.last_access, users.id, users.created_at 
+FROM users 
+WHERE users.id = $1::VARCHAR
+2026-05-24 14:31:30,329 INFO sqlalchemy.engine.Engine [cached since 231.5s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:31:30,333 INFO sqlalchemy.engine.Engine SELECT knowledge_bases.name, knowledge_bases.dataset_id, knowledge_bases.access_settings, knowledge_bases.id, knowledge_bases.created_at 
+FROM knowledge_bases JOIN kb_users ON kb_users.kb_id = knowledge_bases.id 
+WHERE kb_users.user_id = $1::VARCHAR
+2026-05-24 14:31:30,333 INFO sqlalchemy.engine.Engine [cached since 225.9s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:31:30,337 INFO sqlalchemy.engine.Engine SELECT models.provider, models.model, models.api_key, models.api_header, models.base_url, models.api_version, models.type, models.is_active, models.prompt_tokens, models.completion_tokens, models.total_tokens, models.parameters, models.id, models.created_at, models.updated_at 
+FROM models ORDER BY models.created_at
+2026-05-24 14:31:30,337 INFO sqlalchemy.engine.Engine [cached since 225.9s ago] ()
+2026-05-24 14:31:30.338 | INFO     | app.core.middleware:dispatch:38 - GET /api/v1/knowledge_base/list status=200 duration=14.7ms ip=127.0.0.1
+2026-05-24 14:31:30.339 | INFO     | app.core.middleware:dispatch:38 - GET /api/v1/model/list status=200 duration=16.0ms ip=127.0.0.1
+2026-05-24 14:31:30,339 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-05-24 14:31:30,340 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:56627 - "GET /api/v1/knowledge_base/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56626 - "GET /api/v1/model/list HTTP/1.1" 200 OK
+/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/jwt/api_jwt.py:368: InsecureKeyLengthWarning: The HMAC key is 12 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+  decoded = self.decode_complete(
+2026-05-24 14:31:30,525 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:31:30,525 INFO sqlalchemy.engine.Engine SELECT users.account, users.password, users.role, users.last_access, users.id, users.created_at 
+FROM users 
+WHERE users.id = $1::VARCHAR
+2026-05-24 14:31:30,525 INFO sqlalchemy.engine.Engine [cached since 231.7s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:31:30,528 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
+FROM nodes 
+WHERE nodes.kb_id = $1::VARCHAR AND nodes.status != $2::INTEGER
+2026-05-24 14:31:30,528 INFO sqlalchemy.engine.Engine [cached since 225.7s ago] ('c188352a-182f-4c55-93ab-70798b2e54e4', 2)
+2026-05-24 14:31:30,529 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:31:30,529 INFO sqlalchemy.engine.Engine SELECT users.account, users.password, users.role, users.last_access, users.id, users.created_at 
+FROM users 
+WHERE users.id = $1::VARCHAR
+2026-05-24 14:31:30,529 INFO sqlalchemy.engine.Engine [cached since 231.7s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:31:30,531 INFO sqlalchemy.engine.Engine SELECT navs.name, navs.kb_id, navs.position, navs.id, navs.created_at, navs.updated_at 
+FROM navs 
+WHERE navs.kb_id = $1::VARCHAR ORDER BY navs.position
+2026-05-24 14:31:30,531 INFO sqlalchemy.engine.Engine [cached since 231.7s ago] ('c188352a-182f-4c55-93ab-70798b2e54e4',)
+2026-05-24 14:31:30,533 INFO sqlalchemy.engine.Engine SELECT nodes.kb_id, nodes.nav_id, nodes.type, nodes.status, nodes.rag_info, nodes.name, nodes.content, nodes.meta, nodes.parent_id, nodes.position, nodes.doc_id, nodes.creator_id, nodes.editor_id, nodes.edit_time, nodes.permissions, nodes.id, nodes.created_at, nodes.updated_at 
+FROM nodes 
+WHERE nodes.kb_id = $1::VARCHAR ORDER BY nodes.position, nodes.created_at
+2026-05-24 14:31:30,533 INFO sqlalchemy.engine.Engine [cached since 231.6s ago] ('c188352a-182f-4c55-93ab-70798b2e54e4',)
+2026-05-24 14:31:30,533 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
+FROM nodes 
+WHERE nodes.kb_id = $1::VARCHAR AND nodes.status = $2::INTEGER
+2026-05-24 14:31:30,534 INFO sqlalchemy.engine.Engine [cached since 225.7s ago] ('c188352a-182f-4c55-93ab-70798b2e54e4', 2)
+2026-05-24 14:31:30,535 INFO sqlalchemy.engine.Engine SELECT users.id, users.account 
+FROM users 
+WHERE users.id IN ($1::VARCHAR)
+2026-05-24 14:31:30,535 INFO sqlalchemy.engine.Engine [cached since 231.6s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:31:30,536 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
+FROM navs 
+WHERE navs.kb_id = $1::VARCHAR
+2026-05-24 14:31:30,536 INFO sqlalchemy.engine.Engine [cached since 225.7s ago] ('c188352a-182f-4c55-93ab-70798b2e54e4',)
+2026-05-24 14:31:30.536 | INFO     | app.core.middleware:dispatch:38 - GET /api/v1/node/list/group/nav status=200 duration=10.4ms ip=127.0.0.1
+2026-05-24 14:31:30,536 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:56631 - "GET /api/v1/node/list/group/nav?kb_id=c188352a-182f-4c55-93ab-70798b2e54e4 HTTP/1.1" 200 OK
+2026-05-24 14:31:30.539 | INFO     | app.core.middleware:dispatch:38 - GET /api/v1/node/stats status=200 duration=19.1ms ip=127.0.0.1
+2026-05-24 14:31:30,540 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:56629 - "GET /api/v1/node/stats?kb_id=c188352a-182f-4c55-93ab-70798b2e54e4 HTTP/1.1" 200 OK
+2026-05-24 14:31:37,764 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:31:37,765 INFO sqlalchemy.engine.Engine SELECT users.account, users.password, users.role, users.last_access, users.id, users.created_at 
+FROM users 
+WHERE users.id = $1::VARCHAR
+2026-05-24 14:31:37,765 INFO sqlalchemy.engine.Engine [cached since 238.9s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:31:37,769 INFO sqlalchemy.engine.Engine SELECT navs.name, navs.kb_id, navs.position, navs.id, navs.created_at, navs.updated_at 
+FROM navs 
+WHERE navs.kb_id = $1::VARCHAR ORDER BY navs.position
+2026-05-24 14:31:37,769 INFO sqlalchemy.engine.Engine [cached since 238.9s ago] ('c188352a-182f-4c55-93ab-70798b2e54e4',)
+2026-05-24 14:31:37,771 INFO sqlalchemy.engine.Engine SELECT nodes.kb_id, nodes.nav_id, nodes.type, nodes.status, nodes.rag_info, nodes.name, nodes.content, nodes.meta, nodes.parent_id, nodes.position, nodes.doc_id, nodes.creator_id, nodes.editor_id, nodes.edit_time, nodes.permissions, nodes.id, nodes.created_at, nodes.updated_at 
+FROM nodes 
+WHERE nodes.kb_id = $1::VARCHAR ORDER BY nodes.position, nodes.created_at
+2026-05-24 14:31:37,771 INFO sqlalchemy.engine.Engine [cached since 238.9s ago] ('c188352a-182f-4c55-93ab-70798b2e54e4',)
+2026-05-24 14:31:37,777 INFO sqlalchemy.engine.Engine SELECT users.id, users.account 
+FROM users 
+WHERE users.id IN ($1::VARCHAR)
+2026-05-24 14:31:37,777 INFO sqlalchemy.engine.Engine [cached since 238.9s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:31:37.779 | INFO     | app.core.middleware:dispatch:38 - GET /api/v1/node/list/group/nav status=200 duration=37.4ms ip=127.0.0.1
+2026-05-24 14:31:37,780 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:56667 - "GET /api/v1/node/list/group/nav?kb_id=c188352a-182f-4c55-93ab-70798b2e54e4 HTTP/1.1" 200 OK
+2026-05-24 14:32:13,490 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:32:13,492 INFO sqlalchemy.engine.Engine SELECT users.account, users.password, users.role, users.last_access, users.id, users.created_at 
+FROM users 
+WHERE users.id = $1::VARCHAR
+2026-05-24 14:32:13,492 INFO sqlalchemy.engine.Engine [cached since 274.6s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:32:13,496 INFO sqlalchemy.engine.Engine SELECT nodes.kb_id, nodes.nav_id, nodes.type, nodes.status, nodes.rag_info, nodes.name, nodes.content, nodes.meta, nodes.parent_id, nodes.position, nodes.doc_id, nodes.creator_id, nodes.editor_id, nodes.edit_time, nodes.permissions, nodes.id, nodes.created_at, nodes.updated_at 
+FROM nodes 
+WHERE nodes.id = $1::VARCHAR AND nodes.kb_id = $2::VARCHAR
+2026-05-24 14:32:13,496 INFO sqlalchemy.engine.Engine [cached since 50.33s ago] ('f575cc9c-a48e-475b-8fd0-4d6a603c5584', 'c188352a-182f-4c55-93ab-70798b2e54e4')
+2026-05-24 14:32:13,503 INFO sqlalchemy.engine.Engine SELECT node_auth_groups.id, node_auth_groups.node_id, node_auth_groups.auth_group_id, node_auth_groups.perm, node_auth_groups.created_at, node_auth_groups.updated_at 
+FROM node_auth_groups 
+WHERE node_auth_groups.node_id = $1::VARCHAR
+2026-05-24 14:32:13,503 INFO sqlalchemy.engine.Engine [generated in 0.00032s] ('f575cc9c-a48e-475b-8fd0-4d6a603c5584',)
+2026-05-24 14:32:13,547 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:56796 - "GET /api/v1/node/permission?kb_id=c188352a-182f-4c55-93ab-70798b2e54e4&id=f575cc9c-a48e-475b-8fd0-4d6a603c5584 HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+  + Exception Group Traceback (most recent call last):
+  |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/_utils.py", line 81, in collapse_excgroups
+  |     yield
+  |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 192, in __call__
+  |     async with anyio.create_task_group() as task_group:
+  |                ~~~~~~~~~~~~~~~~~~~~~~~^^
+  |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/anyio/_backends/_asyncio.py", line 799, in __aexit__
+  |     raise BaseExceptionGroup(
+  |         "unhandled errors in a TaskGroup", self._exceptions
+  |     ) from None
+  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Traceback (most recent call last):
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/httptools_impl.py", line 421, in run_asgi
+    |     result = await app(  # type: ignore[func-returns-value]
+    |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |         self.scope, self.receive, self.send
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |     )
+    |     ^
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 56, in __call__
+    |     return await self.app(scope, receive, send)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1159, in __call__
+    |     await super().__call__(scope, receive, send)
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/applications.py", line 90, in __call__
+    |     await self.middleware_stack(scope, receive, send)
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    |     raise exc
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    |     await self.app(scope, receive, _send)
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 191, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |                                    ~~~~~~~~~~~~~~~~~~^^
+    |   File "/opt/homebrew/Cellar/python@3.13/3.13.3_1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 162, in __exit__
+    |     self.gen.throw(value)
+    |     ~~~~~~~~~~~~~~^^^^^^^
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/_utils.py", line 87, in collapse_excgroups
+    |     raise exc
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 193, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/app/core/middleware.py", line 58, in dispatch
+    |     return await call_next(request)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 168, in call_next
+    |     raise app_exc from app_exc.__cause__ or app_exc.__context__
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 144, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 191, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |                                    ~~~~~~~~~~~~~~~~~~^^
+    |   File "/opt/homebrew/Cellar/python@3.13/3.13.3_1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 162, in __exit__
+    |     self.gen.throw(value)
+    |     ~~~~~~~~~~~~~~^^^^^^^
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/_utils.py", line 87, in collapse_excgroups
+    |     raise exc
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 193, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/app/core/middleware.py", line 76, in dispatch
+    |     response = await call_next(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 168, in call_next
+    |     raise app_exc from app_exc.__cause__ or app_exc.__context__
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 144, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 191, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |                                    ~~~~~~~~~~~~~~~~~~^^
+    |   File "/opt/homebrew/Cellar/python@3.13/3.13.3_1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 162, in __exit__
+    |     self.gen.throw(value)
+    |     ~~~~~~~~~~~~~~^^^^^^^
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/_utils.py", line 87, in collapse_excgroups
+    |     raise exc
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 193, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/app/core/middleware.py", line 35, in dispatch
+    |     response = await call_next(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 168, in call_next
+    |     raise app_exc from app_exc.__cause__ or app_exc.__context__
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 144, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 88, in __call__
+    |     await self.app(scope, receive, send)
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    |     await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    |     raise exc
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    |     await app(scope, receive, sender)
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    |     await self.app(scope, receive, send)
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/routing.py", line 660, in __call__
+    |     await self.middleware_stack(scope, receive, send)
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/routing.py", line 680, in app
+    |     await route.handle(scope, receive, send)
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/routing.py", line 276, in handle
+    |     await self.app(scope, receive, send)
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 134, in app
+    |     await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    |     raise exc
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    |     await app(scope, receive, sender)
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 120, in app
+    |     response = await f(request)
+    |                ^^^^^^^^^^^^^^^^
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 695, in app
+    |     content = await serialize_response(
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+    |     ...<11 lines>...
+    |     )
+    |     ^
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 300, in serialize_response
+    |     raise ResponseValidationError(
+    |     ...<3 lines>...
+    |     )
+    | fastapi.exceptions.ResponseValidationError: 3 validation errors:
+    |   {'type': 'dict_type', 'loc': ('response', 'answerable'), 'msg': 'Input should be a valid dictionary', 'input': 'open'}
+    |   {'type': 'dict_type', 'loc': ('response', 'visitable'), 'msg': 'Input should be a valid dictionary', 'input': 'open'}
+    |   {'type': 'dict_type', 'loc': ('response', 'visible'), 'msg': 'Input should be a valid dictionary', 'input': 'open'}
+    | 
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/app/api/v1/node.py", line 165, in node_permission
+    |     GET /api/v1/node/permission
+    +------------------------------------
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/httptools_impl.py", line 421, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 56, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1159, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/applications.py", line 90, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3_1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/_utils.py", line 87, in collapse_excgroups
+    raise exc
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/app/core/middleware.py", line 58, in dispatch
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3_1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/_utils.py", line 87, in collapse_excgroups
+    raise exc
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/app/core/middleware.py", line 76, in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3_1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/_utils.py", line 87, in collapse_excgroups
+    raise exc
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/app/core/middleware.py", line 35, in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 695, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<11 lines>...
+    )
+    ^
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 300, in serialize_response
+    raise ResponseValidationError(
+    ...<3 lines>...
+    )
+fastapi.exceptions.ResponseValidationError: 3 validation errors:
+  {'type': 'dict_type', 'loc': ('response', 'answerable'), 'msg': 'Input should be a valid dictionary', 'input': 'open'}
+  {'type': 'dict_type', 'loc': ('response', 'visitable'), 'msg': 'Input should be a valid dictionary', 'input': 'open'}
+  {'type': 'dict_type', 'loc': ('response', 'visible'), 'msg': 'Input should be a valid dictionary', 'input': 'open'}
+
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/app/api/v1/node.py", line 165, in node_permission
+    GET /api/v1/node/permission
+2026-05-24 14:32:17,934 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:32:17,934 INFO sqlalchemy.engine.Engine SELECT users.account, users.password, users.role, users.last_access, users.id, users.created_at 
+FROM users 
+WHERE users.id = $1::VARCHAR
+2026-05-24 14:32:17,934 INFO sqlalchemy.engine.Engine [cached since 279.1s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:32:17,936 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-05-24 14:32:17.937 | INFO     | app.core.middleware:dispatch:38 - POST /api/v1/node/summary/stream status=422 duration=7.9ms ip=127.0.0.1
+INFO:     127.0.0.1:56813 - "POST /api/v1/node/summary/stream HTTP/1.1" 422 Unprocessable Content
+2026-05-24 14:34:26,516 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:34:26,518 INFO sqlalchemy.engine.Engine SELECT users.account, users.password, users.role, users.last_access, users.id, users.created_at 
+FROM users 
+WHERE users.id = $1::VARCHAR
+2026-05-24 14:34:26,519 INFO sqlalchemy.engine.Engine [cached since 407.7s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:34:26,556 INFO sqlalchemy.engine.Engine SELECT navs.name, navs.kb_id, navs.position, navs.id, navs.created_at, navs.updated_at 
+FROM navs 
+WHERE navs.kb_id = $1::VARCHAR ORDER BY navs.position
+2026-05-24 14:34:26,558 INFO sqlalchemy.engine.Engine [cached since 407.7s ago] ('c188352a-182f-4c55-93ab-70798b2e54e4',)
+2026-05-24 14:34:26,575 INFO sqlalchemy.engine.Engine SELECT nodes.kb_id, nodes.nav_id, nodes.type, nodes.status, nodes.rag_info, nodes.name, nodes.content, nodes.meta, nodes.parent_id, nodes.position, nodes.doc_id, nodes.creator_id, nodes.editor_id, nodes.edit_time, nodes.permissions, nodes.id, nodes.created_at, nodes.updated_at 
+FROM nodes 
+WHERE nodes.kb_id = $1::VARCHAR ORDER BY nodes.position, nodes.created_at
+2026-05-24 14:34:26,575 INFO sqlalchemy.engine.Engine [cached since 407.7s ago] ('c188352a-182f-4c55-93ab-70798b2e54e4',)
+2026-05-24 14:34:26,579 INFO sqlalchemy.engine.Engine SELECT users.id, users.account 
+FROM users 
+WHERE users.id IN ($1::VARCHAR)
+2026-05-24 14:34:26,579 INFO sqlalchemy.engine.Engine [cached since 407.7s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:34:26.582 | INFO     | app.core.middleware:dispatch:38 - GET /api/v1/node/list/group/nav status=200 duration=90.3ms ip=127.0.0.1
+2026-05-24 14:34:26,583 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:57266 - "GET /api/v1/node/list/group/nav?kb_id=c188352a-182f-4c55-93ab-70798b2e54e4 HTTP/1.1" 200 OK
+2026-05-24 14:34:27,546 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:34:27,547 INFO sqlalchemy.engine.Engine SELECT users.account, users.password, users.role, users.last_access, users.id, users.created_at 
+FROM users 
+WHERE users.id = $1::VARCHAR
+2026-05-24 14:34:27,547 INFO sqlalchemy.engine.Engine [cached since 408.7s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:34:27,551 INFO sqlalchemy.engine.Engine SELECT navs.name, navs.kb_id, navs.position, navs.id, navs.created_at, navs.updated_at 
+FROM navs 
+WHERE navs.kb_id = $1::VARCHAR ORDER BY navs.position
+2026-05-24 14:34:27,551 INFO sqlalchemy.engine.Engine [cached since 408.7s ago] ('c188352a-182f-4c55-93ab-70798b2e54e4',)
+2026-05-24 14:34:27,556 INFO sqlalchemy.engine.Engine SELECT nodes.kb_id, nodes.nav_id, nodes.type, nodes.status, nodes.rag_info, nodes.name, nodes.content, nodes.meta, nodes.parent_id, nodes.position, nodes.doc_id, nodes.creator_id, nodes.editor_id, nodes.edit_time, nodes.permissions, nodes.id, nodes.created_at, nodes.updated_at 
+FROM nodes 
+WHERE nodes.kb_id = $1::VARCHAR ORDER BY nodes.position, nodes.created_at
+2026-05-24 14:34:27,557 INFO sqlalchemy.engine.Engine [cached since 408.7s ago] ('c188352a-182f-4c55-93ab-70798b2e54e4',)
+2026-05-24 14:34:27,561 INFO sqlalchemy.engine.Engine SELECT users.id, users.account 
+FROM users 
+WHERE users.id IN ($1::VARCHAR)
+2026-05-24 14:34:27,561 INFO sqlalchemy.engine.Engine [cached since 408.7s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:34:27.563 | INFO     | app.core.middleware:dispatch:38 - GET /api/v1/node/list/group/nav status=200 duration=27.9ms ip=127.0.0.1
+2026-05-24 14:34:27,564 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:57274 - "GET /api/v1/node/list/group/nav?kb_id=c188352a-182f-4c55-93ab-70798b2e54e4 HTTP/1.1" 200 OK
+2026-05-24 14:34:29,230 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:34:29,230 INFO sqlalchemy.engine.Engine SELECT users.account, users.password, users.role, users.last_access, users.id, users.created_at 
+FROM users 
+WHERE users.id = $1::VARCHAR
+2026-05-24 14:34:29,230 INFO sqlalchemy.engine.Engine [cached since 410.4s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:34:29,235 INFO sqlalchemy.engine.Engine SELECT navs.name, navs.kb_id, navs.position, navs.id, navs.created_at, navs.updated_at 
+FROM navs 
+WHERE navs.kb_id = $1::VARCHAR ORDER BY navs.position
+2026-05-24 14:34:29,235 INFO sqlalchemy.engine.Engine [cached since 410.4s ago] ('c188352a-182f-4c55-93ab-70798b2e54e4',)
+2026-05-24 14:34:29,239 INFO sqlalchemy.engine.Engine SELECT nodes.kb_id, nodes.nav_id, nodes.type, nodes.status, nodes.rag_info, nodes.name, nodes.content, nodes.meta, nodes.parent_id, nodes.position, nodes.doc_id, nodes.creator_id, nodes.editor_id, nodes.edit_time, nodes.permissions, nodes.id, nodes.created_at, nodes.updated_at 
+FROM nodes 
+WHERE nodes.kb_id = $1::VARCHAR ORDER BY nodes.position, nodes.created_at
+2026-05-24 14:34:29,240 INFO sqlalchemy.engine.Engine [cached since 410.3s ago] ('c188352a-182f-4c55-93ab-70798b2e54e4',)
+2026-05-24 14:34:29,243 INFO sqlalchemy.engine.Engine SELECT users.id, users.account 
+FROM users 
+WHERE users.id IN ($1::VARCHAR)
+2026-05-24 14:34:29,243 INFO sqlalchemy.engine.Engine [cached since 410.3s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:34:29.245 | INFO     | app.core.middleware:dispatch:38 - GET /api/v1/node/list/group/nav status=200 duration=19.4ms ip=127.0.0.1
+2026-05-24 14:34:29,246 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:57286 - "GET /api/v1/node/list/group/nav?kb_id=c188352a-182f-4c55-93ab-70798b2e54e4 HTTP/1.1" 200 OK
+2026-05-24 14:34:36,613 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:34:36,615 INFO sqlalchemy.engine.Engine SELECT apps.kb_id, apps.name, apps.type, apps.settings, apps.id, apps.created_at, apps.updated_at 
+FROM apps 
+WHERE apps.kb_id = $1::VARCHAR AND apps.type = $2::INTEGER
+2026-05-24 14:34:36,615 INFO sqlalchemy.engine.Engine [cached since 253.3s ago] ('43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3', 1)
+2026-05-24 14:34:36,622 INFO sqlalchemy.engine.Engine SELECT knowledge_bases.name, knowledge_bases.dataset_id, knowledge_bases.access_settings, knowledge_bases.id, knowledge_bases.created_at 
+FROM knowledge_bases 
+WHERE knowledge_bases.id = $1::VARCHAR
+2026-05-24 14:34:36,623 INFO sqlalchemy.engine.Engine [cached since 412s ago] ('43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3',)
+2026-05-24 14:34:36.626 | INFO     | app.core.middleware:dispatch:38 - GET /share/v1/app/web/info status=200 duration=27.6ms ip=127.0.0.1
+2026-05-24 14:34:36,627 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:57311 - "GET /share/v1/app/web/info HTTP/1.1" 200 OK
+2026-05-24 14:34:36.640 | INFO     | app.core.middleware:dispatch:38 - POST /share/v1/captcha/challenge status=200 duration=1.8ms ip=::1
+INFO:     ::1:0 - "POST /share/v1/captcha/challenge HTTP/1.1" 200 OK
+2026-05-24 14:34:36,755 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:34:36,755 INFO sqlalchemy.engine.Engine SELECT apps.kb_id, apps.name, apps.type, apps.settings, apps.id, apps.created_at, apps.updated_at 
+FROM apps 
+WHERE apps.kb_id = $1::VARCHAR AND apps.type = $2::INTEGER
+2026-05-24 14:34:36,755 INFO sqlalchemy.engine.Engine [cached since 253.5s ago] ('43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3', 1)
+2026-05-24 14:34:36,772 INFO sqlalchemy.engine.Engine SELECT knowledge_bases.name, knowledge_bases.dataset_id, knowledge_bases.access_settings, knowledge_bases.id, knowledge_bases.created_at 
+FROM knowledge_bases 
+WHERE knowledge_bases.id = $1::VARCHAR
+2026-05-24 14:34:36,772 INFO sqlalchemy.engine.Engine [cached since 412.1s ago] ('43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3',)
+2026-05-24 14:34:36.774 | INFO     | app.core.middleware:dispatch:38 - GET /share/v1/app/web/info status=200 duration=46.8ms ip=127.0.0.1
+2026-05-24 14:34:36,775 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:57311 - "GET /share/v1/app/web/info HTTP/1.1" 200 OK
+2026-05-24 14:34:36.782 | INFO     | app.core.middleware:dispatch:38 - POST /share/v1/captcha/redeem status=200 duration=2.9ms ip=::1
+INFO:     ::1:0 - "POST /share/v1/captcha/redeem HTTP/1.1" 200 OK
+2026-05-24 14:34:36,804 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:34:36,805 INFO sqlalchemy.engine.Engine SELECT apps.kb_id, apps.name, apps.type, apps.settings, apps.id, apps.created_at, apps.updated_at 
+FROM apps 
+WHERE apps.kb_id = $1::VARCHAR AND apps.type = $2::INTEGER
+2026-05-24 14:34:36,805 INFO sqlalchemy.engine.Engine [cached since 253.5s ago] ('43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3', 1)
+2026-05-24 14:34:36,809 INFO sqlalchemy.engine.Engine SELECT knowledge_bases.name, knowledge_bases.dataset_id, knowledge_bases.access_settings, knowledge_bases.id, knowledge_bases.created_at 
+FROM knowledge_bases 
+WHERE knowledge_bases.id = $1::VARCHAR
+2026-05-24 14:34:36,809 INFO sqlalchemy.engine.Engine [cached since 412.2s ago] ('43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3',)
+2026-05-24 14:34:36.815 | INFO     | app.core.middleware:dispatch:38 - GET /share/v1/app/web/info status=200 duration=18.0ms ip=127.0.0.1
+2026-05-24 14:34:36,816 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:57311 - "GET /share/v1/app/web/info HTTP/1.1" 200 OK
+2026-05-24 14:34:36.822 | INFO     | app.core.middleware:dispatch:38 - POST /share/v1/chat/message status=200 duration=2.8ms ip=::1
+INFO:     ::1:0 - "POST /share/v1/chat/message HTTP/1.1" 200 OK
+2026-05-24 14:34:36,825 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:34:36,827 INFO sqlalchemy.engine.Engine SELECT conversations.nonce, conversations.kb_id, conversations.app_id, conversations.subject, conversations.remote_ip, conversations.info, conversations.id, conversations.created_at 
+FROM conversations 
+WHERE conversations.id = $1::VARCHAR
+2026-05-24 14:34:36,827 INFO sqlalchemy.engine.Engine [generated in 0.00019s] ('9ff93eeb-4bad-4e40-acfe-54bffe2ead40',)
+2026-05-24 14:34:36,830 INFO sqlalchemy.engine.Engine INSERT INTO conversation_messages (conversation_id, app_id, kb_id, role, content, image_paths, provider, model, prompt_tokens, completion_tokens, total_tokens, remote_ip, info, parent_id, id) VALUES ($1::VARCHAR, $2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR[], $7::VARCHAR, $8::VARCHAR, $9::INTEGER, $10::INTEGER, $11::INTEGER, $12::VARCHAR, $13::JSONB, $14::VARCHAR, $15::VARCHAR) RETURNING conversation_messages.created_at
+2026-05-24 14:34:36,830 INFO sqlalchemy.engine.Engine [cached since 253.3s ago] ('9ff93eeb-4bad-4e40-acfe-54bffe2ead40', '', '', 'user', '廖家银在哪里上班\n', [], '', '', 0, 0, 0, '', '"{}"', '', '6eefbcd9-9a64-4867-9377-4699133e3213')
+2026-05-24 14:34:36,833 INFO sqlalchemy.engine.Engine COMMIT
+2026-05-24 14:34:36,840 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:34:36,841 INFO sqlalchemy.engine.Engine SELECT system_settings.id, system_settings.key, system_settings.value, system_settings.description, system_settings.created_at, system_settings.updated_at 
+FROM system_settings 
+WHERE system_settings.key = $1::VARCHAR
+2026-05-24 14:34:36,841 INFO sqlalchemy.engine.Engine [cached since 253.2s ago] ('model_setting_mode',)
+2026-05-24 14:34:36,843 INFO sqlalchemy.engine.Engine SELECT settings.id, settings.kb_id, settings.key, settings.value, settings.description, settings.created_at, settings.updated_at 
+FROM settings 
+WHERE settings.kb_id = $1::VARCHAR AND settings.key = $2::VARCHAR
+2026-05-24 14:34:36,843 INFO sqlalchemy.engine.Engine [cached since 253.2s ago] ('', 'system_prompt')
+2026-05-24 14:34:36,845 INFO sqlalchemy.engine.Engine SELECT knowledge_bases.name, knowledge_bases.dataset_id, knowledge_bases.access_settings, knowledge_bases.id, knowledge_bases.created_at 
+FROM knowledge_bases 
+WHERE knowledge_bases.id = $1::VARCHAR
+2026-05-24 14:34:36,845 INFO sqlalchemy.engine.Engine [cached since 412.2s ago] ('',)
+2026-05-24 14:34:36,847 INFO sqlalchemy.engine.Engine SELECT conversation_messages.conversation_id, conversation_messages.app_id, conversation_messages.kb_id, conversation_messages.role, conversation_messages.content, conversation_messages.image_paths, conversation_messages.provider, conversation_messages.model, conversation_messages.prompt_tokens, conversation_messages.completion_tokens, conversation_messages.total_tokens, conversation_messages.remote_ip, conversation_messages.info, conversation_messages.parent_id, conversation_messages.id, conversation_messages.created_at 
+FROM conversation_messages 
+WHERE conversation_messages.conversation_id = $1::VARCHAR ORDER BY conversation_messages.created_at
+2026-05-24 14:34:36,847 INFO sqlalchemy.engine.Engine [cached since 253.2s ago] ('9ff93eeb-4bad-4e40-acfe-54bffe2ead40',)
+2026-05-24 14:34:36.876 | ERROR    | app.infrastructure.rag.ct_rag:query_records:236 - Query records failed: Client error '400 Bad Request' for url 'http://localhost:5050/api/v1/search'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400
+2026-05-24 14:34:38,500 INFO sqlalchemy.engine.Engine INSERT INTO conversation_messages (conversation_id, app_id, kb_id, role, content, image_paths, provider, model, prompt_tokens, completion_tokens, total_tokens, remote_ip, info, parent_id, id) VALUES ($1::VARCHAR, $2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR[], $7::VARCHAR, $8::VARCHAR, $9::INTEGER, $10::INTEGER, $11::INTEGER, $12::VARCHAR, $13::JSONB, $14::VARCHAR, $15::VARCHAR) RETURNING conversation_messages.created_at
+2026-05-24 14:34:38,500 INFO sqlalchemy.engine.Engine [cached since 252.9s ago] ('9ff93eeb-4bad-4e40-acfe-54bffe2ead40', '', '', 'assistant', '目前没有公开信息显示廖家银的具体工作单位。如果您能提供更多背景信息（如所在行业、地区等），可能有助于进一步查询。', [], 'BaiZhiCloud', 'deepseek-chat', 0, 0, 0, '', '"{}"', '6eefbcd9-9a64-4867-9377-4699133e3213', '142e0b78-d730-4230-bff5-aa8aa1e55d96')
+2026-05-24 14:34:38,502 INFO sqlalchemy.engine.Engine COMMIT
+2026-05-24 14:34:42,256 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:34:42,257 INFO sqlalchemy.engine.Engine SELECT users.account, users.password, users.role, users.last_access, users.id, users.created_at 
+FROM users 
+WHERE users.id = $1::VARCHAR
+2026-05-24 14:34:42,257 INFO sqlalchemy.engine.Engine [cached since 423.4s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:34:42,264 INFO sqlalchemy.engine.Engine SELECT navs.name, navs.kb_id, navs.position, navs.id, navs.created_at, navs.updated_at 
+FROM navs 
+WHERE navs.kb_id = $1::VARCHAR ORDER BY navs.position
+2026-05-24 14:34:42,264 INFO sqlalchemy.engine.Engine [cached since 423.4s ago] ('c188352a-182f-4c55-93ab-70798b2e54e4',)
+2026-05-24 14:34:42,268 INFO sqlalchemy.engine.Engine SELECT nodes.kb_id, nodes.nav_id, nodes.type, nodes.status, nodes.rag_info, nodes.name, nodes.content, nodes.meta, nodes.parent_id, nodes.position, nodes.doc_id, nodes.creator_id, nodes.editor_id, nodes.edit_time, nodes.permissions, nodes.id, nodes.created_at, nodes.updated_at 
+FROM nodes 
+WHERE nodes.kb_id = $1::VARCHAR ORDER BY nodes.position, nodes.created_at
+2026-05-24 14:34:42,268 INFO sqlalchemy.engine.Engine [cached since 423.4s ago] ('c188352a-182f-4c55-93ab-70798b2e54e4',)
+2026-05-24 14:34:42,271 INFO sqlalchemy.engine.Engine SELECT users.id, users.account 
+FROM users 
+WHERE users.id IN ($1::VARCHAR)
+2026-05-24 14:34:42,272 INFO sqlalchemy.engine.Engine [cached since 423.4s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:34:42.274 | INFO     | app.core.middleware:dispatch:38 - GET /api/v1/node/list/group/nav status=200 duration=32.2ms ip=127.0.0.1
+2026-05-24 14:34:42,275 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:57344 - "GET /api/v1/node/list/group/nav?kb_id=c188352a-182f-4c55-93ab-70798b2e54e4 HTTP/1.1" 200 OK
+2026-05-24 14:34:48,470 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-24 14:34:48,473 INFO sqlalchemy.engine.Engine SELECT users.account, users.password, users.role, users.last_access, users.id, users.created_at 
+FROM users 
+WHERE users.id = $1::VARCHAR
+2026-05-24 14:34:48,473 INFO sqlalchemy.engine.Engine [cached since 429.6s ago] ('d807b905-5e04-46f7-91d4-aa9c22c8450c',)
+2026-05-24 14:34:48,477 INFO sqlalchemy.engine.Engine SELECT nodes.kb_id, nodes.nav_id, nodes.type, nodes.status, nodes.rag_info, nodes.name, nodes.content, nodes.meta, nodes.parent_id, nodes.position, nodes.doc_id, nodes.creator_id, nodes.editor_id, nodes.edit_time, nodes.permissions, nodes.id, nodes.created_at, nodes.updated_at 
+FROM nodes 
+WHERE nodes.id = $1::VARCHAR AND nodes.kb_id = $2::VARCHAR
+2026-05-24 14:34:48,477 INFO sqlalchemy.engine.Engine [cached since 205.3s ago] ('f575cc9c-a48e-475b-8fd0-4d6a603c5584', 'c188352a-182f-4c55-93ab-70798b2e54e4')
+2026-05-24 14:34:48,483 INFO sqlalchemy.engine.Engine SELECT node_auth_groups.id, node_auth_groups.node_id, node_auth_groups.auth_group_id, node_auth_groups.perm, node_auth_groups.created_at, node_auth_groups.updated_at 
+FROM node_auth_groups 
+WHERE node_auth_groups.node_id = $1::VARCHAR
+2026-05-24 14:34:48,483 INFO sqlalchemy.engine.Engine [cached since 155s ago] ('f575cc9c-a48e-475b-8fd0-4d6a603c5584',)
+2026-05-24 14:34:48,488 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:57371 - "GET /api/v1/node/permission?kb_id=c188352a-182f-4c55-93ab-70798b2e54e4&id=f575cc9c-a48e-475b-8fd0-4d6a603c5584 HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+  + Exception Group Traceback (most recent call last):
+  |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/_utils.py", line 81, in collapse_excgroups
+  |     yield
+  |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 192, in __call__
+  |     async with anyio.create_task_group() as task_group:
+  |                ~~~~~~~~~~~~~~~~~~~~~~~^^
+  |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/anyio/_backends/_asyncio.py", line 799, in __aexit__
+  |     raise BaseExceptionGroup(
+  |         "unhandled errors in a TaskGroup", self._exceptions
+  |     ) from None
+  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Traceback (most recent call last):
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/httptools_impl.py", line 421, in run_asgi
+    |     result = await app(  # type: ignore[func-returns-value]
+    |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |         self.scope, self.receive, self.send
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |     )
+    |     ^
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 56, in __call__
+    |     return await self.app(scope, receive, send)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1159, in __call__
+    |     await super().__call__(scope, receive, send)
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/applications.py", line 90, in __call__
+    |     await self.middleware_stack(scope, receive, send)
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    |     raise exc
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    |     await self.app(scope, receive, _send)
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 191, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |                                    ~~~~~~~~~~~~~~~~~~^^
+    |   File "/opt/homebrew/Cellar/python@3.13/3.13.3_1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 162, in __exit__
+    |     self.gen.throw(value)
+    |     ~~~~~~~~~~~~~~^^^^^^^
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/_utils.py", line 87, in collapse_excgroups
+    |     raise exc
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 193, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/app/core/middleware.py", line 58, in dispatch
+    |     return await call_next(request)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 168, in call_next
+    |     raise app_exc from app_exc.__cause__ or app_exc.__context__
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 144, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 191, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |                                    ~~~~~~~~~~~~~~~~~~^^
+    |   File "/opt/homebrew/Cellar/python@3.13/3.13.3_1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 162, in __exit__
+    |     self.gen.throw(value)
+    |     ~~~~~~~~~~~~~~^^^^^^^
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/_utils.py", line 87, in collapse_excgroups
+    |     raise exc
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 193, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/app/core/middleware.py", line 76, in dispatch
+    |     response = await call_next(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 168, in call_next
+    |     raise app_exc from app_exc.__cause__ or app_exc.__context__
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 144, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 191, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |                                    ~~~~~~~~~~~~~~~~~~^^
+    |   File "/opt/homebrew/Cellar/python@3.13/3.13.3_1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 162, in __exit__
+    |     self.gen.throw(value)
+    |     ~~~~~~~~~~~~~~^^^^^^^
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/_utils.py", line 87, in collapse_excgroups
+    |     raise exc
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 193, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/app/core/middleware.py", line 35, in dispatch
+    |     response = await call_next(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 168, in call_next
+    |     raise app_exc from app_exc.__cause__ or app_exc.__context__
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 144, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 88, in __call__
+    |     await self.app(scope, receive, send)
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    |     await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    |     raise exc
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    |     await app(scope, receive, sender)
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    |     await self.app(scope, receive, send)
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/routing.py", line 660, in __call__
+    |     await self.middleware_stack(scope, receive, send)
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/routing.py", line 680, in app
+    |     await route.handle(scope, receive, send)
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/routing.py", line 276, in handle
+    |     await self.app(scope, receive, send)
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 134, in app
+    |     await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    |     raise exc
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    |     await app(scope, receive, sender)
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 120, in app
+    |     response = await f(request)
+    |                ^^^^^^^^^^^^^^^^
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 695, in app
+    |     content = await serialize_response(
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+    |     ...<11 lines>...
+    |     )
+    |     ^
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 300, in serialize_response
+    |     raise ResponseValidationError(
+    |     ...<3 lines>...
+    |     )
+    | fastapi.exceptions.ResponseValidationError: 3 validation errors:
+    |   {'type': 'dict_type', 'loc': ('response', 'answerable'), 'msg': 'Input should be a valid dictionary', 'input': 'open'}
+    |   {'type': 'dict_type', 'loc': ('response', 'visitable'), 'msg': 'Input should be a valid dictionary', 'input': 'open'}
+    |   {'type': 'dict_type', 'loc': ('response', 'visible'), 'msg': 'Input should be a valid dictionary', 'input': 'open'}
+    | 
+    |   File "/Users/ayin/AIproject/PandaWiki/backend-py/app/api/v1/node.py", line 165, in node_permission
+    |     GET /api/v1/node/permission
+    +------------------------------------
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/httptools_impl.py", line 421, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 56, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1159, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/applications.py", line 90, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3_1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/_utils.py", line 87, in collapse_excgroups
+    raise exc
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/app/core/middleware.py", line 58, in dispatch
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3_1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/_utils.py", line 87, in collapse_excgroups
+    raise exc
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/app/core/middleware.py", line 76, in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3_1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/_utils.py", line 87, in collapse_excgroups
+    raise exc
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/app/core/middleware.py", line 35, in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 695, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<11 lines>...
+    )
+    ^
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 300, in serialize_response
+    raise ResponseValidationError(
+    ...<3 lines>...
+    )
+fastapi.exceptions.ResponseValidationError: 3 validation errors:
+  {'type': 'dict_type', 'loc': ('response', 'answerable'), 'msg': 'Input should be a valid dictionary', 'input': 'open'}
+  {'type': 'dict_type', 'loc': ('response', 'visitable'), 'msg': 'Input should be a valid dictionary', 'input': 'open'}
+  {'type': 'dict_type', 'loc': ('response', 'visible'), 'msg': 'Input should be a valid dictionary', 'input': 'open'}
+
+  File "/Users/ayin/AIproject/PandaWiki/backend-py/app/api/v1/node.py", line 165, in node_permission
+    GET /api/v1/node/permission

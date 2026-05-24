@@ -3,7 +3,7 @@
 from sqlalchemy import String, Float, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import Base, TimestampMixin, UUIDPrimaryKey
+from app.models.base import Base, TimestampMixin, CreatedAtMixin, UUIDPrimaryKey
 
 
 class Nav(Base, UUIDPrimaryKey, TimestampMixin):
@@ -22,11 +22,11 @@ class Nav(Base, UUIDPrimaryKey, TimestampMixin):
         return f"<Nav(id={self.id}, name={self.name}, kb_id={self.kb_id})>"
 
 
-class NavRelease(Base, UUIDPrimaryKey, TimestampMixin):
+class NavRelease(Base, UUIDPrimaryKey, CreatedAtMixin):
     """栏目发布版本表"""
     __tablename__ = "nav_releases"
 
-    nav_id: Mapped[str] = mapped_column(String(36), nullable=False)
+    nav_id: Mapped[str] = mapped_column(String(36), ForeignKey("navs.id"), nullable=False)
     release_id: Mapped[str] = mapped_column(String(36), nullable=False, index=True)
     kb_id: Mapped[str] = mapped_column(String(36), nullable=False, index=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False)

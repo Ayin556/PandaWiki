@@ -27,19 +27,18 @@ async def create_knowledge_base(
     return KnowledgeBaseDetailResponse.from_orm(kb)
 
 
-@router.get("/list", response_model=KnowledgeBaseListResponse)
+@router.get("/list")
 async def get_knowledge_base_list(user: CurrentUser, db: DbSession):
-    """获取知识库列表 - 对应 Go 版 KnowledgeBaseHandler.GetKnowledgeBaseList"""
+    """获取知识库列表 - 对应 Go 版 KnowledgeBaseHandler.GetKnowledgeBaseList，直接返回数组"""
     service = KnowledgeBaseService(db)
-    kbs = await service.get_knowledge_base_list(user.id if user else "")
-    return KnowledgeBaseListResponse(list=kbs)
+    return await service.get_knowledge_base_list(user.id if user else "")
 
 
 @router.get("/detail", response_model=KnowledgeBaseDetailResponse)
-async def get_knowledge_base_detail(kb_id: str, user: CurrentUser, db: DbSession):
+async def get_knowledge_base_detail(id: str, user: CurrentUser, db: DbSession):
     """获取知识库详情 - 对应 Go 版 KnowledgeBaseHandler.GetKnowledgeBaseDetail"""
     service = KnowledgeBaseService(db)
-    kb = await service.get_knowledge_base(kb_id)
+    kb = await service.get_knowledge_base(id)
     if not kb:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     return KnowledgeBaseDetailResponse.from_orm(kb)
@@ -58,10 +57,10 @@ async def update_knowledge_base(
 
 
 @router.delete("/detail")
-async def delete_knowledge_base(kb_id: str, admin: AdminUser, db: DbSession):
+async def delete_knowledge_base(id: str, admin: AdminUser, db: DbSession):
     """删除知识库 - 对应 Go 版 KnowledgeBaseHandler.DeleteKnowledgeBase"""
     service = KnowledgeBaseService(db)
-    await service.delete_knowledge_base(kb_id)
+    await service.delete_knowledge_base(id)
     return {"message": "Deleted successfully"}
 
 

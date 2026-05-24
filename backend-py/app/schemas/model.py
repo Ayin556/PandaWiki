@@ -51,6 +51,7 @@ class ModelListResponse(BaseModel):
 
 
 class SwitchModeRequest(BaseModel):
-    """切换模型模式请求"""
+    """切换模型模式请求 - 对应 Go 版 domain.SwitchModeReq"""
     mode: str  # manual / auto
-    api_key: str = ""
+    auto_mode_api_key: str = ""  # 百智云 API Key
+    chat_model: str = ""  # 自定义对话模型名称

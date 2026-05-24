@@ -1,6 +1,6 @@
 """应用管理 API - 对应 Go 版 handler/v1/app.go"""
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 from app.api.deps import CurrentUser, DbSession
 from app.services.app import AppService
 
@@ -8,10 +8,10 @@ router = APIRouter()
 
 
 @router.get("/detail")
-async def get_app_detail(id: str, kb_id: str, user: CurrentUser, db: DbSession):
-    """获取应用详情 - 对应 Go 版 AppHandler.GetAppDetail"""
+async def get_app_detail(kb_id: str, type: str, user: CurrentUser, db: DbSession):
+    """获取应用详情 - 对应 Go 版 AppHandler.GetAppDetail，Go 版接受 kb_id + type 参数"""
     service = AppService(db)
-    return await service.get_app_detail(kb_id, id)
+    return await service.get_app_detail_by_type(kb_id, type)
 
 
 @router.put("")

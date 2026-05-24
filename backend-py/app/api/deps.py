@@ -2,7 +2,7 @@
 
 from typing import Annotated, AsyncGenerator
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, Header, HTTPException, Query, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -111,10 +111,23 @@ async def require_full_control(
 
 # ==================== 知识库上下文 ====================
 async def get_kb_id_from_header(
-    x_kb_id: str = "",
+    x_kb_id: str = Header(default="", alias="x-kb-id"),
+    kb_id_query: str = Query(default="", alias="kb_id"),
 ) -> str:
-    """从请求头获取知识库ID"""
-    return x_kb_id
+    """从请求头或查询参数获取知识库ID - 对应 Go 版从 X-KB-ID header 获取
+
+    Go 版由 Caddy 反向代理注入 X-KB-ID 请求头，
+    开发环境前端通过 x-kb-id header 传递（来源 DEV_KB_ID），
+    同时兼容 query 参数方式
+    """
+    # 优先使用 header（与 Go 版对齐）
+    kb_id = x_kb_id or kb_id_query
+    if not kb_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="kb_id is required (via x-kb-id header or kb_id query param)",
+        )
+    return kb_id
 
 
 KbId = Annotated[str, Depends(get_kb_id_from_header)]

@@ -8,12 +8,11 @@ from app.services.nav import NavService
 router = APIRouter()
 
 
-@router.get("/list", response_model=NavListResponse)
-async def nav_list(kb_id: str, user: CurrentUser, db: DbSession):
-    """获取栏目列表 - 对应 Go 版 NavHandler.NavList"""
+@router.get("/list")
+async def nav_list(kb_id: str, user: CurrentUser = None, db: DbSession = None):
+    """获取栏目列表 - 对应 Go 版 NavHandler.NavList，直接返回数组"""
     service = NavService(db)
-    navs = await service.get_list(kb_id)
-    return NavListResponse(list=navs)
+    return await service.get_list(kb_id)
 
 
 @router.post("/add")

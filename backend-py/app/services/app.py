@@ -17,10 +17,31 @@ class AppService:
         self.repo = AppRepository(db)
 
     async def get_app_detail(self, kb_id: str, app_id: str) -> dict:
-        """获取应用详情 - 对应 Go 版 GetAppDetailByKBIDAndAppType"""
+        """获取应用详情（按 ID）"""
         app = await self.repo.get_by_id(app_id)
         if not app or app.kb_id != kb_id:
             return {}
+
+        settings = app.settings or {}
+        return {
+            "id": app.id,
+            "kb_id": app.kb_id,
+            "name": app.name,
+            "type": app.type,
+            "settings": settings,
+        }
+
+    async def get_app_detail_by_type(self, kb_id: str, app_type: str) -> dict:
+        """获取应用详情 - 对应 Go 版 GetAppDetailByKBIDAndAppType，按 kb_id + type 查询"""
+        try:
+            type_int = int(app_type)
+        except (ValueError, TypeError):
+            return {}
+
+        app = await self.repo.get_by_kb_id_and_type(kb_id, type_int)
+        if not app:
+            # 如果不存在，自动创建（与 Go 版行为一致）
+            app = await self.repo.get_or_create_by_kb_id_and_type(kb_id, type_int)
 
         settings = app.settings or {}
         return {
@@ -60,7 +81,9 @@ class AppService:
             await self.repo.delete_by_id(app_id)
 
     async def get_web_app_info(self, kb_id: str) -> dict:
-        """获取Web应用信息 - 对应 Go 版 ShareGetWebAppInfo"""
+        """获取Web应用信息 - 对应 Go 版 ShareGetWebAppInfo
+        返回结构与 Go 版 AppInfoResp 一致: {name, settings, base_url}
+        """
         app = await self.repo.get_or_create_by_kb_id_and_type(kb_id, 1)  # Web type
         settings = app.settings or {}
 
@@ -72,22 +95,16 @@ class AppService:
         )
         kb = result.scalar_one_or_none()
 
+        # 获取 base_url: Go 版从 kb.AccessSettings.BaseURL 读取
+        access_settings = kb.access_settings or {} if kb else {}
+        base_url = access_settings.get("base_url", "")
+
+        # 直接透传数据库中的 settings JSONB，以 Go 版 AppSettingsResp 为准
+        # 数据库存的就是完整的 Go 版 AppSettings JSON，无需逐字段映射
         return {
-            "kb_id": kb_id,
-            "title": settings.get("title", kb.name if kb else ""),
-            "icon": settings.get("icon", ""),
-            "description": settings.get("description", ""),
-            "theme": settings.get("theme", {"primary_color": "#1890ff", "mode": "light"}),
-            "watermark": settings.get("watermark", {"setting": "hidden", "text": ""}),
-            "copy_setting": settings.get("copy_setting", {"setting": "none", "text": ""}),
-            "chat": settings.get("chat", {"enabled": True, "show_source": True}),
-            "welcome": settings.get("welcome", {"enabled": True, "message": ""}),
-            "landing_page": settings.get("landing_page", {"enabled": False, "nav_id": ""}),
-            "recommend_nodes": settings.get("recommend_nodes", {"type": "nav", "nav_ids": [], "node_ids": []}),
-            "feedback": settings.get("feedback", {"enabled": False}),
-            "comment": settings.get("comment", {"enabled": False, "review_enabled": False}),
-            "copyright": settings.get("copyright", {"enabled": False, "content": ""}),
-            "disclaimer": settings.get("disclaimer", {"enabled": False, "content": ""}),
+            "name": app.name or "",
+            "settings": settings,
+            "base_url": base_url,
         }
 
     async def get_widget_app_info(self, kb_id: str) -> dict:

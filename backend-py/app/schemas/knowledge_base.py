@@ -60,10 +60,11 @@ class KBUserUpdateRequest(BaseModel):
 
 
 class KBReleaseCreateRequest(BaseModel):
-    """创建发布版本请求"""
+    """创建发布版本请求 - 与前端 DomainCreateKBReleaseReq 对齐"""
     kb_id: str
     tag: str = ""
     message: str = ""
+    node_ids: list[str] = []
 
 
 class KBReleaseListItem(BaseModel):

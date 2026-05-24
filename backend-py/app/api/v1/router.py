@@ -15,6 +15,7 @@ from app.api.v1.crawler import router as crawler_router
 from app.api.v1.creation import router as creation_router
 from app.api.v1.file import router as file_router
 from app.api.v1.stat import router as stat_router
+from app.api.v1.license import router as license_router
 
 v1_router = APIRouter()
 
@@ -31,3 +32,4 @@ v1_router.include_router(crawler_router, prefix="/crawler", tags=["文档导入"
 v1_router.include_router(creation_router, prefix="/creation", tags=["AI创作"])
 v1_router.include_router(file_router, prefix="/file", tags=["文件上传"])
 v1_router.include_router(stat_router, prefix="/stat", tags=["统计分析"])
+v1_router.include_router(license_router, prefix="/license", tags=["License管理"])

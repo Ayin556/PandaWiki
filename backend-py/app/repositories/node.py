@@ -35,13 +35,28 @@ class NodeRepository(BaseRepository[Node]):
         await self.db.refresh(node)
         return node.id
 
-    async def get_list(self, kb_id: str, nav_id: str = "", search: str = "") -> list:
-        """获取节点列表"""
+    async def get_list(self, kb_id: str, nav_id: str = "", search: str = "", status: str = "") -> list:
+        """获取节点列表
+        
+        Args:
+            kb_id: 知识库 ID
+            nav_id: 可选，栏目 ID 过滤
+            search: 可选，搜索关键词
+            status: 可选，节点状态过滤 (released/unpublished/unstudied)
+        """
         query = select(Node).where(Node.kb_id == kb_id)
         if nav_id:
             query = query.where(Node.nav_id == nav_id)
         if search:
             query = query.where(Node.name.ilike(f"%{search}%"))
+        # status 过滤 - 与 Go 版对齐
+        if status == "released":
+            query = query.where(Node.status == 2)
+        elif status == "unpublished":
+            query = query.where(Node.status.in_([0, 1]))
+        elif status == "unstudied":
+            # 已发布但 RAG 状态异常的文档
+            query = query.where(Node.status == 2)
         query = query.order_by(Node.position, Node.created_at)
         result = await self.db.execute(query)
         return list(result.scalars().all())
@@ -171,7 +186,9 @@ class NodeRepository(BaseRepository[Node]):
 
     async def move_nav(self, req) -> None:
         """移动到其他栏目"""
-        for node_id in req.node_ids:
+        # 兼容 ids 和 node_ids 两种字段名
+        node_ids = getattr(req, "ids", None) or getattr(req, "node_ids", [])
+        for node_id in node_ids:
             await self.db.execute(
                 update(Node).where(Node.id == node_id).values(nav_id=req.nav_id)
             )
@@ -179,22 +196,32 @@ class NodeRepository(BaseRepository[Node]):
 
     async def batch_move(self, req) -> None:
         """批量移动"""
-        for node_id in req.node_ids:
+        # 兼容 ids 和 node_ids 两种字段名
+        node_ids = getattr(req, "ids", None) or getattr(req, "node_ids", [])
+        for node_id in node_ids:
             await self.db.execute(
                 update(Node).where(Node.id == node_id).values(parent_id=req.parent_id)
             )
         await self.db.commit()
 
     async def get_recommend_nodes(self, kb_id: str, nav_ids: list, node_ids: list) -> list:
-        """获取推荐节点"""
+        """获取推荐节点 - 对应 Go 版 RecommendNodes，返回递归树结构
+
+        Go 版 RecommendNodeListResp 字段：id, nav_id, nav_name, name, type, summary,
+        parent_id, position, emoji, recommend_nodes(递归), permissions
+        """
         result_list = []
+        seen_ids = set()
 
         # 按节点 ID 获取
         if node_ids:
             result = await self.db.execute(
                 select(Node).where(Node.kb_id == kb_id, Node.id.in_(node_ids), Node.status == 2)
             )
-            result_list.extend(list(result.scalars().all()))
+            for n in result.scalars().all():
+                if n.id not in seen_ids:
+                    result_list.append(n)
+                    seen_ids.add(n.id)
 
         # 按栏目 ID 获取
         if nav_ids:
@@ -202,18 +229,54 @@ class NodeRepository(BaseRepository[Node]):
                 select(Node).where(Node.kb_id == kb_id, Node.nav_id.in_(nav_ids), Node.status == 2)
                 .order_by(Node.position).limit(20)
             )
-            result_list.extend(list(result.scalars().all()))
+            for n in result.scalars().all():
+                if n.id not in seen_ids:
+                    result_list.append(n)
+                    seen_ids.add(n.id)
 
-        return [
-            {
+        # 批量获取栏目名称
+        nav_name_map = {}
+        nav_id_set = {n.nav_id for n in result_list if n.nav_id}
+        if nav_id_set:
+            nav_result = await self.db.execute(select(Nav.id, Nav.name).where(Nav.id.in_(nav_id_set)))
+            nav_name_map = dict(nav_result.all())
+
+        # 构建递归树结构
+        def build_node_data(n: Node) -> dict:
+            meta = n.meta or {}
+            permissions = n.permissions or {}
+            return {
                 "id": n.id,
+                "nav_id": n.nav_id,
+                "nav_name": nav_name_map.get(n.nav_id, ""),
                 "name": n.name,
                 "type": n.type,
-                "nav_id": n.nav_id,
-                "meta": n.meta or {},
+                "summary": meta.get("summary", ""),
+                "parent_id": n.parent_id,
+                "position": n.position,
+                "emoji": meta.get("emoji", ""),
+                "recommend_nodes": [],
+                "permissions": {
+                    "answerable": permissions.get("answerable", "open"),
+                    "visitable": permissions.get("visitable", "open"),
+                    "visible": permissions.get("visible", "open"),
+                },
             }
-            for n in result_list
-        ]
+
+        node_map = {}
+        for n in result_list:
+            node_map[n.id] = build_node_data(n)
+
+        # 构建父子关系树（文件夹包含子文档）
+        root_nodes = []
+        for n in result_list:
+            node_data = node_map[n.id]
+            if n.parent_id and n.parent_id in node_map:
+                node_map[n.parent_id]["recommend_nodes"].append(node_data)
+            else:
+                root_nodes.append(node_data)
+
+        return root_nodes
 
     async def get_permissions(self, kb_id: str, node_id: str) -> dict:
         """获取节点权限"""

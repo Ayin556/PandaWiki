@@ -2,7 +2,7 @@
 
 from datetime import datetime
 
-from sqlalchemy import String, Integer, Float, ForeignKey, DateTime
+from sqlalchemy import String, Integer, Float, ForeignKey, DateTime, ARRAY
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.models.base import Base, TimestampMixin, JSONType
@@ -37,10 +37,11 @@ class AuthGroup(Base, TimestampMixin):
     kb_id: Mapped[str] = mapped_column(String(36), nullable=False)
     parent_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
     position: Mapped[float] = mapped_column(Float, default=0.0)
-    auth_ids: Mapped[list] = mapped_column(
-        JSONType,
+    # auth_ids 在数据库中是 integer[] 类型（对应 Go 版 pq.Int64Array）
+    auth_ids: Mapped[list[int]] = mapped_column(
+        ARRAY(Integer),
         default=list,
-        comment="包含的认证用户ID列表 JSON",
+        comment="包含的认证用户ID列表",
     )
     sync_id: Mapped[str] = mapped_column(String(255), default="")
     sync_parent_id: Mapped[str] = mapped_column(String(255), default="")

@@ -9,35 +9,39 @@ from app.core.constants import ModelType
 
 @dataclass
 class RankedNodeChunk:
-    """排序后的节点块"""
-    node_id: str
+    """排序后的节点块 - 对齐 Go 版 domain.NodeContentChunk"""
+    chunk_id: str  # Go 版: chunk.ChunkID
+    node_id: str   # Go 版: chunk.DocumentID (用作 node 查找键)
     node_name: str
     content: str
     score: float = 0.0
-    doc_id: str = ""
+    doc_id: str = ""  # Go 版: chunk.DocumentID
     url: str = ""
 
 
 @dataclass
 class UpsertRecordRequest:
-    """上传文档请求"""
+    """上传文档请求 - 对齐 Go 版 rag.UpsertRecordsRequest"""
     dataset_id: str
     doc_id: str
     name: str
     content: str
-    group_ids: list[str] = field(default_factory=list)
+    id: str = ""  # Go 版的 ID 字段，用于文件名 {id}.md
+    group_ids: list[int] = field(default_factory=list)  # Go 版为 []int
     tags: list[str] = field(default_factory=list)
 
 
 @dataclass
 class QueryRecordRequest:
-    """检索请求"""
+    """检索请求 - 对齐 Go 版 rag.QueryRecordsRequest"""
     dataset_id: str
     query: str
-    top_k: int = 5
-    score_threshold: float = 0.5
-    group_ids: list[str] = field(default_factory=list)
-    history: list[dict[str, str]] = field(default_factory=list)
+    top_k: int = 10  # Go 版硬编码为 10
+    score_threshold: float = 0.2  # Go 版 chat 场景传 0.2
+    group_ids: list[int] = field(default_factory=list)  # Go 版为 []int
+    history: list[dict[str, str]] = field(default_factory=list)  # chat_history
+    tags: list[str] = field(default_factory=list)  # Go 版传 tags
+    max_chunks_per_doc: int = 0  # Go 版传 MaxChunksPerDoc
 
 
 @dataclass
@@ -49,13 +53,19 @@ class QueryRecordResponse:
 
 @dataclass
 class ModelInfo:
-    """模型信息"""
+    """模型信息 - 对齐 Go 版 domain.Model"""
     id: str
     name: str
     type: str
     provider: str
     base_url: str
     api_key: str
+    api_header: str = ""
+    api_version: str = ""
+    max_tokens: int = 8192
+    extra_parameters: dict = field(default_factory=dict)
+    is_default: bool = True
+    is_active: bool = True
 
 
 class RAGService(ABC):
@@ -88,9 +98,9 @@ class RAGService(ABC):
 
     @abstractmethod
     async def update_document_group_ids(
-        self, dataset_id: str, doc_id: str, group_ids: list[str]
+        self, dataset_id: str, doc_id: str, group_ids: list[int]
     ) -> None:
-        """更新文档分组ID"""
+        """更新文档分组ID - Go 版 groupIds 类型为 []int"""
         ...
 
     @abstractmethod
@@ -131,9 +141,22 @@ _rag_service: RAGService | None = None
 
 
 def get_rag_service() -> RAGService:
-    """获取 RAG 服务单例"""
+    """获取 RAG 服务单例
+
+    优先使用 CT RAG (raglite HTTP 服务)，与 Go 版保持一致。
+    仅当 RAG_BASE_URL 未配置时回退到本地 LangChain/Chroma。
+    """
     global _rag_service
-    if _rag_service is None:
+    if _rag_service is not None:
+        return _rag_service
+
+    from app.core.config import settings
+
+    if settings.RAG_BASE_URL:
+        from app.infrastructure.rag.ct_rag import CTRAGService
+        _rag_service = CTRAGService()
+    else:
         from app.infrastructure.rag.langchain_rag import LangChainRAG
         _rag_service = LangChainRAG()
+
     return _rag_service
