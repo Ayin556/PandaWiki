@@ -20,6 +20,7 @@ type Config struct {
 	S3            S3Config     `mapstructure:"s3"`
 	Sentry        SentryConfig `mapstructure:"sentry"`
 	CaddyAPI      string       `mapstructure:"caddy_api"`
+	CaddyEnabled  bool         `mapstructure:"caddy_enabled"`
 	SubnetPrefix  string       `mapstructure:"subnet_prefix"`
 }
 
@@ -131,6 +132,7 @@ func NewConfig() (*Config, error) {
 			DSN:     "https://2a4cff1ae04b624ffc72663f523024ff@sentry.baizhi.cloud/4",
 		},
 		CaddyAPI:     "/app/run/caddy-admin.sock",
+		CaddyEnabled: true,
 		SubnetPrefix: "169.254.15",
 	}
 
@@ -172,9 +174,6 @@ func overrideWithEnv(c *Config) {
 	if env := os.Getenv("JWT_SECRET"); env != "" {
 		c.Auth.JWT.Secret = env
 	}
-	if env := os.Getenv("S3_SECRET_KEY"); env != "" {
-		c.S3.SecretKey = env
-	}
 	if env := os.Getenv("ADMIN_PASSWORD"); env != "" {
 		c.AdminPassword = env
 	}
@@ -201,6 +200,12 @@ func overrideWithEnv(c *Config) {
 	if env := os.Getenv("S3_ENDPOINT"); env != "" {
 		c.S3.Endpoint = env
 	}
+	if env := os.Getenv("S3_ACCESS_KEY"); env != "" {
+		c.S3.AccessKey = env
+	}
+	if env := os.Getenv("S3_SECRET_KEY"); env != "" {
+		c.S3.SecretKey = env
+	}
 	// sentry
 	if env := os.Getenv("SENTRY_ENABLED"); env != "" {
 		c.Sentry.Enabled = env == "true"
@@ -212,6 +217,10 @@ func overrideWithEnv(c *Config) {
 	if env := os.Getenv("CADDY_API"); env != "" {
 		c.CaddyAPI = env
 	}
+	// caddy enabled
+	if env := os.Getenv("CADDY_ENABLED"); env != "" {
+		c.CaddyEnabled = env == "true"
+	}
 	// log level
 	if env := os.Getenv("LOG_LEVEL"); env != "" {
 		if i, err := strconv.Atoi(env); err == nil {
@@ -222,6 +231,14 @@ func overrideWithEnv(c *Config) {
 			c.Log.Level = i
 		} else {
 			fmt.Fprintf(os.Stderr, "Invalid log level: %s with err: %s\n", env, err)
+		}
+	}
+	// http port
+	if env := os.Getenv("HTTP_PORT"); env != "" {
+		if i, err := strconv.Atoi(env); err == nil {
+			c.HTTP.Port = i
+		} else {
+			fmt.Fprintf(os.Stderr, "Invalid http port: %s with err: %s\n", env, err)
 		}
 	}
 }

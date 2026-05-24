@@ -10,6 +10,7 @@ import (
 	"maps"
 	"net"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/google/go-cmp/cmp"
@@ -55,6 +56,11 @@ func NewKnowledgeBaseRepository(db *pg.DB, config *config.Config, logger *log.Lo
 }
 
 func (r *KnowledgeBaseRepository) SyncKBAccessSettingsToCaddy(ctx context.Context, kbList []*domain.KnowledgeBaseListItem) error {
+	// Caddy 禁用时跳过同步（macOS 本地开发等场景）
+	if !r.config.CaddyEnabled {
+		r.logger.Warn("caddy sync skipped: caddy is disabled (CADDY_ENABLED=false)")
+		return nil
+	}
 	if len(kbList) == 0 {
 		return nil
 	}
@@ -313,16 +319,34 @@ func (r *KnowledgeBaseRepository) SyncKBAccessSettingsToCaddy(ctx context.Contex
 		"apps": apps,
 	}
 	newBody, _ := json.Marshal(config)
-	tr := &http.Transport{
-		DialContext: func(_ context.Context, _, _ string) (net.Conn, error) {
-			return net.Dial("unix", socketPath)
-		},
+
+	// 根据 CaddyAPI 配置选择连接方式：tcp:// 开头使用 TCP，否则使用 Unix socket
+	var tr *http.Transport
+	var reqURL string
+	caddyAPI := r.config.CaddyAPI
+	if strings.HasPrefix(caddyAPI, "tcp://") {
+		// TCP 模式：CaddyAPI 格式为 tcp://host:port
+		tcpAddr := strings.TrimPrefix(caddyAPI, "tcp://")
+		tr = &http.Transport{
+			DialContext: func(_ context.Context, _, _ string) (net.Conn, error) {
+				return net.Dial("tcp", tcpAddr)
+			},
+		}
+		reqURL = "http://" + tcpAddr + "/load"
+	} else {
+		// Unix socket 模式：CaddyAPI 为 socket 文件路径
+		tr = &http.Transport{
+			DialContext: func(_ context.Context, _, _ string) (net.Conn, error) {
+				return net.Dial("unix", socketPath)
+			},
+		}
+		reqURL = "http://unix/load"
 	}
 	client := &http.Client{
 		Transport: tr,
 		Timeout:   5 * time.Second,
 	}
-	req, err := http.NewRequest("POST", "http://unix/load", bytes.NewBuffer(newBody))
+	req, err := http.NewRequest("POST", reqURL, bytes.NewBuffer(newBody))
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)
 	}

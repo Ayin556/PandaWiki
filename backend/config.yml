@@ -1,0 +1,21 @@
+http:
+  port: 8080
+
+pg:
+  dsn: "host=localhost user=pandawiki password=YourSecurePassword123 dbname=pandawiki port=5432 sslmode=disable TimeZone=Asia/Shanghai"
+
+mq:
+  type: "nats"
+  nats:
+    server: "nats://localhost:4222"
+    user: "panda-wiki"
+    password: ""
+
+redis:
+  addr: "localhost:6379"
+  password: ""
+
+s3:
+  endpoint: "localhost:9000"
+  access_key: "minioadmin"
+  secret_key: "minioadmin123"

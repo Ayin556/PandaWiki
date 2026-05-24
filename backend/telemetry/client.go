@@ -8,7 +8,9 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
+	"os/user"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 
@@ -23,9 +25,24 @@ import (
 )
 
 const (
-	machineIDFile  = "/data/.machine_id"
 	reportInterval = time.Hour
 )
+
+// getMachineIDFilePath 返回 machine ID 文件路径，适配本地开发和容器环境
+func getMachineIDFilePath() string {
+	if runtime.GOOS == "windows" {
+		return filepath.Join(os.Getenv("APPDATA"), "panda-wiki", ".machine_id")
+	}
+	// 尝试 /data 目录（容器环境）
+	if err := os.MkdirAll("/data", 0755); err == nil {
+		return "/data/.machine_id"
+	}
+	// 本地开发环境，使用用户目录
+	if u, err := user.Current(); err == nil && u.HomeDir != "" {
+		return filepath.Join(u.HomeDir, ".panda-wiki", ".machine_id")
+	}
+	return filepath.Join(os.TempDir(), "panda-wiki", ".machine_id")
+}
 
 // Client is the telemetry client
 type Client struct {
@@ -92,6 +109,7 @@ func (c *Client) GetMachineID() string {
 }
 
 func (c *Client) getOrCreateMachineID() (string, error) {
+	machineIDFile := getMachineIDFilePath()
 	// get machine id from file
 	if id, err := os.ReadFile(machineIDFile); err == nil {
 		c.firstReport = false

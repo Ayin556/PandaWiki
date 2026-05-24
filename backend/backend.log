@@ -1,0 +1,661 @@
+time=2026-05-23T20:35:11.325+08:00 level=INFO msg="Starting server on port 8080"
+time=2026-05-23T20:35:29.167+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/swagger/index.html status=200 latency=4
+time=2026-05-23T20:36:14.816+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/api/v1/user/login status=200 latency=70
+time=2026-05-23T20:36:44.424+08:00 level=ERROR msg=REQUEST_ERROR remote_ip=::1 method=GET uri=/api/v1/license status=404 latency=0 err="code=404, message=Not Found"
+time=2026-05-23T20:36:44.448+08:00 level=ERROR msg="failed to get user" module=http_base_handler trace_id=1d2107e9-35c7-4efd-9d77-c2e39ede7f1b error="record not found"
+time=2026-05-23T20:36:44.448+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/user status=200 latency=23
+time=2026-05-23T20:37:11.134+08:00 level=INFO msg="synced user access time to database" module=repo.pg.user_access update_count=1
+time=2026-05-23T20:37:11.483+08:00 level=ERROR msg="ValidateKBUserPerm ValidateKBPerm failed" module=middleware.jwt error="get user failed record not found"
+time=2026-05-23T20:37:11.483+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/api/v1/nav/add status=403 latency=2
+time=2026-05-23T20:38:11.121+08:00 level=INFO msg="synced user access time to database" module=repo.pg.user_access update_count=1
+time=2026-05-23T20:38:12.961+08:00 level=ERROR msg=用户名或密码错误 module=http_base_handler trace_id=8ad8adea-bcfe-4e8e-ab67-c800073f3ff2 error="invalid password"
+time=2026-05-23T20:38:13.053+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/api/v1/user/login status=200 latency=166
+time=2026-05-23T20:38:30.402+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/api/v1/user/login status=200 latency=78
+time=2026-05-23T20:38:30.506+08:00 level=ERROR msg=REQUEST_ERROR remote_ip=::1 method=GET uri=/api/v1/license status=404 latency=0 err="code=404, message=Not Found"
+time=2026-05-23T20:38:30.508+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/user status=200 latency=3
+time=2026-05-23T20:38:30.537+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/knowledge_base/list status=200 latency=3
+time=2026-05-23T20:38:30.572+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/model/list status=200 latency=39
+time=2026-05-23T20:38:30.609+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/model/mode-setting status=200 latency=10
+time=2026-05-23T20:38:35.311+08:00 level=INFO msg="CheckModel req" provider=BaiZhiCloud model=deepseek-chat baseURL=https://model-square.app.baizhi.cloud/v1
+time=2026-05-23T20:38:36.700+08:00 level=INFO msg="successfully updated RAG model" module=usecase.model "model name: "=bge-m3
+time=2026-05-23T20:38:36.704+08:00 level=INFO msg="successfully updated RAG model" module=usecase.model "model name: "=bge-reranker-v2-m3
+time=2026-05-23T20:38:36.708+08:00 level=INFO msg="successfully updated RAG model" module=usecase.model "model name: "=qwen2.5-3b-instruct
+time=2026-05-23T20:38:36.710+08:00 level=INFO msg="successfully updated RAG model" module=usecase.model "model name: "=qwen-vl-max-latest
+time=2026-05-23T20:38:36.713+08:00 level=INFO msg="successfully updated RAG model" module=usecase.model "model name: "=deepseek-chat
+time=2026-05-23T20:38:36.713+08:00 level=INFO msg="embedding model updated, triggering upsert records" module=usecase.model
+time=2026-05-23T20:38:36.718+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/api/v1/model/switch-mode status=200 latency=1411
+time=2026-05-23T20:38:36.728+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/model/list status=200 latency=1
+time=2026-05-23T20:38:36.772+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/model/mode-setting status=200 latency=1
+time=2026-05-23T20:38:45.054+08:00 level=WARN msg="caddy sync skipped: caddy is disabled (CADDY_ENABLED=false)" module=repo.pg.knowledge_base
+time=2026-05-23T20:38:45.088+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/api/v1/knowledge_base status=200 latency=51
+time=2026-05-23T20:38:45.094+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/knowledge_base/list status=200 latency=1
+time=2026-05-23T20:38:45.098+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/knowledge_base/detail?id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=4
+time=2026-05-23T20:38:45.132+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/knowledge_base/detail?id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=1
+time=2026-05-23T20:38:45.153+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=17
+time=2026-05-23T20:38:45.153+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/stats?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=23
+time=2026-05-23T20:38:46.857+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=3
+time=2026-05-23T20:38:46.873+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/api/v1/node status=200 latency=10
+time=2026-05-23T20:38:46.873+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/api/v1/node status=200 latency=9
+time=2026-05-23T20:38:46.883+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/api/v1/node status=200 latency=19
+time=2026-05-23T20:38:47.556+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/api/v1/knowledge_base/release status=200 latency=30
+time=2026-05-23T20:38:49.997+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/app/detail?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3&type=1" status=200 latency=9
+time=2026-05-23T20:38:50.016+08:00 level=INFO msg=REQUEST remote_ip=::1 method=PUT uri="/api/v1/app?id=104cefab-8686-4417-aaa6-d46688c2cda3" status=200 latency=10
+time=2026-05-23T20:38:55.824+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=21
+time=2026-05-23T20:38:56.961+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/stats?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=4
+time=2026-05-23T20:38:56.962+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=4
+time=2026-05-23T20:38:56.991+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/stats?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=3
+time=2026-05-23T20:38:59.174+08:00 level=ERROR msg=REQUEST_ERROR remote_ip=::1 method=GET uri=/api/v1/license status=404 latency=0 err="code=404, message=Not Found"
+time=2026-05-23T20:38:59.186+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/user status=200 latency=12
+time=2026-05-23T20:38:59.217+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/knowledge_base/list status=200 latency=11
+time=2026-05-23T20:38:59.226+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/model/list status=200 latency=25
+time=2026-05-23T20:38:59.454+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=6
+time=2026-05-23T20:38:59.454+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/app/detail?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3&type=1" status=200 latency=5
+time=2026-05-23T20:38:59.625+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=5
+time=2026-05-23T20:38:59.795+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/detail?id=019e54d8-5f51-7c48-addc-c92d73dc3e23&kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=13
+time=2026-05-23T20:39:03.705+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=21
+time=2026-05-23T20:39:05.777+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/stat/instant_count?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=18
+time=2026-05-23T20:39:05.779+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/stat/instant_pages?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=20
+time=2026-05-23T20:39:05.821+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/stat/referer_hosts?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3&day=1" status=200 latency=16
+time=2026-05-23T20:39:05.823+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/stat/hot_pages?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3&day=1" status=200 latency=13
+time=2026-05-23T20:39:05.872+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/stat/browsers?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3&day=1" status=200 latency=14
+time=2026-05-23T20:39:05.887+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/stat/count?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3&day=1" status=200 latency=124
+time=2026-05-23T20:39:05.891+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/stat/conversation_distribution?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3&day=1" status=200 latency=114
+time=2026-05-23T20:39:05.904+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/stat/geo_count?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3&day=1" status=200 latency=129
+time=2026-05-23T20:39:08.704+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/conversation?page=1&per_page=20&kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3&subject=&remote_ip=" status=200 latency=6
+time=2026-05-23T20:39:10.708+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=8
+time=2026-05-23T20:39:10.718+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/stats?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=18
+time=2026-05-23T20:39:11.076+08:00 level=INFO msg="synced user access time to database" module=repo.pg.user_access update_count=1
+time=2026-05-23T20:39:15.057+08:00 level=ERROR msg=REQUEST_ERROR remote_ip=::1 method=GET uri=/api/v1/license status=404 latency=0 err="code=404, message=Not Found"
+time=2026-05-23T20:39:15.064+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/user status=200 latency=6
+time=2026-05-23T20:39:15.097+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/knowledge_base/list status=200 latency=11
+time=2026-05-23T20:39:15.101+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/model/list status=200 latency=18
+time=2026-05-23T20:39:15.354+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=3
+time=2026-05-23T20:39:15.355+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/app/detail?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3&type=1" status=200 latency=4
+time=2026-05-23T20:39:15.363+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=6
+time=2026-05-23T20:39:15.377+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/detail?id=019e54d8-5f51-7c48-addc-c92d73dc3e23&kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=26
+time=2026-05-23T20:39:22.343+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=16
+time=2026-05-23T20:39:27.856+08:00 level=ERROR msg=REQUEST_ERROR remote_ip=::1 method=GET uri=/api/v1/license status=404 latency=0 err="code=404, message=Not Found"
+time=2026-05-23T20:39:27.863+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/user status=200 latency=16
+time=2026-05-23T20:39:28.176+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/model/list status=200 latency=12
+time=2026-05-23T20:39:28.200+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/knowledge_base/list status=200 latency=34
+time=2026-05-23T20:39:28.406+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/app/detail?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3&type=1" status=200 latency=55
+time=2026-05-23T20:39:28.434+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=81
+time=2026-05-23T20:39:28.497+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=130
+time=2026-05-23T20:39:29.232+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/detail?id=019e54d8-5f51-7c48-addc-c92d73dc3e23&kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=22
+time=2026-05-23T20:39:44.581+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=18
+time=2026-05-23T20:39:52.862+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/conversation?page=1&per_page=20&kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3&subject=&remote_ip=" status=200 latency=11
+time=2026-05-23T20:40:11.070+08:00 level=INFO msg="synced user access time to database" module=repo.pg.user_access update_count=1
+time=2026-05-23T20:41:40.960+08:00 level=ERROR msg=REQUEST_ERROR remote_ip=::1 method=GET uri=/api/v1/knowledge_base status=404 latency=0 err="code=404, message=Not Found"
+time=2026-05-23T20:41:50.233+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/api/v1/user/login status=200 latency=72
+time=2026-05-23T20:41:50.247+08:00 level=ERROR msg=REQUEST_ERROR remote_ip=::1 method=GET uri=/api/v1/knowledge-base status=404 latency=0 err="code=404, message=Not Found"
+time=2026-05-23T20:42:00.003+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/stats?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=15
+time=2026-05-23T20:42:00.006+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=18
+time=2026-05-23T20:42:06.306+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3&status=unstudied" status=200 latency=6
+time=2026-05-23T20:42:11.072+08:00 level=INFO msg="synced user access time to database" module=repo.pg.user_access update_count=1
+time=2026-05-23T20:42:11.208+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/api/v1/user/login status=200 latency=59
+time=2026-05-23T20:42:11.216+08:00 level=ERROR msg=REQUEST_ERROR remote_ip=::1 method=GET uri=/api/v1/kb status=404 latency=0 err="code=404, message=Not Found"
+time=2026-05-23T20:42:11.242+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/swagger/doc.json status=200 latency=3
+time=2026-05-23T20:42:19.446+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/api/v1/user/login status=200 latency=72
+time=2026-05-23T20:42:19.460+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/knowledge_base/list status=200 latency=1
+time=2026-05-23T20:42:32.050+08:00 level=ERROR msg=REQUEST_ERROR remote_ip=::1 method=GET uri=/share/pro/v1/auth/info status=404 latency=0 err="code=404, message=Not Found"
+time=2026-05-23T20:42:32.051+08:00 level=ERROR msg="kb_id is required" module=http_base_handler trace_id=e5405510-69e3-472f-81c0-4c67f32b0af3 error=<nil>
+time=2026-05-23T20:42:32.051+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=1
+time=2026-05-23T20:42:40.502+08:00 level=ERROR msg="kb_id is required" module=http_base_handler trace_id=90892e02-2453-43fa-ba3a-3357315f443a error=<nil>
+time=2026-05-23T20:42:40.502+08:00 level=ERROR msg=REQUEST_ERROR remote_ip=::1 method=GET uri=/share/pro/v1/auth/info status=404 latency=0 err="code=404, message=Not Found"
+time=2026-05-23T20:42:40.502+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=0
+time=2026-05-23T20:42:45.353+08:00 level=ERROR msg="kb_id is required" module=http_base_handler trace_id=6bb92d93-b7dd-4383-9571-eb782209c16b error=<nil>
+time=2026-05-23T20:42:45.354+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=0
+time=2026-05-23T20:42:45.354+08:00 level=ERROR msg=REQUEST_ERROR remote_ip=::1 method=GET uri=/share/pro/v1/auth/info status=404 latency=0 err="code=404, message=Not Found"
+time=2026-05-23T20:43:11.104+08:00 level=INFO msg="synced user access time to database" module=repo.pg.user_access update_count=1
+time=2026-05-23T20:43:18.526+08:00 level=ERROR msg="kb_id is required" module=http_base_handler trace_id=e7c7774e-b001-42d1-9672-762a0069d429 error=<nil>
+time=2026-05-23T20:43:18.526+08:00 level=ERROR msg=REQUEST_ERROR remote_ip=::1 method=GET uri=/share/pro/v1/auth/info status=404 latency=0 err="code=404, message=Not Found"
+time=2026-05-23T20:43:18.526+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=0
+time=2026-05-23T20:43:34.853+08:00 level=ERROR msg=REQUEST_ERROR remote_ip=::1 method=GET uri=/share/pro/v1/auth/info status=404 latency=0 err="code=404, message=Not Found"
+time=2026-05-23T20:43:34.951+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=99
+time=2026-05-23T20:43:35.301+08:00 level=ERROR msg=REQUEST_ERROR remote_ip=::1 method=GET uri=/share/pro/v1/auth/info status=404 latency=0 err="code=404, message=Not Found"
+time=2026-05-23T20:43:35.319+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=18
+time=2026-05-23T20:44:05.697+08:00 level=ERROR msg=REQUEST_ERROR remote_ip=::1 method=GET uri=/share/pro/v1/auth/info status=404 latency=2 err="code=404, message=Not Found"
+time=2026-05-23T20:44:05.744+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=49
+time=2026-05-23T20:44:23.559+08:00 level=ERROR msg=REQUEST_ERROR remote_ip=::1 method=GET uri=/share/pro/v1/auth/info status=404 latency=0 err="code=404, message=Not Found"
+time=2026-05-23T20:44:23.585+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=25
+time=2026-05-23T20:46:04.340+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=20
+time=2026-05-23T20:46:17.043+08:00 level=ERROR msg=REQUEST_ERROR remote_ip=::1 method=GET uri=/share/pro/v1/auth/info status=404 latency=1 err="code=404, message=Not Found"
+time=2026-05-23T20:46:17.062+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=19
+time=2026-05-23T20:47:11.505+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=52
+time=2026-05-23T20:47:11.513+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=5
+time=2026-05-23T20:47:15.227+08:00 level=ERROR msg=REQUEST_ERROR remote_ip=::1 method=GET uri=/share/pro/v1/auth/info status=404 latency=0 err="code=404, message=Not Found"
+time=2026-05-23T20:47:15.245+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=18
+time=2026-05-23T20:47:21.207+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=22
+time=2026-05-23T20:47:21.225+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=10
+time=2026-05-23T20:47:21.266+08:00 level=ERROR msg=REQUEST_ERROR remote_ip=::1 method=GET uri=/share/pro/v1/auth/info status=404 latency=0 err="code=404, message=Not Found"
+time=2026-05-23T20:47:21.273+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=8
+
+2026/05/23 20:47:33 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:626 SLOW SQL >= 200ms
+[206.271ms] [rows:1] SELECT * FROM "knowledge_bases" WHERE id = '43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3' ORDER BY "knowledge_bases"."id" LIMIT 1
+time=2026-05-23T20:47:33.949+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=704
+time=2026-05-23T20:47:34.062+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=39
+time=2026-05-23T20:47:34.220+08:00 level=ERROR msg=REQUEST_ERROR remote_ip=::1 method=GET uri=/share/pro/v1/auth/info status=404 latency=0 err="code=404, message=Not Found"
+time=2026-05-23T20:47:34.228+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=8
+time=2026-05-23T20:48:21.985+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=49
+time=2026-05-23T20:48:22.001+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/share/v1/captcha/challenge status=201 latency=2
+time=2026-05-23T20:48:22.214+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=20
+time=2026-05-23T20:48:22.218+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/share/v1/captcha/redeem status=201 latency=1
+time=2026-05-23T20:48:22.263+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=12
+time=2026-05-23T20:48:24.189+08:00 level=INFO msg="retrieve chunks result" module=store.vector.ct "chunks count"=0 query=你是什么模型、
+time=2026-05-23T20:48:24.189+08:00 level=INFO msg="get related documents from raglite" module=usecase.llm record_count=0
+time=2026-05-23T20:48:25.692+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/share/v1/chat/message status=200 latency=3410
+time=2026-05-23T20:49:02.062+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=46
+time=2026-05-23T20:49:04.008+08:00 level=ERROR msg=REQUEST_ERROR remote_ip=::1 method=GET uri=/api/v1/license status=404 latency=0 err="code=404, message=Not Found"
+time=2026-05-23T20:49:04.011+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/user status=200 latency=3
+time=2026-05-23T20:49:04.064+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/knowledge_base/list status=200 latency=2
+time=2026-05-23T20:49:04.067+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/model/list status=200 latency=6
+time=2026-05-23T20:49:04.148+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/knowledge_base/detail?id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=5
+time=2026-05-23T20:49:04.498+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/stats?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=9
+time=2026-05-23T20:49:04.505+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=9
+time=2026-05-23T20:49:11.085+08:00 level=ERROR msg=REQUEST_ERROR remote_ip=::1 method=GET uri=/api/v1/license status=404 latency=3 err="code=404, message=Not Found"
+time=2026-05-23T20:49:11.094+08:00 level=INFO msg="synced user access time to database" module=repo.pg.user_access update_count=1
+time=2026-05-23T20:49:11.098+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/user status=200 latency=17
+time=2026-05-23T20:49:11.135+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/model/list status=200 latency=2
+time=2026-05-23T20:49:11.136+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/knowledge_base/list status=200 latency=3
+time=2026-05-23T20:49:11.538+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=8
+time=2026-05-23T20:49:11.542+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/app/detail?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3&type=1" status=200 latency=12
+time=2026-05-23T20:49:11.631+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=9
+time=2026-05-23T20:49:11.719+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/detail?id=019e54d8-5f51-7c48-addc-c92d73dc3e23&kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=5
+time=2026-05-23T20:49:20.901+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=36
+time=2026-05-23T20:49:30.741+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/api/v1/node status=200 latency=47
+time=2026-05-23T20:49:30.759+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=7
+time=2026-05-23T20:49:30.881+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/stats?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=5
+time=2026-05-23T20:49:31.412+08:00 level=ERROR msg=REQUEST_ERROR remote_ip=::1 method=GET uri=/api/v1/license status=404 latency=1 err="code=404, message=Not Found"
+time=2026-05-23T20:49:31.413+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/user status=200 latency=1
+time=2026-05-23T20:49:31.438+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/model/list status=200 latency=3
+time=2026-05-23T20:49:31.445+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/knowledge_base/list status=200 latency=9
+time=2026-05-23T20:49:31.715+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/detail?id=019e54e2-325c-740f-af72-7d24666225df&kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=9
+time=2026-05-23T20:49:31.716+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/app/detail?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3&type=1" status=200 latency=10
+time=2026-05-23T20:49:31.758+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=52
+time=2026-05-23T20:49:31.765+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=5
+time=2026-05-23T20:49:52.260+08:00 level=INFO msg=REQUEST remote_ip=::1 method=PUT uri=/api/v1/node/detail status=200 latency=34
+time=2026-05-23T20:49:52.379+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3&status=unpublished" status=200 latency=6
+time=2026-05-23T20:49:54.648+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/api/v1/knowledge_base/release status=200 latency=28
+time=2026-05-23T20:50:04.761+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=47
+time=2026-05-23T20:50:04.765+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/share/v1/captcha/challenge status=201 latency=0
+time=2026-05-23T20:50:04.863+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=8
+time=2026-05-23T20:50:04.865+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/share/v1/captcha/redeem status=201 latency=0
+time=2026-05-23T20:50:04.882+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=6
+time=2026-05-23T20:50:05.509+08:00 level=INFO msg="retrieve chunks result" module=store.vector.ct "chunks count"=0 query=Ayin的QQ
+time=2026-05-23T20:50:05.509+08:00 level=INFO msg="get related documents from raglite" module=usecase.llm record_count=0
+time=2026-05-23T20:50:07.233+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/share/v1/chat/message status=200 latency=2349
+time=2026-05-23T20:50:11.068+08:00 level=INFO msg="synced user access time to database" module=repo.pg.user_access update_count=1
+time=2026-05-23T20:50:15.595+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=29
+time=2026-05-23T20:50:15.602+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/share/v1/captcha/challenge status=201 latency=0
+time=2026-05-23T20:50:15.700+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=8
+time=2026-05-23T20:50:15.702+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/share/v1/captcha/redeem status=201 latency=0
+time=2026-05-23T20:50:15.721+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=6
+time=2026-05-23T20:50:15.932+08:00 level=INFO msg="retrieve chunks result" module=store.vector.ct "chunks count"=0 query=Ayin
+time=2026-05-23T20:50:15.932+08:00 level=INFO msg="get related documents from raglite" module=usecase.llm record_count=0
+time=2026-05-23T20:50:15.940+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/share/v1/chat/search status=200 latency=218
+time=2026-05-23T20:50:18.326+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=9
+time=2026-05-23T20:50:18.328+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/share/v1/captcha/challenge status=201 latency=0
+time=2026-05-23T20:50:18.396+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=4
+time=2026-05-23T20:50:18.398+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/share/v1/captcha/redeem status=201 latency=0
+time=2026-05-23T20:50:18.414+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=5
+time=2026-05-23T20:50:18.591+08:00 level=INFO msg="retrieve chunks result" module=store.vector.ct "chunks count"=0 query=Ayin的QQ
+time=2026-05-23T20:50:18.592+08:00 level=INFO msg="get related documents from raglite" module=usecase.llm record_count=0
+time=2026-05-23T20:50:18.593+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/share/v1/chat/search status=200 latency=176
+time=2026-05-23T20:50:24.348+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=19
+time=2026-05-23T20:50:24.352+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/share/v1/captcha/challenge status=201 latency=0
+time=2026-05-23T20:50:24.424+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=7
+time=2026-05-23T20:50:24.425+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/share/v1/captcha/redeem status=201 latency=0
+time=2026-05-23T20:50:24.440+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=6
+time=2026-05-23T20:50:24.823+08:00 level=INFO msg="retrieve chunks result" module=store.vector.ct "chunks count"=0 query=Ayin的QQ
+time=2026-05-23T20:50:24.823+08:00 level=INFO msg="get related documents from raglite" module=usecase.llm record_count=0
+time=2026-05-23T20:50:25.934+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/share/v1/chat/message status=200 latency=1492
+time=2026-05-23T20:50:44.753+08:00 level=INFO msg=REQUEST remote_ip=::1 method=PUT uri=/api/v1/node/detail status=200 latency=29
+time=2026-05-23T20:50:44.753+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/detail?id=019e54d8-5f5f-7868-91b3-6f61a561aeca&kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=29
+time=2026-05-23T20:50:45.247+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/detail?id=019e54d8-5f50-7e25-9805-2f25dfa05345&kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=5
+time=2026-05-23T20:50:45.252+08:00 level=INFO msg=REQUEST remote_ip=::1 method=PUT uri=/api/v1/node/detail status=200 latency=9
+time=2026-05-23T20:50:45.662+08:00 level=INFO msg=REQUEST remote_ip=::1 method=PUT uri=/api/v1/node/detail status=200 latency=7
+time=2026-05-23T20:50:45.662+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/detail?id=019e54d8-5f51-7c48-addc-c92d73dc3e23&kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=7
+time=2026-05-23T20:50:48.008+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=22
+time=2026-05-23T20:51:00.410+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=13
+time=2026-05-23T20:51:03.154+08:00 level=ERROR msg=REQUEST_ERROR remote_ip=::1 method=GET uri=/api/v1/license status=404 latency=1 err="code=404, message=Not Found"
+time=2026-05-23T20:51:03.160+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/user status=200 latency=7
+time=2026-05-23T20:51:03.189+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/knowledge_base/list status=200 latency=13
+time=2026-05-23T20:51:03.246+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/model/list status=200 latency=70
+time=2026-05-23T20:51:03.452+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/detail?id=019e54d8-5f51-7c48-addc-c92d73dc3e23&kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=6
+time=2026-05-23T20:51:03.455+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/app/detail?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3&type=1" status=200 latency=10
+time=2026-05-23T20:51:03.468+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=22
+time=2026-05-23T20:51:03.470+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=1
+time=2026-05-23T20:51:11.077+08:00 level=INFO msg="synced user access time to database" module=repo.pg.user_access update_count=1
+time=2026-05-23T20:51:14.712+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=39
+time=2026-05-23T20:51:16.504+08:00 level=ERROR msg=REQUEST_ERROR remote_ip=::1 method=GET uri=/api/v1/license status=404 latency=0 err="code=404, message=Not Found"
+time=2026-05-23T20:51:16.506+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/user status=200 latency=2
+time=2026-05-23T20:51:16.536+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/model/list status=200 latency=9
+time=2026-05-23T20:51:16.567+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/knowledge_base/list status=200 latency=39
+time=2026-05-23T20:51:16.807+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=7
+time=2026-05-23T20:51:16.812+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=3
+time=2026-05-23T20:51:16.813+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/detail?id=019e54d8-5f50-7e25-9805-2f25dfa05345&kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=12
+time=2026-05-23T20:51:16.836+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/app/detail?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3&type=1" status=200 latency=35
+time=2026-05-23T20:51:18.085+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=9
+time=2026-05-23T20:51:19.786+08:00 level=ERROR msg=REQUEST_ERROR remote_ip=::1 method=GET uri=/api/v1/license status=404 latency=0 err="code=404, message=Not Found"
+time=2026-05-23T20:51:19.791+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/user status=200 latency=4
+time=2026-05-23T20:51:19.798+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/model/list status=200 latency=1
+time=2026-05-23T20:51:19.799+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/knowledge_base/list status=200 latency=2
+time=2026-05-23T20:51:20.090+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/app/detail?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3&type=1" status=200 latency=4
+time=2026-05-23T20:51:20.090+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=4
+time=2026-05-23T20:51:20.095+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=2
+time=2026-05-23T20:51:20.116+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/detail?id=019e54d8-5f5f-7868-91b3-6f61a561aeca&kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=30
+time=2026-05-23T20:51:22.697+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=25
+time=2026-05-23T20:52:11.096+08:00 level=INFO msg="synced user access time to database" module=repo.pg.user_access update_count=1
+time=2026-05-23T20:52:41.210+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/api/v1/user/login status=200 latency=108
+time=2026-05-23T20:52:41.230+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/knowledge_base/list status=200 latency=4
+time=2026-05-23T20:52:46.002+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=31
+time=2026-05-23T20:52:59.288+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/api/v1/user/login status=200 latency=78
+time=2026-05-23T20:52:59.322+08:00 level=ERROR msg=REQUEST_ERROR remote_ip=::1 method=GET uri=/api/v1/knowledge_base/43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3/node/list status=404 latency=1 err="code=404, message=Not Found"
+time=2026-05-23T20:53:01.857+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/api/v1/user/login status=200 latency=56
+time=2026-05-23T20:53:01.866+08:00 level=ERROR msg=REQUEST_ERROR remote_ip=::1 method=GET uri=/api/v1/knowledge_base/43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3/node/tree status=404 latency=0 err="code=404, message=Not Found"
+time=2026-05-23T20:53:11.081+08:00 level=INFO msg="synced user access time to database" module=repo.pg.user_access update_count=1
+time=2026-05-23T20:53:11.662+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/swagger/doc.json status=200 latency=6
+time=2026-05-23T20:53:16.438+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=93
+time=2026-05-23T20:53:18.441+08:00 level=ERROR msg=REQUEST_ERROR remote_ip=::1 method=GET uri=/api/v1/license status=404 latency=2 err="code=404, message=Not Found"
+time=2026-05-23T20:53:18.475+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/user status=200 latency=37
+time=2026-05-23T20:53:18.519+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/knowledge_base/list status=200 latency=30
+time=2026-05-23T20:53:18.519+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/model/list status=200 latency=26
+time=2026-05-23T20:53:18.750+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/app/detail?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3&type=1" status=200 latency=17
+time=2026-05-23T20:53:18.751+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/detail?id=019e54e2-325c-740f-af72-7d24666225df&kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=18
+time=2026-05-23T20:53:18.779+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=46
+time=2026-05-23T20:53:18.784+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=1
+time=2026-05-23T20:53:20.876+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=30
+time=2026-05-23T20:53:29.706+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/api/v1/user/login status=200 latency=70
+time=2026-05-23T20:53:29.722+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=5
+time=2026-05-23T20:53:45.401+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/api/v1/user/login status=200 latency=78
+time=2026-05-23T20:53:45.414+08:00 level=ERROR msg=REQUEST_ERROR remote_ip=::1 method=GET uri=/api/v1/knowledge_base/43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3/rag/settings status=404 latency=0 err="code=404, message=Not Found"
+time=2026-05-23T20:53:45.453+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/swagger/doc.json status=200 latency=6
+time=2026-05-23T20:53:53.949+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/api/v1/user/login status=200 latency=73
+time=2026-05-23T20:53:53.959+08:00 level=ERROR msg=REQUEST_ERROR remote_ip=::1 method=GET uri=/api/v1/llm/model/list status=404 latency=0 err="code=404, message=Not Found"
+time=2026-05-23T20:53:58.808+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=106
+time=2026-05-23T20:54:01.551+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3&status=unstudied" status=200 latency=17
+time=2026-05-23T20:54:06.677+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/api/v1/node/restudy status=200 latency=8
+time=2026-05-23T20:54:06.687+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=5
+time=2026-05-23T20:54:06.715+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/stats?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=4
+time=2026-05-23T20:54:11.072+08:00 level=INFO msg="synced user access time to database" module=repo.pg.user_access update_count=1
+time=2026-05-23T20:54:13.384+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/model/mode-setting status=200 latency=9
+time=2026-05-23T20:54:30.931+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/api/v1/user/login status=200 latency=71
+time=2026-05-23T20:54:30.943+08:00 level=ERROR msg=REQUEST_ERROR remote_ip=::1 method=GET uri=/api/v1/model status=404 latency=2 err="code=404, message=Not Found"
+time=2026-05-23T20:54:32.915+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/api/v1/user/login status=200 latency=60
+time=2026-05-23T20:54:32.928+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/model/list status=200 latency=2
+time=2026-05-23T20:54:43.907+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/api/v1/user/login status=200 latency=89
+time=2026-05-23T20:54:43.922+08:00 level=ERROR msg=REQUEST_ERROR remote_ip=::1 method=GET uri=/api/v1/model/provider/supported status=404 latency=2 err="code=404, message=Not Found"
+time=2026-05-23T20:54:45.884+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/api/v1/user/login status=200 latency=59
+time=2026-05-23T20:54:45.899+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/model/mode-setting status=200 latency=5
+time=2026-05-23T20:55:00.963+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/api/v1/user/login status=200 latency=84
+time=2026-05-23T20:55:00.981+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/swagger/doc.json status=200 latency=5
+time=2026-05-23T20:55:11.077+08:00 level=INFO msg="synced user access time to database" module=repo.pg.user_access update_count=1
+time=2026-05-23T20:56:32.499+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/api/v1/user/login status=200 latency=74
+time=2026-05-23T20:56:32.517+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=7
+time=2026-05-23T20:57:08.407+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/api/v1/user/login status=200 latency=87
+time=2026-05-23T20:57:08.427+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=6
+time=2026-05-23T20:57:11.073+08:00 level=INFO msg="synced user access time to database" module=repo.pg.user_access update_count=1
+time=2026-05-23T20:57:53.664+08:00 level=INFO msg=REQUEST remote_ip=127.0.0.1 method=GET uri=/share/v1/app/web/info status=200 latency=168
+time=2026-05-23T20:57:53.751+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=49
+time=2026-05-23T20:57:54.176+08:00 level=ERROR msg=REQUEST_ERROR remote_ip=::1 method=GET uri=/share/pro/v1/auth/info status=404 latency=0 err="code=404, message=Not Found"
+time=2026-05-23T20:57:54.181+08:00 level=INFO msg=REQUEST remote_ip=127.0.0.1 method=GET uri=/share/v1/app/web/info status=200 latency=7
+time=2026-05-23T20:58:02.663+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=15
+time=2026-05-23T20:58:02.677+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/share/v1/captcha/challenge status=201 latency=1
+time=2026-05-23T20:58:02.747+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=9
+time=2026-05-23T20:58:02.749+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/share/v1/captcha/redeem status=201 latency=0
+time=2026-05-23T20:58:02.765+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/share/v1/app/web/info status=200 latency=8
+time=2026-05-23T20:58:03.375+08:00 level=INFO msg="retrieve chunks result" module=store.vector.ct "chunks count"=1 query=Ayin的QQ是多少
+time=2026-05-23T20:58:03.375+08:00 level=INFO msg="get related documents from raglite" module=usecase.llm record_count=1
+time=2026-05-23T20:58:03.375+08:00 level=INFO msg="node chunk doc ids" module=usecase.llm docIDs=[9d184d5c-f05b-41e5-a06b-a1d63dd47ae4]
+time=2026-05-23T20:58:03.386+08:00 level=INFO msg="get node release by doc ids" module=usecase.llm docIDNode=[9d184d5c-f05b-41e5-a06b-a1d63dd47ae4]
+time=2026-05-23T20:58:07.141+08:00 level=INFO msg=REQUEST remote_ip=::1 method=POST uri=/share/v1/chat/message status=200 latency=4373
+time=2026-05-23T20:59:42.809+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=36
+time=2026-05-23T20:59:50.788+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=95
+time=2026-05-23T21:00:11.089+08:00 level=INFO msg="synced user access time to database" module=repo.pg.user_access update_count=1
+time=2026-05-23T21:00:29.857+08:00 level=ERROR msg=REQUEST_ERROR remote_ip=::1 method=GET uri=/api/v1/license status=404 latency=21 err="code=404, message=Not Found"
+time=2026-05-23T21:00:29.895+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/user status=200 latency=61
+time=2026-05-23T21:00:29.936+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/model/list status=200 latency=3
+time=2026-05-23T21:00:29.956+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/api/v1/knowledge_base/list status=200 latency=23
+time=2026-05-23T21:00:30.132+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=9
+time=2026-05-23T21:00:30.135+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/app/detail?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3&type=1" status=200 latency=12
+time=2026-05-23T21:00:30.136+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/list/group/nav?kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=2
+time=2026-05-23T21:00:30.155+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri="/api/v1/node/detail?id=019e54e2-325c-740f-af72-7d24666225df&kb_id=43d4ba40-bc1a-4151-9ad0-cf0e6604cfa3" status=200 latency=32
+time=2026-05-23T21:01:11.090+08:00 level=INFO msg="synced user access time to database" module=repo.pg.user_access update_count=1
+
+2026/05/23 21:35:11 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[40.244ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-23T21:35:11.340+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 22:35:11 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[18.878ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-23T22:35:11.299+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:35:11 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[20.075ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-23T23:35:11.304+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:56:20 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[13.685ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-23T23:56:20.961+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:56:20 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/system_setting.go:26 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[1.023ms] [rows:0] SELECT * FROM "system_settings" WHERE key = 'model_setting_mode' ORDER BY "system_settings"."id" LIMIT 1
+time=2026-05-23T23:56:20.963+08:00 level=ERROR msg="get model config mode failed in telemetry" module=telemetry error="failed to get model mode setting: failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:56:20 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/user.go:106 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[2.687ms] [rows:0] SELECT "users"."id","users"."account","users"."role","users"."last_access","users"."created_at" FROM "users" ORDER BY created_at DESC
+time=2026-05-23T23:56:20.966+08:00 level=ERROR msg="get admin login today failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:56:20 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/node.go:1320 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.287ms] [rows:0] SELECT count(*) FROM "nodes"
+time=2026-05-23T23:56:20.967+08:00 level=ERROR msg="get docs count failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:56:20 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/conversation.go:283 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.607ms] [rows:0] SELECT apps.type as app_type, COUNT(*) as count FROM "conversations" JOIN apps ON conversations.app_id = apps.id GROUP BY "apps"."type"
+time=2026-05-23T23:56:20.968+08:00 level=ERROR msg="get conversation count by app type failed" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:56:20 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/mcp.go:21 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.319ms] [rows:0] SELECT count(*) FROM "mcp_calls"
+time=2026-05-23T23:56:20.968+08:00 level=ERROR msg="get mcp call count failed" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-23T23:56:20.970+08:00 level=INFO msg="report data event" module=telemetry event="{\"version\":\"dev\",\"machine_id\":\"ddaaf04f-5397-4dd7-8c81-71f0171aaf78\",\"timestamp\":\"2026-05-23T23:56:20+08:00\",\"type\":\"data_report\",\"kb_count\":0,\"model_config_mode\":\"\",\"admin_logged_in_today\":false,\"docs_count\":0,\"web_conversation_count\":0,\"widget_conversation_count\":0,\"dingtalk_bot_conversation_count\":0,\"feishu_bot_conversation_count\":0,\"wechat_bot_conversation_count\":0,\"wechat_server_bot_conversation_count\":0,\"discord_bot_conversation_count\":0,\"wechat_official_account_conversation_count\":0,\"openai_api_conversation_count\":0,\"wecom_ai_bot_conversation_count\":0,\"lark_bot_conversation_count\":0,\"mcp_server_conversation_count\":0}"
+
+2026/05/23 23:57:19 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[2.815ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-23T23:57:19.179+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:57:19 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/system_setting.go:26 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[1.012ms] [rows:0] SELECT * FROM "system_settings" WHERE key = 'model_setting_mode' ORDER BY "system_settings"."id" LIMIT 1
+time=2026-05-23T23:57:19.180+08:00 level=ERROR msg="get model config mode failed in telemetry" module=telemetry error="failed to get model mode setting: failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:57:19 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/user.go:106 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.761ms] [rows:0] SELECT "users"."id","users"."account","users"."role","users"."last_access","users"."created_at" FROM "users" ORDER BY created_at DESC
+time=2026-05-23T23:57:19.181+08:00 level=ERROR msg="get admin login today failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:57:19 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/node.go:1320 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.687ms] [rows:0] SELECT count(*) FROM "nodes"
+time=2026-05-23T23:57:19.182+08:00 level=ERROR msg="get docs count failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:57:19 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/conversation.go:283 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.584ms] [rows:0] SELECT apps.type as app_type, COUNT(*) as count FROM "conversations" JOIN apps ON conversations.app_id = apps.id GROUP BY "apps"."type"
+time=2026-05-23T23:57:19.183+08:00 level=ERROR msg="get conversation count by app type failed" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:57:19 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/mcp.go:21 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.512ms] [rows:0] SELECT count(*) FROM "mcp_calls"
+time=2026-05-23T23:57:19.183+08:00 level=ERROR msg="get mcp call count failed" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-23T23:57:19.183+08:00 level=INFO msg="report data event" module=telemetry event="{\"version\":\"dev\",\"machine_id\":\"ddaaf04f-5397-4dd7-8c81-71f0171aaf78\",\"timestamp\":\"2026-05-23T23:57:19+08:00\",\"type\":\"data_report\",\"kb_count\":0,\"model_config_mode\":\"\",\"admin_logged_in_today\":false,\"docs_count\":0,\"web_conversation_count\":0,\"widget_conversation_count\":0,\"dingtalk_bot_conversation_count\":0,\"feishu_bot_conversation_count\":0,\"wechat_bot_conversation_count\":0,\"wechat_server_bot_conversation_count\":0,\"discord_bot_conversation_count\":0,\"wechat_official_account_conversation_count\":0,\"openai_api_conversation_count\":0,\"wecom_ai_bot_conversation_count\":0,\"lark_bot_conversation_count\":0,\"mcp_server_conversation_count\":0}"
+
+2026/05/23 23:57:43 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[1.930ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-23T23:57:43.232+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:57:43 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/system_setting.go:26 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.851ms] [rows:0] SELECT * FROM "system_settings" WHERE key = 'model_setting_mode' ORDER BY "system_settings"."id" LIMIT 1
+time=2026-05-23T23:57:43.233+08:00 level=ERROR msg="get model config mode failed in telemetry" module=telemetry error="failed to get model mode setting: failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:57:43 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/user.go:106 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.796ms] [rows:0] SELECT "users"."id","users"."account","users"."role","users"."last_access","users"."created_at" FROM "users" ORDER BY created_at DESC
+time=2026-05-23T23:57:43.234+08:00 level=ERROR msg="get admin login today failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:57:43 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/node.go:1320 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[1.092ms] [rows:0] SELECT count(*) FROM "nodes"
+time=2026-05-23T23:57:43.235+08:00 level=ERROR msg="get docs count failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:57:43 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/conversation.go:283 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.666ms] [rows:0] SELECT apps.type as app_type, COUNT(*) as count FROM "conversations" JOIN apps ON conversations.app_id = apps.id GROUP BY "apps"."type"
+time=2026-05-23T23:57:43.236+08:00 level=ERROR msg="get conversation count by app type failed" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:57:43 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/mcp.go:21 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.763ms] [rows:0] SELECT count(*) FROM "mcp_calls"
+time=2026-05-23T23:57:43.237+08:00 level=ERROR msg="get mcp call count failed" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-23T23:57:43.237+08:00 level=INFO msg="report data event" module=telemetry event="{\"version\":\"dev\",\"machine_id\":\"ddaaf04f-5397-4dd7-8c81-71f0171aaf78\",\"timestamp\":\"2026-05-23T23:57:43+08:00\",\"type\":\"data_report\",\"kb_count\":0,\"model_config_mode\":\"\",\"admin_logged_in_today\":false,\"docs_count\":0,\"web_conversation_count\":0,\"widget_conversation_count\":0,\"dingtalk_bot_conversation_count\":0,\"feishu_bot_conversation_count\":0,\"wechat_bot_conversation_count\":0,\"wechat_server_bot_conversation_count\":0,\"discord_bot_conversation_count\":0,\"wechat_official_account_conversation_count\":0,\"openai_api_conversation_count\":0,\"wecom_ai_bot_conversation_count\":0,\"lark_bot_conversation_count\":0,\"mcp_server_conversation_count\":0}"
+
+2026/05/23 23:57:45 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[1.421ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-23T23:57:45.283+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:57:45 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/system_setting.go:26 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.793ms] [rows:0] SELECT * FROM "system_settings" WHERE key = 'model_setting_mode' ORDER BY "system_settings"."id" LIMIT 1
+time=2026-05-23T23:57:45.284+08:00 level=ERROR msg="get model config mode failed in telemetry" module=telemetry error="failed to get model mode setting: failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:57:45 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/user.go:106 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[1.127ms] [rows:0] SELECT "users"."id","users"."account","users"."role","users"."last_access","users"."created_at" FROM "users" ORDER BY created_at DESC
+time=2026-05-23T23:57:45.285+08:00 level=ERROR msg="get admin login today failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:57:45 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/node.go:1320 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.654ms] [rows:0] SELECT count(*) FROM "nodes"
+time=2026-05-23T23:57:45.286+08:00 level=ERROR msg="get docs count failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:57:45 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/conversation.go:283 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.585ms] [rows:0] SELECT apps.type as app_type, COUNT(*) as count FROM "conversations" JOIN apps ON conversations.app_id = apps.id GROUP BY "apps"."type"
+time=2026-05-23T23:57:45.287+08:00 level=ERROR msg="get conversation count by app type failed" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:57:45 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/mcp.go:21 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.496ms] [rows:0] SELECT count(*) FROM "mcp_calls"
+time=2026-05-23T23:57:45.287+08:00 level=ERROR msg="get mcp call count failed" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-23T23:57:45.287+08:00 level=INFO msg="report data event" module=telemetry event="{\"version\":\"dev\",\"machine_id\":\"ddaaf04f-5397-4dd7-8c81-71f0171aaf78\",\"timestamp\":\"2026-05-23T23:57:45+08:00\",\"type\":\"data_report\",\"kb_count\":0,\"model_config_mode\":\"\",\"admin_logged_in_today\":false,\"docs_count\":0,\"web_conversation_count\":0,\"widget_conversation_count\":0,\"dingtalk_bot_conversation_count\":0,\"feishu_bot_conversation_count\":0,\"wechat_bot_conversation_count\":0,\"wechat_server_bot_conversation_count\":0,\"discord_bot_conversation_count\":0,\"wechat_official_account_conversation_count\":0,\"openai_api_conversation_count\":0,\"wecom_ai_bot_conversation_count\":0,\"lark_bot_conversation_count\":0,\"mcp_server_conversation_count\":0}"
+
+2026/05/23 23:57:58 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[2.867ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-23T23:57:58.333+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:57:58 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/system_setting.go:26 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.826ms] [rows:0] SELECT * FROM "system_settings" WHERE key = 'model_setting_mode' ORDER BY "system_settings"."id" LIMIT 1
+time=2026-05-23T23:57:58.334+08:00 level=ERROR msg="get model config mode failed in telemetry" module=telemetry error="failed to get model mode setting: failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:57:58 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/user.go:106 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.615ms] [rows:0] SELECT "users"."id","users"."account","users"."role","users"."last_access","users"."created_at" FROM "users" ORDER BY created_at DESC
+time=2026-05-23T23:57:58.335+08:00 level=ERROR msg="get admin login today failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:57:58 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/node.go:1320 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.638ms] [rows:0] SELECT count(*) FROM "nodes"
+time=2026-05-23T23:57:58.336+08:00 level=ERROR msg="get docs count failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:57:58 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/conversation.go:283 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.726ms] [rows:0] SELECT apps.type as app_type, COUNT(*) as count FROM "conversations" JOIN apps ON conversations.app_id = apps.id GROUP BY "apps"."type"
+time=2026-05-23T23:57:58.337+08:00 level=ERROR msg="get conversation count by app type failed" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:57:58 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/mcp.go:21 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.569ms] [rows:0] SELECT count(*) FROM "mcp_calls"
+time=2026-05-23T23:57:58.338+08:00 level=ERROR msg="get mcp call count failed" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-23T23:57:58.338+08:00 level=INFO msg="report data event" module=telemetry event="{\"version\":\"dev\",\"machine_id\":\"ddaaf04f-5397-4dd7-8c81-71f0171aaf78\",\"timestamp\":\"2026-05-23T23:57:58+08:00\",\"type\":\"data_report\",\"kb_count\":0,\"model_config_mode\":\"\",\"admin_logged_in_today\":false,\"docs_count\":0,\"web_conversation_count\":0,\"widget_conversation_count\":0,\"dingtalk_bot_conversation_count\":0,\"feishu_bot_conversation_count\":0,\"wechat_bot_conversation_count\":0,\"wechat_server_bot_conversation_count\":0,\"discord_bot_conversation_count\":0,\"wechat_official_account_conversation_count\":0,\"openai_api_conversation_count\":0,\"wecom_ai_bot_conversation_count\":0,\"lark_bot_conversation_count\":0,\"mcp_server_conversation_count\":0}"
+
+2026/05/23 23:57:59 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[1.553ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-23T23:57:59.385+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:57:59 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/system_setting.go:26 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[1.029ms] [rows:0] SELECT * FROM "system_settings" WHERE key = 'model_setting_mode' ORDER BY "system_settings"."id" LIMIT 1
+time=2026-05-23T23:57:59.386+08:00 level=ERROR msg="get model config mode failed in telemetry" module=telemetry error="failed to get model mode setting: failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:57:59 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/user.go:106 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[1.436ms] [rows:0] SELECT "users"."id","users"."account","users"."role","users"."last_access","users"."created_at" FROM "users" ORDER BY created_at DESC
+time=2026-05-23T23:57:59.388+08:00 level=ERROR msg="get admin login today failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:57:59 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/node.go:1320 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.615ms] [rows:0] SELECT count(*) FROM "nodes"
+time=2026-05-23T23:57:59.389+08:00 level=ERROR msg="get docs count failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:57:59 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/conversation.go:283 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.597ms] [rows:0] SELECT apps.type as app_type, COUNT(*) as count FROM "conversations" JOIN apps ON conversations.app_id = apps.id GROUP BY "apps"."type"
+time=2026-05-23T23:57:59.389+08:00 level=ERROR msg="get conversation count by app type failed" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:57:59 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/mcp.go:21 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.454ms] [rows:0] SELECT count(*) FROM "mcp_calls"
+time=2026-05-23T23:57:59.390+08:00 level=ERROR msg="get mcp call count failed" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-23T23:57:59.390+08:00 level=INFO msg="report data event" module=telemetry event="{\"version\":\"dev\",\"machine_id\":\"ddaaf04f-5397-4dd7-8c81-71f0171aaf78\",\"timestamp\":\"2026-05-23T23:57:59+08:00\",\"type\":\"data_report\",\"kb_count\":0,\"model_config_mode\":\"\",\"admin_logged_in_today\":false,\"docs_count\":0,\"web_conversation_count\":0,\"widget_conversation_count\":0,\"dingtalk_bot_conversation_count\":0,\"feishu_bot_conversation_count\":0,\"wechat_bot_conversation_count\":0,\"wechat_server_bot_conversation_count\":0,\"discord_bot_conversation_count\":0,\"wechat_official_account_conversation_count\":0,\"openai_api_conversation_count\":0,\"wecom_ai_bot_conversation_count\":0,\"lark_bot_conversation_count\":0,\"mcp_server_conversation_count\":0}"
+
+2026/05/23 23:58:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[2.336ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-23T23:58:00.436+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:58:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/system_setting.go:26 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.577ms] [rows:0] SELECT * FROM "system_settings" WHERE key = 'model_setting_mode' ORDER BY "system_settings"."id" LIMIT 1
+time=2026-05-23T23:58:00.437+08:00 level=ERROR msg="get model config mode failed in telemetry" module=telemetry error="failed to get model mode setting: failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:58:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/user.go:106 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.675ms] [rows:0] SELECT "users"."id","users"."account","users"."role","users"."last_access","users"."created_at" FROM "users" ORDER BY created_at DESC
+time=2026-05-23T23:58:00.438+08:00 level=ERROR msg="get admin login today failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:58:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/node.go:1320 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.457ms] [rows:0] SELECT count(*) FROM "nodes"
+time=2026-05-23T23:58:00.439+08:00 level=ERROR msg="get docs count failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:58:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/conversation.go:283 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.423ms] [rows:0] SELECT apps.type as app_type, COUNT(*) as count FROM "conversations" JOIN apps ON conversations.app_id = apps.id GROUP BY "apps"."type"
+time=2026-05-23T23:58:00.439+08:00 level=ERROR msg="get conversation count by app type failed" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/23 23:58:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/mcp.go:21 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.342ms] [rows:0] SELECT count(*) FROM "mcp_calls"
+time=2026-05-23T23:58:00.440+08:00 level=ERROR msg="get mcp call count failed" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-23T23:58:00.440+08:00 level=INFO msg="report data event" module=telemetry event="{\"version\":\"dev\",\"machine_id\":\"ddaaf04f-5397-4dd7-8c81-71f0171aaf78\",\"timestamp\":\"2026-05-23T23:58:00+08:00\",\"type\":\"data_report\",\"kb_count\":0,\"model_config_mode\":\"\",\"admin_logged_in_today\":false,\"docs_count\":0,\"web_conversation_count\":0,\"widget_conversation_count\":0,\"dingtalk_bot_conversation_count\":0,\"feishu_bot_conversation_count\":0,\"wechat_bot_conversation_count\":0,\"wechat_server_bot_conversation_count\":0,\"discord_bot_conversation_count\":0,\"wechat_official_account_conversation_count\":0,\"openai_api_conversation_count\":0,\"wecom_ai_bot_conversation_count\":0,\"lark_bot_conversation_count\":0,\"mcp_server_conversation_count\":0}"
+
+2026/05/24 00:35:11 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[23.437ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T00:35:11.295+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 01:35:11 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[18.622ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T01:35:11.214+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 02:35:11 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[20.704ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T02:35:11.238+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 03:35:11 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[27.555ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T03:35:11.263+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 04:35:11 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[16.919ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T04:35:11.252+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 05:35:11 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[16.332ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T05:35:11.228+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 06:35:11 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[18.630ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T06:35:11.252+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 07:35:11 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[15.891ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T07:35:11.257+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 08:35:11 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[20.263ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T08:35:11.268+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 09:35:11 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[21.209ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T09:35:11.220+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T09:58:37.849+08:00 level=INFO msg=REQUEST remote_ip=::1 method=GET uri=/swagger/doc.json status=200 latency=37
