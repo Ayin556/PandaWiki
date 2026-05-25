@@ -673,3 +673,407 @@ time=2026-05-24T13:35:11.186+08:00 level=ERROR msg="get knowledge base list fail
 2026/05/24 14:35:11 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 sql: Scan error on column index 3, name "access_settings": json: cannot unmarshal string into Go value of type domain.AccessSettings
 [26.913ms] [rows:2] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
 time=2026-05-24T14:35:11.301+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="sql: Scan error on column index 3, name \"access_settings\": json: cannot unmarshal string into Go value of type domain.AccessSettings"
+
+2026/05/24 15:35:11 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[27.819ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T15:35:11.238+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 16:35:11 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[20.509ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T16:35:11.285+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 17:35:11 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[18.257ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T17:35:11.301+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 18:35:11 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[21.065ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T18:35:11.262+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 19:35:11 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[28.724ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T19:35:11.309+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 20:35:11 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[20.773ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T20:35:11.303+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 21:35:11 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[15.985ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T21:35:11.266+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 22:35:11 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[18.594ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T22:35:11.247+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:35:11 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[18.427ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T23:35:11.245+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:36:31 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[2.602ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T23:36:31.963+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:36:31 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/system_setting.go:26 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[1.695ms] [rows:0] SELECT * FROM "system_settings" WHERE key = 'model_setting_mode' ORDER BY "system_settings"."id" LIMIT 1
+time=2026-05-24T23:36:31.967+08:00 level=ERROR msg="get model config mode failed in telemetry" module=telemetry error="failed to get model mode setting: failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:36:31 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/user.go:106 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.618ms] [rows:0] SELECT "users"."id","users"."account","users"."role","users"."last_access","users"."created_at" FROM "users" ORDER BY created_at DESC
+time=2026-05-24T23:36:31.968+08:00 level=ERROR msg="get admin login today failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:36:31 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/node.go:1320 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.470ms] [rows:0] SELECT count(*) FROM "nodes"
+time=2026-05-24T23:36:31.968+08:00 level=ERROR msg="get docs count failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:36:31 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/conversation.go:283 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[1.049ms] [rows:0] SELECT apps.type as app_type, COUNT(*) as count FROM "conversations" JOIN apps ON conversations.app_id = apps.id GROUP BY "apps"."type"
+time=2026-05-24T23:36:31.970+08:00 level=ERROR msg="get conversation count by app type failed" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:36:31 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/mcp.go:21 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.914ms] [rows:0] SELECT count(*) FROM "mcp_calls"
+time=2026-05-24T23:36:31.971+08:00 level=ERROR msg="get mcp call count failed" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T23:36:31.974+08:00 level=INFO msg="report data event" module=telemetry event="{\"version\":\"dev\",\"machine_id\":\"ddaaf04f-5397-4dd7-8c81-71f0171aaf78\",\"timestamp\":\"2026-05-24T23:36:31+08:00\",\"type\":\"data_report\",\"kb_count\":0,\"model_config_mode\":\"\",\"admin_logged_in_today\":false,\"docs_count\":0,\"web_conversation_count\":0,\"widget_conversation_count\":0,\"dingtalk_bot_conversation_count\":0,\"feishu_bot_conversation_count\":0,\"wechat_bot_conversation_count\":0,\"wechat_server_bot_conversation_count\":0,\"discord_bot_conversation_count\":0,\"wechat_official_account_conversation_count\":0,\"openai_api_conversation_count\":0,\"wecom_ai_bot_conversation_count\":0,\"lark_bot_conversation_count\":0,\"mcp_server_conversation_count\":0}"
+
+2026/05/24 23:52:25 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[7.438ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T23:52:25.144+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:52:25 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/system_setting.go:26 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[1.088ms] [rows:0] SELECT * FROM "system_settings" WHERE key = 'model_setting_mode' ORDER BY "system_settings"."id" LIMIT 1
+time=2026-05-24T23:52:25.147+08:00 level=ERROR msg="get model config mode failed in telemetry" module=telemetry error="failed to get model mode setting: failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:52:25 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/user.go:106 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.516ms] [rows:0] SELECT "users"."id","users"."account","users"."role","users"."last_access","users"."created_at" FROM "users" ORDER BY created_at DESC
+time=2026-05-24T23:52:25.148+08:00 level=ERROR msg="get admin login today failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:52:25 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/node.go:1320 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.462ms] [rows:0] SELECT count(*) FROM "nodes"
+time=2026-05-24T23:52:25.149+08:00 level=ERROR msg="get docs count failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:52:25 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/conversation.go:283 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.532ms] [rows:0] SELECT apps.type as app_type, COUNT(*) as count FROM "conversations" JOIN apps ON conversations.app_id = apps.id GROUP BY "apps"."type"
+time=2026-05-24T23:52:25.150+08:00 level=ERROR msg="get conversation count by app type failed" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:52:25 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/mcp.go:21 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.603ms] [rows:0] SELECT count(*) FROM "mcp_calls"
+time=2026-05-24T23:52:25.151+08:00 level=ERROR msg="get mcp call count failed" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T23:52:25.153+08:00 level=INFO msg="report data event" module=telemetry event="{\"version\":\"dev\",\"machine_id\":\"ddaaf04f-5397-4dd7-8c81-71f0171aaf78\",\"timestamp\":\"2026-05-24T23:52:25+08:00\",\"type\":\"data_report\",\"kb_count\":0,\"model_config_mode\":\"\",\"admin_logged_in_today\":false,\"docs_count\":0,\"web_conversation_count\":0,\"widget_conversation_count\":0,\"dingtalk_bot_conversation_count\":0,\"feishu_bot_conversation_count\":0,\"wechat_bot_conversation_count\":0,\"wechat_server_bot_conversation_count\":0,\"discord_bot_conversation_count\":0,\"wechat_official_account_conversation_count\":0,\"openai_api_conversation_count\":0,\"wecom_ai_bot_conversation_count\":0,\"lark_bot_conversation_count\":0,\"mcp_server_conversation_count\":0}"
+
+2026/05/24 23:56:23 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[2.815ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T23:56:23.308+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:56:23 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/system_setting.go:26 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[1.129ms] [rows:0] SELECT * FROM "system_settings" WHERE key = 'model_setting_mode' ORDER BY "system_settings"."id" LIMIT 1
+time=2026-05-24T23:56:23.310+08:00 level=ERROR msg="get model config mode failed in telemetry" module=telemetry error="failed to get model mode setting: failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:56:23 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/user.go:106 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.834ms] [rows:0] SELECT "users"."id","users"."account","users"."role","users"."last_access","users"."created_at" FROM "users" ORDER BY created_at DESC
+time=2026-05-24T23:56:23.311+08:00 level=ERROR msg="get admin login today failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:56:23 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/node.go:1320 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.857ms] [rows:0] SELECT count(*) FROM "nodes"
+time=2026-05-24T23:56:23.312+08:00 level=ERROR msg="get docs count failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:56:23 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/conversation.go:283 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[1.262ms] [rows:0] SELECT apps.type as app_type, COUNT(*) as count FROM "conversations" JOIN apps ON conversations.app_id = apps.id GROUP BY "apps"."type"
+time=2026-05-24T23:56:23.313+08:00 level=ERROR msg="get conversation count by app type failed" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:56:23 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/mcp.go:21 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.828ms] [rows:0] SELECT count(*) FROM "mcp_calls"
+time=2026-05-24T23:56:23.314+08:00 level=ERROR msg="get mcp call count failed" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T23:56:23.314+08:00 level=INFO msg="report data event" module=telemetry event="{\"version\":\"dev\",\"machine_id\":\"ddaaf04f-5397-4dd7-8c81-71f0171aaf78\",\"timestamp\":\"2026-05-24T23:56:23+08:00\",\"type\":\"data_report\",\"kb_count\":0,\"model_config_mode\":\"\",\"admin_logged_in_today\":false,\"docs_count\":0,\"web_conversation_count\":0,\"widget_conversation_count\":0,\"dingtalk_bot_conversation_count\":0,\"feishu_bot_conversation_count\":0,\"wechat_bot_conversation_count\":0,\"wechat_server_bot_conversation_count\":0,\"discord_bot_conversation_count\":0,\"wechat_official_account_conversation_count\":0,\"openai_api_conversation_count\":0,\"wecom_ai_bot_conversation_count\":0,\"lark_bot_conversation_count\":0,\"mcp_server_conversation_count\":0}"
+
+2026/05/24 23:57:48 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[2.622ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T23:57:48.472+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:57:48 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/system_setting.go:26 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.784ms] [rows:0] SELECT * FROM "system_settings" WHERE key = 'model_setting_mode' ORDER BY "system_settings"."id" LIMIT 1
+time=2026-05-24T23:57:48.473+08:00 level=ERROR msg="get model config mode failed in telemetry" module=telemetry error="failed to get model mode setting: failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:57:48 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/user.go:106 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.790ms] [rows:0] SELECT "users"."id","users"."account","users"."role","users"."last_access","users"."created_at" FROM "users" ORDER BY created_at DESC
+time=2026-05-24T23:57:48.474+08:00 level=ERROR msg="get admin login today failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:57:48 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/node.go:1320 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.617ms] [rows:0] SELECT count(*) FROM "nodes"
+time=2026-05-24T23:57:48.475+08:00 level=ERROR msg="get docs count failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:57:48 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/conversation.go:283 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.568ms] [rows:0] SELECT apps.type as app_type, COUNT(*) as count FROM "conversations" JOIN apps ON conversations.app_id = apps.id GROUP BY "apps"."type"
+time=2026-05-24T23:57:48.475+08:00 level=ERROR msg="get conversation count by app type failed" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:57:48 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/mcp.go:21 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.410ms] [rows:0] SELECT count(*) FROM "mcp_calls"
+time=2026-05-24T23:57:48.476+08:00 level=ERROR msg="get mcp call count failed" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T23:57:48.476+08:00 level=INFO msg="report data event" module=telemetry event="{\"version\":\"dev\",\"machine_id\":\"ddaaf04f-5397-4dd7-8c81-71f0171aaf78\",\"timestamp\":\"2026-05-24T23:57:48+08:00\",\"type\":\"data_report\",\"kb_count\":0,\"model_config_mode\":\"\",\"admin_logged_in_today\":false,\"docs_count\":0,\"web_conversation_count\":0,\"widget_conversation_count\":0,\"dingtalk_bot_conversation_count\":0,\"feishu_bot_conversation_count\":0,\"wechat_bot_conversation_count\":0,\"wechat_server_bot_conversation_count\":0,\"discord_bot_conversation_count\":0,\"wechat_official_account_conversation_count\":0,\"openai_api_conversation_count\":0,\"wecom_ai_bot_conversation_count\":0,\"lark_bot_conversation_count\":0,\"mcp_server_conversation_count\":0}"
+
+2026/05/24 23:57:55 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.924ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T23:57:55.617+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:57:55 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/system_setting.go:26 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.542ms] [rows:0] SELECT * FROM "system_settings" WHERE key = 'model_setting_mode' ORDER BY "system_settings"."id" LIMIT 1
+time=2026-05-24T23:57:55.618+08:00 level=ERROR msg="get model config mode failed in telemetry" module=telemetry error="failed to get model mode setting: failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:57:55 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/user.go:106 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.429ms] [rows:0] SELECT "users"."id","users"."account","users"."role","users"."last_access","users"."created_at" FROM "users" ORDER BY created_at DESC
+time=2026-05-24T23:57:55.619+08:00 level=ERROR msg="get admin login today failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:57:55 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/node.go:1320 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.356ms] [rows:0] SELECT count(*) FROM "nodes"
+time=2026-05-24T23:57:55.619+08:00 level=ERROR msg="get docs count failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:57:55 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/conversation.go:283 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.285ms] [rows:0] SELECT apps.type as app_type, COUNT(*) as count FROM "conversations" JOIN apps ON conversations.app_id = apps.id GROUP BY "apps"."type"
+time=2026-05-24T23:57:55.619+08:00 level=ERROR msg="get conversation count by app type failed" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:57:55 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/mcp.go:21 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.470ms] [rows:0] SELECT count(*) FROM "mcp_calls"
+time=2026-05-24T23:57:55.620+08:00 level=ERROR msg="get mcp call count failed" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T23:57:55.620+08:00 level=INFO msg="report data event" module=telemetry event="{\"version\":\"dev\",\"machine_id\":\"ddaaf04f-5397-4dd7-8c81-71f0171aaf78\",\"timestamp\":\"2026-05-24T23:57:55+08:00\",\"type\":\"data_report\",\"kb_count\":0,\"model_config_mode\":\"\",\"admin_logged_in_today\":false,\"docs_count\":0,\"web_conversation_count\":0,\"widget_conversation_count\":0,\"dingtalk_bot_conversation_count\":0,\"feishu_bot_conversation_count\":0,\"wechat_bot_conversation_count\":0,\"wechat_server_bot_conversation_count\":0,\"discord_bot_conversation_count\":0,\"wechat_official_account_conversation_count\":0,\"openai_api_conversation_count\":0,\"wecom_ai_bot_conversation_count\":0,\"lark_bot_conversation_count\":0,\"mcp_server_conversation_count\":0}"
+
+2026/05/24 23:57:57 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[1.410ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T23:57:57.663+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:57:57 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/system_setting.go:26 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.698ms] [rows:0] SELECT * FROM "system_settings" WHERE key = 'model_setting_mode' ORDER BY "system_settings"."id" LIMIT 1
+time=2026-05-24T23:57:57.664+08:00 level=ERROR msg="get model config mode failed in telemetry" module=telemetry error="failed to get model mode setting: failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:57:57 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/user.go:106 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.592ms] [rows:0] SELECT "users"."id","users"."account","users"."role","users"."last_access","users"."created_at" FROM "users" ORDER BY created_at DESC
+time=2026-05-24T23:57:57.665+08:00 level=ERROR msg="get admin login today failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:57:57 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/node.go:1320 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.713ms] [rows:0] SELECT count(*) FROM "nodes"
+time=2026-05-24T23:57:57.666+08:00 level=ERROR msg="get docs count failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:57:57 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/conversation.go:283 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.664ms] [rows:0] SELECT apps.type as app_type, COUNT(*) as count FROM "conversations" JOIN apps ON conversations.app_id = apps.id GROUP BY "apps"."type"
+time=2026-05-24T23:57:57.667+08:00 level=ERROR msg="get conversation count by app type failed" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:57:57 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/mcp.go:21 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.888ms] [rows:0] SELECT count(*) FROM "mcp_calls"
+time=2026-05-24T23:57:57.668+08:00 level=ERROR msg="get mcp call count failed" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T23:57:57.668+08:00 level=INFO msg="report data event" module=telemetry event="{\"version\":\"dev\",\"machine_id\":\"ddaaf04f-5397-4dd7-8c81-71f0171aaf78\",\"timestamp\":\"2026-05-24T23:57:57+08:00\",\"type\":\"data_report\",\"kb_count\":0,\"model_config_mode\":\"\",\"admin_logged_in_today\":false,\"docs_count\":0,\"web_conversation_count\":0,\"widget_conversation_count\":0,\"dingtalk_bot_conversation_count\":0,\"feishu_bot_conversation_count\":0,\"wechat_bot_conversation_count\":0,\"wechat_server_bot_conversation_count\":0,\"discord_bot_conversation_count\":0,\"wechat_official_account_conversation_count\":0,\"openai_api_conversation_count\":0,\"wecom_ai_bot_conversation_count\":0,\"lark_bot_conversation_count\":0,\"mcp_server_conversation_count\":0}"
+
+2026/05/24 23:57:59 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[1.314ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T23:57:59.711+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:57:59 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/system_setting.go:26 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.975ms] [rows:0] SELECT * FROM "system_settings" WHERE key = 'model_setting_mode' ORDER BY "system_settings"."id" LIMIT 1
+time=2026-05-24T23:57:59.712+08:00 level=ERROR msg="get model config mode failed in telemetry" module=telemetry error="failed to get model mode setting: failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:57:59 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/user.go:106 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.700ms] [rows:0] SELECT "users"."id","users"."account","users"."role","users"."last_access","users"."created_at" FROM "users" ORDER BY created_at DESC
+time=2026-05-24T23:57:59.713+08:00 level=ERROR msg="get admin login today failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:57:59 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/node.go:1320 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.406ms] [rows:0] SELECT count(*) FROM "nodes"
+time=2026-05-24T23:57:59.714+08:00 level=ERROR msg="get docs count failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:57:59 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/conversation.go:283 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.706ms] [rows:0] SELECT apps.type as app_type, COUNT(*) as count FROM "conversations" JOIN apps ON conversations.app_id = apps.id GROUP BY "apps"."type"
+time=2026-05-24T23:57:59.715+08:00 level=ERROR msg="get conversation count by app type failed" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:57:59 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/mcp.go:21 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.397ms] [rows:0] SELECT count(*) FROM "mcp_calls"
+time=2026-05-24T23:57:59.715+08:00 level=ERROR msg="get mcp call count failed" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T23:57:59.715+08:00 level=INFO msg="report data event" module=telemetry event="{\"version\":\"dev\",\"machine_id\":\"ddaaf04f-5397-4dd7-8c81-71f0171aaf78\",\"timestamp\":\"2026-05-24T23:57:59+08:00\",\"type\":\"data_report\",\"kb_count\":0,\"model_config_mode\":\"\",\"admin_logged_in_today\":false,\"docs_count\":0,\"web_conversation_count\":0,\"widget_conversation_count\":0,\"dingtalk_bot_conversation_count\":0,\"feishu_bot_conversation_count\":0,\"wechat_bot_conversation_count\":0,\"wechat_server_bot_conversation_count\":0,\"discord_bot_conversation_count\":0,\"wechat_official_account_conversation_count\":0,\"openai_api_conversation_count\":0,\"wecom_ai_bot_conversation_count\":0,\"lark_bot_conversation_count\":0,\"mcp_server_conversation_count\":0}"
+
+2026/05/24 23:58:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.742ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-24T23:58:00.758+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:58:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/system_setting.go:26 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[1.393ms] [rows:0] SELECT * FROM "system_settings" WHERE key = 'model_setting_mode' ORDER BY "system_settings"."id" LIMIT 1
+time=2026-05-24T23:58:00.760+08:00 level=ERROR msg="get model config mode failed in telemetry" module=telemetry error="failed to get model mode setting: failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:58:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/user.go:106 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.511ms] [rows:0] SELECT "users"."id","users"."account","users"."role","users"."last_access","users"."created_at" FROM "users" ORDER BY created_at DESC
+time=2026-05-24T23:58:00.761+08:00 level=ERROR msg="get admin login today failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:58:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/node.go:1320 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.468ms] [rows:0] SELECT count(*) FROM "nodes"
+time=2026-05-24T23:58:00.761+08:00 level=ERROR msg="get docs count failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:58:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/conversation.go:283 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.352ms] [rows:0] SELECT apps.type as app_type, COUNT(*) as count FROM "conversations" JOIN apps ON conversations.app_id = apps.id GROUP BY "apps"."type"
+time=2026-05-24T23:58:00.762+08:00 level=ERROR msg="get conversation count by app type failed" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/24 23:58:00 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/mcp.go:21 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[0.507ms] [rows:0] SELECT count(*) FROM "mcp_calls"
+time=2026-05-24T23:58:00.762+08:00 level=ERROR msg="get mcp call count failed" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+time=2026-05-24T23:58:00.762+08:00 level=INFO msg="report data event" module=telemetry event="{\"version\":\"dev\",\"machine_id\":\"ddaaf04f-5397-4dd7-8c81-71f0171aaf78\",\"timestamp\":\"2026-05-24T23:58:00+08:00\",\"type\":\"data_report\",\"kb_count\":0,\"model_config_mode\":\"\",\"admin_logged_in_today\":false,\"docs_count\":0,\"web_conversation_count\":0,\"widget_conversation_count\":0,\"dingtalk_bot_conversation_count\":0,\"feishu_bot_conversation_count\":0,\"wechat_bot_conversation_count\":0,\"wechat_server_bot_conversation_count\":0,\"discord_bot_conversation_count\":0,\"wechat_official_account_conversation_count\":0,\"openai_api_conversation_count\":0,\"wecom_ai_bot_conversation_count\":0,\"lark_bot_conversation_count\":0,\"mcp_server_conversation_count\":0}"
+
+2026/05/25 00:35:11 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[19.091ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-25T00:35:11.222+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/25 01:35:11 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[26.632ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-25T01:35:11.252+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/25 02:35:11 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[18.313ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-25T02:35:11.263+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/25 03:35:11 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[15.091ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-25T03:35:11.275+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/25 04:35:11 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[20.074ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-25T04:35:11.262+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/25 05:35:11 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[19.094ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-25T05:35:11.274+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/25 06:35:11 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[19.693ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-25T06:35:11.237+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/25 07:35:11 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[17.456ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-25T07:35:11.216+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
+
+2026/05/25 08:35:11 /Users/ayin/AIproject/PandaWiki/backend/repo/pg/knowledge_base.go:498 failed to connect to `user=panda-wiki database=panda-wiki`:
+	[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused
+	127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused
+[16.893ms] [rows:0] SELECT "knowledge_bases"."id","knowledge_bases"."name","knowledge_bases"."dataset_id","knowledge_bases"."access_settings","knowledge_bases"."created_at","knowledge_bases"."updated_at" FROM "knowledge_bases" ORDER BY created_at ASC
+time=2026-05-25T08:35:11.274+08:00 level=ERROR msg="get knowledge base list failed in telemetry" module=telemetry error="failed to connect to `user=panda-wiki database=panda-wiki`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
