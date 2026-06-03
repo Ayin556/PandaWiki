@@ -28,7 +28,7 @@ async def login(req: LoginRequest, db: DbSession):
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid credentials",
+            detail="账号或密码错误",
         )
     token = create_access_token({"user_id": user.id, "role": user.role})
     return LoginResponse(token=token, user_id=user.id)

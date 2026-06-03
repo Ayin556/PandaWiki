@@ -34,12 +34,11 @@ const Conversation = () => {
       title: '问题',
       render: (text: string, record) => {
         const isGroupChat = record.info?.user_info?.from === 1;
-        const AppIcon =
-          AppType[record.app_type as keyof typeof AppType]?.icon || '';
+        const AppIcon = AppType[record.app_type as keyof typeof AppType]?.icon;
         return (
           <>
             <Stack direction={'row'} alignItems={'center'} gap={1}>
-              <AppIcon sx={{ fontSize: 12 }}></AppIcon>
+              {AppIcon && <AppIcon sx={{ fontSize: 12 }}></AppIcon>}
               <Ellipsis
                 className='primary-color'
                 sx={{ cursor: 'pointer', flex: 1, width: 0 }}
@@ -90,7 +89,11 @@ const Conversation = () => {
       title: '来源 IP',
       width: 200,
       render: (text: string, record) => {
-        const { city = '', country = '', province = '' } = record.ip_address!;
+        const {
+          city = '',
+          country = '',
+          province = '',
+        } = record.ip_address || {};
         return (
           <>
             <Box>{text}</Box>

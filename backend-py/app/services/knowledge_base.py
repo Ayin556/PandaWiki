@@ -73,6 +73,6 @@ class KnowledgeBaseService:
         """创建知识库发布版本"""
         return await self.repo.create_release(req, user_id)
 
-    async def get_kb_release_list(self, kb_id: str, offset: int, limit: int) -> list:
-        """获取发布版本列表"""
+    async def get_kb_release_list(self, kb_id: str, offset: int, limit: int) -> tuple[list, int]:
+        """获取发布版本列表，返回 (list, total)"""
         return await self.repo.get_release_list(kb_id, offset, limit)

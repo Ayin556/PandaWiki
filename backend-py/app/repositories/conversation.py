@@ -13,15 +13,29 @@ class ConversationRepository(BaseRepository[Conversation]):
     def __init__(self, db: AsyncSession):
         super().__init__(Conversation, db)
 
-    async def get_conversation_list(self, kb_id: str, offset: int = 0, limit: int = 20) -> list:
-        """获取对话列表"""
+    async def get_conversation_list(self, kb_id: str, offset: int = 0, limit: int = 20,
+                                     subject: str = "", remote_ip: str = "") -> tuple[list, int]:
+        """获取对话列表，返回 (list, total)"""
+        query = select(Conversation).where(Conversation.kb_id == kb_id)
+        count_query = select(func.count()).select_from(Conversation).where(Conversation.kb_id == kb_id)
+
+        if subject:
+            query = query.where(Conversation.subject.ilike(f"%{subject}%"))
+            count_query = count_query.where(Conversation.subject.ilike(f"%{subject}%"))
+        if remote_ip:
+            query = query.where(Conversation.remote_ip == remote_ip)
+            count_query = count_query.where(Conversation.remote_ip == remote_ip)
+
+        # 查询总数
+        count_result = await self.db.execute(count_query)
+        total = count_result.scalar_one()
+
+        # 查询列表
         result = await self.db.execute(
-            select(Conversation)
-            .where(Conversation.kb_id == kb_id)
-            .order_by(Conversation.created_at.desc())
+            query.order_by(Conversation.created_at.desc())
             .offset(offset).limit(limit)
         )
-        return list(result.scalars().all())
+        return list(result.scalars().all()), total
 
     async def get_conversation_detail(self, kb_id: str, conversation_id: str) -> dict | None:
         """获取对话详情"""
@@ -60,29 +74,37 @@ class ConversationRepository(BaseRepository[Conversation]):
             ],
         }
 
-    async def get_message_feedback_list(self, kb_id: str, offset: int, limit: int) -> list:
-        """获取消息反馈列表"""
+    async def get_message_feedback_list(self, kb_id: str, offset: int, limit: int) -> tuple[list, int]:
+        """获取消息反馈列表，返回 (list, total)"""
+        # 只查询有反馈的消息
+        base_query = select(ConversationMessage).where(ConversationMessage.kb_id == kb_id)
+        count_query = select(func.count()).select_from(ConversationMessage).where(ConversationMessage.kb_id == kb_id)
+
+        # 查询总数 (所有消息，不筛选反馈)
+        count_result = await self.db.execute(count_query)
+        total = count_result.scalar_one()
+
         result = await self.db.execute(
-            select(ConversationMessage)
-            .where(ConversationMessage.kb_id == kb_id)
+            base_query
             .order_by(ConversationMessage.created_at.desc())
             .offset(offset).limit(limit)
         )
         messages = list(result.scalars().all())
 
-        return [
+        items = [
             {
                 "id": m.id,
                 "conversation_id": m.conversation_id,
                 "kb_id": m.kb_id,
                 "role": m.role,
-                "content": m.content[:100] + "..." if len(m.content) > 100 else m.content,
+                "question": m.content[:100] + "..." if len(m.content) > 100 else m.content,
                 "info": m.info or {},
+                "remote_ip": getattr(m, 'remote_ip', ''),
                 "created_at": m.created_at.isoformat() if m.created_at else "",
             }
             for m in messages
-            if m.info and m.info.get("score")
         ]
+        return items, total
 
     async def get_message_detail(self, kb_id: str, message_id: str) -> dict | None:
         """获取消息详情"""

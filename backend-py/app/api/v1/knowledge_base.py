@@ -31,7 +31,27 @@ async def create_knowledge_base(
 async def get_knowledge_base_list(user: CurrentUser, db: DbSession):
     """获取知识库列表 - 对应 Go 版 KnowledgeBaseHandler.GetKnowledgeBaseList，直接返回数组"""
     service = KnowledgeBaseService(db)
-    return await service.get_knowledge_base_list(user.id if user else "")
+    items = await service.get_knowledge_base_list(user.id if user else "")
+
+    # 为每个知识库附加当前用户权限 - admin 用户默认 full_control
+    perm = ""
+    if user:
+        if user.role == "admin":
+            perm = "full_control"
+    result = []
+    for item in items:
+        d = item if isinstance(item, dict) else {"id": item.id, "name": item.name, "dataset_id": getattr(item, "dataset_id", ""), "access_settings": getattr(item, "access_settings", {}), "created_at": getattr(item, "created_at", None)}
+        # 非 admin 用户查询 kb_users 表
+        if user and user.role != "admin":
+            from app.models.user import KBUser
+            from sqlalchemy import select
+            r = await db.execute(
+                select(KBUser.perm).where(KBUser.kb_id == d["id"], KBUser.user_id == user.id)
+            )
+            perm = r.scalar_one_or_none() or ""
+        d["perm"] = perm
+        result.append(d)
+    return result
 
 
 @router.get("/detail", response_model=KnowledgeBaseDetailResponse)
@@ -41,7 +61,23 @@ async def get_knowledge_base_detail(id: str, user: CurrentUser, db: DbSession):
     kb = await service.get_knowledge_base(id)
     if not kb:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-    return KnowledgeBaseDetailResponse.from_orm(kb)
+
+    # 计算当前用户对该知识库的权限 - 对应 Go 版 GetKnowledgeBasePerm
+    perm = ""
+    if user:
+        if user.role == "admin":
+            perm = "full_control"
+        else:
+            from app.models.user import KBUser
+            from sqlalchemy import select
+            result = await db.execute(
+                select(KBUser.perm).where(KBUser.kb_id == id, KBUser.user_id == user.id)
+            )
+            perm = result.scalar_one_or_none() or ""
+
+    resp = KnowledgeBaseDetailResponse.from_orm(kb)
+    resp.perm = perm
+    return resp
 
 
 @router.put("/detail")
@@ -64,12 +100,12 @@ async def delete_knowledge_base(id: str, admin: AdminUser, db: DbSession):
     return {"message": "Deleted successfully"}
 
 
-@router.get("/user/list", response_model=KBUserListResponse)
+@router.get("/user/list")
 async def get_kb_users(kb_id: str, user: CurrentUser, db: DbSession):
     """获取知识库用户列表 - 对应 Go 版 KnowledgeBaseHandler.KBUserList"""
     service = KnowledgeBaseService(db)
     users = await service.get_kb_users(kb_id)
-    return KBUserListResponse(list=users)
+    return users
 
 
 @router.post("/user/invite")
@@ -104,9 +140,10 @@ async def create_kb_release(req: KBReleaseCreateRequest, user: CurrentUser, db: 
     return {"id": release_id}
 
 
-@router.get("/release/list", response_model=KBReleaseListResponse)
-async def get_kb_release_list(kb_id: str, offset: int = 0, limit: int = 20, user: CurrentUser = None, db: DbSession = None):
+@router.get("/release/list")
+async def get_kb_release_list(kb_id: str, page: int = 1, per_page: int = 20, user: CurrentUser = None, db: DbSession = None):
     """获取发布版本列表 - 对应 Go 版 KnowledgeBaseHandler.GetKBReleaseList"""
+    offset = (page - 1) * per_page
     service = KnowledgeBaseService(db)
-    releases = await service.get_kb_release_list(kb_id, offset, limit)
-    return KBReleaseListResponse(list=releases)
+    items, total = await service.get_kb_release_list(kb_id, offset, per_page)
+    return {"data": items, "total": total}

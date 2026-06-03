@@ -24,11 +24,16 @@ async_session_factory = async_sessionmaker(
 
 
 async def init_db():
-    """初始化数据库连接，验证数据库可达性（启动时容错）"""
+    """初始化数据库连接，自动创建新表（容错）"""
     try:
         async with engine.begin() as conn:
             await conn.execute(text("SELECT 1"))
         logger.info("Database connection established")
+        # 自动创建新表（不会修改已有表结构）
+        from app.models import Base  # noqa: E402
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+        logger.info("Database tables ensured")
     except Exception as e:
         logger.warning(f"Database not available at startup, will retry on request: {e}")
 

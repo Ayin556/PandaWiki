@@ -11,16 +11,17 @@ class ConversationService:
         self.db = db
         self.repo = ConversationRepository(db)
 
-    async def get_conversation_list(self, kb_id: str, offset: int, limit: int) -> list:
-        """获取对话列表"""
-        return await self.repo.get_conversation_list(kb_id, offset, limit)
+    async def get_conversation_list(self, kb_id: str, offset: int, limit: int,
+                                     subject: str = "", remote_ip: str = "") -> tuple[list, int]:
+        """获取对话列表，返回 (list, total)"""
+        return await self.repo.get_conversation_list(kb_id, offset, limit, subject, remote_ip)
 
     async def get_conversation_detail(self, kb_id: str, conversation_id: str) -> dict:
         """获取对话详情"""
         return await self.repo.get_conversation_detail(kb_id, conversation_id)
 
-    async def get_message_feedback_list(self, kb_id: str, offset: int, limit: int) -> list:
-        """获取消息反馈列表"""
+    async def get_message_feedback_list(self, kb_id: str, offset: int, limit: int) -> tuple[list, int]:
+        """获取消息反馈列表，返回 (list, total)"""
         return await self.repo.get_message_feedback_list(kb_id, offset, limit)
 
     async def get_message_detail(self, kb_id: str, message_id: str) -> dict:

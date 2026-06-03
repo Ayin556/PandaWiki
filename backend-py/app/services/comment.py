@@ -51,18 +51,22 @@ class CommentService:
         await self.db.refresh(comment)
         return {"id": comment.id}
 
-    async def get_comment_list(self, kb_id: str, offset: int, limit: int) -> dict:
+    async def get_comment_list(self, kb_id: str, offset: int, limit: int, status: int | None = None) -> dict:
         """获取评论列表(管理端) - 对应 Go 版 GetCommentListByKbID"""
+        where_clauses = [Comment.kb_id == kb_id]
+        if status is not None:
+            where_clauses.append(Comment.status == status)
+
         # 查询总数
         count_result = await self.db.execute(
-            select(func.count()).select_from(Comment).where(Comment.kb_id == kb_id)
+            select(func.count()).select_from(Comment).where(*where_clauses)
         )
         total = count_result.scalar_one()
 
         # 查询列表
         result = await self.db.execute(
             select(Comment)
-            .where(Comment.kb_id == kb_id)
+            .where(*where_clauses)
             .order_by(Comment.created_at.desc())
             .offset(offset).limit(limit)
         )

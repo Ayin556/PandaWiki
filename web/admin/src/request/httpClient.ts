@@ -104,12 +104,16 @@ export class HttpClient<SecurityDataType = unknown> {
         return Promise.reject(response);
       },
       (error) => {
-        if (error.response?.status === 401) {
-          window.location.href = window.__BASENAME__ + "/login";
+        const status = error.response?.status;
+        const msg = error.response?.data?.message || error.response?.data?.detail || error.response?.statusText || "网络异常";
+        if (status === 401) {
+          if (!location.pathname.includes("/login")) {
+            window.location.href = window.__BASENAME__ + "/login";
+          }
           localStorage.removeItem("panda_wiki_token");
         }
         if (error.code !== "ERR_CANCELED") {
-          message.error(error.response?.statusText || "网络异常");
+          message.error(msg);
         }
         return Promise.reject(error.response);
       },

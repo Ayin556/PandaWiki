@@ -16,6 +16,8 @@ from app.models.comment import Comment
 from app.models.stat import StatPage, StatPageHour, NodeStats
 from app.models.setting import Setting, SystemSetting
 from app.models.api_token import APIToken
+from app.models.document_feedback import DocumentFeedback
+from app.models.contribute import Contribute
 
 __all__ = [
     # Base
@@ -44,4 +46,8 @@ __all__ = [
     "Setting", "SystemSetting",
     # API Token
     "APIToken",
+    # Document Feedback
+    "DocumentFeedback",
+    # Contribute
+    "Contribute",
 ]

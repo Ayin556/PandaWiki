@@ -75,6 +75,7 @@ class ChatService:
                 subject=message[:100],
                 remote_ip=remote_ip,
                 nonce=new_nonce,
+                created_at=datetime.now(timezone.utc),
             )
             self.db.add(conversation)
             await self.db.commit()

@@ -29,9 +29,9 @@ class InstantPageItem(BaseModel):
 
 
 class StatCountResponse(BaseModel):
-    """全局统计响应"""
-    pv: int = 0
-    uv: int = 0
+    """全局统计响应 - 对应 Go 版 StatPageHour 字段"""
+    page_visit_count: int = 0
+    ip_count: int = 0
     session_count: int = 0
     conversation_count: int = 0
 

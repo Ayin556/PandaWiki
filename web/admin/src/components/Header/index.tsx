@@ -67,18 +67,24 @@ const Header = () => {
     >
       <Bread />
       <Stack direction={'row'} alignItems={'center'} gap={2}>
-        <Button
-          size='small'
-          variant='contained'
-          color='dark'
-          onClick={() => {
-            if (wikiUrl) {
-              window.open(wikiUrl, '_blank');
-            }
-          }}
+        <Tooltip
+          arrow
+          title={wikiUrl ? '' : '请先在「设置 → 访问控制」中配置访问地址'}
         >
-          访问 Wiki 网站
-        </Button>
+          <span>
+            <Button
+              size='small'
+              variant='contained'
+              color='dark'
+              disabled={!wikiUrl}
+              onClick={() => {
+                window.open(wikiUrl, '_blank');
+              }}
+            >
+              访问 Wiki 网站
+            </Button>
+          </span>
+        </Tooltip>
         <System />
         <Tooltip arrow title='退出登录'>
           <IconButton

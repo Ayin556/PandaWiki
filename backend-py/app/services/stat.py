@@ -71,25 +71,50 @@ class StatService:
         )
         pages = list(result.scalars().all())
 
+        # 批量查询节点名称
+        node_ids = set(p.node_id for p in pages if p.node_id)
+        node_name_map = {}
+        if node_ids:
+            node_result = await self.db.execute(
+                select(Node.id, Node.name).where(Node.id.in_(node_ids))
+            )
+            for nid, nname in node_result.all():
+                node_name_map[nid] = nname
+
         # 补充地理位置和场景名称
         items = []
         for p in pages:
-            location = ""
+            # 解析 IP 地理位置
+            country = ""
+            province = ""
+            city = ""
             if p.ip:
                 try:
                     redis = await self._get_redis()
                     if redis:
                         location = await redis.get(f"geo:{p.ip}") or ""
+                        if location and "|" in location:
+                            parts = location.split("|")
+                            country = parts[0] if len(parts) > 0 else ""
+                            province = parts[1] if len(parts) > 1 else ""
+                            city = parts[2] if len(parts) > 2 else ""
                 except Exception:
                     pass
 
             items.append({
                 "scene": p.scene,
-                "scene_name": self._scene_name(p.scene),
                 "node_id": p.node_id,
+                "node_name": node_name_map.get(p.node_id, ""),
                 "ip": p.ip,
-                "location": location,
-                "session_id": p.session_id,
+                "ip_address": {
+                    "ip": p.ip,
+                    "country": country,
+                    "province": province,
+                    "city": city,
+                },
+                "info": None,
+                "user_id": p.user_id if hasattr(p, 'user_id') else 0,
+                "created_at": p.created_at.isoformat() if p.created_at else "",
             })
         return items
 
@@ -97,52 +122,31 @@ class StatService:
         """全局统计 - 对应 Go 版 GetStatCount"""
         since = datetime.now(timezone.utc) - timedelta(days=day)
 
-        if day == 1:
-            # 从明细表查询
-            pv_result = await self.db.execute(
-                select(func.count()).select_from(StatPage)
-                .where(StatPage.kb_id == kb_id, StatPage.created_at >= since)
-            )
-            uv_result = await self.db.execute(
-                select(func.count(func.distinct(StatPage.ip)))
-                .select_from(StatPage)
-                .where(StatPage.kb_id == kb_id, StatPage.created_at >= since)
-            )
-            session_result = await self.db.execute(
-                select(func.count(func.distinct(StatPage.session_id)))
-                .select_from(StatPage)
-                .where(StatPage.kb_id == kb_id, StatPage.created_at >= since)
-            )
-            conv_result = await self.db.execute(
-                select(func.count()).select_from(Conversation)
-                .where(Conversation.kb_id == kb_id, Conversation.created_at >= since)
-            )
-            return {
-                "pv": pv_result.scalar_one(),
-                "uv": uv_result.scalar_one(),
-                "session_count": session_result.scalar_one(),
-                "conversation_count": conv_result.scalar_one(),
-            }
-        else:
-            # 从小时聚合表查询
-            result = await self.db.execute(
-                select(
-                    func.sum(StatPageHour.page_visit_count),
-                    func.sum(StatPageHour.ip_count),
-                    func.sum(StatPageHour.session_count),
-                    func.sum(StatPageHour.conversation_count),
-                ).where(
-                    StatPageHour.kb_id == kb_id,
-                    StatPageHour.hour >= since,
-                )
-            )
-            row = result.one()
-            return {
-                "pv": row[0] or 0,
-                "uv": row[1] or 0,
-                "session_count": row[2] or 0,
-                "conversation_count": row[3] or 0,
-            }
+        # 统一从明细表查询（Python 版无消费者聚合 stat_page_hours）
+        pv_result = await self.db.execute(
+            select(func.count()).select_from(StatPage)
+            .where(StatPage.kb_id == kb_id, StatPage.created_at >= since)
+        )
+        uv_result = await self.db.execute(
+            select(func.count(func.distinct(StatPage.ip)))
+            .select_from(StatPage)
+            .where(StatPage.kb_id == kb_id, StatPage.created_at >= since)
+        )
+        session_result = await self.db.execute(
+            select(func.count(func.distinct(StatPage.session_id)))
+            .select_from(StatPage)
+            .where(StatPage.kb_id == kb_id, StatPage.created_at >= since)
+        )
+        conv_result = await self.db.execute(
+            select(func.count()).select_from(Conversation)
+            .where(Conversation.kb_id == kb_id, Conversation.created_at >= since)
+        )
+        return {
+            "page_visit_count": pv_result.scalar_one(),
+            "ip_count": uv_result.scalar_one(),
+            "session_count": session_result.scalar_one(),
+            "conversation_count": conv_result.scalar_one(),
+        }
 
     async def get_geo_count(self, kb_id: str, day: int = 1) -> list:
         """地理分布 - 对应 Go 版 GetGeoCount"""
@@ -189,35 +193,14 @@ class StatService:
         """热门文档 - 对应 Go 版 GetHotPages"""
         since = datetime.now(timezone.utc) - timedelta(days=day)
 
-        if day == 1:
-            result = await self.db.execute(
-                select(StatPage.node_id, func.count().label("count"))
-                .where(StatPage.kb_id == kb_id, StatPage.created_at >= since, StatPage.node_id != "")
-                .group_by(StatPage.node_id)
-                .order_by(func.count().desc())
-                .limit(10)
-            )
-        else:
-            result = await self.db.execute(
-                select(StatPageHour.hot_page)
-                .where(StatPageHour.kb_id == kb_id, StatPageHour.hour >= since)
-            )
-            # 聚合小时数据中的 hot_page JSON
-            pages_map = {}
-            for row in result.scalars().all():
-                if isinstance(row, dict):
-                    for node_id, count in row.items():
-                        pages_map[node_id] = pages_map.get(node_id, 0) + count
-            sorted_pages = sorted(pages_map.items(), key=lambda x: -x[1])[:10]
-            # 补充节点名称
-            items = []
-            for node_id, count in sorted_pages:
-                node_result = await self.db.execute(
-                    select(Node.name).where(Node.id == node_id)
-                )
-                name = node_result.scalar_one_or_none() or ""
-                items.append({"node_id": node_id, "name": name, "count": count})
-            return items
+        # 统一从明细表查询（Python 版无消费者聚合 stat_page_hours）
+        result = await self.db.execute(
+            select(StatPage.node_id, func.count().label("count"))
+            .where(StatPage.kb_id == kb_id, StatPage.created_at >= since, StatPage.node_id != "")
+            .group_by(StatPage.node_id)
+            .order_by(func.count().desc())
+            .limit(10)
+        )
 
         items = []
         for node_id, count in result.all():
@@ -225,7 +208,7 @@ class StatService:
                 select(Node.name).where(Node.id == node_id)
             )
             name = node_result.scalar_one_or_none() or ""
-            items.append({"node_id": node_id, "name": name, "count": count})
+            items.append({"node_id": node_id, "node_name": name, "count": count})
         return items
 
     async def get_hot_referer_hosts(self, kb_id: str, day: int = 1) -> list:
@@ -239,7 +222,7 @@ class StatService:
             .order_by(func.count().desc())
             .limit(10)
         )
-        return [{"host": host, "count": count} for host, count in result.all()]
+        return [{"referer_host": host, "count": count} for host, count in result.all()]
 
     async def get_hot_browsers(self, kb_id: str, day: int = 1) -> dict:
         """浏览器统计 - 对应 Go 版 GetHotBrowsers"""
@@ -252,7 +235,19 @@ class StatService:
             .order_by(func.count().desc())
             .limit(10)
         )
-        return {"browsers": [{"name": name, "count": count} for name, count in result.all()]}
+        browser_list = [{"name": name, "count": count} for name, count in result.all()]
+
+        # 操作系统统计
+        os_result = await self.db.execute(
+            select(StatPage.browser_os, func.count().label("count"))
+            .where(StatPage.kb_id == kb_id, StatPage.created_at >= since, StatPage.browser_os != "")
+            .group_by(StatPage.browser_os)
+            .order_by(func.count().desc())
+            .limit(10)
+        )
+        os_list = [{"name": name, "count": count} for name, count in os_result.all()]
+
+        return {"browser": browser_list, "os": os_list}
 
     async def _get_redis(self):
         """获取 Redis 连接"""

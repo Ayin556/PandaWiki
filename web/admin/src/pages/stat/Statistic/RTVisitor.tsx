@@ -180,9 +180,9 @@ const RTVisitor = ({ isWideScreen }: { isWideScreen: boolean }) => {
                         ...(!isWideScreen && { ml: '20px', fontSize: 10 }),
                       }}
                     >
-                      {it.ip_address.country === '中国'
-                        ? `${it.ip_address.province}-${it.ip_address.city}`
-                        : `${it.ip_address.country}`}
+                      {(it.ip_address?.country || '') === '中国'
+                        ? `${it.ip_address?.province || ''}-${it.ip_address?.city || ''}`
+                        : `${it.ip_address?.country || ''}`}
                     </Box>
                   </Stack>
                 </Stack>

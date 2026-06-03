@@ -2,7 +2,7 @@
 
 from datetime import datetime, timezone
 
-from sqlalchemy import select, delete, update
+from sqlalchemy import select, delete, update, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.knowledge_base import KnowledgeBase, KBRelease, KBReleaseNodeRelease
@@ -58,7 +58,7 @@ class KnowledgeBaseRepository(BaseRepository[KnowledgeBase]):
             .join(KBUser, KBUser.user_id == User.id)
             .where(KBUser.kb_id == kb_id)
         )
-        return [{"id": u.id, "account": u.account, "perm": perm} for u, perm in result.all()]
+        return [{"id": u.id, "account": u.account, "perms": perm, "role": "user"} for u, perm in result.all()]
 
     async def create_kb_user(self, kb_id: str, user_id: str, perm: str) -> None:
         """创建知识库用户映射"""
@@ -173,12 +173,33 @@ class KnowledgeBaseRepository(BaseRepository[KnowledgeBase]):
         await self.db.refresh(release)
         return release.id
 
-    async def get_release_list(self, kb_id: str, offset: int, limit: int) -> list[KBRelease]:
-        """获取发布版本列表"""
+    async def get_release_list(self, kb_id: str, offset: int, limit: int) -> tuple[list[dict], int]:
+        """获取发布版本列表，返回 (list, total)"""
+        from app.models.user import User
+
+        # 查询总数
+        count_result = await self.db.execute(
+            select(func.count()).select_from(KBRelease).where(KBRelease.kb_id == kb_id)
+        )
+        total = count_result.scalar_one()
+
+        # 查询列表并关联用户表获取 publisher_account
         result = await self.db.execute(
-            select(KBRelease)
+            select(KBRelease, User.account)
+            .outerjoin(User, User.id == KBRelease.publisher_id)
             .where(KBRelease.kb_id == kb_id)
             .order_by(KBRelease.created_at.desc())
             .offset(offset).limit(limit)
         )
-        return list(result.scalars().all())
+        items = []
+        for release, account in result.all():
+            items.append({
+                "id": release.id,
+                "kb_id": release.kb_id,
+                "tag": release.tag,
+                "message": release.message,
+                "publisher_id": release.publisher_id,
+                "publisher_account": account or "",
+                "created_at": release.created_at.isoformat() if release.created_at else "",
+            })
+        return items, total

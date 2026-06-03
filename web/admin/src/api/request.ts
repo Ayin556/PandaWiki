@@ -47,11 +47,20 @@ const request = <T>(options: AxiosRequestConfig): Promise<T> => {
       return Promise.reject(response);
     },
     (error: AxiosError) => {
-      if (error.response?.status === 401) {
-        window.location.href = window.__BASENAME__ + '/login';
+      const status = error.response?.status;
+      const errData = error.response?.data as ErrorResponse | undefined;
+      const msg =
+        errData?.message ||
+        (error.response?.data as any)?.detail ||
+        error.response?.statusText ||
+        '网络异常';
+      if (status === 401) {
+        if (!location.pathname.includes('/login')) {
+          window.location.href = window.__BASENAME__ + '/login';
+        }
         localStorage.removeItem('panda_wiki_token');
       }
-      message.error(error.response?.statusText || '网络异常');
+      message.error(msg);
       return Promise.reject(error.response);
     },
   );

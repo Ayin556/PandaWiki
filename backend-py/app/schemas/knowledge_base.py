@@ -22,6 +22,7 @@ class KnowledgeBaseDetailResponse(BaseModel):
     id: str
     name: str
     dataset_id: str = ""
+    perm: str = ""
     access_settings: Optional[dict] = None
 
     class Config:
@@ -74,8 +75,14 @@ class KBReleaseListItem(BaseModel):
     tag: str
     message: str
     publisher_id: str = ""
+    publisher_account: str = ""
+    created_at: str = ""
+
+    class Config:
+        from_attributes = True
 
 
 class KBReleaseListResponse(BaseModel):
     """发布版本列表响应"""
-    list: list[KBReleaseListItem]
+    data: list[KBReleaseListItem] = []
+    total: int = 0

@@ -8,6 +8,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from loguru import logger
 
+from app.api.pro.router import pro_router
+from app.api.share.contribute import router as share_contribute_router
+from app.api.share.pro_auth import router as share_pro_auth_router
 from app.api.share.router import share_router
 from app.api.v1.router import v1_router
 from app.core.config import settings
@@ -101,7 +104,11 @@ def create_app() -> FastAPI:
 
     # 注册路由
     app.include_router(v1_router, prefix="/api/v1")
+    app.include_router(pro_router, prefix="/api/pro/v1")
     app.include_router(share_router, prefix="/share/v1")
+    app.include_router(share_pro_auth_router, prefix="/share/pro/v1/auth", tags=["Share-Pro-企微认证"])
+    app.include_router(share_pro_auth_router, prefix="/share/pro/v1/openapi", tags=["Share-Pro-企微回调"])
+    app.include_router(share_contribute_router, prefix="/share/pro/v1/contribute", tags=["Share-Pro-贡献提交"])
 
     return app
 
